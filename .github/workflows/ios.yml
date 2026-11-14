@@ -1,0 +1,27 @@
+name: iOS build check
+
+# Compiles the iOS app for the simulator (no Apple account needed).
+# For TestFlight / App Store, open ios/App/App.xcodeproj in Xcode on a Mac and archive with your team.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  simulator:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx cap sync ios
+      - name: Build for simulator
+        run: >
+          xcodebuild -project ios/App/App.xcodeproj -scheme App
+          -sdk iphonesimulator -configuration Debug
+          -destination 'generic/platform=iOS Simulator'
+          CODE_SIGNING_ALLOWED=NO build

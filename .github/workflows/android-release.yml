@@ -1,0 +1,42 @@
+name: Android release (signed AAB for Play Store)
+
+# Add these repository secrets first (Settings > Secrets and variables > Actions):
+#   ANDROID_KEYSTORE_BASE64   base64 of your upload keystore (.jks)
+#   ANDROID_KEYSTORE_PASSWORD
+#   ANDROID_KEY_ALIAS
+#   ANDROID_KEY_PASSWORD
+on:
+  workflow_dispatch:
+
+jobs:
+  aab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npx cap sync android
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Restore keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > $RUNNER_TEMP/upload.jks
+      - name: Build signed AAB
+        run: >
+          npx cap build android
+          --keystorepath $RUNNER_TEMP/upload.jks
+          --keystorepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+          --keystorealias "${{ secrets.ANDROID_KEY_ALIAS }}"
+          --keystorealiaspass "${{ secrets.ANDROID_KEY_PASSWORD }}"
+          --androidreleasetype AAB
+      - uses: actions/upload-artifact@v4
+        with:
+          name: level-devil-dad-release-aab
+          path: android/app/build/outputs/bundle/release/*.aab

@@ -1,0 +1,63 @@
+name: Test APK (sideload, rolling "test" release)
+
+# Builds the same small sideload APK as android-test/build.sh (package com.poshith.leveldevildad.test) on every
+# push to main and puts it on the release tagged "test", so a phone can always grab the latest from
+# https://github.com/<owner>/<repo>/releases/tag/test
+#
+# To make these APKs install over the test app already on your phone (and keep your progress), they must be
+# signed with the same key: add a repository secret TEST_KEYSTORE_B64 = base64 of android-test/test-keystore.jks
+# (Settings > Secrets and variables > Actions). Without it, a throwaway key is used: uninstall the old app first.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: test-apk
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - name: Signing key
+        env:
+          KS: ${{ secrets.TEST_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KS" ]; then
+            echo "$KS" | base64 -d > android-test/test-keystore.jks
+            echo "Signing with the saved test key."
+          else
+            echo "::warning::No TEST_KEYSTORE_B64 secret: this APK is signed with a throwaway key and won't install over your current test app."
+          fi
+      - run: bash android-test/build.sh
+      - name: Name it
+        run: |
+          V=$(node -p "require('./package.json').version")
+          echo "V=$V" >> "$GITHUB_ENV"
+          cp android-test/build/LevelDevilDad-test.apk "LevelDevilDad-v$V.apk"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LevelDevilDad-test-apk
+          path: LevelDevilDad-v*.apk
+      - name: Publish to the "test" release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete test --yes --cleanup-tag || true
+          gh release create test "LevelDevilDad-v$V.apk" --prerelease --target "$GITHUB_SHA" \
+            --title "Test APK v$V (latest main)" \
+            --notes "Sideload build of ${GITHUB_SHA::7}. On the phone: download the APK, open it, allow installs from this source."
