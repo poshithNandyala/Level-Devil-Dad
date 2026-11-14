@@ -39,6 +39,7 @@ const CAP: Record<string, { cap: string; capHi: string; blades?: string; flowers
   RPR: { cap: '#9CCC65', capHi: '#C5E1A5', pebbles: '#8D5A3B' },
   BPL: { cap: '#B9C7A6', capHi: '#D9E3C8', pebbles: '#7E8F6E' },
   BOM: { cap: '#4A4858', capHi: '#6B6980', pebbles: '#2E2D3A' },
+  RNC: { cap: '#7CB342', capHi: '#AED581', blades: '#5E8C33', pebbles: '#8D5A3B' },
 };
 
 /** One ground tile in the city's style. Edges depend on neighbours so groups of tiles read as one mass. */

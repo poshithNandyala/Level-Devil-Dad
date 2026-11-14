@@ -281,3 +281,24 @@ Working notes so the build can be resumed at any point.
 - Result: 95% / 93% / 92% for quick / average / relaxed timing. The check is now a test anyone can rerun and
   copy: `tests/fair-gnr07.test.ts`.
 
+
+## v0.15.0: Ranchi (8 stages, the eastern chapter opens)
+- RNC-01 tour "Johar, Ranchi!" up the plateau road, then 02 **Haat** (the barter: a stall takes the one
+  thing on its sign and lays a plank over the gap; carry one thing at a time, and the act makes the last
+  stall want the dona you already walked past) · 03 **Hundru** (the plunge: the basin is bare shards and
+  the falls fill it on a cycle, so you wait on the lip and step off into water; the act's third bay never
+  fills, so you land on a shelf over the shards) · 04 **Baans** (woven one-way traps: a mouth is an exit,
+  and the short one points back down the lane) · 05 **Sarhul** (the Pahan's pot spills on every jump and
+  landing, spouts fill it, and the door wants it nearly full) · 06 **Dokra** (pour a channel across a pit:
+  fresh brass burns, dull brass is a floor) · 07 **Chhau** (a mask on a pole buys one blow from a dancer;
+  his sweep breaks the cracked wall behind it, and bare-handed he turns on Dad) · 08 **Sarhul Mela** (all
+  of it in one lane, plus a door you walk right past).
+- New file `src/game/entities/jharkhand.ts`: Plate/Hands/Stall, Plunge + FallCurtain, Chute, pot + Spout,
+  Cast + Crucible, mask + MaskPole + Dancer + StoneSlab. New endings file `endings4.ts` with `bhaav`
+  `jharana` `khokha` `pahan` `dhalai` `mukhauta` `ghumav`.
+- Fairness fixes found while proving the routes: the dancer's wind-up is 1.3 s (a drumbeat you can hear)
+  and he retargets to a mask that goes up mid-swing; a dry basin bites the *fall*, not the standing, so a
+  pool that drains under you never kills you where you stand; the last dancer at RNC-07's door only ever
+  goes for the mask.
+- Proven: route + NAIVE death for every stage (NAIVE on 05-08), act routes and door policies in
+  `tests/east.ts`, `npm run typecheck` clean, `npm test` green.

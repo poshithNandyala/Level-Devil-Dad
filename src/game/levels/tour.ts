@@ -51,6 +51,8 @@ export const COURSES: Record<CityId, TourSeg[]> = {
   JAI: [{ k: 'posts', x: 12, n: 3 }, { k: 'steps', x: 26, n: 3, run: 2, top: 3 }, { k: 'parked', x: 46 }, { k: 'ferry', x: 56, w: 14, kind: 'traincar', label: 'PINK LINE' }, { k: 'ditch', x: 80, w: 2 }],
   // a ride on the local over the nala
   BOM: [{ k: 'posts', x: 12, n: 3 }, { k: 'ditch', x: 24, w: 2 }, { k: 'parked', x: 34 }, { k: 'ferry', x: 46, w: 16, kind: 'traincar', wet: true, label: 'CHURCHGATE' }, { k: 'wall', x: 70 }, { k: 'steps', x: 78, n: 2, run: 2, top: 2 }],
+  // the Rock Garden's steps and a ride up the plateau road from Ranchi station
+  RNC: [{ k: 'ditch', x: 12, w: 2 }, { k: 'steps', x: 24, n: 3, run: 2, top: 3 }, { k: 'posts', x: 44, n: 3 }, { k: 'parked', x: 62 }, { k: 'ferry', x: 76, w: 14, kind: 'traincar', label: 'RANCHI JN' }],
 };
 
 /** the far end of a piece, in tiles */

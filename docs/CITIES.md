@@ -32,7 +32,7 @@ How to use this file:
 | 12 | JAI | Jaipur | Rajasthan | West | Rajasthani + English | done |
 | 13 | BPL | Bhopal | Madhya Pradesh | Central | Bhopali Hindi + English | done |
 | 14 | RPR | Raipur | Chhattisgarh | Central | Chhattisgarhi + English | done |
-| 15 | RNC | Ranchi | Jharkhand | Central | Nagpuri (Sadri) + Hindi + English | **next** |
+| 15 | RNC | Ranchi | Jharkhand | Central | Nagpuri (Sadri) + Hindi + English | done |
 | 16 | PAT | Patna | Bihar | Central | Magahi / Bhojpuri + Hindi + English | to do |
 | 17 | LKO | Lucknow | Uttar Pradesh | Central | Lakhnavi Hindustani (Urdu-rich) + Awadhi + English | to do |
 | 18 | BBI | Bhubaneswar | Odisha | East | Odia + Hindi + English | to do |
@@ -306,7 +306,16 @@ recoiling ropes · KOH "Log Drum Off-Beat" vs JAI-02's beat-forced hops · SVP "
 `amr03-logs`, and "Coconut Crab Snip" vs KVT-07's crabs · DEL "Mind The Gap, Bhai" vs every train (BOM, BLR,
 CHN-08) · LEH "Julley At 11,000 Feet" (thin air) vs KVT-06's air meter.
 
-### RNC · Ranchi, Jharkhand (next)
+### RNC · Ranchi, Jharkhand (done: v0.15.0)
+**Built:** 01 "Johar, Ranchi!" tour · 02 Haat (barter: carry the thing the stall's sign names and it lays
+its plank; the act makes you walk back for the dona) · 03 Hundru (the plunge: only the pool is a soft
+landing, and it fills and drains with the falls; the act's third bay has no water at all, so you land on
+the shelf over the shards) · 04 Baans (woven one-way traps: the short mouth points backwards, the long one
+crosses the gap) · 05 Sarhul (the Pahan's pot: every jump spills, spouts fill, the door wants it nearly
+full) · 06 Dokra (pour the channel, wait for the brass to dull, then walk on it) · 07 Chhau (hang a mask
+on the pole so the dancer's blow breaks the cracked wall; bare-handed, he turns on you) · 08 Sarhul Mela
+(all of it again in one lane, and a hairpin at the door). Doors: `bhaav` `jharana` `khokha` `pahan`
+`dhalai` `mukhauta` `ghumav`. Hidden item: dhuska. Proven routes, acts and door policies: `tests/east.ts`.
 - **Speak:** Nagpuri (Sadri) + Hindi + English; Kurukh, Mundari, Ho and Santali are spoken around it. Map
   greeting "Johar! | Greetings!". Raipur already opens with "Jai Johar!", so lead with other lines.
 - **Locals live with:** waterfalls all round the city (Hundru, Dassam, Jonha, Hirni) with spray and mist,
@@ -315,8 +324,7 @@ CHN-08) · LEH "Julley At 11,000 Feet" (thin air) vs KVT-06's air meter.
 - **Food / hidden item:** dhuska with ghugni; rugra (monsoon mushroom); thekua; pitha.
 - **Festivals and craft:** Sarhul (spring, sal blossoms, mandar drums), Karma (lines of dancers, arms linked),
   Sohrai and Khovar wall painting, Seraikela Chhau (masked dance).
-- **Teasers now:** Dhuska Trampoline · Hundru Mist.
-- **Watch out:** sal forest, hornets, hawks and ants are Raipur's; hairpins are TVM-07; bounce is taken; the
+- **Watch out:** sal forest, hornets, hawks and ants are Raipur's; bounce is taken; the
   `cascade` kit already does a falling stream, so a waterfall idea needs a new angle (behind the curtain,
   mist that hides, a pool that refills).
 - **Avoid:** mining accidents and coal fires as jokes, tribal stereotypes, politics, real cricketers, handia

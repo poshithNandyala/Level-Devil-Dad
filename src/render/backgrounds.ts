@@ -5,6 +5,7 @@ import { THEMES, Theme } from './theme';
 import { Ctx, circle, ellipse, hash, rr, withAlpha } from './art/common';
 import { amaravati, ambientSouth, chennai, kavaratti, puducherry, thiruvananthapuram } from './backdrops-south';
 import { ambientWest, daman, gandhinagar, bhopal, jaipur, raipur, panaji } from './backdrops-west';
+import { ranchi } from './backdrops-east';
 
 /**
  * City backdrops, drawn in world units around the room. `x0..x1` is the
@@ -41,6 +42,7 @@ export function drawBackdrop(ctx: Ctx, city: CityId, x0: number, x1: number, y0:
   else if (city === 'JAI') jaipur(ctx, th, x0, x1);
   else if (city === 'BPL') bhopal(ctx, th, x0, x1);
   else if (city === 'RPR') raipur(ctx, th, x0, x1);
+  else if (city === 'RNC') ranchi(ctx, th, x0, x1);
   else amaravati(ctx, th, x0, x1);
   // haze near the ground line so the playfield pops
   const hz = ctx.createLinearGradient(0, 170, 0, 260);

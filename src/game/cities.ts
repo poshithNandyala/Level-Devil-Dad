@@ -298,6 +298,23 @@ export const LINES: Record<CityId, CityLines> = {
     seven: 'Saat baar! Thala for a reason. | Seven times! Back to the start.',
     lastLife: 'Aakhri mauka, Dad! Dheere dheere! | Last chance, Dad! Slowly!',
   },
+  RNC: {
+    hello: 'Johar! | Greetings!',
+    famous: 'Waterfalls all round the city, sal flowers at Sarhul and hot dhuska at the haat.',
+    lang: 'Nagpuri (Sadri) + Hindi + English',
+    intro: ['Johar, Dad! Hian aao! | Greetings, Dad! Come here!', 'Toen kaisan aahis? | How are you?', 'Jharna tez he, sambhal ke! | The falls are strong, be careful!', 'Haat ma sab milela! | You get everything at the haat!', 'Dhuska garam he, kha lo! | The dhuska is hot, eat up!', 'Mask pehno, Dad! | Wear the mask, Dad!', 'Paani bhar ke rakh, Dad! | Keep the pot full, Dad!'],
+    taunt: ['Kaisan, Dad? | How’s that, Dad?', 'Ruk na, Dad! | Wait up, Dad!', 'Moen thik aahon, toen? | I’m fine, are you?', 'Jharana neeche he! | The falls are down there!', 'Haat band ho gelo! | The market’s shut!'],
+    beaten: ['Hau, Dad! Toen jit gela! | Yes, Dad! You win!', 'Besh, Dad! | Well played, Dad!'],
+    death: ['Jharana ek, Dad zero! | Falls one, Dad zero!', 'Paani ma chala gela! | You went into the water!', 'Dhuska thanda ho gelo! | The dhuska went cold!', 'Patthar gira! | A rock came down!', 'Phir se, Dad! | Again, Dad!'],
+    near: ['Aur thoda, Dad! | A little more, Dad!', 'Bas, ek kadam! | Just one step!'],
+    win: ['Johar! Nikal gela! | Greetings! You’re out!', 'Besh, Dad! | Well played, Dad!', 'Chal, aage! | Come on, onwards!'],
+    flip: 'Ulta ho gela! | It’s gone topsy-turvy!',
+    cleared: 'Ranchi cleared. Johar! | Ranchi cleared. Greetings!',
+    brag: 'Johar! | Greetings!',
+    idle: ['Ka, Dad? Chal na! | What, Dad? Come on!', 'Ped jaisan khada he! | Standing like a tree!', 'Toen kaisan aahis? | How are you?', 'Dhuska khabe ka? | Fancy a dhuska?'],
+    seven: 'Saat baar! Wapas shuru! | Seven times! Back to the start.',
+    lastLife: 'Ek jaan bachi he, Dad! | One life left, Dad!',
+  },
 };
 
 /** South to north. Bonus chapters are optional side trips; previews are early peeks. */
@@ -316,7 +333,7 @@ export const CHAPTERS: Chapter[] = [
   { id: 'JAI', name: 'Jaipur', state: 'Rajasthan', region: 'West', city: 'JAI', hello: LINES.JAI.hello, famous: LINES.JAI.famous },
   { id: 'BPL', name: 'Bhopal', state: 'Madhya Pradesh', region: 'Central', city: 'BPL', hello: LINES.BPL.hello, famous: LINES.BPL.famous },
   { id: 'RPR', name: 'Raipur', state: 'Chhattisgarh', region: 'Central', city: 'RPR', hello: LINES.RPR.hello, famous: LINES.RPR.famous },
-  { id: 'RNC', name: 'Ranchi', state: 'Jharkhand', region: 'Central', hello: "Johar! | Greetings!", famous: 'Waterfalls all around and hot dhuska at breakfast.', teasers: ['Dhuska Trampoline', 'Hundru Mist'] },
+  { id: 'RNC', name: 'Ranchi', state: 'Jharkhand', region: 'Central', city: 'RNC', hello: LINES.RNC.hello, famous: LINES.RNC.famous },
   { id: 'PAT', name: 'Patna', state: 'Bihar', region: 'Central', hello: "Ka haal ba? | How's it going?", famous: 'The Ganga, litti chokha and the old Golghar dome.', teasers: ['Golghar Spiral', 'Gandhi Setu Peel'] },
   { id: 'LKO', name: 'Lucknow', state: 'Uttar Pradesh', region: 'Central', hello: "Aadaab! | Respectful greetings!", famous: 'Kebabs, chikan embroidery and pehle-aap politeness.', teasers: ['Pehle Aap Trap', 'Door Number 489'] },
   { id: 'BBI', name: 'Bhubaneswar', state: 'Odisha', region: 'East', hello: "Kemiti achha? | How are you?", famous: 'Wide new roads, an old town and dahibara stalls.', teasers: ['Pipli Parachute', 'Kalbaishakhi Gust'] },

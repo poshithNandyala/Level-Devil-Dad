@@ -135,6 +135,7 @@ export interface RivalScript {
 /** What Tara says when she saw exactly how you went down. */
 const CAUSE_LINES: Record<string, string[]> = {
   fell: ['Mind the gap, Dad!', 'Gravity: 1. Dad: 0.'],
+  rocks: ['Bare rock, Dad! Only the pool is soft!', 'Watch the fall: the pool drains!'],
   spikes: ['Ouch. Pointy, no?', 'Those were not decorations!'],
   crushed: ['Flat Dad! Hahaha!', 'Squished like a dosa!'],
   coconut: ['Coconut 1, Dad 0!', 'Look up sometimes, Dad!'],

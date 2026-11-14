@@ -44,7 +44,7 @@ export const PHYS = {
   stickyRun: 42,
 };
 
-export type CityId = 'TVM' | 'KVT' | 'CHN' | 'PDY' | 'BLR' | 'AMR' | 'HYD' | 'PNJ' | 'BOM' | 'DMN' | 'GNR' | 'JAI' | 'BPL' | 'RPR';
+export type CityId = 'TVM' | 'KVT' | 'CHN' | 'PDY' | 'BLR' | 'AMR' | 'HYD' | 'PNJ' | 'BOM' | 'DMN' | 'GNR' | 'JAI' | 'BPL' | 'RPR' | 'RNC';
 
 export interface Rect {
   x: number;

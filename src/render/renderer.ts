@@ -1004,6 +1004,7 @@ const GRADES: Record<string, { gx: number; gy: number; glow: string; tint: strin
   BPL: { gx: 0.3, gy: 0.24, glow: 'rgba(255,236,200,0.24)', tint: 'rgba(60,150,160,0.07)', vig: 'rgba(10,30,40,0.2)' },
   JAI: { gx: 0.65, gy: 0.22, glow: 'rgba(255,222,196,0.26)', tint: 'rgba(230,100,120,0.07)', vig: 'rgba(40,15,20,0.2)' },
   BOM: { gx: 0.8, gy: -0.1, glow: 'rgba(170,200,255,0.22)', tint: 'rgba(80,110,255,0.10)', vig: 'rgba(4,6,26,0.26)' },
+  RNC: { gx: 0.68, gy: 0.12, glow: 'rgba(255,246,205,0.27)', tint: 'rgba(90,150,80,0.07)', vig: 'rgba(18,32,14,0.2)' },
 };
 /** tile cache slice width (world px) */
 const CHUNK = 512;

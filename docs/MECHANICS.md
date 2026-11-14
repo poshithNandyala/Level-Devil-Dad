@@ -106,6 +106,7 @@ gnr02-terraces gnr03-shaft gnr04-hatchery gnr05-pride gnr06-sabarmati gnr07-sher
 jai02-show jai03-zenana jai04-yantras jai05-rasta jai06-mela jai07-udaan jai08-amer
 bpl02-jheel bpl03-shelters bpl04-karchob bpl05-mehfil bpl06-chowk bpl07-karkhana bpl08-bhojtal
 rpr02-khet rpr03-chowk rpr04-kothi rpr05-mela rpr06-jungle rpr07-saal rpr08-dussehra
+rnc02-haat rnc03-jharana rnc04-baans rnc05-phool rnc06-dhalai rnc07-mukhauta rnc08-mela
 
 ## Door endings (ENDINGS: one stage each)
 Check the advice lines in endings*.ts too: an idea counts as used even under a new name (e.g. catching
@@ -120,4 +121,5 @@ setu jali milan safari kichad pravesh herd
 sutradhar toran shant naap dulha palat salaami
 ghat haath gaanth khaali paan rakhdo kissa
 utar ghanta khisko lattu reel gud rath
+bhaav jharana khokha pahan dhalai mukhauta ghumav
 (+ the old nine twists: spikes crush swap shy sink rise wall fake none)

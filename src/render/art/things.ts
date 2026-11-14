@@ -112,7 +112,8 @@ export type ThingKind =
   | 'dhokla'
   | 'ghevar'
   | 'poha'
-  | 'chila';
+  | 'chila'
+  | 'dhuska';
 
 const SIZE: Record<ThingKind, [number, number]> = {
   crate: [16, 16],
@@ -210,6 +211,7 @@ const SIZE: Record<ThingKind, [number, number]> = {
   ghevar: [12, 10],
   poha: [12, 10],
   chila: [12, 10],
+  dhuska: [12, 10],
 };
 
 export function thingSize(k: ThingKind): [number, number] {
@@ -1664,6 +1666,26 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       for (let i = 0; i < 5; i++) ctx.fillRect(x + 2 + ((i * 7) % 8), y + 2 + ((i * 3) % 3), 0.9, 0.9);
       ctx.fillStyle = '#43A047';
       ctx.fillRect(x + 5, y + 1, 5, 1.2);
+      break;
+    }
+    case 'dhuska': {
+      // a dhuska on a sal-leaf dona, with a spoon of ghugni on the side
+      const cx = x + w / 2,
+        cy = y + h / 2 + 1.5;
+      ctx.fillStyle = '#558B2F';
+      ctx.beginPath();
+      ctx.ellipse(cx, cy + 1.5, w / 2, h / 2 - 1.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#E8A33D';
+      ctx.beginPath();
+      ctx.ellipse(cx - 0.5, cy - 0.5, 4.6, 3.4, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#C97B22';
+      ctx.fillRect(cx - 4.4, cy - 1.2, 8, 0.9);
+      ctx.fillStyle = '#6D4C41';
+      ctx.beginPath();
+      ctx.arc(cx + 3.6, cy + 1.6, 1.8, 0, Math.PI * 2);
+      ctx.fill();
       break;
     }
     case 'chila': {

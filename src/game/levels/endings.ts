@@ -18,6 +18,7 @@ export type { Ending } from './endkit';
 import type { Ending } from './endkit';
 import { NEW_ENDINGS, type NewEndingKind } from './endings2';
 import { WEST_ENDINGS, type WestEndingKind } from './endings3';
+import { EAST_ENDINGS, type EastEndingKind } from './endings4';
 
 export type EndingKind =
   | 'knock' | 'loading' | 'reflection' | 'glider' | 'trapdoor'
@@ -28,9 +29,10 @@ export type EndingKind =
   | 'otp' | 'biryani' | 'gravity' | 'tiny' | 'cannon' | 'backdoor' | 'slowmo'
   | 'bollywood' | 'kabaddi' | 'dahihandi' | 'credits'
   | NewEndingKind
-  | WestEndingKind;
+  | WestEndingKind
+  | EastEndingKind;
 
-const OLD_ENDINGS: Record<Exclude<EndingKind, NewEndingKind | WestEndingKind>, Ending> = {
+const OLD_ENDINGS: Record<Exclude<EndingKind, NewEndingKind | WestEndingKind | EastEndingKind>, Ending> = {
   // ================================================================ Thiruvananthapuram
   /** The door is locked. Knock: jump into it, three times, and Ammachi opens up. */
   knock: {
@@ -2518,6 +2520,6 @@ const OLD_ENDINGS: Record<Exclude<EndingKind, NewEndingKind | WestEndingKind>, E
   },
 };
 
-export const ENDINGS: Record<EndingKind, Ending> = { ...OLD_ENDINGS, ...NEW_ENDINGS, ...WEST_ENDINGS };
+export const ENDINGS: Record<EndingKind, Ending> = { ...OLD_ENDINGS, ...NEW_ENDINGS, ...WEST_ENDINGS, ...EAST_ENDINGS };
 
 export const isEnding = (k: string | undefined): k is EndingKind => !!k && k in ENDINGS;

@@ -8,6 +8,7 @@ import { swim, skimmer, kicker, type Out } from './moves';
 import type { Dolphin } from '../src/game/levels/kvt';
 import { HOLI_TILES } from '../src/game/levels/bom';
 import { WEST_ACT_ROUTES } from './west';
+import { EAST_ACT_ROUTES } from './east';
 
 /** up a two-step rock (rimUp at x+3): two hops */
 const upRim = (x: number): Step[] => [
@@ -718,3 +719,4 @@ export const ACT_ROUTES: Record<string, (x: number, p: P) => Step[]> = {
   ],
 };
 Object.assign(ACT_ROUTES, WEST_ACT_ROUTES);
+Object.assign(ACT_ROUTES, EAST_ACT_ROUTES);

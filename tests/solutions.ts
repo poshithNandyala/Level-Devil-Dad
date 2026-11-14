@@ -9,6 +9,7 @@ import { DT } from '../src/game/constants';
 import { swim, skimmer, kicker } from './moves';
 import { Jelly } from '../src/game/levels/kvt';
 import { westSolutions } from './west';
+import { eastSolutions, EAST_NAIVE } from './east';
 const px16 = (t: number) => t * 16;
 /** jellyfish i is drifting down, well under the surface: room to swim over it */
 const jellyLow = (i: number) => (w: World) => {
@@ -1094,9 +1095,11 @@ SOLUTIONS['BOM-08'] = [
 ];
 lengthen('BOM-08', 0, []);
 westSolutions(SOLUTIONS, lengthen);
+eastSolutions(SOLUTIONS, lengthen);
 
 /** The obvious play that a trap is designed to punish. */
 export const NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
+  ...EAST_NAIVE,
   'TVM-02': { steps: [{ hold: 'R', until: done }], cause: 'splash' },
   'TVM-03': { steps: [{ hold: 'R', until: done }], cause: 'spikes' },
   'TVM-04': { steps: [{ hold: 'R', until: done }], cause: 'coconut' },
