@@ -27,8 +27,20 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
+      # until Pages is switched on, build and test but don't try to deploy (and don't go red)
+      - id: pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh api "repos/${{ github.repository }}/pages" >/dev/null 2>&1; then
+            echo "on=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::GitHub Pages is off, so nothing was published. Turn it on: Settings > Pages > Source: GitHub Actions."
+          fi
+      - if: steps.pages.outputs.on == '1'
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist
       - id: deployment
+        if: steps.pages.outputs.on == '1'
         uses: actions/deploy-pages@v4
