@@ -266,3 +266,18 @@ Working notes so the build can be resumed at any point.
 - Backlog: the PNJ, DMN, GNR, JAI, BPL and RPR stages (and some KVT and BOM ones) have no `NAIVE` test
   proving the obvious play dies. New cities must have one per stage; adding them to the old ones is a good
   first task for a new developer.
+
+## v0.14.4: GNR-07's door, made clear and fair
+- The owner couldn't tell what "It's behind the lamp! Join the dance!" wanted. Measured with a human-timing
+  model (a player who read the hint, stops at a sloppy spot, arrives at a random moment): 31% got through at
+  average timing. Two causes: you could only join from a 2-pixel spot (closer and the dancers sweeping the end
+  hit you; further and jump was just a jump), and nothing said how to join or when to jump again.
+- Now: press jump anywhere from about two steps short of the ring's left end up to the end, when no dancer is
+  at the end, and Dad is pulled into the dance (a short slide, no snapping). With a dancer at the end it's just
+  a jump: no more dying from the join itself. While he's right behind the lamp the door glows: jump then.
+- New lines: approaching, "Daabe chhede kudo, raas ma jodao! | Jump at the left end, join the dance!"; at the
+  locked door, "Garbo ni pachhal! Daabe thi kudo! | Behind the lamp! Hop in from the left!"; once dancing,
+  "Garbo ni pachhal aavo tyare kudo! | Jump when you're behind the lamp!" (each dropped if it's stale).
+- Result: 95% / 93% / 92% for quick / average / relaxed timing. The check is now a test anyone can rerun and
+  copy: `tests/fair-gnr07.test.ts`.
+

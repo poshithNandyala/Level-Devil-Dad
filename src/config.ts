@@ -1,7 +1,7 @@
 export const GAME = {
   /** Working title. Pick a distinct public name and icon before store release (see README). */
   title: 'Level Devil Dad',
-  version: '0.14.3',
+  version: '0.14.4',
   /** Where the web build is hosted, so shared challenges can carry a link. Leave '' to share codes only. */
   shareUrl: '',
 };

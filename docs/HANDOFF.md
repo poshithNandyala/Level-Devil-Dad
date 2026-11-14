@@ -4,7 +4,7 @@ Everything a new developer (human or AI) needs to carry on. Rules and the qualit
 `AGENTS.md`; what's done and what's next is in `docs/CITIES.md`; every idea already used is in
 `docs/MECHANICS.md`; the changelog with lessons learned is `docs/WAVE1.md`.
 
-Status: v0.14.3, 14 capitals, 112 stages, all proven beatable by scripted routes. Next city: Ranchi (RNC).
+Status: v0.14.4, 14 capitals, 112 stages, all proven beatable by scripted routes. Next city: Ranchi (RNC).
 
 ## 1. Setup
 
@@ -226,7 +226,8 @@ Route bots hide unfair timing. Before shipping, play each tricky section with a 
 route and, for each input, add a random reaction delay of 0–18 ticks and a random hold length of 6–44 ticks
 (seeded, a few hundred runs). Report the success rate for quick (0–6), average (0–12) and relaxed (0–18)
 delays. Ship only if average is 90% or better; if not, move the hazard, widen the window or slow it down
-(v0.14.1 in WAVE1.md is the worked example: BOM-06 went from 23% to 98%). Also try the obvious wrong things
+(v0.14.1 in WAVE1.md is the worked example: BOM-06 went from 23% to 98%; `tests/fair-gnr07.test.ts` is one in
+code: `LDD_FAIR=1 npx vitest run tests/fair-gnr07.test.ts --silent=false`). Also try the obvious wrong things
 a player will do and make sure the hint and the guide don't send them to their death.
 
 ## 7. Before you call a city done

@@ -1631,7 +1631,7 @@ export const WEST_ENDINGS: Record<WestEndingKind, Ending> = {
    *  line. Join the dance at the ring's left end, go round with them, and jump in from behind. */
   pravesh: {
     space: 16,
-    advice: 'The door is at the back of the last ring, behind the lamp: you can’t walk to it. Join the dance instead: at the ring’s left end, in a gap, press jump and you’re dancing with them. When you come round right behind the lamp, jump again, straight into the door.',
+    advice: 'The door is at the back of the last ring, behind the lamp: you can’t walk to it. Join the dance instead: stand just left of the ring and press jump when no dancer is at its end. Dad doesn’t jump, he’s pulled into the dance and goes round the back towards the lamp. When he’s right behind it (the door glows), press jump again, straight into the door.',
     build(w, d) {
       const D = Math.round(d.x / 16);
       const cx = px(D) + 8,
@@ -1639,9 +1639,11 @@ export const WEST_ENDINGS: Record<WestEndingKind, Ending> = {
       const g = w.add(new GarbaRing(cx, FLOOR, [{ r: R, n: 6, w: 0.7, phase: 0.3 }]));
       w.add(g.front);
       w.flags.pravesh = g;
-      const L = lock(w, d, 'Garbo ni pachhal chhe! Raas ma jodao! | It’s behind the lamp! Join the dance!');
+      const L = lock(w, d, 'Garbo ni pachhal! Daabe thi kudo! | Behind the lamp! Hop in from the left!');
       w.flags.twist = 'line';
       const TAU = Math.PI * 2;
+      // radians from 1.5π (right behind the lamp) where a jump takes you in
+      const behind = (th: number) => Math.abs(th - 1.5 * Math.PI);
       w.add(
         new (class extends Entity {
           update(w2: World) {
@@ -1649,25 +1651,27 @@ export const WEST_ENDINGS: Record<WestEndingKind, Ending> = {
             if (w2.state !== 'play') return;
             const j = g.joined;
             if (!j) {
-              if (w2.input.jumpPressed && p.onGround && Math.abs(p.cx - (cx - R)) <= 12) {
-                // stepping in right on top of a dancer knocks you both flat
+              // anywhere from a couple of steps short of the left end up to the end itself; with a dancer at the
+              // end it's just a jump
+              if (w2.input.jumpPressed && p.onGround && p.cx >= cx - R - 40 && p.cx <= cx - R + 12) {
                 const a0 = g.angle(0, w2.tick * DT);
                 for (let k = 0; k < 6; k++) {
                   let dth = (((a0 + (TAU * k) / 6 - Math.PI) % TAU) + TAU) % TAU;
                   if (dth > Math.PI) dth -= TAU;
-                  if (Math.abs(dth) < 0.3) return w2.die('garba');
+                  if (Math.abs(dth) < 0.3) return;
                 }
                 g.joined = { ring: 0, th: Math.PI };
                 p.stun = 2;
                 w2.flags.twist = 'dancing';
                 npc(w2, 'Aavo, aavo! | Come, come!', cx - R, FLOOR - 34, 1.2);
+                w2.guide('Garbo ni pachhal aavo tyare kudo! | Jump when you’re behind the lamp!', () => !!g.joined);
               }
               return;
             }
             const th = ((j.th % TAU) + TAU) % TAU;
             w2.flags.danceTh = th;
             if (!w2.input.jumpPressed) return;
-            if (Math.abs(th - 1.5 * Math.PI) < 0.3) {
+            if (behind(th) < 0.3) {
               L.open = true;
               g.joined = null;
               w2.win('door');
@@ -1679,6 +1683,27 @@ export const WEST_ENDINGS: Record<WestEndingKind, Ending> = {
             }
           }
         })(),
+      );
+      // while he's dancing right behind the lamp, the door glows: that's when to jump
+      w.add(
+        new Paint((ctx, w2) => {
+          const th = w2.flags.danceTh as number | undefined;
+          if (!g.joined || th === undefined || behind(th) >= 0.3) return;
+          const a = 0.55 + 0.35 * Math.sin(w2.tick * 0.25);
+          ctx.save();
+          ctx.globalAlpha = a;
+          ctx.strokeStyle = '#FFE27A';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(d.x - 2, d.y - 2, 20, 36);
+          ctx.globalAlpha = a * 0.35;
+          ctx.fillStyle = '#FFE27A';
+          ctx.fillRect(d.x - 2, d.y - 2, 20, 36);
+          ctx.restore();
+        }, 5),
+      );
+      w.when(
+        (w2) => w2.player.cx > cx - R - 72 && !g.joined,
+        (w2) => w2.guide('Daabe chhede kudo, raas ma jodao! | Jump at the left end, join the dance!', () => !g.joined),
       );
       w.when(
         (w2) => w2.player.cx > px(D - 14),

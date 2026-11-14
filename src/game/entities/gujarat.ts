@@ -1295,9 +1295,11 @@ export class GarbaRing extends Entity {
       const R = this.rings[j.ring];
       j.th += R.w * DT;
       const p = w.player;
-      const nx = this.cx + R.r * Math.cos(j.th) - p.w / 2;
+      const nx = Math.round(this.cx + R.r * Math.cos(j.th) - p.w / 2);
+      // he's pulled into the ring from just outside it, then moves with it
+      const dx = nx - p.x;
       p.vx = 0;
-      p.x = Math.round(nx);
+      p.x += Math.abs(dx) <= 3 ? dx : Math.sign(dx) * 3;
       p.xr = 0;
       p.stun = 2;
     }
