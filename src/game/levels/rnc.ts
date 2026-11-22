@@ -1,384 +1,483 @@
-// Ranchi: the haat, Hundru's gorge, bamboo traps, Sarhul's pot, Dokra's furnace and Chhau's masks.
-// Each stage's room teaches one idea; the act breaks the habit it taught; the door has its own last word.
+// Ranchi: the city of waterfalls on the edge of the Chota Nagpur plateau. Dhuska frying on Main Road,
+// Jharkhand's archers, the monsoon storm and its rugra, Seraikela's Chhau masks, Dokra brass, and Hundru,
+// where the Subarnarekha drops off the plateau.
 import { type LevelDef, type World } from '../world';
+import { Paint } from './endkit';
 import { LINES } from '../cities';
-import { collectible, door, group, px, rival, sign } from './kit';
+import { collectible, door, px, rival, sign } from './kit';
 import type { Act } from './acts';
+import { onPass } from './trolls';
 import { tour } from './tour';
 import { longStage } from './chunks';
 import { Grid } from './grid';
-import { Cast, Chute, Crucible, Dancer, FallCurtain, Hands, MaskPickup, MaskPole, Plate, Plunge, PotHands, Spout, Stall, setPot } from '../entities/jharkhand';
+import { Artisan, Boss, CastMould, ChhauDancer, Cook, Crucible, DhuskaStall, MaskStand, Mould, Mound, Musicians, Pool, Railing, Range, River, Rugra, Sal, Storm, Stream, addKadhai, dadMask, falls, type Bowman, type CookStep } from '../entities/jharkhand';
 
 const TAUNTS = LINES.RNC.taunt;
 const G = 15;
+const FLOOR = px(15);
 const tara = (n: number, beaten = 0) => ({ intro: LINES.RNC.intro[n], point: 1 as const, introAt: 0.5, taunts: TAUNTS, beaten: LINES.RNC.beaten[beaten] });
 
-// ------------------------------------------------------------------ shared pieces
-/** a woven trap mouth on the ground at columns c..c+w */
-const mouth = (c: number, w: number, groundTop = 240) => ({ x: px(c), y: groundTop - 14, w: px(w), h: 14 });
-/** a cast channel across the pit c0..c1 (the floor tiles must be cleared by the map) */
-function cast(w: World, c0: number, c1: number) {
-  return w.add(new Cast(px(c0), px(c1), 240));
+// ================================================================== RNC-02: Dhuska (the kadhai)
+/** the usual routine for n dhuska: batter into each in turn, flip each in turn, scoop each in turn */
+export function routine(n: number, gap = 72, order = [...Array(n).keys()]): { plan: CookStep[]; period: number } {
+  const plan: CookStep[] = [];
+  order.forEach((i, k) => plan.push({ at: k * gap, a: 'drop', i }));
+  order.forEach((i, k) => plan.push({ at: (n + k) * gap, a: 'flip', i }));
+  order.forEach((i, k) => plan.push({ at: (2 * n + k) * gap, a: 'scoop', i }));
+  return { plan, period: (3 * n * gap) / 120 };
 }
-/** a crucible tipped from the ground at columns c..c+w, pouring over `over` */
-function crucible(w: World, c: number, wTiles: number, ch: Cast, over: number) {
-  return w.add(new Crucible({ x: px(c), y: 226, w: px(wTiles), h: 14 }, ch, px(over)));
-}
-/** a dancer's blow breaks the wall group whose solid overlaps its sweep */
-function wallBreaker(wall: { solid: { x: number; y: number; w: number; h: number }; fall: (w: World) => void }, w: World, from: number, to: number) {
-  if (wall.solid.x + wall.solid.w > from && wall.solid.x < to) wall.fall(w);
-}
-/** the whole mask dance: a rack, a pole, a dancer and the wall his blow brings down */
-function dance(w: World, o: { rack: number; pole: number; dancer: number; face: 1 | -1; reach: number; wall?: { solid: { x: number; y: number; w: number; h: number }; fall: (w: World) => void }; oneShot?: boolean }) {
-  w.add(new MaskPickup(px(o.rack) + 2, 228));
-  w.add(new MaskPole(px(o.pole), 240));
-  return w.add(
-    new Dancer(px(o.dancer) + 8, 240, o.face, o.reach, (w2, from, to) => {
-      if (o.wall) wallBreaker(o.wall, w2, from, to);
-    }, o.oneShot ?? true),
+/** a kadhai over columns c0..c1 with dhuska at the given columns, and its cook at column cc */
+export function dhuskaLine(w: World, c0: number, c1: number, cols: number[], cc: number, o: { gap?: number; order?: number[]; phase?: number; toss?: { vx: number; vy: number; stun?: number }; stall?: boolean } = {}) {
+  const { ds } = addKadhai(
+    w,
+    px(c0),
+    px(c1 + 1),
+    cols.map((c) => px(c) + 8),
   );
+  const r = routine(cols.length, o.gap ?? 72, o.order);
+  const face: 1 | -1 = px(cc) > px(c0) ? -1 : 1;
+  const cook = w.add(new Cook(px(cc) + 8, face, ds, r.plan, r.period, o.phase ?? 0, o.toss));
+  cook.bank0 = px(c0);
+  cook.bank1 = px(c1 + 1);
+  if (o.stall !== false) w.add(new DhuskaStall(face < 0 ? px(cc) - 4 : px(cc) - 44, 56));
+  (w.flags.cooks ??= []).push(cook);
+  return { cook, ds };
 }
 
-/** the pot is carried by one pair of hands, however many sections a stage has */
-function potHands(w: World) {
-  if (!w.flags.potHands) w.flags.potHands = w.add(new PotHands());
-  return w.flags.potHands as PotHands;
-}
-
-// ================================================================== RNC-02: Haat (the market's trade)
-function haatRoom(): LevelDef {
+function dhuskaRoom(): LevelDef {
   return {
     id: 'RNC-02',
     city: 'RNC',
     index: 2,
-    name: 'Haat',
-    nameEn: 'The weekly market',
-    tagline: 'One day a week the lanes fill with stalls, and everything is a swap.',
-    hint: 'A haat runs on trade. Walk into a stall carrying the thing its sign asks for and it lays down what it gives: a plank over the gap. You can carry one thing at a time, so the food and the leaf plate are two separate trips.',
-    par: 13,
-    map: Grid.ground(15).pit(12, 16).pit(23, 26).put(1, 14, '@').put(30, 14, 'E').rows(),
+    name: 'Dhuska',
+    nameEn: 'Breakfast on Main Road',
+    tagline: 'Ranchi starts the day with dhuska: rice batter into hot oil, out puffed and golden. Watch the man work.',
+    hint: 'Batter sinks out of sight, then comes up as a dhuska you can stand on. The cook flips every one once (whatever is standing on it goes flying) and later scoops it out. Keep hopping: on to each one as it comes up, off again before his spoon gets there.',
+    par: 10,
+    map: Grid.ground(15).pit(8, 22).put(1, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      w.add(new Hands());
-      w.add(new Plate('dhuska', px(6) + 2, 228));
-      w.add(new Stall('dhuska', px(9) + 8, 240, px(12), px(5), 'PAAT'));
-      w.add(new Plate('dona', px(17.5) + 2, 228));
-      w.add(new Stall('dona', px(20) + 8, 240, px(23), px(4), 'PAAT'));
-      sign(w, 0.3, 10.4, 3, 'HAAT', 'shop', null, 'mangal bazaar');
+      dhuskaLine(w, 8, 22, [10, 13, 16, 19], 24, { gap: 80 });
+      sign(w, 0.3, 10.4, 3.4, 'MAIN ROAD', 'shop', null, 'nashta');
       rival(w, 3, 15, 1, tara(0));
-      collectible(w, 'dhuska', 13.5, 8.6);
+      onPass(w, px(5), (w2) => w2.guide('Ruk ke dekh! Chamach se pehle kood! | Watch! Jump off before his spoon!'));
+      collectible(w, 'dhuska', 14.5, 10.6);
     },
   };
 }
 
-/** RNC-02 act: the lane. Two things on the ground, four stalls, and one trip you have to make twice. */
-const haatAct: Act = {
-  id: 'rnc02-haat',
+/** RNC-02 act: a cook who works out of order, then a long kadhai on a quicker rhythm. */
+const galli: Act = {
+  id: 'rnc02-galli',
   w: 48,
-  advice: 'The stalls are choosy: the one before each gap wants the thing its sign names. Take the dhuska at the start, then the dona, then the second dhuska. When the last stall wants a dona you have already walked past, go back for it: the planks stay where they were laid.',
-  cps: [22.5],
+  advice: 'Two more stalls. The first cook doesn’t go left to right: watch where his ladle goes and wait on the road till the one ahead of you is up. The second kadhai is long and quick: go the moment each one comes up.',
+  cps: [21.5],
   paint: (g, c) => {
-    const x = c.x;
-    g.pit(x + 7, x + 10).pit(x + 16, x + 19).pit(x + 26, x + 29).pit(x + 34, x + 37);
+    g.pit(c.x + 3, c.x + 17).pit(c.x + 24, c.x + 42);
   },
   build: (w, c) => {
     const x = c.x;
-    w.add(new Hands());
-    w.add(new Plate('dhuska', px(x + 2) + 2, 228));
-    w.add(new Stall('dhuska', px(x + 5) + 8, 240, px(x + 7), px(4), 'PAAT'));
-    w.add(new Plate('dona', px(x + 12) + 2, 228));
-    w.add(new Stall('dona', px(x + 14) + 8, 240, px(x + 16), px(4), 'PAAT'));
-    w.add(new Plate('dhuska', px(x + 21) + 2, 228));
-    w.add(new Plate('dona', px(x + 22.5) + 2, 228));
-    w.add(new Stall('dhuska', px(x + 24) + 8, 240, px(x + 26), px(4), 'PAAT'));
-    w.add(new Stall('dona', px(x + 31) + 8, 240, px(x + 34), px(4), 'PAAT'));
-    sign(w, x + 12, 10.4, 3, 'MANDI', 'shop', null, 'dhuska-dona');
+    dhuskaLine(w, x + 3, x + 17, [x + 5, x + 8, x + 11, x + 14], x + 19, { order: [1, 0, 3, 2], gap: 70, phase: 40 });
+    dhuskaLine(w, x + 24, x + 42, [x + 26, x + 29, x + 32, x + 35, x + 38], x + 44, { gap: 58, phase: 20 });
+    sign(w, x + 19.5, 10.4, 3, 'GALLI', 'shop', null, 'dhuska');
   },
 };
 
-// ================================================================== RNC-03: Hundru (the plunge)
-function hundruRoom(): LevelDef {
+
+// ================================================================== RNC-03: Teer (the archery range)
+/** three arrows a burst, 0.18 s apart, from each start time */
+export const burst = (...at: number[]) => at.flatMap((t) => [t, t + 0.18, t + 0.36]);
+/** a range: archers (column, the height they shoot at in px above the road, when in each end they loose),
+ *  a straw boss from column b0 (bw wide, its top `top` px above the road), and the end's length */
+export function range(w: World, men: { c: number; up: number; shots: number[] }[], b0: number, bw: number, top: number, end: number, phase = 0, bottom = px(G), edge?: number) {
+  const bowmen: Bowman[] = men.map((m) => ({ x: px(m.c) + 8, feet: Math.min(px(G), px(G) - m.up + 16), lane: px(G) - m.up, shots: m.shots }));
+  const boss = w.add(new Boss(px(b0), px(G) - top, px(bw), bowmen.map((b) => b.lane), bottom));
+  const r = w.add(new Range(w, bowmen, px(b0), end, phase));
+  (w.flags.ranges ??= []).push({ r, boss, edge });
+  return { r, boss };
+}
+
+function teerRoom(): LevelDef {
   return {
     id: 'RNC-03',
     city: 'RNC',
     index: 3,
-    name: 'Hundru',
-    nameEn: 'The falls',
-    tagline: 'The Subarnarekha drops ninety-eight metres into its own pool, and the pool comes and goes with it.',
-    hint: 'Down here the water is the only soft landing: the bare rock in the basin is shards. The pool drains when the falls thin and fills when they swell, so wait on the ledge, watch the fall, and step off into the water while it is full. Then climb out the far side.',
-    par: 14,
-    map: (() => {
-      const g = Grid.ground(15);
-      g.fill(0, 8, 5, 14, '#');
-      g.fill(9, 21, 15, 16, '.');
-      return g.put(1, 4, '@').put(30, 14, 'E').rows();
-    })(),
+    name: 'Teer',
+    nameEn: 'The archery range',
+    tagline: 'Jharkhand is proud to be the land of archery, and its archers start on bamboo bows. The boss on this range is rather tall.',
+    hint: 'The arrows fly over your head while you walk; it’s jumping through their height that gets you shot. Each arrow that hits the straw sticks out of it: a step. Climb them, one height at a time, between shots, and get on top before the whistle: then the coach walks up and pulls every arrow out.',
+    par: 12,
+    map: Grid.ground(15).put(1, 14, '@').put(26, 7, 'E').rows(),
     build(w: World) {
       door(w);
-      w.flags.pool = w.add(new Plunge(px(9), px(22), px(17), 5, 0.55, 0));
-      w.add(new FallCurtain(px(13), 0, px(17), 30, 1));
-      sign(w, 1.2, 3.4, 4, 'HUNDRU', 'green', null, '98 metre');
-      rival(w, 4, 5, 1, tara(1, 1));
-      collectible(w, 'dhuska', 18.5, 8.4);
+      range(
+        w,
+        [
+          { c: 5, up: 24, shots: burst(0.6, 3.4) },
+          { c: 7, up: 56, shots: burst(1.6, 4.4) },
+          { c: 9, up: 88, shots: burst(2.6, 5.4) },
+        ],
+        24,
+        5,
+        112,
+        7.0,
+      );
+      sign(w, 11, 10.4, 3.6, 'TEER-DHANUSH', 'shop', null, 'academy');
+      rival(w, 2, 15, 1, tara(1));
+      onPass(w, px(12), (w2) => w2.guide('Teer pe chadho, seeti se pehle! | Climb the arrows, before the whistle!'));
+      collectible(w, 'dhuska', 16, 10.8);
     },
   };
 }
 
-/** RNC-03 act: three bays in one gorge. The last one has no water at all. */
-const gorgeAct: Act = {
-  id: 'rnc03-jharana',
+/** RNC-03 act: arrows in a post over a pit, then a taller boss with a fourth archer. */
+const maidan: Act = {
+  id: 'rnc03-maidan',
   w: 50,
-  advice: 'Three bays. The first two are the pool again: wait on the edge for the fall to swell, then step off into the water. The third has stopped running altogether, and the shards at the bottom are bare, so land on the flat shelf over them and not below it.',
-  cps: [18.5, 31.5],
+  advice: 'A pit with a target post in it: two archers stick a step and a second step in its face, and from the top one you jump over the post. Then a taller boss with four archers: the same climb, one step more, and quicker.',
+  cps: [15.5],
   paint: (g, c) => {
-    const x = c.x;
-    g.fill(x + 8, x + 12, 15, 16, '.');
-    g.fill(x + 21, x + 25, 15, 16, '.');
-    g.fill(x + 34, x + 41, 15, 16, '.');
-    g.fill(x + 35, x + 38, 14, 14, '#');
+    g.pit(c.x + 10, c.x + 13);
   },
   build: (w, c) => {
     const x = c.x;
-    w.flags.poolA = w.add(new Plunge(px(x + 8), px(x + 13), px(17), 4.4, 0.58, 0));
-    w.flags.poolB = w.add(new Plunge(px(x + 21), px(x + 26), px(17), 3.6, 0.55, 0.35));
-    w.flags.poolC = w.add(new Plunge(px(x + 34), px(x + 42), px(17), 1, 0, 0, 0));
-    w.add(new FallCurtain(px(x + 9), 0, px(17), 18, 1));
-    w.add(new FallCurtain(px(x + 22), 0, px(17), 14, 1));
-    sign(w, x + 3, 10.4, 3, 'GHAGH', 'green', null, 'teen kund');
+    range(
+      w,
+      [
+        { c: x + 3, up: 28, shots: burst(0.5, 2.6) },
+        { c: x + 5, up: 52, shots: burst(1.3, 3.4) },
+      ],
+      x + 12,
+      1,
+      72,
+      5.2,
+      0.3,
+      px(G) + 64,
+      px(x + 10),
+    );
+    range(
+      w,
+      [
+        { c: x + 17, up: 24, shots: burst(0.5, 2.9) },
+        { c: x + 19, up: 56, shots: burst(1.1, 3.5) },
+        { c: x + 21, up: 88, shots: burst(1.7, 4.1) },
+        { c: x + 23, up: 120, shots: burst(2.3, 4.7) },
+      ],
+      x + 38,
+      5,
+      140,
+      6.2,
+      0.2,
+    );
+    sign(w, x + 26, 10.4, 3.4, 'MORABADI', 'shop', null, 'maidan');
   },
 };
 
-// ================================================================== RNC-04: Baans (the bamboo traps)
-function baansRoom(): LevelDef {
+// ================================================================== RNC-04: Rugra (the storm)
+/** a storm over the forest: the x it stops at each time (px), termite mounds [column, height], and
+ *  bumps in the leaves where rugra wait [column, height, ground row] */
+export function storm(
+  w: World,
+  stations: number[],
+  o: { dwell?: number; speed?: number; phase?: number; mounds?: [number, number][]; bumps?: [number, number, number?][]; last?: number } = {},
+) {
+  const st = w.add(new Storm(stations, o.dwell ?? 1.2, o.speed ?? 90, Math.round((o.phase ?? 0) * 120)));
+  for (const [c, h] of o.mounds ?? []) st.rods.push(w.add(new Mound(px(c) + 8, px(G) - h)));
+  for (const [c, H, r] of o.bumps ?? []) st.spots.push(w.add(new Rugra(px(c) + 8, H, px(r ?? G), o.last)));
+  (w.flags.storms ??= []).push(st);
+  return st;
+}
+
+function rugraRoom(): LevelDef {
   return {
     id: 'RNC-04',
     city: 'RNC',
     index: 4,
-    name: 'Baans',
-    nameEn: 'The bamboo traps',
-    tagline: 'The weavers make fish traps with one way in and one way out, and the mouth is not the end you think.',
-    hint: 'Woven traps lie in the dry stream bed. Walk into a wide mouth and it carries you out of the narrow end, always one way. The short trap near you points back down the lane; the long one beyond it crosses the gap. Hop over the mouth you do not want: only walking in sends you.',
+    name: 'Rugra',
+    nameEn: 'After the thunder',
+    tagline: 'Monsoon in the sal forest. Everyone in Ranchi knows the thunder brings the rugra up. Tonight it brings them up rather big.',
+    hint: 'The cloud stops, flickers, and its lightning hits the tallest thing under it. If that’s you, or you’re standing right beside it, that’s it. The thunder pushes rugra up out of the leaves all round: stand on a bump before it strikes and the rugra lifts you. Ride them up, and get off high ground before the cloud gets there.',
     par: 12,
-    map: Grid.ground(15).pit(14, 21).put(1, 14, '@').put(30, 14, 'E').rows(),
+    map: Grid.ground(15).fill(9, 15, 10, 14, '#').fill(25, 31, 9, 14, '#').put(1, 14, '@').put(29, 8, 'E').rows(),
     build(w: World) {
       door(w);
-      w.flags.chuteTrap = w.add(new Chute(mouth(6, 1), { x: px(1.5), y: 240 }));
-      w.flags.chute = w.add(new Chute(mouth(11, 3), { x: px(23), y: 240 }));
-      sign(w, 0.4, 10.4, 3, 'BAANS', 'green', null, 'machhli jaal');
-      rival(w, 3, 15, 1, tara(2));
-      collectible(w, 'dhuska', 17.5, 8.4);
+      for (const [c, t] of [
+        [1, 3],
+        [8, 1],
+        [18, 2],
+        [23, 4],
+        [30, 1],
+      ])
+        w.add(new Sal(px(c) + 8, px(t)));
+      const st = storm(w, [110, 216, 400, 216], { speed: 140, phase: -0.31, bumps: [[6, 50], [23, 76]] });
+      st.rods.push(w.add(new Mound(px(26) + 8, px(9) - 30, px(9))));
+      sign(w, 17, 10.4, 3.4, 'SAL BAN', 'shop', null, 'rugra');
+      rival(w, 2, 15, 1, tara(2));
+      onPass(w, px(3), (w2) => w2.guide('Garaj ke baad rugra niklega! | After the thunder come the rugra!'));
+      collectible(w, 'dhuska', 6.5, 9.4);
     },
   };
 }
 
-/** RNC-04 act: two more mouths, and the first one is a trap. */
-const baansAct: Act = {
-  id: 'rnc04-baans',
-  w: 48,
-  advice: 'A trap that points back at you, then two that cross their gaps. Read which end the mouth is at before you walk in, and hop over the backward one.',
-  cps: [23.5],
+/** RNC-04 act: no rocks, only rugra. The lightning hits the tallest one, and its thunder brings the next,
+ *  taller one up beside it: stairs that build themselves, one strike at a time. */
+const seedhi: Act = {
+  id: 'rnc04-seedhi',
+  w: 30,
+  advice: 'No rocks here, only rugra: the lightning hits the tallest one, and its thunder brings the next, taller one up beside it. Climb them like stairs, one step behind the lightning: on to each rugra just after it’s been struck, never before (till then, it’s the tallest thing, and so are you on it).',
+  cps: [1.5],
   paint: (g, c) => {
-    const x = c.x;
-    g.pit(x + 6, x + 10).pit(x + 19, x + 24).pit(x + 35, x + 40);
+    g.fill(c.x + 16, c.x + 29, 8, 14, '#');
   },
   build: (w, c) => {
     const x = c.x;
-    w.add(new Chute(mouth(x + 2, 2), { x: px(x + 12), y: 240 }));
-    w.add(new Chute(mouth(x + 15, 1), { x: px(x + 1.5), y: 240 }));
-    w.add(new Chute(mouth(x + 17, 2), { x: px(x + 26), y: 240 }));
-    w.add(new Chute(mouth(x + 30, 1), { x: px(x + 1.5), y: 240 }));
-    w.add(new Chute(mouth(x + 33, 2), { x: px(x + 42), y: 240 }));
-    sign(w, x + 9, 10.4, 3, 'JAAL', 'green', null, 'khokha');
+    const s0 = px(x + 6) + 8;
+    const st = storm(w, [px(x + 3) + 8, s0, s0 + 40, s0 + 80, s0 + 120], { dwell: 1.0, speed: 90, last: 3.4 });
+    st.rods.push(w.add(new Mound(px(x + 3) + 8, px(G) - 26)));
+    [32, 54, 76, 98].forEach((H, k) => st.spots.push(w.add(new Rugra(s0 + 40 * k, H, px(G), 3.4))));
+    for (const [cc, t] of [
+      [x + 1, 3],
+      [x + 10, 1],
+      [x + 20, 2],
+      [x + 26, 0],
+    ])
+      w.add(new Sal(px(cc) + 8, px(t)));
   },
 };
 
-// ================================================================== RNC-05: Sarhul (the pot)
-function sarhulRoom(): LevelDef {
+// ================================================================== RNC-05: Chhau (the masks)
+function chhauRoom(): LevelDef {
   return {
     id: 'RNC-05',
     city: 'RNC',
     index: 5,
-    name: 'Sarhul',
-    nameEn: 'The sal blossom festival',
-    tagline: 'The Pahan leaves pots of water at the sal tree overnight, and reads the morning level for the rains.',
-    hint: 'You carry the Pahan’s pot. Every jump spills a little and every hard landing spills more, so fill at a spout, jump, then fill again at the next. The pot has to be almost full when he reads it at the door.',
+    name: 'Chhau',
+    nameEn: 'As the mask, so the dance',
+    tagline: 'Chaitra Parva in Seraikela, and the Chhau dancers are out under the lights. A dancer becomes whatever his mask is. So, it turns out, do you.',
+    hint: 'Jump up at a stand to put its mask on, and the dancers take you for that character. A tiger pounces on a peacock and runs from a hunter. A peacock dances with another peacock: it spreads its wings beside you, and if you’re on them it leaps, and you with it.',
     par: 14,
-    map: Grid.ground(15).pit(12, 14).pit(21, 22).put(1, 14, '@').put(30, 14, 'E').rows(),
+    map: Grid.ground(15).fill(24, 31, 9, 14, '#').put(1, 14, '@').put(28, 8, 'E').rows(),
     build(w: World) {
       door(w);
-      setPot(w, 0.35);
-      potHands(w);
-      for (const c of [5, 18, 26]) w.add(new Spout(px(c), 240, 1));
-      sign(w, 0.3, 10.4, 3.4, 'SARHUL', 'green', null, 'sal phool');
-      rival(w, 3, 15, 1, tara(3, 1));
-      collectible(w, 'dhuska', 16.5, 8.4);
+      w.add(new Musicians(px(11) + 8));
+      w.add(new MaskStand(px(3) + 8, 'mayur'));
+      w.add(new MaskStand(px(5) + 8, 'shikari'));
+      w.add(new ChhauDancer('baagh', px(8) + 8, px(14) + 8));
+      w.add(new MaskStand(px(17) + 8, 'mayur'));
+      w.add(new ChhauDancer('mayur', px(19), px(22) + 8));
+      dadMask(w);
+      sign(w, 8.5, 5.6, 5, 'SERAIKELA CHHAU', 'shop', null, 'chaitra parva');
+      rival(w, 1, 15, 1, tara(3));
+      onPass(w, px(2), (w2) => w2.guide('Jaisa mukhauta, waisa naach! | As the mask, so the dance!'));
+      collectible(w, 'dhuska', 19, 8.4);
     },
   };
 }
 
-/** RNC-05 act: the fields. More gaps than spouts, and one stretch with two jumps in it. */
-const phoolAct: Act = {
-  id: 'rnc05-phool',
-  w: 50,
-  advice: 'Five spouts and four gaps, and between the last two spouts you have to jump twice. Start each stretch full; if you land with the pot low, refill before the next gap rather than after.',
-  cps: [27.5],
+/** RNC-05 act: the tiger runs from the hunter, but comes back. By the Kharkai, a peacock with a tiger on
+ *  its back flies for its life, straight over the river. */
+const kharkai: Act = {
+  id: 'rnc05-kharkai',
+  w: 40,
+  advice: 'The tiger runs from the hunter, but only for a while. Put on the peacock mask and the peacock by the river spreads its wings for you: get on, then reach up for the tiger mask hanging over him. A peacock with a tiger on its back flies for its life, straight over the Kharkai.',
+  cps: [0.5],
   paint: (g, c) => {
-    const x = c.x;
-    g.pit(x + 8, x + 9).pit(x + 17, x + 19).pit(x + 29, x + 30).pit(x + 38, x + 39);
+    g.pit(c.x + 23, c.x + 32);
   },
   build: (w, c) => {
     const x = c.x;
-    potHands(w);
-    for (const t of [3, 13, 24, 34, 43]) w.add(new Spout(px(x + t), 240, 1));
-    sign(w, x + 18, 10.4, 3, 'KHET', 'green', null, 'dhan');
+    dadMask(w);
+    w.add(new River(px(x + 23), px(x + 33)));
+    w.add(new MaskStand(px(x + 1) + 8, 'shikari'));
+    w.add(new ChhauDancer('baagh', px(x + 9) + 8, px(x + 14) + 8, FLOOR, 7));
+    w.add(new MaskStand(px(x + 16) + 8, 'mayur'));
+    const pea = w.add(new ChhauDancer('mayur', px(x + 18) + 8, px(x + 21) + 8, FLOOR, 4));
+    pea.perch = px(x + 34) + 8;
+    w.add(new MaskStand(px(x + 21) + 20, 'baagh', FLOOR, 72));
+    sign(w, x + 34.5, 10.4, 3, 'KHARKAI', 'shop', null, 'nadi');
   },
 };
 
-// ================================================================== RNC-06: Dokra (the casting)
+// ================================================================== RNC-06: Dokra (the lost wax)
+const MOULD = { clay: 1.6, melt: 0.8, hollow: 1.6, pour: 1.0, cool: 1.0, brass: 1.2, reset: 0.6 };
+/** a kiln over a passage, with a clay elephant mould sitting in the arch */
+function kiln(w: World, c0: number, c1: number, lag = 0, face: 1 | -1 = -1) {
+  const m = w.add(new Mould(px(c0), px(c1 + 1), px(12), FLOOR, MOULD, Math.round(-lag * 120)));
+  w.add(new Artisan(face < 0 ? px(c0) - 10 : px(c1 + 1) + 10, m, face < 0 ? 1 : -1));
+  (w.flags.moulds ??= []).push(m);
+  return m;
+}
+
 function dokraRoom(): LevelDef {
   return {
     id: 'RNC-06',
     city: 'RNC',
     index: 6,
     name: 'Dokra',
-    nameEn: 'The lost-wax casting',
-    tagline: 'Pundi’s brass comes out of a clay mould the smith breaks open, and the metal runs where the channel takes it.',
-    hint: 'The gap has no floor and the only way to make one is to pour it. Stand on the far end of the beam and the crucible tips: the brass runs into the channel across the gap, glows, and sets. Do not step on it while it glows. When it goes dull it is a floor.',
-    par: 14,
-    map: Grid.ground(15).pit(12, 16).put(1, 14, '@').put(30, 14, 'E').rows(),
+    nameEn: 'The lost wax',
+    tagline: 'Dokra is cast the old way: a wax elephant inside a clay one, the wax melted out, the brass poured in. For a moment in between, the elephant is hollow. That’s your moment.',
+    hint: 'Each kiln has a clay elephant sitting in its arch. On the fire the wax runs out (don’t touch that), and then it’s hollow: walk straight through before they pour the brass in. Then it’s brass, and solid, till they set the next one.',
+    par: 12,
+    map: Grid.ground(15).fill(8, 13, 5, 11, '#').fill(19, 24, 5, 11, '#').put(1, 14, '@').put(29, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      const ch = cast(w, 12, 17);
-      w.flags.cast = ch;
-      crucible(w, 8, 2, ch, 14);
-      sign(w, 0.3, 10.4, 3, 'DOKRA', 'shop', null, 'pundi');
-      rival(w, 3, 15, 1, tara(4));
-      collectible(w, 'dhuska', 18.5, 8.4);
+      kiln(w, 8, 13, 0);
+      kiln(w, 19, 24, 2.2);
+      sign(w, 14.6, 10.4, 3.4, 'DOKRA', 'shop', null, 'malhar basti');
+      rival(w, 2, 15, 1, tara(4));
+      onPass(w, px(3), (w2) => w2.guide('Mom gaya, pital aaya. Beech mein raasta! | The wax goes out, the brass goes in. In between, a way through!'));
+      collectible(w, 'dhuska', 16, 11);
     },
   };
 }
 
-/** RNC-06 act: the yard. A long channel, then one you must tip from a step above it. */
-const dhalaiAct: Act = {
-  id: 'rnc06-dhalai',
-  w: 50,
-  advice: 'Three pours. Tip the beam end, then wait out the glow: fresh brass burns, dull brass carries you. The step in the middle of the yard is just a step.',
-  cps: [16.5, 33.5],
+/** RNC-06 act: the smiths are on their tea break with the brass still hot in the crucibles. This time you
+ *  pour: tip a crucible into the mould below and you've cast yourself a step. */
+const ghariya: Act = {
+  id: 'rnc06-ghariya',
+  w: 34,
+  advice: 'The smiths have gone for chai and left the brass in the crucibles. Jump up into a crucible’s handle and it tips into the mould below: a moment later there’s a brass elephant to stand on, and from its back you reach the next ledge. Just don’t be standing in the mould, or under the spout.',
+  cps: [1],
   paint: (g, c) => {
-    const x = c.x;
-    g.pit(x + 6, x + 9).pit(x + 19, x + 24).fill(x + 28, x + 29, 14, 17, '#').pit(x + 34, x + 37);
+    g.fill(c.x + 10, c.x + 33, 11, 14, '#');
+    g.fill(c.x + 20, c.x + 33, 8, 10, '#');
   },
   build: (w, c) => {
     const x = c.x;
-    const a = cast(w, x + 6, x + 11);
-    crucible(w, x + 3, 2, a, x + 8);
-    const b = cast(w, x + 19, x + 26);
-    crucible(w, x + 17, 2, b, x + 22);
-    const d = cast(w, x + 34, x + 39);
-    crucible(w, x + 31, 2, d, x + 36);
-    sign(w, x + 14, 10.4, 3, 'BHATTI', 'shop', null, 'dhalai');
+    const pour = (col: number, floor: number) => {
+      const m = w.add(new CastMould(px(col) + 4, floor));
+      const k = w.add(new Crucible(m, floor - 64));
+      (w.flags.crucibles ??= []).push(k);
+      return k;
+    };
+    pour(x + 7, FLOOR);
+    pour(x + 17, FLOOR - 64);
+    sign(w, x + 1.2, 10.4, 3.4, 'CHAI BREAK', 'shop', null, 'aate hain');
   },
 };
 
-// ================================================================== RNC-07: Chhau (the masks)
-function chhauRoom(): LevelDef {
+// ================================================================== RNC-07: Hundru (the falls)
+/** a stream from y `top` down to the road, centred `dx` px into column c, into the falls' rule */
+function stream(w: World, c: number, top: number, dx = 12) {
+  const s = w.add(new Stream(px(c) + dx, top, FLOOR));
+  falls(w).streams.push(s);
+  w.add(new Pool(s.x0, s.x1 + 8));
+  return s;
+}
+
+function hundruRoom(): LevelDef {
   return {
     id: 'RNC-07',
     city: 'RNC',
     index: 7,
-    name: 'Chhau',
-    nameEn: 'The masked dance',
-    tagline: 'Seraikela’s dancers wear their faces and never speak; the drum says when the blade comes down.',
-    hint: 'The dancer strikes whatever wears a face in front of him, and one blow spends a mask. Hang a mask on the pole in front of the cracked wall, stand well back, and let his blade do the breaking. Walk through while he is bowing out; bare-handed in his reach, he turns on you.',
-    par: 15,
-    map: (() => {
-      const g = Grid.ground(15);
-      g.fill(13, 14, 10, 14, 'a');
-      return g.put(1, 14, '@').put(30, 14, 'E').rows();
-    })(),
+    name: 'Hundru',
+    nameEn: 'The falls',
+    tagline: 'Here the Subarnarekha jumps ninety-eight metres off the edge of the plateau. Everyone else takes the steps.',
+    hint: 'At Hundru a long fall on to the rocks kills you, and it counts from the top of your jump. The falling water is the soft way down: get up on the railing and step off into it, and you sink gently to the pool. Don’t steer out of it.',
+    par: 10,
+    map: Grid.ground(15).fill(0, 8, 4, 14, '#').fill(20, 22, 12, 14, '#').put(1, 3, '@').put(29, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      const wall = group(w, 'a');
-      dance(w, { rack: 5, pole: 12, dancer: 17, face: -1, reach: 112, wall });
-      sign(w, 0.3, 10.4, 3, 'CHHAU', 'green', null, 'mukhauta');
-      rival(w, 3, 15, 1, tara(5, 1));
-      collectible(w, 'dhuska', 16.5, 8.4);
+      w.add(new Railing(px(8), px(4)));
+      stream(w, 9, px(4));
+      sign(w, 24.5, 10.4, 3.4, 'HUNDRU', 'shop', null, '98 m');
+      rival(w, 3, 4, 1, tara(5));
+      onPass(w, px(4), (w2) => w2.guide('Paani ke saath utro! | Go down with the water!'));
+      collectible(w, 'dhuska', 21, 10.8);
     },
   };
 }
 
-/** RNC-07 act: three courtyards, three walls, and masks enough for exactly three blows. */
-const mukhautaAct: Act = {
-  id: 'rnc07-mukhauta',
-  w: 54,
-  advice: 'Three dancers and three walls, and one mask before each. Plant it on the pole, back off out of the sweep, wait for the blow, then walk through while he bows. There is no spare mask: wasting one means walking back for the next.',
-  cps: [18.5, 36.5],
+/** RNC-07 act: the rocks below the falls. Up them any way you like; down a high one by walking off
+ *  (a jump adds its own height to the fall), off the tallest at a run, and off the last into the water. */
+const chattan: Act = {
+  id: 'rnc07-chattan',
+  w: 38,
+  advice: 'Below the falls it’s all rock. Jump up the rocks as you like, but come down off a high one by walking off the edge: a jump off it adds its own height to the fall. Off the tallest one, run: the little rock below is a long step out. And off the last, there’s only the water.',
+  cps: [10.5, 25.5],
   paint: (g, c) => {
     const x = c.x;
-    g.fill(x + 7, x + 8, 10, 14, c.L[0]);
-    g.fill(x + 21, x + 22, 10, 14, c.L[1]);
-    g.fill(x + 35, x + 36, 10, 14, c.L[2]);
+    g.fill(x + 2, x + 4, 12, 14, '#');
+    g.fill(x + 5, x + 9, 9, 14, '#');
+    g.fill(x + 12, x + 14, 12, 14, '#');
+    g.fill(x + 15, x + 17, 9, 14, '#');
+    g.fill(x + 18, x + 22, 6, 14, '#');
+    g.fill(x + 25, x + 26, 12, 14, '#');
+    g.fill(x + 28, x + 30, 9, 14, '#');
+    g.fill(x + 31, x + 34, 6, 14, '#');
   },
   build: (w, c) => {
     const x = c.x;
-    dance(w, { rack: x + 2, pole: x + 6, dancer: x + 11, face: -1, reach: 112, wall: group(w, c.L[0]) });
-    dance(w, { rack: x + 16, pole: x + 20, dancer: x + 25, face: -1, reach: 112, wall: group(w, c.L[1]) });
-    dance(w, { rack: x + 30, pole: x + 34, dancer: x + 39, face: -1, reach: 112, wall: group(w, c.L[2]) });
-    sign(w, x + 25, 10.4, 3, 'AKHADA', 'green', null, 'chhau');
+    stream(w, x + 35, 0);
+    sign(w, x + 10.2, 10.4, 3, 'PATHAR', 'shop', null, 'sambhal ke');
   },
 };
 
-// ================================================================== RNC-08: Sarhul Mela (everything)
-function melaRoom(): LevelDef {
+// ================================================================== RNC-08: Toofan (the storm, the finale)
+function toofanRoom(): LevelDef {
   return {
     id: 'RNC-08',
     city: 'RNC',
     index: 8,
-    name: 'Sarhul Mela',
-    nameEn: 'The festival ground',
-    tagline: 'The whole city on one ground: a dancer, a furnace and the way out.',
-    hint: 'Everything Ranchi has taught you, in one lane: hang a mask for the dancer so his blow opens the wall, then tip the crucible and wait for the brass to dull before you cross the gap.',
-    par: 18,
-    map: (() => {
-      const g = Grid.ground(15);
-      g.fill(8, 9, 10, 14, 'a');
-      g.pit(20, 23);
-      return g.put(1, 14, '@').put(30, 14, 'E').rows();
-    })(),
+    name: 'Toofan',
+    nameEn: 'The storm',
+    tagline: 'The monsoon breaks over the plateau all at once. Ranchi carries on regardless.',
+    hint: 'The cloud has stopped over the falls: it flickers, and strikes the tallest thing under it. Sinking slowly down the water, that’s you. Wait up top till it has struck, then walk off into the water at once, and out from under the cloud at the bottom before it strikes again.',
+    par: 14,
+    map: Grid.ground(15).fill(0, 8, 4, 14, '#').put(1, 3, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      dance(w, { rack: 2, pole: 7, dancer: 13, face: -1, reach: 112, wall: group(w, 'a') });
-      const ch = cast(w, 20, 24);
-      crucible(w, 16, 2, ch, 22);
-      sign(w, 0.3, 10.4, 3.4, 'MELA', 'shop', null, 'sarhul');
-      rival(w, 3, 15, 1, tara(6));
-      collectible(w, 'dhuska', 17.5, 8.4);
+      // the water comes out of a cleft in the rock, part way down
+      w.add(
+        new Paint((ctx) => {
+          ctx.fillStyle = '#4A3B33';
+          ctx.beginPath();
+          ctx.moveTo(px(11), px(7) + 4);
+          ctx.lineTo(px(12) + 6, px(6) - 6);
+          ctx.lineTo(px(15), px(6) - 2);
+          ctx.lineTo(px(16), px(7) + 6);
+          ctx.fill();
+          ctx.fillStyle = 'rgba(0,0,0,0.45)';
+          ctx.fillRect(px(13) - 4, px(7) - 3, 24, 4);
+        }, 3),
+      );
+      stream(w, 13, px(7), 8);
+      for (const [c, t] of [
+        [19, 1],
+        [24, 3],
+      ])
+        w.add(new Sal(px(c) + 8, px(t)));
+      storm(w, [px(13) + 8], { dwell: 3.6, phase: 1.59 });
+      sign(w, 17.2, 10.4, 3.4, 'HUNDRU', 'shop', null, 'toofan');
+      rival(w, 3, 4, 1, tara(6, 1));
+      onPass(w, px(4), (w2) => w2.guide('Paani mein tum sabse oonche ho! | In the water, you’re the tallest thing!'));
+      collectible(w, 'dhuska', 20, 12.4);
     },
   };
 }
 
-/** RNC-08 act: the long walk to the gate: a plunge, a trap, a wall, a pour. */
-const melaAct: Act = {
-  id: 'rnc08-mela',
-  w: 62,
-  advice: 'The last walk. Into the pool when the fall swells, out the far side; into the trap’s wide mouth and out past the gap; a mask for the dancer at the wall; then the crucible, and the wait for the brass to dull.',
-  cps: [12.5, 28.5, 46.5],
+/** RNC-08 act: the peacock still flies for its life with a tiger on its back, straight over the
+ *  Subarnarekha... and lands on a rock far too high to jump down from. Down the falls, then. */
+const ghagh: Act = {
+  id: 'rnc08-ghagh',
+  w: 36,
+  advice: 'The peacock by the river: its mask on, up on its wings, and reach for the tiger mask over it. It flies for its life, with you aboard, over the river, and lands on a rock far too high to jump down from. Walk off the end into the falls.',
+  cps: [27.5],
   paint: (g, c) => {
-    const x = c.x;
-    g.fill(x + 6, x + 11, 15, 16, '.');
-    g.pit(x + 19, x + 25);
-    g.fill(x + 32, x + 33, 10, 14, c.L[0]);
-    g.pit(x + 50, x + 54);
+    g.pit(c.x + 10, c.x + 21);
+    g.fill(c.x + 22, c.x + 27, 6, 14, '#');
   },
   build: (w, c) => {
     const x = c.x;
-    w.flags.poolMela = w.add(new Plunge(px(x + 6), px(x + 12), px(17), 4.2, 0.6, 0));
-    w.add(new FallCurtain(px(x + 8), 0, px(17), 20, 1));
-    w.add(new Chute(mouth(x + 16, 2), { x: px(x + 27), y: 240 }));
-    dance(w, { rack: x + 29, pole: x + 31, dancer: x + 37, face: -1, reach: 112, wall: group(w, c.L[0]) });
-    const ch = cast(w, x + 50, x + 55);
-    crucible(w, x + 46, 2, ch, x + 52);
-    sign(w, x + 40, 10.4, 3, 'MELA', 'shop', null, 'jharkhand');
+    dadMask(w);
+    w.add(new River(px(x + 10), px(x + 22)));
+    w.add(new MaskStand(px(x + 2) + 8, 'mayur'));
+    const pea = w.add(new ChhauDancer('mayur', px(x + 5) + 8, px(x + 8) + 8, FLOOR, 4));
+    pea.perch = px(x + 24) + 8;
+    pea.landY = px(6);
+    w.add(new MaskStand(px(x + 8) + 20, 'baagh', FLOOR, 72));
+    stream(w, x + 28, px(6));
+    sign(w, x + 30.5, 10.4, 3.2, 'SUBARNAREKHA', 'shop', null, 'nadi');
   },
 };
 
@@ -388,25 +487,25 @@ export const RNC: LevelDef[] = [
     city: 'RNC',
     name: 'Johar, Ranchi!',
     nameEn: 'Greetings, Ranchi!',
-    tagline: 'The city of waterfalls, on the plateau’s edge.',
+    tagline: 'The city of waterfalls, up on the Chota Nagpur plateau.',
     lines: [
-      'Johar, Dad! Ranchi ma swagat he! | Greetings, Dad! Welcome to Ranchi!',
-      'Ranchi la jharna ke shahar kaheth he! | They call Ranchi the city of waterfalls!',
-      'Hundru se paani sau meter neeche girthe! | At Hundru the water falls nearly a hundred metres!',
-      'Sarhul ma sal ke phool sab jagah! | At Sarhul, sal flowers are everywhere!',
-      'Haat ma dhuska garam milthe! | At the haat you get hot dhuska!',
+      'Hian aao, Dad! Ranchi mein swagat! | Come here, Dad! Welcome to Ranchi!',
+      'Ranchi jharnon ka shahar hai! | Ranchi is the city of waterfalls!',
+      'Hundru mein Swarnrekha sau meter girti hai! | At Hundru the river drops a hundred metres!',
+      'Jharkhand, teer-dhanush ki dharti! | Jharkhand, the land of archery!',
+      'Bijli ke baad rugra nikalta hai! | After the lightning, the rugra come up!',
       'Chal Dad, asli khel! | Come on Dad, the real game!',
     ],
     shouts: [
-      [21, 'Dhuska garam! | Hot dhuska!'],
-      [84, 'Jharna dekh ke jao! | Go and see the falls!'],
+      [21, 'Dhuska garam, ghugni ke saath! | Hot dhuska, with ghugni!'],
+      [84, 'Moen dhuska khamu! | I’ll have a dhuska!'],
     ],
     ride: 'cart',
     item: 'dhuska',
     signs: [
-      [8, 'HUNDRU', 'jharana'],
-      [55, 'KANKE', 'bandh'],
-      [102, 'SARNA', 'sal phool'],
+      [8, 'MAIN ROAD', 'nashta'],
+      [55, 'MORABADI', 'maidan'],
+      [102, 'HUNDRU', '45 km'],
     ],
     props: [
       ['lamp', 4, {}],
@@ -418,11 +517,11 @@ export const RNC: LevelDef[] = [
     ],
     things: [],
   }),
-  longStage({ base: haatRoom(), par: 40, acts: [haatAct], twist: 'bhaav' }),
-  longStage({ base: hundruRoom(), par: 44, acts: [gorgeAct], twist: 'jharana' }),
-  longStage({ base: baansRoom(), par: 42, acts: [baansAct], twist: 'khokha' }),
-  longStage({ base: sarhulRoom(), par: 48, acts: [phoolAct], twist: 'pahan' }),
-  longStage({ base: dokraRoom(), par: 52, acts: [dhalaiAct], twist: 'dhalai' }),
-  longStage({ base: chhauRoom(), par: 56, acts: [mukhautaAct], twist: 'mukhauta' }),
-  longStage({ base: melaRoom(), par: 84, acts: [melaAct], twist: 'ghumav' }),
+  longStage({ base: dhuskaRoom(), par: 56, acts: [galli], twist: 'ulta' }),
+  longStage({ base: teerRoom(), par: 60, acts: [maidan], twist: 'nishana' }),
+  longStage({ base: rugraRoom(), par: 56, acts: [seedhi], twist: 'tadit' }),
+  longStage({ base: chhauRoom(), par: 40, acts: [kharkai], twist: 'chehra' }),
+  longStage({ base: dokraRoom(), par: 56, acts: [ghariya], twist: 'kataar' }),
+  longStage({ base: hundruRoom(), par: 44, acts: [chattan], twist: 'khoh' }),
+  longStage({ base: toofanRoom(), par: 48, acts: [ghagh], twist: 'dwar' }),
 ];

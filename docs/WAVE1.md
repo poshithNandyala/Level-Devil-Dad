@@ -302,3 +302,47 @@ Working notes so the build can be resumed at any point.
   goes for the mask.
 - Proven: route + NAIVE death for every stage (NAIVE on 05-08), act routes and door policies in
   `tests/east.ts`, `npm run typecheck` clean, `npm test` green.
+
+## v0.15.1: Ranchi rebuilt
+v0.15.0's Ranchi (made with another tool) fell short of the bar: generic lines, a barter haat, a pot that
+spills, and a Sarhul stage too close to religion. All seven stages, acts and doors are new.
+- 02 **Dhuska**: the cook's kadhai. Batter sinks, comes up as a dhuska you can stand on, gets flipped once
+  (throwing whatever's on it) and scooped. Act `rnc02-galli`: a cook who works out of order, then a long
+  quick one. Door `ulta`: a cook on your side of the kadhai flips you up on to the counter.
+- 03 **Teer**: the archers shoot over your head; the arrows in the straw boss are steps, climbed between
+  shots, before the whistle pulls them. Act `rnc03-maidan`: steps in a post over a pit, a taller boss. Door
+  `nishana`: the door is behind the target sheet; it tears after enough hits.
+- 04 **Rugra**: the storm's lightning hits the tallest thing under the cloud (you, or anything right beside
+  you); the thunder pushes rugra up. Act `rnc04-seedhi`: rugra stairs, one step behind the lightning. Door
+  `tadit`: the lightning arrester's wire takes the strike to an earth pit; the rugra come up there.
+- 05 **Chhau**: masks make the dancers take you for that character. Act `rnc05-kharkai`: a peacock with a
+  tiger on its back flies for its life over the river. Door `chehra`: drop on the tiger's head and swap masks.
+- 06 **Dokra**: a clay elephant in each kiln arch, hollow between the wax and the brass. Act `rnc06-ghariya`:
+  tip a crucible and cast your own brass step. Door `kataar`: stand in the gap in the row of falling brass
+  elephants.
+- 07 **Hundru**: the first stage where falling hurts. A drop of more than 120 px on to rock kills, counted
+  from the highest point since you last stood (or were in water): a jump off a high rock adds its own
+  height. Inside falling water you sink at 70 px/s and wade at a third of your speed. Room: hop on the
+  railing and step off into the falls (a running jump flies clean over the water). Act `rnc07-chattan`:
+  walk off a high rock, run off the tallest on to a little rock a long step out, and down the last one
+  only by the water. Door `khoh`: the door is in a hollow under the lip, halfway down the last fall: climb
+  the steps, walk off into the water, hold left. Miss it and it's the steps again.
+- 08 **Toofan** (finale): the storm is parked over a fall that comes out of a cleft: wait for the strike,
+  then walk off into the water (slow means tallest). Act `rnc08-ghagh`: the peacock flies you over the
+  Subarnarekha to a rock too high to jump down from; the falls take you down. Door `dwar`: there is no door,
+  only a door-shaped mould and a crucible; pour it and wait for it to set (Tara says it's done while it's
+  still molten).
+- New lines throughout in Nagpuri + Hindi, checked against published Nagpuri phrases ("Hian aao", "Toen
+  kaisan aahis?", "Moen thik aahon", "Ka?", "Kale?", "Barkha"). The tour no longer opens with "Johar"
+  (Raipur's opener). New death lines: `tel` `teer` `bijli` `baagh` `mom` `pital` `pathar` `chhalang`.
+- New pieces in `jharkhand.ts`: `Stream` + `Falls` (the fall rule, once per world, `zone` to limit it),
+  `Pool`, `Railing`, `Steps` (stone blocks you can walk under), and `CastMould(…, door)` for a cast door.
+- Fairness: `tests/fair-rnc.test.ts` plays every Ranchi stage with a human-timing model (arrives 0-3 s late,
+  starts every press 0-6 / 0-12 / 0-18 ticks late, lets go on time). Average timing: 02 83%, 03 93%,
+  04-08 90-100%. 02's misses are mid-air corrections over the kadhai by the bot; it was given wider windows
+  (the room's cook works at 80 ticks a step, the door's cook flips later) and stays the one to watch.
+- Gotchas: one-way stair slabs at 45° let a player who holds right fall up through the stairs and drop out
+  underneath; stairs must be solid blocks (the `Steps` entity), with room to walk underneath. A stream that
+  starts at the very top of the screen catches a jumper at the top, who then sinks for three seconds:
+  start it lower (a cleft) where slowness matters.
+

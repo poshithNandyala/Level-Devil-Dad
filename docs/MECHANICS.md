@@ -17,7 +17,8 @@ nouns and verbs (`grep -rni "bounce\|trampoline" src/game`). For the stage list 
   (PNJ-07), floats in a parade (PNJ-08), a packed train that shoves you out (BOM-03).
 - **Water:** floods and rising water (TVM-02, BOM-04), swimming with an air meter (KVT-06), running on
   water (KVT-08), skipping like a stone (BPL-02), tides (DMN, PDY-06), waves (PDY-07), see-through water
-  (KVT-02), waterfalls (BLR-08, `cascade` kit), lakes (BPL-02, BPL-08).
+  (KVT-02), waterfalls (BLR-08, `cascade` kit), lakes (BPL-02, BPL-08), falls that kill unless you go down
+  inside the falling water (RNC-07; BOM's `lightwell` already splats a fall down a shaft).
 - **Air:** gusts and wind (kit), tailwind (KVT-04), gliding (`glider`), feather flaps (GNR-06), choosing the
   wind (JAI-07), kites and kite string (HYD-05, GNR-02), rockets (JAI), cannon (`cannon`).
 - **Bounce and spring:** springs and spouts, recoiling ropes (PNJ-05), hammock (`hammock`), shockwaves
@@ -43,11 +44,12 @@ nouns and verbs (`grep -rni "bounce\|trampoline" src/game`). For the stage list 
   (BOM-06), palm climbing (KVT-07), a needle that sews (BPL-04).
 - **Festivals already used:** Onam boats (TVM-08), Bastille Day (PDY-08), Mysuru lights (BLR-06), Holi
   (BOM-07), dahi handi (`dahihandi`), Uttarayan (GNR-02), Navratri garba (GNR-07), Diwali (JAI-07),
-  Carnival (PNJ-08), Hareli (RPR-02), Bastar Dussehra (RPR-08).
-- **Sports already used:** cricket (CHN-04), football (PNJ-03, `penalty`), kabaddi (`kabaddi`).
+  Carnival (PNJ-08), Hareli (RPR-02), Bastar Dussehra (RPR-08), Seraikela Chhau at Chaitra Parva (RNC-05).
+- **Sports already used:** cricket (CHN-04), football (PNJ-03, `penalty`), kabaddi (`kabaddi`), archery (RNC-03).
 - **Doors:** knock (`knock`, unused but taken), fake and painted doors (`fakewin`, `paintwall`,
   `invisible`, `backdoor`), a door that moves, hides or must be caught (`shy` twist, `catch`, `lattu`), a door
-  you're carried to (`reel`), a toss up on to a gate (`salaami`). Read every `advice:` line in
+  you're carried to (`reel`), a toss up on to a gate (`salaami`), a door in a hollow halfway down a waterfall
+  (`khoh`), a door you cast yourself (`dwar`). Read every `advice:` line in
   `src/game/levels/endings*.ts` before you pick an ending.
 
 ## Ways to move and core rules
@@ -80,6 +82,17 @@ nouns and verbs (`grep -rni "bounce\|trampoline" src/game`). For the stage list 
   you move (RPR-03), pouring rice in to hills you climb (RPR-04), spinning-top platforms kept up by
   landing on them (RPR-05), a cocoon from standing still that hornets can't get through but hawks
   like (RPR-06), ant bridges that come to you and bite (RPR-07).
+- Dhuska that come up in the kadhai as platforms, get flipped (throwing whatever stands on them) and get
+  scooped out (RNC-02), arrows that stick in a straw boss as steps you climb between shots, pulled out on
+  the whistle (RNC-03), a storm cloud whose lightning hits the tallest thing under it (you, or beside it)
+  while its thunder pushes rugra up as lifts (RNC-04; the act: rugra stairs one step behind the
+  lightning), Chhau masks that make the dancers take you for that character: tiger flees the hunter,
+  pounces on the peacock, peacock dances with a peacock and flies from a tiger, rider and all (RNC-05),
+  a lost-wax mould that is hollow (walk-through) between the wax running out and the brass going in, and
+  a crucible you tip to cast your own brass step (RNC-06), Hundru's rule: a long fall on to rock kills,
+  counted from the top of your jump, so off a high rock you walk, or run, but never jump; inside the
+  falling water you sink slowly (RNC-07), and the storm parked over the falls, where the slow water makes
+  you the tallest thing (RNC-08).
 
 ## Hazards and kit (traps.ts, kit.ts, abilities.ts, goa.ts)
 Springs/spouts, blinkers (timed platforms), gusts/wind, geysers, cascades, rollers, riders, shots,
@@ -106,7 +119,7 @@ gnr02-terraces gnr03-shaft gnr04-hatchery gnr05-pride gnr06-sabarmati gnr07-sher
 jai02-show jai03-zenana jai04-yantras jai05-rasta jai06-mela jai07-udaan jai08-amer
 bpl02-jheel bpl03-shelters bpl04-karchob bpl05-mehfil bpl06-chowk bpl07-karkhana bpl08-bhojtal
 rpr02-khet rpr03-chowk rpr04-kothi rpr05-mela rpr06-jungle rpr07-saal rpr08-dussehra
-rnc02-haat rnc03-jharana rnc04-baans rnc05-phool rnc06-dhalai rnc07-mukhauta rnc08-mela
+rnc02-galli rnc03-maidan rnc04-seedhi rnc05-kharkai rnc06-ghariya rnc07-chattan rnc08-ghagh
 
 ## Door endings (ENDINGS: one stage each)
 Check the advice lines in endings*.ts too: an idea counts as used even under a new name (e.g. catching
@@ -121,5 +134,5 @@ setu jali milan safari kichad pravesh herd
 sutradhar toran shant naap dulha palat salaami
 ghat haath gaanth khaali paan rakhdo kissa
 utar ghanta khisko lattu reel gud rath
-bhaav jharana khokha pahan dhalai mukhauta ghumav
+ulta nishana tadit chehra kataar khoh dwar
 (+ the old nine twists: spikes crush swap shy sink rise wall fake none)

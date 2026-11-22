@@ -289,14 +289,31 @@ song lyrics. Affectionate teasing locals would proudly share; never mean.
 | RPR-06 | Kosa (Tussar silk) | Champa’s kosa silk comes from wild cocoons in the sal forest. The forest also has hornets. *Scene: Sal forest.* | `rpr06-jungle` | `reel` |
 | RPR-07 | Chapda (The red ants) | Bastar makes chutney out of red weaver ants. The ants make bridges out of themselves. *Scene: Bastar.* | `rpr07-saal` | `gud` |
 | RPR-08 | Bastar Dussehra (The seventy-five day festival) | The longest Dussehra in the world: seventy-five days, and a wooden chariot the whole town pulls. *Scene: Jagdalpur.* | `rpr08-dussehra` | `rath` |
+
+### RNC · Ranchi, Jharkhand
+
+- Language: Nagpuri (Sadri) + Hindi + English · Hello: "Johar! | Greetings!" · Hidden item: dhuska
+- The city of waterfalls up on the plateau: hot dhuska, Chhau masks, Dokra brass and rugra after the storm.
+
+| Stage | Name (meaning) | What it is | Act | Door ending |
+| --- | --- | --- | --- | --- |
+| RNC-01 | Johar, Ranchi! (Greetings, Ranchi!) | Welcome tour: the city of waterfalls, up on the Chota Nagpur plateau. | — | — |
+| RNC-02 | Dhuska (Breakfast on Main Road) | Rice batter into hot oil, out puffed and golden: dhuska you hop across while they're up, off before the cook flips or scoops them. | `rnc02-galli` | `ulta` |
+| RNC-03 | Teer (The archery range) | Arrows fly over your head while you walk; the ones in the straw boss are steps, climbed between shots and before the whistle. | `rnc03-maidan` | `nishana` |
+| RNC-04 | Rugra (After the thunder) | The cloud's lightning takes the tallest thing under it; its thunder pushes rugra up out of the leaves, and you with them. *Scene: monsoon sal forest.* | `rnc04-seedhi` | `tadit` |
+| RNC-05 | Chhau (As the mask, so the dance) | Put on a Seraikela mask and the dancers take you for it: the tiger runs from the hunter, pounces on the peacock; the peacock dances with a peacock. *Scene: Chaitra Parva at night.* | `rnc05-kharkai` | `chehra` |
+| RNC-06 | Dokra (The lost wax) | Walk through the clay elephant in the moment it's hollow, between the wax running out and the brass going in; then pour your own brass steps. | `rnc06-ghariya` | `kataar` |
+| RNC-07 | Hundru (The falls) | Here a long fall on to the rocks kills, counted from the top of your jump: step off the railing into the falling water, walk (don't jump) off high rocks, and come back up the steps. | `rnc07-chattan` | `khoh` |
+| RNC-08 | Toofan (The storm) | The storm parks over the falls, and sinking slowly down the water you're the tallest thing under it; then the peacock flies you over the river to a rock only the falls get you down from. | `rnc08-ghagh` | `dwar` |
+
 ## To do
 
 The map already shows each city's greeting and two placeholder stage names ("teasers") from `CHAPTERS`.
 Teasers are only placeholders: several of them clash with each other or with shipped ideas (flagged below).
 Replace them with the real stage names when the city is built.
 
-**Clashes already visible in the teasers:** RNC "Dhuska Trampoline" vs CHH "Charpai Trampoline" vs BPL-05's
-bouncing bowls (bounce is taken: neither should be a trampoline) · DDN "Six Clocks, Zero Time" vs RPR-03's
+**Clashes already visible in the teasers:** CHH "Charpai Trampoline" vs BPL-05's
+bouncing bowls (bounce is taken: it shouldn't be a trampoline) · DDN "Six Clocks, Zero Time" vs RPR-03's
 clock that only runs while you move (+ `ghanta`, `clockhand`, `slowmo`) · AGT "Mirror Lake Lie" vs the
 `reflection` and `mirror` endings and BOM-08's mirror twin · GTK "One Floor Or Six?" vs AIZ "Ten Floors
 Below" (same idea: give it to one city) · SML "Give Back My Specs!" vs the `monkey` ending · ITA "Hornbill
@@ -305,30 +322,6 @@ Rain" vs every wind idea (gust kit, KVT-04 tailwind, JAI-07) · JMU "Kalari Chee
 recoiling ropes · KOH "Log Drum Off-Beat" vs JAI-02's beat-forced hops · SVP "Chatham Log Roll" vs
 `amr03-logs`, and "Coconut Crab Snip" vs KVT-07's crabs · DEL "Mind The Gap, Bhai" vs every train (BOM, BLR,
 CHN-08) · LEH "Julley At 11,000 Feet" (thin air) vs KVT-06's air meter.
-
-### RNC · Ranchi, Jharkhand (done: v0.15.0)
-**Built:** 01 "Johar, Ranchi!" tour · 02 Haat (barter: carry the thing the stall's sign names and it lays
-its plank; the act makes you walk back for the dona) · 03 Hundru (the plunge: only the pool is a soft
-landing, and it fills and drains with the falls; the act's third bay has no water at all, so you land on
-the shelf over the shards) · 04 Baans (woven one-way traps: the short mouth points backwards, the long one
-crosses the gap) · 05 Sarhul (the Pahan's pot: every jump spills, spouts fill, the door wants it nearly
-full) · 06 Dokra (pour the channel, wait for the brass to dull, then walk on it) · 07 Chhau (hang a mask
-on the pole so the dancer's blow breaks the cracked wall; bare-handed, he turns on you) · 08 Sarhul Mela
-(all of it again in one lane, and a hairpin at the door). Doors: `bhaav` `jharana` `khokha` `pahan`
-`dhalai` `mukhauta` `ghumav`. Hidden item: dhuska. Proven routes, acts and door policies: `tests/east.ts`.
-- **Speak:** Nagpuri (Sadri) + Hindi + English; Kurukh, Mundari, Ho and Santali are spoken around it. Map
-  greeting "Johar! | Greetings!". Raipur already opens with "Jai Johar!", so lead with other lines.
-- **Locals live with:** waterfalls all round the city (Hundru, Dassam, Jonha, Hirni) with spray and mist,
-  big rocks and rocky hills (Rock Garden, Tagore Hill), Kanke dam and Ranchi lake, the Patratu valley road's
-  tight hairpins, weekly haats, leaf plates (dona-pattal), bamboo and dokra metal craft.
-- **Food / hidden item:** dhuska with ghugni; rugra (monsoon mushroom); thekua; pitha.
-- **Festivals and craft:** Sarhul (spring, sal blossoms, mandar drums), Karma (lines of dancers, arms linked),
-  Sohrai and Khovar wall painting, Seraikela Chhau (masked dance).
-- **Watch out:** sal forest, hornets, hawks and ants are Raipur's; bounce is taken; the
-  `cascade` kit already does a falling stream, so a waterfall idea needs a new angle (behind the curtain,
-  mist that hides, a pool that refills).
-- **Avoid:** mining accidents and coal fires as jokes, tribal stereotypes, politics, real cricketers, handia
-  (alcohol).
 
 ### PAT · Patna, Bihar
 - **Speak:** Magahi is Patna's own; Bhojpuri is everywhere; + Hindi + English. "Ka haal ba? | How's it going?"
