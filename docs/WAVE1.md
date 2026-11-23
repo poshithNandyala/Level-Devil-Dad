@@ -508,3 +508,20 @@ a betrayal every few steps, and the obvious fix for each one meets the next.
   the boat after the last bridge decides whether it kills, so it wasn't exact.
 - The route shots (`scripts/dev/shots.sh`) replay `/tmp/rec`, which only `LDD_ENDREC=1 ... endrec.test.ts`
   writes: re-record after changing a route, or the sheet shows an old route dying.
+
+## v0.16.12: Kavaratti, fair (and two new betrayals)
+Before the toughness pass reaches Kavaratti, its old stages had to be fair: by the human-timing model (0-12
+ticks slow) KVT-02 was at 83%, 03 at 25%, 05 at 20%, 06 at 75% and 08 at 20%.
+- 02: the route jumped on to the jetty a tile too late (a slow player walked off the shore first). 100%.
+- 03: the hop to the island could land a tile from the fake door, leaving no room to jump it: the fake door
+  is two tiles further on. 100%.
+- 05: the tuna were rising arcs, so a hop went *into* them; they now fly flat at head height, a fish to hop.
+  The lighthouse steps overlap by a tile, so each is a jump straight up (gulls are the timing, not the
+  landing), and the fish basket is left with a small hop (a big one met the pulley). 90%.
+- 06: a wider air pocket in eel alley, a bigger knot zone at the safety stop. 75%: the rest is the swim
+  steering under lag (the bot overshoots), a model artifact more than a trap; left for later.
+- 08: a five-tile sandbar between the dolphin beds, broader dolphin backs and a slower leap, slightly bigger
+  footprints. 83%: the footsteps door at the slow end of the range is what's left.
+- New betrayals: 02's last two jetty planks give way under a dad who waits there for the boat (the natural
+  place to wait); 08's sandbar is only there at low tide and goes under when you stop on it (the lagoon closes
+  over it). Both recorded as mistakes.

@@ -127,7 +127,9 @@ one who hops (TVM-02, `parunthu`), a tea pour that starts the moment you leave t
 from behind and then one head-on (TVM-03), broken glasses on the way back to a door that hopped over you
 (TVM-03), hidden spikes where a short hop over a fake floor lands (TVM-03), fallen palm fronds over a
 coir-retting pit (TVM-04, a fake floor), a far bank that backs away from your jump (TVM-04, `shyLedge`), a
-second portcullis hidden in the gatehouse that drops as you pass under the first (TVM-05), a fishing-net counterweight that slams down when you step off the net
+second portcullis hidden in the gatehouse that drops as you pass under the first (TVM-05), jetty planks that
+give way under a dad who waits on them for the boat (KVT-02), a sandbar that goes under when you stop on it
+(KVT-08), a fishing-net counterweight that slams down when you step off the net
 (TVM-06, `Counterweight`).
 
 ## Acts (one per id, never reused)

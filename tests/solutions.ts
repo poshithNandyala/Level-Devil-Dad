@@ -1429,6 +1429,12 @@ export const MISTAKES: Record<string, { what: string; steps: Step[]; cause?: str
     { what: 'walk straight back to the door', steps: [...SOLUTIONS['TVM-03'].slice(0, SOLUTIONS['TVM-03'].findIndex((st) => st.note === 'the door ran back')), { hold: 'L', until: (w) => w.state !== 'play', max: 300 }], cause: 'spikes' },
     { what: 'hop over the shiny floor', steps: swapAt('TVM-03', 'over the painted floor, long: spikes come up where a hop lands', 1, [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'spikes' },
   ],
+  'KVT-02': [
+    { what: 'wait for the boat at the very end of the jetty', steps: [...SOLUTIONS['KVT-02'].slice(0, SOLUTIONS['KVT-02'].findIndex((st) => st.note === 'the boat sees you and leaves')), { hold: 'R', until: and(ground, X(16.4)), max: 300 }, { hold: '', until: (w) => w.state !== 'play', max: 900 }], cause: 'splash' },
+  ],
+  'KVT-08': [
+    { what: 'stop for a rest on the sandbar', steps: [{ hold: 'R', until: X(15.1), max: 400 }, { hold: '', until: (w) => w.state !== 'play', max: 400 }], cause: 'fell' },
+  ],
   'TVM-05': [
     { what: 'wait for the first gate, then run on', steps: [...SOLUTIONS['TVM-05'].slice(0, SOLUTIONS['TVM-05'].findIndex((st) => st.note === 'under the first gate, and stop')), { hold: 'R', until: (w) => w.state !== 'play', max: 400 }], cause: 'crushed' },
     { what: 'stand on a stone in the moat', steps: [...SOLUTIONS['TVM-05'].slice(0, SOLUTIONS['TVM-05'].findIndex((st) => st.note === 'calm over the moat') + 2), { hold: 'R', jump: 12, ticks: 12 }, { hold: '', until: (w) => w.state !== 'play', max: 400 }], cause: 'splash' },

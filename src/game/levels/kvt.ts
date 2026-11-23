@@ -6,7 +6,7 @@ import { Palm, Sea, Skim, Vent, type PalmOpts } from '../entities/abilities';
 import { Solid } from '../body';
 import { collectible, door, gust, panel, prop, px, rider, rival, roller, shot, sign, thing, water } from './kit';
 import { Act, G, deco, hiddenGroup, pool } from './acts';
-import { onPass } from './trolls';
+import { crumble, onPass } from './trolls';
 import { DT, ease } from '../constants';
 import { tour } from './tour';
 import { longStage } from './chunks';
@@ -823,14 +823,17 @@ function lagoonRoom(): LevelDef {
     name: 'Billam Ottam',
     nameEn: 'Running on the lagoon',
     tagline: 'Run fast enough and the lagoon holds you up. Stop, and it doesn’t.',
-    hint: 'Hold the way you’re going and never let go: flat out, the lagoon holds you up. Slow down, stop or turn on the water and you sink. Rest on the sandbar, hop the rock.',
+    hint: 'Hold the way you’re going and never let go: flat out, the lagoon holds you up. Slow down, stop or turn on the water and you sink. Don’t stop on the sandbar either: it goes under the moment you stand on it. Hop the rock.',
     par: 9,
     scene: { kind: 'water', place: 'Bangaram lagoon', with: ['palms'] },
-    map: Grid.ground(15).pit(6, 14).pit(17, 27).fill(22, 22, 14, 17, '#').put(2, 14, '@').put(30, 14, 'E').rows(),
+    map: Grid.ground(15).pit(6, 14).pit(17, 27).fill(22, 22, 14, 17, '#').fill(15, 16, 15, 17, 's').put(2, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
       skim(w, 6, 15);
       skim(w, 17, 28);
+      // the sandbar is only there at low tide: stand still on it and it goes under, and the lagoon closes over it
+      const bar = crumble(w, 's', 0.45);
+      w.when(() => !bar.solid.collidable, (w2) => void skim(w2, 15, 17));
       thing(w, 'coral', 22, 13.5, { solid: false, layer: 2, dx: -8 });
       sign(w, 3.5, 10.6, 3.2, 'ODU!', 'wood', 'right', 'run, don’t stop');
       prop(w, 'palm', 1, 15, { h: 70, lean: 6 });
@@ -889,7 +892,7 @@ export const KVT: LevelDef[] = [
     name: 'Odam Gone',
     nameEn: 'The boat’s gone',
     tagline: 'The boat waits for the tide, never for your jump.',
-    hint: 'One jetty plank is rotten: jump it. The boat leaves when it sees you coming. Wait at the end; it always comes back, and stays a moment.',
+    hint: 'One jetty plank is rotten: jump it. The boat leaves when it sees you coming; it always comes back, and stays a moment. Wait for it, but not on the last two planks: stand there and they go too.',
     par: 6,
     map: Grid.ground().pit(5, 31).put(2, 14, '@').put(20, 12, 'E').rows(),
     build(w: World) {
@@ -897,7 +900,21 @@ export const KVT: LevelDef[] = [
       const d = door(w);
       thing(w, 'jetty', 5, 13, { w: px(6) });
       const rotten = thing(w, 'jetty', 11, 13, { w: px(2) });
-      thing(w, 'jetty', 13, 13, { w: px(5) });
+      thing(w, 'jetty', 13, 13, { w: px(3) });
+      // the last two planks, by the boat, are as old as the rotten one: stand there waiting and they go
+      const end = thing(w, 'jetty', 16, 13, { w: px(2) });
+      let stood = 0,
+        gone = false;
+      w.onTick((w2) => {
+        if (gone) return;
+        stood = w2.standing(end.solid) ? stood + 1 : 0;
+        if (stood === 72) w2.sfx('creak', end.cx, end.y);
+        if (stood >= 96) {
+          gone = true;
+          w2.sfx('crack', end.cx, end.y);
+          end.fall(w2, { delay: 0, land: false });
+        }
+      });
       let broke = false;
       w.when(
         (w2) => !broke && w2.standing(rotten.solid),

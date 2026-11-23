@@ -90,13 +90,13 @@ song lyrics. Affectionate teasing locals would proudly share; never mean.
 | Stage | Name (meaning) | What it is | Act | Door ending |
 | --- | --- | --- | --- | --- |
 | KVT-01 | Swagatham, Billam (Welcome to Kavaratti) | Welcome tour past landmarks while the guide tells you real things about the city. Coral sand, a glass-clear lagoon and boats that run on a timetable. As you cross the jetty, a green turtle nest on the beach below hatches: never step on a baby, and they spread wider than any jump. Stop on the jetty till every one is in the water. | — | — |
-| KVT-02 | Odam Gone (The boat’s gone) | The boat waits for the tide, never for your jump. | `kvt02-glass` | `loading` |
+| KVT-02 | Odam Gone (The boat’s gone) | The boat waits for the tide, never for your jump. The last two planks by the boat go too, if you stand there waiting for it. | `kvt02-glass` | `loading` |
 | KVT-03 | Supari Light (Lighthouse on the island) | The lighthouse beam builds your bridge. For a moment. | `kvt03-faith` | `reflection` |
 | KVT-04 | Agatti Airstrip | One runway, one flight a day, and the whole island watching. *Scene: Agatti.* | `kvt04-tailwind` | `glider` |
 | KVT-05 | Minicoy Tuna | Pole-and-line tuna fishing: the fish come out of the sea and fly over your head. *Scene: Minicoy.* | `kvt05-lift` | `trapdoor` |
 | KVT-06 | Phar Mungal (Diving the reef) | India’s scuba school. The fish are friendly. The reef is not. *Scene: Kavaratti lagoon.* | `kvt06-air`, `kvt06-eels` | `safetystop` |
 | KVT-07 | Thengu Kayaru (Up the palm) | Coconut country: every islander can climb a palm. Can Dad? | `kvt07-crabs`, `kvt07-bend` | `pushoff` |
-| KVT-08 | Billam Ottam (Running on the lagoon) | Run fast enough and the lagoon holds you up. Stop, and it doesn’t. *Scene: Bangaram lagoon.* | `kvt08-weed`, `kvt08-dolphins` | `footsteps` |
+| KVT-08 | Billam Ottam (Running on the lagoon) | Run fast enough and the lagoon holds you up. Stop, and it doesn’t. *Scene: Bangaram lagoon.* The sandbar is only there at low tide: stop on it and it goes under. | `kvt08-weed`, `kvt08-dolphins` | `footsteps` |
 
 ### CHN · Chennai, Tamil Nadu
 
