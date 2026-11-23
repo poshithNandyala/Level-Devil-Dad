@@ -235,7 +235,9 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'R', until: X(55.1), max: 400 },
     { hold: '', until: (w) => w.entities.some((e: any) => e.kind === 'coconut' && e.x >= px16(58) && e.x < px16(59) && e.state !== 'rest'), max: 400, note: 'wind: wait for the wave to start' },
     { hold: '', ticks: 34 },
-    { hold: 'R', until: X(76.6), max: 600, note: 'follow behind the wave' },
+    { hold: 'R', until: X(72), max: 600, note: 'follow behind the wave' },
+    { hold: '', until: (w) => w.entities.some((e: any) => e.kind === 'coconut' && e.x >= px16(74) && e.x < px16(74) + 4 && (e.state === 'gone' || e.y > 250)), max: 300, note: 'the last palm kept one back: stop and let it fall' },
+    { hold: 'R', until: X(76.6), max: 300 },
     { hold: '', jump: 6, ticks: 40, note: 'a little hop: the far bank backs away' },
     { hold: '', until: groupBack('k'), max: 400, note: 'and creeps back' },
     { hold: 'R', jump: 12, ticks: 12, note: 'now over the gap' },
@@ -1437,10 +1439,19 @@ export const MISTAKES: Record<string, { what: string; steps: Step[]; cause?: str
   ],
   'TVM-05': [
     { what: 'wait for the first gate, then run on', steps: [...SOLUTIONS['TVM-05'].slice(0, SOLUTIONS['TVM-05'].findIndex((st) => st.note === 'under the first gate, and stop')), { hold: 'R', until: (w) => w.state !== 'play', max: 400 }], cause: 'crushed' },
+    { what: 'back off when the dog growls', steps: swapAt('TVM-05', 'walk past the dog, do not jump', 1, [{ hold: '', until: ground, max: 200 }, { hold: 'L', until: (w) => w.state !== 'play', max: 300 }]), cause: 'spikes' },
     { what: 'stand on a stone in the moat', steps: [...SOLUTIONS['TVM-05'].slice(0, SOLUTIONS['TVM-05'].findIndex((st) => st.note === 'calm over the moat') + 2), { hold: 'R', jump: 12, ticks: 12 }, { hold: '', until: (w) => w.state !== 'play', max: 400 }], cause: 'splash' },
+  ],
+  'TVM-07': [
+    { what: 'walk down the steps to the factory, as Tara says', steps: swapAt('TVM-07', 'leap past the step: it drops if you land on it', 2, [{ hold: 'R', until: (w) => w.state !== 'play', max: 600 }]), cause: 'fell' },
+  ],
+  'TVM-08': [
+    { what: 'stay seated under the fourth bridge (Tara lied at the third)', steps: swapAt('TVM-08', 'the low bridge after it: do hop this one', 3, [{ hold: '', until: (w) => w.state !== 'play', max: 900 }]), cause: 'splash' },
   ],
   'TVM-04': [
     { what: 'walk over the fallen fronds', steps: swapAt('TVM-04', 'hop the fronds: a coir pit under them', 2, [{ hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'splash' },
+    { what: 'walk straight on through the wind', steps: swapAt('TVM-04', 'wind: wait for the wave to start', 2, [{ hold: 'R', until: (w) => w.state !== 'play', max: 600 }]), cause: 'coconut' },
+    { what: 'let the wave go by, then follow it', steps: swapAt('TVM-04', 'follow behind the wave', 2, [{ hold: 'R', until: (w) => w.state !== 'play', max: 600 }]), cause: 'coconut' },
     { what: 'jump the last gap', steps: swapAt('TVM-04', 'a little hop: the far bank backs away', 2, [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'splash' },
   ],
   'TVM-02': [

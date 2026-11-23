@@ -367,6 +367,11 @@ export class Audio {
         this.burst(t, 0.22, 0.2, 'bandpass', 380, 2.5, undefined, 220);
         this.burst(t + 0.25, 0.3, 0.24, 'bandpass', 330, 2.5, undefined, 180);
         break;
+      case 'growl':
+        // a dog growling in its sleep: a low buzzing rumble that rises a little and fades
+        this.tone('sawtooth', 82, 96, t, 0.55, 0.06);
+        this.burst(t, 0.5, 0.12, 'lowpass', 260, 0.8, undefined, 160);
+        break;
       case 'pop':
         // a line of subtitles comes up: a soft blip, enough to make you glance down
         this.tone('sine', 620, 980, t, 0.06, 0.035);

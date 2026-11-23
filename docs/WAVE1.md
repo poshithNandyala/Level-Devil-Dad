@@ -525,3 +525,25 @@ ticks slow) KVT-02 was at 83%, 03 at 25%, 05 at 20%, 06 at 75% and 08 at 20%.
 - New betrayals: 02's last two jetty planks give way under a dad who waits there for the boat (the natural
   place to wait); 08's sandbar is only there at low tide and goes under when you stop on it (the lagoon closes
   over it). Both recorded as mistakes.
+
+## v0.16.13: Thiruvananthapuram, round two (Tara lies, at the trap)
+The owner on v0.16.11: better, but it can still be tougher and more unexpected. Round two keeps every trap
+and makes the city harder to trust.
+- **Tara lies, live, at the trap.** As you reach a trap she urges the very move it's waiting for: "Jump, Dad!"
+  at the ditch and "Hurry!" at the puttu stall (01), "Jump!" at the kite (02), "Safe now!" as the first
+  scooter passes (03), "Walk across on the fronds!" (04), "Jump over it!" at the dog (05), "Come down the
+  steps!" at the factory step (07). Then, once you've learnt she lies, she tells the truth: "Jump right now!"
+  on 06's last net, where staying put drowns you. The finale calls back to both: at the third bridge she says
+  get up on top (its deck grows spikes), at the fourth she says jump up (true). Read the bridge, not Tara.
+  Her lines go through `tara(w, line)` from endkit (imported as `taraSays`: tvm.ts has its own `tara` script
+  helper).
+- 04: the last palm has two coconuts. The second stays up when the wave goes by and drops as you pass the
+  palm before it, so the obvious fix after dying in the wave (let it go by, then follow it) dies too, at any
+  wait. Stop short of the last palm and let it fall. Two new mistakes: walk straight on through the wind,
+  and let the wave go by then follow it.
+- 05: land past the spikes and the sleeping dog growls (new `growl` sound). It's only a growl: the dad who
+  backs off steps on the spikes he just jumped. Recorded as a mistake.
+- Fewer, calmer checkpoints: 02 at 48 (was 36 and 60), 04 at 46 (was 33 and 71), 05 at 38 (was 34 and 61),
+  08 at 50 (was 41 and 59).
+- New mistakes for 07 (take the steps, as Tara says) and 08 (stay seated under the fourth bridge).
+- Human timing unchanged at 12 ticks: 01 100, 02 93, 03 100, 04 100, 05 90, 06 98, 07 90, 08 100.

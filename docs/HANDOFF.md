@@ -115,7 +115,9 @@ docs/                    this file, CITIES, MECHANICS, WAVE1 (changelog), PROMPT
   - `w.guide(line, stillTrue?)`: the honest helper, queued, shown in the talk card. It must only say true
     things. Pass `stillTrue` so a queued line is dropped if it's out of date by the time it would play.
   - Tara (`rival(w, tx, ty, facing, script)` and `tara(w, line)` in endings): the rival. She taunts, and
-    may point at fake shortcuts. She lies; the guide never does.
+    may point at fake shortcuts. She lies; the guide never does. In a stage, `tara(w, line)` from endkit
+    makes her urge you live, at a trap (TVM does this, and once tells the truth): import it under another
+    name, since most stage files have their own `tara` script helper.
   - `npc(w, line, x, y)`: locals in speech bubbles. Honest, flavour.
   Every line is `"Local | English"`, max 8 words each side where possible.
 - Death causes: `w.die('chapda')`. Add each new cause to `CAUSE_LINES` in `entities/props.ts`:

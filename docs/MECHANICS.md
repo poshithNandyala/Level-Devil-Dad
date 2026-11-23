@@ -130,7 +130,11 @@ coir-retting pit (TVM-04, a fake floor), a far bank that backs away from your ju
 second portcullis hidden in the gatehouse that drops as you pass under the first (TVM-05), jetty planks that
 give way under a dad who waits on them for the boat (KVT-02), a sandbar that goes under when you stop on it
 (KVT-08), a fishing-net counterweight that slams down when you step off the net
-(TVM-06, `Counterweight`).
+(TVM-06, `Counterweight`), Tara urging the very move a trap waits for, live, at the trap (TVM-01 ditch and
+tarp, 02 kite, 03 second scooter, 04 fronds, 05 dog, 07 factory step), then telling the truth once you've
+learnt she lies (TVM-06's last net), and a lie and a truth at back-to-back bridges (TVM-08: read the bridge,
+not Tara), a coconut the last palm keeps back for the dad who follows the falling wave (TVM-04), a sleeping
+dog that growls as you land past the spikes, so the flinch back meets them (TVM-05).
 
 ## Acts (one per id, never reused)
 amr02-powder amr03-logs amr04-hot amr05-humps amr06-zip amr07-gallery amr08-shack

@@ -6,6 +6,7 @@ import { DT } from '../constants';
 import { tour } from './tour';
 import { Grid } from './grid';
 import { exitTwist } from './twists';
+import { tara as taraSays } from './endkit';
 import { crumble, dropFloor, fakeFloor, gapAhead, noLanding, onPass, popAt, popOnJump, riseWall, shyLedge } from './trolls';
 import { Counterweight, Launch, Puddle, Slab, Tarp } from '../entities/kerala';
 
@@ -94,6 +95,9 @@ export const TVM: LevelDef[] = [
       popOnJump(w, 'G', px(6), px(12.5)).look = 'glass';
       // the wall's glass doesn't stay on the wall: the road under it is strewn with it
       popAt(w, 'K', px(16) + 4).look = 'glass';
+      // Tara, helpful as ever: at the ditch she says jump, at the puttu stall she says hurry
+      onPass(w, px(19.5), (w2) => taraSays(w2, 'Kuzhi! Chaadu, Dad! | A ditch! Jump, Dad!', 1.8));
+      onPass(w, px(82.2), (w2) => taraSays(w2, 'Puttu thanuthu pokum! Vegam! | The puttu’s going cold! Hurry!', 1.8));
       // wade the ditch; jump it from the road and its far side bristles where you come down
       const far = spikes(w, 'J');
       w.when(
@@ -127,7 +131,7 @@ export const TVM: LevelDef[] = [
       return g.put(1, 12, '@').put(93, 11, 'E').rows();
     })(),
     build(w: World) {
-      for (const tx of [36, 60]) checkpoint(w, tx);
+      for (const tx of [48]) checkpoint(w, tx);
       exitTwist(w, door(w), 'knock');
       // the flood: only the bus is dry
       water(w, 14.4, { rate: 0, minTy: 14.4, colors: ['rgba(86,140,150,0.88)', 'rgba(36,80,92,0.96)'], cause: 'splash' });
@@ -228,6 +232,7 @@ export const TVM: LevelDef[] = [
         (w2) => {
           shot(w2, 'parunthu', w2.player.x + 220, Y - 44, -100, 0, 0, 'hit');
           w2.sfx('caw', w2.player.x + 180, Y - 40);
+          taraSays(w2, 'Parunthu! Chaadu! | A kite! Jump!', 1.4);
         },
       );
       // under the second flyover a chunk drops on the middle of the roof, where the bells taught you to ride
@@ -341,6 +346,7 @@ export const TVM: LevelDef[] = [
       w.when(
         (w2) => !!first && first.x > w2.player.x + w2.player.w + 16 && w2.player.onGround,
         (w2) => {
+          taraSays(w2, 'Poyi! Ini safe! | It’s gone! Safe now!', 1.4);
           w2.sfx('honk', w2.player.x + 170, px(15));
           rider(w2, 'scooter', w2.player.x + 230, 15, -200, 4, 'hit').facesRight = true;
         },
@@ -367,16 +373,17 @@ export const TVM: LevelDef[] = [
     name: 'Thenga Trajectory',
     nameEn: 'Coconut trajectory',
     tagline: 'Gravity in Kerala always finds Dad’s head.',
-    hint: 'Coconuts fall where you’re going: wait, then hop the roll. The one over the gap falls when you jump, so bait it with a little hop. A palm crashes across the river as a bridge, then sinks: don’t stop on it. Past the river, don’t walk on the fallen fronds: there’s a coir pit under them, hop it. In the last grove they fall in a wave: follow behind it. The far bank of the last gap backs away from your first jump: bait it too, wait for it to come back, then jump.',
+    hint: 'Coconuts fall where you’re going: wait, then hop the roll. The one over the gap falls when you jump, so bait it with a little hop. A palm crashes across the river as a bridge, then sinks: don’t stop on it. Past the river, don’t walk on the fallen fronds: there’s a coir pit under them, hop it. In the last grove they fall in a wave: let it go by. The last palm keeps one nut back for you: stop just before it and let it fall. The far bank of the last gap backs away from your first jump: bait it too, wait for it to come back, then jump.',
     par: 18,
     map: Grid.ground(15, 96).pit(15, 16).pit(36, 45).pit(78, 79).fill(80, 83, 15, 17, 'k').fill(51, 52, 15, 17, 'f').put(2, 14, '@').put(92, 14, 'E').rows(),
     build(w: World) {
-      for (const tx of [33, 71]) checkpoint(w, tx);
+      for (const tx of [46]) checkpoint(w, tx);
       exitTwist(w, door(w), 'fake');
       // the far bank of the last gap backs off from the first jump at it, then creeps back: bait it
       shyLedge(w, 'k', { dx: px(3), from: px(72), back: 1.1 });
       // fallen fronds on the bank: underneath them, a coir pit where the husks are soaked
       fakeFloor(w, 'f').paint = { fill: '#7E8B3C', trim: '#A4B45A', line: 'rgba(60,66,20,0.45)' };
+      onPass(w, px(48.3), (w2) => taraSays(w2, 'Olayude mele nadannu po! | Walk across on the fronds!', 1.8));
       water(w, 15.6, { rate: 0, minTy: 15.6, colors: ['#4F8C83', '#295B57'], cause: 'splash', behind: true });
       // the first grove (as before)
       prop(w, 'palm', 9, 15, { h: 80, lean: 4 });
@@ -434,6 +441,8 @@ export const TVM: LevelDef[] = [
       const grove = [58, 62, 66, 70, 74];
       grove.forEach((tx, i) => prop(w, 'palm', tx, 15, { h: 82 + (i % 2) * 8, lean: i % 2 ? -6 : 5 }));
       const nuts = grove.map((tx) => coconut(w, px(tx) + 7, 160));
+      // the last palm has two. The second stays up when the wave goes by and waits for the dad who follows it
+      const straggler = coconut(w, px(74) + 1, 158);
       w.when(
         (w2) => w2.player.x >= px(55),
         (w2) => {
@@ -441,6 +450,10 @@ export const TVM: LevelDef[] = [
           w2.emit('shake', px(64), px(10), { amount: 2 });
           nuts.forEach((n, i) => w2.after(0.25 + i * 0.42, () => drop(w2, n, { shake: 0.05, v0: 90, land: false })));
         },
+      );
+      w.when(
+        (w2) => nuts[4].state !== 'rest' && w2.player.x >= px(70.5),
+        (w2) => drop(w2, straggler, { shake: 0.18, v0: 90, land: false }),
       );
       prop(w, 'palm', 88, 15, { h: 76, lean: 4 });
       rival(w, 4, 15, 1, tara(3, 1));
@@ -453,7 +466,7 @@ export const TVM: LevelDef[] = [
     index: 5,
     name: 'Fort Gate Forward',
     tagline: 'Two gates, a moat, a headwind and one very light sleeper.',
-    hint: 'Let the first gate drop and rise, never while the wind holds you back, then go under it and stop at once: a second gate hides in the gatehouse and drops as you pass the first. Let it go back up. Over the moat, every stone crumbles: keep hopping, but stop on the bank: the next gate drops right there. Jump the spikes that pop up, then walk past the dog. Do not jump near it.',
+    hint: 'Let the first gate drop and rise, never while the wind holds you back, then go under it and stop at once: a second gate hides in the gatehouse and drops as you pass the first. Let it go back up. Over the moat, every stone crumbles: keep hopping, but stop on the bank: the next gate drops right there. Jump the spikes that pop up, then walk past the dog. Do not jump near it, whatever Tara says. It growls in its sleep: keep walking, or you back on to the spikes.',
     par: 22,
     map: (() => {
       // the first gatehouse is deep: it hides a second portcullis behind the one you can see
@@ -464,7 +477,7 @@ export const TVM: LevelDef[] = [
       return g.put(3, 14, '@').put(86, 14, 'E').rows();
     })(),
     build(w: World) {
-      for (const tx of [34, 61]) checkpoint(w, tx);
+      for (const tx of [38]) checkpoint(w, tx);
       const d = door(w);
       water(w, 15.8, { rate: 0, minTy: 15.8, colors: ['#5B7F6E', '#2F4E43'], cause: 'splash', behind: true });
       prop(w, 'umbrellas', 8, 15, { n: 2 });
@@ -542,6 +555,17 @@ export const TVM: LevelDef[] = [
           d.moveTo(w, px(66), d.y, 0.7, 'inOut');
         },
       );
+      // Tara says jump the dog; the dog growls in its sleep when you land near it. It's only a growl: a dad who
+      // steps back from it steps back on to the spikes he just jumped
+      onPass(w, px(76.8), (w2) => taraSays(w2, 'Patti! Chaadi kadakku! | A dog! Jump over it!', 1.6));
+      w.when(
+        (w2) => w2.player.onGround && w2.player.cx >= px(77.6) && !woke,
+        (w2) => {
+          w2.say('Grrr...', dog.cx, dog.y - 6, 1.0, 'npc');
+          w2.sfx('growl', dog.cx, dog.y);
+          w2.emit('shake', dog.cx, dog.y, { amount: 1 });
+        },
+      );
       prop(w, 'palm', 62, 15, { h: 80, lean: 5 });
       prop(w, 'umbrellas', 70, 15, { n: 1 });
       rival(w, 21, 6, -1, tara(4, -1));
@@ -583,6 +607,8 @@ export const TVM: LevelDef[] = [
             if (caught < 0 && w2.standing(net.solid)) {
               caught = w2.tick;
               w2.say('Meen kitti! | Got a fish!', net.cx, UP - 30, 1.0, 'npc');
+              // and this time Tara tells the truth (a dad who's learnt she lies stays put)
+              taraSays(w2, 'Ippo thanne chaadu! | Jump right now!', 1.2);
             }
             // step off the dipped net and it springs back up: its stones slam down on the bank
             if (caught >= 0 && sprung < 0 && !w2.standing(net.solid) && w2.player.x > net.solid.x + 4) sprung = w2.tick;
@@ -746,8 +772,9 @@ export const TVM: LevelDef[] = [
       };
       rock(px(70), px(70) - 56, 0);
       rock(px(75), px(72) - 2, 0.18);
-      // the step down to the factory looks solid. It isn't, if you land on it.
+      // the step down to the factory looks solid. It isn't, if you land on it. (Tara says take the steps.)
       noLanding(w, 'e');
+      onPass(w, px(78.6), (w2) => taraSays(w2, 'Padi irangi vaa! | Come down the steps!', 1.6));
       prop(w, 'teastall', 4, 15, { label: 'CHAAYA' });
       prop(w, 'tree', 25, 15, { h: 70 });
       sign(w, 28.4, 10.8, 3.6, 'MUNNAR', 'green', 'right', '2 km');
@@ -785,7 +812,7 @@ export const TVM: LevelDef[] = [
       .put(94, 12, 'E')
       .rows(),
     build(w: World) {
-      for (const tx of [41, 59]) checkpoint(w, tx);
+      for (const tx of [50]) checkpoint(w, tx);
       exitTwist(w, door(w), 'none');
       water(w, 13.85, { rate: 0, minTy: 13.85, colors: ['rgba(70,140,120,0.85)', 'rgba(25,70,60,0.95)'], cause: 'splash' });
       // whitewashed footbridges with red-oxide edges
@@ -822,6 +849,9 @@ export const TVM: LevelDef[] = [
       w.flags.boatEnd = END;
       // the high bridge you can sit under: hop up on to it like the first two and spikes come out of its deck
       popOnJump(w, 'D', px(51), px(58));
+      // Tara: a lie at the third bridge, the truth at the fourth. Read the bridge, not Tara
+      onPass(w, px(49.5), (w2) => taraSays(w2, 'Paalam! Mukalil kayaru! | A bridge! Get up on top!', 1.6));
+      onPass(w, px(60), (w2) => taraSays(w2, 'Ee paalam chaadi kayaru! | Jump up on this bridge!', 1.6));
       // crows skim the water at head height
       const crow = (at: number, ahead: number) =>
         onPass(w, at, (w2) => {
