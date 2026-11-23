@@ -1,30 +1,27 @@
-import './rooms/rooms.css';
+import './ui/style.css';
 import { Capacitor } from '@capacitor/core';
-import { RoomApp } from './rooms/app';
-import { ROOM_BY_ID } from './rooms/doors';
+import { App } from './app/app';
 import { inAndroidShell } from './platform/device';
-
-// ?classic opens the old long-stage game (frozen; kept for reference)
-const classic = new URLSearchParams(location.search).has('classic');
 
 function fail(e: any) {
   console.error(e);
   document.body.insertAdjacentHTML('beforeend', `<pre style="position:fixed;inset:auto 0 0 0;color:#fff;background:#a00;padding:8px;font:12px monospace;z-index:999">${String(e?.stack ?? e)}</pre>`);
 }
 
-if (classic) {
-  Promise.all([import('./ui/style.css'), import('./app/app')])
-    .then(([, m]) => {
-      const app = new m.App(document.getElementById('app')!);
+// ?rooms opens the shelved one-screen rooms prototype (v0.16.0); the game is the long stages below
+if (new URLSearchParams(location.search).has('rooms')) {
+  Promise.all([import('./rooms/rooms.css'), import('./rooms/app'), import('./rooms/doors')])
+    .then(([, m, d]) => {
+      const app = new m.RoomApp(document.getElementById('app')!);
       (window as any).__ldd = app;
+      (window as any).__lddRoomIds = () => Object.keys(d.ROOM_BY_ID);
+      (window as any).__lddRoom = (id: string) => d.ROOM_BY_ID[id];
       return app.boot();
     })
     .catch(fail);
 } else {
-  const app = new RoomApp(document.getElementById('app')!);
+  const app = new App(document.getElementById('app')!);
   (window as any).__ldd = app;
-  (window as any).__lddRoomIds = () => Object.keys(ROOM_BY_ID);
-  (window as any).__lddRoom = (id: string) => ROOM_BY_ID[id];
   app.boot().catch(fail);
 }
 

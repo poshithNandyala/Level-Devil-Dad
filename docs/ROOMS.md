@@ -1,4 +1,8 @@
-# The rooms game (v0.16 onwards)
+# The rooms prototype (v0.16.0, shelved)
+
+**Shelved.** The owner prefers the long-stage game; v0.16.1 put it back as the game. This prototype is kept in
+`src/rooms/` and opens only with `?rooms` in the URL. Ideas from it (the fixed-height jump, exact traps, the
+counter-adaptation bar, the fail montage) can be borrowed by the long stages.
 
 The game is now **one-screen rooms**, wordless, in **doors** of five. Every door is a city, and in every
 city **Dad is late for a ride**: the local train in Mumbai, an auto in Bengaluru, the metro in Delhi. The ride
