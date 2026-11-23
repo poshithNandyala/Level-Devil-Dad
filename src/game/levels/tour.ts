@@ -1,6 +1,7 @@
-// Stage 1 of every city: a long, easy walk through the capital with Tara as the guide.
-// No traps, shallow ditches you can climb out of, hidden checkpoints anyway. She welcomes you,
+// Stage 1 of every city: a walk through the capital with Tara as the guide. She welcomes you,
 // then tells you real things about the place as you pass them (queued, so nothing is cut off).
+// The course itself is gentle (shallow ditches you can climb out of), but since the hardness pass
+// every city's tour hides betrayals of its own (`paint` and `extra`): no stage is a free walk.
 import type { CityId } from '../constants';
 import type { LevelDef, World } from '../world';
 import type { ThingKind } from '../../render/art/things';
@@ -109,6 +110,11 @@ export interface TourSpec {
   /** things standing about as scenery (no collision): [kind, tile x] */
   things?: [ThingKind, number][];
   par?: number;
+  /** this city's own betrayals: map letters to add (after the course) and what to build */
+  paint?: (g: Grid) => void;
+  extra?: (w: World) => void;
+  /** the hint, if the betrayals need one (the course hint is used otherwise) */
+  hint?: string;
 }
 
 const HINT: Record<TourSeg['k'], string> = {
@@ -139,9 +145,9 @@ export function tour(t: TourSpec): LevelDef {
       for (let i = 0; i < s.n; i++) g.fill(d0 + i * s.run, d0 + (i + 1) * s.run - 1, 15 - (s.n - i), 14, '#');
     }
   }
-  g.fill(T.deck[0], T.deck[1], 13, 14, '#')
-    .put(3, 14, '@')
-    .put(T.door, 14, 'E');
+  g.fill(T.deck[0], T.deck[1], 13, 14, '#');
+  t.paint?.(g);
+  g.put(3, 14, '@').put(T.door, 14, 'E');
   const kinds = [...new Set(course.map((s) => s.k))];
   const hint = 'A walk around town: ' + kinds.map((k) => HINT[k]).join(', ') + '. Tara will tell you about the city.';
   return {
@@ -151,7 +157,7 @@ export function tour(t: TourSpec): LevelDef {
     name: t.name,
     nameEn: t.nameEn,
     tagline: t.tagline,
-    hint: hint.charAt(0).toUpperCase() + hint.slice(1),
+    hint: t.hint ?? hint.charAt(0).toUpperCase() + hint.slice(1),
     par: t.par ?? 30,
     map: g.rows(),
     build(w: World) {
@@ -180,6 +186,7 @@ export function tour(t: TourSpec): LevelDef {
       for (const sg of course) checkpoint(w, segEnd(sg) + 1.5);
       collectible(w, t.item, T.item[0], T.item[1]);
       w.flags.tour = 1;
+      t.extra?.(w);
     },
   };
 }

@@ -189,7 +189,7 @@ whole stage: it appends each act's route (by act id) and the ending's policy (by
 
 | Suite | Checks |
 | --- | --- |
-| `levels.test.ts` | every stage builds, the route wins, it's deterministic, it wins with every rival variant, and the `NAIVE` play dies |
+| `levels.test.ts` | every stage builds, the route wins, it's deterministic, it wins with every rival variant, the `NAIVE` play dies, and the `FIX` play (the obvious correction after the first death) dies too |
 | `checkpoints.test.ts` | the route passes every hidden checkpoint and a respawn replay is exact |
 | `cpsafe.test.ts` | standing at a checkpoint is safe |
 | `items.test.ts` | one hidden item per stage, somewhere reachable-looking |
@@ -209,9 +209,19 @@ LDD_PAR=1 npx vitest run tests/par.test.ts --silent=false                       
 LDD_ENDREC=1 LDD_ID=RPR-05 npx vitest run tests/endrec.test.ts                     # record the route -> /tmp/rec/RPR-05.json
 npm run build:single && bash scripts/dev/shots.sh RPR-05                           # screenshots along it -> shots/route/RPR-05-sheet.png
 node scripts/dev/clip.mjs RPR-05 1200 1800 4                                      # frames of ticks 1200-1800 for a how-to clip
+LDD_LEVEL=TVM-08 LDD_FIX=1 LDD_REC=/tmp/r.json npx vitest run tests/debug.test.ts   # trace/record the FIX play
+LDD_AUDIT=1 LDD_IDS=TVM-01,TVM-02 npx vitest run tests/hazard-audit.test.ts --silent=false   # spikes nobody comes near
+LDD_FAIR=1 LDD_IDS=TVM-01,TVM-02 npx vitest run tests/fair-rnc.test.ts --silent=false        # human timing, any stages
+node scripts/solshot.mjs TVM-01 /tmp/r.json 700,900                                       # screenshots of a recording
 ```
 
 `tests/dbg2.test.ts` is a skipped scratch file for one-off checks.
+
+The hardness-pass kit: a tour (stage 01) takes `paint(g)` and `extra(w)` for its betrayals and its own
+`hint`; `gapAhead(w, letter, { lead, back })` (trolls.ts) drops a floor just ahead of you and brings it
+back after `back` seconds. A moving thing you can ride must set `solid.velX` to its real speed, or a hop
+on it loses its motion (TVM-02's bus did until v0.16.2). The route bot (`incoming`) counts the speed of
+whatever you stand on, so its hops on a moving roof are judged like a person's.
 
 **Gotchas** (each one cost hours):
 - The ending harness already counts `m.hold` down; don't decrement it in a policy.

@@ -103,6 +103,12 @@ gangway slope push (PNJ ending), sliding hammock bounce counter, clock-hand circ
 (manja) as height caps, babool thorn branches, forest gates (naka), a safari jeep ridden backwards,
 window breezes, broken-glass floors, half-shut shutters, sword dancers on a count, Diwali rockets on a fuse.
 
+Hardness pass (v0.16.2 on): a rocket launch whose blast burns the road and whose spent stage falls where
+you'd wait (TVM-01, `Launch`), a floor that drops just ahead of you and comes back if you wait, while the
+far side breaks if you jump it (TVM-01, `gapAhead` + `noLanding`), bus bells as a rule: one bell brakes and
+slides you forward, two bells jerk off and slide you back (TVM-02), hidden spikes on a deck top that come
+out when you hop at it (TVM-08).
+
 ## Acts (one per id, never reused)
 amr02-powder amr03-logs amr04-hot amr05-humps amr06-zip amr07-gallery amr08-shack
 blr02-badge blr03-viaduct blr04-jam blr05-glasshouse blr06-powercut blr07-crusher blr08-curtain

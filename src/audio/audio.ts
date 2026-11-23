@@ -325,6 +325,11 @@ export class Audio {
         this.burst(t + 0.18, 0.22, 0.22, 'bandpass', 1500, 0.7, undefined, 600);
         this.tone('square', 500, 200, t + 0.18, 0.12, 0.04);
         break;
+      case 'ding':
+        // one pull of a bus bell cord
+        this.tone('sine', 2093, 2093, t, 0.3, 0.055);
+        this.tone('sine', 2637, 2637, t, 0.22, 0.03);
+        break;
       case 'bell':
         this.tone('sine', 2093, 2093, t, 0.25, 0.05);
         this.tone('sine', 2637, 2637, t, 0.2, 0.03);

@@ -346,3 +346,27 @@ spills, and a Sarhul stage too close to religion. All seven stages, acts and doo
   starts at the very top of the screen catches a jumper at the top, who then sinks for three seconds:
   start it lower (a cleft) where slowness matters.
 
+
+## v0.16.2: the hardness pass, Thiruvananthapuram
+The owner's verdict on the shipped game: too easy, too obvious, nowhere near Level Devil. Every city gets a
+hardness pass, in journey order (AGENTS.md has the rules). Thiruvananthapuram first:
+- 01 **Swagatham** bites now. Coming down the steps, the rocket at Thumba launches and its blast burns the
+  road ahead (stop on the last step). Its spent stage then falls at the foot of the steps, exactly where you
+  stopped if you stopped late (wait on the step; hop it once it's down). At the door the road drops away a
+  step ahead of you; jumping it breaks the far side, waiting brings it back.
+- 02 **Aanavandi Express**: the KSRTC bells as a rule (one bell = stop, two bells = go, as on every Kerala
+  bus). One bell, he brakes and you slide forward 28 px; two bells, he jerks off and you slide back 71 px.
+  Board and stand and the jerk throws you off the back; ride at the front and the brake throws you off the
+  front; the middle stays on. The bus now has a real speed (`solid.velX`): before, a hop on the roof lost
+  the bus's motion and landed you 30-50 px further back.
+- 04: the coconut over the gap now meets a dad who jumps the gap from its edge head first (it missed by a
+  few pixels). 08: the high footbridge's spikes sit on its deck and come out if you hop at it (they used to
+  sit under it, where nobody went).
+- The obvious fix dies in six of eight stages (`FIX` in tests/solutions.ts: 01, 02, 04, 06, 07, 08).
+- Tools: `tests/hazard-audit.test.ts` lists spikes that no route, naive play or fix ever comes near (TVM is
+  clean). The route bot's `incoming` now counts the speed of what you stand on; it used to hop a bus-roof
+  crow 0.07 s before impact, which made TVM-02 and TVM-08 look unfair to the human-timing model.
+- Human timing (whole stage, average 0-12 ticks late): 01 100%, 02 100%, 07 90%, 08 100%. Still under 90%
+  and untouched: 03 70% (glasses on the counter), 04 75%, 05 33% (crumbling moat stones), 06 28% (the
+  first net). Those are old sections; check them with a person before deciding they're unfair.
+- AGENTS.md: the hint may name what's ahead (the player asked for it); the guide still may not.

@@ -154,7 +154,9 @@ export function incoming(w: World, _gap: number) {
     if (e.y + eh < p.y - 6 || e.y > p.y + p.h + 2) continue;
     const ahead = e.x - (p.x + p.w),
       behind = p.x - (e.x + ew);
-    const pv = p.vx + (p.carryVx ?? 0);
+    // riding something (a bus roof): its speed counts too
+    const gs: any = p.onGround ? p.groundSolid : null;
+    const pv = p.vx + (p.carryVx ?? 0) + (gs ? gs.velX ?? gs.lastDx / DT : 0);
     if (e.vx < 0 && ahead > -4) {
       const closing = -e.vx + Math.max(0, pv);
       if (closing > 20 && ahead / closing <= 0.13) return true;

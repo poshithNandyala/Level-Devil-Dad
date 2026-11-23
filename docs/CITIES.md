@@ -73,8 +73,8 @@ song lyrics. Affectionate teasing locals would proudly share; never mean.
 
 | Stage | Name (meaning) | What it is | Act | Door ending |
 | --- | --- | --- | --- | --- |
-| TVM-01 | Swagatham (Welcome to Thiruvananthapuram) | Welcome tour: easy run past landmarks while the guide tells you real things about the city. Red buses, coconut palms, a rocket station and chaaya in the rain. | — | — |
-| TVM-02 | Aanavandi Express (The elephant-bus express) | Monsoon flood. One red bus. Ride on the roof. | — | room twist |
+| TVM-01 | Swagatham (Welcome to Thiruvananthapuram) | Welcome tour past landmarks while the guide tells you real things about the city, with two betrayals: the rocket at Thumba launches as you come down the steps and its blast burns the road (stop on the last step), then its spent stage falls at the foot of the steps (don't wait there; hop it once it's down); and at the door the road opens in front of you (jumping it breaks the far side; wait, it closes again). | — | — |
+| TVM-02 | Aanavandi Express (The elephant-bus express) | Monsoon flood. One red bus. Ride on the roof. The conductor's bells: one bell, he brakes and you slide forward; two bells, he jerks off and you slide back off the roof. Ride in the middle. | — | room twist |
 | TVM-03 | Chaaya Later (Tea later) | A tea street. Everything is hot, and half of it is a trick. | — | room twist |
 | TVM-04 | Thenga Trajectory (Coconut trajectory) | Gravity in Kerala always finds Dad’s head. | — | room twist |
 | TVM-05 | Fort Gate Forward | Two gates, a moat, a headwind and one very light sleeper. | — | room twist |

@@ -132,8 +132,10 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'R', jump: 12, ticks: 12, note: 'on to the roof' },
     { hold: 'R', until: (w) => w.player.onGround || w.player.x >= thingOf(w, 'redbus').solid.x + 6, max: 100 },
     { hold: '', until: ground, max: 200 },
-    { hold: '', dodge: 60, until: (w) => w.flags.bus === 'stop', max: 2000, note: 'hop the crows; never jump under a flyover' },
-    { hold: 'L', ticks: 26, note: 'lean back against the brake' },
+    { hold: '', dodge: 105, until: (w) => thingOf(w, 'redbus').solid.x >= px16(26), max: 2000, note: 'hop the crows; never jump under a flyover' },
+    { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 46, max: 120, note: 'ride in the middle of the roof' },
+    { hold: '', until: (w) => w.flags.bus === 'go2' && w.player.stun === 0, max: 2000, note: 'one bell, two bells: the middle stays on' },
+    { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 40, max: 120, note: 'back to the middle' },
     { hold: '', dodge: 60, until: (w) => w.flags.bus === 'end', max: 2000 },
     { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 78, max: 200, note: 'run to the front at the last stop' },
     { hold: 'R', jump: 12, ticks: 12, note: 'off before it turns back' },
@@ -907,6 +909,33 @@ export const SOLUTIONS: Record<string, Step[]> = {
 
 for (const c of Object.keys(COURSES) as CityId[]) SOLUTIONS[`${c}-01`] = tourRun(c);
 
+// ---------------------------------------------------------------- the hardness pass: tours that bite
+/** a tour run with extra steps spliced in: before the step whose note is `at` (its i-th occurrence) */
+function tourWith(city: CityId, cuts: { before: string; nth?: number; steps: Step[] }[], tail?: Step[]): Step[] {
+  const run = tourRun(city);
+  for (const c of cuts) {
+    let n = c.nth ?? 0;
+    const i = run.findIndex((st) => st.note === c.before && n-- === 0);
+    if (i < 0) throw new Error(`tourWith ${city}: no step '${c.before}'`);
+    // the step before a noted jump is its approach (`until X`): splice in front of the approach
+    run.splice(i - 1, 0, ...c.steps);
+  }
+  if (tail) run.splice(run.length - 1, 1, ...tail);
+  return run;
+}
+const launchIs = (st: string) => (w: World) => w.flags.launch === st;
+const groupBack = (letter: string) => (w: World) => {
+  const g = groupAt(w, letter) as unknown as { state: string; atRest: boolean };
+  return g.state === 'rest' && g.atRest;
+};
+// Thumba: stop on the last step while the rocket's fire dies down and its spent stage lands (it makes a
+// step down); at the very end, wait for the road to close again
+SOLUTIONS['TVM-01'] = tourWith(
+  'TVM',
+  [{ before: 'hop the parked ride', steps: [{ hold: 'R', until: X(49.9), max: 400, note: 'on to the last step' }, { hold: '', until: launchIs('down'), max: 600, note: 'the rocket goes; wait out the fire and the falling stage' }] }],
+  [{ hold: 'R', until: X(101.9), max: 900 }, { hold: '', until: groupBack('g'), max: 400, note: 'the road opens: wait for it to close' }, { hold: 'R', until: done, max: 400 }],
+);
+
 /** A long stage = its old room + troll sections + the door: drop the room's last `drop` steps
  *  (its old door), walk on with `extra`, then the sections' routes and the door. */
 function lengthen(id: string, drop: number, extra: Step[]) {
@@ -1100,6 +1129,7 @@ eastSolutions(SOLUTIONS, lengthen);
 /** The obvious play that a trap is designed to punish. */
 export const NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
   ...EAST_NAIVE,
+  'TVM-01': { steps: tourRun('TVM'), cause: 'burnt' },
   'TVM-02': { steps: [{ hold: 'R', until: done }], cause: 'splash' },
   'TVM-03': { steps: [{ hold: 'R', until: done }], cause: 'spikes' },
   'TVM-04': { steps: [{ hold: 'R', until: done }], cause: 'coconut' },
@@ -1210,4 +1240,37 @@ export const NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
   'BOM-03': { steps: [{ hold: 'L', until: done, note: 'trust Tara, board the fast local' }], cause: 'fell' },
   'BOM-04': { steps: [{ hold: '', until: done }], cause: 'flood' },
   'BOM-05': { steps: [{ hold: 'R', until: done }], cause: 'fell' },
+};
+
+/** The hardness pass: what the player tries after the first death. It must die too (in at least half the stages). */
+const tvm08 = SOLUTIONS['TVM-08'];
+const tvm08At = tvm08.findIndex((st) => st.note?.startsWith('hop the crow; under the spiky bridge'));
+/** a route with the step noted `note` (and the `n` after it) swapped for `with` */
+function swapAt(id: string, note: string, n: number, w: Step[]): Step[] {
+  const r = SOLUTIONS[id];
+  const i = r.findIndex((st) => st.note === note);
+  if (i < 0) throw new Error(`swapAt ${id}: no step '${note}'`);
+  return [...r.slice(0, i), ...w, ...r.slice(i + n)];
+}
+export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
+  // the bus jerked off and threw you off the back: ride at the front then (the brake throws you off it)
+  'TVM-02': {
+    steps: swapAt('TVM-02', 'ride in the middle of the roof', 1, [
+      { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 80, max: 120 },
+    ]),
+    cause: 'splash',
+  },
+  // the coconut over the gap: just jump the gap, like the roll before it (it drops on the jump)
+  'TVM-04': { steps: swapAt('TVM-04', 'little hop to bait the gap coconut', 1, []), cause: 'coconut' },
+  // the last net: wait on it for the right moment, like the four before it (it dips the moment you land)
+  'TVM-06': { steps: swapAt('TVM-06', 'it dips at once: straight off to the jetty', 2, [{ hold: '', until: done, max: 400 }]), cause: 'splash' },
+  // the jeep: hop it and run on, it's gone by (it backs up for another go)
+  'TVM-07': { steps: swapAt('TVM-07', 'it backs up: stop and hop it', 1, [{ hold: 'R', until: done, max: 600 }]), cause: 'hit' },
+  // the third bridge: hop it like the first two (its spikes only come out when you do)
+  'TVM-08': {
+    steps: [...tvm08.slice(0, tvm08At), { hold: '', until: (w) => px16(54) - (w.player.x + 10) <= 30, max: 900, dodge: 1 }, { hold: 'R', jump: 30, ticks: 30, long: true }, { hold: '', until: done, max: 300 }],
+    cause: 'spikes',
+  },
+  // stop at the foot of the steps until the fire is out: the spent stage comes down there
+  'TVM-01': { steps: tourWith('TVM', [{ before: 'hop the parked ride', steps: [{ hold: 'R', until: X(52.3), max: 400 }, { hold: '', until: done, max: 600 }] }]), cause: 'crushed' },
 };

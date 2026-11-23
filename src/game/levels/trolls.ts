@@ -114,3 +114,30 @@ export function chaser(w: World, kind: Thing['kind'], at: number, o: { x: number
 }
 
 export { px };
+
+/**
+ * The floor ahead opens the moment Dad's leading edge comes within `lead` px of it, and slides
+ * back up into place `back` seconds later, for good. (Jump it and you land on whatever's past it.)
+ */
+export function gapAhead(w: World, letter: string, o: { lead?: number; back: number }): TileGroup {
+  const g = group(w, letter);
+  const lead = o.lead ?? 30;
+  w.when(
+    (w2) => w2.player.x + w2.player.w >= g.ox - lead && w2.player.x < g.ox,
+    (w2) => {
+      g.fall(w2, { g: 2600, v0: 60 });
+      w2.after(o.back, () => {
+        const s = g.solid;
+        s.x = g.ox;
+        s.y = g.oy + 5 * 16;
+        s.xr = 0;
+        s.yr = 0;
+        s.collidable = true;
+        g.visible = true;
+        g.state = 'rest';
+        g.slide(w2, 0, -5, 0.3, 'out');
+      });
+    },
+  );
+  return g;
+}

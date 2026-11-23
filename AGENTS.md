@@ -56,7 +56,8 @@ Read before you touch anything:
 3. **Exact.** Every hazard must be able to reach the route or the obvious mistake. A spike row no jump can touch
    is decoration, not a trap: move it to where the jump goes (by pixels, against Dad's 10x14 box and the real
    jump arc), or take it out.
-4. **No spoilers.** The guide and the hint never describe a trap the player hasn't died to yet in this visit.
+4. **No spoilers.** The guide (Tara's live lines) never describes a trap the player hasn't died to yet in this
+   visit. The hint is the player asking for help (it unlocks after 3 deaths), so it may name what's ahead.
 5. **Still fair.** The human-timing check stays at 90%+ for the route; harder means smarter, not more precise.
 
 ## Workflow per city

@@ -6,7 +6,8 @@ import { DT } from '../constants';
 import { tour } from './tour';
 import { Grid } from './grid';
 import { exitTwist } from './twists';
-import { crumble, dropFloor, fakeFloor, noLanding, onPass, popAt, popOnJump, riseWall, shyLedge } from './trolls';
+import { crumble, dropFloor, fakeFloor, gapAhead, noLanding, onPass, popAt, popOnJump, riseWall, shyLedge } from './trolls';
+import { Launch } from '../entities/kerala';
 
 // Thiruvananthapuram: monsoon puddles, a red express bus, a tea stall,
 // coconut palms and the old fort gate. Lines: Malayalam + English.
@@ -69,7 +70,16 @@ export const TVM: LevelDef[] = [
       ["teastall", 88, { label: 'PUTTU' }],
       ["palm", 108, { h: 84, lean: -6 }],
     ],
-    things: [["rocket", 58], ["redbus", 24]],
+    things: [["redbus", 24]],
+    hint: 'When the rocket at Thumba goes up, the road burns: stop on the last step. Don’t wait at the bottom of the steps, the spent stage falls there; hop it once it’s down. At the very end the road opens in front of you: don’t jump it (the far side breaks), wait, it closes again.',
+    // Thumba's rocket goes up as you come down the steps, and the road at the very end opens up
+    paint: (g) => g.fill(104, 106, 15, 17, 'g').fill(107, 110, 15, 17, 'h'),
+    extra: (w) => {
+      const rocket = Launch.place(w, { tx: 61, groundTy: 15, blast: [58, 65], blastSec: 1.4, stageTx: 52, sepAt: 1.5 });
+      onPass(w, px(50), (w2) => rocket.fire(w2));
+      gapAhead(w, 'g', { lead: 30, back: 0.8 });
+      noLanding(w, 'h');
+    },
   }),
   {
     id: 'TVM-02',
@@ -78,7 +88,7 @@ export const TVM: LevelDef[] = [
     name: 'Aanavandi Express',
     nameEn: 'The elephant-bus express',
     tagline: 'Monsoon flood. One red bus. Ride on the roof.',
-    hint: 'Hop the crows that fly at you, but never jump under a bridge. Before the bus brakes at the statue, walk to the back of the roof. At the end it turns back: jump off before it does.',
+    hint: 'Hop the crows that fly at you, but never jump under a bridge. One bell: he brakes and you slide forward. Two bells: he jerks off and you slide back. Ride in the middle of the roof. At the end it turns back: jump off before it does.',
     par: 23,
     map: (() => {
       const g = new Grid(96).fill(0, 3, 13, 17, '#').fill(88, 95, 12, 17, '#');
@@ -95,7 +105,9 @@ export const TVM: LevelDef[] = [
       const bus = thing(w, 'redbus', 10, 0, { dy: 240 - 40, h: 40, label: 'SUPER FAST' });
       const Y = bus.y;
       let x = bus.x,
-        v = 0;
+        lastX = x,
+        v = 0,
+        rung = false;
       let phase: 'arrive' | 'wait' | 'go' | 'brake' | 'stop' | 'go2' | 'end' | 'back' = 'arrive';
       w.flags.bus = phase;
       const set = (p2: typeof phase) => {
@@ -116,10 +128,15 @@ export const TVM: LevelDef[] = [
         } else if (phase === 'go' || phase === 'go2') {
           v = Math.min(108, v + 160 * DT);
           x += v * DT;
+          // one bell means stop: the conductor rings it a moment before the statue
+          if (phase === 'go' && !rung && x >= px(31.6)) {
+            rung = true;
+            w2.sfx('ding', bus.cx, Y);
+            w2.say('Statue! Statue! | Statue stop!', bus.cx, Y - 14, 1.4, 'npc');
+          }
           if (phase === 'go' && x >= px(37)) {
             set('brake');
             w2.sfx('honk', bus.cx, Y);
-            w2.say('Statue! Statue! | Statue stop!', bus.cx, Y - 14, 1.4, 'npc');
           }
           if (phase === 'go2' && x >= px(80)) {
             set('end');
@@ -128,16 +145,36 @@ export const TVM: LevelDef[] = [
             w2.after(0.75, () => set('back'));
           }
         } else if (phase === 'brake') {
-          // slams the brakes: whoever stands on the roof keeps going
+          // slams the brakes: whoever stands on the roof slides on forward
           v = 0;
-          if (riding) w2.player.vx = 250;
+          if (riding) {
+            w2.player.vx = 200;
+            w2.player.stun = 12;
+          }
           w2.emit('shake', bus.cx, Y, { amount: 3 });
           w2.sfx('thud', bus.cx, Y);
           set('stop');
-          w2.after(1.1, () => set('go2'));
+          // two bells mean go: and he takes off with a jerk that slides the roof out from under you
+          w2.after(0.6, () => {
+            w2.sfx('bell', bus.cx, Y);
+            w2.say('Right, right! | Go on, go!', bus.cx, Y - 14, 1.2, 'npc');
+          });
+          w2.after(1.4, () => {
+            set('go2');
+            v = 70;
+            if (w2.standing(bus.solid)) {
+              w2.player.vx = -230;
+              w2.player.stun = 32;
+            }
+            w2.emit('shake', bus.cx, Y, { amount: 2 });
+            w2.sfx('thud', bus.cx, Y);
+          });
         } else if (phase === 'back') {
           x = Math.max(px(4), x - 120 * DT);
         }
+        // its speed, so a hop on the roof keeps it (you land where you took off)
+        bus.solid.velX = (x - lastX) / DT;
+        lastX = x;
         bus.place(w2, x, Y);
       });
       // crows fly at you along the road, at head height above the roof
@@ -259,7 +296,8 @@ export const TVM: LevelDef[] = [
       prop(w, 'palm', 17, 15, { h: 86, lean: -10 });
       prop(w, 'palm', 26, 15, { h: 80, lean: 6 });
       const a = coconut(w, px(9) + 7, 162);
-      const b = coconut(w, px(16) + 2, 156);
+      // (measured: a dad who jumps the gap from its edge meets this one head first)
+      const b = coconut(w, px(16) - 4, 156);
       const c1 = coconut(w, px(26) + 9, 162);
       const c2 = coconut(w, px(26) + 15, 160);
       w.when((w2) => w2.player.x >= px(6), () => drop(w, a, { shake: 0.15, rollVx: -90 }));
@@ -602,7 +640,7 @@ export const TVM: LevelDef[] = [
     name: 'Vallam Kali',
     nameEn: 'Snake-boat race',
     tagline: 'The snake boat race at Alappuzha. A hundred oarsmen, and they don’t stop for bridges.',
-    hint: 'Ride the snake boat. It slips under the footbridges and you don’t: hop up, cross, drop back on. The second bridge is taller: hold jump. Never jump at the bridge with spikes under it, but do hop the one after it. Hop the crows. Spikes pop up twice on the finish jetty.',
+    hint: 'Ride the snake boat. It slips under the footbridges and you don’t: hop up, cross, drop back on. The second bridge is taller: hold jump. The third is high enough to sit under: stay seated, spikes come out of its deck if you hop at it. Do hop the one after it. Hop the crows. Spikes pop up twice on the finish jetty.',
     par: 20,
     scene: { kind: 'water', place: 'Alappuzha', with: ['houseboats', 'palms'] },
     map: Grid.ground(13, 96)
@@ -611,7 +649,7 @@ export const TVM: LevelDef[] = [
       .fill(22, 23, 11, 12, 'b')
       .fill(36, 37, 10, 12, 'c')
       .fill(54, 55, 10, 10, 'd')
-      .fill(54, 55, 11, 11, 'v')
+      .fill(54, 55, 9, 9, 'D')
       .fill(64, 65, 11, 12, 'f')
       .put(89, 12, 'A')
       .put(2, 12, '@')
@@ -653,6 +691,8 @@ export const TVM: LevelDef[] = [
         },
       );
       w.flags.boatEnd = END;
+      // the high bridge you can sit under: hop up on to it like the first two and spikes come out of its deck
+      popOnJump(w, 'D', px(51), px(58));
       // crows skim the water at head height
       const crow = (at: number, ahead: number) =>
         onPass(w, at, (w2) => {
