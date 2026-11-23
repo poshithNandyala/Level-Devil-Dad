@@ -235,19 +235,19 @@ export const TVM: LevelDef[] = [
     name: 'Chaaya Later',
     nameEn: 'Tea later',
     tagline: 'A tea street. Everything is hot, and half of it is a trick.',
-    hint: 'Jump the steam: spikes hide in it. Cross under the long pour when it stops. Up on the counter, hop the glasses he slides at you, and jump off before the end gives way. Mind the boiling sprays, the shiny floor is fake, and a scooter comes from behind.',
+    hint: 'Jump the steam: spikes hide in it. Cross under the long pour when it stops. Up on the counter, hop the glasses he slides at you, and jump off before the end gives way. Mind the boiling sprays. The shiny floor is fake, and your jump over it brings up spikes where a short jump lands: jump long. A scooter comes from behind.',
     par: 18,
     map: (() => {
       const g = Grid.ground(15, 80);
       g.fill(10, 10, 14, 14, '^');
       // the long counter over a hot drain
       g.pit(24, 34).fill(24, 31, 13, 13, '#').fill(32, 34, 13, 13, 'a');
-      // a shiny shop floor that isn't there (b)
-      g.fill(50, 51, 15, 17, 'b');
+      // a shiny shop floor that isn't there (b), and where the hop over it lands, hidden spikes (S)
+      g.fill(50, 51, 15, 17, 'b').fill(52, 53, 14, 14, 'S');
       return g.put(2, 14, '@').put(77, 14, 'E').rows();
     })(),
     build(w: World) {
-      for (const tx of [52]) checkpoint(w, tx);
+      for (const tx of [47]) checkpoint(w, tx);
       exitTwist(w, door(w), 'swap', { to: 69 });
       water(w, 16.5, { rate: 0, minTy: 16.5, colors: ['#8C6A44', '#4E3620'], cause: 'burnt', behind: true });
       prop(w, 'teastall', 4, 15, { label: 'CHAAYA' });
@@ -279,6 +279,8 @@ export const TVM: LevelDef[] = [
       // 5. the shiny floor is a painted board over the drain
       const fake = fakeFloor(w, 'b');
       fake.paint = { fill: '#C9B38C', trim: '#EFE2C4', line: 'rgba(80,60,30,0.25)' };
+      // the hop over it brings up spikes where a hop lands: jump long
+      popOnJump(w, 'S', px(46), px(51.5));
       // 6. a scooter comes up behind you
       w.when(
         (w2) => w2.player.x >= px(54),
@@ -303,12 +305,14 @@ export const TVM: LevelDef[] = [
     name: 'Thenga Trajectory',
     nameEn: 'Coconut trajectory',
     tagline: 'Gravity in Kerala always finds Dad’s head.',
-    hint: 'Coconuts fall where you’re going: wait, then hop the roll. The one over the gap falls when you jump, so bait it with a little hop. A palm crashes across the river as a bridge, then sinks: don’t stop on it. In the last grove they fall in a wave: follow behind it.',
+    hint: 'Coconuts fall where you’re going: wait, then hop the roll. The one over the gap falls when you jump, so bait it with a little hop. A palm crashes across the river as a bridge, then sinks: don’t stop on it. In the last grove they fall in a wave: follow behind it. The far bank of the last gap backs away from your first jump: bait it too, wait for it to come back, then jump.',
     par: 18,
-    map: Grid.ground(15, 96).pit(15, 16).pit(36, 45).pit(78, 79).put(2, 14, '@').put(92, 14, 'E').rows(),
+    map: Grid.ground(15, 96).pit(15, 16).pit(36, 45).pit(78, 79).fill(80, 83, 15, 17, 'k').put(2, 14, '@').put(92, 14, 'E').rows(),
     build(w: World) {
       for (const tx of [33, 71]) checkpoint(w, tx);
       exitTwist(w, door(w), 'fake');
+      // the far bank of the last gap backs off from the first jump at it, then creeps back: bait it
+      shyLedge(w, 'k', { dx: px(3), from: px(72), back: 1.1 });
       water(w, 15.6, { rate: 0, minTy: 15.6, colors: ['#4F8C83', '#295B57'], cause: 'splash', behind: true });
       // the first grove (as before)
       prop(w, 'palm', 9, 15, { h: 80, lean: 4 });

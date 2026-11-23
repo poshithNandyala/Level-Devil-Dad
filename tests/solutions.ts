@@ -11,6 +11,11 @@ import { Jelly } from '../src/game/levels/kvt';
 import { westSolutions } from './west';
 import { eastSolutions, EAST_NAIVE } from './east';
 const px16 = (t: number) => t * 16;
+/** a tile group that has moved away (fallen, slid) is back home and still */
+const groupBack = (letter: string) => (w: World) => {
+  const g = groupAt(w, letter) as unknown as { state: string; atRest: boolean };
+  return g.state === 'rest' && g.atRest;
+};
 /** jellyfish i is drifting down, well under the surface: room to swim over it */
 const jellyLow = (i: number) => (w: World) => {
   const j = w.entities.filter((e) => e instanceof Jelly)[i] as Jelly;
@@ -156,8 +161,8 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'R', jump: 12, ticks: 12, note: 'off before the end drops' },
     { hold: 'R', until: and(ground, X(37.2)), max: 300 },
     { hold: '', until: (w) => { const m = (w.tick / 120) % 2.4; return m >= 0.7 && m < 0.76; }, max: 900, note: 'follow the wave of sprays as it moves on' },
-    { hold: 'R', until: X(48.6), max: 300 },
-    { hold: 'R', jump: 12, ticks: 12, note: 'over the painted floor' },
+    { hold: 'R', until: X(49.3), max: 300 },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'over the painted floor, long: spikes come up where a hop lands' },
     { hold: 'R', until: ground, max: 200 },
     { hold: 'R', until: (w) => w.entities.some((e: any) => e.kind === 'scooter' && e.alive && e.x > w.player.x - 70), max: 600, note: 'a scooter comes up behind' },
     { hold: '', dodge: 60, until: (w) => !w.entities.some((e: any) => e.kind === 'scooter' && e.alive && e.x < w.player.x + 14), max: 300, note: 'stop and hop it' },
@@ -187,7 +192,9 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: '', until: (w) => w.entities.some((e: any) => e.kind === 'coconut' && e.x >= px16(58) && e.x < px16(59) && e.state !== 'rest'), max: 400, note: 'wind: wait for the wave to start' },
     { hold: '', ticks: 34 },
     { hold: 'R', until: X(76.6), max: 600, note: 'follow behind the wave' },
-    { hold: 'R', jump: 12, ticks: 12 },
+    { hold: '', jump: 6, ticks: 40, note: 'a little hop: the far bank backs away' },
+    { hold: '', until: groupBack('k'), max: 400, note: 'and creeps back' },
+    { hold: 'R', jump: 12, ticks: 12, note: 'now over the gap' },
     { hold: 'R', until: (w: World) => w.flags.twist === 'swapped', max: 900 },
     { hold: 'L', until: done, max: 600, note: 'the door jumped behind you' },
   ],
@@ -924,10 +931,6 @@ function tourWith(city: CityId, cuts: { before: string; nth?: number; steps: Ste
   return run;
 }
 const launchIs = (st: string) => (w: World) => w.flags.launch === st;
-const groupBack = (letter: string) => (w: World) => {
-  const g = groupAt(w, letter) as unknown as { state: string; atRest: boolean };
-  return g.state === 'rest' && g.atRest;
-};
 // Thumba: stop on the last step while the rocket's fire dies down and its spent stage lands (it makes a
 // step down); at the very end, wait for the road to close again
 let FIX_AMR01: Step[] = [];
@@ -1356,6 +1359,12 @@ function swapAt(id: string, note: string, n: number, w: Step[]): Step[] {
 }
 /** More scripted mistakes per stage: each is something a first-timer does, and each must die. */
 export const MISTAKES: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'TVM-03': [
+    { what: 'hop over the shiny floor', steps: swapAt('TVM-03', 'over the painted floor, long: spikes come up where a hop lands', 1, [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'spikes' },
+  ],
+  'TVM-04': [
+    { what: 'jump the last gap', steps: swapAt('TVM-04', 'a little hop: the far bank backs away', 2, [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'splash' },
+  ],
   'TVM-02': [
     {
       what: 'ride at the back of the roof',
