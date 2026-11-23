@@ -440,3 +440,17 @@ hardness pass, in journey order (AGENTS.md has the rules). Thiruvananthapuram fi
   the cyclone gust in the beach shack: its roof comes down).
 - AMR-07's spikes after the falling ceiling are gone: nobody who goes along the grand passage gets past the
   ceiling to meet them (decoration, by the hardness rules). Amaravati's audit is clean.
+
+## v0.16.8: Thiruvananthapuram, the Level Devil way (stages 1 and 2)
+The owner played Thiruvananthapuram after v0.16.7: still not Level Devil. Most of its traps were things you
+see coming (crows, coconuts, buses). Level Devil's betrayals are in the level itself: the floor, the walls,
+the steps and the door, with no warning. So the city gets rebuilt that way, stage by stage.
+- 01: the road caves in right after Tara's welcome (a two-tile hole, the moment you reach it). The big jump
+  over it lands you on the compound wall, and your jump has put broken bottle glass on its top (Kerala's
+  compound walls wear it; `SpikeGroup.look = 'glass'`): hop the hole small, then jump clean over the wall.
+  The canoe's landing gives way as you step off (hop off). The rocket and the end gap stay. Five ways to
+  die before the door, each recorded.
+- 02: under the first flyover a chunk of it cracks off on to the back of the bus roof (`Slab`): ride in the
+  middle, which the bells want anyway.
+- Tests: `MISTAKES` in tests/solutions.ts holds as many scripted first-timer mistakes per stage as it
+  needs; each must die (levels.test.ts), and the hazard audit counts them as runs.

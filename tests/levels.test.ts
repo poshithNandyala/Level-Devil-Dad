@@ -3,7 +3,7 @@ import { LEVELS } from '../src/game/levels';
 import { World } from '../src/game/world';
 import { INFO } from './helpers';
 import { play } from './runner';
-import { SOLUTIONS, NAIVE, FIX } from './solutions';
+import { SOLUTIONS, NAIVE, FIX, MISTAKES } from './solutions';
 
 describe('stages', () => {
   for (const def of LEVELS) {
@@ -42,6 +42,14 @@ describe('stages', () => {
           const { w } = play(def, n.steps);
           expect(w.state, `${def.id} fix ended ${w.state}`).toBe('dead');
           if (n.cause) expect(w.deathCause).toBe(n.cause);
+        });
+      }
+
+      for (const m of MISTAKES[def.id] ?? []) {
+        it(`punishes: ${m.what}`, () => {
+          const { w } = play(def, m.steps);
+          expect(w.state, `${def.id} (${m.what}) ended ${w.state}`).toBe('dead');
+          if (m.cause) expect(w.deathCause).toBe(m.cause);
         });
       }
 

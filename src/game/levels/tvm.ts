@@ -7,7 +7,7 @@ import { tour } from './tour';
 import { Grid } from './grid';
 import { exitTwist } from './twists';
 import { crumble, dropFloor, fakeFloor, gapAhead, noLanding, onPass, popAt, popOnJump, riseWall, shyLedge } from './trolls';
-import { Launch } from '../entities/kerala';
+import { Launch, Slab } from '../entities/kerala';
 
 // Thiruvananthapuram: monsoon puddles, a red express bus, a tea stall,
 // coconut palms and the old fort gate. Lines: Malayalam + English.
@@ -71,10 +71,21 @@ export const TVM: LevelDef[] = [
       ["palm", 108, { h: 84, lean: -6 }],
     ],
     things: [["redbus", 24]],
-    hint: 'When the rocket at Thumba goes up, the road burns: stop on the last step. Don’t wait at the bottom of the steps, the spent stage falls there; hop it once it’s down. At the very end the road opens in front of you: don’t jump it (the far side breaks), wait, it closes again.',
-    // Thumba's rocket goes up as you come down the steps, and the road at the very end opens up
-    paint: (g) => g.fill(104, 106, 15, 17, 'g').fill(107, 110, 15, 17, 'h'),
+    hint: 'The road caves in right after Tara: hop it, a small hop. Your jump puts broken glass on top of the compound wall: jump clean over it. When the rocket at Thumba goes up, the road burns: stop on the last step, not at the bottom (the spent stage falls there); hop it once it’s down. The canoe’s landing gives way: hop off it. At the very end the road opens in front of you: don’t jump it (the far side breaks), wait, it closes again.',
+    // the monsoon has eaten the road after Tara; the compound wall wears broken glass (Kerala's
+    // walls do); Thumba's rocket goes up as you come down the steps; the canoe's landing gives way;
+    // and the road at the very end opens up
+    paint: (g) =>
+      g
+        .fill(8, 9, 15, 17, 'a')
+        .put(12, 13, 'G')
+        .fill(78, 79, 15, 17, 'c')
+        .fill(104, 106, 15, 17, 'g')
+        .fill(107, 110, 15, 17, 'h'),
     extra: (w) => {
+      dropFloor(w, 'a', { at: px(8) - 6 });
+      popOnJump(w, 'G', px(6), px(12.5)).look = 'glass';
+      dropFloor(w, 'c', { at: px(77.4) });
       const rocket = Launch.place(w, { tx: 61, groundTy: 15, blast: [58, 65], blastSec: 1.4, stageTx: 52, sepAt: 1.5 });
       onPass(w, px(50), (w2) => rocket.fire(w2));
       gapAhead(w, 'g', { lead: 30, back: 0.8 });
@@ -88,7 +99,7 @@ export const TVM: LevelDef[] = [
     name: 'Aanavandi Express',
     nameEn: 'The elephant-bus express',
     tagline: 'Monsoon flood. One red bus. Ride on the roof.',
-    hint: 'Hop the crows that fly at you, but never jump under a bridge. One bell: he brakes and you slide forward. Two bells: he jerks off and you slide back. Ride in the middle of the roof. At the end it turns back: jump off before it does.',
+    hint: 'Hop the crows that fly at you, but never jump under a bridge. Don’t ride at the back of the roof: a chunk of the first flyover falls there. One bell: he brakes and you slide forward. Two bells: he jerks off and you slide back. Ride in the middle of the roof. At the end it turns back: jump off before it does.',
     par: 23,
     map: (() => {
       const g = new Grid(96).fill(0, 3, 13, 17, '#').fill(88, 95, 12, 17, '#');
@@ -177,6 +188,14 @@ export const TVM: LevelDef[] = [
         lastX = x;
         bus.place(w2, x, Y);
       });
+      // under the first flyover a tired chunk of it cracks off on to the back of the roof
+      w.when(
+        () => x >= px(30) && (phase === 'go' || phase === 'go2'),
+        (w2) => {
+          w2.sfx('crack', px(32), px(11));
+          w2.add(new Slab(px(30) + 20, px(11) + 2));
+        },
+      );
       // crows fly at you along the road, at head height above the roof
       const crowAt = (busX: number) =>
         w.when(

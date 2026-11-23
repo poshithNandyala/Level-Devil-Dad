@@ -7,7 +7,7 @@ import { SpikeGroup } from '../src/game/entities/basics';
 import { decodeInput } from '../src/game/replay';
 import { INFO } from './helpers';
 import { play } from './runner';
-import { SOLUTIONS, NAIVE, FIX } from './solutions';
+import { SOLUTIONS, NAIVE, FIX, MISTAKES } from './solutions';
 
 function inputsOf(def: any, steps: any): number[] {
   (globalThis as any).__lddRec = [];
@@ -33,7 +33,7 @@ test('hazard audit', () => {
   const out: string[] = [];
   for (const def of LEVELS) {
     if (only && !only.includes(def.id)) continue;
-    const runs = [SOLUTIONS[def.id], NAIVE[def.id]?.steps, FIX[def.id]?.steps].filter(Boolean);
+    const runs = [SOLUTIONS[def.id], NAIVE[def.id]?.steps, FIX[def.id]?.steps, ...(MISTAKES[def.id] ?? []).map((m) => m.steps)].filter(Boolean);
     // every hazard rect, with a label, and the closest Dad ever came
     const best = new Map<string, number>();
     const label = (k: string) => k;

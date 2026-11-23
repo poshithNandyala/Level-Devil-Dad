@@ -10,6 +10,8 @@ export class SpikeGroup extends Entity {
   popped = false;
   popTick = -1;
   hazard: Hazard;
+  /** how they look when they're up: the city's spikes, or broken glass set in a wall top */
+  look: 'spikes' | 'glass' = 'spikes';
 
   constructor(w: World, letter: string) {
     super();
@@ -55,7 +57,42 @@ export class SpikeGroup extends Entity {
     const th = THEMES[w.city];
     const k = clamp((w.tick - this.popTick) / 5, 0, 1);
     const s = k < 1 ? ease.back(k) : 1;
+    if (this.look === 'glass') {
+      for (const c of this.cells) drawGlassTile(ctx, c.x, c.y, Math.max(0.05, s));
+      return;
+    }
     for (const c of this.cells) drawSpikeTile(ctx, c.t, c.x, c.y, th, Math.max(0.05, s));
+  }
+}
+
+/** broken bottle glass set in the mortar on top of a compound wall (a tile, pointing up) */
+function drawGlassTile(ctx: Ctx, x: number, y: number, s: number) {
+  const base = y + TILE;
+  ctx.fillStyle = '#B9B4AA';
+  ctx.fillRect(x, base - 3, TILE, 3);
+  const shards: [number, number, number, string][] = [
+    [1, 4, 10, 'rgba(62,142,90,0.9)'],
+    [4, 4, 13, 'rgba(216,240,240,0.75)'],
+    [7, 5, 9, 'rgba(168,107,45,0.9)'],
+    [10, 4, 12, 'rgba(62,142,90,0.9)'],
+    [12.5, 3.5, 8, 'rgba(216,240,240,0.75)'],
+  ];
+  for (const [dx, wd, h, col] of shards) {
+    const top = base - 3 - h * s;
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.moveTo(x + dx, base - 2);
+    ctx.lineTo(x + dx + wd * 0.35, top);
+    ctx.lineTo(x + dx + wd * 0.6, top + h * s * 0.35);
+    ctx.lineTo(x + dx + wd, base - 2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+    ctx.lineWidth = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(x + dx + wd * 0.2, base - 3);
+    ctx.lineTo(x + dx + wd * 0.35, top + 1);
+    ctx.stroke();
   }
 }
 

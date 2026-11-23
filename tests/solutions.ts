@@ -1004,11 +1004,34 @@ SOLUTIONS['KVT-01'] = tourWith('KVT', [
     ],
   },
 ]);
-SOLUTIONS['TVM-01'] = tourWith(
-  'TVM',
-  [{ before: 'hop the parked ride', steps: [{ hold: 'R', until: X(49.9), max: 400, note: 'on to the last step' }, { hold: '', until: launchIs('down'), max: 600, note: 'the rocket goes; wait out the fire and the falling stage' }] }],
-  [{ hold: 'R', until: X(101.9), max: 900 }, { hold: '', until: groupBack('g'), max: 400, note: 'the road opens: wait for it to close' }, { hold: 'R', until: done, max: 400 }],
-);
+/** swap a tour route's noted jump (with its approach before it and its landing after it) for `steps` */
+function tourSwap(run: Step[], note: string, steps: Step[], nth = 0): Step[] {
+  let n = nth;
+  const i = run.findIndex((st) => st.note === note && n-- === 0);
+  if (i < 0) throw new Error(`tourSwap: no step '${note}'`);
+  return [...run.slice(0, i - 1), ...steps, ...run.slice(i + 2)];
+}
+/** TVM-01's start: a small hop over the cave-in, then clean over the wall and the glass your hop put on it */
+const tvm01Start: Step[] = [
+  { hold: 'R', until: X(6.3), max: 300 },
+  { hold: 'R', jump: 10, ticks: 10, note: 'a small hop over the cave-in' },
+  { hold: 'R', until: ground, max: 200 },
+  { hold: 'R', until: X(10.3), max: 200 },
+  { hold: 'R', jump: 20, ticks: 20, long: true, note: 'clean over the wall and its glass' },
+  { hold: 'R', until: ground, max: 200 },
+];
+/** the TVM course with the city's own betrayals (the rocket and the end gap added by the callers) */
+function tvm01(start = tvm01Start, offCanoe: Step[] = [{ hold: 'R', until: X(76.7), max: 200 }, { hold: 'R', jump: 10, ticks: 10, note: 'hop off: the landing gives way' }, { hold: 'R', until: ground, max: 200 }]): Step[] {
+  let run = tourSwap(tourRun('TVM'), 'a low wall', start);
+  const off = run.findIndex((st) => st.note === 'step off');
+  run = [...run.slice(0, off), ...offCanoe, ...run.slice(off + 1)];
+  const rocket = run.findIndex((st) => st.note === 'hop the parked ride') - 1;
+  run.splice(rocket, 0, { hold: 'R', until: X(49.9), max: 400, note: 'on to the last step' }, { hold: '', until: launchIs('down'), max: 600, note: 'the rocket goes; wait out the fire and the falling stage' });
+  return run;
+}
+const tvm01End: Step[] = [{ hold: 'R', until: X(101.9), max: 900 }, { hold: '', until: groupBack('g'), max: 400, note: 'the road opens: wait for it to close' }, { hold: 'R', until: done, max: 400 }];
+SOLUTIONS['TVM-01'] = [...tvm01().slice(0, -1), ...tvm01End];
+const tvm01Die: Step = { hold: 'R', until: (w) => w.state !== 'play', max: 900 };
 
 /** A long stage = its old room + troll sections + the door: drop the room's last `drop` steps
  *  (its old door), walk on with `extra`, then the sections' routes and the door. */
@@ -1203,7 +1226,7 @@ eastSolutions(SOLUTIONS, lengthen);
 /** The obvious play that a trap is designed to punish. */
 export const NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
   ...EAST_NAIVE,
-  'TVM-01': { steps: tourRun('TVM'), cause: 'burnt' },
+  'TVM-01': { steps: tourRun('TVM'), cause: 'fell' },
   'KVT-01': { steps: tourRun('KVT'), cause: 'hatchling' },
   'CHN-01': { steps: tourRun('CHN'), cause: 'burnt' },
   'PDY-01': { steps: tourRun('PDY'), cause: 'hit' },
@@ -1331,6 +1354,28 @@ function swapAt(id: string, note: string, n: number, w: Step[]): Step[] {
   if (i < 0) throw new Error(`swapAt ${id}: no step '${note}'`);
   return [...r.slice(0, i), ...w, ...r.slice(i + n)];
 }
+/** More scripted mistakes per stage: each is something a first-timer does, and each must die. */
+export const MISTAKES: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'TVM-02': [
+    {
+      what: 'ride at the back of the roof',
+      steps: [
+        ...SOLUTIONS['TVM-02'].slice(0, SOLUTIONS['TVM-02'].findIndex((st) => st.note?.startsWith('hop the crows'))),
+        { hold: 'L', until: (w) => w.player.x <= thingOf(w, 'redbus').solid.x + 12, max: 120 },
+        { hold: '', dodge: 60, until: (w) => w.state !== 'play', max: 2000 },
+      ],
+      cause: 'crushed',
+    },
+  ],
+  'TVM-01': [
+    { what: 'hop up on to the wall', steps: [...tvm01Start.slice(0, 3), { hold: 'R', until: (w) => w.player.x + w.player.w >= px16(12) - 0.5, max: 200 }, { hold: '', jump: 14, ticks: 14 }, { hold: 'R', until: (w) => w.state !== 'play' || w.player.onGround, max: 200 }, tvm01Die], cause: 'spikes' },
+    { what: 'run on when the rocket goes', steps: tvm01().filter((st) => st.note !== 'on to the last step' && !st.note?.startsWith('the rocket goes')), cause: 'burnt' },
+    { what: 'stop at the foot of the steps when it goes', steps: [...tvm01().slice(0, tvm01().findIndex((st) => st.note === 'on to the last step')), { hold: 'R', until: X(52.3), max: 400 }, { hold: '', until: (w) => w.state !== 'play', max: 600 }], cause: 'crushed' },
+    { what: 'step off the canoe', steps: [...tvm01([...tvm01Start], [tvm01Die])], cause: 'fell' },
+    { what: 'jump the hole at the end', steps: [...tvm01().slice(0, -1), { hold: 'R', until: X(101.9), max: 900 }, { hold: 'R', jump: 30, ticks: 30, long: true }, tvm01Die], cause: 'fell' },
+  ],
+};
+
 export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
   // you fell short: take the long jump properly, holding jump (but you ate at the aunty's: still short)
   'AMR-01': { steps: FIX_AMR01, cause: 'splash' },
@@ -1450,5 +1495,9 @@ export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
     cause: 'spikes',
   },
   // stop at the foot of the steps until the fire is out: the spent stage comes down there
-  'TVM-01': { steps: tourWith('TVM', [{ before: 'hop the parked ride', steps: [{ hold: 'R', until: X(52.3), max: 400 }, { hold: '', until: done, max: 600 }] }]), cause: 'crushed' },
+  // the road caved in: jump it properly next time, a big jump (it lands you on the wall's glass)
+  'TVM-01': {
+    steps: [{ hold: 'R', until: X(7.3), max: 300 }, { hold: 'R', jump: 30, ticks: 30, long: true }, { hold: 'R', until: (w) => w.state !== 'play', max: 200 }],
+    cause: 'spikes',
+  },
 };

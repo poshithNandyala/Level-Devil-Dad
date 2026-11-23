@@ -255,3 +255,78 @@ export class Launch extends Entity {
     }
   }
 }
+
+/**
+ * A chunk of a tired flyover: it cracks off the underside as something passes beneath, falls, and bursts
+ * into dust on whatever it hits. Deadly on the way down.
+ */
+export class Slab extends Entity {
+  x: number;
+  y: number;
+  readonly w = 22;
+  readonly h = 9;
+  private vy = 0;
+  alive = true;
+  private dust = -1;
+  hazard: Hazard;
+  constructor(x: number, y: number) {
+    super();
+    this.layer = 4;
+    this.x = x;
+    this.y = y;
+    const self = this;
+    this.hazard = {
+      active: true,
+      cause: 'crushed',
+      hits(x2, y2, w2, h2) {
+        return self.dust < 0 && overlapXYWH(x2, y2, w2, h2, { x: self.x + 1, y: self.y + 1, w: self.w - 2, h: self.h - 1 });
+      },
+    };
+  }
+  update(w: World) {
+    if (this.dust >= 0) {
+      if (++this.dust > 30) this.alive = false;
+      return;
+    }
+    this.vy = Math.min(520, this.vy + 1700 * DT);
+    this.y += this.vy * DT;
+    if (w.solidAt(this.x, this.y + this.h, this.w, 1)) {
+      this.dust = 0;
+      w.sfx('crack', this.x + this.w / 2, this.y);
+      w.emit('shake', this.x, this.y, { amount: 2 });
+    }
+    if (this.y > 300) this.alive = false;
+  }
+  draw(ctx: CanvasRenderingContext2D) {
+    if (this.dust >= 0) {
+      const k = this.dust / 30;
+      ctx.fillStyle = `rgba(190,190,185,${0.8 * (1 - k)})`;
+      for (let i = 0; i < 6; i++) {
+        ctx.beginPath();
+        ctx.arc(this.x + 2 + i * 4, this.y + this.h - 2 - k * 10 - (i % 2) * 3, 2.5 + k * 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return;
+    }
+    ctx.fillStyle = '#9AA0A6';
+    ctx.beginPath();
+    ctx.moveTo(this.x, this.y + 2);
+    ctx.lineTo(this.x + 6, this.y);
+    ctx.lineTo(this.x + this.w, this.y + 1);
+    ctx.lineTo(this.x + this.w - 2, this.y + this.h);
+    ctx.lineTo(this.x + 3, this.y + this.h - 1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#6E757C';
+    ctx.fillRect(this.x + 5, this.y + 3, 1.5, 1.5);
+    ctx.fillRect(this.x + 14, this.y + 5, 2, 1.2);
+    ctx.strokeStyle = '#5B4636';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(this.x + 8, this.y + this.h);
+    ctx.lineTo(this.x + 9, this.y + this.h + 4);
+    ctx.moveTo(this.x + 16, this.y + this.h - 1);
+    ctx.lineTo(this.x + 18, this.y + this.h + 3);
+    ctx.stroke();
+  }
+}
