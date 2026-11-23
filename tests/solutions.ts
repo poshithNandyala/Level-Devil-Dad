@@ -930,6 +930,17 @@ const groupBack = (letter: string) => (w: World) => {
 };
 // Thumba: stop on the last step while the rocket's fire dies down and its spent stage lands (it makes a
 // step down); at the very end, wait for the road to close again
+const pongalIs = (st: string) => (w: World) => w.flags.pongal === st;
+SOLUTIONS['CHN-01'] = tourWith('CHN', [
+  {
+    before: 'up on the deck',
+    steps: [
+      { hold: 'R', until: pongalIs('bubble'), max: 600 },
+      { hold: 'L', ticks: 30, note: 'it bubbles: back off' },
+      { hold: '', until: pongalIs('cool'), max: 600, note: 'wait till it stops steaming' },
+    ],
+  },
+]);
 SOLUTIONS['KVT-01'] = tourWith('KVT', [
   {
     before: 'a shallow ditch',
@@ -1140,6 +1151,7 @@ export const NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
   ...EAST_NAIVE,
   'TVM-01': { steps: tourRun('TVM'), cause: 'burnt' },
   'KVT-01': { steps: tourRun('KVT'), cause: 'hatchling' },
+  'CHN-01': { steps: tourRun('CHN'), cause: 'burnt' },
   'TVM-02': { steps: [{ hold: 'R', until: done }], cause: 'splash' },
   'TVM-03': { steps: [{ hold: 'R', until: done }], cause: 'spikes' },
   'TVM-04': { steps: [{ hold: 'R', until: done }], cause: 'coconut' },
@@ -1263,6 +1275,24 @@ function swapAt(id: string, note: string, n: number, w: Step[]): Step[] {
   return [...r.slice(0, i), ...w, ...r.slice(i + n)];
 }
 export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
+  // the room taught "pot three is the trap": in the second queue, step on to pot two (it's pot two here)
+  'CHN-02': { steps: swapAt('CHN-02', 'over pots one and two, straight onto pot three', 1, [{ hold: 'R', jump: 8, ticks: 8 }, { hold: '', until: (w) => w.state !== 'play', max: 300 }]), cause: 'hit' },
+  // Tara says jump every ball: jump the bouncer too (it flies at jump height)
+  'CHN-04': {
+    steps: swapAt('CHN-04', 'hop the balls on the ground, stay down for the bouncer', 1, [
+      { policy: (w) => ({ move: 'R', jump: w.player.onGround && w.entities.some((e: any) => e.kind === 'ball' && e.alive && e.x > w.player.x && e.x - w.player.x < 44) }), until: (w) => w.state !== 'play', max: 1500 },
+    ]),
+    cause: 'hit',
+  },
+  // the shimmer was a hole: so jump the black patch too
+  'CHN-05': { steps: swapAt('CHN-05', 'walk across the black patch', 1, [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'fell' },
+  // the first hanging stone: walk under it to drop it; do the same with the second (it's over the spike pit)
+  'CHN-07': { steps: swapAt('CHN-07', 'wait at the edge: it drops into the pit', 1, [{ hold: 'R', until: (w) => w.state !== 'play', max: 400 }]), cause: 'spikes' },
+  // the Pongal pot: stop the moment it bubbles (the spill runs past where you stand)
+  'CHN-01': {
+    steps: tourWith('CHN', [{ before: 'up on the deck', steps: [{ hold: 'R', until: pongalIs('bubble'), max: 600 }, { hold: '', until: done, max: 400 }] }]),
+    cause: 'burnt',
+  },
   // the glass gap was walkable: so walk the next gap too (it's real water)
   'KVT-02': { steps: swapAt('KVT-02', 'the real gap', 1, []), cause: 'splash' },
   // the reef rose under every step: so walk the last gap too (it's real water)

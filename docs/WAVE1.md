@@ -381,3 +381,15 @@ hardness pass, in journey order (AGENTS.md has the rules). Thiruvananthapuram fi
   walk the real one too), 03 (the reef rose under every step, so walk the last gap too), 05 (do what Tara
   says and ride the fish basket all the way up into the pulley). KVT-05's pulley spikes now show up in the
   hazard audit as reaching that mistake; Kavaratti is clean.
+
+## v0.16.4: the hardness pass, Chennai
+- 01 **Vanakkam Chennai** bites: past the sundal stall, a Pongal pot (clay pot, turmeric leaves, a stick of
+  sugarcane, a kolam round the stove) starts to bubble as you come close and 0.3 s later boils over
+  ("Pongalo Pongal! | It's boiling over!"): a spout of foam over the pot and a hot spill 3.5 tiles each way,
+  half a tile past where it started bubbling. Walking on burns, stopping where it bubbled burns, and every
+  jump over it burns (tested from six take-off points and three heights). Back off a step, wait till the
+  spill stops steaming (1.4 s), walk on. Human timing 100%.
+- The obvious fix dies in five of eight stages: 01 (stop where it bubbles), 02 (in the second queue, trust
+  the room's lesson and step on pot two), 04 (do as Tara says and jump every ball, the bouncer too), 05
+  (the shimmer was a hole, so jump the black patch too), 07 (drop the second hanging stone the way you
+  dropped the first: it's over the spike pit). Chennai's hazard audit is clean.

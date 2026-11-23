@@ -108,7 +108,9 @@ you'd wait (TVM-01, `Launch`), a floor that drops just ahead of you and comes ba
 far side breaks if you jump it (TVM-01, `gapAhead` + `noLanding`), bus bells as a rule: one bell brakes and
 slides you forward, two bells jerk off and slide you back (TVM-02), hidden spikes on a deck top that come
 out when you hop at it (TVM-08), a turtle nest that hatches across your path: you must not touch a baby,
-and they spread wider than a jump, so you wait (KVT-01, `Nest` in entities/lakshadweep.ts).
+and they spread wider than a jump, so you wait (KVT-01, `Nest` in entities/lakshadweep.ts), a Pongal pot that
+boils over when you come close: its spill runs past where it started bubbling and a spout of foam covers any
+jump over it, so you back off (CHN-01, `PongalPot` in entities/tamil.ts). Festivals: Pongal (CHN-01).
 
 ## Acts (one per id, never reused)
 amr02-powder amr03-logs amr04-hot amr05-humps amr06-zip amr07-gallery amr08-shack

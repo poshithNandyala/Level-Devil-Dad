@@ -13,6 +13,7 @@ import { tour } from './tour';
 import { longStage } from './chunks';
 import { Grid } from './grid';
 import { exitTwist } from './twists';
+import { PongalPot } from '../entities/tamil';
 
 // Chennai: share autos, plastic water pots, a flooding subway, filter kaapi
 // poured in long arcs, and a sun that makes doors appear. Chennai Tamil + English.
@@ -309,7 +310,7 @@ export const CHN: LevelDef[] = [
     ],
     shouts: [
       [21, "Kaapi! Degree kaapi! | Coffee! Strong filter coffee!"],
-      [88, "Sundal! Sooda sundal! | Sundal! Hot sundal!"],
+      [82, "Sundal! Sooda sundal! | Sundal! Hot sundal!"],
     ],
     ride: "shareauto",
     item: "kaapi",
@@ -319,10 +320,15 @@ export const CHN: LevelDef[] = [
       ["stall", 20, { label: 'KAAPI' }],
       ["kudamrow", 34, {}],
       ["palm", 62, { h: 82, lean: 5 }],
-      ["stall", 88, { label: 'SUNDAL' }],
+      ["stall", 82.5, { label: 'SUNDAL' }],
       ["lamp", 106, {}],
     ],
     things: [["lighthouse", 60]],
+    hint: 'Near the end, a Pongal pot boils over across the road. When it starts to bubble, back off a step or two: the spill runs further than where you stood, and the foam shoots up over the pot. When it stops steaming, walk on.',
+    extra: (w) => {
+      PongalPot.place(w, { tx: 88, groundTy: 15, triggerTx: 85.5, reach: 3.5 });
+      prop(w, 'palm', 91, 15, { h: 70, lean: -4 }, -8);
+    },
   }),
   longStage({
     base: {

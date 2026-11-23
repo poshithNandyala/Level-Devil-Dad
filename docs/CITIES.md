@@ -105,7 +105,7 @@ song lyrics. Affectionate teasing locals would proudly share; never mean.
 
 | Stage | Name (meaning) | What it is | Act | Door ending |
 | --- | --- | --- | --- | --- |
-| CHN-01 | Vanakkam Chennai (Welcome to Chennai) | Welcome tour: easy run past landmarks while the guide tells you real things about the city. Filter kaapi, share autos and a very, very long beach. | — | — |
+| CHN-01 | Vanakkam Chennai (Welcome to Chennai) | Welcome tour past landmarks while the guide tells you real things about the city. Filter kaapi, share autos and a very, very long beach. Near the end a Pongal pot on the street boils over ("Pongalo Pongal!"): a spout of foam over it and a hot spill across the road that runs past where it started bubbling. Back off when it bubbles; walk on when it stops steaming. | — | — |
 | CHN-02 | Kudam Queue (Water-pot queue) | Everyone saved their place. Including the pots. | `chn02-queue2` | `token` |
 | CHN-03 | Subway Splash | One raindrop, and the subway is a swimming pool. | `chn03-frogger` | `bull` |
 | CHN-04 | Degree Kaapi (Proper filter coffee) | Never walk between an uncle and his morning kaapi. | `chn04-cricket` | `catch` |
