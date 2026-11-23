@@ -110,7 +110,9 @@ slides you forward, two bells jerk off and slide you back (TVM-02), hidden spike
 out when you hop at it (TVM-08), a turtle nest that hatches across your path: you must not touch a baby,
 and they spread wider than a jump, so you wait (KVT-01, `Nest` in entities/lakshadweep.ts), a Pongal pot that
 boils over when you come close: its spill runs past where it started bubbling and a spout of foam covers any
-jump over it, so you back off (CHN-01, `PongalPot` in entities/tamil.ts). Festivals: Pongal (CHN-01).
+jump over it, so you back off (CHN-01, `PongalPot` in entities/tamil.ts), a policeman chasing his blown-off
+kepi: the way through is to help him, by catching his cap as it blows over you (PDY-01, `Kepi` in
+entities/tamil.ts). Festivals: Pongal (CHN-01). Puducherry's pétanque is still unused (an idea for later).
 
 ## Acts (one per id, never reused)
 amr02-powder amr03-logs amr04-hot amr05-humps amr06-zip amr07-gallery amr08-shack

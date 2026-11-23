@@ -9,6 +9,7 @@ import { exitTwist } from './twists';
 import { tour } from './tour';
 import { longStage } from './chunks';
 import { Grid } from './grid';
+import { Kepi } from '../entities/tamil';
 
 // Puducherry: yellow walls, cobbled rues, a rocky seafront that sneezes,
 // bollards that close the beach road at six, and a canal bridge that opens
@@ -161,7 +162,7 @@ const jumpyPalms: Act = {
   build: (w, c) => {
     const { X } = c;
     prop(w, 'palm', c.x + 6, G, { h: 86, lean: 6 });
-    prop(w, 'palm', c.x + 12, G, { h: 86, lean: 4 });
+    prop(w, 'palm', c.x + 13.2, G, { h: 86, lean: 4 });
     const nut = (tx: number, from: number, to: number, roll: boolean) => {
       const n = w.add(new Thing('coconut', X(tx), px(G) - 86 + 6, { solid: false, layer: 3 }));
       w.when(
@@ -183,7 +184,8 @@ const jumpyPalms: Act = {
       );
     };
     nut(6.6, 4.5, 8.5, false);
-    nut(12.8, 10.5, 14.5, true);
+    // (measured: it meets the head of a dad who jumps the urchins from their edge, a little after take-off)
+    nut(13.6, 10.5, 14.5, true);
     onPass(w, X(2), (w2) => w2.guide('Thenga venuma? Jump pannu, Dad! | Want a coconut? Jump, Dad!'));
   },
 };
@@ -300,6 +302,11 @@ export const PDY: LevelDef[] = [
       ["bougain", 106, {}],
     ],
     things: [["cyclist", 24]],
+    hint: 'After the café terrace, the sea breeze takes a policeman’s red cap down the street and he comes running after it. Don’t stand in his way and don’t hop him (he leaps for his cap). Jump up and catch the cap as it goes over you: he stops and takes it back.',
+    extra: (w) => {
+      const kepi = Kepi.place(w, { hatTx: 85, copTx: 85, giveUpTx: 40, groundTy: 15 });
+      onPass(w, px(69), (w2) => kepi.start(w2));
+    },
   }),
   longStage({
     base: {

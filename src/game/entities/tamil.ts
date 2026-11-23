@@ -208,3 +208,172 @@ export class PongalPot extends Entity {
     }
   }
 }
+
+/**
+ * Puducherry: a sea breeze takes a traffic policeman's red kepi off his head and bowls it down the street,
+ * a little above a dad's head, and he comes running after it, eyes on the cap and one arm up. Get in his
+ * way and he bowls you over; hop him and he leaps for the cap at the same moment. Catch the cap (jump into
+ * it as it goes by) and he stops, salutes and takes it back. Running away doesn't help: he runs on after it.
+ */
+export class Kepi extends Entity {
+  /** where the cap sets off, where the policeman starts, and where he runs off the street (px) */
+  readonly hatX0: number;
+  readonly copX0: number;
+  readonly giveUpX: number;
+  readonly ground: number;
+  state: 'idle' | 'chase' | 'caught' | 'done' = 'idle';
+  private t = 0;
+  hatX = 0;
+  hatY = 0;
+  copX = 0;
+  copY = 0;
+  private copVy = 0;
+  copOn = false;
+  private saluteT = -1;
+  hazard: Hazard;
+  static readonly HAT_V = 100;
+  static readonly COP_V = 100;
+  /** he runs this far behind his cap (px) */
+  static readonly GAP = 100;
+  private readonly copDelay: number;
+
+  constructor(o: { hatTx: number; copTx: number; giveUpTx: number; groundTy: number }) {
+    super();
+    this.layer = 3;
+    this.hatX0 = o.hatTx * TILE;
+    this.copX0 = o.copTx * TILE;
+    this.giveUpX = o.giveUpTx * TILE;
+    this.ground = o.groundTy * TILE;
+    this.hatX = this.hatX0;
+    this.hatY = this.ground - 30;
+    this.copX = this.copX0;
+    this.copY = this.ground;
+    // he comes in running when the cap is GAP ahead of where he starts
+    this.copDelay = Math.max(0, (this.hatX0 - this.copX0 + Kepi.GAP) / Kepi.HAT_V);
+    const self = this;
+    this.hazard = {
+      active: true,
+      cause: 'hit',
+      hits(x, y, w, h) {
+        return self.copOn && self.state === 'chase' && overlapXYWH(x, y, w, h, { x: self.copX - 5, y: self.copY - 46, w: 11, h: 46 });
+      },
+    };
+  }
+
+  static place(w: World, o: ConstructorParameters<typeof Kepi>[0]): Kepi {
+    return w.add(new Kepi(o));
+  }
+
+  start(w: World) {
+    if (this.state !== 'idle') return;
+    this.state = 'chase';
+    this.t = 0;
+    w.sfx('wind', this.hatX, this.hatY);
+  }
+
+  update(w: World) {
+    w.flags.kepi = this.state;
+    if (this.state === 'idle' || this.state === 'done') return;
+    this.t++;
+    const s = this.t * DT;
+    const p = w.player;
+    if (this.state === 'chase') {
+      // the cap bowls along on the breeze, bobbing
+      this.hatX -= Kepi.HAT_V * DT;
+      this.hatY = this.ground - 30 + Math.sin(s * 7) * 5;
+      if (w.state === 'play' && overlapXYWH(p.x - 2, p.y - 2, p.w + 4, p.h + 4, { x: this.hatX - 6, y: this.hatY - 4, w: 12, h: 7 })) {
+        this.state = 'caught';
+        this.saluteT = 0;
+        w.sfx('collect', this.hatX, this.hatY);
+        return;
+      }
+      if (s >= this.copDelay) {
+        if (!this.copOn) {
+          this.copOn = true;
+          w.say('Mon képi! En thoppi! | My cap! My cap!', this.copX, this.ground - 60, 1.6, 'npc');
+        }
+        // he leaps for the cap whenever someone in front of him leaves the ground
+        const ahead = this.copX - 5 - (p.x + p.w);
+        if (this.copY >= this.ground && !p.onGround && ahead > -6 && ahead < 46) this.copVy = -330;
+        this.copVy += 1500 * DT;
+        this.copY = Math.min(this.ground, this.copY + this.copVy * DT);
+        if (this.copY >= this.ground) this.copVy = 0;
+        if (this.copX > this.giveUpX) this.copX = Math.max(this.giveUpX, this.copX - Kepi.COP_V * DT);
+        else {
+          // he's run off after it, down the street
+          this.state = 'done';
+          this.copOn = false;
+        }
+      }
+    } else if (this.state === 'caught') {
+      // Dad has it: the policeman stops dead, salutes, and takes his cap back
+      this.copVy += 1500 * DT;
+      this.copY = Math.min(this.ground, this.copY + this.copVy * DT);
+      this.saluteT++;
+      if (this.saluteT === 1) w.say('Merci beaucoup! | Thank you very much!', this.copOn ? this.copX : p.cx, this.ground - 60, 1.8, 'npc');
+      if (this.saluteT * DT > 1.2) this.state = 'done';
+    }
+  }
+
+  draw(ctx: CanvasRenderingContext2D, w: World) {
+    if (this.state === 'idle') return;
+    const p = w.player;
+    // the cap: on the breeze, on Dad's head, or back on its owner
+    let hx = this.hatX,
+      hy = this.hatY,
+      spin = Math.sin(this.t * 0.25) * 0.6;
+    if (this.state === 'caught' || (this.state === 'done' && this.saluteT >= 0)) {
+      const k = Math.min(1, Math.max(0, (this.saluteT * DT - 0.5) / 0.4));
+      const ox = p.cx,
+        oy = p.y - 2;
+      const tx = this.copOn ? this.copX : p.cx + 40,
+        ty = this.copY - 46;
+      hx = ox + (tx - ox) * k;
+      hy = oy + (ty - oy) * k - Math.sin(k * Math.PI) * 10;
+      spin = 0;
+    }
+    if (this.state !== 'done' || this.saluteT >= 0) {
+      ctx.save();
+      ctx.translate(hx, hy);
+      ctx.rotate(spin);
+      ctx.fillStyle = '#C62828';
+      ctx.fillRect(-4, -4, 8, 5);
+      ctx.fillStyle = '#1B2A4A';
+      ctx.fillRect(-5.5, 1, 11, 1.6);
+      ctx.fillStyle = '#F2C94C';
+      ctx.fillRect(-4, -1, 8, 0.8);
+      ctx.restore();
+    }
+    if (!this.copOn) return;
+    // the policeman: white uniform, running, one arm up after his cap (saluting once he has it back)
+    const x = this.copX,
+      y = this.copY;
+    const run = this.state === 'chase' && this.copX > this.giveUpX;
+    const leg = run ? Math.sin(this.t * 0.45) * 3 : 0;
+    ctx.fillStyle = '#2B2B2B';
+    ctx.fillRect(x - 3 + leg * 0.5, y - 3, 3, 3);
+    ctx.fillRect(x + 1 - leg * 0.5, y - 3, 3, 3);
+    ctx.fillStyle = '#ECEFF1';
+    ctx.fillRect(x - 3.5, y - 16, 3, 13);
+    ctx.fillRect(x + 0.5, y - 16, 3, 13);
+    ctx.fillRect(x - 5, y - 30, 10, 15);
+    ctx.fillStyle = '#C9A27A';
+    ctx.beginPath();
+    ctx.arc(x, y - 34, 4.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#ECEFF1';
+    if (this.state === 'chase') {
+      // the arm reaching up for the cap
+      ctx.fillRect(x - 6, y - 46, 2.6, 17);
+    } else {
+      // a salute
+      ctx.fillRect(x + 2, y - 38, 6, 2.4);
+    }
+    ctx.fillStyle = '#C62828';
+    ctx.fillRect(x - 4.5, y - 41, 9, 2.2);
+    if (this.state !== 'chase') {
+      // cap back on
+      ctx.fillRect(x - 4, y - 44, 8, 5);
+    }
+  }
+}

@@ -931,6 +931,23 @@ const groupBack = (letter: string) => (w: World) => {
 // Thumba: stop on the last step while the rocket's fire dies down and its spent stage lands (it makes a
 // step down); at the very end, wait for the road to close again
 const pongalIs = (st: string) => (w: World) => w.flags.pongal === st;
+/** the policeman's cap: [x, y] while it's blowing down the street */
+const capAt = (w: World) => {
+  const k = w.entities.find((e: any) => e.hatX !== undefined && e.copX0 !== undefined) as any;
+  return k && k.state === 'chase' ? { x: k.hatX as number, y: k.hatY as number } : null;
+};
+SOLUTIONS['PDY-01'] = tourWith('PDY', [
+  {
+    before: 'a shallow ditch',
+    nth: 1,
+    steps: [
+      { hold: 'R', until: (w) => w.flags.kepi === 'chase', max: 600 },
+      { hold: '', until: (w) => { const c = capAt(w); return !!c && c.x - (w.player.x + 10) < 30; }, max: 600, note: 'the cap comes down the street' },
+      { hold: '', jump: 10, until: (w) => w.flags.kepi !== 'chase', max: 120, note: 'jump and catch it' },
+      { hold: '', until: (w) => w.flags.kepi === 'done', max: 400, note: 'he takes it back' },
+    ],
+  },
+]);
 SOLUTIONS['CHN-01'] = tourWith('CHN', [
   {
     before: 'up on the deck',
@@ -1152,6 +1169,7 @@ export const NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
   'TVM-01': { steps: tourRun('TVM'), cause: 'burnt' },
   'KVT-01': { steps: tourRun('KVT'), cause: 'hatchling' },
   'CHN-01': { steps: tourRun('CHN'), cause: 'burnt' },
+  'PDY-01': { steps: tourRun('PDY'), cause: 'hit' },
   'TVM-02': { steps: [{ hold: 'R', until: done }], cause: 'splash' },
   'TVM-03': { steps: [{ hold: 'R', until: done }], cause: 'spikes' },
   'TVM-04': { steps: [{ hold: 'R', until: done }], cause: 'coconut' },
@@ -1275,6 +1293,29 @@ function swapAt(id: string, note: string, n: number, w: Step[]): Step[] {
   return [...r.slice(0, i), ...w, ...r.slice(i + n)];
 }
 export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
+  // the pools taught "the rocks are steps": hop on the rock in the last pool (it's a turtle)
+  'PDY-02': { steps: swapAt('PDY-02', 'over the whole turtle pool', 1, [{ hold: 'R', jump: 12, ticks: 12 }, { hold: '', until: (w) => w.state !== 'play', max: 400 }]) },
+  // the signs lied: so the street that says walk must be a lie too (walk it)... it isn't
+  'PDY-03': { steps: swapAt('PDY-03', 'jump the street that says walk', 1, [{ hold: 'R', until: (w) => w.state !== 'play', max: 400 }]) },
+  // the first raft waited at the post: wait for the second one too (it only kisses the post)
+  'PDY-05': { steps: swapAt('PDY-05', 'on it at once', 1, [{ hold: '', ticks: 90 }, { hold: 'R', until: (w) => w.state !== 'play', max: 400 }]) },
+  // the first palm let you walk under: walk under the second and jump the urchins (the jump brings its coconut down)
+  'PDY-06': { steps: swapAt('PDY-06', 'a hop under the second palm brings its coconut down', 3, []), cause: 'hit' },
+  // the policeman ran you over: hop him next time (he leaps for his cap as you do)
+  'PDY-01': {
+    steps: tourWith('PDY', [
+      {
+        before: 'a shallow ditch',
+        nth: 1,
+        steps: [
+          { hold: 'R', until: (w) => w.entities.some((e: any) => e.copOn && e.copX - 5 - (w.player.x + 10) < 34), max: 900 },
+          { hold: 'R', jump: 20, ticks: 20, note: 'hop the policeman' },
+          { hold: 'R', until: (w) => w.state !== 'play', max: 300 },
+        ],
+      },
+    ]),
+    cause: 'hit',
+  },
   // the room taught "pot three is the trap": in the second queue, step on to pot two (it's pot two here)
   'CHN-02': { steps: swapAt('CHN-02', 'over pots one and two, straight onto pot three', 1, [{ hold: 'R', jump: 8, ticks: 8 }, { hold: '', until: (w) => w.state !== 'play', max: 300 }]), cause: 'hit' },
   // Tara says jump every ball: jump the bouncer too (it flies at jump height)

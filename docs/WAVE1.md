@@ -393,3 +393,18 @@ hardness pass, in journey order (AGENTS.md has the rules). Thiruvananthapuram fi
   the room's lesson and step on pot two), 04 (do as Tara says and jump every ball, the bouncer too), 05
   (the shimmer was a hole, so jump the black patch too), 07 (drop the second hanging stone the way you
   dropped the first: it's over the spike pit). Chennai's hazard audit is clean.
+
+## v0.16.5: the hardness pass, Puducherry
+- 01 **Bienvenue** bites, and its way out is a new kind of answer: help a local. After the café terrace the
+  sea breeze bowls a traffic policeman's red kepi down the street (Puducherry's police still wear the
+  French kepi), 30 px up, bobbing, a little above your head, and he runs after it 100 px behind, arm up:
+  "Mon képi! En thoppi! | My cap! My cap!". Walk on and he bowls you over; hop him and he leaps for his cap
+  the moment you leave the ground; running back up the terrace doesn't help (he's tall, and he runs on).
+  Jump into the cap as it goes over: it lands on your head, he stops dead, "Merci beaucoup! | Thank you very
+  much!", and it flies back to him. The terrace moved four tiles left and the low wall after it is gone, to
+  give the chase a street; the checkpoint before the chase is calm. Human timing 100%.
+- The obvious fix dies in five of eight stages: 01 (hop the policeman), 02 (the clear pools were steps, so
+  hop on to the rock in the last pool: it's a turtle), 03 (the signs lied, so walk the street that says
+  walk), 05 (the first raft waited at the post, so wait for the second), 06 (the first palm let you walk
+  under, so walk under the second and jump the urchins). 06's coconut now meets that jumper's head: it hung
+  a tile behind the jump and always missed (moved from tile 12.8 to 13.6, its palm with it).

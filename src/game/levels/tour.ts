@@ -33,7 +33,8 @@ export const COURSES: Record<CityId, TourSeg[]> = {
   // the auto stand, then up and down a gopuram's tiers, and the beach lamp posts
   CHN: [{ k: 'parked', x: 14 }, { k: 'ditch', x: 26, w: 2 }, { k: 'steps', x: 36, n: 4, run: 2, top: 4 }, { k: 'posts', x: 64, n: 3 }, { k: 'wall', x: 80, w: 2 }],
   // French bollards in a row, a canal, and the café terrace
-  PDY: [{ k: 'posts', x: 12, n: 5 }, { k: 'ditch', x: 32, w: 2, wet: true }, { k: 'parked', x: 44 }, { k: 'steps', x: 56, n: 1, run: 2, top: 10 }, { k: 'wall', x: 76, w: 2 }, { k: 'ditch', x: 86, w: 2 }],
+  // (no wall after the terrace: the street from there to the canal is where the policeman's cap blows down)
+  PDY: [{ k: 'posts', x: 12, n: 5 }, { k: 'ditch', x: 32, w: 2, wet: true }, { k: 'parked', x: 44 }, { k: 'steps', x: 52, n: 1, run: 2, top: 10 }, { k: 'ditch', x: 86, w: 2 }],
   // over the dug-up road on the metro shuttle
   BLR: [{ k: 'wall', x: 12 }, { k: 'steps', x: 22, n: 2, run: 2, top: 3 }, { k: 'parked', x: 40 }, { k: 'ferry', x: 52, w: 12, kind: 'traincar', label: 'NAMMA METRO' }, { k: 'ditch', x: 74, w: 2 }, { k: 'posts', x: 82, n: 2 }],
   // the barrage piers across the Krishna

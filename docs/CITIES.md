@@ -121,7 +121,7 @@ song lyrics. Affectionate teasing locals would proudly share; never mean.
 
 | Stage | Name (meaning) | What it is | Act | Door ending |
 | --- | --- | --- | --- | --- |
-| PDY-01 | Bienvenue (Welcome to Puducherry) | Welcome tour: easy run past landmarks while the guide tells you real things about the city. Yellow walls, French street names and a rocky seafront. | — | — |
+| PDY-01 | Bienvenue (Welcome to Puducherry) | Welcome tour past landmarks while the guide tells you real things about the city. Yellow walls, French street names and a rocky seafront. After the café terrace the sea breeze takes a traffic policeman's red kepi down the street, a little above your head, and he comes running after it, arm up ("Mon képi! En thoppi!"). Stand in his way and he bowls you over; hop him and he leaps for his cap as you do. Jump up and catch the cap: he stops, says "Merci beaucoup!" and takes it back. | — | — |
 | PDY-02 | Rock Beach | Big black rocks. Bigger waves. Perfect rhythm. Almost. | `pdy02-pools` | `shuffle` |
 | PDY-03 | Yellow Wall Jam | In White Town the walls are yellow. And a little bit jealous. | `pdy03-signs` | `mirror` |
 | PDY-04 | Six O’Clock | At six the beach road closes. Everything on it must leave. Including you. | `pdy04-closing` | `lamp` |
