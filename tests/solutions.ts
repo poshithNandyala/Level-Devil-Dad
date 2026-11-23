@@ -49,6 +49,13 @@ const arcCalm = (w: World, need: number) => {
   for (let k = 0; k <= need; k += 1 / 30) if ((w.tick / 120 + k + (s0.phase ?? 0)) % s0.period < s0.on) return false;
   return true;
 };
+/** every pour in the room off for `need` seconds from now */
+const arcsCalm = (w: World, need: number) =>
+  (w.entities.filter((e: any) => e.schedule && e.ax !== undefined) as any[]).every((a) => {
+    const s0 = a.schedule as { period: number; on: number; phase?: number };
+    for (let k = 0; k <= need; k += 1 / 30) if ((w.tick / 120 + k + (s0.phase ?? 0)) % s0.period < s0.on) return false;
+    return true;
+  });
 /** the tile group with this map letter */
 const groupAt = (w: World, letter: string) => w.entities.find((e: any) => e.letter === letter) as unknown as { state: string; solid: { x: number } };
 /** ride a running-lights pulse on one bulb string (BLR-06): stay near its centre */
@@ -173,13 +180,11 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'R', jump: 12, ticks: 12, note: 'on to the roof' },
     { hold: 'R', until: (w) => w.player.onGround || w.player.x >= thingOf(w, 'redbus').solid.x + 6, max: 100 },
     { hold: '', until: ground, max: 200 },
-    { hold: '', dodge: 60, until: (w) => thingOf(w, 'redbus').solid.x >= px16(26), max: 2000, note: 'hop the crows; never jump under a flyover' },
+    { hold: '', dodge: 60, until: (w) => thingOf(w, 'redbus').solid.x >= px16(31.6), max: 2000, note: 'hop the crows; ride the back under the first flyover' },
     { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 46, max: 120, note: 'ride in the middle of the roof' },
     { hold: '', until: (w) => w.flags.bus === 'go2' && w.player.stun === 0, max: 2000, note: 'one bell, two bells: the middle stays on' },
     { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 40, max: 120, note: 'back to the middle' },
-    { hold: '', dodge: 60, until: (w) => thingOf(w, 'redbus').solid.x >= px16(50), max: 2000, note: 'ride the middle' },
-    { hold: 'R', dodge: 60, until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 70, max: 200, note: 'to the front before the second flyover' },
-    { hold: '', dodge: 60, until: (w) => w.flags.bus === 'end', max: 2000 },
+    { hold: '', dodge: 60, until: (w) => w.flags.bus === 'end', max: 2000, note: 'ride the middle: the second chunk hits the front' },
     { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 78, max: 200, note: 'run to the front at the last stop' },
     { hold: 'R', jump: 12, ticks: 12, note: 'off before it turns back' },
     { hold: 'R', until: ground, max: 200 },
@@ -191,7 +196,7 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'R', until: X(8.3) },
     { hold: 'R', jump: 12, ticks: 12, note: 'jump the steam (spikes inside)' },
     { hold: 'R', until: and(ground, X(12.4)), max: 300 },
-    { hold: '', until: (w) => arcCalm(w, 1.05), max: 600, note: 'wait for the pour to stop' },
+    { hold: '', until: (w) => arcsCalm(w, 1.05), max: 900, note: 'wait for both pulls of the pour' },
     { hold: 'R', until: X(22.4), max: 300 },
     { hold: '', dodge: 40, until: (w) => !w.entities.some((e: any) => e.kind === 'tumbler' && e.alive && e.vx < 0 && e.x < px16(24) + 4), max: 300, note: 'let a glass fall off the end' },
     { hold: 'R', jump: 12, ticks: 12, note: 'up on the counter' },
@@ -200,8 +205,8 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'R', jump: 45, ticks: 45, long: true, note: 'off before the end drops' },
     { hold: 'R', until: and(ground, X(37.2)), max: 300 },
     { hold: '', until: (w) => { const m = (w.tick / 120) % 2.4; return m >= 0.7 && m < 0.76; }, max: 900, note: 'follow the wave of sprays as it moves on' },
-    { hold: 'R', until: X(49.3), max: 300 },
-    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'over the painted floor, long: spikes come up where a hop lands' },
+    { hold: 'R', until: X(46.6), max: 300 },
+    { hold: 'R', jump: 45, ticks: 45, long: true, note: 'over the painted floor, long: spikes come up where a hop lands' },
     { hold: 'R', until: ground, max: 200 },
     { hold: 'R', until: (w) => w.entities.some((e: any) => e.kind === 'scooter' && e.alive && e.x > w.player.x - 70), max: 600, note: 'a scooter comes up behind' },
     { hold: '', dodge: 60, until: (w) => !w.entities.some((e: any) => e.kind === 'scooter' && e.alive && e.x < w.player.x + 14), max: 400, note: 'stop and hop it' },
@@ -212,7 +217,7 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'L', until: done, max: 300 },
   ],
   'TVM-04': [
-    { hold: 'R', until: X(6.05), note: 'the first coconut drops ahead' },
+    { hold: 'R', until: X(7.6), note: 'the first coconut drops ahead: stop past the palm, never under it' },
     { hold: '', until: rollerNear(40), max: 400 },
     { hold: 'R', jump: 12, ticks: 12, note: 'hop the roll' },
     { hold: 'R', until: and(ground, X(12.3)) },
@@ -427,9 +432,10 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'FWD', until: done, max: 300 },
   ],
   'TVM-06': [
-    { hold: 'R', until: X(4.1), dodge: 1 },
+    { hold: 'R', until: X(2.9), dodge: 1, note: 'wait back from the edge: the swell crashes over it' },
     { hold: '', until: (w) => !w.entities.some((e: any) => e.kind === 'crow' && e.alive && e.x > w.player.x - 20), max: 600, dodge: 1, note: 'hop the crow' },
-    { hold: '', until: (w) => (w.flags.net0 ?? 0) >= 0.55 && noCrow(w), max: 900, dodge: 44 },
+    { hold: '', until: (w) => (w.flags.net0 ?? 0) >= 0.7 && noCrow(w), max: 900, dodge: 44 },
+    { hold: 'R', until: X(4.3), max: 100, note: 'the net is up: to the edge' },
     ...hopOn(netNo(0)),
     { hold: '', until: (w) => (w.flags.net1 ?? 0) >= 0.55 && w.player.onGround && noCrow(w), max: 900, dodge: 44 },
     ...hopOn(netNo(1)),
@@ -475,21 +481,18 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'R', jump: 14, ticks: 14, note: 'up on the ridge' },
     { hold: 'R', until: ground, max: 200 },
     { hold: 'R', until: X(55.0), max: 300 },
-    { hold: '', until: (w) => mistClear(w, 1.1), max: 900, note: 'wait for the mist to lift' },
+    { hold: '', until: (w) => mistClear(w, 1.5), max: 900, note: 'wait for the mist to lift' },
     { hold: 'R', until: X(56.6), max: 300 },
     { hold: 'R', jump: 12, ticks: 12, note: 'spike pit one' },
     { hold: 'R', until: and(ground, X(60.6)), max: 300 },
     { hold: 'R', jump: 12, ticks: 12, note: 'spike pit two' },
+    { hold: 'R', until: and(ground, X(64.6)), max: 300 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'spike pit three' },
     { hold: 'R', until: ground, max: 200 },
-    { hold: 'R', until: X(68.2), max: 300 },
+    { hold: 'R', until: X(69.2), max: 300 },
     { hold: 'R', jump: 14, ticks: 14, note: 'over the first rock as soon as it lands' },
     { hold: 'R', until: ground, max: 200 },
-    { hold: 'R', until: (w) => !!thingOf(w, 'boulder', 1), max: 200 },
-    { hold: '', until: (w) => thingOf(w, 'boulder', 1)?.state === 'landed', max: 300, note: 'the next one falls just ahead: let it' },
-    { hold: 'R', until: and(ground, X(72.8)), max: 200 },
-    { hold: 'R', jump: 14, ticks: 14, note: 'over the second rock' },
-    { hold: 'R', until: ground, max: 200 },
-    { hold: 'R', until: X(80.9), max: 300 },
+    { hold: 'R', until: X(80.9), max: 400, note: 'keep going: the second rock comes down where you would stop' },
     { hold: 'R', jump: 30, ticks: 30, note: 'leap past the step: it drops if you land on it' },
     { hold: 'R', until: ground, max: 200 },
     { hold: 'R', until: (w: World) => w.flags.twist === 'shut', max: 900 },
@@ -513,12 +516,9 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'R', until: X(66.2), max: 300 },
     { hold: '', until: ground, max: 200 },
     { hold: '', until: (w) => thingOf(w, 'snakeboat').x >= w.flags.boatEnd - 0.5, max: 1500, dodge: 1, note: 'hop the crows, ride to the finish' },
-    { hold: 'R', until: and(ground, X(87.0)), max: 300 },
-    { hold: 'R', jump: 12, ticks: 12, note: 'spikes in the jetty' },
-    { hold: 'R', until: ground, max: 200 },
-    { hold: 'R', until: X(91.4), max: 200 },
-    { hold: 'R', jump: 12, ticks: 12, note: 'and at the door: jump in' },
-    { hold: 'R', until: done, max: 300 },
+    { hold: 'R', until: X(86.4), max: 300 },
+    { hold: '', until: (w) => w.entities.some((e: any) => e.cells?.[0]?.x === px16(89) && e.popTick >= 0 && !e.popped), max: 300, note: 'spikes in the jetty: let them sink back' },
+    { hold: 'R', until: done, max: 300, note: 'and walk in: a hop brings up more where you land' },
   ],
   'KVT-04': [
     { hold: 'R', until: X(5.4) },
@@ -820,7 +820,8 @@ export const SOLUTIONS: Record<string, Step[]> = {
     ...hopOn(() => ({ solid: { x: 41 * 16, w: 32 } })),
     ...hopOn(() => ({ solid: { x: 44 * 16, w: 32 } })),
     ...hopOn(() => ({ solid: { x: 47 * 16, w: 32 } })),
-    { hold: 'R', jump: 12, ticks: 12, note: 'on to the bank before it crumbles' },
+    { hold: 'R', until: X(48.75), max: 30 },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'off the last stone, long: past the mud on the bank' },
     { hold: 'R', until: ground, max: 200 },
     { hold: 'R', until: X(52.6), max: 200, note: 'up to the second gate' },
     { hold: '', until: (w) => gateNear(w, 55).y > 180, max: 300, note: 'second gate drops' },
@@ -1049,13 +1050,10 @@ function tourSwap(run: Step[], note: string, steps: Step[], nth = 0): Step[] {
   if (i < 0) throw new Error(`tourSwap: no step '${note}'`);
   return [...run.slice(0, i - 1), ...steps, ...run.slice(i + 2)];
 }
-/** TVM-01's start: a small hop over the cave-in, clean over the wall and the glass your hop put on it, and
- *  at once over the glass on the road past it */
+/** TVM-01's start: walk over the soaked road (a hop on it breaks it), clean over the wall and the glass
+ *  your jump put on it, and at once over the glass on the road past it */
 const tvm01Wall: Step[] = [
-  { hold: 'R', until: X(6.3), max: 300 },
-  { hold: 'R', jump: 10, ticks: 10, note: 'a small hop over the cave-in' },
-  { hold: 'R', until: ground, max: 200 },
-  { hold: 'R', until: X(10.3), max: 200 },
+  { hold: 'R', until: X(10.3), max: 400, note: 'walk over the soaked road: a hop on it breaks it' },
   { hold: 'R', jump: 20, ticks: 20, long: true, note: 'clean over the wall and its glass' },
   { hold: 'R', until: ground, max: 200 },
 ];
@@ -1087,7 +1085,7 @@ function tvm01(start = tvm01Start, offCanoe: Step[] = [{ hold: 'R', until: X(76.
   const off = run.findIndex((st) => st.note === 'step off');
   run = [...run.slice(0, off), ...offCanoe, ...run.slice(off + 1)];
   const rocket = run.findIndex((st) => st.note === 'hop the parked ride') - 1;
-  run.splice(rocket, 0, { hold: 'R', until: X(49.9), max: 400, note: 'on to the last step' }, { hold: '', until: launchIs('down'), max: 600, note: 'the rocket goes; wait out the fire and the falling stage' });
+  run.splice(rocket, 0, { hold: 'R', until: X(45.6), max: 400, note: 'over the top of the steps: the rocket goes' }, { hold: '', until: launchIs('down'), max: 600, note: 'the rocket goes; stay up top while both stages come down' });
   const deck = run.findIndex((st) => st.note === 'up on the deck') - 1;
   run.splice(deck, 0, ...tarp);
   return run;
@@ -1113,7 +1111,7 @@ function newDoor(id: string, drop: number) {
 newDoor('TVM-02', 3);
 newDoor('TVM-04', 2);
 newDoor('TVM-06', 2);
-newDoor('TVM-08', 3);
+newDoor('TVM-08', 1);
 
 // Kavaratti
 SOLUTIONS['KVT-06'] = [
@@ -1289,7 +1287,7 @@ eastSolutions(SOLUTIONS, lengthen);
 /** The obvious play that a trap is designed to punish. */
 export const NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
   ...EAST_NAIVE,
-  'TVM-01': { steps: tourRun('TVM'), cause: 'fell' },
+  'TVM-01': { steps: tourRun('TVM'), cause: 'spikes' },
   'KVT-01': { steps: tourRun('KVT'), cause: 'hatchling' },
   'CHN-01': { steps: tourRun('CHN'), cause: 'burnt' },
   'PDY-01': { steps: tourRun('PDY'), cause: 'hit' },
@@ -1420,6 +1418,7 @@ function swapAt(id: string, note: string, n: number, w: Step[]): Step[] {
 /** More scripted mistakes per stage: each is something a first-timer does, and each must die. */
 export const MISTAKES: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
   'TVM-06': [
+    { what: 'wait at the edge of the promenade, like last time', steps: [{ hold: 'R', until: X(4.1), max: 300 }, { hold: '', until: (w) => w.state !== 'play', max: 900 }], cause: 'splash' },
     { what: 'hop straight off the last net (a short hop)', steps: swapAt('TVM-06', 'it dips at once: straight off to the jetty', 2, [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'crushed' },
   ],
   'TVM-03': [
@@ -1429,6 +1428,8 @@ export const MISTAKES: Record<string, { what: string; steps: Step[]; cause?: str
       cause: 'hit',
     },
     { what: 'walk straight back to the door', steps: [...SOLUTIONS['TVM-03'].slice(0, SOLUTIONS['TVM-03'].findIndex((st) => st.note === 'the door ran back')), { hold: 'L', until: (w) => w.state !== 'play', max: 300 }], cause: 'spikes' },
+    { what: 'cross the moment the pour stops, like last time', steps: swapAt('TVM-03', 'wait for both pulls of the pour', 1, [{ hold: '', until: (w) => arcCalm(w, 1.05), max: 600 }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'burnt' },
+    { what: 'walk up to where you jumped the shiny floor last time', steps: swapAt('TVM-03', 'over the painted floor, long: spikes come up where a hop lands', 1, [{ hold: 'R', until: (w) => w.state !== 'play' || w.player.x >= px16(49.3), max: 300 }, { hold: 'R', jump: 30, ticks: 30, long: true }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'burnt' },
     { what: 'hop over the shiny floor', steps: swapAt('TVM-03', 'over the painted floor, long: spikes come up where a hop lands', 1, [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'spikes' },
   ],
   'KVT-02': [
@@ -1439,16 +1440,22 @@ export const MISTAKES: Record<string, { what: string; steps: Step[]; cause?: str
   ],
   'TVM-05': [
     { what: 'wait for the first gate, then run on', steps: [...SOLUTIONS['TVM-05'].slice(0, SOLUTIONS['TVM-05'].findIndex((st) => st.note === 'under the first gate, and stop')), { hold: 'R', until: (w) => w.state !== 'play', max: 400 }], cause: 'crushed' },
+    { what: 'hop on to the bank, like last time', steps: [...SOLUTIONS['TVM-05'].slice(0, SOLUTIONS['TVM-05'].findIndex((st) => st.note === 'off the last stone, long: past the mud on the bank') - 1), { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }], cause: 'splash' },
     { what: 'back off when the dog growls', steps: swapAt('TVM-05', 'walk past the dog, do not jump', 1, [{ hold: '', until: ground, max: 200 }, { hold: 'L', until: (w) => w.state !== 'play', max: 300 }]), cause: 'spikes' },
     { what: 'stand on a stone in the moat', steps: [...SOLUTIONS['TVM-05'].slice(0, SOLUTIONS['TVM-05'].findIndex((st) => st.note === 'calm over the moat') + 2), { hold: 'R', jump: 12, ticks: 12 }, { hold: '', until: (w) => w.state !== 'play', max: 400 }], cause: 'splash' },
   ],
   'TVM-07': [
+    { what: 'hop two pits in the mist and walk on, like last time', steps: [...SOLUTIONS['TVM-07'].slice(0, SOLUTIONS['TVM-07'].findIndex((st) => st.note === 'spike pit two') + 1), { hold: 'R', until: (w) => w.state !== 'play', max: 400 }], cause: 'spikes' },
+    { what: 'stop past the first rock to let the second fall, like last time', steps: [...SOLUTIONS['TVM-07'].slice(0, SOLUTIONS['TVM-07'].findIndex((st) => st.note === 'over the first rock as soon as it lands') + 2), { hold: 'R', until: X(73.4), max: 100 }, { hold: '', until: (w) => w.state !== 'play', max: 400 }], cause: 'crushed' },
     { what: 'walk down the steps to the factory, as Tara says', steps: swapAt('TVM-07', 'leap past the step: it drops if you land on it', 2, [{ hold: 'R', until: (w) => w.state !== 'play', max: 600 }]), cause: 'fell' },
   ],
   'TVM-08': [
+    { what: 'hop the jetty spikes, like last time', steps: [...SOLUTIONS['TVM-08'].slice(0, SOLUTIONS['TVM-08'].findIndex((st) => st.note === 'spikes in the jetty: let them sink back') - 1), { hold: 'R', until: and(ground, X(87.0)), max: 300 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }], cause: 'spikes' },
+    { what: 'walk on when the jetty spikes come up', steps: [...SOLUTIONS['TVM-08'].slice(0, SOLUTIONS['TVM-08'].findIndex((st) => st.note === 'spikes in the jetty: let them sink back') - 1), { hold: 'R', until: (w) => w.state !== 'play', max: 300 }], cause: 'spikes' },
     { what: 'stay seated under the fourth bridge (Tara lied at the third)', steps: swapAt('TVM-08', 'the low bridge after it: do hop this one', 3, [{ hold: '', until: (w) => w.state !== 'play', max: 900 }]), cause: 'splash' },
   ],
   'TVM-04': [
+    { what: 'stop under the palm and wait for the roll, like last time', steps: [{ hold: 'R', until: X(6.05), max: 300 }, { hold: '', until: (w) => w.state !== 'play', max: 400 }], cause: 'coconut' },
     { what: 'walk over the fallen fronds', steps: swapAt('TVM-04', 'hop the fronds: a coir pit under them', 2, [{ hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'splash' },
     { what: 'walk straight on through the wind', steps: swapAt('TVM-04', 'wind: wait for the wave to start', 2, [{ hold: 'R', until: (w) => w.state !== 'play', max: 600 }]), cause: 'coconut' },
     { what: 'let the wave go by, then follow it', steps: swapAt('TVM-04', 'follow behind the wave', 2, [{ hold: 'R', until: (w) => w.state !== 'play', max: 600 }]), cause: 'coconut' },
@@ -1456,34 +1463,50 @@ export const MISTAKES: Record<string, { what: string; steps: Step[]; cause?: str
   ],
   'TVM-02': [
     {
-      what: 'ride at the back of the roof',
+      what: 'ride at the back of the roof through the bells',
       steps: [
         ...SOLUTIONS['TVM-02'].slice(0, SOLUTIONS['TVM-02'].findIndex((st) => st.note?.startsWith('hop the crows'))),
         { hold: 'L', until: (w) => w.player.x <= thingOf(w, 'redbus').solid.x + 12, max: 120 },
+        { hold: '', dodge: 60, until: (w) => w.state !== 'play', max: 2000 },
+      ],
+      cause: 'splash',
+    },
+    {
+      what: 'ride the middle under the first flyover, like last time',
+      steps: [
+        ...SOLUTIONS['TVM-02'].slice(0, SOLUTIONS['TVM-02'].findIndex((st) => st.note?.startsWith('hop the crows'))),
+        { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 46, max: 200 },
         { hold: '', dodge: 60, until: (w) => w.state !== 'play', max: 2000 },
       ],
       cause: 'crushed',
     },
     {
       what: 'hop the kite like the crows',
-      steps: [...SOLUTIONS['TVM-02'].slice(0, SOLUTIONS['TVM-02'].findIndex((st) => st.note === 'ride the middle')), { policy: hopAnyBird(), until: (w) => w.state !== 'play', max: 2000 }],
+      steps: [...SOLUTIONS['TVM-02'].slice(0, SOLUTIONS['TVM-02'].findIndex((st) => st.note?.startsWith('ride the middle: the second'))), { policy: hopAnyBird(), until: (w) => w.state !== 'play', max: 2000 }],
       cause: 'hit',
     },
     {
-      what: 'stay in the middle under the second flyover',
-      steps: [...SOLUTIONS['TVM-02'].slice(0, SOLUTIONS['TVM-02'].findIndex((st) => st.note === 'to the front before the second flyover')), { hold: '', dodge: 60, until: (w) => w.state !== 'play', max: 2000 }],
+      what: 'run to the front before the second flyover, like last time',
+      steps: [
+        ...SOLUTIONS['TVM-02'].slice(0, SOLUTIONS['TVM-02'].findIndex((st) => st.note?.startsWith('ride the middle: the second'))),
+        { hold: '', dodge: 60, until: (w) => thingOf(w, 'redbus').solid.x >= px16(50), max: 2000 },
+        { hold: 'R', dodge: 60, until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 70, max: 200 },
+        { hold: '', dodge: 60, until: (w) => w.state !== 'play', max: 2000 },
+      ],
       cause: 'crushed',
     },
   ],
   'TVM-01': [
     { what: 'hop up on to the wall', steps: [...tvm01Start.slice(0, 3), { hold: 'R', until: (w) => w.player.x + w.player.w >= px16(12) - 0.5, max: 200 }, { hold: '', jump: 14, ticks: 14 }, { hold: 'R', until: (w) => w.state !== 'play' || w.player.onGround, max: 200 }, tvm01Die], cause: 'spikes' },
     { what: 'walk on after the wall', steps: [...tvm01Wall, tvm01Die], cause: 'spikes' },
+    { what: 'hop the soaked road, like last time', steps: [{ hold: 'R', until: X(6.3), max: 300 }, { hold: 'R', jump: 10, ticks: 10 }, tvm01Die], cause: 'fell' },
     { what: 'jump the ditch', steps: tvm01(tvm01Start, undefined, [{ hold: 'R', until: X(22.4), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, tvm01Die]), cause: 'spikes' },
     { what: 'jump the ditch, long', steps: tvm01(tvm01Start, undefined, [{ hold: 'R', until: X(22.9), max: 400 }, { hold: 'R', jump: 30, ticks: 30, long: true }, tvm01Die]), cause: 'spikes' },
     { what: 'walk on under the full tarp', steps: tvm01(tvm01Start, undefined, tvm01Ditch, [tvm01Die]), cause: 'drenched' },
     { what: 'let the tarp empty, then wade the puddle like the ditch', steps: tvm01(tvm01Start, undefined, tvm01Ditch, [...tvm01Tarp.slice(0, 2), tvm01Die]), cause: 'splash' },
-    { what: 'run on when the rocket goes', steps: tvm01().filter((st) => st.note !== 'on to the last step' && !st.note?.startsWith('the rocket goes')), cause: 'burnt' },
-    { what: 'stop at the foot of the steps when it goes', steps: [...tvm01().slice(0, tvm01().findIndex((st) => st.note === 'on to the last step')), { hold: 'R', until: X(52.3), max: 400 }, { hold: '', until: (w) => w.state !== 'play', max: 600 }], cause: 'crushed' },
+    { what: 'run on when the rocket goes', steps: tvm01().filter((st) => st.note !== 'over the top of the steps: the rocket goes' && !st.note?.startsWith('the rocket goes')), cause: 'burnt' },
+    { what: 'stop at the foot of the steps when it goes', steps: [...tvm01().slice(0, tvm01().findIndex((st) => st.note === 'over the top of the steps: the rocket goes')), { hold: 'R', until: X(52.3), max: 400 }, { hold: '', until: (w) => w.state !== 'play', max: 600 }], cause: 'crushed' },
+    { what: 'wait on the last step, like last time', steps: [...tvm01().slice(0, tvm01().findIndex((st) => st.note === 'over the top of the steps: the rocket goes')), { hold: 'R', until: X(49.9), max: 400 }, { hold: '', until: (w) => w.state !== 'play', max: 600 }], cause: 'crushed' },
     { what: 'step off the canoe', steps: [...tvm01([...tvm01Start], [tvm01Die])], cause: 'fell' },
     { what: 'jump the hole at the end', steps: [...tvm01().slice(0, -1), { hold: 'R', until: X(101.9), max: 900 }, { hold: 'R', jump: 30, ticks: 30, long: true }, tvm01Die], cause: 'fell' },
   ],
@@ -1599,7 +1622,7 @@ export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
   // out of the steam, straight on: the tea master starts his pour as you come out of it
   'TVM-03': { steps: [...SOLUTIONS['TVM-03'].slice(0, 2), { hold: 'R', until: (w) => w.state !== 'play', max: 900 }], cause: 'burnt' },
   // the moat's stones crumble, so keep hopping, on to the bank and on: the second gate drops right there
-  'TVM-05': { steps: [...SOLUTIONS['TVM-05'].slice(0, SOLUTIONS['TVM-05'].findIndex((st) => st.note === 'on to the bank before it crumbles') + 1), { hold: 'R', until: (w) => w.state !== 'play', max: 600 }], cause: 'crushed' },
+  'TVM-05': { steps: [...SOLUTIONS['TVM-05'].slice(0, SOLUTIONS['TVM-05'].findIndex((st) => st.note === 'off the last stone, long: past the mud on the bank') + 1), { hold: 'R', until: (w) => w.state !== 'play', max: 600 }], cause: 'crushed' },
   // the coconut over the gap: just jump the gap, like the roll before it (it drops on the jump)
   'TVM-04': { steps: swapAt('TVM-04', 'little hop to bait the gap coconut', 1, []), cause: 'coconut' },
   // the last net: wait on it for the right moment, like the four before it (it dips the moment you land)

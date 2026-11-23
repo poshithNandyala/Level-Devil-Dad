@@ -135,6 +135,16 @@ tarp, 02 kite, 03 second scooter, 04 fronds, 05 dog, 07 factory step), then tell
 learnt she lies (TVM-06's last net), and a lie and a truth at back-to-back bridges (TVM-08: read the bridge,
 not Tara), a coconut the last palm keeps back for the dad who follows the falling wave (TVM-04), a sleeping
 dog that growls as you land past the spikes, so the flinch back meets them (TVM-05).
+Round three of the pass (v0.16.14) moves the tricks so the way through the last version dies, and records
+that version's routes in `tests/frozen/` (tests/stale.test.ts plays them and they must die): a soaked road
+that holds a walker and breaks under a hop (TVM-01, the reverse of its old cave-in), a two-stage rocket
+whose first stage comes down where you used to wait (TVM-01, `Launch` `boosters`), flyover chunks moved
+to where you used to ride, with dark cracks in the decks as the tell (TVM-02), the tea master's double pull
+(TVM-03), a coconut that drops on whoever stops under a palm (TVM-04), moat mud at the bank's edge that goes
+the moment you land on it (TVM-05), the swell crashing over the promenade's edge while the first net is
+down (TVM-06), a third pit in the mist and a rock that comes down where you'd stop to let it fall, its
+pebbles first (TVM-07), and finish-jetty spikes that sink back after a moment, with more where a hop over
+them lands (TVM-08, calling back Fort Kochi's jetty and the tea street's painted floor).
 
 ## Acts (one per id, never reused)
 amr02-powder amr03-logs amr04-hot amr05-humps amr06-zip amr07-gallery amr08-shack

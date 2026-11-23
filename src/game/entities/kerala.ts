@@ -9,6 +9,18 @@ import { overlapXYWH } from '../constants';
  * road for a moment, and a little later the spent first stage drops back out of the
  * sky (where a careful dad waits for the fire to die down) and lies there, a log to hop.
  */
+/** one spent stage of a Launch: separates `sepAt` s after the launch, falls, and lies where it lands */
+interface SpentStage {
+  x: number;
+  ground: number;
+  sepAt: number;
+  y: number;
+  v: number;
+  state: 'up' | 'falling' | 'down';
+  solid: Solid;
+  hazard: Hazard;
+}
+
 export class Launch extends Entity {
   /** the rocket's centre and the ground it stands on */
   readonly x: number;
@@ -18,17 +30,12 @@ export class Launch extends Entity {
   /** the burning stretch of road, px */
   readonly blastX0: number;
   readonly blastX1: number;
-  /** the spent stage: where it comes down, and when (seconds after launch) */
-  readonly stageX: number;
-  readonly sepAt: number;
-  private stageY = -60;
-  private stageV = 0;
-  stage: 'up' | 'falling' | 'down' = 'up';
-  private stageSolid: Solid;
+  /** the spent stages, in the order they separate: where each comes down (and on what), and when */
+  readonly stages: SpentStage[];
   hazard: Hazard;
-  private stageHazard: Hazard;
 
-  constructor(o: { tx: number; groundTy: number; blast: [number, number]; blastSec?: number; stageTx: number; sepAt?: number }) {
+  /** `stageTx`/`sepAt` is the last stage; `boosters` are stages that separate before it (lower, and sooner) */
+  constructor(o: { tx: number; groundTy: number; blast: [number, number]; blastSec?: number; stageTx: number; sepAt?: number; boosters?: { tx: number; groundTy?: number; sepAt: number }[] }) {
     super();
     this.layer = -1;
     this.x = o.tx * TILE + 8;
@@ -36,10 +43,19 @@ export class Launch extends Entity {
     this.blastX0 = o.blast[0] * TILE;
     this.blastX1 = (o.blast[1] + 1) * TILE;
     this.blastSec = o.blastSec ?? 1.4;
-    this.stageX = o.stageTx * TILE;
-    this.sepAt = o.sepAt ?? 1.5;
-    this.stageSolid = new Solid(this.stageX, this.ground - 12, 40, 12);
-    this.stageSolid.collidable = false;
+    const mk = (tx: number, groundTy: number, sepAt: number): SpentStage => {
+      const st: SpentStage = { x: tx * TILE, ground: groundTy * TILE, sepAt, y: -60, v: 0, state: 'up', solid: new Solid(tx * TILE, groundTy * TILE - 12, 40, 12), hazard: null as unknown as Hazard };
+      st.solid.collidable = false;
+      st.hazard = {
+        active: true,
+        cause: 'crushed',
+        hits(x, y, w, h) {
+          return st.state === 'falling' && overlapXYWH(x, y, w, h, { x: st.x + 2, y: st.y + 2, w: 36, h: 10 });
+        },
+      };
+      return st;
+    };
+    this.stages = [...(o.boosters ?? []).map((b) => mk(b.tx, b.groundTy ?? o.groundTy, b.sepAt)), mk(o.stageTx, o.groundTy, o.sepAt ?? 1.5)];
     const self = this;
     this.hazard = {
       active: true,
@@ -48,20 +64,20 @@ export class Launch extends Entity {
         return self.burning && overlapXYWH(x, y, w, h, { x: self.blastX0, y: self.ground - 22, w: self.blastX1 - self.blastX0, h: 22 });
       },
     };
-    this.stageHazard = {
-      active: true,
-      cause: 'crushed',
-      hits(x, y, w, h) {
-        return self.stage === 'falling' && overlapXYWH(x, y, w, h, { x: self.stageX + 2, y: self.stageY + 2, w: 36, h: 10 });
-      },
-    };
   }
 
-  /** add it to the world (it brings a second hazard and a solid for the fallen stage) */
+  /** the last stage (the one that falls furthest out) */
+  get stage(): 'up' | 'falling' | 'down' {
+    return this.stages[this.stages.length - 1].state;
+  }
+
+  /** add it to the world (it brings a hazard and a solid for each spent stage) */
   static place(w: World, o: ConstructorParameters<typeof Launch>[0]): Launch {
     const l = w.add(new Launch(o));
-    w.hazards.push(l.stageHazard);
-    w.solids.push(l.stageSolid);
+    for (const st of l.stages) {
+      w.hazards.push(st.hazard);
+      w.solids.push(st.solid);
+    }
     return l;
   }
 
@@ -93,24 +109,27 @@ export class Launch extends Entity {
     this.elapsedTicks = w.tick - this.t0;
     const t = this.elapsed;
     if (t >= this.blastSec && w.flags.launch === 'fire') w.flags.launch = 'calm';
-    if (this.stage === 'up' && t >= this.sepAt) {
-      this.stage = 'falling';
-      this.stageY = -60;
-      this.stageV = 60;
-      w.sfx('whistle', this.stageX + 20, 40);
-      w.flags.launch = 'stage';
-    }
-    if (this.stage === 'falling') {
-      this.stageV = Math.min(520, this.stageV + 1400 * DT);
-      this.stageY += this.stageV * DT;
-      if (this.stageY >= this.ground - 12) {
-        this.stageY = this.ground - 12;
-        this.stage = 'down';
-        this.stageSolid.collidable = true;
-        w.sfx('thud', this.stageX + 20, this.ground);
-        w.emit('shake', this.stageX + 20, this.ground, { amount: 4 });
-        w.emit('fx', this.stageX + 20, this.ground, { kind: 'dust', w: 40 });
-        w.flags.launch = 'down';
+    for (const st of this.stages) {
+      if (st.state === 'up' && t >= st.sepAt) {
+        st.state = 'falling';
+        st.y = -60;
+        st.v = 60;
+        w.sfx('whistle', st.x + 20, 40);
+        w.flags.launch = 'stage';
+      }
+      if (st.state === 'falling') {
+        st.v = Math.min(520, st.v + 1400 * DT);
+        st.y += st.v * DT;
+        if (st.y >= st.ground - 12) {
+          st.y = st.ground - 12;
+          st.state = 'down';
+          st.solid.collidable = true;
+          w.sfx('thud', st.x + 20, st.ground);
+          w.emit('shake', st.x + 20, st.ground, { amount: 4 });
+          w.emit('fx', st.x + 20, st.ground, { kind: 'dust', w: 40 });
+          // 'down' once every stage is down
+          w.flags.launch = this.stages.every((s2) => s2.state === 'down') ? 'down' : 'stage';
+        }
       }
     }
   }
@@ -225,11 +244,12 @@ export class Launch extends Entity {
         ctx.fill();
       }
     }
-    // the spent stage
-    if (this.stage !== 'up') {
-      const sx = this.stageX,
-        sy = this.stageY;
-      if (this.stage === 'falling') {
+    // the spent stages
+    for (const st of this.stages) {
+      if (st.state === 'up') continue;
+      const sx = st.x,
+        sy = st.y;
+      if (st.state === 'falling') {
         for (let i = 1; i < 6; i++) {
           ctx.fillStyle = `rgba(230,226,220,${0.45 - i * 0.07})`;
           ctx.beginPath();
@@ -248,7 +268,7 @@ export class Launch extends Entity {
       ctx.fillRect(sx + 26, sy, 3, 12);
       ctx.fillStyle = '#5A5A5A';
       ctx.fillRect(sx - 2, sy + 2, 3, 8);
-      if (this.stage === 'down') {
+      if (st.state === 'down') {
         ctx.fillStyle = 'rgba(0,0,0,0.25)';
         ctx.fillRect(sx + 1, sy + 12, 38, 1);
       }

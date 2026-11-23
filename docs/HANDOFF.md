@@ -197,6 +197,7 @@ whole stage: it appends each act's route (by act id) and the ending's policy (by
 | `items.test.ts` | one hidden item per stage, somewhere reachable-looking |
 | `jumpaudit.test.ts` | no required jump needs more than a 15-tick hold unless the step is marked `long` |
 | `chunks.test.ts`, `abilities.test.ts`, `physics.test.ts` | the old troll sections, swimming/palms/water running/wall kicks, physics |
+| `stale.test.ts` | a reworked stage kills the route that won the last version it shipped in (frozen copies in `tests/frozen/`): the way the player already knows is not the way through any more |
 
 Tools (each is a test that only runs with its env var):
 
@@ -233,6 +234,12 @@ whatever you stand on, so its hops on a moving roof are judged like a person's.
 - Bots press on the exact frame. A route passing proves the stage is possible, not that it's fair.
 - A `Rider` assumes its art faces left and flips it when it moves right. Art that faces right (the scooter,
   the road roller) needs `facesRight = true`, or it rides backwards.
+- Reworking a stage the owner has already played: change the moves he knows, not only the mistakes he no
+  longer makes. Freeze the shipped routes (`tests/frozen/vX.ts`, a copy of solutions.ts with its imports
+  one folder up), list the reworked ids in `stale.test.ts`, and record each old move as a `like last time`
+  mistake. Traps only for wrong moves look like "no changes" to someone who knows the stage.
+- `newDoor(id, n)` drops a route's last `n` steps for the door policy: if you add steps at the end of a
+  room, lower `n`, or they vanish (TVM-08's finish did).
 - A hazard on a clock (`Schedule`) meets whoever arrives at the right moment, which is luck. To make the
   obvious play meet it every time, start the clock when Dad gets near (TVM-03's pour: `onPass` sets the
   schedule's phase).

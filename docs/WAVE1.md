@@ -547,3 +547,34 @@ and makes the city harder to trust.
   08 at 50 (was 41 and 59).
 - New mistakes for 07 (take the steps, as Tara says) and 08 (stay seated under the fourth bridge).
 - Human timing unchanged at 12 ticks: 01 100, 02 93, 03 100, 04 100, 05 90, 06 98, 07 90, 08 100.
+
+## v0.16.14: Thiruvananthapuram, round three (the way you know is gone)
+The owner on v0.16.13: no changes he could see. He was right: the route that won v0.16.12 still won 7 of
+the 8 stages, because round two only added traps for wrong moves, and someone who knows the stages doesn't
+make those. Round three changes the moves he knows. `tests/stale.test.ts` now plays v0.16.13's winning
+route (frozen in `tests/frozen/v0.16.13.ts`) on every TVM stage, and each one has to die. Each old move is
+also recorded as a "like last time" mistake.
+- 01: the road after Tara is soaked. It holds a dad who walks over it and breaks under one who hops (last
+  time it caved in and you hopped). The Thumba rocket goes up as you come over the top of the steps; it has
+  two stages now (`Launch` takes `boosters`), and the first comes down on the last step where you used to
+  wait: stay up top. The road burns 2 s, so running on still burns.
+- 02: the first flyover's chunk falls on the middle of the roof (ride the back), the second's on the front
+  (ride the middle). Dark cracks on the decks show where.
+- 03: the tea master pulls twice ("Onnoode! | Once more!"): cross after the second pull. The shiny fake
+  floor is two tiles nearer, so walking up to the old take-off spot puts you on it: jump long from further
+  back.
+- 04: a palm stands where you used to wait for the first roll, and its coconut drops on whoever stops under
+  it (Tara: "Thanalil nikku, Dad! | Stand in the shade, Dad!"). Stop past it, between the palms.
+- 05: the bank's edge past the moat is mud (`noLanding`): the hop off the last stone that used to land
+  there goes in. Jump long from the stone's far edge.
+- 06: the swell crashes over the edge of the promenade while the first net is down (a `geyser` on the nets'
+  own clock). Wait back from the edge; go when the net is up.
+- 07: three pits in the mist (it clears a little longer), and the second rock comes down where you used to
+  stop to let it fall: keep going after the first. Its pebbles trickle down first, right over you.
+- 08 (finale, callbacks only): the finish-jetty spikes come up as you step off the boat and sink back after
+  a moment (Fort Kochi's jetty); hop them and more come up where you land (the tea street's painted floor).
+  Wait, then walk in.
+- Human timing at 12 ticks: 01 100, 02 100, 03 100, 04 100, 05 90, 06 98, 07 90, 08 100.
+- Tried and dropped: a gust through TVM-05's gatehouse that would carry the dad who stops between the gates
+  under the hidden one. Wind pushes a stopped dad only as far as the zone reaches and then he stops dead,
+  and starting it early carried a runner past the hidden gate instead of into it.
