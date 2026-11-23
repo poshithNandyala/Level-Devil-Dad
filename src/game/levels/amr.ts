@@ -9,6 +9,7 @@ import { tour } from './tour';
 import { longStage } from './chunks';
 import { Grid } from './grid';
 import { exitTwist } from './twists';
+import { Aunty } from '../entities/andhra';
 
 // Amaravati and Vijayawada: a capital being built by the Krishna, Guntur
 // chillies drying in the sun, the long barrage, the hottest tar in India and
@@ -250,8 +251,8 @@ const lowerGallery: Act = {
     g.fill(c.x + 2, c.x + 3, 14, 14, '#').fill(c.x + 4, c.x + 23, 12, 14, '#');
     g.fill(c.x + 4, c.x + 27, 15, 16, '.');
     g.fill(c.x + 9, c.x + 10, 12, 14, '.');
+    // (no spikes after the falling ceiling: nobody who goes that way gets past the ceiling to meet them)
     g.fill(c.x + 14, c.x + 19, 9, 10, c.L[0]);
-    g.fill(c.x + 20, c.x + 23, 11, 11, '^');
   },
   build: (w, c) => {
     const { X } = c;
@@ -324,6 +325,13 @@ export const AMR: LevelDef[] = [
       ["palm", 106, { h: 84, lean: -4 }],
     ],
     things: [["doll", 80]],
+    hint: 'An aunty on her doorstep feeds everyone who walks past ("Annam tinnava?"), and a full stomach won’t make the long jump on the barrage piers. Hop past her plate, or wait a few seconds for it to settle (you’ll burp). Hold jump for the wide gap.',
+    // the Krishna is deep here, and one pier is missing: a wide gap that wants a long jump
+    paint: (g) => g.fill(36, 57, 17, 17, '.').fill(50, 51, 15, 16, '.').fill(52, 53, 15, 16, '#'),
+    extra: (w) => {
+      pool(w, 36, 58, 15.4, { colors: ['rgba(70,120,140,0.88)', 'rgba(30,70,90,0.97)'] });
+      Aunty.place(w, { tx: 31, groundTy: 15, fullSec: 7 });
+    },
   }),
   longStage({
     base: {

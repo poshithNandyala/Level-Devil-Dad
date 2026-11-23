@@ -132,7 +132,7 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'R', jump: 12, ticks: 12, note: 'on to the roof' },
     { hold: 'R', until: (w) => w.player.onGround || w.player.x >= thingOf(w, 'redbus').solid.x + 6, max: 100 },
     { hold: '', until: ground, max: 200 },
-    { hold: '', dodge: 105, until: (w) => thingOf(w, 'redbus').solid.x >= px16(26), max: 2000, note: 'hop the crows; never jump under a flyover' },
+    { hold: '', dodge: 60, until: (w) => thingOf(w, 'redbus').solid.x >= px16(26), max: 2000, note: 'hop the crows; never jump under a flyover' },
     { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 46, max: 120, note: 'ride in the middle of the roof' },
     { hold: '', until: (w) => w.flags.bus === 'go2' && w.player.stun === 0, max: 2000, note: 'one bell, two bells: the middle stays on' },
     { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 40, max: 120, note: 'back to the middle' },
@@ -930,8 +930,32 @@ const groupBack = (letter: string) => (w: World) => {
 };
 // Thumba: stop on the last step while the rocket's fire dies down and its spent stage lands (it makes a
 // step down); at the very end, wait for the road to close again
+let FIX_AMR01: Step[] = [];
 const pongalIs = (st: string) => (w: World) => w.flags.pongal === st;
 const bridgeIs = (st: string) => (w: World) => w.flags.bridge === st;
+/** AMR-01: hop past the aunty's plate, then the barrage piers with the long jump over the missing one */
+const amrPiers = (fed: boolean): Step[] => [
+  ...(fed ? [] : [{ hold: 'R' as const, until: (w: World) => w.player.cx >= px16(29.7), max: 600 }, { hold: 'R' as const, jump: 10, ticks: 10, note: 'hop past the aunty’s plate' }, { hold: 'R' as const, until: ground, max: 200 }]),
+  { hold: 'R', until: X(35.1), max: 600 },
+  { hold: 'R', jump: 10, ticks: 10, note: 'onto the first pier' },
+  { hold: 'R', until: and(ground, X(39.1)), max: 200 },
+  { hold: 'R', jump: 10, ticks: 10 },
+  { hold: 'R', until: and(ground, X(43.1)), max: 200 },
+  { hold: 'R', jump: 10, ticks: 10 },
+  { hold: 'R', until: and(ground, X(47.5)), max: 200 },
+  { hold: 'R', jump: 30, ticks: 30, long: true, note: 'the long jump over the missing pier' },
+  { hold: 'R', until: ground, max: 200 },
+  { hold: 'R', until: X(55.2), max: 200 },
+  { hold: 'R', jump: 10, ticks: 10, note: 'on to the far bank' },
+  { hold: 'R', until: ground, max: 200 },
+];
+{
+  const run = tourRun('AMR');
+  const a = run.findIndex((st) => st.note === 'onto the first stone') - 1;
+  const b = run.findIndex((st, i) => i > a && st.note === 'a low wall') - 1;
+  SOLUTIONS['AMR-01'] = [...run.slice(0, a), ...amrPiers(false), ...run.slice(b)];
+  FIX_AMR01 = [...run.slice(0, a), ...amrPiers(true), { hold: '', until: (w) => w.state !== 'play', max: 300 }];
+}
 SOLUTIONS['BLR-01'] = tourWith('BLR', [
   {
     before: 'a post',
@@ -1184,6 +1208,7 @@ export const NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
   'CHN-01': { steps: tourRun('CHN'), cause: 'burnt' },
   'PDY-01': { steps: tourRun('PDY'), cause: 'hit' },
   'BLR-01': { steps: tourRun('BLR'), cause: 'fell' },
+  'AMR-01': { steps: tourRun('AMR'), cause: 'splash' },
   'TVM-02': { steps: [{ hold: 'R', until: done }], cause: 'splash' },
   'TVM-03': { steps: [{ hold: 'R', until: done }], cause: 'spikes' },
   'TVM-04': { steps: [{ hold: 'R', until: done }], cause: 'coconut' },
@@ -1307,6 +1332,23 @@ function swapAt(id: string, note: string, n: number, w: Step[]): Step[] {
   return [...r.slice(0, i), ...w, ...r.slice(i + n)];
 }
 export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
+  // you fell short: take the long jump properly, holding jump (but you ate at the aunty's: still short)
+  'AMR-01': { steps: FIX_AMR01, cause: 'splash' },
+  // the first wait was in the shade of an umbrella: wait under the next umbrella too (it's full of holes)
+  'AMR-04': { steps: swapAt('AMR-04', 'to the little tree', 2, [{ hold: 'R', ticks: 150 }, { hold: '', until: (w) => w.state !== 'play', max: 600 }]), cause: 'burnt' },
+  // the hook carried you: ride it all the way (it jams and drops)
+  'AMR-06': { steps: swapAt('AMR-06', 'to the next hook before this one drops', 1, [{ hold: '', until: (w) => w.state !== 'play', max: 600 }]) },
+  // Tara said go straight to the big hall: jump the hole and go along the grand passage (its ceiling falls)
+  'AMR-07': {
+    steps: swapAt('AMR-07', 'drop through the hole', 1, [
+      { hold: 'R', until: ground, max: 100 },
+      // jump the hole in the floor where it opens in front of you, and keep going
+      { policy: (w) => { const p = w.player; return { move: 'R', jump: p.onGround && w.tileAt(Math.floor((p.x + p.w + 4) / 16), 12) === 0 }; }, until: (w) => w.state !== 'play', max: 400 },
+    ]),
+    cause: 'crushed',
+  },
+  // a cyclone gust: shelter in the beach shack (its roof comes down)
+  'AMR-08': { steps: swapAt('AMR-08', 'straight through the first shack', 1, [{ hold: 'R', ticks: 70 }, { hold: '', until: (w) => w.state !== 'play', max: 600 }]), cause: 'crushed' },
   // the crane laid every piece so far: wait for the last one too, then step on (it comes in 2027)
   'BLR-03': { steps: swapAt('BLR-03', 'the piece that comes in 2027', 1, [{ hold: '', ticks: 240 }, { hold: 'R', until: (w) => w.state !== 'play', max: 400 }]), cause: 'spikes' },
   // every car in the jam held still: stand on the jeep too (it pulls away)

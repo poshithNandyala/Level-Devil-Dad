@@ -113,7 +113,8 @@ boils over when you come close: its spill runs past where it started bubbling an
 jump over it, so you back off (CHN-01, `PongalPot` in entities/tamil.ts), a policeman chasing his blown-off
 kepi: the way through is to help him, by catching his cap as it blows over you (PDY-01, `Kepi` in
 entities/tamil.ts), a bridge that loads like a progress bar, sticks at 99% and restarts from nothing with
-you on it (BLR-01, `LoadingBridge` in entities/karnataka.ts). Festivals: Pongal (CHN-01). Puducherry's
+you on it (BLR-01, `LoadingBridge` in entities/karnataka.ts), being fed: a full stomach shortens your jump for
+a few seconds (AMR-01, `Aunty` and `FULL_PHYS` in entities/andhra.ts). Festivals: Pongal (CHN-01). Puducherry's
 pétanque is still unused (an idea for later).
 
 ## Acts (one per id, never reused)

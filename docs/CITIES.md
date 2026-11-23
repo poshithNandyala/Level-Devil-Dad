@@ -153,7 +153,7 @@ song lyrics. Affectionate teasing locals would proudly share; never mean.
 
 | Stage | Name (meaning) | What it is | Act | Door ending |
 | --- | --- | --- | --- | --- |
-| AMR-01 | Swagatham Amaravati (Welcome to Amaravati) | Welcome tour: easy run past landmarks while the guide tells you real things about the city. A new capital rising on the Krishna, with chillies that bite back. | — | — |
+| AMR-01 | Swagatham Amaravati (Welcome to Amaravati) | Welcome tour past landmarks while the guide tells you real things about the city. A new capital rising on the Krishna, with chillies that bite back. The Telugu greeting is "Annam tinnava?" (have you eaten?): an aunty on her doorstep feeds anyone who walks past ("Tinu, tinu!"), and a full Dad's jump is a third shorter for 7 s, just as the barrage piers over the deep Krishna have one missing. Hop past her plate ("He left without eating!") or wait for the burp. | — | — |
 | AMR-02 | Mirchi Mild | Guntur chillies. Mild, they said. | `amr02-powder` | `key` |
 | AMR-03 | Barrage Gates | Seventy gates on the Krishna. Every one of them is watching your feet. | `amr03-logs` | `swing` |
 | AMR-04 | Bezawada Blaze (Vijayawada heat) | Forty-five degrees, fresh tar, and a road roller that does not brake. | `amr04-hot` | `mirchi` |

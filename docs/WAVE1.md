@@ -424,3 +424,19 @@ hardness pass, in journey order (AGENTS.md has the rules). Thiruvananthapuram fi
   its first tile, so the rest of the row counts as reached (BLR-03 and BLR-04's rebar under the bus rides).
   What it still lists in BLR-03 are the spikes between the viaduct pillars, 72 px below the deck: they're
   for anyone who steps on a deck piece before the crane has landed it (no recorded policy does that yet).
+
+## v0.16.7: the hardness pass, Amaravati
+- 01 **Swagatham Amaravati** bites, with a new kind of trouble: being fed. The Telugu greeting is "Annam
+  tinnava?" (have you eaten?), and an aunty on her doorstep before the Krishna feeds anyone who walks past
+  her door ("Tinu, tinu! Baaga tinu! | Eat, eat! Eat well!", then "Kadupu nindindaa? | Is your tummy
+  full?"). Dad comes away with a round stomach: for 7 s his jump is two thirds as strong and he walks a
+  tenth slower (`FULL_PHYS`), then he burps and it's over. The Krishna is deep now, and the fourth barrage
+  pier is missing: a four-tile gap any normal jump clears and a full one falls short of. Hop past her plate
+  (she can't feed a dad in the air: "Ayyo, tinakunda vellipoyadu! | He left without eating!") or wait on
+  the third pier for the burp. Human timing 100%.
+- The obvious fix dies in five of eight: 01 (eat, then do the long jump properly), 04 (the first wait was
+  under an umbrella, so wait under the next one: it's full of holes), 06 (ride the zipline hook all the
+  way: it jams and drops), 07 (Tara says go straight to the big hall: its ceiling falls), 08 (shelter from
+  the cyclone gust in the beach shack: its roof comes down).
+- AMR-07's spikes after the falling ceiling are gone: nobody who goes along the grand passage gets past the
+  ceiling to meet them (decoration, by the hardness rules). Amaravati's audit is clean.
