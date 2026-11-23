@@ -930,6 +930,15 @@ const groupBack = (letter: string) => (w: World) => {
 };
 // Thumba: stop on the last step while the rocket's fire dies down and its spent stage lands (it makes a
 // step down); at the very end, wait for the road to close again
+SOLUTIONS['KVT-01'] = tourWith('KVT', [
+  {
+    before: 'a shallow ditch',
+    steps: [
+      { hold: 'R', until: X(66), max: 300 },
+      { hold: '', until: (w) => w.flags.nest === 1, max: 900, note: 'let every baby turtle reach the water' },
+    ],
+  },
+]);
 SOLUTIONS['TVM-01'] = tourWith(
   'TVM',
   [{ before: 'hop the parked ride', steps: [{ hold: 'R', until: X(49.9), max: 400, note: 'on to the last step' }, { hold: '', until: launchIs('down'), max: 600, note: 'the rocket goes; wait out the fire and the falling stage' }] }],
@@ -1130,6 +1139,7 @@ eastSolutions(SOLUTIONS, lengthen);
 export const NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
   ...EAST_NAIVE,
   'TVM-01': { steps: tourRun('TVM'), cause: 'burnt' },
+  'KVT-01': { steps: tourRun('KVT'), cause: 'hatchling' },
   'TVM-02': { steps: [{ hold: 'R', until: done }], cause: 'splash' },
   'TVM-03': { steps: [{ hold: 'R', until: done }], cause: 'spikes' },
   'TVM-04': { steps: [{ hold: 'R', until: done }], cause: 'coconut' },
@@ -1253,6 +1263,26 @@ function swapAt(id: string, note: string, n: number, w: Step[]): Step[] {
   return [...r.slice(0, i), ...w, ...r.slice(i + n)];
 }
 export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
+  // the glass gap was walkable: so walk the next gap too (it's real water)
+  'KVT-02': { steps: swapAt('KVT-02', 'the real gap', 1, []), cause: 'splash' },
+  // the reef rose under every step: so walk the last gap too (it's real water)
+  'KVT-03': { steps: swapAt('KVT-03', 'the last gap is real', 1, []), cause: 'splash' },
+  // Tara said go all the way up: the basket hauls you into the pulley
+  'KVT-05': { steps: swapAt('KVT-05', 'off onto the pier', 1, [{ hold: '', until: (w) => w.state !== 'play', max: 900 }]), cause: 'spikes' },
+  // the baby turtles: jump over them (they spread wider than a jump)
+  'KVT-01': {
+    steps: tourWith('KVT', [
+      {
+        before: 'a shallow ditch',
+        steps: [
+          { hold: 'R', until: X(69.4), max: 300 },
+          { hold: 'R', jump: 20, ticks: 20, note: 'jump the babies' },
+          { hold: 'R', until: ground, max: 200 },
+        ],
+      },
+    ]),
+    cause: 'hatchling',
+  },
   // the bus jerked off and threw you off the back: ride at the front then (the brake throws you off it)
   'TVM-02': {
     steps: swapAt('TVM-02', 'ride in the middle of the roof', 1, [

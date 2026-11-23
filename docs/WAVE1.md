@@ -370,3 +370,14 @@ hardness pass, in journey order (AGENTS.md has the rules). Thiruvananthapuram fi
   and untouched: 03 70% (glasses on the counter), 04 75%, 05 33% (crumbling moat stones), 06 28% (the
   first net). Those are old sections; check them with a person before deciding they're unfair.
 - AGENTS.md: the hint may name what's ahead (the player asked for it); the guide still may not.
+
+## v0.16.3: the hardness pass, Kavaratti
+- 01 **Swagatham, Billam** bites: as you cross the jetty, a green turtle nest on the beach below hatches
+  (green turtles nest all year in Lakshadweep) and a beach watcher shouts "Nilkku! Aamakkunjungal! | Stop!
+  Baby turtles!". Step on a baby and it's over ("Kunjungale chavittalle! | Don't step on the babies!").
+  They spread over five tiles, wider than any jump, so jumping them dies too; stop and let them reach the
+  water (about 1.5 s is enough once you know).
+- The obvious fix dies in four of eight stages: 01 (jump the babies), 02 (the glass gap was walkable, so
+  walk the real one too), 03 (the reef rose under every step, so walk the last gap too), 05 (do what Tara
+  says and ride the fish basket all the way up into the pulley). KVT-05's pulley spikes now show up in the
+  hazard audit as reaching that mistake; Kavaratti is clean.

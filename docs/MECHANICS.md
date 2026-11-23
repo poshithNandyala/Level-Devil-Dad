@@ -107,7 +107,8 @@ Hardness pass (v0.16.2 on): a rocket launch whose blast burns the road and whose
 you'd wait (TVM-01, `Launch`), a floor that drops just ahead of you and comes back if you wait, while the
 far side breaks if you jump it (TVM-01, `gapAhead` + `noLanding`), bus bells as a rule: one bell brakes and
 slides you forward, two bells jerk off and slide you back (TVM-02), hidden spikes on a deck top that come
-out when you hop at it (TVM-08).
+out when you hop at it (TVM-08), a turtle nest that hatches across your path: you must not touch a baby,
+and they spread wider than a jump, so you wait (KVT-01, `Nest` in entities/lakshadweep.ts).
 
 ## Acts (one per id, never reused)
 amr02-powder amr03-logs amr04-hot amr05-humps amr06-zip amr07-gallery amr08-shack

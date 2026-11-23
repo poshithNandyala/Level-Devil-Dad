@@ -89,7 +89,7 @@ song lyrics. Affectionate teasing locals would proudly share; never mean.
 
 | Stage | Name (meaning) | What it is | Act | Door ending |
 | --- | --- | --- | --- | --- |
-| KVT-01 | Swagatham, Billam (Welcome to Kavaratti) | Welcome tour: easy run past landmarks while the guide tells you real things about the city. Coral sand, a glass-clear lagoon and boats that run on a timetable. | — | — |
+| KVT-01 | Swagatham, Billam (Welcome to Kavaratti) | Welcome tour past landmarks while the guide tells you real things about the city. Coral sand, a glass-clear lagoon and boats that run on a timetable. As you cross the jetty, a green turtle nest on the beach below hatches: never step on a baby, and they spread wider than any jump. Stop on the jetty till every one is in the water. | — | — |
 | KVT-02 | Odam Gone (The boat’s gone) | The boat waits for the tide, never for your jump. | `kvt02-glass` | `loading` |
 | KVT-03 | Supari Light (Lighthouse on the island) | The lighthouse beam builds your bridge. For a moment. | `kvt03-faith` | `reflection` |
 | KVT-04 | Agatti Airstrip | One runway, one flight a day, and the whole island watching. *Scene: Agatti.* | `kvt04-tailwind` | `glider` |

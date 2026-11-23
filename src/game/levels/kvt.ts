@@ -12,6 +12,7 @@ import { tour } from './tour';
 import { longStage } from './chunks';
 import { Grid } from './grid';
 import { exitTwist } from './twists';
+import { Nest } from '../entities/lakshadweep';
 
 // Kavaratti (bonus): the lagoon, the tide and the boat all keep their own
 // timetable. Jeseri words (billam = lagoon, phar = reef, odam = boat,
@@ -866,6 +867,16 @@ export const KVT: LevelDef[] = [
       ["palm", 104, { h: 90, lean: -6 }],
     ],
     things: [["crab", 33], ["coral", 61], ["crab", 91]],
+    hint: 'Coming along the jetty, a turtle nest on the beach below hatches. Never step on a baby turtle, and they spread wider than any jump: stop on the jetty and let every one of them reach the water.',
+    extra: (w) => {
+      // the nest below the jetty steps hatches as you cross the jetty
+      const nest = Nest.place(w, { tx: 77, groundTy: 15, waterTx: 82 });
+      onPass(w, px(64), (w2) => nest.hatch(w2));
+      w.flags.nest = 0;
+      w.onTick((w2) => {
+        if (nest.done) w2.flags.nest = 1;
+      });
+    },
   }),
   longStage({
     base: {
