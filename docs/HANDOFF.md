@@ -217,8 +217,8 @@ node scripts/solshot.mjs TVM-01 /tmp/r.json 700,900                             
 
 `tests/dbg2.test.ts` is a skipped scratch file for one-off checks.
 
-The hardness-pass kit: a tour (stage 01) takes `paint(g)` and `extra(w)` for its betrayals and its own
-`hint`; `gapAhead(w, letter, { lead, back })` (trolls.ts) drops a floor just ahead of you and brings it
+The hardness-pass kit: a tour (stage 01) takes `paint(g)` and `extra(w)` for its betrayals, its own
+`hint`, and `cps` (tile columns) to replace the checkpoint after every piece with a few long runs; `gapAhead(w, letter, { lead, back })` (trolls.ts) drops a floor just ahead of you and brings it
 back after `back` seconds. A moving thing you can ride must set `solid.velX` to its real speed, or a hop
 on it loses its motion (TVM-02's bus did until v0.16.2). The route bot (`incoming`) counts the speed of
 whatever you stand on, so its hops on a moving roof are judged like a person's.
@@ -229,6 +229,11 @@ whatever you stand on, so its hops on a moving roof are judged like a person's.
 - An ending that moves the door a column over must offset `D` in `build`.
 - Standing still at a checkpoint can trigger things (a cocoon!): keep threats off checkpoints.
 - Bots press on the exact frame. A route passing proves the stage is possible, not that it's fair.
+- A `Rider` assumes its art faces left and flips it when it moves right. Art that faces right (the scooter,
+  the road roller) needs `facesRight = true`, or it rides backwards.
+- A hazard on a clock (`Schedule`) meets whoever arrives at the right moment, which is luck. To make the
+  obvious play meet it every time, start the clock when Dad gets near (TVM-03's pour: `onPass` sets the
+  schedule's phase).
 
 ### Fairness check (do this for every precision section)
 

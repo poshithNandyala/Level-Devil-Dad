@@ -7,7 +7,7 @@ import { tour } from './tour';
 import { Grid } from './grid';
 import { exitTwist } from './twists';
 import { crumble, dropFloor, fakeFloor, gapAhead, noLanding, onPass, popAt, popOnJump, riseWall, shyLedge } from './trolls';
-import { Counterweight, Launch, Slab } from '../entities/kerala';
+import { Counterweight, Launch, Puddle, Slab, Tarp } from '../entities/kerala';
 
 // Thiruvananthapuram: monsoon puddles, a red express bus, a tea stall,
 // coconut palms and the old fort gate. Lines: Malayalam + English.
@@ -57,7 +57,7 @@ export const TVM: LevelDef[] = [
     ],
     shouts: [
       [21, "Chaaya! Choodu chaaya! | Tea! Hot tea!"],
-      [88, "Puttum kadalayum ready! | Puttu and kadala curry, ready!"],
+      [85, "Puttum kadalayum ready! | Puttu and kadala curry, ready!"],
     ],
     ride: "scooter",
     item: "chaaya",
@@ -67,27 +67,45 @@ export const TVM: LevelDef[] = [
       ["teastall", 20, { label: 'CHAAYA' }],
       ["palm", 33, { h: 88, lean: -5 }],
       ["palm", 64, { h: 76, lean: 4 }],
-      ["teastall", 88, { label: 'PUTTU' }],
+      ["teastall", 84, { label: 'PUTTU' }],
       ["palm", 108, { h: 84, lean: -6 }],
     ],
-    things: [["redbus", 24]],
-    hint: 'The road caves in right after Tara: hop it, a small hop. Your jump puts broken glass on top of the compound wall: jump clean over it. When the rocket at Thumba goes up, the road burns: stop on the last step, not at the bottom (the spent stage falls there); hop it once it’s down. The canoe’s landing gives way: hop off it. At the very end the road opens in front of you: don’t jump it (the far side breaks), wait, it closes again.',
+    things: [["redbus", 29]],
+    // three long runs, Level Devil style: dying sends you back to the start of the run, not the last step
+    cps: [32, 67, 81],
+    hint: 'The road caves in right after Tara: hop it, a small hop. That hop puts broken glass on the compound wall: jump clean over it, then hop again at once, the road past it is full of glass too. The ditch is only a puddle: walk in and climb out (jump it from the road and spikes meet you on the far side). When the rocket at Thumba goes up, the road burns: stop on the last step, not at the bottom (the spent stage falls there); hop it once it’s down. The canoe’s landing gives way: hop off it. At the puttu stall, stop short of the blue tarp and let it empty, then jump the puddle after it: that one is a pothole. At the very end the road opens in front of you: don’t jump it (the far side breaks), wait, it closes again.',
     // the monsoon has eaten the road after Tara; the compound wall wears broken glass (Kerala's
-    // walls do); Thumba's rocket goes up as you come down the steps; the canoe's landing gives way;
-    // and the road at the very end opens up
+    // walls do) and the road below it is strewn with more; the ditch is just a puddle to wade, but
+    // jump it and its far side bristles; Thumba's rocket goes up as you come down the steps; the
+    // canoe's landing gives way; the puttu stall's tarp is full of rain, and the puddle past it is
+    // a pothole; and the road at the very end opens up
     paint: (g) =>
       g
         .fill(8, 9, 15, 17, 'a')
         .put(12, 13, 'G')
+        .put(17, 14, 'K')
+        .fill(26, 30, 14, 14, 'J')
         .fill(78, 79, 15, 17, 'c')
+        .fill(89, 90, 15, 16, '.')
         .fill(104, 106, 15, 17, 'g')
         .fill(107, 110, 15, 17, 'h'),
     extra: (w) => {
       dropFloor(w, 'a', { at: px(8) - 6 });
       popOnJump(w, 'G', px(6), px(12.5)).look = 'glass';
+      // the wall's glass doesn't stay on the wall: the road under it is strewn with it
+      popAt(w, 'K', px(16) + 4).look = 'glass';
+      // wade the ditch; jump it from the road and its far side bristles where you come down
+      const far = spikes(w, 'J');
+      w.when(
+        (w2) => w2.player.jumpTick === w2.tick && w2.player.cx >= px(20) && w2.player.cx < px(26) && w2.player.y + w2.player.h <= px(15) + 1,
+        (w2) => far.pop(w2),
+      );
       dropFloor(w, 'c', { at: px(77.4) });
       const rocket = Launch.place(w, { tx: 61, groundTy: 15, blast: [58, 65], blastSec: 1.4, stageTx: 52, sepAt: 1.5 });
       onPass(w, px(50), (w2) => rocket.fire(w2));
+      // the puttu stall's tarp is full of rain; the puddle past it is a pothole, not a ditch to wade
+      w.add(new Tarp({ tx0: 85.6, tx1: 88.6, ty: 11, groundTy: 15, drop: [86.2, 89], triggerTx: 83.6 }));
+      w.add(new Puddle(px(89), px(91)));
       gapAhead(w, 'g', { lead: 30, back: 0.8 });
       noLanding(w, 'h');
     },
@@ -99,7 +117,7 @@ export const TVM: LevelDef[] = [
     name: 'Aanavandi Express',
     nameEn: 'The elephant-bus express',
     tagline: 'Monsoon flood. One red bus. Ride on the roof.',
-    hint: 'Hop the crows that fly at you, but never jump under a bridge. Don’t ride at the back of the roof: a chunk of the first flyover falls there. One bell: he brakes and you slide forward. Two bells: he jerks off and you slide back. Ride in the middle of the roof. At the end it turns back: jump off before it does.',
+    hint: 'Hop the crows that fly at you, but not the big brown kite: it glides over your head if you stand, and a hop meets it. Never jump under a flyover. A chunk of the first flyover falls on the back of the roof, and one of the second on the middle. One bell: he brakes and you slide forward. Two bells: he jerks off and you slide back. So ride the middle through the bells, then go to the front before the second flyover. At the end it turns back: jump off before it does.',
     par: 23,
     map: (() => {
       const g = new Grid(96).fill(0, 3, 13, 17, '#').fill(88, 95, 12, 17, '#');
@@ -202,7 +220,24 @@ export const TVM: LevelDef[] = [
           (w2) => x >= busX && (phase === 'go' || phase === 'go2'),
           (w2) => shot(w2, 'crow', w2.player.x + 230, Y - 13, -125, 0, 0, 'hit'),
         );
-      [px(14), px(18), px(46), px(67), px(72)].forEach(crowAt);
+      [px(14), px(18), px(67), px(72)].forEach(crowAt);
+      // by now you hop anything with wings. A Brahminy kite glides over, well above your head:
+      // stand and it passes; hop it like a crow and you meet it
+      w.when(
+        (w2) => x >= px(46) && phase === 'go2',
+        (w2) => {
+          shot(w2, 'parunthu', w2.player.x + 220, Y - 44, -100, 0, 0, 'hit');
+          w2.sfx('caw', w2.player.x + 180, Y - 40);
+        },
+      );
+      // under the second flyover a chunk drops on the middle of the roof, where the bells taught you to ride
+      w.when(
+        () => x >= px(60) - 30 && phase === 'go2',
+        (w2) => {
+          w2.sfx('crack', x + 64, px(11));
+          w2.add(new Slab(x + 53, px(11) + 2));
+        },
+      );
       // jump under a flyover and its spikes come down
       popOnJump(w, 'A', px(28) - 4, px(36) + 4);
       popOnJump(w, 'B', px(59) - 4, px(67) + 4);
@@ -235,7 +270,7 @@ export const TVM: LevelDef[] = [
     name: 'Chaaya Later',
     nameEn: 'Tea later',
     tagline: 'A tea street. Everything is hot, and half of it is a trick.',
-    hint: 'Jump the steam: spikes hide in it. Cross under the long pour when it stops. Up on the counter, hop the glasses he slides at you, and jump off before the end gives way. Mind the boiling sprays. The shiny floor is fake, and your jump over it brings up spikes where a short jump lands: jump long. A scooter comes from behind.',
+    hint: 'Jump the steam: spikes hide in it. Cross under the long pour when it stops. Up on the counter, hop the glasses he slides at you, and jump off before the end gives way. Mind the boiling sprays. The shiny floor is fake, and your jump over it brings up spikes where a short jump lands: jump long. A scooter comes from behind: hop it, and the moment it’s by, hop the one coming the other way. The door jumps back over you: on the way back to it, hop the broken glasses that come up.',
     par: 18,
     map: (() => {
       const g = Grid.ground(15, 80);
@@ -244,6 +279,8 @@ export const TVM: LevelDef[] = [
       g.pit(24, 34).fill(24, 31, 13, 13, '#').fill(32, 34, 13, 13, 'a');
       // a shiny shop floor that isn't there (b), and where the hop over it lands, hidden spikes (S)
       g.fill(50, 51, 15, 17, 'b').fill(52, 53, 14, 14, 'S');
+      // broken glasses (K) on the way back to where the door lands
+      g.put(72, 14, 'K');
       return g.put(2, 14, '@').put(77, 14, 'E').rows();
     })(),
     build(w: World) {
@@ -256,15 +293,24 @@ export const TVM: LevelDef[] = [
       cloud(w, 8, 12, 4, 3);
       // 2. the tea master's long pour across the lane, in a rhythm
       prop(w, 'teastall', 12, 15, { label: 'METHA' });
-      arc(w, px(13) + 8, px(11), px(21), px(15) - 4, 26, { period: 2.2, on: 0.95, phase: 0.3 }, '#C98B4F', 'burnt');
+      // he starts pouring the moment you're out of the steam (so whoever runs straight on meets it)
+      const pour = { period: 1e9, on: 0, phase: 0 };
+      arc(w, px(13) + 8, px(11), px(21), px(15) - 4, 26, pour, '#C98B4F', 'burnt');
+      onPass(w, px(11.5), (w2) => {
+        const t = w2.tick * DT + 0.15;
+        pour.period = 2.2;
+        pour.on = 0.95;
+        pour.phase = (2.2 - (t % 2.2)) % 2.2;
+      });
       thingOn(w, 'tumbler', 21, 15, { solid: false });
       // 3. glasses slide down the counter at you; its far end gives way
       const counterDrop = dropFloor(w, 'a', { at: px(31.2) });
       counterDrop.paint = { fill: '#8A5A3B', trim: '#B88458', line: 'rgba(40,20,10,0.4)' };
       const slide = () => {
         if (w.state !== 'play') return;
-        if (w.player.x > px(20) && w.player.x < px(31)) roller(w, 'tumbler', px(31) - 12, px(13) - 12, -120, { cause: 'burnt', breakOnWall: false });
-        w.after(1.15, slide);
+        // (he stops sliding them once you're well along: the end of the counter is its own trap)
+        if (w.player.x > px(20) && w.player.x < px(25.5)) roller(w, 'tumbler', px(31) - 12, px(13) - 12, -100, { cause: 'burnt', breakOnWall: false });
+        w.after(1.3, slide);
       };
       w.after(0.5, slide);
       w.when(
@@ -281,14 +327,30 @@ export const TVM: LevelDef[] = [
       fake.paint = { fill: '#C9B38C', trim: '#EFE2C4', line: 'rgba(80,60,30,0.25)' };
       // the hop over it brings up spikes where a hop lands: jump long
       popOnJump(w, 'S', px(46), px(51.5));
-      // 6. a scooter comes up behind you
+      // 6. a scooter comes up behind you... and the moment it's by, another comes the other way
+      let first: Rider | null = null;
       w.when(
         (w2) => w2.player.x >= px(54),
         (w2) => {
           w2.sfx('honk', w2.player.x - 120, px(15));
           w2.say('Maaru, maaru! | Move, move!', w2.player.x - 60, px(11), 1.2, 'npc');
-          rider(w2, 'scooter', w2.player.x - 170, 15, 240, 4, 'hit');
+          first = rider(w2, 'scooter', w2.player.x - 170, 15, 240, 4, 'hit');
+          first.facesRight = true;
         },
+      );
+      w.when(
+        (w2) => !!first && first.x > w2.player.x + w2.player.w + 16 && w2.player.onGround,
+        (w2) => {
+          w2.sfx('honk', w2.player.x + 170, px(15));
+          rider(w2, 'scooter', w2.player.x + 230, 15, -200, 4, 'hit').facesRight = true;
+        },
+      );
+      // 7. the door hops back over you, and the lane back to it is strewn with broken tea glasses
+      const shards = spikes(w, 'K');
+      shards.look = 'glass';
+      w.when(
+        (w2) => w2.flags.twist === 'swapped' && w2.player.cx <= px(74.6),
+        (w2) => shards.pop(w2),
       );
       prop(w, 'palm', 16, 15, { h: 84, lean: -5 });
       prop(w, 'umbrellas', 37, 15, { n: 1 });

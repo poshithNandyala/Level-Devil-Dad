@@ -117,6 +117,18 @@ you on it (BLR-01, `LoadingBridge` in entities/karnataka.ts), being fed: a full 
 a few seconds (AMR-01, `Aunty` and `FULL_PHYS` in entities/andhra.ts). Festivals: Pongal (CHN-01). Puducherry's
 pétanque is still unused (an idea for later).
 
+Level Devil pass (v0.16.8 on, Thiruvananthapuram first): a road that caves in under you, compound-wall glass
+that your hop puts on the wall and more of it on the road below (TVM-01, glass-look pop-up spikes), a ditch
+you must wade because jumping it brings up spikes on its far side (TVM-01), a stall tarp full of monsoon rain
+that empties on the road when you come near (TVM-01, `Tarp`), a puddle drawn exactly like the wadeable ditch
+that is a pothole (TVM-01, `Puddle`), chunks of flyover falling on the bus roof, the back under one flyover
+and the middle under the next (TVM-02, `Slab`), a Brahminy kite that glides over a dad who stands and meets
+one who hops (TVM-02, `parunthu`), a tea pour that starts the moment you leave the steam (TVM-03), a scooter
+from behind and then one head-on (TVM-03), broken glasses on the way back to a door that hopped over you
+(TVM-03), hidden spikes where a short hop over a fake floor lands (TVM-03), a far bank that backs away from
+your jump (TVM-04, `shyLedge`), a fishing-net counterweight that slams down when you step off the net
+(TVM-06, `Counterweight`).
+
 ## Acts (one per id, never reused)
 amr02-powder amr03-logs amr04-hot amr05-humps amr06-zip amr07-gallery amr08-shack
 blr02-badge blr03-viaduct blr04-jam blr05-glasshouse blr06-powercut blr07-crusher blr08-curtain

@@ -464,3 +464,25 @@ the steps and the door, with no warning. So the city gets rebuilt that way, stag
   counterweight (`Counterweight`) slams down on the bank's edge, where a short hop lands: jump off long.
 - Each new trap is a recorded mistake that dies (MISTAKES). Human timing unchanged by them (03 68%, 04 75%,
   06 28%: the old sections the route bot plays badly).
+
+## v0.16.10: Thiruvananthapuram 1–3, tougher
+The owner played up to TVM-03 on v0.16.9: still not tough. The answer is density and depth, not precision:
+a betrayal every few steps, and the obvious fix for each one meets the next.
+- 01 (the tour) now has three checkpoints (32, 67, 81) instead of one after every piece (`cps` on a
+  TourSpec), so each stretch between them plays like one Level Devil level. New: the road past the glass
+  wall is strewn with glass too (it comes up as you near it: hop again at once); the ditch is a puddle to
+  wade, and jumping it from the road brings up spikes all along its far side (a long jump lands on them
+  too); at the puttu stall a tarp full of rain empties on the road when you come near (`Tarp`, cause
+  `drenched`), and the puddle past it, drawn exactly like the ditch you just waded, is a pothole (`Puddle`).
+  Ten recorded mistakes, all dying. Human timing 100% at 12 ticks.
+- 02: a Brahminy kite (`parunthu`) after the bells, gliding well above your head: stand and it passes, hop it
+  like the crows and you meet it. Under the second flyover a chunk drops on the middle of the roof, where the
+  bells taught you to ride: go to the front for it. Human timing 93%.
+- 03: the tea master starts his long pour the moment you're out of the steam (the pour used to run on the
+  clock, so whether running straight on met it was luck; now it always does: the `FIX`). After the scooter
+  from behind, one comes the other way. The door hops back over you, and the lane back to it has broken tea
+  glasses that come up as you walk back. Fairness fixes to old parts: the glasses only slide while you're
+  getting on the counter (one used to arrive just as you had to jump off its dropping end), a little slower
+  and further apart, and the route jumps off the counter long. 53% → 100% at 12 ticks.
+- 05 gets its `FIX` (the stones crumble, so keep hopping on to the bank and on: the second gate drops there).
+- Scooter riders were drawn riding backwards (the art faces right; riders assume left): `facesRight = true`.

@@ -27,7 +27,7 @@ export type TourSeg =
 export const TOUR = { cols: 120, door: 112, deck: [94, 99] as [number, number], item: [96.5, 8.4] as [number, number] };
 export const COURSES: Record<CityId, TourSeg[]> = {
   // a temple tank to walk down into, and a canoe across the canal
-  TVM: [{ k: 'wall', x: 12 }, { k: 'ditch', x: 24, w: 2 }, { k: 'steps', x: 36, n: 2, run: 3, top: 4 }, { k: 'parked', x: 56 }, { k: 'ferry', x: 68, w: 10, kind: 'odam', wet: true }],
+  TVM: [{ k: 'wall', x: 12 }, { k: 'ditch', x: 24, w: 2, wet: true }, { k: 'steps', x: 36, n: 2, run: 3, top: 4 }, { k: 'parked', x: 56 }, { k: 'ferry', x: 68, w: 10, kind: 'odam', wet: true }],
   // coral heads across the lagoon, and the jetty steps
   KVT: [{ k: 'stones', x: 13, n: 4, wet: true }, { k: 'wall', x: 36 }, { k: 'parked', x: 48 }, { k: 'steps', x: 60, n: 2, run: 2, top: 6 }, { k: 'ditch', x: 82, w: 2, wet: true }],
   // the auto stand, then up and down a gopuram's tiers, and the beach lamp posts
@@ -117,6 +117,8 @@ export interface TourSpec {
   extra?: (w: World) => void;
   /** the hint, if the betrayals need one (the course hint is used otherwise) */
   hint?: string;
+  /** checkpoints (tile x) in place of one after every piece of the course */
+  cps?: number[];
 }
 
 const HINT: Record<TourSeg['k'], string> = {
@@ -184,8 +186,9 @@ export function tour(t: TourSpec): LevelDef {
       for (const [tx, label, sub] of t.signs) sign(w, tx, 10.6, Math.max(3.4, label.length * 0.42 + 1), label, 'green', null, sub);
       for (const [kind, tx, o, ty] of t.props) prop(w, kind, tx, ty ?? 15, o ?? {}, -8);
       for (const [kind, tx] of t.things ?? []) thingOn(w, kind, tx, 15, { solid: false, layer: -7 });
-      // hidden checkpoints after each piece (a tour should never send you all the way back)
-      for (const sg of course) checkpoint(w, segEnd(sg) + 1.5);
+      // hidden checkpoints after each piece (a tour should never send you all the way back), unless
+      // the city's betrayals want fewer, longer runs between them
+      for (const tx of t.cps ?? course.map((sg) => segEnd(sg) + 1.5)) checkpoint(w, tx);
       collectible(w, t.item, T.item[0], T.item[1]);
       w.flags.tour = 1;
       t.extra?.(w);

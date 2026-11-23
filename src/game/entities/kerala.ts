@@ -417,3 +417,185 @@ export class Counterweight extends Entity {
     ctx.stroke();
   }
 }
+
+/**
+ * Monsoon: a blue tarp over a stall front, sagging with rainwater. Come close and the stall-keeper
+ * pokes it clear with a stick: it wobbles and dribbles for a moment, then the lot comes down on
+ * the road under it. Once only (it's empty after).
+ */
+export class Tarp extends Entity {
+  readonly x0: number;
+  readonly x1: number;
+  readonly y: number;
+  readonly ground: number;
+  /** the stretch of road the water comes down on (px) */
+  readonly dropX0: number;
+  readonly dropX1: number;
+  readonly trigger: number;
+  static readonly TIP = 0.5;
+  static readonly DUMP = 0.45;
+  state: 'full' | 'tip' | 'dump' | 'empty' = 'full';
+  t = 0;
+  hazard: Hazard;
+  constructor(o: { tx0: number; tx1: number; ty: number; groundTy: number; drop: [number, number]; triggerTx: number }) {
+    super();
+    this.layer = 4;
+    this.x0 = o.tx0 * TILE;
+    this.x1 = o.tx1 * TILE;
+    this.y = o.ty * TILE;
+    this.ground = o.groundTy * TILE;
+    this.dropX0 = o.drop[0] * TILE;
+    this.dropX1 = o.drop[1] * TILE;
+    this.trigger = o.triggerTx * TILE;
+    const self = this;
+    this.hazard = {
+      active: true,
+      cause: 'drenched',
+      hits(x, y, w, h) {
+        if (self.state !== 'dump') return false;
+        const [top, bottom] = self.column();
+        return bottom > top && overlapXYWH(x, y, w, h, { x: self.dropX0, y: top, w: self.dropX1 - self.dropX0, h: bottom - top });
+      },
+    };
+  }
+  /** the falling water's top and bottom (px), while it dumps */
+  column(): [number, number] {
+    const y0 = this.y + 10;
+    const bottom = Math.min(this.ground, y0 + 600 * this.t);
+    const top = this.t < 0.28 ? y0 : Math.min(this.ground, y0 + 700 * (this.t - 0.28));
+    return [top, bottom];
+  }
+  update(w: World) {
+    if (this.state === 'full') {
+      if (w.player.cx < this.trigger) return;
+      this.state = 'tip';
+      this.t = 0;
+      w.sfx('creak', (this.x0 + this.x1) / 2, this.y);
+    } else if (this.state === 'tip') {
+      this.t += DT;
+      if (this.t >= Tarp.TIP) {
+        this.state = 'dump';
+        this.t = 0;
+        w.sfx('splash', (this.dropX0 + this.dropX1) / 2, this.ground);
+        w.say('Ayyo, mazha vellam! | Oops, rainwater!', this.x0 - 6, this.y - 12, 1.3, 'npc');
+      }
+    } else if (this.state === 'dump') {
+      this.t += DT;
+      if (this.t >= Tarp.DUMP) this.state = 'empty';
+    }
+    w.flags.tarp = this.state;
+  }
+  draw(ctx: CanvasRenderingContext2D, w: World) {
+    const tick = w.tick;
+    // bamboo poles
+    ctx.strokeStyle = '#8D6E3F';
+    ctx.lineWidth = 1.6;
+    for (const x of [this.x0 + 1, this.x1 - 1]) {
+      ctx.beginPath();
+      ctx.moveTo(x, this.ground);
+      ctx.lineTo(x, this.y - 2);
+      ctx.stroke();
+    }
+    // the sag: deep and wobbling while full of water, slack once it's tipped out
+    const wob = this.state === 'tip' ? Math.sin(tick * 0.9) * 2.2 : this.state === 'full' ? Math.sin(tick * 0.05) * 0.6 : 0;
+    const sag = this.state === 'full' || this.state === 'tip' ? 13 + wob : this.state === 'dump' ? Math.max(-3, 13 - this.t * 80) : 4;
+    const mx = (this.x0 + this.x1) / 2;
+    ctx.fillStyle = '#2F6FB3';
+    ctx.beginPath();
+    ctx.moveTo(this.x0 - 2, this.y - 3);
+    ctx.quadraticCurveTo(mx, this.y + sag * 2 - 3, this.x1 + 2, this.y - 3);
+    ctx.lineTo(this.x1 + 2, this.y);
+    ctx.quadraticCurveTo(mx, this.y + sag * 2, this.x0 - 2, this.y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#1D4F86';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+    if (this.state === 'full' || this.state === 'tip') {
+      // the water pooled in it
+      ctx.fillStyle = 'rgba(150,205,235,0.85)';
+      ctx.beginPath();
+      ctx.ellipse(mx, this.y + sag - 4, (this.x1 - this.x0) * 0.28, 3.2, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // drips: a few while it's tipping, the odd one after
+    if (this.state === 'tip' || this.state === 'empty') {
+      ctx.fillStyle = 'rgba(160,210,240,0.9)';
+      const n = this.state === 'tip' ? 3 : 1;
+      for (let i = 0; i < n; i++) {
+        const ph = ((tick * 2.2 + i * 23) % 60) / 60;
+        ctx.fillRect(mx - 6 + i * 6, this.y + sag + ph * (this.ground - this.y - sag), 1, 2.5);
+      }
+    }
+    if (this.state === 'dump') {
+      const [top, bottom] = this.column();
+      if (bottom > top) {
+        const g = ctx.createLinearGradient(0, top, 0, bottom);
+        g.addColorStop(0, 'rgba(170,215,240,0.55)');
+        g.addColorStop(1, 'rgba(110,170,210,0.8)');
+        ctx.fillStyle = g;
+        ctx.fillRect(this.dropX0, top, this.dropX1 - this.dropX0, bottom - top);
+        ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+        ctx.lineWidth = 0.8;
+        for (let x = this.dropX0 + 3; x < this.dropX1 - 2; x += 5) {
+          const off = (tick * 7 + x * 3) % 14;
+          ctx.beginPath();
+          ctx.moveTo(x, top + off);
+          ctx.lineTo(x, Math.min(bottom, top + off + 9));
+          ctx.stroke();
+        }
+      }
+      if (bottom >= this.ground) {
+        // the splash on the road
+        ctx.fillStyle = 'rgba(190,225,245,0.8)';
+        for (let i = 0; i < 5; i++) {
+          const k = Math.min(1, (this.t - 0.11) / 0.3);
+          ctx.beginPath();
+          ctx.arc(this.dropX0 - 4 + i * ((this.dropX1 - this.dropX0 + 8) / 4), this.ground - 2 - k * 6 * (i % 2 ? 1 : 0.6), 2 + k * 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+  }
+}
+
+/**
+ * A puddle in a dip in the road, drawn just like the tour's shallow ditches (wade those). This one
+ * is a monsoon pothole: step in and you're gone.
+ */
+export class Puddle extends Entity {
+  hazard: Hazard;
+  constructor(
+    readonly x0: number,
+    readonly x1: number,
+    cause = 'splash',
+  ) {
+    super();
+    this.layer = 5;
+    const self = this;
+    const surface = 15 * TILE + 6;
+    this.hazard = {
+      active: true,
+      cause,
+      hits(x, y, w, h) {
+        return x < self.x1 && x + w > self.x0 && y + h > surface + 4;
+      },
+    };
+  }
+  draw(ctx: CanvasRenderingContext2D, w: { tick: number }) {
+    const y = 15 * TILE + 6;
+    const g = ctx.createLinearGradient(0, y, 0, y + 26);
+    g.addColorStop(0, 'rgba(110,190,210,0.7)');
+    g.addColorStop(1, 'rgba(40,110,130,0.85)');
+    ctx.fillStyle = g;
+    ctx.fillRect(this.x0, y, this.x1 - this.x0, 26);
+    ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+    ctx.lineWidth = 0.8;
+    for (let x = this.x0 + ((w.tick * 0.3) % 12); x < this.x1 - 4; x += 12) {
+      ctx.beginPath();
+      ctx.moveTo(x, y + 0.5);
+      ctx.lineTo(x + 5, y + 0.5);
+      ctx.stroke();
+    }
+  }
+}

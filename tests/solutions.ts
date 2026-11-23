@@ -129,6 +129,29 @@ const tourRun = (city: CityId): Step[] => {
   return steps;
 };
 
+/** a dad who hops anything with wings the moment it's close (the crow lesson), however high it flies */
+function hopAnyBird(): (w: World) => { move: 'L' | 'R' | ''; jump: boolean } {
+  let hold = 0,
+    last = -1;
+  return (w) => {
+    if (w.tick < last) hold = 0;
+    last = w.tick;
+    if (hold > 0) {
+      hold--;
+      return { move: '', jump: true };
+    }
+    const p = w.player;
+    const gs: any = p.onGround ? p.groundSolid : null;
+    const pv = p.vx + (gs ? (gs.velX ?? 0) : 0);
+    const bird = w.entities.some((e: any) => e.alive && (e.kind === 'crow' || e.kind === 'parunthu') && e.vx < 0 && e.x - (p.x + p.w) > -4 && (e.x - (p.x + p.w)) / (-e.vx + Math.max(0, pv)) <= 0.13);
+    if (bird && p.onGround) {
+      hold = 11;
+      return { move: '', jump: true };
+    }
+    return { move: '', jump: false };
+  };
+}
+
 /** Known-good input scripts. If a change breaks one, a stage became unbeatable. */
 export const SOLUTIONS: Record<string, Step[]> = {
   'TVM-02': [
@@ -141,6 +164,8 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 46, max: 120, note: 'ride in the middle of the roof' },
     { hold: '', until: (w) => w.flags.bus === 'go2' && w.player.stun === 0, max: 2000, note: 'one bell, two bells: the middle stays on' },
     { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 40, max: 120, note: 'back to the middle' },
+    { hold: '', dodge: 60, until: (w) => thingOf(w, 'redbus').solid.x >= px16(50), max: 2000, note: 'ride the middle' },
+    { hold: 'R', dodge: 60, until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 70, max: 200, note: 'to the front before the second flyover' },
     { hold: '', dodge: 60, until: (w) => w.flags.bus === 'end', max: 2000 },
     { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 78, max: 200, note: 'run to the front at the last stop' },
     { hold: 'R', jump: 12, ticks: 12, note: 'off before it turns back' },
@@ -157,18 +182,21 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'R', until: X(22.4), max: 300 },
     { hold: '', dodge: 40, until: (w) => !w.entities.some((e: any) => e.kind === 'tumbler' && e.alive && e.vx < 0 && e.x < px16(24) + 4), max: 300, note: 'let a glass fall off the end' },
     { hold: 'R', jump: 12, ticks: 12, note: 'up on the counter' },
-    { hold: 'R', dodge: 46, until: X(30.4), max: 600, note: 'hop the glasses' },
-    { hold: 'R', jump: 12, ticks: 12, note: 'off before the end drops' },
+    { hold: 'R', dodge: 46, until: X(29.8), max: 600, note: 'hop the glasses' },
+    { hold: 'R', until: and(ground, X(29.8)), max: 200 },
+    { hold: 'R', jump: 45, ticks: 45, long: true, note: 'off before the end drops' },
     { hold: 'R', until: and(ground, X(37.2)), max: 300 },
     { hold: '', until: (w) => { const m = (w.tick / 120) % 2.4; return m >= 0.7 && m < 0.76; }, max: 900, note: 'follow the wave of sprays as it moves on' },
     { hold: 'R', until: X(49.3), max: 300 },
     { hold: 'R', jump: 30, ticks: 30, long: true, note: 'over the painted floor, long: spikes come up where a hop lands' },
     { hold: 'R', until: ground, max: 200 },
     { hold: 'R', until: (w) => w.entities.some((e: any) => e.kind === 'scooter' && e.alive && e.x > w.player.x - 70), max: 600, note: 'a scooter comes up behind' },
-    { hold: '', dodge: 60, until: (w) => !w.entities.some((e: any) => e.kind === 'scooter' && e.alive && e.x < w.player.x + 14), max: 300, note: 'stop and hop it' },
+    { hold: '', dodge: 60, until: (w) => !w.entities.some((e: any) => e.kind === 'scooter' && e.alive && e.x < w.player.x + 14), max: 400, note: 'stop and hop it' },
     { hold: '', until: ground, max: 100 },
-    { hold: 'R', until: (w: World) => w.flags.twist === 'swapped', max: 900 },
-    { hold: 'L', until: done, max: 300, note: 'the door ran back' },
+    { hold: 'R', dodge: 60, until: (w: World) => w.flags.twist === 'swapped', max: 900, note: 'and hop the one coming the other way' },
+    { hold: 'L', until: XL(74.1), max: 300, note: 'the door ran back' },
+    { hold: 'L', jump: 12, ticks: 12, note: 'hop the broken glasses on the way back' },
+    { hold: 'L', until: done, max: 300 },
   ],
   'TVM-04': [
     { hold: 'R', until: X(6.05), note: 'the first coconut drops ahead' },
@@ -1014,8 +1042,9 @@ function tourSwap(run: Step[], note: string, steps: Step[], nth = 0): Step[] {
   if (i < 0) throw new Error(`tourSwap: no step '${note}'`);
   return [...run.slice(0, i - 1), ...steps, ...run.slice(i + 2)];
 }
-/** TVM-01's start: a small hop over the cave-in, then clean over the wall and the glass your hop put on it */
-const tvm01Start: Step[] = [
+/** TVM-01's start: a small hop over the cave-in, clean over the wall and the glass your hop put on it, and
+ *  at once over the glass on the road past it */
+const tvm01Wall: Step[] = [
   { hold: 'R', until: X(6.3), max: 300 },
   { hold: 'R', jump: 10, ticks: 10, note: 'a small hop over the cave-in' },
   { hold: 'R', until: ground, max: 200 },
@@ -1023,13 +1052,37 @@ const tvm01Start: Step[] = [
   { hold: 'R', jump: 20, ticks: 20, long: true, note: 'clean over the wall and its glass' },
   { hold: 'R', until: ground, max: 200 },
 ];
-/** the TVM course with the city's own betrayals (the rocket and the end gap added by the callers) */
-function tvm01(start = tvm01Start, offCanoe: Step[] = [{ hold: 'R', until: X(76.7), max: 200 }, { hold: 'R', jump: 10, ticks: 10, note: 'hop off: the landing gives way' }, { hold: 'R', until: ground, max: 200 }]): Step[] {
+const tvm01Start: Step[] = [
+  ...tvm01Wall,
+  { hold: 'R', until: X(15.0), max: 200 },
+  { hold: 'R', jump: 12, ticks: 12, note: 'and over the glass on the road' },
+  { hold: 'R', until: ground, max: 200 },
+];
+/** the ditch is a puddle: walk down into it and climb out (a jump at it from the road brings up spikes) */
+const tvm01Ditch: Step[] = [
+  { hold: 'R', until: (w) => w.player.y + w.player.h > px16(15) + 8, max: 400, note: 'walk into the ditch' },
+  { hold: 'R', until: and(ground, X(24.4)), max: 200 },
+  { hold: 'R', jump: 12, ticks: 12, note: 'climb out of the ditch' },
+  { hold: 'R', until: ground, max: 200 },
+];
+/** the puttu stall: stop short of the tarp, let it empty, then jump the puddle (a pothole) */
+const tvm01Tarp: Step[] = [
+  { hold: 'R', until: X(83.4), max: 400 },
+  { hold: '', until: (w) => w.flags.tarp === 'empty', max: 300, note: 'let the tarp empty' },
+  { hold: 'R', until: X(88.4), max: 300 },
+  { hold: 'R', jump: 12, ticks: 12, note: 'jump the puddle: it is a pothole' },
+  { hold: 'R', until: ground, max: 200 },
+];
+/** the TVM course with the city's own betrayals (the end gap added by the callers) */
+function tvm01(start = tvm01Start, offCanoe: Step[] = [{ hold: 'R', until: X(76.7), max: 200 }, { hold: 'R', jump: 10, ticks: 10, note: 'hop off: the landing gives way' }, { hold: 'R', until: ground, max: 200 }], ditch = tvm01Ditch, tarp = tvm01Tarp): Step[] {
   let run = tourSwap(tourRun('TVM'), 'a low wall', start);
+  run = tourSwap(run, 'a shallow ditch', ditch);
   const off = run.findIndex((st) => st.note === 'step off');
   run = [...run.slice(0, off), ...offCanoe, ...run.slice(off + 1)];
   const rocket = run.findIndex((st) => st.note === 'hop the parked ride') - 1;
   run.splice(rocket, 0, { hold: 'R', until: X(49.9), max: 400, note: 'on to the last step' }, { hold: '', until: launchIs('down'), max: 600, note: 'the rocket goes; wait out the fire and the falling stage' });
+  const deck = run.findIndex((st) => st.note === 'up on the deck') - 1;
+  run.splice(deck, 0, ...tarp);
   return run;
 }
 const tvm01End: Step[] = [{ hold: 'R', until: X(101.9), max: 900 }, { hold: '', until: groupBack('g'), max: 400, note: 'the road opens: wait for it to close' }, { hold: 'R', until: done, max: 400 }];
@@ -1363,6 +1416,12 @@ export const MISTAKES: Record<string, { what: string; steps: Step[]; cause?: str
     { what: 'hop straight off the last net (a short hop)', steps: swapAt('TVM-06', 'it dips at once: straight off to the jetty', 2, [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'crushed' },
   ],
   'TVM-03': [
+    {
+      what: 'walk on after hopping the scooter',
+      steps: [...SOLUTIONS['TVM-03'].slice(0, SOLUTIONS['TVM-03'].findIndex((st) => st.note === 'and hop the one coming the other way')), { hold: 'R', until: (w) => w.state !== 'play', max: 600 }],
+      cause: 'hit',
+    },
+    { what: 'walk straight back to the door', steps: [...SOLUTIONS['TVM-03'].slice(0, SOLUTIONS['TVM-03'].findIndex((st) => st.note === 'the door ran back')), { hold: 'L', until: (w) => w.state !== 'play', max: 300 }], cause: 'spikes' },
     { what: 'hop over the shiny floor', steps: swapAt('TVM-03', 'over the painted floor, long: spikes come up where a hop lands', 1, [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'spikes' },
   ],
   'TVM-04': [
@@ -1378,9 +1437,24 @@ export const MISTAKES: Record<string, { what: string; steps: Step[]; cause?: str
       ],
       cause: 'crushed',
     },
+    {
+      what: 'hop the kite like the crows',
+      steps: [...SOLUTIONS['TVM-02'].slice(0, SOLUTIONS['TVM-02'].findIndex((st) => st.note === 'ride the middle')), { policy: hopAnyBird(), until: (w) => w.state !== 'play', max: 2000 }],
+      cause: 'hit',
+    },
+    {
+      what: 'stay in the middle under the second flyover',
+      steps: [...SOLUTIONS['TVM-02'].slice(0, SOLUTIONS['TVM-02'].findIndex((st) => st.note === 'to the front before the second flyover')), { hold: '', dodge: 60, until: (w) => w.state !== 'play', max: 2000 }],
+      cause: 'crushed',
+    },
   ],
   'TVM-01': [
     { what: 'hop up on to the wall', steps: [...tvm01Start.slice(0, 3), { hold: 'R', until: (w) => w.player.x + w.player.w >= px16(12) - 0.5, max: 200 }, { hold: '', jump: 14, ticks: 14 }, { hold: 'R', until: (w) => w.state !== 'play' || w.player.onGround, max: 200 }, tvm01Die], cause: 'spikes' },
+    { what: 'walk on after the wall', steps: [...tvm01Wall, tvm01Die], cause: 'spikes' },
+    { what: 'jump the ditch', steps: tvm01(tvm01Start, undefined, [{ hold: 'R', until: X(22.4), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, tvm01Die]), cause: 'spikes' },
+    { what: 'jump the ditch, long', steps: tvm01(tvm01Start, undefined, [{ hold: 'R', until: X(22.9), max: 400 }, { hold: 'R', jump: 30, ticks: 30, long: true }, tvm01Die]), cause: 'spikes' },
+    { what: 'walk on under the full tarp', steps: tvm01(tvm01Start, undefined, tvm01Ditch, [tvm01Die]), cause: 'drenched' },
+    { what: 'let the tarp empty, then wade the puddle like the ditch', steps: tvm01(tvm01Start, undefined, tvm01Ditch, [...tvm01Tarp.slice(0, 2), tvm01Die]), cause: 'splash' },
     { what: 'run on when the rocket goes', steps: tvm01().filter((st) => st.note !== 'on to the last step' && !st.note?.startsWith('the rocket goes')), cause: 'burnt' },
     { what: 'stop at the foot of the steps when it goes', steps: [...tvm01().slice(0, tvm01().findIndex((st) => st.note === 'on to the last step')), { hold: 'R', until: X(52.3), max: 400 }, { hold: '', until: (w) => w.state !== 'play', max: 600 }], cause: 'crushed' },
     { what: 'step off the canoe', steps: [...tvm01([...tvm01Start], [tvm01Die])], cause: 'fell' },
@@ -1495,6 +1569,10 @@ export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
     ]),
     cause: 'splash',
   },
+  // out of the steam, straight on: the tea master starts his pour as you come out of it
+  'TVM-03': { steps: [...SOLUTIONS['TVM-03'].slice(0, 2), { hold: 'R', until: (w) => w.state !== 'play', max: 900 }], cause: 'burnt' },
+  // the moat's stones crumble, so keep hopping, on to the bank and on: the second gate drops right there
+  'TVM-05': { steps: [...SOLUTIONS['TVM-05'].slice(0, SOLUTIONS['TVM-05'].findIndex((st) => st.note === 'on to the bank before it crumbles') + 1), { hold: 'R', until: (w) => w.state !== 'play', max: 600 }], cause: 'crushed' },
   // the coconut over the gap: just jump the gap, like the roll before it (it drops on the jump)
   'TVM-04': { steps: swapAt('TVM-04', 'little hop to bait the gap coconut', 1, []), cause: 'coconut' },
   // the last net: wait on it for the right moment, like the four before it (it dips the moment you land)

@@ -58,6 +58,7 @@ export type ThingKind =
   | 'spikerow'
   | 'net'
   | 'crow'
+  | 'parunthu'
   | 'jeep'
   | 'snakeboat'
   | 'frond'
@@ -181,6 +182,7 @@ const SIZE: Record<ThingKind, [number, number]> = {
   spikerow: [16, 10],
   net: [32, 6],
   crow: [14, 10],
+  parunthu: [22, 12],
   jeep: [40, 22],
   snakeboat: [128, 10],
   frond: [24, 10],
@@ -1155,6 +1157,48 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.lineTo(x + w / 2, y - 30);
       ctx.lineTo(x + w - 1, y);
       ctx.stroke();
+      break;
+    }
+    case 'parunthu': {
+      // a Brahminy kite gliding left: chestnut wings held out flat, white head and breast, a hooked
+      // yellow bill. It soars, it doesn't flap like a crow
+      const tilt = Math.sin(t * 0.08) * 0.8;
+      ctx.fillStyle = '#9A4A1C';
+      // wings, out flat with dark tips
+      ctx.beginPath();
+      ctx.moveTo(x + 6, y + 6);
+      ctx.lineTo(x + 10, y + 0.5 + tilt);
+      ctx.lineTo(x + 16, y + 0.5 + tilt);
+      ctx.lineTo(x + 14, y + 6);
+      ctx.fill();
+      ctx.fillStyle = '#3B1E0C';
+      ctx.fillRect(x + 10, y + 0.5 + tilt, 2.4, 1.4);
+      // tail fan
+      ctx.fillStyle = '#A85626';
+      ctx.beginPath();
+      ctx.moveTo(x + 15, y + 6);
+      ctx.lineTo(x + 21.5, y + 4.5);
+      ctx.lineTo(x + 21.5, y + 8.5);
+      ctx.fill();
+      // body
+      ctx.fillStyle = '#9A4A1C';
+      ctx.beginPath();
+      ctx.ellipse(x + 10.5, y + 7, 6.5, 2.9, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // white head and breast
+      ctx.fillStyle = '#F4F1EA';
+      ctx.beginPath();
+      ctx.ellipse(x + 5.2, y + 7.2, 3.6, 2.6, 0, 0, Math.PI * 2);
+      ctx.fill();
+      circle(ctx, x + 3.2, y + 6, 2.4, '#FBF9F4');
+      // hooked bill and eye
+      ctx.fillStyle = '#E8B730';
+      ctx.beginPath();
+      ctx.moveTo(x + 1.2, y + 5.4);
+      ctx.lineTo(x - 0.8, y + 6.4);
+      ctx.lineTo(x + 1.2, y + 7);
+      ctx.fill();
+      circle(ctx, x + 2.6, y + 5.5, 0.6, '#2A1A0E');
       break;
     }
     case 'crow': {
