@@ -454,3 +454,13 @@ the steps and the door, with no warning. So the city gets rebuilt that way, stag
   middle, which the bells want anyway.
 - Tests: `MISTAKES` in tests/solutions.ts holds as many scripted first-timer mistakes per stage as it
   needs; each must die (levels.test.ts), and the hazard audit counts them as runs.
+
+## v0.16.9: Thiruvananthapuram, the Level Devil way (stages 3, 4 and 6)
+- 03: the hop over the shiny (painted) floor brings up hidden spikes where a hop lands: jump long. Its
+  checkpoint moved before the floor (standing where the old one was meant meeting the scooter).
+- 04: the far bank of the last gap backs away from the first jump at it (`shyLedge`) and creeps back: the
+  stage's own lesson again, bait it with a little hop, wait, then jump.
+- 06: the Chinese fishing net is a lever. Step off the dipped last net and it springs up, and its granite
+  counterweight (`Counterweight`) slams down on the bank's edge, where a short hop lands: jump off long.
+- Each new trap is a recorded mistake that dies (MISTAKES). Human timing unchanged by them (03 68%, 04 75%,
+  06 28%: the old sections the route bot plays badly).
