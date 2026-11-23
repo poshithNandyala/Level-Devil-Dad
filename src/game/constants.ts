@@ -44,6 +44,41 @@ export const PHYS = {
   stickyRun: 42,
 };
 
+/** a physics profile: the old long stages use PHYS; the new rooms use ROOM_PHYS */
+export type Phys = typeof PHYS & {
+  /** every jump is the same height: no cut on release, and the rise ignores the button */
+  fixedJump?: boolean;
+};
+
+/**
+ * Rooms: one screen, short and sharp. A fixed-height jump (one tap is always the same
+ * jump, so every trap can be measured to the pixel), quick starts and stops, and the
+ * forgiveness numbers from research (83 ms coyote, 117 ms buffer).
+ * Rise 40.7 px (2.5 tiles: a 2-tile wall clears, 3 never does); airtime 0.55 s;
+ * range at a run 66 px (a 3-tile gap has 230 ms of slack, a 4-tile gap is only for experts).
+ */
+export const ROOM_PHYS: Phys = {
+  ...PHYS,
+  maxRun: 120,
+  accelGround: 2400,
+  decelGround: 3200,
+  turnGround: 4800,
+  accelAir: 2000,
+  decelAir: 1400,
+  turnAir: 3200,
+  gravityUp: 1050,
+  gravityDown: 1600,
+  apexHangVy: 40,
+  apexHangMul: 0.55,
+  jumpVel: 290,
+  ledgeAssist: 4,
+  maxFall: 420,
+  coyote: 0.083,
+  jumpBuffer: 0.117,
+  cornerCorrect: 4,
+  fixedJump: true,
+};
+
 export type CityId = 'TVM' | 'KVT' | 'CHN' | 'PDY' | 'BLR' | 'AMR' | 'HYD' | 'PNJ' | 'BOM' | 'DMN' | 'GNR' | 'JAI' | 'BPL' | 'RPR' | 'RNC';
 
 export interface Rect {

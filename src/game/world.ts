@@ -1,6 +1,6 @@
 import { Actor, Collider, Solid } from './body';
 import { bi, EN_DELAY, EN_HOLD } from './bi';
-import { CityId, COLS, DT, overlapXYWH, PHYS, Rect, ROOM_H, ROOM_W, ROWS, secs, TILE } from './constants';
+import { CityId, COLS, DT, overlapXYWH, PHYS, Rect, ROOM_H, ROOM_PHYS, ROOM_W, ROWS, secs, TILE } from './constants';
 import { Player, type Climbable, type SeaZone } from './player';
 
 export type RivalVariant = 'tara' | 'bandar' | 'none';
@@ -47,7 +47,16 @@ export interface LevelDef {
   doorX?: number;
   /** long stages: the kind of surprise at the door */
   ending?: string;
+  /** a one-screen room of the new game: room physics, and Dad dies the moment he drops out of the frame */
+  room?: boolean;
 }
+
+/**
+ * The part of a room's 32x18 grid that is on screen: columns 3..28 and rows 5..16 (the
+ * floor top is row 14). Dad can't leave it sideways, and dropping out of it is a death.
+ * 26 x 12 tiles fills a modern phone edge to edge and keeps Dad big (about 28 px tall).
+ */
+export const ROOM_FRAME = { x: 3 * TILE, y: 5 * TILE, w: 26 * TILE, h: 12 * TILE };
 
 export type SceneKind = 'hills' | 'water' | 'rock' | 'falls' | 'night' | 'cave' | 'market' | 'filmset';
 export interface SceneDef {
@@ -164,6 +173,11 @@ export class World implements Collider {
   kicks: Rect[] = [];
   /** Dad's long-lost twins: they get the same buttons */
   twins: Player[] = [];
+  /** falling past this (his top, px) is a death */
+  killY = ROOM_H + 24;
+  /** the walls at the sides (px): the map's edges, or a room's frame */
+  minX = 0;
+  maxX = ROOM_W;
 
   /** the sea Dad's in (his feet a little under its surface), if any */
   seaAt(a: Actor): SeaZone | null {
@@ -202,6 +216,12 @@ export class World implements Collider {
     this.info = info;
     this.parse(level.map);
     this.player = new Player(this.spawn.x, this.spawn.y);
+    if (level.room) {
+      this.player.phys = ROOM_PHYS;
+      this.killY = ROOM_FRAME.y + ROOM_FRAME.h;
+      this.minX = ROOM_FRAME.x;
+      this.maxX = ROOM_FRAME.x + ROOM_FRAME.w;
+    }
     this.actors.push(this.player);
   }
 
@@ -212,6 +232,7 @@ export class World implements Collider {
     if (cols < COLS) throw new Error(`${this.level.id}: map needs at least ${COLS} cols, has ${cols}`);
     this.cols = cols;
     this.W = cols * TILE;
+    this.maxX = this.W;
     this.tiles = new Uint8Array(cols * ROWS);
     this.hiddenTiles = new Uint8Array(cols * ROWS);
     let spawnFound = false;
@@ -261,7 +282,7 @@ export class World implements Collider {
 
   // -------------------------------------------------------------- collision
   solidAt(x: number, y: number, w: number, h: number): Solid | true | null {
-    if (x < 0 || x + w > this.W || y < 0) return true;
+    if (x < this.minX || x + w > this.maxX || y < 0) return true;
     const tx0 = Math.floor(x / TILE),
       tx1 = Math.floor((x + w - 1) / TILE);
     const ty0 = Math.floor(y / TILE),
@@ -490,7 +511,7 @@ export class World implements Collider {
       p.update(this, this.input);
       for (const t of this.twins) if (!t.dead && !t.hidden && this.state === 'play') t.update(this, t.mirror ? { ...this.input, left: this.input.right, right: this.input.left } : this.input);
       if (p.squishAxis) this.die('crushed');
-      else if (p.y > ROOM_H + 24 || (p.gsign < 0 && p.y <= 0)) this.die('fell');
+      else if (p.y > this.killY || (p.gsign < 0 && p.y <= 0)) this.die('fell');
       else {
         for (const h of p.hidden ? [] : this.hazards) {
           if (h.active && h.hits(p.x, p.y, p.w, p.h)) {
@@ -503,7 +524,7 @@ export class World implements Collider {
       // the twins face the same dangers (and losing one is losing the take)
       for (const t of this.twins) {
         if (this.state !== 'play' || t.dead || t.hidden) continue;
-        let cause = t.squishAxis ? 'crushed' : t.y > ROOM_H + 24 ? 'fell' : '';
+        let cause = t.squishAxis ? 'crushed' : t.y > this.killY ? 'fell' : '';
         if (!cause) for (const h of this.hazards) if (h.active && h.hits(t.x, t.y, t.w, t.h)) cause = h.cause;
         if (!cause && this.spikesAt(t)) cause = 'spikes';
         if (cause) this.die(cause, t);

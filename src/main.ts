@@ -1,14 +1,32 @@
-import './ui/style.css';
+import './rooms/rooms.css';
 import { Capacitor } from '@capacitor/core';
-import { App } from './app/app';
+import { RoomApp } from './rooms/app';
+import { ROOM_BY_ID } from './rooms/doors';
 import { inAndroidShell } from './platform/device';
 
-const app = new App(document.getElementById('app')!);
-(window as any).__ldd = app;
-app.boot().catch((e) => {
+// ?classic opens the old long-stage game (frozen; kept for reference)
+const classic = new URLSearchParams(location.search).has('classic');
+
+function fail(e: any) {
   console.error(e);
   document.body.insertAdjacentHTML('beforeend', `<pre style="position:fixed;inset:auto 0 0 0;color:#fff;background:#a00;padding:8px;font:12px monospace;z-index:999">${String(e?.stack ?? e)}</pre>`);
-});
+}
+
+if (classic) {
+  Promise.all([import('./ui/style.css'), import('./app/app')])
+    .then(([, m]) => {
+      const app = new m.App(document.getElementById('app')!);
+      (window as any).__ldd = app;
+      return app.boot();
+    })
+    .catch(fail);
+} else {
+  const app = new RoomApp(document.getElementById('app')!);
+  (window as any).__ldd = app;
+  (window as any).__lddRoomIds = () => Object.keys(ROOM_BY_ID);
+  (window as any).__lddRoom = (id: string) => ROOM_BY_ID[id];
+  app.boot().catch(fail);
+}
 
 // Offline support for the hosted web build (not inside the native app or the single-file preview).
 if (!__SINGLE__ && !Capacitor.isNativePlatform() && 'serviceWorker' in navigator && location.protocol === 'https:') {

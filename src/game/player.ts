@@ -1,5 +1,5 @@
 import { Actor, Solid } from './body';
-import { approach, DT, PHYS } from './constants';
+import { approach, DT, Phys, PHYS } from './constants';
 import type { InputState, World } from './world';
 
 /** In the sea: tap to stroke up, hold to float, let go to sink. */
@@ -138,6 +138,10 @@ export class Player extends Actor {
   twin = false;
   /** a twin that does everything the other way round (left is right) */
   mirror = false;
+  /** which physics this body uses (the rooms swap in ROOM_PHYS) */
+  phys: Phys = PHYS;
+  /** in the air because of a jump (not a walk off a ledge): the apex hang only applies to jumps */
+  private arc = false;
 
   constructor(x: number, y: number) {
     super(x, y, PHYS.width, PHYS.height);
@@ -155,7 +159,7 @@ export class Player extends Actor {
   }
 
   update(w: World, inp: InputState) {
-    const P = PHYS;
+    const P = this.phys;
     const stunned = this.stun > 0;
     if (stunned) this.stun--;
     let dir = stunned ? 0 : (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
@@ -184,6 +188,7 @@ export class Player extends Actor {
         w.emit('land', this.cx, this.y + this.h, { speed: sg * this.vy });
       }
       this.onGround = true;
+      this.arc = false;
       this.groundSolid = g.solid;
       this.coyoteT = P.coyote;
       this.airTicks = 0;
@@ -237,6 +242,7 @@ export class Player extends Actor {
         if (pvy < 0) this.vy += pvy;
       }
       this.jumping = true;
+      this.arc = true;
       this.cutPending = false;
       this.onGround = false;
       this.groundSolid = null;
@@ -263,7 +269,7 @@ export class Player extends Actor {
       w.emit('jump', this.cx, this.y + this.h);
       w.emit('kick', side > 0 ? this.x + this.w : this.x, this.cy, { side });
     }
-    if (this.jumping && !inp.jump && sg * this.vy < 0) this.cutPending = true;
+    if (this.jumping && !inp.jump && sg * this.vy < 0 && !P.fixedJump) this.cutPending = true;
     if (this.cutPending && this.jumping && sg * this.vy < 0 && (w.tick - this.jumpTick) * DT >= P.minJump) {
       this.vy *= P.jumpCut;
       this.jumping = false;
@@ -275,9 +281,9 @@ export class Player extends Actor {
     // --------------------------------------------------------------- gravity
     if (!this.onGround) {
       // a pending cut keeps the jump's own gravity until the minimum jump time is over
-      let grav = sg * this.vy < 0 && (inp.jump || this.cutPending) && !this.launched ? P.gravityUp : P.gravityDown;
+      let grav = sg * this.vy < 0 && (P.fixedJump || inp.jump || this.cutPending) && !this.launched ? P.gravityUp : P.gravityDown;
       if (sg * this.vy >= 0) this.launched = false;
-      if (Math.abs(this.vy) < P.apexHangVy && inp.jump) grav *= P.apexHangMul;
+      if (Math.abs(this.vy) < P.apexHangVy && (P.fixedJump ? this.arc : inp.jump)) grav *= P.apexHangMul;
       const maxFall = this.fallCap ?? P.maxFall;
       this.vy = sg > 0 ? Math.min(this.vy + grav * DT, maxFall) : Math.max(this.vy - grav * DT, -maxFall);
     } else if (sg * this.vy > 0) {
@@ -541,7 +547,7 @@ export class Player extends Actor {
   /** Nudge sideways when the head barely clips a ceiling corner. */
   private cornerCorrect(w: World): boolean {
     const order = this.vx >= 0 ? [1, -1] : [-1, 1];
-    for (let i = 1; i <= PHYS.cornerCorrect; i++) {
+    for (let i = 1; i <= this.phys.cornerCorrect; i++) {
       for (const s of order) {
         if (!w.solidAt(this.x + s * i, this.y - 1, this.w, this.h) && !w.solidAt(this.x + s * i, this.y, this.w, this.h)) {
           this.x += s * i;
