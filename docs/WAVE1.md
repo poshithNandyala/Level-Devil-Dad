@@ -486,3 +486,25 @@ a betrayal every few steps, and the obvious fix for each one meets the next.
   and further apart, and the route jumps off the counter long. 53% → 100% at 12 ticks.
 - 05 gets its `FIX` (the stones crumble, so keep hopping on to the bank and on: the second gate drops there).
 - Scooter riders were drawn riding backwards (the art faces right; riders assume left): `facesRight = true`.
+
+## v0.16.11: Thiruvananthapuram 4–8, tougher, and all of it fair
+- 04: fallen palm fronds past the river hide a coir pit (the husks soak in them): hop it.
+- 05: the first gatehouse is deep and hides a second portcullis, drawn behind its wall (`layer -4`): it drops
+  once as you pass under the first, so the dad who waited for the first gate and ran on meets it. Stop
+  between them and let it go back up. The `FIX` (the moat: keep hopping, on to the bank and on) and two
+  mistakes are recorded.
+- 07: the first spike on the road hides until you're on it (`popAt`), and the stage has two long runs
+  between checkpoints (36, 77) instead of three.
+- Fair at last: 04, 05 and 06 had been shipping at 75%, 33% and 28% for average human timing, under the 90%
+  bar. Their fixes, none of which makes a trap easier to read: 04's second grove coconut falls a moment later
+  and the far one a little earlier (a forward hop over the first roll used to land under the second as it
+  fell); 05's moat stones are two tiles wide, crumble after 0.4 s, the moat's gusts end at its bank and blow
+  less often, the bank before the second gate is three tiles longer, and the first gate stays up a little
+  longer; 06's nets stand 3.5 tiles apart instead of 4 (you had to jump from a net's very edge to reach the
+  next), the jetty's spikes moved past where the hop off the boats lands and sink back after a moment, and
+  the jetty is longer so the shy door's dance has room. Every Thiruvananthapuram stage is now 90%+ at 12
+  ticks (01 100, 02 93, 03 100, 04 100, 05 90, 06 98, 07 90, 08 100).
+- Tried and dropped: a lurch on 08's sprint (the crew pulls at once and you slide back). Where you stand on
+  the boat after the last bridge decides whether it kills, so it wasn't exact.
+- The route shots (`scripts/dev/shots.sh`) replay `/tmp/rec`, which only `LDD_ENDREC=1 ... endrec.test.ts`
+  writes: re-record after changing a route, or the sheet shows an old route dying.

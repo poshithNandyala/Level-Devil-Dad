@@ -125,8 +125,9 @@ that is a pothole (TVM-01, `Puddle`), chunks of flyover falling on the bus roof,
 and the middle under the next (TVM-02, `Slab`), a Brahminy kite that glides over a dad who stands and meets
 one who hops (TVM-02, `parunthu`), a tea pour that starts the moment you leave the steam (TVM-03), a scooter
 from behind and then one head-on (TVM-03), broken glasses on the way back to a door that hopped over you
-(TVM-03), hidden spikes where a short hop over a fake floor lands (TVM-03), a far bank that backs away from
-your jump (TVM-04, `shyLedge`), a fishing-net counterweight that slams down when you step off the net
+(TVM-03), hidden spikes where a short hop over a fake floor lands (TVM-03), fallen palm fronds over a
+coir-retting pit (TVM-04, a fake floor), a far bank that backs away from your jump (TVM-04, `shyLedge`), a
+second portcullis hidden in the gatehouse that drops as you pass under the first (TVM-05), a fishing-net counterweight that slams down when you step off the net
 (TVM-06, `Counterweight`).
 
 ## Acts (one per id, never reused)

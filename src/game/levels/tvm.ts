@@ -367,14 +367,16 @@ export const TVM: LevelDef[] = [
     name: 'Thenga Trajectory',
     nameEn: 'Coconut trajectory',
     tagline: 'Gravity in Kerala always finds Dad’s head.',
-    hint: 'Coconuts fall where you’re going: wait, then hop the roll. The one over the gap falls when you jump, so bait it with a little hop. A palm crashes across the river as a bridge, then sinks: don’t stop on it. In the last grove they fall in a wave: follow behind it. The far bank of the last gap backs away from your first jump: bait it too, wait for it to come back, then jump.',
+    hint: 'Coconuts fall where you’re going: wait, then hop the roll. The one over the gap falls when you jump, so bait it with a little hop. A palm crashes across the river as a bridge, then sinks: don’t stop on it. Past the river, don’t walk on the fallen fronds: there’s a coir pit under them, hop it. In the last grove they fall in a wave: follow behind it. The far bank of the last gap backs away from your first jump: bait it too, wait for it to come back, then jump.',
     par: 18,
-    map: Grid.ground(15, 96).pit(15, 16).pit(36, 45).pit(78, 79).fill(80, 83, 15, 17, 'k').put(2, 14, '@').put(92, 14, 'E').rows(),
+    map: Grid.ground(15, 96).pit(15, 16).pit(36, 45).pit(78, 79).fill(80, 83, 15, 17, 'k').fill(51, 52, 15, 17, 'f').put(2, 14, '@').put(92, 14, 'E').rows(),
     build(w: World) {
       for (const tx of [33, 71]) checkpoint(w, tx);
       exitTwist(w, door(w), 'fake');
       // the far bank of the last gap backs off from the first jump at it, then creeps back: bait it
       shyLedge(w, 'k', { dx: px(3), from: px(72), back: 1.1 });
+      // fallen fronds on the bank: underneath them, a coir pit where the husks are soaked
+      fakeFloor(w, 'f').paint = { fill: '#7E8B3C', trim: '#A4B45A', line: 'rgba(60,66,20,0.45)' };
       water(w, 15.6, { rate: 0, minTy: 15.6, colors: ['#4F8C83', '#295B57'], cause: 'splash', behind: true });
       // the first grove (as before)
       prop(w, 'palm', 9, 15, { h: 80, lean: 4 });
@@ -394,7 +396,7 @@ export const TVM: LevelDef[] = [
         (w2) => w2.player.x >= px(22),
         () => {
           drop(w, c1, { shake: 0.15, rollVx: -80 });
-          w.after(0.9, () => drop(w, c2, { shake: 0.1, rollVx: -80 }));
+          w.after(1.4, () => drop(w, c2, { shake: 0.1, rollVx: -80 }));
         },
       );
       // the river: a palm crashes across it... and then sinks
@@ -427,7 +429,7 @@ export const TVM: LevelDef[] = [
       // a coconut on the far bank waits for you
       prop(w, 'palm', 48, 15, { h: 78, lean: -8 });
       const far = coconut(w, px(47) + 6, 160);
-      w.when((w2) => w2.player.x >= px(43.5), () => drop(w, far, { shake: 0.05, v0: 150, rollVx: -70 }));
+      w.when((w2) => w2.player.x >= px(42.3), () => drop(w, far, { shake: 0.05, v0: 150, rollVx: -70 }));
       // the shaken grove: coconuts drop palm after palm, left to right
       const grove = [58, 62, 66, 70, 74];
       grove.forEach((tx, i) => prop(w, 'palm', tx, 15, { h: 82 + (i % 2) * 8, lean: i % 2 ? -6 : 5 }));
@@ -451,13 +453,13 @@ export const TVM: LevelDef[] = [
     index: 5,
     name: 'Fort Gate Forward',
     tagline: 'Two gates, a moat, a headwind and one very light sleeper.',
-    hint: 'Let each gate drop and rise before you go under, and never while the wind holds you back. Over the moat, every stone crumbles: keep hopping. Jump the spikes that pop up, then walk past the dog. Do not jump near it.',
+    hint: 'Let the first gate drop and rise, never while the wind holds you back, then go under it and stop at once: a second gate hides in the gatehouse and drops as you pass the first. Let it go back up. Over the moat, every stone crumbles: keep hopping, but stop on the bank: the next gate drops right there. Jump the spikes that pop up, then walk past the dog. Do not jump near it.',
     par: 22,
     map: (() => {
-      const g = Grid.ground(15, 90).fill(19, 22, 6, 9, '#').fill(52, 55, 6, 9, '#');
+      // the first gatehouse is deep: it hides a second portcullis behind the one you can see
+      const g = Grid.ground(15, 90).fill(19, 26, 6, 9, '#').fill(54, 57, 6, 9, '#');
       // the moat with crumbling stepping stones (a, b, c)
-      g.pit(40, 50).put(42, 14, 'a').put(45, 13, 'b').put(48, 14, 'c');
-      g.fill(42, 42, 15, 15, 'a').fill(48, 48, 15, 15, 'c');
+      g.pit(40, 49).fill(41, 42, 14, 15, 'a').fill(44, 45, 13, 13, 'b').fill(47, 48, 14, 15, 'c');
       g.fill(76, 76, 14, 14, 'A');
       return g.put(3, 14, '@').put(86, 14, 'E').rows();
     })(),
@@ -469,8 +471,8 @@ export const TVM: LevelDef[] = [
       prop(w, 'palm', 13, 15, { h: 72, lean: -4 });
       sign(w, 14.5, 10.6, 3.4, 'EAST FORT', 'wood', 'right', '');
       // headwind across the gate approaches and the moat, in gusts
-      gust(w, 13, 7, 11, 8, -230, { period: 2.6, on: 0.9, phase: 1.7 });
-      gust(w, 39, 7, 13, 8, -200, { period: 3.0, on: 0.8, phase: 0.6 });
+      gust(w, 13, 7, 6, 8, -230, { period: 3.0, on: 0.9, phase: 1.7 });
+      gust(w, 39, 7, 11, 8, -200, { period: 3.6, on: 0.8, phase: 0.6 });
       // a portcullis: drops when you come close, then keeps its own rhythm
       const portcullis = (tx: number, armAt: number, down: number, upWait: number) => {
         const gate = thing(w, 'gate', tx, 10, { dx: 8, h: 48 });
@@ -493,13 +495,37 @@ export const TVM: LevelDef[] = [
         );
         return gate;
       };
-      portcullis(20, 17, 0.9, 1.3);
-      portcullis(53, 50.5, 0.6, 1.0);
+      portcullis(20, 17, 0.9, 1.8);
+      portcullis(55, 52.5, 0.6, 1.0);
+      // ...and the one hidden in the gatehouse behind the first: it drops once, as you pass under the first,
+      // so the dad who waited for the first gate and ran on meets this one. Stop between them, let it go back up.
+      const inner = thing(w, 'gate', 25, 7, { h: 48, layer: -4 });
+      const innerUp = inner.y;
+      w.when(
+        (w2) => w2.player.cx >= px(20) + 16,
+        (w2) => {
+          w2.sfx('creak', inner.cx, px(9));
+          inner.shake(w2, 0.33, () => {
+            inner.setDeadly('crushed');
+            inner.moveTo(w2, inner.x, px(15) - 48, 0.2, 'in', () => {
+              w2.emit('shake', inner.cx, px(15), { amount: 4 });
+              w2.sfx('thud', inner.cx, px(15));
+              w2.flags.inner = 'down';
+              w2.after(0.9, () =>
+                inner.moveTo(w2, inner.x, innerUp, 0.5, 'inOut', () => {
+                  inner.setDeadly(false);
+                  w2.flags.inner = 'up';
+                }),
+              );
+            });
+          });
+        },
+      );
       // stepping stones in the moat crumble under you
-      crumble(w, 'a', 0.3);
-      crumble(w, 'b', 0.3);
-      crumble(w, 'c', 0.3);
-      sign(w, 56.5, 10.6, 3.4, 'FORT', 'wood', 'right', '');
+      crumble(w, 'a', 0.4);
+      crumble(w, 'b', 0.4);
+      crumble(w, 'c', 0.4);
+      sign(w, 58.5, 10.6, 3.4, 'FORT', 'wood', 'right', '');
       // spikes jump out of the path before the dog
       popAt(w, 'A', px(75) + 2);
       // a sleeping dog in front of the exit: jumping near it wakes it, and the door runs away
@@ -533,7 +559,7 @@ export const TVM: LevelDef[] = [
     hint: 'A crow skims the promenade: hop it. Each net dips into the sea and comes back up, one after another like a wave: hop along while they’re up. The last net dips the moment you land on it, so jump straight off, and long: as your weight leaves it, it springs up and its stones slam down on the bank’s edge. Spikes on the jetty.',
     par: 14,
     scene: { kind: 'water', place: 'Fort Kochi', with: ['nets', 'palms'] },
-    map: Grid.ground(13, 64).pit(6, 25, 13).pit(35, 46, 13).fill(50, 50, 12, 12, 'A').put(2, 12, '@').put(60, 12, 'E').rows(),
+    map: Grid.ground(13, 70).pit(5, 23, 13).pit(35, 46, 13).fill(53, 53, 12, 12, 'A').put(2, 12, '@').put(64, 12, 'E').rows(),
     build(w: World) {
       for (const tx of [31]) checkpoint(w, tx);
       exitTwist(w, door(w), 'shy');
@@ -543,8 +569,8 @@ export const TVM: LevelDef[] = [
         P = 3.2;
       const cycle = (m: number) => (m < 1.2 ? UP : m < 1.6 ? UP + ((m - 1.2) / 0.4) * (DOWN - UP) : m < 2.6 ? DOWN : DOWN - ((m - 2.6) / 0.6) * (DOWN - UP));
       // the last net's stones hang over the bank's edge: net up, stones down
-      const stones = w.add(new Counterweight({ tx: 26, tw: 2, floorTy: 13, lift: 54 }));
-      [7, 11, 15, 19, 23].forEach((tx, i) => {
+      const stones = w.add(new Counterweight({ tx: 24, tw: 2, floorTy: 13, lift: 54 }));
+      [7, 10.5, 14, 17.5, 21].forEach((tx, i) => {
         const net = thing(w, 'net', tx, 0, { oneWay: true, dy: UP });
         let caught = -1;
         let sprung = -1;
@@ -600,7 +626,7 @@ export const TVM: LevelDef[] = [
             }
             if (tipped >= 0) {
               const k = (w2.tick - tipped) * DT;
-              if (k > 0.22) y += Math.min(40, (k - 0.22) * 160);
+              if (k > 0.3) y += Math.min(40, (k - 0.3) * 140);
               if (k > 2.6) tipped = -1;
             }
           }
@@ -610,7 +636,9 @@ export const TVM: LevelDef[] = [
       });
       void boats;
       // spikes in the jetty boards, and a second crow
-      popAt(w, 'A', px(49) + 4);
+      // (they sink back after a moment: the door's dance later goes back over these boards)
+      const jetty = popAt(w, 'A', px(52) + 4);
+      w.when(() => jetty.popped, (w2) => w2.after(1.5, () => jetty.retract(w2)));
       w.when(
         (w2) => w2.player.x >= px(52),
         (w2) => {
@@ -618,8 +646,8 @@ export const TVM: LevelDef[] = [
           w2.sfx('caw', w2.player.x + 160, 190);
         },
       );
-      prop(w, 'netpole', 56, 13);
-      rival(w, 58, 13, -1, { intro: 'Kochi vala kando? Keri po! | Seen the Kochi nets? Climb on!', point: -1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
+      prop(w, 'netpole', 59, 13);
+      rival(w, 62, 13, -1, { intro: 'Kochi vala kando? Keri po! | Seen the Kochi nets? Climb on!', point: -1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
       collectible(w, 'chaaya', 13.5, 9.6);
     },
   },
@@ -630,11 +658,12 @@ export const TVM: LevelDef[] = [
     name: 'Munnar Hairpins',
     nameEn: 'Munnar hill road',
     tagline: 'Hairpin bends, tea terraces, mist, and jeeps that never slow down.',
-    hint: 'Hop the jeep, then stop: it backs up for another go. Hop straight up the terraces, the middle one gives way. Let the landslide boulder come to you and hop it. Wait for the mist on the ridge to lift: two spike pits hide in it. Under the rock cutting, hop the first rock the moment it lands, then let the second one fall. Don’t step down to the factory: leap. The factory has a shutter.',
+    hint: 'A spike comes out of the road just ahead of the tea stall: hop early. Hop the jeep, then stop: it backs up for another go. Hop straight up the terraces, the middle one gives way. Let the landslide boulder come to you and hop it. Wait for the mist on the ridge to lift: two spike pits hide in it. Under the rock cutting, hop the first rock the moment it lands, then let the second one fall. Don’t step down to the factory: leap. The factory has a shutter.',
     par: 20,
     scene: { kind: 'hills', place: 'Munnar' },
     map: Grid.ground(15, 96)
-      .put(7, 14, '^')
+      // the road's first spike hides until you're on top of it
+      .put(8, 14, 'A')
       // the tea terraces
       .fill(36, 41, 13, 14, '#')
       .fill(42, 45, 11, 17, 'a')
@@ -652,8 +681,10 @@ export const TVM: LevelDef[] = [
       .put(92, 10, 'E')
       .rows(),
     build(w: World) {
-      for (const tx of [36, 55, 77]) checkpoint(w, tx);
+      // two long runs: the terraces, the landslide, the mist and the rock cutting are one stretch
+      for (const tx of [36, 77]) checkpoint(w, tx);
       exitTwist(w, door(w), 'crush');
+      popAt(w, 'A', px(6.6) + 4);
       // the lower road: a jeep comes down the hill... and then backs up for another go
       let jeep: Rider | null = null;
       let phase = 0,
