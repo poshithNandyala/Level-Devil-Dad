@@ -410,7 +410,7 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: '', until: (w) => (w.flags.net4 ?? 0) >= 0.55 && w.player.onGround && noCrow(w), max: 900, dodge: 44 },
     { hold: 'R', jump: 12, ticks: 12, note: 'onto the last net' },
     { hold: 'R', until: ground, max: 200 },
-    { hold: 'R', jump: 12, ticks: 12, note: 'it dips at once: straight off to the jetty' },
+    { hold: 'R', jump: 26, ticks: 26, long: true, note: 'it dips at once: straight off to the jetty' },
     { hold: 'R', until: and(ground, X(33.6)), max: 400 },
     ...hopOn((w) => thingOf(w, 'odam', 0)),
     ...hopOn((w) => thingOf(w, 'odam', 1)),
@@ -1359,6 +1359,9 @@ function swapAt(id: string, note: string, n: number, w: Step[]): Step[] {
 }
 /** More scripted mistakes per stage: each is something a first-timer does, and each must die. */
 export const MISTAKES: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'TVM-06': [
+    { what: 'hop straight off the last net (a short hop)', steps: swapAt('TVM-06', 'it dips at once: straight off to the jetty', 2, [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'crushed' },
+  ],
   'TVM-03': [
     { what: 'hop over the shiny floor', steps: swapAt('TVM-03', 'over the painted floor, long: spikes come up where a hop lands', 1, [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.state !== 'play', max: 300 }]), cause: 'spikes' },
   ],

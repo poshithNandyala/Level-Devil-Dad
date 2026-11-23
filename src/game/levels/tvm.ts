@@ -7,7 +7,7 @@ import { tour } from './tour';
 import { Grid } from './grid';
 import { exitTwist } from './twists';
 import { crumble, dropFloor, fakeFloor, gapAhead, noLanding, onPass, popAt, popOnJump, riseWall, shyLedge } from './trolls';
-import { Launch, Slab } from '../entities/kerala';
+import { Counterweight, Launch, Slab } from '../entities/kerala';
 
 // Thiruvananthapuram: monsoon puddles, a red express bus, a tea stall,
 // coconut palms and the old fort gate. Lines: Malayalam + English.
@@ -468,7 +468,7 @@ export const TVM: LevelDef[] = [
     name: 'Cheena Vala',
     nameEn: 'Chinese fishing nets',
     tagline: 'Fort Kochi’s giant fishing nets go up and down all day. You are today’s catch.',
-    hint: 'A crow skims the promenade: hop it. Each net dips into the sea and comes back up, one after another like a wave: hop along while they’re up. The last net dips the moment you land on it, so jump straight off. Spikes on the jetty.',
+    hint: 'A crow skims the promenade: hop it. Each net dips into the sea and comes back up, one after another like a wave: hop along while they’re up. The last net dips the moment you land on it, so jump straight off, and long: as your weight leaves it, it springs up and its stones slam down on the bank’s edge. Spikes on the jetty.',
     par: 14,
     scene: { kind: 'water', place: 'Fort Kochi', with: ['nets', 'palms'] },
     map: Grid.ground(13, 64).pit(6, 25, 13).pit(35, 46, 13).fill(50, 50, 12, 12, 'A').put(2, 12, '@').put(60, 12, 'E').rows(),
@@ -480,9 +480,12 @@ export const TVM: LevelDef[] = [
         DOWN = 240,
         P = 3.2;
       const cycle = (m: number) => (m < 1.2 ? UP : m < 1.6 ? UP + ((m - 1.2) / 0.4) * (DOWN - UP) : m < 2.6 ? DOWN : DOWN - ((m - 2.6) / 0.6) * (DOWN - UP));
+      // the last net's stones hang over the bank's edge: net up, stones down
+      const stones = w.add(new Counterweight({ tx: 26, tw: 2, floorTy: 13, lift: 54 }));
       [7, 11, 15, 19, 23].forEach((tx, i) => {
         const net = thing(w, 'net', tx, 0, { oneWay: true, dy: UP });
         let caught = -1;
+        let sprung = -1;
         w.onTick((w2) => {
           const t = w2.tick * DT - i * 0.55;
           const m = ((t % P) + P) % P;
@@ -493,11 +496,21 @@ export const TVM: LevelDef[] = [
               caught = w2.tick;
               w2.say('Meen kitti! | Got a fish!', net.cx, UP - 30, 1.0, 'npc');
             }
-            if (caught >= 0) {
+            // step off the dipped net and it springs back up: its stones slam down on the bank
+            if (caught >= 0 && sprung < 0 && !w2.standing(net.solid) && w2.player.x > net.solid.x + 4) sprung = w2.tick;
+            if (sprung >= 0) {
+              const k = Math.min(1, (w2.tick - sprung) * DT / 0.12);
+              y = DOWN - k * (DOWN - UP);
+              if ((w2.tick - sprung) * DT > 2.2) {
+                sprung = -1;
+                caught = -1;
+              }
+            } else if (caught >= 0) {
               const k = Math.min(1, (w2.tick - caught) * DT / 0.35);
               y = Math.max(y, UP + k * (DOWN - UP));
               if ((w2.tick - caught) * DT > 2.5) caught = -1;
             }
+            stones.set(y < UP + 8, w2);
           }
           w2.flags[`net${i}`] = m < 1.2 && caught < 0 ? 1.2 - m : 0;
           net.place(w2, net.solid.x, y);

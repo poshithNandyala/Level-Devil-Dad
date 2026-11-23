@@ -330,3 +330,90 @@ export class Slab extends Entity {
     ctx.stroke();
   }
 }
+
+/**
+ * Fort Kochi's Chinese fishing nets are levers: the net on the sea end, a bundle of granite stones on ropes
+ * at the shore end. Net up, stones down. Step off a dipped net and it springs up, and its stones slam down
+ * on the bank's edge, right where a short hop lands.
+ */
+export class Counterweight extends Entity {
+  /** left edge and width (px), the bank's surface, how high the bundle hangs when the net is down */
+  readonly x: number;
+  readonly w: number;
+  readonly floor: number;
+  readonly lift: number;
+  /** 0: hanging up (net in the sea), 1: down on the bank (net up) */
+  k = 0;
+  private target = 0;
+  hazard: Hazard;
+  constructor(o: { tx: number; tw: number; floorTy: number; lift: number }) {
+    super();
+    this.layer = 3;
+    this.x = o.tx * TILE;
+    this.w = o.tw * TILE;
+    this.floor = o.floorTy * TILE;
+    this.lift = o.lift;
+    const self = this;
+    this.hazard = {
+      active: true,
+      cause: 'crushed',
+      hits(x, y, w, h) {
+        return self.k > 0.5 && overlapXYWH(x, y, w, h, { x: self.x + 2, y: self.bottom - 16, w: self.w - 4, h: 16 });
+      },
+    };
+  }
+  get bottom() {
+    return this.floor - (1 - this.k) * this.lift;
+  }
+  /** slam down (the net springs up) or haul up (the net goes back in the sea) */
+  set(down: boolean, w?: World) {
+    const t = down ? 1 : 0;
+    if (t === this.target) return;
+    this.target = t;
+    if (down && w) {
+      w.sfx('thud', this.x + this.w / 2, this.floor);
+      w.emit('shake', this.x, this.floor, { amount: 3 });
+    }
+  }
+  update() {
+    // slams down fast, comes up slowly
+    this.k = this.target > this.k ? Math.min(1, this.k + DT / 0.12) : Math.max(0, this.k - DT / 0.6);
+  }
+  draw(ctx: CanvasRenderingContext2D) {
+    const b = this.bottom;
+    const cx = this.x + this.w / 2;
+    // the ropes up to the lever
+    ctx.strokeStyle = '#6B5A44';
+    ctx.lineWidth = 1;
+    for (const dx of [-this.w / 3, 0, this.w / 3]) {
+      ctx.beginPath();
+      ctx.moveTo(cx + dx * 0.4, 0);
+      ctx.lineTo(cx + dx, b - 14);
+      ctx.stroke();
+    }
+    // the stones, lashed together
+    const stones: [number, number, number][] = [
+      [-0.32, -6, 6],
+      [0, -9, 7],
+      [0.3, -6, 6],
+      [-0.15, -15, 5],
+      [0.17, -15, 5],
+    ];
+    for (const [fx, dy, r] of stones) {
+      ctx.fillStyle = '#7D7F84';
+      ctx.beginPath();
+      ctx.ellipse(cx + fx * this.w, b + dy, r * 1.25, r, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      ctx.beginPath();
+      ctx.ellipse(cx + fx * this.w - r * 0.4, b + dy - r * 0.4, r * 0.5, r * 0.3, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.strokeStyle = '#5B4A36';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(this.x + 4, b - 10);
+    ctx.lineTo(this.x + this.w - 4, b - 10);
+    ctx.stroke();
+  }
+}
