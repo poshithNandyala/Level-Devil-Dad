@@ -62,8 +62,19 @@ test('hazard audit', () => {
         });
       }
     }
-    // group neighbouring cells: report runs of far-away spikes
-    const far = [...best.entries()].filter(([, d]) => d > +(process.env.LDD_FAR ?? 28)).map(([k, d]) => `${label(k)} (${Math.round(d)}px)`);
+    // a row of spikes is one hazard (a field of rebar kills a walker at its first tile): a tile counts as
+    // reached if any tile in its unbroken row was. Report only rows nobody came near.
+    const FAR = +(process.env.LDD_FAR ?? 28);
+    const near = (k: string) => (best.get(k) ?? 1e9) <= FAR;
+    const rowReached = (k: string) => {
+      const m = k.match(/^(tile|popup#\d+) (\d+(?:\.\d+)?),(\d+)/);
+      if (!m) return near(k);
+      const [, kind, xs, ys] = m;
+      const at = (x: number) => `${kind} ${x},${ys}`;
+      for (const dir of [-1, 1]) for (let x = +xs; best.has(at(x)); x += dir) if (near(at(x))) return true;
+      return false;
+    };
+    const far = [...best.entries()].filter(([k]) => !rowReached(k)).map(([k, d]) => `${label(k)} (${Math.round(d)}px)`);
     if (far.length) out.push(`${def.id}: ${far.length} far: ${far.slice(0, 6).join('; ')}${far.length > 6 ? ' ...' : ''}`);
   }
   console.log(out.join('\n'));

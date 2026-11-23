@@ -137,7 +137,7 @@ song lyrics. Affectionate teasing locals would proudly share; never mean.
 
 | Stage | Name (meaning) | What it is | Act | Door ending |
 | --- | --- | --- | --- | --- |
-| BLR-01 | Namaskara Bengaluru (Welcome to Bengaluru) | Welcome tour: easy run past landmarks while the guide tells you real things about the city. Gardens, tech parks, filter kaapi and weather everyone brags about. | — | — |
+| BLR-01 | Namaskara Bengaluru (Welcome to Bengaluru) | Welcome tour past landmarks while the guide tells you real things about the city. Gardens, tech parks, filter kaapi and weather everyone brags about. After the metro, India's Silicon Valley has put a SMART BRIDGE over the dug-up road, and it behaves like every progress bar in town: it loads a tile at a time when you step up ("Swalpa wait maadi!"), sticks at 99%, and restarts from nothing ("Ayyo! Restart aaytu!"). Walk behind the loading edge and jump the tile that never loads. | — | — |
 | BLR-02 | Green Man | The button actually works | `blr02-badge` | `revolve` |
 | BLR-03 | Namma Metro (Our metro) | Opening soon. Since 2019. | `blr03-viaduct` | `pull` |
 | BLR-04 | Silk Board | Signal is a suggestion | `blr04-jam` | `wall` |

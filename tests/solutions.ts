@@ -931,6 +931,19 @@ const groupBack = (letter: string) => (w: World) => {
 // Thumba: stop on the last step while the rocket's fire dies down and its spent stage lands (it makes a
 // step down); at the very end, wait for the road to close again
 const pongalIs = (st: string) => (w: World) => w.flags.pongal === st;
+const bridgeIs = (st: string) => (w: World) => w.flags.bridge === st;
+SOLUTIONS['BLR-01'] = tourWith('BLR', [
+  {
+    before: 'a post',
+    steps: [
+      { hold: 'R', until: X(70.6), max: 600, note: 'up to the edge of the dug-up road' },
+      { hold: '', until: bridgeIs('stalled'), max: 600, note: 'let the smart bridge load' },
+      { hold: 'R', until: X(77.5), max: 200, note: 'across: it is stuck at 99%' },
+      { hold: 'R', jump: 12, ticks: 12, note: 'jump the tile that never loads' },
+      { hold: 'R', until: ground, max: 200 },
+    ],
+  },
+]);
 /** the policeman's cap: [x, y] while it's blowing down the street */
 const capAt = (w: World) => {
   const k = w.entities.find((e: any) => e.hatX !== undefined && e.copX0 !== undefined) as any;
@@ -1170,6 +1183,7 @@ export const NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
   'KVT-01': { steps: tourRun('KVT'), cause: 'hatchling' },
   'CHN-01': { steps: tourRun('CHN'), cause: 'burnt' },
   'PDY-01': { steps: tourRun('PDY'), cause: 'hit' },
+  'BLR-01': { steps: tourRun('BLR'), cause: 'fell' },
   'TVM-02': { steps: [{ hold: 'R', until: done }], cause: 'splash' },
   'TVM-03': { steps: [{ hold: 'R', until: done }], cause: 'spikes' },
   'TVM-04': { steps: [{ hold: 'R', until: done }], cause: 'coconut' },
@@ -1293,6 +1307,27 @@ function swapAt(id: string, note: string, n: number, w: Step[]): Step[] {
   return [...r.slice(0, i), ...w, ...r.slice(i + n)];
 }
 export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
+  // the crane laid every piece so far: wait for the last one too, then step on (it comes in 2027)
+  'BLR-03': { steps: swapAt('BLR-03', 'the piece that comes in 2027', 1, [{ hold: '', ticks: 240 }, { hold: 'R', until: (w) => w.state !== 'play', max: 400 }]), cause: 'spikes' },
+  // every car in the jam held still: stand on the jeep too (it pulls away)
+  'BLR-04': { steps: swapAt('BLR-04', 'straight on to the bus before the jeep pulls away', 1, [{ hold: '', ticks: 120 }, { hold: 'R', until: (w) => w.state !== 'play', max: 400 }]) },
+  // the waterfall was only a curtain: walk on over the wet stones too (you slide in)
+  'BLR-08': { steps: swapAt('BLR-08', 'off the wet stones', 1, [{ hold: 'R', until: (w) => w.state !== 'play', max: 400 }]) },
+  // the smart bridge: wait on it for the last tile (it restarts from nothing)
+  'BLR-01': {
+    steps: tourWith('BLR', [
+      {
+        before: 'a post',
+        steps: [
+          { hold: 'R', until: X(70.6), max: 600 },
+          { hold: '', until: bridgeIs('stalled'), max: 600 },
+          { hold: 'R', until: X(77.6), max: 200 },
+          { hold: '', until: (w) => w.state !== 'play', max: 600, note: 'wait for the last tile' },
+        ],
+      },
+    ]),
+    cause: 'fell',
+  },
   // the pools taught "the rocks are steps": hop on the rock in the last pool (it's a turtle)
   'PDY-02': { steps: swapAt('PDY-02', 'over the whole turtle pool', 1, [{ hold: 'R', jump: 12, ticks: 12 }, { hold: '', until: (w) => w.state !== 'play', max: 400 }]) },
   // the signs lied: so the street that says walk must be a lie too (walk it)... it isn't

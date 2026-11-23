@@ -13,6 +13,8 @@ import { Vehicle } from '../entities/traffic';
 import type { ThingKind } from '../../render/art/things';
 import { Act, G, deco, pool } from './acts';
 import { onPass } from './trolls';
+import { LoadingBridge } from '../entities/karnataka';
+import { checkpoint } from './kit';
 
 // Bengaluru: traffic signals stop and rearrange the vehicles you stand on.
 // Kannada + English.
@@ -282,6 +284,12 @@ export const BLR: LevelDef[] = [
       ["jacaranda", 107, {}],
     ],
     things: [],
+    hint: 'After the metro, the dug-up road has a smart bridge. It loads a tile at a time when you step up: walk behind the loading edge. It sticks at 99% and then restarts from nothing, so don’t wait for the last tile: jump it.',
+    paint: (g) => g.fill(72, 79, 15, 17, '.'),
+    extra: (w) => {
+      LoadingBridge.place(w, { tx: 72, ty: 15, n: 8 });
+      checkpoint(w, 80.6);
+    },
   }),
   longStage({
     base: {

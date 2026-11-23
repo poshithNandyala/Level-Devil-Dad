@@ -36,7 +36,8 @@ export const COURSES: Record<CityId, TourSeg[]> = {
   // (no wall after the terrace: the street from there to the canal is where the policeman's cap blows down)
   PDY: [{ k: 'posts', x: 12, n: 5 }, { k: 'ditch', x: 32, w: 2, wet: true }, { k: 'parked', x: 44 }, { k: 'steps', x: 52, n: 1, run: 2, top: 10 }, { k: 'ditch', x: 86, w: 2 }],
   // over the dug-up road on the metro shuttle
-  BLR: [{ k: 'wall', x: 12 }, { k: 'steps', x: 22, n: 2, run: 2, top: 3 }, { k: 'parked', x: 40 }, { k: 'ferry', x: 52, w: 12, kind: 'traincar', label: 'NAMMA METRO' }, { k: 'ditch', x: 74, w: 2 }, { k: 'posts', x: 82, n: 2 }],
+  // (the dug-up road after the metro is the city's own: a smart bridge over it, see blr.ts)
+  BLR: [{ k: 'wall', x: 12 }, { k: 'steps', x: 22, n: 2, run: 2, top: 3 }, { k: 'parked', x: 40 }, { k: 'ferry', x: 52, w: 12, kind: 'traincar', label: 'NAMMA METRO' }, { k: 'posts', x: 82, n: 2 }],
   // the barrage piers across the Krishna
   AMR: [{ k: 'ditch', x: 12, w: 2 }, { k: 'parked', x: 24 }, { k: 'stones', x: 36, n: 5, wet: true }, { k: 'wall', x: 66, w: 2 }, { k: 'steps', x: 74, n: 3, run: 2, top: 2 }],
   // up the Charminar's steps, and the boat on Hussain Sagar

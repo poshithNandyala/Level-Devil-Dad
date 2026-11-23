@@ -408,3 +408,19 @@ hardness pass, in journey order (AGENTS.md has the rules). Thiruvananthapuram fi
   walk), 05 (the first raft waited at the post, so wait for the second), 06 (the first palm let you walk
   under, so walk under the second and jump the urchins). 06's coconut now meets that jumper's head: it hung
   a tile behind the jump and always missed (moved from tile 12.8 to 13.6, its palm with it).
+
+## v0.16.6: the hardness pass, Bengaluru
+- 01 **Namaskara Bengaluru** bites: the dug-up road after the metro is eight tiles of pit now, with a SMART
+  BRIDGE over it that behaves like every progress bar in India's Silicon Valley. Step up to the edge and it
+  loads a tile every 0.35 s ("Swalpa wait maadi! | Wait a little!"), sticks at 99% with the last tile
+  missing, and after 2.2 s restarts from nothing ("Ayyo! Restart aaytu! | Oh no! It restarted!"), taking
+  anyone waiting on it into the pit. Walk on and you fall in; wait on it for the last tile and you fall in;
+  walk behind the loading edge (or wait for 99%) and jump the tile that never loads. The course's little
+  ditch there is gone (the pit replaces it) and a checkpoint sits just past it. Human timing 100%.
+- The obvious fix dies in four of eight: 01 (wait for the last tile), 03 (the crane laid every piece, so wait
+  for the 2027 one too), 04 (every car in the jam held still, so stand on the jeep), 08 (the waterfall was
+  only a curtain, so walk on over the wet stones).
+- The hazard audit now treats an unbroken row of spikes as one hazard: a field of rebar kills a walker at
+  its first tile, so the rest of the row counts as reached (BLR-03 and BLR-04's rebar under the bus rides).
+  What it still lists in BLR-03 are the spikes between the viaduct pillars, 72 px below the deck: they're
+  for anyone who steps on a deck piece before the crane has landed it (no recorded policy does that yet).
