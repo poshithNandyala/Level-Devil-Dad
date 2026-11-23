@@ -418,7 +418,7 @@ export const NEW_ENDINGS: Record<NewEndingKind, Ending> = {
         }
         // the flat itself: anywhere but a fresh footprint is an urchin
         if (p.onGround && p.cx > x0 + 2 && p.cx < x1 - 2) {
-          const safe = prints.some((f) => w2.tick - f.t < LIFE && Math.abs(f.x - p.cx) < 9);
+          const safe = prints.some((f) => w2.tick - f.t < LIFE && Math.abs(f.x - p.cx) < 12);
           if (!safe) w2.die('spikes');
         }
       });
@@ -534,7 +534,7 @@ export const NEW_ENDINGS: Record<NewEndingKind, Ending> = {
       w.onTick((w2) => {
         if (ok) return;
         const p = w2.player;
-        const at = p.swimming && Math.abs(p.cx - lineX) < 22 && Math.abs(p.cy - knotY) < 11;
+        const at = p.swimming && Math.abs(p.cx - lineX) < 28 && Math.abs(p.cy - knotY) < 16;
         held = at ? held + 1 : 0;
         w2.flags.stopT = held * DT;
         if (held === 1) w2.flags.twist = 'stop';

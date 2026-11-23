@@ -446,7 +446,8 @@ const eelAlley: Act = {
     rimUp(g, x + 3);
     g.fill(x + 8, x + 35, 11, 16, '.');
     g.fill(x + 11, x + 30, 0, 12, '#');
-    g.fill(x + 20, x + 21, 10, 12, '.');
+    // the air pocket in the roof (three tiles wide: you can find it in a hurry)
+    g.fill(x + 19, x + 21, 10, 12, '.');
     rimDown(g, x + 36);
     g.fill(x + 41, x + 41, 15, 17, '#');
   },
@@ -689,7 +690,8 @@ export class Dolphin extends Entity {
   ) {
     super();
     this.layer = 2;
-    this.solid = new Solid(x0, base + 30, 34, 8);
+    // (a broad back to land on: catching a leaping dolphin is the trick, not landing on a coin)
+    this.solid = new Solid(x0, base + 30, 44, 8);
     this.solid.oneWay = true;
     this.solid.collidable = false;
   }
@@ -706,20 +708,20 @@ export class Dolphin extends Entity {
     if (k < 0) {
       if (s.collidable) {
         s.collidable = false;
-        w.emit('fx', s.x + 17, this.base, { kind: 'splash' });
+        w.emit('fx', s.x + 22, this.base, { kind: 'splash' });
       }
       return;
     }
     const p = this.posAt(k);
     if (!s.collidable) {
-      s.place(p.x - 17, p.y - 4);
+      s.place(p.x - 22, p.y - 4);
       s.collidable = true;
       w.sfx('splash', p.x, this.base);
       w.emit('fx', p.x, this.base, { kind: 'splash' });
       return;
     }
     s.velX = (this.x1 - this.x0) / this.air;
-    s.moveBy(w, p.x - 17 - s.x - s.xr, p.y - 4 - s.y - s.yr);
+    s.moveBy(w, p.x - 22 - s.x - s.xr, p.y - 4 - s.y - s.yr);
   }
   draw(ctx: CanvasRenderingContext2D) {
     if (this.k < 0) return;
@@ -794,17 +796,18 @@ const weedBeds: Act = {
 /** KVT-08 act 2: a seaweed bed too wide to jump. The dolphins leap right across it: ride one. */
 const dolphinRide: Act = {
   id: 'kvt08-dolphins',
-  w: 36,
+  w: 38,
   advice: 'The seaweed bed is too wide to jump. Wait on the sand for a dolphin to leap, run out and jump on its back as it rises, and jump off at the top. Then the next one.',
   paint: (g, c) => {
-    g.pit(c.x + 3, c.x + 15).pit(c.x + 19, c.x + 31);
+    // (the sandbar between the two weed beds is five tiles: room to come down off a dolphin you left late)
+    g.pit(c.x + 3, c.x + 15).pit(c.x + 21, c.x + 33);
   },
   build: (w, c) => {
     const { X } = c;
     skim(w, c.x + 3, c.x + 16, [[c.x + 5, c.x + 16]]);
-    skim(w, c.x + 19, c.x + 32, [[c.x + 19, c.x + 30.5]]);
-    const d1 = w.add(new Dolphin(X(4), X(14.5), px(15) + 4, 70, 1.25, 3.2, 0));
-    const d2 = w.add(new Dolphin(X(19.5), X(30.5), px(15) + 4, 76, 1.3, 3.2, 1.6));
+    skim(w, c.x + 21, c.x + 34, [[c.x + 21, c.x + 32.5]]);
+    const d1 = w.add(new Dolphin(X(4), X(14.5), px(15) + 4, 70, 1.45, 3.4, 0));
+    const d2 = w.add(new Dolphin(X(21.5), X(32.5), px(15) + 4, 76, 1.5, 3.4, 1.7));
     w.flags[c.f('dolphins')] = [d1, d2];
     sign(w, c.x + 0.2, G - 4.4, 3.4, 'DOLPHINS', 'wood', null, 'do not ride');
     onPass(w, X(1), (w2) => w2.guide('Dolphin-inte purathu kayaru! | Ride the dolphin!'));
@@ -964,7 +967,7 @@ export const KVT: LevelDef[] = [
     build(w: World) {
       lagoon(w);
       door(w);
-      const fake = w.add(new Door(28, 14));
+      const fake = w.add(new Door(30, 14));
       fake.fake = true;
       const steps: [number, number][] = [
         [8, 216],
@@ -1027,14 +1030,16 @@ export const KVT: LevelDef[] = [
     hint: 'Tuna fly low over the pier from the fishing boat: hop them. Ride the bobbing boat across the bay, then climb the lighthouse steps. Gulls sweep across the steps, so time each hop.',
     par: 13,
     scene: { kind: 'water', place: 'Minicoy', with: ['lighthouse'] },
-    map: Grid.ground(13).pit(10, 21, 13).fill(24, 26, 11, 11, '=').fill(27, 29, 9, 9, '=').fill(24, 26, 7, 7, '=').fill(27, 31, 5, 5, '=').put(2, 12, '@').put(30, 4, 'E').rows(),
+    // the lighthouse steps zigzag up, each one overlapping the one below it by a tile
+    map: Grid.ground(13).pit(10, 21, 13).fill(24, 26, 11, 11, '=').fill(26, 28, 9, 9, '=').fill(24, 26, 7, 7, '=').fill(26, 31, 5, 5, '=').put(2, 12, '@').put(30, 4, 'E').rows(),
     build(w: World) {
       door(w);
       lagoon(w);
       // tuna flung over the pier, every 1.3 s
       const fling = () => {
         if (w.state !== 'play') return;
-        if (w.player.x < px(10)) shot(w, 'tuna', px(10), 204, -170, -150, 300, 'hit').stopOnSolid = true;
+        // (flat and at head height, the length of the pier: a fish to hop, not a guess)
+        if (w.player.x < px(10)) shot(w, 'tuna', px(10), 197, -170, 0, 0, 'hit');
         w.after(1.3, fling);
       };
       w.when(

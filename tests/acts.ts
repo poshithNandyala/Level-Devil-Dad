@@ -32,7 +32,7 @@ const rideDolphin = (key: string, i: number, landX0: number) => {
     }
     const d = (w.flags[key] as Dolphin[])[i];
     const p = w.player;
-    const mid = d.solid.x + 17;
+    const mid = d.solid.x + 22;
     if (hold > 0) {
       hold--;
       return { move: st === 3 ? 'R' : mid > p.cx + 2 ? 'R' : '', jump: true };
@@ -191,8 +191,8 @@ export const ACT_ROUTES: Record<string, (x: number, p: P) => Step[]> = {
   ],
   'kvt05-lift': (x) => [
     { hold: 'R', until: X(x + 5.4), max: 600, note: 'into the basket' },
-    { hold: '', until: (w) => { const b = thingAt(w, 'crate', px(x + 4), px(x + 8)); return !!b && b.y <= px(7) + 10; }, max: 900, note: 'ride it up' },
-    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'off onto the pier' },
+    { hold: '', until: (w) => { const b = thingAt(w, 'crate', px(x + 4), px(x + 8)); return !!b && b.y <= px(7) + 2; }, max: 900, note: 'ride it up' },
+    { hold: 'R', jump: 12, ticks: 12, note: 'off onto the pier: a little hop (a big one meets the pulley)' },
     { hold: 'R', until: ground, max: 200 },
     { hold: 'R', until: X(x + 32), max: 900 },
   ],
@@ -270,8 +270,8 @@ export const ACT_ROUTES: Record<string, (x: number, p: P) => Step[]> = {
     { hold: 'R', until: X(x + 1.4), max: 300 },
     { hold: '', ticks: 6 },
     { policy: rideDolphin(`kvt08-dolphins:dolphins`, 0, px(x + 16)), until: (w) => w.player.onGround && w.player.x >= px(x + 16) && Math.abs(w.player.vx) < 1, max: 1500, note: 'ride the first dolphin to the sand' },
-    { policy: rideDolphin(`kvt08-dolphins:dolphins`, 1, px(x + 32)), until: (w) => w.player.onGround && w.player.x >= px(x + 32), max: 1500, note: 'and the second, to the beach' },
-    { hold: 'R', until: X(x + 36), max: 200 },
+    { policy: rideDolphin(`kvt08-dolphins:dolphins`, 1, px(x + 34)), until: (w) => w.player.onGround && w.player.x >= px(x + 34), max: 1500, note: 'and the second, to the beach' },
+    { hold: 'R', until: X(x + 38), max: 200 },
   ],
   // ------------------------------------------------------------ Chennai
   'chn02-queue2': (x) => [

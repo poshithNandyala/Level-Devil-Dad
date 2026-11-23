@@ -129,6 +129,15 @@ const tourRun = (city: CityId): Step[] => {
   return steps;
 };
 
+/** up on to a 3-tile ledge at tile column `tx`, easing off over its middle (KVT-05's lighthouse steps) */
+function stairHop(tx: number, dir: 'L' | 'R', note: string): Step[] {
+  const mid = (tx + 1.5) * 16 - 5;
+  return [
+    { hold: dir, jump: 14, ticks: 14, note },
+    { hold: dir, until: (w) => w.player.onGround || (dir === 'R' ? w.player.x >= mid - 3 : w.player.x <= mid + 3), max: 120 },
+    { hold: '', until: ground, max: 200 },
+  ];
+}
 /** TVM-05's portcullis at tile column `tx` (found by place: the hidden one sorts first, being drawn behind the walls) */
 const gateNear = (w: World, tx: number): any => w.entities.find((e: any) => e.kind === 'gate' && Math.abs(e.x - (tx * 16 + 8)) < 6);
 /** TVM-06's fishing nets, in order along the promenade */
@@ -234,7 +243,7 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'L', until: done, max: 600, note: 'the door jumped behind you' },
   ],
   'KVT-02': [
-    { hold: 'R', until: X(3.4) },
+    { hold: 'R', until: X(2.9) },
     { hold: 'R', jump: 12, ticks: 12, note: 'onto the jetty' },
     { hold: 'R', until: and(ground, X(9.8)) },
     { hold: 'R', jump: 12, ticks: 12, note: 'over the rotten plank' },
@@ -254,8 +263,8 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'R', jump: 12, ticks: 12 },
     { hold: 'R', until: and(ground, X(21.9)) },
     { hold: 'R', jump: 12, ticks: 12, note: 'to the island' },
-    { hold: 'R', until: and(ground, X(26.6)) },
-    { hold: 'R', jump: 12, ticks: 12, note: 'over the fake door' },
+    { hold: 'R', until: and(ground, X(27.9)) },
+    { hold: 'R', jump: 20, ticks: 20, long: true, note: 'over the fake door' },
     { hold: 'R', until: done },
   ],
   'CHN-02': [
@@ -523,25 +532,27 @@ export const SOLUTIONS: Record<string, Step[]> = {
     { hold: 'R', until: done, max: 300 },
   ],
   'KVT-05': [
-    { hold: 'R', until: X(8.6), max: 300, dodge: 40 },
-    { hold: '', until: (w) => thingOf(w, 'odam').x <= px16(10) + 3, max: 900, dodge: 40, note: 'wait for the boat at the pier' },
-    { hold: 'R', jump: 12, ticks: 12, note: 'on to the boat' },
+    { hold: 'R', until: X(7.0), max: 300, dodge: 40 },
+    { hold: '', until: (w) => thingOf(w, 'odam').x <= px16(10) + 3 && !w.entities.some((e: any) => e.kind === 'tuna' && e.alive && e.x > w.player.x - 30), max: 900, dodge: 40, note: 'wait for the boat, back from the end of the pier' },
+    { hold: 'R', jump: 14, ticks: 14, note: 'on to the boat' },
     { hold: 'R', until: ground, max: 200 },
     { hold: '', ticks: 4 },
+    { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'odam').x + 24, max: 200, note: 'to the front of the boat' },
     { hold: '', until: (w) => thingOf(w, 'odam').x >= px16(17.3), max: 900 },
     { hold: 'R', jump: 12, ticks: 12, note: 'on to the shore' },
-    { hold: 'R', until: and(ground, X(22.8)), max: 300 },
-    { hold: 'R', jump: 12, ticks: 12, note: 'first step' },
-    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: and(ground, X(22.2)), max: 300 },
+    ...stairHop(24, 'R', 'first step'),
+    { steer: (w) => (w.player.x < px16(25.9) ? 'R' : w.player.x > px16(26.2) ? 'L' : ''), until: (w) => w.player.x >= px16(25.9) && w.player.x <= px16(26.2), max: 120, note: 'under the next step' },
     { hold: '', ticks: 8 },
     { hold: '', until: (w) => !w.entities.some((e: any) => e.kind === 'crow' && e.alive && e.x > w.player.x - 30), max: 600, note: 'let the gull pass' },
-    { hold: 'R', jump: 12, ticks: 12, note: 'second step' },
-    { hold: 'R', until: ground, max: 200 },
-    { hold: 'L', jump: 12, ticks: 12, note: 'third step' },
-    { hold: 'L', until: ground, max: 200 },
+    { hold: '', jump: 14, ticks: 14, note: 'second step, straight up' },
+    { hold: '', until: ground, max: 200 },
+    { hold: '', jump: 14, ticks: 14, note: 'third step, straight up' },
+    { hold: '', until: ground, max: 200 },
     { hold: '', ticks: 8 },
     { hold: '', until: (w) => !w.entities.some((e: any) => e.kind === 'crow' && e.alive && e.x > w.player.x - 30), max: 600, note: 'let the next gull pass' },
-    { hold: 'R', jump: 12, ticks: 12, note: 'top of the lighthouse' },
+    { hold: '', jump: 14, ticks: 14, note: 'top of the lighthouse' },
+    { hold: '', until: ground, max: 200 },
     { hold: 'R', until: done, max: 300 },
   ],
   'CHN-06': [
@@ -1319,7 +1330,7 @@ export const NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
   'TVM-07': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'spikes' },
   'TVM-08': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'hit' },
   'KVT-04': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'spikes' },
-  'KVT-05': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'splash' },
+  'KVT-05': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'hit' },
   'CHN-06': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'fell' },
   'CHN-07': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'fell' },
   'CHN-08': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'splash' },
@@ -1546,7 +1557,7 @@ export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
   // the reef rose under every step: so walk the last gap too (it's real water)
   'KVT-03': { steps: swapAt('KVT-03', 'the last gap is real', 1, []), cause: 'splash' },
   // Tara said go all the way up: the basket hauls you into the pulley
-  'KVT-05': { steps: swapAt('KVT-05', 'off onto the pier', 1, [{ hold: '', until: (w) => w.state !== 'play', max: 900 }]), cause: 'spikes' },
+  'KVT-05': { steps: swapAt('KVT-05', 'off onto the pier: a little hop (a big one meets the pulley)', 1, [{ hold: '', until: (w) => w.state !== 'play', max: 900 }]), cause: 'spikes' },
   // the baby turtles: jump over them (they spread wider than a jump)
   'KVT-01': {
     steps: tourWith('KVT', [
