@@ -83,7 +83,7 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
   const form = cfg.form ?? 0.35;
   const shapes: Record<Pose, Rig> = {
     bridge: w.add(new Rig(x0, FL, W, 6, { solid: true, layer: 3 })),
-    tower: w.add(new Rig(cx - 8, FL - 40, 16, 58, { solid: true, layer: 3 })),
+    tower: w.add(new Rig(cx - 12, FL - 40, 24, 58, { solid: true, layer: 3 })),
     wheel: w.add(new Rig(cx - 32, FL - 36, 64, 8, { solid: true, layer: 3 })),
     gate: w.add(new Rig(x0, FL - 56, W, 8, { solid: true, layer: 3 })),
   };
@@ -288,6 +288,42 @@ export const act3: Act = {
     });
   },
 };
+
+/** a street of troupes, each in its own pit with its own drummer (the drum starts as you come near) */
+export function troupeAct(id: string, w0: number, cfgs: TroupeCfg[], key: string, advice: string, cps: number[] = []): Act {
+  return {
+    id,
+    w: w0,
+    advice,
+    cps,
+    paint: (g, c) => {
+      for (const t of cfgs) g.pit(c.x + t.c0, c.x + t.c0 + t.n - 1);
+    },
+    build: (w, c) => {
+      cfgs.forEach((t, i) => {
+        const st = { t0: -1 };
+        onPass(w, c.X(t.c0 - 2.5), (w2) => (st.t0 = w2.tick));
+        stagePit(w, c.x + t.c0, c.x + t.c0 + t.n - 1);
+        troupe(w, { ...t, c0: c.x + t.c0 }, () => st.t0, `${key}${i}`);
+      });
+    },
+  };
+}
+
+/** act 4: the tower pose is the only stepping stone: jump on to its top and off before the drum */
+export const T07d: TroupeCfg[] = [
+  { c0: 3, n: 5, drum: 1.3, hold: 1.8, poses: ['tower'], form: 0.3 },
+  { c0: 13, n: 6, drum: 1.1, hold: 1.8, poses: ['wheel', 'tower'], form: 0.3, phase: 0.3 },
+];
+export const act4 = troupeAct('bbi07-stambha', 23, T07d, 'bbi7d', 'Two troupes that never lie down. The first only ever makes a tower: jump on to its top and off to the far bank before the drum starts. The second makes a wheel, then a tower: either will do, if you go at once.', [11.5]);
+
+/** act 5: the long night: three bridges back to back, quicker drummers each time */
+export const T07e2: TroupeCfg[] = [
+  { c0: 3, n: 7, drum: 1.4, hold: 1.4, poses: ['wheel', 'bridge'], form: 0.3 },
+  { c0: 13, n: 8, drum: 1.2, hold: 1.4, poses: ['tower', 'bridge'], form: 0.3, phase: 0.6 },
+  { c0: 24, n: 9, drum: 1.0, hold: 1.4, poses: ['bridge', 'tower', 'wheel'], form: 0.3, phase: 0.2 },
+];
+export const act5 = troupeAct('bbi07-raati', 36, T07e2, 'bbi7f', 'The last three troupes, each drummer quicker than the one before. Be at each edge as its drum stops for the bridge, and rest on the banks between.', [11.5, 22.5]);
 
 /** ending: the last pose is a gate over the door; between poses the troupe whirls across the doorway */
 export const T07e: TroupeCfg = { c0: 0, n: 4, drum: 1.6, hold: 1.6, poses: ['gate'], form: 0.3, ground: true };
