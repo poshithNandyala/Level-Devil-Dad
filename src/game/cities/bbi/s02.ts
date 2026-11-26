@@ -185,17 +185,18 @@ export function room(): LevelDef {
 
 /** act: a penalty corner. The injector pushes the ball in along the turf, the stopper stops it dead, and the
  *  flicker drag-flicks it back to the goal at chest height. Cross the stopper's spot while the ball sits still. */
-export const CORNER = { period: 5.0, push: 1.1, stop: 2.3, inj: 31, stopAt: 20, goal: 2, pushV: 160, flickV: 300 };
-export const act: Act = {
-  id: 'bbi02-corner',
-  w: 36,
-  advice: 'A penalty corner: the injector pushes the ball in, the stopper stops it dead, and then it is drag-flicked back the way you came, at chest height. Never wait on the goal side for the flick: cross the stopper’s spot, hopping the still ball, while it sits there.',
+export const CORNER0 = { period: 5.0, push: 1.1, stop: 2.3, inj: 31, stopAt: 20, goal: 2, pushV: 160, flickV: 300 };
+export function cornerAct(id: string, w0: number, CORNER: typeof CORNER0, key: string, advice: string): Act {
+  return {
+  id,
+  w: w0,
+  advice,
   cps: [],
   paint: () => {},
   build: (w, c) => {
-    turf(w, c.x, c.x + 35);
+    turf(w, c.x, c.x + w0 - 1);
     const st = { t0: -1, x: c.X(CORNER.inj), y: FL - BALL, phase: 'wait' as 'wait' | 'push' | 'stop' | 'flick' };
-    w.flags.bbi2c = st;
+    (w.flags[key] as unknown) = st;
     onPass(w, c.X(1), (w2) => (st.t0 = w2.tick));
     const sx = c.X(CORNER.stopAt);
     w.add(
@@ -253,6 +254,10 @@ export const act: Act = {
     sign(w, c.x + 24, 10.4, 3.6, 'SHORT CORNER', 'shop', null, 'D');
   },
 };
+}
+export const act = cornerAct('bbi02-corner', 36, CORNER0, 'bbi2c', 'A penalty corner: the injector pushes the ball in, the stopper stops it dead, and then it is drag-flicked back the way you came, at chest height. Never wait on the goal side for the flick: cross the stopper’s spot, hopping the still ball, while it sits there.');
+export const CORNER2 = { period: 4.4, push: 0.9, stop: 2.0, inj: 25, stopAt: 14, goal: 2, pushV: 160, flickV: 320 };
+export const act3 = cornerAct('bbi02-dobara', 30, CORNER2, 'bbi2d', 'A second corner, closer and quicker: the stopper is nearer, the flick is harder. Same answer: over the still ball while it sits, never wait on the goal side.');
 
 /** act 2: a second keeper by a second drain, the flicker further off: the same ride, longer */
 export const act2: Act = {

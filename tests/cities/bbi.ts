@@ -5,6 +5,7 @@ import type { Door } from '../../src/game/entities/basics';
 import { Step, X, and, ground, done } from '../runner';
 import type { CityTests } from '../city-tests';
 import { g1Road } from '../../src/game/cities/bbi/s01';
+import { RAJA4, RAJA5, type RajaPiece } from '../../src/game/cities/bbi/s05';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -590,6 +591,19 @@ const bowlRun = (k: string, c0: number, c1: number, i: number, t: number) => (x:
   { hold: 'R', until: X(x + c1 + 6.5), max: 400 },
 ];
 
+/** Raja's lane: every piece crossed touching nothing */
+const rajaRun = (pieces: RajaPiece[], w0: number) => (x: number): Step[] => {
+  const out: Step[] = [];
+  for (const p of pieces) {
+    if (p.k === 'mill') out.push(...hop(x + p.at - 0.8, 'jump the channel over the mill', 14));
+    else if (p.k === 'pounder') out.push(...hop(x + p.at - 0.8, 'jump the pounder’s pit', 12));
+    else if (p.k === 'cart') out.push({ hold: 'R', until: X(x + p.at - 1.25), max: 600 }, { hold: 'R', jump: 15, ticks: 15, note: 'over the cart, touching nothing' }, { hold: 'R', until: ground, max: 300 });
+    else out.push({ hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + p.at + 0.75) - 4, max: 600 }, { hold: 'R', jump: 15, ticks: 15, note: 'from against the stone, up the step' }, { hold: 'R', until: ground, max: 300 }, { hold: 'R', until: and(ground, X(x + p.at + 5.2)), max: 400, note: 'and down' });
+  }
+  out.push({ hold: 'R', until: X(x + w0 - 0.5), max: 600 });
+  return out;
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['BBI-01'] = [...pastG1(), ...tourTail()];
   S['BBI-02'] = room02();
@@ -661,6 +675,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02
   'bbi08-handi': bowlRun('bbi8f', 4, 19, 1, 4.6),
   'bbi10-bunakar': loomRun('bbi10b', 8, 1.1),
   'bbi10-konark': chAct('bbi10c3', 10, 8),
+  'bbi02-dobara': (x) => [...hop(x + 11.9, 'hop the still ball at the stopper'), { hold: 'R', until: X(x + 29), max: 600 }],
+  'bbi05-pokhari': rajaRun(RAJA4, 30),
+  'bbi05-gaon': rajaRun(RAJA5, 34),
   'bbi10-mela': (x) => [...crossTroupe('bbi10m0', x, 3, 6, 'bridge'), ...crossTroupe('bbi10m1', x, 13, 7, 'wheel'), { hold: 'R', until: X(x + 23.5), max: 300 }],
 };
 const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy, 'bbi-pose-gate': gatePolicy, 'bbi-leaf-plate': platePolicy, 'bbi-horse-gap': horseGap, 'bbi-ribbon-snip': ribbonPolicy };

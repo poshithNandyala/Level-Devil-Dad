@@ -100,8 +100,9 @@ export function jaanta(w: World, c: number) {
 
 /** the dhenki: a rice-pounding beam lying across the husk pit; step on it and it tips you in */
 export function dhenki(w: World, c0: number, c1: number) {
-  const x = px(c0);
-  const ww = px(c1 - c0 + 1);
+  // the beam lies in the pit, a little short of each edge
+  const x = px(c0) + 3;
+  const ww = px(c1 - c0 + 1) - 6;
   return machine(w, x, FL - 6, ww, 6, {
     list: 'bbi5m',
     blame: 'bbi-dhenki',
@@ -345,6 +346,41 @@ export const act3: Act = {
     );
   },
 };
+
+export type RajaPiece = { k: 'mill' | 'stone' | 'cart' | 'pounder'; at: number };
+/** a village lane built from Raja's still machines: each `at` is the piece's first column in the act */
+export function rajaAct(id: string, w0: number, pieces: RajaPiece[], advice: string): Act {
+  return {
+    id,
+    w: w0,
+    advice,
+    cps: [],
+    paint: (g, c) => {
+      for (const p of pieces) {
+        if (p.k === 'mill') g.pit(c.x + p.at, c.x + p.at + 2);
+        if (p.k === 'pounder') g.pit(c.x + p.at, c.x + p.at + 1);
+        if (p.k === 'stone') g.fill(c.x + p.at + 2, c.x + p.at + 4, 13, 14, '#');
+      }
+    },
+    build: (w, c) => {
+      village(w, c.x, c.x + w0);
+      for (const p of pieces) {
+        if (p.k === 'mill') {
+          pitBlame(w, c.x + p.at, c.x + p.at + 2, 'bbi-dhan', 'water');
+          jaanta(w, c.x + p.at + 1);
+        } else if (p.k === 'pounder') {
+          pitBlame(w, c.x + p.at, c.x + p.at + 1, 'bbi-dhenki', 'spikes');
+          dhenki(w, c.x + p.at, c.x + p.at + 1);
+        } else if (p.k === 'stone') sila(w, c.x + p.at + 0.75);
+        else cart(w, c.x + p.at, c.x + p.at + 6);
+      }
+    },
+  };
+}
+export const RAJA4: RajaPiece[] = [{ k: 'stone', at: 3 }, { k: 'mill', at: 11 }, { k: 'cart', at: 18 }, { k: 'pounder', at: 25 }];
+export const act4 = rajaAct('bbi05-pokhari', 30, RAJA4, 'Past the pond: a grinding stone at a step, a hand mill in the channel, a cart and a pounder in its pit. Touch none of them: climb the step itself, jump the channel and the pit, hop the cart.');
+export const RAJA5: RajaPiece[] = [{ k: 'cart', at: 3 }, { k: 'pounder', at: 9 }, { k: 'mill', at: 14 }, { k: 'stone', at: 20 }, { k: 'cart', at: 28 }];
+export const act5 = rajaAct('bbi05-gaon', 34, RAJA5, 'The far end of the village, the same still machines in a new order. Touch nothing.');
 
 /** ending: the house with podapitha on the verandah step; the front door up there is locked. The way in is
  *  below, behind the step. On the verandah, the grinding stone's roller starts when you land by it. */
