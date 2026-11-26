@@ -779,6 +779,63 @@ const kumor10: Act = {
   },
 };
 
+
+/** CCU-05 act: the long lane to the ghat steps, every kind of figure mixed: read each one before you land */
+const lane: Act = {
+  id: 'ccu05-lane',
+  w: 34,
+  advice: 'The long lane down to the river: every kind of figure, mixed. Read each one before you land: below the waist, stay; above it, go on at once; pale and dry, walk down on to it, never jump.',
+  paint: (g, c) => {
+    g.pit(c.x, c.x + 29);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(new Ghat(c.X(0), c.X(30)));
+    figures(
+      w,
+      [
+        [x + 1, 2, 0.2, 0.08, 'woman'],
+        [x + 3, 3, 0.7, 0.12, 'horse'],
+        [x + 5, 2, 0, 0, 'man'],
+        [x + 8, 2, 0.1, 0.08, 'horse'],
+        [x + 11, 3, 0.4, 0.1, 'woman'],
+        [x + 13, 2, 0, 0, 'man'],
+        [x + 15, 1, 0, 0, 'horse'],
+        [x + 18, 2, 0.6, 0.15, 'man'],
+        [x + 21, 3, 0.1, 0.08, 'woman'],
+        [x + 23, 2, 0, 0, 'horse'],
+        [x + 26, 2, 0.3, 0.1, 'man'],
+      ],
+      c.X(0),
+    );
+  },
+};
+
+
+/** CCU-09 act: the gate arch, where two panels go up at once across both next footholds, the far one under
+ *  the arch's frame */
+const toran: Act = {
+  id: 'ccu09-toran',
+  w: 26,
+  advice: 'At the gate arch two panels go up at once, across both the next bamboos: a full jump on to the first, run across both tops, and off the far end at once, because the second is under the arch’s frame and they tie another on above it.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 2, x + 3, 12, 12, '=').fill(x + 6, x + 7, 12, 12, '=').fill(x + 8, x + 9, 12, 12, '=').fill(x + 13, x + 14, 12, 12, '=').fill(x + 8, x + 11, 7, 7, '#').fill(x + 18, x + 25, 12, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(new Skeleton(c.X(0), c.X(26)));
+    w.add(new Stakes(c.X(0), c.X(18)));
+    const p1 = w.add(new ClothPanel(c.X(6), px(2), px(12), 2, 1));
+    const p2 = w.add(new ClothPanel(c.X(8), px(2), px(12), 2, 3));
+    w.add(new Decorator(c.X(10) + 6, px(12), p2));
+    tieWhenOn(w, p1, x + 2, x + 4);
+    tieWhenOn(w, p2, x + 2, x + 4);
+    stackWhenOn(w, p2, 2, 0.3);
+    w.flags.toran = p2;
+  },
+};
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -820,7 +877,7 @@ export const levels = (): LevelDef[] => [
       extra: (w) => {
         feet(w);
         w.add(new Rail(px(62), px(70), px(72)));
-        onPass(w, px(56), (w2) => w2.guide('Tram! Ei je, shunun! | The tram line! Excuse me, listen!'));
+        onPass(w, px(56), (w2) => w2.guide('Tram! Ei je, shunun! | The tram line! Excuse me, listen!', (w3) => w3.player.cx < px(70)));
       },
       cps: [16.5, 42, 57, 75, 97],
     }),
@@ -829,10 +886,10 @@ export const levels = (): LevelDef[] => [
   longStage({ base: aasteRoom(), par: 30, twist: 'ccu-stop', shape: 'short', meta: meta('exit-moving-vehicle-on-shout', ['exit-facing-forward'], 'ccu-bus-crawls-for-whoever-waits') }),
   longStage({ base: muriRoom(), par: 30, acts: [dui3], twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
   longStage({ base: boiRoom(), par: 26, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
-  longStage({ base: kumartuliRoom(), par: 50, acts: [uthon, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-finished-figure-carried-over-the-lane') }),
+  longStage({ base: kumartuliRoom(), par: 50, acts: [uthon, lane, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-finished-figure-carried-over-the-lane') }),
   longStage({ base: poleRoom(), par: 60, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 90, acts: [girder, dui, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 40, acts: [rok, tokta], twist: 'ccu-bhanr', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-door-opens-for-a-cup-of-tea') }),
-  longStage({ base: pandalRoom(), par: 40, acts: [sinri, chala], twist: 'ccu-dhak', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-dhak-beat-lifts-the-gate-curtain') }),
+  longStage({ base: pandalRoom(), par: 40, acts: [sinri, toran, chala], twist: 'ccu-dhak', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-dhak-beat-lifts-the-gate-curtain') }),
   longStage({ base: finaleRoom(), par: 80, acts: [bus10, tram10, rok10, kumor10], twist: 'ccu-wall', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-customers-buy-the-wall-down') }),
 ];

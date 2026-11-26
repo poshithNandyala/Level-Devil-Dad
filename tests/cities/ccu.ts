@@ -470,6 +470,35 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu09-toran': (x) => [
+    steerHop(px(x + 3), 12, 'on to the bamboo: two panels go up'),
+    steerHop(px(x + 7), 34, 'a full jump on to the first', true),
+    { hold: 'R', until: (w) => w.player.onGround && w.player.cx > px(x + 10.2), max: 120, note: 'across both tops' },
+    steerHop(px(x + 14), 10, 'and off the far end at once, down to the bamboo'),
+    { hold: 'R', until: X(x + 14.2), max: 60 },
+    steerHop(px(x + 19), 12, 'on to the deck'),
+    walk(x + 25.4),
+  ],
+  'ccu05-lane': (x) => [
+    steerHop(px(x + 1.8), 12, 'up on the first'),
+    steerHop(px(x + 3.8), 10, 'up, and straight on (painted past the waist)'),
+    walkOnto(x + 5, 'walk down on to the dry one'),
+    { hold: 'R', until: X(x + 6.2), max: 120 },
+    steerHop(px(x + 8.8), 12, 'across'),
+    { hold: 'R', until: X(x + 9.2), max: 120 },
+    steerHop(px(x + 11.8), 12, 'up'),
+    walkOnto(x + 13, 'walk down on to the dry one'),
+    walkOnto(x + 15, 'and down again, one step'),
+    { hold: 'R', until: X(x + 16.2), max: 120 },
+    steerHop(px(x + 18.8), 12, 'up on the one nearly done, and on'),
+    steerHop(px(x + 21.8), 12, 'up'),
+    walkOnto(x + 23, 'walk down on to the dry one'),
+    { hold: 'R', until: X(x + 24.2), max: 120 },
+    steerHop(px(x + 26.8), 12, 'across to the last'),
+    { hold: 'R', until: X(x + 27.2), max: 120 },
+    steerHop(px(x + 30.8), 10, 'down on to the ghat steps'),
+    walk(x + 33.4),
+  ],
   'ccu10-rok': (x) => [walk(x + 3.6), steerHop(px(x + 7), 12, 'up on the rok'), { policy: hopWater(), until: and(ground, X(x + 31)), max: 1800, note: 'through the adda, hopping the water' }, walk(x + 33.4)],
   'ccu10-kumor': (x) => [
     steerHop(px(x + 1.8), 12, 'up on the first'),
