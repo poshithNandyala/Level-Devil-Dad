@@ -153,7 +153,6 @@ export const CAUSE_LINES: Record<string, string[]> = {
   drowned: ['Bubbles over your head means AIR, Dad!', 'Fish breathe water. Dads don’t.'],
   far: ['Next stop: Aguada! Let go sooner!', 'The boat doesn’t stop, Dad!'],
   washed: ['The tide always wins.', 'Built on sand, Dad.'],
-  moored: ['That line was holding a boat, Dad.', 'Hop the lines, don’t hug them!'],
   frozen: ['Dad-sicle!', 'Keep moving, it’s minus eighteen!'],
   manja: ['Kaapyo! That string had glass on it, Dad.', 'Too much run-up: you flew into the manja!'],
   stomped: ['Never walk under a dinosaur, Dad.', 'Rajasaurus 1, Dad 0!'],

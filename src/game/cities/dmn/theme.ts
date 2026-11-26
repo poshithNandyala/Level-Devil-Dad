@@ -1,0 +1,25 @@
+import type { Theme } from '../../../render/theme';
+
+export const theme: Theme = {
+  city: 'DMN',
+  name: 'Daman',
+  local: 'દમણ',
+  sky: ['#1F5C8A', '#6FB3D6', '#F3E3BC'],
+  sun: '#FFF6DA',
+  far: '#8FB8C9',
+  mid: '#5B8F7A',
+  near: '#2F6650',
+  accent: '#FF8F00',
+  accent2: '#00897B',
+  tileBase: '#8C7B66',
+  tileTop: '#B8A68C',
+  tileEdge: '#6B5C4A',
+  tileDark: '#4C4033',
+  topper: '#7CB342',
+  pattern: 'granite',
+  spike: '#F4F1EA',
+  spikeEdge: '#1F1A14',
+  ink: '#1F1A14',
+  rim: null,
+  ui: '#FF8F00',
+};

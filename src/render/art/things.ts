@@ -81,7 +81,6 @@ export type BaseThingKind =
   | 'ferry'
   | 'football'
   // Daman
-  | 'bombil'
   // Gandhinagar
   | 'dhokla'
   | 'ghevar'
@@ -161,7 +160,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   plank: [16, 5],
   ferry: [48, 10],
   football: [10, 10],
-  bombil: [14, 8],
   dhokla: [12, 10],
   ghevar: [12, 10],
   poha: [12, 10],
@@ -1240,22 +1238,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.fillRect(cx + 1.5, cy - 2, 1.6, 0.8);
       ctx.fillStyle = '#ECEFF1';
       ctx.fillRect(cx - 0.5, cy - 2.6, 1.4, 1);
-      break;
-    }
-    case 'bombil': {
-      // a dried Bombay duck: a long pale fish, a little curled
-      ctx.fillStyle = '#E8D9B8';
-      ctx.beginPath();
-      ctx.ellipse(x + w / 2, y + h / 2, w / 2 - 1, h / 2 - 1.5, -0.15, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#C8B68C';
-      ctx.beginPath();
-      ctx.moveTo(x + 1, y + h / 2);
-      ctx.lineTo(x - 2, y + 1);
-      ctx.lineTo(x - 2, y + h - 1);
-      ctx.fill();
-      ctx.fillStyle = '#5D4037';
-      ctx.fillRect(x + w - 4, y + 2.5, 1.2, 1.2);
       break;
     }
     case 'vada': {

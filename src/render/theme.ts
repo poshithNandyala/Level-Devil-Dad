@@ -25,29 +25,6 @@ export interface Theme {
 }
 
 export const THEMES = {
-  DMN: {
-    city: 'DMN',
-    name: 'Daman',
-    local: 'દમણ',
-    sky: ['#1F5C8A', '#6FB3D6', '#F3E3BC'],
-    sun: '#FFF6DA',
-    far: '#8FB8C9',
-    mid: '#5B8F7A',
-    near: '#2F6650',
-    accent: '#FF8F00',
-    accent2: '#00897B',
-    tileBase: '#8C7B66',
-    tileTop: '#B8A68C',
-    tileEdge: '#6B5C4A',
-    tileDark: '#4C4033',
-    topper: '#7CB342',
-    pattern: 'granite',
-    spike: '#F4F1EA',
-    spikeEdge: '#1F1A14',
-    ink: '#1F1A14',
-    rim: null,
-    ui: '#FF8F00',
-  },
   GNR: {
     city: 'GNR',
     name: 'Gandhinagar',
@@ -143,7 +120,7 @@ export const THEMES = {
 } as Record<CityId, Theme>;
 
 /** playable cities in journey order (south to north) */
-export const CITY_ORDER: CityId[] = ['DMN', 'GNR', 'JAI', 'BPL', 'RPR'];
+export const CITY_ORDER: CityId[] = ['GNR', 'JAI', 'BPL', 'RPR'];
 
 /** Future chapters, honestly labelled as not built yet. */
 export const COMING_SOON = [

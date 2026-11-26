@@ -26,8 +26,6 @@ export type TourSeg =
 /** Every city walks its own course (tile columns); the door, the deck and the item are where they always were. */
 export const TOUR = { cols: 120, door: 112, deck: [94, 99] as [number, number], item: [96.5, 8.4] as [number, number] };
 export const COURSES = {
-  // the jetty bollards, the ferry from Nani to Moti Daman, and the fort steps
-  DMN: [{ k: 'posts', x: 12, n: 3 }, { k: 'ditch', x: 26, w: 2, wet: true }, { k: 'ferry', x: 38, w: 18, kind: 'ferry', wet: true, label: 'MOTI DAMAN' }, { k: 'wall', x: 64, w: 2 }, { k: 'steps', x: 74, n: 3, run: 2, top: 3 }],
   // the sector circle's kerbs, the riverfront steps, a BRTS shuttle over the Sabarmati
   GNR: [{ k: 'posts', x: 12, n: 4 }, { k: 'steps', x: 28, n: 2, run: 2, top: 3 }, { k: 'parked', x: 44 }, { k: 'ferry', x: 54, w: 16, kind: 'traincar', wet: true, label: 'BRTS' }, { k: 'ditch', x: 78, w: 2 }],
   // the pink city's bollards, Hawa Mahal's steps, the metro over the dug-up road

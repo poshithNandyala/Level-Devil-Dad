@@ -1,7 +1,7 @@
 // Daman's moving parts: the pedal boat, mooring lines, ice from the ice factory.
-import { Entity, type Hazard, type World } from '../world';
-import { Solid } from '../body';
-import { DT } from '../constants';
+import { Entity, type Hazard, type World } from '../../world';
+import { Solid } from '../../body';
+import { DT } from '../../constants';
 
 const approach = (v: number, t: number, d: number) => (v < t ? Math.min(t, v + d) : Math.max(t, v - d));
 

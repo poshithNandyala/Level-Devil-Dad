@@ -1,18 +1,18 @@
 // Daman: two forts across a river mouth, boats you pedal, ice that melts under you, a boatyard that
 // passes you hand to hand, a rope ferry, the fishmonger's scales and a Warli painter's brush.
-import { Entity, type LevelDef, type World } from '../world';
-import { LINES } from '../cities';
-import { collectible, door, prop, px, rival, sign } from './kit';
-import { DT } from '../constants';
-import type { Act } from './acts';
-import { pool } from './acts';
-import { onPass } from './trolls';
-import { tour } from './tour';
-import { longStage } from './chunks';
-import { Grid } from './grid';
-import { Brush, IceBlock, Mooring, PedalBoat, PlankChain, RopeFerry, Scale } from '../entities/daman';
+import { Entity, type LevelDef, type World } from '../../world';
+import { lines as L } from './lines';
+import { collectible, door, prop, px, rival, sign } from '../../levels/kit';
+import { DT } from '../../constants';
+import type { Act } from '../../levels/acts';
+import { pool } from '../../levels/acts';
+import { onPass } from '../../levels/trolls';
+import { tour } from '../../levels/tour';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
+import { Brush, IceBlock, Mooring, PedalBoat, PlankChain, RopeFerry, Scale } from './entities';
 
-const TAUNTS = LINES.DMN.taunt;
+const TAUNTS = L.taunt;
 const G = 15;
 const RIVERMOUTH: [string, string] = ['rgba(92,150,170,0.88)', 'rgba(36,82,104,0.96)'];
 const ICEWATER: [string, string] = ['rgba(150,210,235,0.9)', 'rgba(60,120,160,0.97)'];
@@ -38,7 +38,7 @@ function boatRoom(): LevelDef {
       w.add(new Mooring(px(15), px(G) - 26, px(15.5)));
       sign(w, 1, 10.4, 4.4, 'NANI DAMAN', 'wood', null, 'jetty');
       sign(w, 27.5, 10.4, 4.4, 'MOTI DAMAN', 'wood', null, 'fort');
-      rival(w, 3, 15, 1, { intro: LINES.DMN.intro[1], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.DMN.beaten[0] });
+      rival(w, 3, 15, 1, { intro: L.intro[1], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       onPass(w, px(4), (w2) => w2.guide('Hodi par ubha raho ne pagla maaro! | Stand on the boat and pedal!'));
       collectible(w, 'bombil', 15.2, 8.6);
     },
@@ -101,7 +101,7 @@ function iceRoom(): LevelDef {
       w.flags.ice = [ice(w, 6, 2.5), ice(w, 11, 2), ice(w, 16, 2.5), ice(w, 21, 2)];
       sign(w, 1, 10.4, 4.6, 'ICE FACTORY', 'wood', null, 'Nani Daman');
       prop(w, 'lamp', 29, 15);
-      rival(w, 3, 15, 1, { intro: LINES.DMN.intro[2], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.DMN.beaten[1] });
+      rival(w, 3, 15, 1, { intro: L.intro[2], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       onPass(w, px(4), (w2) => w2.guide('Baraf pigle chhe, ubha na raho! | The ice melts, don’t stand still!'));
       collectible(w, 'bombil', 16, 9.6);
     },
@@ -190,7 +190,7 @@ function chainRoom(): LevelDef {
       const c = w.add(new PlankChain(spotsFrom([[6, 208], [10, 176], [14, 144], [18, 112]]), { rest: 1.0, pass: 0.7, back: 0.8 }));
       w.flags.chain = c;
       sign(w, 1, 10.4, 4.4, 'BOATYARD', 'wood', null, 'dhows');
-      rival(w, 3, 15, 1, { intro: LINES.DMN.intro[3], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.DMN.beaten[0] });
+      rival(w, 3, 15, 1, { intro: L.intro[3], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       onPass(w, px(4), (w2) => w2.guide('Patiya par chadho, kaarigaro upar laijashe! | Get on the plank, the carpenters will take you up!'));
       collectible(w, 'bombil', 14.6, 4.6);
     },
@@ -248,7 +248,7 @@ function ferryRoom(): LevelDef {
       pool(w, 5, 27, 15.45, { colors: RIVERMOUTH, cause: 'splash' });
       w.flags.rafts = [w.add(new RopeFerry(px(5), px(27), px(G) - 4, {}))];
       sign(w, 1, 10.4, 4.4, 'PANIKOTHA', 'wood', null, 'fortim do mar');
-      rival(w, 3, 15, 1, { intro: LINES.DMN.intro[4], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.DMN.beaten[1] });
+      rival(w, 3, 15, 1, { intro: L.intro[4], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       onPass(w, px(4), (w2) => w2.guide('Kudo nahi, kheencho! Fari fari daabo! | Don’t jump, pull! Tap again and again!'));
       collectible(w, 'bombil', 16, 8.4);
     },
@@ -292,7 +292,7 @@ function scaleRoom(): LevelDef {
       door(w);
       w.flags.scale = w.add(new Scale(px(14), 196, { mine: 'B', every: 1.4, max: 4, hold: 1.4 }));
       sign(w, 1, 10.4, 4.4, 'MACHHI BAZAAR', 'shop', null, 'fish market');
-      rival(w, 4, 15, 1, { intro: 'Pallu par ubha raho, Dad! | Stand on the pan, Dad!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.DMN.beaten[0] });
+      rival(w, 4, 15, 1, { intro: 'Pallu par ubha raho, Dad! | Stand on the pan, Dad!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       onPass(w, px(6), (w2) => w2.guide('Ek ek petti, tame upar! | Crate by crate, up you go!'));
       collectible(w, 'bombil', 15, 5.4);
     },
@@ -343,7 +343,7 @@ function warliRoom(): LevelDef {
       ];
       w.flags.brushes = [w.add(new Brush(path, { speed: 90, life: 2.6, startX: px(3), again: 2 }))];
       sign(w, 1, 10.4, 4.4, 'SILVASSA', 'wood', null, 'Warli art');
-      rival(w, 2, 15, 1, { intro: 'Chitra par chalo, Dad! | Walk on the painting, Dad!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.DMN.beaten[1] });
+      rival(w, 2, 15, 1, { intro: 'Chitra par chalo, Dad! | Walk on the painting, Dad!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       onPass(w, px(3), (w2) => w2.guide('Peenchhi ni pachhal pachhal chalo! | Walk right behind the brush!'));
       collectible(w, 'bombil', 16, 10.4);
     },
@@ -397,7 +397,7 @@ function diuRoom(): LevelDef {
       pool(w, 5, 27, 15.45, { colors: ICEWATER, cause: 'frozen' });
       w.flags.diuIce = [ice(w, 6, 2), ice(w, 10, 2, { salted: true }), ice(w, 14, 2.5), ice(w, 19, 2, { salted: true }), ice(w, 23, 2)];
       sign(w, 1, 10.4, 4, 'DIU', 'wood', null, 'fortaleza');
-      rival(w, 3, 15, 1, { intro: 'Diu ma badhuj bheju! | All of it together in Diu!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.DMN.beaten[0] });
+      rival(w, 3, 15, 1, { intro: 'Diu ma badhuj bheju! | All of it together in Diu!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       collectible(w, 'bombil', 14.6, 10.6);
     },
   };
@@ -429,7 +429,7 @@ const diuAct: Act = {
   },
 };
 
-export const DMN: LevelDef[] = [
+export const levels = (): LevelDef[] => [
   tour({
     id: 'DMN-01',
     city: 'DMN',
