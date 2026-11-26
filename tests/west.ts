@@ -8,7 +8,7 @@ import type { Brush, IceBlock, PedalBoat, PlankChain, RopeFerry, Scale } from '.
 import type { Football, Parade, Parasail, Rope, Roulette } from '../src/game/cities/pnj/entities';
 import type { Sunbeam } from '../src/game/cities/gnr/entities';
 import { Dino, Feathers, GarbaRing, Lion, Naka, type FeatherPickup } from '../src/game/cities/gnr/entities';
-import { Balloon, Bangle, Bowl, Elephant, Ghodi, Pots, Rocket, Talwar, type Strings } from '../src/game/entities/rajasthan';
+import { Balloon, Bangle, Bowl, Elephant, Ghodi, Pots, Rocket, Talwar, type Strings } from '../src/game/cities/jai/entities';
 import { Lake, Sailboat, Shelter, Bison, Thread, Katori, Morph, Sher, Chumbak, Surma, Tawa } from '../src/game/entities/bhopal';
 import { Baaj, Chapda, Gedi, Ghadi, Hand, Heap, Kosa, Sack, Swarm, Top } from '../src/game/entities/raipur';
 import type { Player } from '../src/game/player';

@@ -25,29 +25,6 @@ export interface Theme {
 }
 
 export const THEMES = {
-  JAI: {
-    city: 'JAI',
-    name: 'Jaipur',
-    local: 'जयपुर',
-    sky: ['#4A8CC8', '#A6CDE8', '#FBE1CC'],
-    sun: '#FFF0D2',
-    far: '#C9A08E',
-    mid: '#C97B6B',
-    near: '#8E4E43',
-    accent: '#E91E63',
-    accent2: '#FFB300',
-    tileBase: '#C8705F',
-    tileTop: '#E39A87',
-    tileEdge: '#9C4E40',
-    tileDark: '#6E3229',
-    topper: '#E8B04A',
-    pattern: 'brick',
-    spike: '#F7EDE6',
-    spikeEdge: '#3A1E18',
-    ink: '#3A1E18',
-    rim: null,
-    ui: '#E91E63',
-  },
   BPL: {
     city: 'BPL',
     name: 'Bhopal',
@@ -97,7 +74,7 @@ export const THEMES = {
 } as Record<CityId, Theme>;
 
 /** playable cities in journey order (south to north) */
-export const CITY_ORDER: CityId[] = ['JAI', 'BPL', 'RPR'];
+export const CITY_ORDER: CityId[] = ['BPL', 'RPR'];
 
 /** Future chapters, honestly labelled as not built yet. */
 export const COMING_SOON = [

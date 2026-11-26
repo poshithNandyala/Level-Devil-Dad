@@ -1,19 +1,19 @@
 // Jaipur (and its Rajasthan): kathputli strings, pots on your head in the Hawa Mahal, the marble bowls
 // of Jantar Mantar, a lac bangle to roll in, the Kachchhi Ghodi horse dance, a balloon at night, and Amer.
-import { type LevelDef, type World } from '../world';
-import { LINES } from '../cities';
-import { collectible, door, prop, px, rival, sign } from './kit';
-import type { Act } from './acts';
-import { onPass } from './trolls';
-import { tour } from './tour';
-import { longStage } from './chunks';
-import { Grid } from './grid';
-import { Paint } from './endkit';
-import { Balloon, Bangle, Board, Bowl, Elephant, Ghodi, Pots, Rocket, Shards, Strings, Talwar, breezeArt, stageArt } from '../entities/rajasthan';
-import { Entity } from '../world';
-import { Solid } from '../body';
+import { type LevelDef, type World } from '../../world';
+import { lines as L } from './lines';
+import { collectible, door, prop, px, rival, sign } from '../../levels/kit';
+import type { Act } from '../../levels/acts';
+import { onPass } from '../../levels/trolls';
+import { tour } from '../../levels/tour';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
+import { Paint } from '../../levels/endkit';
+import { Balloon, Bangle, Board, Bowl, Elephant, Ghodi, Pots, Rocket, Shards, Strings, Talwar, breezeArt, stageArt } from './entities';
+import { Entity } from '../../world';
+import { Solid } from '../../body';
 
-const TAUNTS = LINES.JAI.taunt;
+const TAUNTS = L.taunt;
 const G = 15;
 
 // ================================================================== JAI-02: Kathputli (the strings)
@@ -39,7 +39,7 @@ function kathputliRoom(): LevelDef {
       w.flags.strings = [puppetStage(w, 5, 28, [0.8, 0.8, 1.6])];
       sign(w, 1.2, 10.4, 4.2, 'KATHPUTLI', 'shop', null, 'puppet show 7 pm');
       prop(w, 'bulbs', 16, 3);
-      rival(w, 3, 15, 1, { intro: LINES.JAI.intro[0], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.JAI.beaten[0] });
+      rival(w, 3, 15, 1, { intro: L.intro[0], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       onPass(w, px(5), (w2) => w2.guide('Dhol ri thaap pe uchhlo! | You jump on the drum beat!'));
       collectible(w, 'ghevar', 14.5, 11.6);
     },
@@ -113,7 +113,7 @@ function hawaRoom(): LevelDef {
       w.flags.pots = pots;
       breeze(w, pots, { x0: px(12), x1: px(19), dir: -1, every: 4, on: 2, phase: 1.5 });
       sign(w, 0.6, 10.4, 4, 'HAWA MAHAL', 'shop', null, '1799');
-      rival(w, 4, 15, 1, { intro: LINES.JAI.intro[1], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.JAI.beaten[1] });
+      rival(w, 4, 15, 1, { intro: L.intro[1], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       w.after(2.4, () => w.guide('Dheere chaalo, matka hile! | Walk gently, the pots sway!'));
       collectible(w, 'ghevar', 16, 10.6);
     },
@@ -169,7 +169,7 @@ function yantraRoom(): LevelDef {
       door(w);
       w.flags.bowls = [bowl(w, px(14), 96, 64)];
       sign(w, 0.4, 10.4, 4.6, 'JANTAR MANTAR', 'shop', null, 'Jai Prakash Yantra');
-      rival(w, 3, 13, 1, { intro: LINES.JAI.intro[2], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.JAI.beaten[0] });
+      rival(w, 3, 13, 1, { intro: L.intro[2], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       w.when(
         (w2) => (w2.flags.bowl ? true : false),
         (w2) => w2.guide('Jis taraf jaavo, us taraf dhakko! | Push the way you’re going!'),
@@ -246,7 +246,7 @@ function rastaRoom(): LevelDef {
       shutter(w, 26);
       sign(w, 0.4, 10.4, 5.2, 'MANIHARON KA RASTA', 'shop', null, 'lac bangles');
       prop(w, 'bulbs', 12, 3);
-      rival(w, 3, 15, 1, { intro: LINES.JAI.intro[3], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.JAI.beaten[1] });
+      rival(w, 3, 15, 1, { intro: L.intro[3], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       onPass(w, px(4), (w2) => w2.guide('Choodi mein ghus jaavo! | Step in to the bangle!'));
       onPass(w, px(22), (w2) => w2.guide('Dheere! Phoot jaasi! | Slow down! It’ll shatter!'));
       collectible(w, 'ghevar', 16.5, 12.4);
@@ -307,7 +307,7 @@ function ghodiRoom(): LevelDef {
       sign(w, 0.3, 10.4, 4.6, 'KACHCHHI GHODI', 'shop', null, 'aaj raat');
       prop(w, 'bulbs', 10, 3);
       prop(w, 'bulbs', 22, 3);
-      rival(w, 2, 15, 1, { intro: LINES.JAI.intro[4], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.JAI.beaten[0] });
+      rival(w, 2, 15, 1, { intro: L.intro[4], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       onPass(w, px(4), (w2) => w2.guide('Ghodi rukti koni! | The horse won’t stop!'));
       onPass(w, px(16), (w2) => w2.guide('Ulta dabao, ghoom jaasi! | Press back, she turns round!'));
       collectible(w, 'ghevar', 14.5, 10.6);
@@ -371,7 +371,7 @@ function balloonRoom(): LevelDef {
       w.flags.balloons = [balloon(w, 4, 20, 29)];
       w.flags.rockets = [rocket(w, 19, 2.6, 0.4)];
       sign(w, 0.3, 10.4, 4.2, 'SKY WALTZ', 'shop', null, 'balloon safari');
-      rival(w, 2, 15, 1, { intro: LINES.JAI.intro[5], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.JAI.beaten[1] });
+      rival(w, 2, 15, 1, { intro: L.intro[5], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       w.when(
         (w2) => !!w2.flags.balloon,
         (w2) => w2.guide('Jump dabao: upar! Chhodo: neeche! | Hold jump: up! Let go: down!'),
@@ -426,7 +426,7 @@ function amerRoom(): LevelDef {
       door(w);
       w.flags.haathis = [haathi(w, 6)];
       sign(w, 0.3, 10.4, 3.6, 'AMER', 'shop', null, 'haathi sawaari');
-      rival(w, 3, 15, 1, { intro: LINES.JAI.intro[6], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.JAI.beaten[0] });
+      rival(w, 3, 15, 1, { intro: L.intro[6], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       onPass(w, px(2), (w2) => w2.guide('Peeth pe chadho, haanko! | Up on her back, and drive!'));
       w.when(
         (w2) => !!w2.flags.tossed,
@@ -464,7 +464,7 @@ const amer: Act = {
   },
 };
 
-export const JAI: LevelDef[] = [
+export const levels = (): LevelDef[] => [
   tour({
     id: 'JAI-01',
     city: 'JAI',

@@ -1,0 +1,25 @@
+import type { Theme } from '../../../render/theme';
+
+export const theme: Theme = {
+  city: 'JAI',
+  name: 'Jaipur',
+  local: 'जयपुर',
+  sky: ['#4A8CC8', '#A6CDE8', '#FBE1CC'],
+  sun: '#FFF0D2',
+  far: '#C9A08E',
+  mid: '#C97B6B',
+  near: '#8E4E43',
+  accent: '#E91E63',
+  accent2: '#FFB300',
+  tileBase: '#C8705F',
+  tileTop: '#E39A87',
+  tileEdge: '#9C4E40',
+  tileDark: '#6E3229',
+  topper: '#E8B04A',
+  pattern: 'brick',
+  spike: '#F7EDE6',
+  spikeEdge: '#3A1E18',
+  ink: '#3A1E18',
+  rim: null,
+  ui: '#E91E63',
+};

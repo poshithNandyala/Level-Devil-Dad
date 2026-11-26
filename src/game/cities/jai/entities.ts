@@ -1,8 +1,8 @@
 // Jaipur's (and Rajasthan's) moving parts: kathputli strings, a tower of pots on your head, the marble
 // bowls of Jantar Mantar, bolts of cloth, the dummy horse of the Kachchhi Ghodi dance.
-import { Entity, type Hazard, type World } from '../world';
-import { Solid } from '../body';
-import { DT, ROOM_H, secs } from '../constants';
+import { Entity, type Hazard, type World } from '../../world';
+import { Solid } from '../../body';
+import { DT, ROOM_H, secs } from '../../constants';
 
 /** A kathputli stage: while Dad is on it he's a puppet on strings. His own jumps do nothing; on every
  *  beat of the dholak the puppeteer jerks him up (if he's standing). He can still walk and steer. */
