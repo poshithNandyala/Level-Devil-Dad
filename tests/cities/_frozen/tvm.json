@@ -118,7 +118,7 @@
   ],
   "route": {
    "state": "won",
-   "tick": 2170
+   "tick": 2179
   },
   "naive": {
    "state": "dead",
@@ -127,7 +127,7 @@
   },
   "fix": {
    "state": "dead",
-   "tick": 1595,
+   "tick": 1604,
    "cause": "crushed"
   }
  },
@@ -144,7 +144,7 @@
   ],
   "route": {
    "state": "won",
-   "tick": 1558
+   "tick": 1562
   },
   "naive": {
    "state": "dead",
@@ -211,7 +211,7 @@
   }
  },
  "TVM-09": {
-  "par": 65,
+  "par": 80,
   "item": [
    [
     12,
@@ -222,11 +222,11 @@
    32.5,
    72.5,
    106.5,
-   135.5
+   167.5
   ],
   "route": {
    "state": "won",
-   "tick": 6417
+   "tick": 8084
   },
   "naive": {
    "state": "dead",
@@ -240,7 +240,7 @@
   }
  },
  "TVM-10": {
-  "par": 25,
+  "par": 40,
   "item": [
    [
     16,
@@ -251,11 +251,13 @@
    32.5,
    48.5,
    66.5,
-   91.5
+   102.5,
+   128.5,
+   157.5
   ],
   "route": {
    "state": "won",
-   "tick": 1748
+   "tick": 3708
   },
   "naive": {
    "state": "dead",

@@ -11,7 +11,7 @@ import { crumble, dropFloor, fakeFloor, noLanding, onPass, popAt, popOnJump, ris
 import { Counterweight, IceSlab, Launch, Puddle, Slab, Tarp } from './entities';
 import { Droni } from './dhara';
 import { longStage } from '../../levels/chunks';
-import { DHARA_META, KOVALAM_META, ashoka, dharaRoom, kizhi, kovalamRoom, samudra, uzhichil, vilakku } from './encores';
+import { DHARA_META, KOVALAM_META, ashoka, chanda, dharaRoom, kizhi, kovalamRoom, pozhikkara, samudra, theeram, uzhichil, vilakku } from './encores';
 
 // Thiruvananthapuram: monsoon puddles, a red express bus, a tea stall,
 // coconut palms and the old fort gate. Lines: Malayalam + English.
@@ -247,7 +247,7 @@ export const levels = (): LevelDef[] => [
       w.when(
         (w2) => x >= px(46) && phase === 'go2',
         (w2) => {
-          shot(w2, 'parunthu', w2.player.x + 220, Y - 44, -100, 0, 0, 'hit');
+          shot(w2, 'tvm-parunthu', w2.player.x + 220, Y - 44, -100, 0, 0, 'hit');
           w2.sfx('caw', w2.player.x + 180, Y - 40);
           taraSays(w2, 'Parunthu! Chaadu! | A kite! Jump!', 1.4);
         },
@@ -341,7 +341,8 @@ export const levels = (): LevelDef[] => [
       const slide = () => {
         if (w.state !== 'play') return;
         // (he stops sliding them once you're well along: the end of the counter is its own trap)
-        if (w.player.x > px(20) && w.player.x < px(25.5)) roller(w, 'tumbler', px(31) - 12, px(13) - 12, -100, { cause: 'burnt', breakOnWall: false });
+        // (85 px/s, was 100: a person's hop over one right after getting up on the counter needs the extra moment)
+        if (w.player.x > px(20) && w.player.x < px(25.5)) roller(w, 'tumbler', px(31) - 12, px(13) - 12, -85, { cause: 'burnt', breakOnWall: false });
         w.after(1.3, slide);
       };
       w.after(0.5, slide);
@@ -638,7 +639,7 @@ export const levels = (): LevelDef[] => [
       // the last net's stones hang over the bank's edge: net up, stones down
       const stones = w.add(new Counterweight({ tx: 24, tw: 2, floorTy: 13, lift: 54 }));
       [7, 10.5, 14, 17.5, 21].forEach((tx, i) => {
-        const net = thing(w, 'net', tx, 0, { oneWay: true, dy: UP });
+        const net = thing(w, 'tvm-net', tx, 0, { oneWay: true, dy: UP });
         let caught = -1;
         let sprung = -1;
         w.onTick((w2) => {
@@ -870,7 +871,7 @@ export const levels = (): LevelDef[] => [
         group(w, l).paint = { fill: '#DCD5C4', trim: '#A3342B', line: 'rgba(70,60,45,0.22)' };
         prop(w, 'footbridge', tx, ty, { w: 2, h: h + (l === 'd' ? 1 : 0) }, -8);
       }
-      const boat = thing(w, 'snakeboat', 5, 0, { dy: 212 });
+      const boat = thing(w, 'tvm-snakeboat', 5, 0, { dy: 212 });
       const END = px(87) - 128;
       // the crew rows at a steady pace (a steady deck is a fair deck); the chant keeps the beat
       let go = false,
@@ -931,6 +932,6 @@ export const levels = (): LevelDef[] => [
     },
   },
   // the encores (allocation v2 slots 9 and 10)
-  longStage({ base: kovalamRoom(), acts: [vilakku, samudra, ashoka], twist: 'tvm-backwash-ride', par: 65, shape: 'long', meta: KOVALAM_META }),
-  longStage({ base: dharaRoom(), acts: [kizhi, uzhichil], twist: 'tvm-oily-feet-coir-mat', par: 25, shape: 'long', meta: DHARA_META }),
+  longStage({ base: kovalamRoom(), acts: [vilakku, samudra, pozhikkara, ashoka], twist: 'tvm-backwash-ride', par: 80, shape: 'long', meta: KOVALAM_META }),
+  longStage({ base: dharaRoom(), acts: [kizhi, theeram, uzhichil, chanda], lives: 'act', twist: 'tvm-oily-feet-coir-mat', par: 40, shape: 'long', meta: DHARA_META }),
 ];

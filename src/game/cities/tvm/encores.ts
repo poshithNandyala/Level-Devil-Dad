@@ -8,7 +8,7 @@ import { onPass } from '../../levels/trolls';
 import { tara as taraSays } from '../../levels/endkit';
 import { Surf } from './kovalam';
 import { Dhara, Droni } from './dhara';
-import { Tarp } from './entities';
+import { IceSlab, Tarp } from './entities';
 import { coconut, drop } from './levels';
 
 const meta = (family: string, betrayals: string[], ending: string): StageMeta => ({ family, betrayals, ending });
@@ -124,6 +124,7 @@ export const samudra: Act = {
 export const ashoka: Act = {
   id: 'tvm09-ashoka',
   w: 30,
+  cp0: false,
   advice: 'At Ashoka beach he whistles and paces, but plants the flags right back where they were: stay put. At the next whistle he does carry them on.',
   paint: (g, c) => {
     const x = c.x;
@@ -150,7 +151,79 @@ export const ashoka: Act = {
   },
 };
 
+/** Pozhikkara: he runs the flags far on past a rock pool, then brings them back over it */
+export const pozhikkara: Act = {
+  id: 'tvm09-pozhikkara',
+  w: 32,
+  advice: 'At Pozhikkara he runs the flags far on, past a rock pool: hop it and get between them. At the next whistle he carries them back over the pool: hop it again, the other way.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x, x + 2, 14, 14, '#').fill(x + 29, x + 31, 14, 14, '#').pit(x + 13, x + 14);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(
+      new Surf({
+        name: 'pozhikkara',
+        x0: x + 3,
+        x1: x + 29,
+        strip: x + 6,
+        waves: [
+          { at: x + 6.5, moves: [{ to: x + 20, sec: 1.3 }], inAt: 2.7, inFor: 2.0 },
+          { moves: [{ to: x + 7, sec: 1.3 }], inAt: 2.8, inFor: 2.0 },
+        ],
+      }),
+    );
+  },
+};
+
 // ================================================================== TVM-10: Dhara
+/** TVM-10 act: Shankumugham shore, Kovalam's flags again, and a pot's oil inside the strip: oil can't be stood on,
+ *  so stand on the dry edge of the strip, not in its middle */
+export const theeram: Act = {
+  id: 'tvm10-theeram',
+  w: 36,
+  advice: 'On the shore the lifeguard moves the flags before each wave again, and a pot drips its oil into the new strip: stand on the dry sand at its edge, not on the oil in the middle (your feet go, and you slide out of the flags).',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x, x + 2, 14, 14, '#').fill(x + 33, x + 35, 14, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(
+      new Surf({
+        name: 'theeram',
+        x0: x + 3,
+        x1: x + 33,
+        strip: x + 6,
+        waves: [
+          { at: x + 7, moves: [{ to: x + 14, sec: 0.9 }], inAt: 2.4, inFor: 2.0 },
+          { moves: [{ to: x + 26, sec: 1.2 }], inAt: 2.6, inFor: 2.0 },
+        ],
+      }),
+    );
+    w.add(new Dhara({ hookTx: x + 19, offTx: -2.7, slick: [x + 15, x + 17.8], ty: 8 }));
+  },
+};
+
+/** TVM-10 act: Chalai market, the tour's fish ice over the drain, and oil past it before a kindi */
+export const chanda: Act = {
+  id: 'tvm10-chanda',
+  w: 30,
+  advice: 'At Chalai market the fish ice over the drain moves twice again: wait for the yank, then a long jump on to it. Past it there is oil and a kindi: jump both from the ice.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 8, x + 13).pit(x + 15, x + 16);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(new IceSlab(x + 8, 2, x + 6.6));
+    w.add(new Droni(x + 8, x + 14, 'tvm-chaal', 'drain'));
+    w.add(new Dhara({ hookTx: x + 17, offTx: -2.4, slick: [x + 14, x + 15], ty: 8 }));
+    w.add(new Droni(x + 15, x + 17, 'tvm-kindi'));
+  },
+};
+
 /** TVM-10's second act: the treatment rooms in a row, the pots in the order the room taught them backwards */
 export const uzhichil: Act = {
   id: 'tvm10-uzhichil',

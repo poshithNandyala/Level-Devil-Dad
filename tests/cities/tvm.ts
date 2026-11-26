@@ -3,7 +3,7 @@
 // replaces that stage's (or act's, or ending's) entry there. After a change on purpose: npm run refreeze -- TVM.
 import type { World } from '../../src/game/world';
 import type { Door } from '../../src/game/entities/basics';
-import { type Step, X, and, done, ground } from '../runner';
+import { type Step, X, and, done, ground, thingOf } from '../runner';
 import type { CityTests } from '../city-tests';
 import { STRIP } from '../../src/game/cities/tvm/kovalam';
 import { surfOf } from '../../src/game/cities/tvm/encores';
@@ -23,9 +23,9 @@ const hopAt = (at: number, ticks: number, note: string, long = false): Step[] =>
 ];
 const until = (pred: (w: World) => boolean, note: string, max = 900): Step => ({ hold: '', until: pred, max, note });
 /** is there no floor just ahead of Dad (the next 14 px, going right)? */
-const pitAhead = (w: World) => {
+const pitAhead = (w: World, dir: Move = 'R') => {
   const p = w.player;
-  const tx = Math.floor((p.x + p.w + 6) / 16);
+  const tx = Math.floor((dir === 'R' ? p.x + p.w + 6 : p.x - 6) / 16);
   return !w.isSolidTile(w.tileAt(tx, 15));
 };
 
@@ -45,9 +45,9 @@ function follow(name: string, i: number, note: string): Step {
         return { move: c > w.player.cx ? 'R' : 'L', jump: true };
       }
       const mv = toward(w, c, 5);
-      if (mv === 'R' && w.player.onGround && pitAhead(w)) {
+      if (mv !== '' && w.player.onGround && pitAhead(w, mv)) {
         jt = 12;
-        return { move: 'R', jump: true };
+        return { move: mv, jump: true };
       }
       return { move: mv, jump: false };
     },
@@ -114,12 +114,203 @@ function tour01(S: Record<string, Step[]>) {
   ];
 }
 
+// ------------------------------------------------------------------ TVM-02, 06, 08: the plays that find TVM's things by kind
+// (copied from tests/solutions.ts with the tvm- kinds; the door step is the shared one, kept from S)
+const px16 = (t: number) => t * 16;
+/** TVM-06's fishing nets, in order along the promenade */
+const netNo = (i: number) => (w: World): any => w.entities.filter((e: any) => e.kind === 'tvm-net')[i];
+/** hop on to something moving: steer over its middle, then drop */
+const hopOn = (get: (w: World) => { solid: { x: number; w: number } }, dir: 'R' | 'FWD' = 'R'): Step[] => [
+  { hold: dir, jump: 12, ticks: 12 },
+  { hold: dir, until: (w) => w.player.onGround || w.player.x + 5 >= get(w).solid.x + get(w).solid.w / 2 - 2, max: 120 },
+  { hold: '', until: ground, max: 200 },
+];
+/** no crow ahead within reach of the next jump */
+const noCrow = (w: World) => !w.entities.some((e: any) => e.kind === 'crow' && e.alive && e.x > w.player.x - 24 && e.x - w.player.x < 110);
+/** a dad who hops anything with wings the moment it's close (the crow lesson), however high it flies */
+function hopAnyBird(): (w: World) => { move: 'L' | 'R' | ''; jump: boolean } {
+  let hold = 0,
+    last = -1;
+  return (w) => {
+    if (w.tick < last) hold = 0;
+    last = w.tick;
+    if (hold > 0) {
+      hold--;
+      return { move: '', jump: true };
+    }
+    const p = w.player;
+    const gs: any = p.onGround ? p.groundSolid : null;
+    const pv = p.vx + (gs ? (gs.velX ?? 0) : 0);
+    const bird = w.entities.some((e: any) => e.alive && (e.kind === 'crow' || e.kind === 'tvm-parunthu') && e.vx < 0 && e.x - (p.x + p.w) > -4 && (e.x - (p.x + p.w)) / (-e.vx + Math.max(0, pv)) <= 0.13);
+    if (bird && p.onGround) {
+      hold = 11;
+      return { move: '', jump: true };
+    }
+    return { move: '', jump: false };
+  };
+}
+function kinds(S: Record<string, Step[]>) {
+  const SOLUTIONS = S;
+  S['TVM-06'] = [
+    { hold: 'R', until: X(2.9), dodge: 1, note: 'wait back from the edge: the swell crashes over it' },
+    { hold: '', until: (w) => !w.entities.some((e: any) => e.kind === 'crow' && e.alive && e.x > w.player.x - 20), max: 600, dodge: 1, note: 'hop the crow' },
+    { hold: '', until: (w) => (w.flags.net0 ?? 0) >= 0.7 && noCrow(w), max: 900, dodge: 44 },
+    { hold: 'R', until: X(4.3), max: 100, note: 'the net is up: to the edge' },
+    ...hopOn(netNo(0)),
+    { hold: '', until: (w) => (w.flags.net1 ?? 0) >= 0.55 && w.player.onGround && noCrow(w), max: 900, dodge: 44 },
+    ...hopOn(netNo(1)),
+    { hold: '', until: (w) => (w.flags.net2 ?? 0) >= 0.55 && w.player.onGround && noCrow(w), max: 900, dodge: 44 },
+    ...hopOn(netNo(2)),
+    { hold: '', until: (w) => (w.flags.net3 ?? 0) >= 0.55 && w.player.onGround && noCrow(w), max: 900, dodge: 44 },
+    ...hopOn(netNo(3)),
+    { hold: '', until: (w) => (w.flags.net4 ?? 0) >= 0.55 && w.player.onGround && noCrow(w), max: 900, dodge: 44 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'onto the last net' },
+    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', jump: 40, ticks: 40, long: true, note: 'it dips at once: straight off to the jetty' },
+    { hold: 'R', until: and(ground, X(33.6)), max: 400 },
+    ...hopOn((w) => thingOf(w, 'odam', 0)),
+    ...hopOn((w) => thingOf(w, 'odam', 1)),
+    ...hopOn((w) => thingOf(w, 'odam', 2), 'R'),
+    { hold: 'R', jump: 12, ticks: 12, note: 'off the boats on to the jetty' },
+    { hold: 'R', until: and(ground, X(50.9)), max: 300 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'spikes in the boards' },
+    { hold: 'R', until: ground, max: 300 },
+    { hold: '', dodge: 50, until: (w) => !w.entities.some((e: any) => e.kind === 'crow' && e.alive && e.x > w.player.x - 20), max: 600, note: 'hop the second crow' },
+    { hold: 'R', until: and(ground, X(57.2)), max: 300 },
+    ...S['TVM-06'].slice(-1),
+  ];
+  S['TVM-08'] = [
+    { hold: 'R', until: X(5.6) },
+    { hold: '', until: (w) => w.player.onGround && thingOf(w, 'tvm-snakeboat').x > px16(5) + 2, max: 300, note: 'on the boat; off it goes' },
+    { hold: '', until: (w) => px16(22) - (w.player.x + 10) <= 22, max: 1500, dodge: 1, note: 'ride towards the first footbridge, hop the crow' },
+    { hold: 'R', jump: 12, ticks: 12, note: 'up on to the bridge' },
+    { hold: 'R', until: X(24.2), max: 300 },
+    { hold: '', until: ground, max: 200, note: 'drop back on the boat' },
+    { hold: '', until: (w) => px16(36) - (w.player.x + 10) <= 44, max: 900 },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'the tall bridge: hold jump' },
+    { hold: 'R', until: X(38.2), max: 300 },
+    { hold: '', until: ground, max: 200 },
+    { hold: '', until: (w) => w.player.x > px16(56) + 2, max: 900, dodge: 1, note: 'hop the crow; under the spiky bridge, no jumping' },
+    { hold: '', until: (w) => px16(64) - (w.player.x + 10) <= 22, max: 900 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'the low bridge after it: do hop this one' },
+    { hold: 'R', until: X(66.2), max: 300 },
+    { hold: '', until: ground, max: 200 },
+    { hold: '', until: (w) => thingOf(w, 'tvm-snakeboat').x >= w.flags.boatEnd - 0.5, max: 1500, dodge: 1, note: 'hop the crows, ride to the finish' },
+    { hold: 'R', until: X(86.4), max: 300 },
+    { hold: '', until: (w) => w.entities.some((e: any) => e.cells?.[0]?.x === px16(89) && e.popTick >= 0 && !e.popped), max: 300, note: 'spikes in the jetty: let them sink back' },
+    ...S['TVM-08'].slice(-1),
+  ];
+  mistakes['TVM-02'] = [
+    {
+      what: 'ride at the back of the roof through the bells',
+      steps: [
+        ...SOLUTIONS['TVM-02'].slice(0, SOLUTIONS['TVM-02'].findIndex((st) => st.note?.startsWith('hop the crows'))),
+        { hold: 'L', until: (w) => w.player.x <= thingOf(w, 'redbus').solid.x + 12, max: 120 },
+        { hold: '', dodge: 60, until: (w) => w.state !== 'play', max: 2000 },
+      ],
+      cause: 'splash',
+    },
+    {
+      what: 'ride the middle under the first flyover, like last time',
+      steps: [
+        ...SOLUTIONS['TVM-02'].slice(0, SOLUTIONS['TVM-02'].findIndex((st) => st.note?.startsWith('hop the crows'))),
+        { hold: 'R', until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 46, max: 200 },
+        { hold: '', dodge: 60, until: (w) => w.state !== 'play', max: 2000 },
+      ],
+      cause: 'crushed',
+    },
+    {
+      what: 'hop the kite like the crows',
+      steps: [...SOLUTIONS['TVM-02'].slice(0, SOLUTIONS['TVM-02'].findIndex((st) => st.note?.startsWith('ride the middle: the second'))), { policy: hopAnyBird(), until: (w) => w.state !== 'play', max: 2000 }],
+      cause: 'hit',
+    },
+    {
+      what: 'run to the front before the second flyover, like last time',
+      steps: [
+        ...SOLUTIONS['TVM-02'].slice(0, SOLUTIONS['TVM-02'].findIndex((st) => st.note?.startsWith('ride the middle: the second'))),
+        { hold: '', dodge: 60, until: (w) => thingOf(w, 'redbus').solid.x >= px16(50), max: 2000 },
+        { hold: 'R', dodge: 60, until: (w) => w.player.x >= thingOf(w, 'redbus').solid.x + 70, max: 200 },
+        { hold: '', dodge: 60, until: (w) => w.state !== 'play', max: 2000 },
+      ],
+      cause: 'crushed',
+    },
+  ];
+}
+
+/** like the route bot's dodge reflex, but timed for a person: hop anything coming at Dad once it's `lead` s away
+ *  (the bot hops at 0.13 s; a late press then lands in the jeep) */
+function earlyHop(hold: Move, lead: number): (w: World) => Out {
+  let jt = 0,
+    last = -1;
+  return (w) => {
+    if (w.tick < last) jt = 0;
+    last = w.tick;
+    if (jt > 0) {
+      jt--;
+      return { move: hold, jump: true };
+    }
+    const p = w.player;
+    if (!p.onGround) return { move: hold, jump: false };
+    const gs: any = p.groundSolid;
+    const pv = p.vx + (gs ? (gs.velX ?? 0) : 0);
+    for (const e of w.entities as any[]) {
+      if (!e.alive || e.vx === undefined || e.x === undefined || !e.hazard?.active) continue;
+      const ew = e.w ?? 12,
+        eh = e.h ?? 12;
+      if (e.y + eh < p.y - 6 || e.y > p.y + p.h + 2) continue;
+      const ahead = e.x - (p.x + p.w),
+        behind = p.x - (e.x + ew);
+      const t = e.vx < 0 && ahead > -4 ? ahead / (-e.vx + Math.max(0, pv)) : e.vx > 0 && behind > -4 ? behind / (e.vx + Math.max(0, -pv)) : 99;
+      if (t <= lead) {
+        jt = 11;
+        return { move: hold, jump: true };
+      }
+    }
+    return { move: hold, jump: false };
+  };
+}
+/** swap the bot's dodge reflex for a person's hop on the step of `id` noted `note` */
+function earlier(S: Record<string, Step[]>, id: string, note: string, lead: number) {
+  S[id] = S[id].map((st) => (st.dodge && st.note === note ? { ...st, dodge: undefined, policy: earlyHop((st.hold === 'FWD' ? 'R' : st.hold) ?? '', lead) } : st));
+}
+
 const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) => {
   tour01(S);
+  kinds(S);
+  // TVM-05, a person's timing (stage unchanged): on the hop to the last moat stone let go of right earlier, so a
+  // late hop (held a little longer) still lands on the stone and not past it in the bank's mud
+  {
+    const r = S['TVM-05'];
+    const i = r.findIndex((st) => st.note === 'off the last stone, long: past the mud on the bank') - 3;
+    r[i] = { ...r[i], until: (w: World) => w.player.onGround || w.player.x + 5 >= 47 * 16 + 16 - 12 };
+  }
+  // TVM-03, a person's timing (stage unchanged): hop the sliding glasses a moment before the bot would
+  earlier(S, 'TVM-03', 'hop the glasses', 0.18);
+  // TVM-06, a person's timing (stage unchanged): on the hop on to the last net, let go of right over its middle
+  // (a late hop held a little longer flies past it on to the bank, under the stones)
+  {
+    const r = S['TVM-06'];
+    const i = r.findIndex((st) => st.note === 'onto the last net');
+    r.splice(i + 1, 1, { hold: 'R', until: (w) => w.player.onGround || w.player.x + 5 >= netNo(4)(w).solid.x + netNo(4)(w).solid.w / 2 - 10, max: 200 }, { hold: '', until: ground, max: 200 });
+  }
+  // TVM-07, a person's timing (the stage is unchanged): hop each jeep a moment before the bot would, and go
+  // over the boulder a little earlier, so a late press still clears it
+  earlier(S, 'TVM-07', 'hop the jeep coming down', 0.15);
+  earlier(S, 'TVM-07', 'it backs up: stop and hop it', 0.15);
+  S['TVM-07'] = S['TVM-07'].map((st) =>
+    st.note === 'let the landslide boulder come to you'
+      ? { ...st, until: (w: World) => w.entities.some((e: any) => e.kind === 'boulder' && e.alive && e.y > 100 && e.x - (w.player.x + 10) <= 28) }
+      : st,
+  );
   S['TVM-09'] = kovalamRoom();
   lengthen('TVM-09', 0, []);
   S['TVM-10'] = dharaRoom();
   lengthen('TVM-10', 0, []);
+  {
+    const r = S['TVM-10'];
+    const i = r.findIndex((st) => st.note === 'with him, to the dry edge of the new strip');
+    mistakes['TVM-10'].push({ what: 'go to the middle of the new flags, on the oil', steps: [...r.slice(0, i), follow('theeram', 0, 'to the middle of the strip'), die], cause: 'tvm-drift' });
+  }
 };
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
@@ -143,6 +334,30 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'tvm09-vilakku': (x) => [walk(x + 10.2, 'into the flags'), follow('vilakku', 0, 'back with him, behind you'), walk(x + 18.2), follow('vilakku', 1, 'far on, over the rock pool'), ...hopAt(x + 36.2, 12, 'up on the rocks'), walk(x + 39.5)],
   'tvm09-samudra': (x) => [walk(x + 4.7, 'into the flags'), follow('samudra', 0, 'with the flags till he stops'), follow('samudra', 1, 'the long run on'), ...hopAt(x + 30.2, 12, 'up on the rocks'), walk(x + 33.5)],
   'tvm09-ashoka': (x) => [walk(x + 6.6, 'into the flags'), follow('ashoka', 0, 'he paces and puts them back: stay'), follow('ashoka', 1, 'then on with him'), ...hopAt(x + 26.2, 12, 'up on the rocks'), walk(x + 29.5)],
+  'tvm09-pozhikkara': (x) => [walk(x + 6.6, 'into the flags'), follow('pozhikkara', 0, 'far on, over the rock pool'), follow('pozhikkara', 1, 'and back over it'), ...hopAt(x + 11.9, 12, 'over the pool again, on'), ...hopAt(x + 28.2, 12, 'up on the rocks'), walk(x + 31.5)],
+  'tvm10-theeram': (x) => [
+    ...hopAt(x - 0.9, 12, 'up on the rocks'),
+    walk(x + 7.2, 'into the flags'),
+    { hold: 'R', until: and(ground, X(x + 14.2)), max: 600, note: 'with him, to the dry edge of the new strip' },
+    until((w) => (surfOf(w, 'theeram')?.i ?? 0) > 0, 'stand on the dry sand, off the oil', 900),
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'over the oil' },
+    { hold: 'R', until: ground, max: 300 },
+    follow('theeram', 1, 'and the long run on'),
+    ...hopAt(x + 32.2, 12, 'up on the rocks'),
+    walk(x + 35.5),
+  ],
+  'tvm10-chanda': (x) => [
+    walk(x + 6.7, 'up to the fish ice: it twitches'),
+    until((w) => w.flags.ice === 'done', 'wait for the yank', 300),
+    { hold: 'R', until: X(x + 7.3), max: 300 },
+    { hold: '', ticks: 20, note: 'stop at the edge of the drain' },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'a long jump on to the ice' },
+    { hold: 'R', until: ground, max: 300 },
+    { hold: '', ticks: 20, note: 'stop on the ice, short of the oil' },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'over the oil and the kindi' },
+    { hold: 'R', until: ground, max: 300 },
+    walk(x + 29.5),
+  ],
   'tvm10-uzhichil': (x) => [
     walk(x + 4.3),
     { hold: '', ticks: 24, note: 'stop at the edge of the first trough' },
@@ -167,7 +382,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: ground, max: 300 },
     walk(x + 18.6),
     ...hopAt(x + 18.9, 14, 'over the oil by the palm'),
-    walk(x + 33.5),
+    walk(x + 32.8),
   ],
 };
 
