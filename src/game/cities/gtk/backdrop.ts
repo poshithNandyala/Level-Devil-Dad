@@ -23,7 +23,7 @@ export function backdrop(ctx: Ctx, th: Theme, x0: number, x1: number) {
   ctx.closePath();
   ctx.fill();
   // shadowed flanks and the sunrise tint on the tops
-  ctx.fillStyle = withAlpha('#A9BCCB', 0.55);
+  ctx.fillStyle = withAlpha('#B7C6D2', 0.45);
   for (let x = x0 - 10; x <= x1 + 10; x += step) {
     const k = Math.round(x / step);
     const top = 58 + ((k * 41) % 26) - (k % 5 === 0 ? 22 : 0);
@@ -70,23 +70,32 @@ export function backdrop(ctx: Ctx, th: Theme, x0: number, x1: number) {
     ctx.fillRect(x - 0.5, y, 1, 3);
   }
 
-  // the town: rows of tall narrow houses stepping down the hill, with a looping road between the rows
+  // the town: two rows of tall narrow houses stepping down the green slope, a looping road between them
+  ctx.fillStyle = th.mid;
+  ctx.beginPath();
+  ctx.moveTo(x0 - 10, 230);
+  for (let x = x0 - 10; x <= x1 + 10; x += 60) ctx.lineTo(x, 168 + ((Math.round(x / 60) * 17) % 12));
+  ctx.lineTo(x1 + 10, 230);
+  ctx.closePath();
+  ctx.fill();
   const roofs = ['#C0392B', '#2E86AB', '#3E8E41', '#E07A5F', '#8E6C8A', '#D4A017'];
-  for (let row = 0; row < 3; row++) {
-    const y = 150 + row * 24;
-    const gap = 26 - row * 2;
-    ctx.fillStyle = withAlpha('#8D8A80', 0.55);
-    ctx.fillRect(x0 - 10, y + 16, x1 - x0 + 20, 2.5);
+  for (let row = 0; row < 2; row++) {
+    const y = 176 + row * 22;
+    const gap = 46 - row * 8;
+    ctx.fillStyle = withAlpha('#8D8A80', 0.6);
+    ctx.fillRect(x0 - 10, y + 16, x1 - x0 + 20, 2);
     for (let x = x0 - 20; x <= x1 + 20; x += gap) {
       const k = Math.round(x / gap) + row * 5;
-      const hw = 14 + ((k * 5) % 7);
-      const hh = 14 + ((k * 7) % 12) + row * 3;
-      ctx.fillStyle = row === 2 ? '#F1ECE1' : withAlpha('#E6E1D5', 0.85 - row * 0.05);
-      ctx.fillRect(x, y + 16 - hh, hw, hh);
+      if (k % 4 === 3) continue;
+      const hw = 12 + ((k * 5) % 6);
+      const hh = 12 + ((k * 7) % 10) + row * 2;
+      const hx = x + ((k * 13) % 9);
+      ctx.fillStyle = withAlpha('#F1ECE1', 0.8 + row * 0.15);
+      ctx.fillRect(hx, y + 16 - hh, hw, hh);
       ctx.fillStyle = roofs[((k % roofs.length) + roofs.length) % roofs.length];
-      ctx.fillRect(x - 1, y + 14 - hh, hw + 2, 3);
-      ctx.fillStyle = withAlpha(th.ink, 0.3);
-      for (let f = 0; f < Math.floor(hh / 6); f++) ctx.fillRect(x + 3, y + 18 - hh + f * 6, hw - 6, 2);
+      ctx.fillRect(hx - 1, y + 14 - hh, hw + 2, 3);
+      ctx.fillStyle = withAlpha(th.ink, 0.28);
+      for (let f = 0; f < Math.floor(hh / 7); f++) ctx.fillRect(hx + 3, y + 19 - hh + f * 7, hw - 6, 2);
     }
   }
   // near slope
