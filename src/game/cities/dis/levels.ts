@@ -146,6 +146,32 @@ const chapori: Act = {
   },
 };
 
+/** DIS-02 act 2: the post again, two sirens, and a bar that narrows from its right end while a new one rises far ahead. */
+const dhar: Act = {
+  id: 'dis02-dhar',
+  w: 36,
+  advice: 'One more channel and its post. After each siren, wait until the dashed bar ahead has come up, then go to it at once: the bar you are on narrows (from its right end) or sinks a little later.',
+  cps: [1.5],
+  paint: (g, c) => {
+    g.pit(c.x + 2, c.x + 31);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(new River(px(x + 2), px(x + 32)));
+    const f = sand(
+      w,
+      [
+        [[x + 3, x + 8], [x + 3, x + 8], null],
+        [null, [x + 11, x + 17], [x + 11, x + 13]],
+        [null, null, [x + 19, x + 24]],
+        [[x + 26, x + 31], [x + 26, x + 31], [x + 26, x + 31]],
+      ],
+      [px(x + 3) - 4, px(x + 11) - 4],
+    );
+    levelPost(w, f, x + 0.6, 3);
+  },
+};
+
 // ================================================================== DIS-03: Duta Paat, Ekta Kuhi (the tea garden)
 /** a plucker with her hedges: hedges and slabs are added, and she is added last */
 export function garden(w: World, hedgeTx: number[], plucker: { x: number; from: number; endX: number; speed?: number }) {
@@ -262,6 +288,33 @@ const tawa: Act = {
       { period: 600, liquid: 300 },
     );
     sign(w, x + 0.2, 10.4, 3.4, 'TAWA', 'shop', null, 'hot');
+  },
+};
+
+/** DIS-04 act 2: the cook works from the far end: the crepe nearest you is poured last. */
+const bhogali: Act = {
+  id: 'dis04-bhogali',
+  w: 30,
+  advice: 'Another pan, and a slow cook: each crepe is poured only a little after the one before it. Wait on the bank until the near one is freshly poured, then wait on each crepe until the next one shines, and only then hop.',
+  cps: [1.5],
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 24);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    pitha(
+      w,
+      x + 3,
+      x + 24,
+      [
+        { x: x + 4, w: 4, o: 0 },
+        { x: x + 11, w: 4, o: 540 },
+        { x: x + 18, w: 4, o: 440 },
+      ],
+      x + 1,
+      { period: 640, liquid: 320 },
+    );
+    sign(w, x + 0.4, 10.4, 3.4, 'BHOGALI', 'shop', null, 'magh bihu');
   },
 };
 
@@ -387,6 +440,25 @@ const majuli: Act = {
       x + 25,
     );
     sign(w, x + 0.4, 10.4, 3.4, 'MAJULI GHAT', 'shop', null, 'run');
+  },
+};
+
+/** DIS-06 act 2: a wide channel, five slabs, and a dry bar to rest on in the middle (the shelter). */
+const chapori6: Act = {
+  id: 'dis06-chapori',
+  w: 46,
+  advice: 'A wide channel with a rock in the middle that the river never takes: run the first three slabs, stop on the rock and get your breath, and the second stretch starts going only when you step off the rock.',
+  cps: [1.5, 18.5],
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 3, x + 16);
+    g.pit(x + 21, x + 38);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    bank(w, [{ x: x + 4, w: 4, t: 230 }, { x: x + 8, w: 4, t: 320 }, { x: x + 12, w: 5, t: 410 }], x + 0.6, x - 4, x + 3, x + 17);
+    bank(w, [{ x: x + 23, w: 4, t: 230 }, { x: x + 28, w: 4, t: 320 }, { x: x + 33, w: 4, t: 410 }], x + 20.4, x + 17, x + 21, x + 39);
+    sign(w, x + 17.6, 10.4, 3.2, 'SHILA', 'shop', null, 'the rock');
   },
 };
 
@@ -623,11 +695,11 @@ void hutDoor;
 
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), shape: 'tour', meta: { family: 'carrier-spills-on-contact', betrayals: ['carrier-spill'], ending: 'dis-tea-tray' } },
-  longStage({ base: charRoom(), acts: [chapori], twist: 'dis-hut-shut', par: 24, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
+  longStage({ base: charRoom(), acts: [chapori, dhar], twist: 'dis-hut-shut', par: 24, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
   longStage({ base: teaRoom(), acts: [bagan], twist: 'dis-tea-chest', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-tea-chest' } }),
-  longStage({ base: pithaRoom(), acts: [tawa], twist: 'dis-laru-plate', par: 40, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
+  longStage({ base: pithaRoom(), acts: [tawa, bhogali], twist: 'dis-laru-plate', par: 40, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
   longStage({ base: gamosaRoom(), acts: [atithi], twist: 'dis-gamosa-latch', par: 60, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
-  longStage({ base: majuliRoom(), acts: [majuli], twist: 'dis-tea-ladder', par: 50, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
+  longStage({ base: majuliRoom(), acts: [majuli, chapori6], twist: 'dis-tea-ladder', par: 50, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
   longStage({ base: husoriRoom(), acts: [ghar, chowk], twist: 'dis-gamosa-door', par: 150, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-gamosa-door' } }),
   longStage({ base: gorhRoom(), acts: [kaziranga], twist: 'dis-watch-tower', par: 70, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
   longStage({ base: rangGharRoom(), acts: [kaidhara], twist: 'dis-royal-seat', par: 80, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),

@@ -94,7 +94,7 @@ function follow(k: number, gap = 58, wetK = -1): (w: World) => { move: 'L' | 'R'
 // ------------------------------------------------------------------ DIS-04: the pan
 const pans = (w: World) => (w.flags.pans ?? []) as Pan[];
 /** across pan k, crepe by crepe: hop to the next one once it is poured and shiny, with time to spare */
-function crossPan(k: number, margin = 90, onto: 'bank' | 'ground' = 'bank'): (w: World) => { move: 'L' | 'R' | ''; jump: boolean } {
+function crossPan(k: number, margin = 90, first = 0): (w: World) => { move: 'L' | 'R' | ''; jump: boolean } {
   let W: World | null = null;
   let hold = 0;
   return (w) => {
@@ -102,7 +102,6 @@ function crossPan(k: number, margin = 90, onto: 'bank' | 'ground' = 'bank'): (w:
       W = w;
       hold = 0;
     }
-    void onto;
     const pan = pans(w)[k];
     const p = w.player;
     if (hold > 0) {
@@ -123,7 +122,7 @@ function crossPan(k: number, margin = 90, onto: 'bank' | 'ground' = 'bank'): (w:
     }
     if (pan.started < 0) return { move: 'R', jump: false };
     const st = pan.stateOf(w, i);
-    const ready = st.s === 'liquid' && st.left > margin;
+    const ready = st.s === 'liquid' && st.left > (curS ? margin : Math.max(margin, first));
     if (!ready) return { move: '', jump: false };
     if (edge - p.cx > 9) return { move: 'R', jump: false };
     hold = 13;
@@ -377,11 +376,37 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...hopR(x + 40.0, 'over the third pit', 14),
     { hold: 'R', until: and(ground, X(x + 48)), max: 400 },
   ],
+  'dis04-bhogali': (x) => [{ policy: crossPan(2, 60, 280), until: and(ground, X(x + 29)), max: 4000, note: 'the far-end cook: wait for the near crepe' }],
+  'dis06-chapori': (x) => [
+    { hold: 'R', until: X(x + 2.7), max: 600, note: 'run to the edge' },
+    { hold: 'R', jump: 14, ticks: 14, note: 'over the channel' },
+    { hold: 'R', until: and(ground, X(x + 17.6)), max: 600, note: 'across the slabs and on to the rock' },
+    { hold: '', ticks: 60, note: 'a breath on the rock' },
+    { hold: 'R', until: X(x + 20.0), max: 300 },
+    { hold: 'R', jump: 14, ticks: 14, note: 'off the rock over the water' },
+    { hold: 'R', until: ground, max: 200 },
+    ...hopR(x + 26.4, 'on across', 12),
+    ...hopR(x + 31.4, 'and on', 12),
+    ...hopR(x + 36.4, 'and off', 12),
+    { hold: 'R', until: and(ground, X(x + 45)), max: 600 },
+  ],
   'dis04-tawa': (x) => [
     { policy: crossPan(1, 60), until: and(ground, X(x + 37)), max: 4000, note: 'four crepes, one after the other' },
   ],
   'dis03-bagan': (x) => [
     { policy: follow(1, 58, 0), until: and(ground, X(x + 33.4)), max: 6000, note: 'behind her again; before the wet path, wait till it is dry' },
+  ],
+  'dis02-dhar': (x) => [
+    ...hopR(x + 1.4, 'on to the first bar', 12),
+    { hold: '', until: and(ground, barUp(2, 1, 4)), max: 900, note: 'wait for the siren and the next bar' },
+    ...hopR(x + 7.6, 'on to the new bar', 12),
+    { hold: 'R', until: X(x + 15.8), max: 300, note: 'along to its right end while the next bar comes up' },
+    { hold: '', until: and(ground, barUp(2, 2, 4)), max: 900, note: 'the next bar is up: go at once' },
+    { hold: 'R', jump: 12, ticks: 12, note: 'on to the far bar, before this one narrows' },
+    { hold: 'R', until: ground, max: 200 },
+    ...hopR(x + 23.6, 'on to the bank bar', 12),
+    ...hopR(x + 31.0, 'and off', 12),
+    { hold: 'R', until: and(ground, X(x + 35)), max: 300 },
   ],
   'dis02-chapori': (x) => [
     ...hopR(x + 1.4, 'on to the first bar', 12),
