@@ -25,7 +25,7 @@ if (which === 'all' || which === 'menus') {
   await page.screenshot({ path: `shots/intro-${tag}.png` });
 }
 if (which === 'all' || which === 'levels') {
-  const ids = await page.evaluate(() => ['HYD','BLR','BOM'].flatMap(c => [1,2,3,4,5].map(i => `${c}-0${i}`)));
+  const ids = await page.evaluate(() => ['HYD','BLR','BOM'].flatMap(c => [1,2,3,4,5].map(i => `${c}-${String(i).padStart(2, "0")}`)));
   await page.evaluate(() => { window.__ldd.store.data.seenControls = true; window.__ldd.input.usingTouch = true; });
   for (const id of ids) {
     await page.evaluate((id) => window.__ldd.startStage(id, null), id);

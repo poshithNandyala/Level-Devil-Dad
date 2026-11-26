@@ -27,7 +27,7 @@ await page.evaluate(() => {
   const done = (id, t, got) => (a.store.data.stages[id] = { attempts: 3, deaths: 2, cleared: true, best: t, got });
   for (const c of ['TVM', 'KVT', 'CHN', 'PDY']) {
     const n = c === 'KVT' ? 3 : 5;
-    for (let i = 1; i <= n; i++) done(`${c}-0${i}`, 5 + i, i % 2 === 0);
+    for (let i = 1; i <= n; i++) done(`${c}-${String(i).padStart(2, "0")}`, 5 + i, i % 2 === 0);
     a.store.data.stamps[c] = 7;
   }
   a.store.save();

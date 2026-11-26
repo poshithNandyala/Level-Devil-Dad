@@ -25,8 +25,9 @@ export function levelsOf(city: CityId): LevelDef[] {
 }
 
 export function normalizeCode(raw: string): string | null {
-  const m = raw.trim().toUpperCase().replace(/\s+/g, '').match(/^([A-Z]{3})-?0?(\d)$/);
+  // stages run 01..10: "rnc5", "RNC-05" and "RNC-10" all work
+  const m = raw.trim().toUpperCase().replace(/\s+/g, '').match(/^([A-Z]{3})-?(\d{1,2})$/);
   if (!m) return null;
-  const id = `${m[1]}-0${m[2]}`;
+  const id = `${m[1]}-${m[2].padStart(2, '0')}`;
   return LEVEL_BY_ID.has(id) ? id : null;
 }
