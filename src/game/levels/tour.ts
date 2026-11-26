@@ -34,8 +34,6 @@ export const COURSES = {
   RPR: [{ k: 'posts', x: 12, n: 3 }, { k: 'ditch', x: 26, w: 2 }, { k: 'steps', x: 40, n: 3, run: 2, top: 3 }, { k: 'ferry', x: 56, w: 14, kind: 'traincar', label: 'RAIPUR JN' }, { k: 'parked', x: 82 }],
   BPL: [{ k: 'steps', x: 12, n: 3, run: 2, top: 3 }, { k: 'posts', x: 28, n: 3 }, { k: 'ditch', x: 44, w: 2 }, { k: 'ferry', x: 54, w: 14, kind: 'traincar', label: 'BHOPAL JN' }, { k: 'parked', x: 80 }],
   JAI: [{ k: 'posts', x: 12, n: 3 }, { k: 'steps', x: 26, n: 3, run: 2, top: 3 }, { k: 'parked', x: 46 }, { k: 'ferry', x: 56, w: 14, kind: 'traincar', label: 'PINK LINE' }, { k: 'ditch', x: 80, w: 2 }],
-  // a ride on the local over the nala
-  BOM: [{ k: 'posts', x: 12, n: 3 }, { k: 'ditch', x: 24, w: 2 }, { k: 'parked', x: 34 }, { k: 'ferry', x: 46, w: 16, kind: 'traincar', wet: true, label: 'CHURCHGATE' }, { k: 'wall', x: 70 }, { k: 'steps', x: 78, n: 2, run: 2, top: 2 }],
   // the Rock Garden's steps and a ride up the plateau road from Ranchi station
 } as Record<CityId, TourSeg[]>;
 

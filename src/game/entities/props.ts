@@ -177,7 +177,6 @@ export const CAUSE_LINES: Record<string, string[]> = {
   chapda: ['Chapda! The red ants bite, and they don’t let go.', 'Wait for the whole bridge, then run it without stopping. And don’t keep them waiting.'],
   matka: ['Matka phoot gyo! The pots came down!', 'Smooth, Dad: no sudden stops with pots on your head!'],
   splat: ['Slide down, don’t drop down!', 'Seven floors, zero brakes!'],
-  spilled: ['Dabbawalas never spill, Dad!', 'Lunch is on the floor now!'],
   'holi-fell': ['Wrong colour, Dad!', 'Bura na mano, Holi hai!'],
   bends: ['Safety stop, Dad! Safety stop!', 'Up too fast!'],
 };

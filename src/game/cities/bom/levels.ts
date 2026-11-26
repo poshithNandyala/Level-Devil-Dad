@@ -1,20 +1,20 @@
-import { Entity, type Hazard, type LevelDef, type World } from '../world';
-import { Solid } from '../body';
-import { LINES } from '../cities';
-import { arc, door, floater, panel, platform, prop, px, rival, sign, train, water, collectible } from './kit';
-import { Thing } from '../entities/traps';
-import { ChawlWall, Facade } from '../entities/abilities';
-import { DT, secs } from '../constants';
-import { Act, G, pool } from './acts';
-import { text } from './endkit';
-import { onPass } from './trolls';
-import { tour } from './tour';
-import { longStage } from './chunks';
-import { Grid } from './grid';
+import { Entity, type Hazard, type LevelDef, type World } from '../../world';
+import { Solid } from '../../body';
+import { lines as L } from './lines';
+import { arc, door, floater, panel, platform, prop, px, rival, sign, train, water, collectible } from '../../levels/kit';
+import { Thing } from '../../entities/traps';
+import { ChawlWall, Facade } from '../../entities/abilities';
+import { DT, secs } from '../../constants';
+import { Act, G, pool } from '../../levels/acts';
+import { text } from '../../levels/endkit';
+import { onPass } from '../../levels/trolls';
+import { tour } from '../../levels/tour';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
 
 // Mumbai: the station platform moves while the train stays still.
 
-const TAUNTS = LINES.BOM.taunt;
+const TAUNTS = L.taunt;
 
 
 // ------------------------------------------------------------------ acts (one per stage, never repeated)
@@ -245,7 +245,7 @@ function chawlRoom(): LevelDef {
       panel(w, 10.7, 12, 0.3, 3, '#BCAAA4', 'rgba(0,0,0,0.3)');
       sign(w, 3, 10.6, 3.4, 'SEEDHI BAND', 'warn', null, 'stairs closed');
       prop(w, 'lamp', 5, 15);
-      rival(w, 4, 15, 1, { intro: 'Seedhi band, bhau! Bhintivarun chadh! | Stairs are shut, bro! Climb the walls!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.BOM.beaten[1] });
+      rival(w, 4, 15, 1, { intro: 'Seedhi band, bhau! Bhintivarun chadh! | Stairs are shut, bro! Climb the walls!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       onPass(w, px(11), (w2) => w2.guide('Bhintila laath maar, ani parat udi! | Kick off the wall, and jump again!'));
       collectible(w, 'vada', 12, 6.5);
     },
@@ -525,7 +525,7 @@ function dabbaRoom(): LevelDef {
       w.add(new (class extends Entity { draw(ctx: CanvasRenderingContext2D) { dabbawala(ctx, px(0.6), px(15)); } })()).layer = -1;
       prop(w, 'rails', 17, 18, {}, -9);
       prop(w, 'board', 21, 5, { name: 'CHURCHGATE', local: 'चर्चगेट', w: 70 }, -8);
-      rival(w, 4, 15, 1, { intro: 'Dabba ghe-un dhaav, bhau! Udya maar! | Run with the dabba, bro! Jump around!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.BOM.beaten[0] });
+      rival(w, 4, 15, 1, { intro: 'Dabba ghe-un dhaav, bhau! Udya maar! | Run with the dabba, bro! Jump around!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       w.say('Dabba ghya! Udi marli tar sagla sandla! | Take the dabba! Jump and it all spills!', px(0.6), px(10.5), 3, 'npc');
       collectible(w, 'vada', 21, 7.6);
     },
@@ -699,13 +699,13 @@ function twinRoom(): LevelDef {
       const wt = laneWall(w, 22, GALLERY - 3, 3, 'twin');
       plate(w, 25, 15, 2, 'dad', (w2) => wt.open(w2));
       w.add(new Facade(0, px(1), px(32), px(7), '#E3D3B5', 11));
-      rival(w, 4, 15, 1, { intro: 'Upar dekh, Dad! Tera judwa bhai! | Look up, Dad! Your twin brother!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.BOM.beaten[1] });
+      rival(w, 4, 15, 1, { intro: 'Upar dekh, Dad! Tera judwa bhai! | Look up, Dad! Your twin brother!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       collectible(w, 'vada', 19, 4.6);
     },
   };
 }
 
-export const BOM: LevelDef[] = [
+export const levels = (): LevelDef[] => [
   tour({
     id: 'BOM-01',
     city: 'BOM',
