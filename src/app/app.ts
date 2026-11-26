@@ -14,6 +14,8 @@ import { fmtTime, h, toast } from '../ui/dom';
 import { IndiaMap, ChapterStatus } from '../ui/mapview';
 import { CHAPTERS, Chapter, LINES, chapterOf } from '../game/cities';
 import { makeCard } from '../ui/card';
+import { HintSheet } from '../ui/hintsheet';
+import { homeChapter, homeId, homeLine, homePicker, setHome } from '../ui/home';
 import { drawIcon } from '../render/art/icon';
 import { GAME } from '../config';
 import { Challenge, LIVES, Session } from './session';
@@ -45,6 +47,11 @@ export class App {
   private versionTaps = 0;
   private unlocked = false;
   pending: Challenge | null = null;
+  private hint: HintSheet | null = null;
+  /** what the hint was opened at: a death or a restart after this closes it */
+  private hintAt = { attempt: 0, deaths: 0 };
+  /** the hint page you last read, per stage (reopening carries on from there) */
+  private hintPage = new Map<string, number>();
 
   constructor(root: HTMLElement) {
     this.root = root;
@@ -99,6 +106,7 @@ export class App {
       if (c) this.openChallenge(c);
     });
     if (this.pending) this.openChallenge(this.pending);
+    else if (homeId(this.store.data) === undefined) this.showHomePicker('first');
     else this.showTitle();
     requestAnimationFrame((t) => this.frame(t));
   }
@@ -527,6 +535,8 @@ export class App {
     const next = this.nextStage();
     const current = focus ?? (next ? chapterOf(next.city).id : CHAPTERS.filter((c) => this.chapterStatus(c) === 'cleared').pop()?.id ?? 'TVM');
     const card = h('div.citycard');
+    const home = homeChapter(d);
+    const status = (c: Chapter) => this.chapterStatus(c);
     const accent = (c: Chapter) => (c.city ? THEMES[c.city].ui : '#8C7A5E');
     const fill = (c: Chapter) => {
       card.innerHTML = '';
@@ -536,6 +546,7 @@ export class App {
       card.append(
         h('div.cc-name', c.name),
         h('div.cc-state', c.state + (c.bonus ? '  ·  bonus' : c.preview ? '  ·  preview' : '')),
+        ...(home?.id === c.id ? [h('div.homebadge', '🏠 Your city · ' + homeLine(c, status))] : []),
         h('div.cc-hello', bi(c.hello).main),
         ...(bi(c.hello).en ? [h('div.cc-hello-en', bi(c.hello).en!)] : []),
         h('p.cc-famous', c.famous),
@@ -575,6 +586,7 @@ export class App {
       accent,
       selected: current,
       fresh,
+      home: home ? { id: home.id, line: homeLine(home, status) } : undefined,
       onSelect: (c) => {
         this.audio.play('ui');
         fill(c);
@@ -621,7 +633,7 @@ export class App {
       h('button.btn.ghost.small.back', { onclick: () => (this.audio.play('uiBack'), this.showJourney(chapterOf(city).id)) }, '← Map'),
       h(
         'div.col.fade-in',
-        h('div.row', h('p.h1', th.name), h('p.h2', { style: { opacity: 0.6, fontFamily: 'system-ui, sans-serif' } }, th.local)),
+        h('div.row', h('p.h1', th.name), h('p.h2', { style: { opacity: 0.6, fontFamily: 'system-ui, sans-serif' } }, th.local), homeChapter(d)?.city === city ? h('div.homebadge', '🏠 Your city') : null),
         h('p.sub', CITY_LINE[city]),
         h('div.stages', ...cards),
       ),
@@ -729,6 +741,7 @@ export class App {
       this.store.log('quit', this.session.def.id, { attempts: this.session.attempt, deaths: this.session.deaths });
     }
     this.session = null;
+    this.hint?.close(true);
     this.hud?.destroy();
     this.hud = null;
     document.body.classList.remove('playing');
@@ -787,27 +800,97 @@ export class App {
     this.acc = 0;
   }
 
+  /** The hint: a slim strip under the HUD. Play goes on (from the pause menu it resumes), the stage stays
+   *  in view, and a death or a restart closes it. It may name what's ahead: the player asked. */
   showHint() {
     const s = this.session;
-    if (!s) return;
-    s.paused = true;
+    if (!s || s.done) return;
     s.hintUsed = true;
     this.store.stage(s.def.id).hint = true;
     this.store.log('hint', s.def.id, { deaths: s.deaths });
     this.audio.play('ui');
-    this.modalEl.innerHTML = '';
-    this.modalEl.append(
-      h(
-        'div.layer',
-        h(
-          'div.panel.col.fade-in',
-          { style: { maxWidth: '460px', textAlign: 'center' } },
-          h('p.h2', '💡 Hint'),
-          h('p', { style: { fontSize: '18px', fontWeight: 700, margin: '4px 0 8px', lineHeight: 1.3 } }, s.def.hint),
-          h('button.btn.big', { onclick: () => (this.audio.play('ui'), this.resume()) }, 'Got it'),
-        ),
-      ),
+    if (s.paused) this.resume();
+    this.hint?.close(true);
+    // the postcard and the stage title sit in the same spot: the hint replaces them
+    this.hudEl.querySelectorAll('.postcard, .stagebanner').forEach((e) => e.remove());
+    const id = s.def.id;
+    const sheet = new HintSheet(
+      s.def.hint,
+      this.hintPage.get(id) ?? 0,
+      () => this.hint === sheet && (this.hint = null),
+      (p) => this.hintPage.set(id, p),
     );
+    this.hint = sheet;
+    this.hintAt = { attempt: s.attempt, deaths: s.deaths };
+    this.hudEl.appendChild(sheet.el);
+  }
+
+  /** every frame while a hint is up: close it on a death or restart; see-through over Dad or the door */
+  hintTick() {
+    const sheet = this.hint,
+      s = this.session;
+    if (!sheet) return;
+    if (!s || s.done || s.attempt !== this.hintAt.attempt || s.deaths !== this.hintAt.deaths) return sheet.close();
+    const w = s.world,
+      v = this.view,
+      k = v.s;
+    const left = v.ox - this.renderer.camX * k;
+    const mirror = w.flags.view === 'mirror';
+    const box = (x: number, y: number, bw: number, bh: number) => {
+      let sx = left + x * k;
+      if (mirror) sx = v.W - sx - bw * k;
+      return { x: sx, y: v.oy + y * k, w: bw * k, h: bh * k };
+    };
+    const p = w.player;
+    const boxes = [box(p.x, p.y, p.w, p.h)];
+    for (const ex of w.exits) {
+      const z = ex.zone();
+      if (z) boxes.push(box(z.x, z.y, z.w, z.h));
+    }
+    sheet.seeThrough(boxes);
+  }
+
+  // ============================================================ home city
+  /** "Where are you from?": on first launch, or from settings. */
+  showHomePicker(from: 'first' | 'title' | 'pause') {
+    const d = this.store.data;
+    const done = () => {
+      if (from === 'pause' && this.session) this.showSettings('pause');
+      else if (from === 'title') this.showSettings('title');
+      else this.showTitle();
+    };
+    const panel = homePicker({
+      current: homeId(d) || undefined,
+      first: from === 'first',
+      onPick: (c) => {
+        setHome(d, c.id);
+        this.store.save(true);
+        this.store.log('home', c.id);
+        this.audio.play('ui');
+        done();
+        toast(this.ui, `${c.name}: ${homeLine(c, (x) => this.chapterStatus(x))}`);
+      },
+      onSkip: () => {
+        if (homeId(d) === undefined) setHome(d, '');
+        this.store.save(true);
+        this.audio.play('uiBack');
+        done();
+      },
+      onClear: () => {
+        setHome(d, '');
+        this.store.save(true);
+        this.audio.play('uiBack');
+        done();
+      },
+    });
+    if (from === 'pause') {
+      this.modalEl.innerHTML = '';
+      this.modalEl.append(h('div.layer', panel));
+    } else {
+      this.screen = 'home';
+      this.clearUI();
+      this.screenEl.append(panel);
+    }
   }
 
   leaveToStages() {
@@ -843,8 +926,9 @@ export class App {
 
   private shareStage(def: LevelDef, deaths: number, t: number | null) {
     const th = THEMES[def.city];
-    const card = makeCard({ kind: 'stage', code: def.id, headline: `Escaped ${th.name}`, deaths, time: t, character: this.store.data.settings.character });
-    const text = `Escaped ${th.name} ${def.id} "${def.name}". ${deaths} ${deaths === 1 ? 'death' : 'deaths'}.${t !== null ? ` Best clear: ${t.toFixed(1)}s.` : ''} Try ${def.id} in ${GAME.title}!`;
+    const mine = homeChapter(this.store.data)?.city === def.city;
+    const card = makeCard({ kind: 'stage', code: def.id, headline: `Escaped ${th.name}`, deaths, time: t, character: this.store.data.settings.character, home: mine });
+    const text = `Escaped ${th.name} ${def.id} "${def.name}"${mine ? ', my home city' : ''}. ${deaths} ${deaths === 1 ? 'death' : 'deaths'}.${t !== null ? ` Best clear: ${t.toFixed(1)}s.` : ''} Try ${def.id} in ${GAME.title}!`;
     this.doShare(card, text, this.shareLink(def.id, t, deaths));
   }
 
@@ -999,8 +1083,9 @@ export class App {
       this.fx.shake = 5;
     }, 420);
     const share = () => {
-      const card = makeCard({ kind: 'city', code: worst.id, headline: `Escaped ${th.name}`, deaths, time: bestT, character: this.store.data.settings.character });
-      const text = `Escaped ${th.name}. ${deaths} deaths.${bestT !== null ? ` Best clear: ${bestT.toFixed(1)}s.` : ''} Try ${worst.id} in ${GAME.title}!`;
+      const mine = homeChapter(this.store.data)?.city === city;
+      const card = makeCard({ kind: 'city', code: worst.id, headline: `Escaped ${th.name}`, deaths, time: bestT, character: this.store.data.settings.character, home: mine });
+      const text = `Escaped ${th.name}${mine ? ', my home city' : ''}. ${deaths} deaths.${bestT !== null ? ` Best clear: ${bestT.toFixed(1)}s.` : ''} Try ${worst.id} in ${GAME.title}!`;
       this.doShare(card, text, this.shareLink(worst.id, bestT, this.store.data.stages[worst.id]?.firstClearDeaths ?? deaths));
     };
     const nextLine = nextCh ? (nextCity && this.chapterStatus(nextCh) === 'open' ? `Next stop: ${nextCh.name}.` : `Next stop: ${nextCh.name}, coming in the next update.`) : 'You crossed all of India!';
@@ -1094,6 +1179,12 @@ export class App {
           ['papa', 'Papa'],
           ['mummy', 'Mummy'],
         ]),
+        h('div.section', 'Home city'),
+        h(
+          'div.setting',
+          h('span.lbl', 'Where are you from?', h('small', homeChapter(this.store.data)?.name ?? 'not set')),
+          h('button.btn.small.ghost', { onclick: () => (this.audio.play('ui'), this.showHomePicker(from)) }, homeChapter(this.store.data) ? 'Change' : 'Pick'),
+        ),
         h('div.section', 'Progress'),
         h(
           'div.setting',
@@ -1105,7 +1196,10 @@ export class App {
               onclick: (e: Event) => {
                 const b = e.currentTarget as HTMLButtonElement;
                 if (b.dataset.armed) {
+                  const home = homeId(this.store.data);
                   this.store.reset();
+                  if (home !== undefined) setHome(this.store.data, home);
+                  this.store.save(true);
                   toast(this.ui, 'Progress reset.');
                   close();
                 } else {
@@ -1313,6 +1407,7 @@ class Hud {
       this.timerEl.textContent = t;
     }
     if (performance.now() - this.shownAt > 2600) this.nameEl.style.opacity = '0.55';
+    this.app.hintTick();
   }
 
   destroy() {

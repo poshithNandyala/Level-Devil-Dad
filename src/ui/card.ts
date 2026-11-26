@@ -12,6 +12,8 @@ export interface CardInfo {
   deaths: number;
   time: number | null;
   character: 'papa' | 'mummy';
+  /** it was the player's home city: a small line above the headline */
+  home?: boolean;
 }
 
 /** A 1080x1080 share card: the room (initial state, so no spoilers), the result and the challenge code. */
@@ -55,6 +57,11 @@ export function makeCard(info: CardInfo): HTMLCanvasElement {
 
   // headline
   ctx.textAlign = 'center';
+  if (info.home) {
+    ctx.font = `800 40px ${FONT}`;
+    ctx.fillStyle = '#FFD166';
+    ctx.fillText('MY HOME CITY', S / 2, 652);
+  }
   ctx.font = `800 92px ${FONT}`;
   ctx.fillStyle = th.ui;
   ctx.fillText(info.headline.toUpperCase(), S / 2, 720);
