@@ -223,6 +223,32 @@ const curlStair: Policy = (w, m) => {
   return go('');
 };
 
+// ------------------------------------------------------------------ BBI-05
+const room05 = (): Step[] => [...hop(11.2, 'run and jump the channel, over the still mill', 14), { hold: 'R', until: X(31.5), max: 600 }];
+const act05a = (x: number): Step[] => [
+  ...hop(x + 0.7, 'up on the straw', 15),
+  { hold: 'R', until: X(x + 2.9), max: 300 },
+  { hold: 'R', jump: 15, ticks: 15, note: 'jump the husk pit from the straw' },
+  { hold: 'R', until: ground, max: 300 },
+  { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 16.75) - 4, max: 600 },
+  { hold: 'R', jump: 15, ticks: 15, note: 'from right against the stone, straight up the step' },
+  { hold: 'R', until: ground, max: 300 },
+  { hold: 'R', until: and(ground, X(x + 25.5)), max: 600 },
+];
+const act05b = (x: number): Step[] => [...hop(x + 4.4, 'jump over the cart, touching nothing', 14), { hold: 'R', until: X(x + 23.5), max: 600 }];
+const behindStep: Policy = () => go('R');
+const verandahPolicy: Policy = (w, m) => {
+  const d = w.entities.find((e: any) => e.constructor?.name === 'Door' && !e.fake) as any;
+  const D = Math.round(d.x / 16);
+  const p = w.player;
+  if (m.hold > 0) return { move: 'R', jump: true };
+  if (p.onGround && p.y + p.h >= 239 && p.x + p.w >= px(D - 6) - 2 && p.x < px(D - 4)) {
+    m.hold = 15;
+    return { move: 'R', jump: true };
+  }
+  return go('R');
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['BBI-01'] = [...pastG1(), ...tourTail()];
   S['BBI-02'] = room02();
@@ -231,28 +257,40 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('BBI-03', 0, []);
   S['BBI-04'] = room04();
   lengthen('BBI-04', 0, []);
+  S['BBI-05'] = room05();
+  lengthen('BBI-05', 0, []);
+  fix['BBI-05'].steps = [...S['BBI-05'].slice(0, -1), { policy: (w) => verandahPolicy(w, fixMem(w), null as unknown as Door), until: done, max: 1500, note: 'up to the front door on the verandah' }];
   void lengthen;
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'BBI-05': { steps: [{ hold: 'R', until: X(11.7), max: 600 }, { hold: 'R', jump: 3, ticks: 8, note: 'a little hop on to the stone in the channel' }, { hold: '', until: done, max: 600 }], cause: 'bbi-jaanta' },
   'BBI-04': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'bbi-agni' },
   'BBI-03': { steps: [...hop(3.6, 'jump for the first parasol'), { hold: 'R', until: done, max: 600 }], cause: 'bbi-rangapani' },
   'BBI-02': { steps: [...board02(), onPad(36, 44), { hold: '', until: done, max: 900, note: 'wait at the front, nearest the far side' }], cause: 'bbi-ball' },
   'BBI-01': { steps: [...tourHead(), ...hop(28.6, 'just walk on and hop the drain'), { hold: 'R', until: done, max: 900 }], cause: 'bbi-nala' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'BBI-05': { steps: [], cause: 'bbi-sila' },
   'BBI-04': { steps: [passTorch(9, r4on, 'keep moving, as learnt'), { hold: 'R', until: X(15.6), max: 400 }, { hold: 'R', jump: 15, ticks: 15, note: 'and jump the trough' }, { hold: 'R', until: done, max: 600 }], cause: 'bbi-kunda' },
   'BBI-03': { steps: [{ hold: 'R', until: X(3.4), max: 600 }, waitFor((w) => p3(w, 0).open(w), 'wait for the customer'), leap((w) => (w.flags.bbi3p as { rig: { x: number } }[])[0].rig.x + 9, 'land on the near side of the silk'), { hold: '', until: done, max: 900, note: 'stand where you landed' }], cause: 'bbi-silk' },
   'BBI-02': { steps: [...board02(), onPad(4, 12), { hold: '', until: (w) => k2(w).ball === 'rebound', max: 900 }, { hold: 'R', until: done, max: 900, note: 'off the moment he lands, and on' }], cause: 'bbi-rebound' },
   'BBI-01': { steps: [...pastG1(), ...tourTail().slice(0, 15), ...hop(72.2, 'jump the drain at its lip, as before'), { hold: 'R', until: done, max: 900 }], cause: 'bbi-nala' },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'BBI-05': [{ what: 'walk the rice pounder across the pit', steps: [...room05(), ...hop(32.7, 'up on the straw', 15), { hold: 'R', until: done, max: 900, note: 'and walk down the pounder' }], cause: 'bbi-dhenki' }],
   'BBI-04': [{ what: 'stop and wait for the torch, then go', steps: [{ hold: 'R', until: X(6.4), max: 300 }, { hold: '', until: (w) => !r4on(w, 0) && (w.tick - t0of(w, 'bbi4r')) / 120 > 1.0, max: 600 }, { hold: 'R', until: done, max: 600 }], cause: 'bbi-jhala' }],
   'BBI-03': [{ what: 'wait on the third parasol’s cut-out', steps: [...room03().slice(0, 7), stayOn(cut3(2), done, 'wait for the next customer', 1500)], cause: 'bbi-peeled' }],
   'BBI-01': [{ what: 'stop and wait for the gardener, as Tara says', steps: [...hop(8.6, 'the ditch'), { hold: 'R', until: X(21), max: 600 }, { hold: '', until: done, max: 900 }], cause: 'bbi-nala' }],
 };
-const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04 };
-const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair };
+let fm: { w: World | null; m: Mem } = { w: null, m: { hold: 0 } };
+const fixMem = (w: World) => {
+  if (fm.w !== w) fm = { w, m: { hold: 0 } };
+  if (fm.m.hold > 0) fm.m.hold--;
+  return fm.m;
+};
+const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b };
+const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep };
 void and;
 
 export const test: CityTests = {
@@ -262,5 +300,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['BBI-01', 'BBI-02', 'BBI-03', 'BBI-04'],
+  fair: ['BBI-01', 'BBI-02', 'BBI-03', 'BBI-04', 'BBI-05'],
 };

@@ -11,4 +11,9 @@ export const causeLines: Record<string, string[]> = {
   'bbi-agni': ['The blowtorch, Dad! Right on you.', 'Pass under a torch between its bursts.'],
   'bbi-jhala': ['Fresh solder! That curl was still glowing.', 'He solders a curl ahead wherever you stand still: keep moving, and wait for a glow to fade.'],
   'bbi-kunda': ['Into the quench trough, Dad.', 'Don’t jump it: stop at the edge and let him build the bridge.'],
+  'bbi-jaanta': ['You started the hand mill, Dad. It spun you off.', 'It’s Raja: nothing moves unless you start it. Touch nothing: jump the channel from the bank.'],
+  'bbi-dhan': ['Into the paddy channel, Dad.', 'Run and jump it from the bank, right over the still mill.'],
+  'bbi-dhenki': ['You stepped on the rice pounder, and it tipped you in.', 'Touch nothing: jump the husk pit from the top of the straw.'],
+  'bbi-sila': ['You set the grinding roller rolling, Dad.', 'Don’t use the stone as a stair: jump straight up the step. On the verandah, it’s waiting too.'],
+  'bbi-gadi': ['You woke the bullocks: they pulled you into the beam.', 'Don’t climb on the cart: jump over it and walk under the beam.'],
 };
