@@ -423,6 +423,44 @@ export const doosra: Act = {
   },
 };
 
+// ================================================================== the act: the third hall, where the crowd comes back
+export const teesra: Act = {
+  id: 'svp07-teesra',
+  w: 48,
+  advice: 'A third hall. The crowd goes over the trench one way, and then the board says WRONG SHIP and they all come back the other way. Stay in the trench for both.',
+  cps: [25],
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 4, x + 11);
+    g.pit(x + 24, x + 26).fill(x + 24, x + 26, 17, 17, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const back = new Crowd(px(x + 13), px(x + 44), 150, 72);
+    const crowd = new Crowd(px(x + 42), px(x + 13), 150, 72);
+    const hall = new Hall([{ x: px(x + 4), w: px(3), h: 24 }, { x: px(x + 7), w: px(5), h: 16 }], 900, crowd, [px(x + 4), px(x + 12)], 0, [px(x + 38) + 8, px(x + 39) + 8, px(x + 40) + 8, px(x + 41) + 8]).install(w);
+    w.add(back);
+    w.add(back.hurt);
+    crowd.onArrive = (w2) => w2.after(1.6, () => back.go());
+    (w.flags.halls ??= []).push(hall);
+    (w.flags.backs ??= []).push(back);
+    trenchArt(w, x + 24, x + 26);
+    w.add(
+      new Fx(null, (ctx) => {
+        if (!crowd.done || back.done) return;
+        // the board over the pier flips
+        const bx = px(x + 20);
+        ctx.fillStyle = '#16303A';
+        ctx.fillRect(bx, FLOOR - 82, 64, 18);
+        ctx.strokeStyle = '#E8423A';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(bx + 0.5, FLOOR - 81.5, 63, 17);
+        text(ctx, 'WRONG SHIP', bx + 32, FLOOR - 73, 7, '#F2A33A', '');
+      }, 3),
+    );
+  },
+};
+
 // ================================================================== the door: the ticket window
 export const ticketWindow: Ending = {
   space: 13,

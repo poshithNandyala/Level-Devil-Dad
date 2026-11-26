@@ -174,14 +174,18 @@ export function tasveerRoom(): LevelDef {
 // ================================================================== the act
 export const dekho: Act = {
   id: 'svp05-dekho',
-  w: 56,
-  advice: 'Two more views. The first has two benches: the first picture takes you to the little island in the middle, and the island has a bench of its own for the rest. The second has its footprints a long way from the bench: it’s the footprints that count.',
-  cps: [17.2, 30],
+  w: 112,
+  advice: 'More views, further on. The first has two benches: the first picture takes you to the little island in the middle, and the island has a bench of its own for the rest. The next has its footprints a long way from the bench: it’s the footprints that count. After it the ledge is a stair going up, and the last view is a long gap that holds a little longer.',
+  cps: [17.2, 30, 57, 84],
   paint: (g, c) => {
     const x = c.x;
     // gap 1 with an island in the middle; gap 2 further on
     g.pit(x + 8, x + 25).fill(x + 15, x + 18, 15, 17, '#');
     g.pit(x + 38, x + 49);
+    // a stair of ledge going up to a raised landing, then a long gap
+    g.pit(x + 62, x + 74);
+    g.fill(x + 75, x + 78, 13, 14, '#');
+    g.pit(x + 88, x + 105);
   },
   build: (w, c) => {
     const x = c.x;
@@ -189,8 +193,10 @@ export const dekho: Act = {
     const b = new Viewpoint(px(x + 16) + 8, [{ x: px(x + 19), w: px(7) }], 300, px(x + 16) + 30).install(w);
     // the third: the bench stands by the road, the footprints are three tiles on
     const cc = new Viewpoint(px(x + 32) + 8, [{ x: px(x + 38), w: px(12) }], 300, px(x + 29) + 8).install(w);
-    (w.flags.vps ??= []).push(a, b, cc);
-    gap(w, [px(x + 8), px(x + 15)], [px(x + 19), px(x + 26)], [px(x + 38), px(x + 50)]);
+    const d = new Viewpoint(px(x + 58) + 8, [{ x: px(x + 62), w: px(5) }, { x: px(x + 67), w: px(4), y: FLOOR - 16 }, { x: px(x + 71), w: px(4), y: FLOOR - 32 }], 320, px(x + 55) + 8).install(w);
+    const e = new Viewpoint(px(x + 84) + 8, [{ x: px(x + 88), w: px(18) }], 420, px(x + 81) + 8).install(w);
+    (w.flags.vps ??= []).push(a, b, cc, d, e);
+    gap(w, [px(x + 8), px(x + 15)], [px(x + 19), px(x + 26)], [px(x + 38), px(x + 50)], [px(x + 62), px(x + 75)], [px(x + 88), px(x + 106)]);
   },
 };
 

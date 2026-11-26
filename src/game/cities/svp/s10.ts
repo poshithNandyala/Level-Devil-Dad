@@ -13,7 +13,7 @@ import { lines as L, X } from './lines';
 import { px } from './kit';
 import { SawHall } from './s02';
 import { nala } from './s03';
-import { Herd } from './s04';
+import { Herd, ghat } from './s04';
 import { pul } from './s09';
 import { doosra } from './s07';
 import { FLOOR } from '../../levels/endkit';
@@ -52,7 +52,9 @@ export const nadi: Act = { ...nala, id: 'svp10-nadi', advice: 'The crocodile’s
 export const jadFin: Act = { ...pul, id: 'svp10-jad', advice: 'The ruined cellar: green roots hold, grey roots and brick do not, and the middle green root swings.' };
 export const samanFin: Act = { ...doosra, id: 'svp10-saman', advice: 'The luggage hall: the luggage is the floor until the real call, the crowd comes from the quay end, and the trench is the place to be.' };
 
-// ================================================================== the door: the island's gate
+export const ghatFin: Act = { ...ghat, id: 'svp10-ghat', advice: 'The last landing: the stall is by the edge, the herd follows the food, and the boat is late. Put the food down where you are and wait for the boat.' };
+
+// ================================================================== the door: the island’s gate
 export const dweepGate: Ending = {
   space: 16,
   advice: 'The island’s gate, and the herd asleep across the doorway. The last fritter stall is on the way in: take it, and the herd is up and after you. Put it down well back from the gate, stand still till it is down, and then the gate is yours.',

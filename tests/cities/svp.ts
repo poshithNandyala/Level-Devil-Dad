@@ -380,14 +380,26 @@ function crossGaps(): Step {
   };
 }
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp07-teesra': (x) => [
+    hopUntil(and(ground, X(x + 12.5)), 'across the luggage, no stopping'),
+    { hold: 'R', until: inTrench, max: 600, note: 'into the trench' },
+    { hold: '', until: (w) => ((w.flags.backs as Crowd[])[0]).on && ((w.flags.backs as Crowd[])[0]).x > px(x + 32), max: 4000, note: 'in the trench through the crowd going one way and the same crowd coming back' },
+    climbRight('out behind the crowd', px(x + 26)),
+    { hold: 'R', until: and(ground, X(x + 47)), max: 600 },
+  ],
   'svp10-nadi': (x) => actRoutes['svp03-nala'](x),
   'svp10-jad': (x) => actRoutes['svp09-pul'](x),
   'svp10-saman': (x) => actRoutes['svp07-doosra'](x),
+  'svp10-ghat': (x) => actRoutes['svp04-ghat'](x),
   'svp09-pul': (x) => [
     rootsPolicy([x + 4, x + 10, x + 17], px(x + 20), 'the green roots, skipping the grey step', and(ground, (w) => w.player.x >= px(x + 20) + 2)),
     { hold: 'R', until: and(ground, X(x + 22.5)), max: 300 },
     rootsPolicy([x + 29, x + 35, x + 41], px(x + 45), 'the second creek of ruin', and(ground, (w) => w.player.x >= px(x + 45) + 2), 74, 26),
-    { hold: 'R', until: and(ground, X(x + 47)), max: 300 },
+    { hold: 'R', until: and(ground, X(x + 50)), max: 300 },
+    rootsPolicy([x + 52, x + 57, x + 62, x + 67], px(x + 71), 'the stair of roots, up and down', and(ground, (w) => w.player.x >= px(x + 71) + 2), 74, 26),
+    { hold: 'R', until: and(ground, X(x + 74.5)), max: 300 },
+    rootsPolicy([x + 80, x + 86, x + 92, x + 98, x + 104], px(x + 108), 'the long cellar of roots', and(ground, (w) => w.player.x >= px(x + 108) + 2), 74, 26),
+    { hold: 'R', until: and(ground, X(x + 110)), max: 300 },
   ],
   'svp08-gali': () => [streetUntil(6, 'the longer street, awning to awning')],
   'svp07-ghat': (x) => [
@@ -416,8 +428,13 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     standOn(vpN(1), 'the island’s own footprints'),
     hopUntil(and(ground, X(x + 28)), 'over the rest'),
     standOn(vpN(2), 'the third footprints: not at the bench'),
-    hopUntil(and(ground, X(x + 51)), 'three slabs and across'),
-    { hold: 'R', until: and(ground, X(x + 55)), max: 300 },
+    hopUntil(and(ground, X(x + 51)), 'across the long ledge'),
+    standOn(vpN(3), 'the fourth footprints: the ledge is a stair going up'),
+    hopUntil(and(ground, X(x + 76)), 'up the stair to the landing'),
+    { hold: 'R', until: and(ground, X(x + 82)), max: 600, note: 'down off the landing' },
+    standOn(vpN(4), 'the last footprints: the long gap'),
+    hopUntil(and(ground, X(x + 107)), 'the whole long ledge'),
+    { hold: 'R', until: and(ground, X(x + 111)), max: 300 },
   ],
   'svp04-ghat': (x) => [
     { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },

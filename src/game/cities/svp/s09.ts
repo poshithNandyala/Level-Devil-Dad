@@ -242,17 +242,21 @@ export function jadRoom(): LevelDef {
 // ================================================================== the act
 export const pul: Act = {
   id: 'svp09-pul',
-  w: 48,
-  advice: 'Not every root is alive. A dead root is grey and bare, with no leaves, and it crumbles like brick: only the green ones hold. Take the green ones, and skip the grey ones between them. The middle green one swings.',
-  cps: [21.5],
+  w: 112,
+  advice: 'Not every root is alive. A dead root is grey and bare, with no leaves, and it crumbles like brick: only the green ones hold. Take the green ones, and skip the grey ones between them. The middle green one swings. Then the roots make a stair up and down, and a long cellar with more swinging ones.',
+  cps: [21.5, 49, 74],
   paint: (g, c) => {
     g.pit(c.x + 3, c.x + 19);
     g.pit(c.x + 28, c.x + 44);
+    g.pit(c.x + 51, c.x + 70);
+    g.pit(c.x + 79, c.x + 107);
   },
   build: (w, c) => {
     const x = c.x;
     cellar(w, x + 3, x + 19);
     cellar(w, x + 28, x + 44);
+    cellar(w, x + 51, x + 70);
+    cellar(w, x + 79, x + 107);
     // first creek of ruin: green, green (swinging), a grey step to tempt you, green
     const y = FLOOR - 28;
     new Root(px(x + 4), y, 64).install(w);
@@ -264,7 +268,20 @@ export const pul: Act = {
     const sw2 = new Root(px(x + 35), y, 64, 12, 540, px(x + 27), 1.2).install(w);
     new Crumbler(px(x + 39) + 8, y + 18, 16, 7, 'dead', 20).install(w);
     new Root(px(x + 41), y, 48).install(w);
-    (w.flags.swingers ??= []).push(sw, sw2);
+    // third: a stair of roots up and down, with a brick landing at the top that is not a landing
+    new Root(px(x + 52), FLOOR - 28, 64).install(w);
+    new Root(px(x + 57), FLOOR - 56, 64).install(w);
+    new Root(px(x + 62), FLOOR - 56, 64).install(w);
+    new Root(px(x + 67), FLOOR - 28, 64).install(w);
+    new Crumbler(px(x + 59), FLOOR - 12, 32, 12, 'brick', 20).install(w);
+    // fourth: a long cellar of roots, two of them swinging, a grey step lower down between
+    const sw3 = new Root(px(x + 86), y, 64, 12, 520, px(x + 74), 0.4).install(w);
+    const sw4 = new Root(px(x + 98), y, 64, 12, 560, px(x + 74), 2.1).install(w);
+    new Root(px(x + 80), y, 64).install(w);
+    new Root(px(x + 92), y, 64).install(w);
+    new Root(px(x + 104), y, 64).install(w);
+    new Crumbler(px(x + 95) + 8, y + 18, 16, 7, 'dead', 20).install(w);
+    (w.flags.swingers ??= []).push(sw, sw2, sw3, sw4);
   },
 };
 
