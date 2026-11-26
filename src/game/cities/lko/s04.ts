@@ -327,4 +327,4 @@ export const kulhad: Ending = {
 };
 
 export const s04 = { room: malaiRoom, acts: [gali] };
-export const meta04 = { family: 'sun-direction-sinks-foam', betrayals: ['light-sinks'], ending: 'fire-behind-flips-which-step-sinks' } as StageMeta;
+export const meta04 = { family: 'sun-direction-sinks-foam', betrayals: ['light-sinks'], ending: 'lko-kulhad' } as StageMeta;

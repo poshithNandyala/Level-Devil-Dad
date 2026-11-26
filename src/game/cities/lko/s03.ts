@@ -269,4 +269,4 @@ export const bakhiya: Ending = {
 };
 
 export const s03 = { room: chhapaRoom, acts: [kunda] };
-export const meta03 = { family: 'print-washed-stitch-remains', betrayals: ['wash-remains'], ending: 'door-seen-only-as-shadow-through-muslin' } as StageMeta;
+export const meta03 = { family: 'print-washed-stitch-remains', betrayals: ['wash-remains'], ending: 'lko-bakhiya' } as StageMeta;

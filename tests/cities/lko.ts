@@ -74,15 +74,16 @@ const hops = (targets: (number | [number, (w: World) => boolean])[], note = '', 
         return { move: toward(w, t.c, 1), jump: true };
       }
       if (!p.onGround) return go(airTo(w, t.c));
-      if (Math.abs(p.cx - t.c) <= 4) {
-        if (i >= T.length - 1) return go(toward(w, t.c, 1));
+      if (Math.abs(p.cx - t.c) <= 9) {
+        if (i >= T.length - 1) return go(toward(w, t.c, 3));
         const n = T[i + 1];
-        if (n.wait && !n.wait(w)) return go(toward(w, t.c, 1));
+        if (n.wait && !n.wait(w)) return go('');
         i++;
         jt = hold - 1;
         return { move: toward(w, n.c, 1), jump: true };
       }
       if (t.wait && !t.wait(w)) return go('');
+      if (Math.abs(t.c - p.cx) <= 14) return go(toward(w, t.c, 1));
       if (Math.abs(t.c - p.cx) <= reach + Math.abs(p.vx) * 0.13) {
         // a careful player stops at the edge, then jumps
         if (Math.abs(p.vx) > 30) return go('');
@@ -91,7 +92,7 @@ const hops = (targets: (number | [number, (w: World) => boolean])[], note = '', 
       }
       return go(toward(w, t.c, 1));
     },
-    until: (w) => w.player.onGround && Math.abs(w.player.cx - T[T.length - 1].c) <= 4 && i >= T.length - 1,
+    until: (w) => w.player.onGround && Math.abs(w.player.cx - T[T.length - 1].c) <= 9 && i >= T.length - 1,
     max: 2400,
     note,
   };
@@ -127,6 +128,14 @@ const room04: Step[] = [
   runTo(31, 300),
 ];
 
+// ================================================================ LKO-05
+const kflat = (key: string, i: number) => (w: World) => (w.flags[key] ?? [])[i]?.flat;
+const room05: Step[] = [
+  runTo(3.5, 200),
+  hops([6, [9, kflat('kebabs', 0)], [12, kflat('kebabs', 1)], [15, kflat('kebabs', 2)], [18, kflat('kebabs', 3)], [21, kflat('kebabs', 4)], [24, kflat('kebabs', 5)], [26.5, kflat('kebabs', 6)]], 'squash each heap, then hop'),
+  runTo(31, 300),
+];
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['LKO-02'] = room02;
   lengthen('LKO-02', 0, []);
@@ -134,16 +143,20 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('LKO-03', 0, []);
   S['LKO-04'] = room04;
   lengthen('LKO-04', 0, []);
+  S['LKO-05'] = room05;
+  lengthen('LKO-05', 0, []);
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-02': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk straight in' }], cause: 'lko-pehle' },
   'LKO-03': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk out along the printed vine' }], cause: 'lko-chhapa' },
-  'LKO-04': { steps: [runTo(4, 200), hops([7], 'line up on the far edge of the first heap'), until(done, 400)], cause: 'lko-malai' },
+  'LKO-04': { steps: [runTo(4, 200), hops([7], 'line up on the far edge of the first heap'), { policy: (w) => go(toward(w, px(7) + 9, 1)), until: done, max: 400 }], cause: 'lko-malai' },
+  'LKO-05': { steps: [runTo(3.5, 200), hops([6, 9, 12], 'hop along the heaps'), until(done, 300)], cause: 'lko-seekh' },
 };
 
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-02': { steps: [runTo(8.2), until(done, 900, 'bow, and keep bowing')], cause: 'lko-dhakka' },
+  'LKO-05': { steps: [runTo(3.5, 200), hops([6]), until(done, 600, 'wait on it, to be sure')], cause: 'lko-tawa' },
   'LKO-04': { steps: [runTo(4, 200), hops([6, 9, 12], 'the shady left tiles, as learned'), until(done, 900, 'wait on it')], cause: 'lko-malai' },
   'LKO-03': { steps: [runTo(3.5, 200), hops([6, 7, 9, 12, 13, 15, 17, 18, 21, 22, 24], 'every white tile in turn, jali too', 12, 30), until(done, 600)], cause: 'lko-jali' },
 };
@@ -182,7 +195,28 @@ actRoutes['lko04-chowk'] = (x) => [
   runTo(x + 35, 300),
 ];
 
+actRoutes['lko05-tawa'] = (x) => {
+  const k = 'lko05-tawa:kebabs';
+  return [runTo(x + 0.5, 300), hops([x + 3, ...[6, 9, 12, 15, 18, 21, 24, 26.5].map((c, i) => [x + c, kflat(k, i)] as [number, (w: World) => boolean])], 'thin ones at once, thick ones once squashed'), runTo(x + 29.5, 300)];
+};
+actRoutes['lko05-lane'] = (x) => [
+  runTo(x + 1.2, 300),
+  hops([x + 3], 'on to the end of the slab'),
+  until(kflat('lko05-lane:slab', 0), 300, 'it squashes under you'),
+  { hold: 'R', until: and(ground, X(x + 18)), max: 900, note: 'walk the lane right behind the squash, no jumping' },
+  runTo(x + 25, 300),
+];
+
 const endingPolicies: Record<string, Policy> = {
+  'lko-sheermal'(w, m, d) {
+    const D = Math.round(d.x / 16);
+    const p = w.player;
+    if (!m.h && w.flags.twist === 'tandoor') return go(toward(w, px(D - 9) + 6, 1));
+    if (!m.h && w.flags.twist === 'slapped') m.h = hops([D - 5.5, D - 1], 'drop on to the sheermal, hop out').policy!;
+    if (!m.h) return go('');
+    if (p.onGround && p.cx > px(D - 1.5)) return go(toward(w, d.x + 8, 1));
+    return m.h(w);
+  },
   'lko-kulhad'(w, m, d) {
     const D = Math.round(d.x / 16);
     const p = w.player;
@@ -237,7 +271,7 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['LKO-02', 'LKO-03', 'LKO-04'],
+  fair: ['LKO-02', 'LKO-03', 'LKO-04', 'LKO-05'],
 };
 void flag;
 void actFlag;

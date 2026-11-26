@@ -281,4 +281,4 @@ const gali: Act = {
 };
 
 export const s02 = { room: pehleRoom, acts: [gali] };
-export const meta02 = { family: 'politeness-bow-sets-order', betrayals: ['bow-order'], ending: 'door-leaves-swing-out-at-you' } as StageMeta;
+export const meta02 = { family: 'politeness-bow-sets-order', betrayals: ['bow-order'], ending: 'lko-kiwad' } as StageMeta;
