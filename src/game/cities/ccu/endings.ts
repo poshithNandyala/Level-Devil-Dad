@@ -7,8 +7,9 @@ import { sign } from '../../levels/kit';
 import type { Ending } from '../../levels/endkit';
 import { Bus } from './entities';
 import { Customer, Muck, Stack, Stall } from './books';
+import { Paint } from '../../levels/endkit';
 
-export type CcuEndingKind = 'ccu-stop' | 'ccu-set';
+export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<CcuEndingKind, true> {}
@@ -94,6 +95,60 @@ export const endings: Record<CcuEndingKind, Ending> = {
           c.target = null;
         },
       );
+    },
+  },
+  // ================================================================ CCU-06: the pole turned at the terminus
+  /** The end of the line, with the door up on the terminus platform beside the step. At the terminus the
+   *  conductor walks the pole round to the other end for the trip back, and it swings low over the platform.
+   *  Stay on the step till it's round, then step up. */
+  'ccu-pole-turn': {
+    space: 14,
+    advice: 'At the end of the line the door is up on the terminus platform, right by the step. Wait: the conductor walks the pole round for the trip back, and it swings low over the platform. Once it’s round, step up.',
+    paint: (g, D) => {
+      g.pit(D - 12, D - 4);
+      g.fill(D - 3, D + 3, 13, 14, '#');
+      g.put(D, 14, '#');
+      g.put(D, 12, 'E');
+    },
+    build(w, d) {
+      const D = Math.round(d.x / 16);
+      w.add(new Muck(px(D - 12), px(D - 3), (w2) => (w2.flags.switched ? 'ccu-points' : 'ccu-khod')));
+      w.flags.terminus = px(D - 4) - 26;
+      const plat = px(13);
+      let t0 = -1;
+      const swing = (w2: World) => (t0 < 0 ? -1 : (w2.tick - t0) / 120 - 0.4);
+      w.flags.twist = 'arrive';
+      sign(w, D - 6.5, 8.6, 3.8, 'ESPLANADE', 'green', null, 'terminus');
+      w.add(
+        new (class extends Entity {
+          hazard = { active: true, cause: 'ccu-dando', hits: (x: number, y: number, ww: number, h: number) => { const s = swing(w); return s > 0 && s < 1.6 && x < px(D + 4) && x + ww > px(D - 3) && y < plat && y + h > plat - 30; } };
+          update(w2: World) {
+            const b = w2.flags.tramB;
+            if (t0 < 0 && b && b.state === 'end') {
+              t0 = w2.tick;
+              w2.flags.twist = 'turning';
+              w2.sfx('creak', px(D), plat);
+            }
+            if (t0 >= 0 && swing(w2) >= 1.6 && w2.flags.twist === 'turning') w2.flags.twist = 'turned';
+          }
+          draw(ctx: CanvasRenderingContext2D, w2: World) {
+            const s = swing(w2);
+            if (s <= 0 || s >= 1.6) return;
+            // the long pole going round, low over the platform, the conductor's rope taut
+            const k = s / 1.6;
+            const bx = px(D - 4) - 14,
+              by = plat - 22;
+            const a = Math.PI * (1 - k);
+            ctx.strokeStyle = '#2B2320';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(bx, by);
+            ctx.lineTo(bx + Math.cos(a) * 96, by - Math.sin(a) * 10 - 6);
+            ctx.stroke();
+          }
+        })(),
+      );
+      void Paint;
     },
   },
 };

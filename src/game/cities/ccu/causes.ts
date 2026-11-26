@@ -6,4 +6,7 @@ export const causeLines: Record<string, string[]> = {
   'ccu-nala': ['Into the open drain. That “aaste” was for the far side.', 'Look where you’ll land before you step off.'],
   'ccu-boi': ['The customer pointed, the seller pulled, and that stack had only one book.', 'Count the books under the finger. A stack of one goes, a stack of two drops one.'],
   'ccu-kada': ['Into the drain between the stalls.', 'Hop stack to stack: they are only one tile apart.'],
+  'ccu-dando': ['The trolley pole jumped the wire and swung right over the roof.', 'At a junction in the wire, ride the rear step, never the roof.'],
+  'ccu-khod': ['Into the dug-up road. It’s all holes and water here.', 'Stay on the tram, or on the island.'],
+  'ccu-points': ['The points were set for the other line, and your tram took it.', 'Look at the pointsman’s lever. Get off at the island before the points.'],
 };

@@ -8,6 +8,7 @@ import { Step, X, and, done, ground } from '../runner';
 import type { CityTests } from '../city-tests';
 import { Bus } from '../../src/game/cities/ccu/entities';
 import type { Stack } from '../../src/game/cities/ccu/books';
+import type { Tram } from '../../src/game/cities/ccu/tram';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -114,6 +115,14 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   S['CCU-01'] = tourRun('onto');
   S['CCU-02'] = [...ride(px(25), px(28.5), 'past the first “aaste” (over the drain), off on the second'), walk(30)];
   lengthen('CCU-02', 0, []);
+  S['CCU-06'] = [
+    walk(2.4),
+    ...hopTo(px(5), 12, 'over the stop’s step'),
+    { hold: 'R', until: (w) => w.player.onGround && w.player.y > 222 && w.player.cx > px(6.6), max: 300 },
+    ...hopTo(px(7) + 12, 8, 'on to the tram’s rear step'),
+    { hold: '', until: X(32.5), max: 2400, note: 'ride the step through the junction' },
+  ];
+  lengthen('CCU-06', 0, []);
   S['CCU-04'] = boiRoute(true);
   lengthen('CCU-04', 0, []);
 }
@@ -137,12 +146,17 @@ function boiRoute(skip: boolean, wait = 0): Step[] {
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-01': { steps: tourRun('long'), cause: 'ccu-rail' },
   'CCU-04': { steps: boiRoute(false), cause: 'ccu-boi' },
+  'CCU-06': {
+    steps: [walk(2.4), ...hopTo(px(4.5), 12, 'up the stop’s step'), ...hopTo(px(5.8), 10, 'up on the platform'), { hold: 'R', until: (w) => tramA(w).riding(w) && w.player.cx > px(8), max: 300, note: 'on to the roof' }, { hold: '', until: done, max: 2400 }],
+    cause: 'ccu-dando',
+  },
   'CCU-02': { steps: [{ hold: '', until: (w) => w.player.cx > px(9), max: 900, note: 'wait for the stop' }, { hold: 'R', until: (w) => w.state !== 'play', max: 300, note: 'step off at the BUS STOP sign' }], cause: 'ccu-gir' },
 };
 
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-04': { steps: boiRoute(true, 300), cause: 'ccu-boi' },
+  'CCU-06': { steps: [walk(2.4), ...hopTo(px(5), 12, 'over the stop’s step'), { hold: 'R', until: (w) => w.player.onGround && w.player.y > 222 && w.player.cx > px(6.6), max: 300 }, ...hopTo(px(7) + 12, 8, 'on to the rear step'), { hold: '', until: done, max: 4000, note: 'stay on the step, past the island' }], cause: 'ccu-points' },
   'CCU-02': { steps: [...ride(px(16), px(19.5), 'off on the first “aaste”'), { hold: 'R', until: (w) => w.state !== 'play', max: 300 }], cause: 'ccu-nala' },
 };
 
@@ -159,11 +173,33 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 };
 
 /** a route for each act, by act id */
-const actRoutes: Record<string, (x: number) => Step[]> = {};
+const tramA = (w: World) => w.flags.tramA as Tram;
+const tramB = (w: World) => w.flags.tramB as Tram | undefined;
+const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu06-points': (x) => [
+    { hold: '', until: (w) => tramA(w).state === 'stop' && w.player.cx > px(x + 4), max: 1800, note: 'ride to the island stop' },
+    { hold: 'R', until: and(ground, X(x + 8.2)), max: 300, note: 'off at the island: the points are set for the other line' },
+    { hold: '', until: (w) => !!tramB(w) && tramB(w)!.state === 'stop', max: 2400, note: 'wait for the tram on the straight line' },
+    { hold: 'L', until: (w) => w.player.cx < tramB(w)!.step.x + 14, max: 300 },
+    { hold: '', jump: 8, until: (w) => tramB(w)!.onStep(w), max: 120, note: 'up on to its step' },
+    { hold: '', until: (w) => tramB(w)!.state === 'end', max: 3000, note: 'through the second junction, to the end of the line' },
+  ],
+};
 
 /** a policy for each door ending, by kind */
 const SETHOP = hopGaps();
 const endingPolicies: Record<string, Policy> = {
+  'ccu-pole-turn'(w, m, d) {
+    const p = w.player;
+    if (m.hold > 0) return { move: 'R', jump: true };
+    const b = tramB(w);
+    if (w.flags.twist !== 'turned') return go('');
+    if (b && b.onStep(w)) {
+      m.hold = 10;
+      return { move: 'R', jump: true };
+    }
+    return go(p.onGround ? toward(w, d.x + 8, 1) || 'R' : 'R');
+  },
   'ccu-set'(w) {
     const k = w.flags.ccuSet as { st: Stack[]; edge: number; D: number };
     const p = w.player;
@@ -196,5 +232,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['CCU-02', 'CCU-04'],
+  fair: ['CCU-02', 'CCU-04', 'CCU-06'],
 };

@@ -12,6 +12,8 @@ import { pool } from '../../levels/acts';
 import { Bus, Rail, feet } from './entities';
 import { NALA } from './endings';
 import { Customer, Muck, Stack, Stall } from './books';
+import { Junction, Points, Tram } from './tram';
+import type { Act } from '../../levels/acts';
 
 const tara = (n: number, beaten = 0) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[beaten % L.beaten.length] });
 /** the allocation slot, plus the door ending's idea key (the uniqueness test reads `ending`) */
@@ -108,6 +110,60 @@ function boiRoom(): LevelDef {
   };
 }
 
+
+// ================================================================== CCU-06: Trolley Pole (the tram)
+const khod = (w: World, c0: number, c1: number) => w.add(new Muck(px(c0), px(c1), (w2) => (w2.flags.switched ? 'ccu-points' : 'ccu-khod')));
+function poleRoom(): LevelDef {
+  return {
+    id: 'CCU-06',
+    city: 'CCU',
+    index: 6,
+    name: 'Trolley Pole',
+    nameEn: 'The tram’s pole',
+    tagline: 'Asia’s oldest trams still run here, slower than walking, on a pole that touches a wire. At the junctions in the wire, the pole sometimes jumps off.',
+    hint: 'The road is dug up: ride the tram. At the junction in the overhead wire the pole jumps the wire, the tram stops dead and the pole swings forward right over the roof. Ride on the open rear step instead (hop on to it from the road), not on the roof.',
+    par: 14,
+    map: Grid.ground(15).fill(4, 4, 13, 14, '#').fill(5, 6, 12, 12, '=').pit(11, 31).put(1, 14, '@').rows(),
+    build(w: World) {
+      khod(w, 11, 32);
+      w.add(new Junction(px(24)));
+      sign(w, 8.2, 8.4, 3.6, 'TRAM STOP', 'green', null, 'route 5');
+      rival(w, 2, 15, 1, tara(4));
+      onPass(w, px(3), (w2) => w2.guide('Tram! Ei je, shunun! | The tram! Excuse me, listen!', (w3) => !w3.flags.tramA?.riding(w3)));
+      collectible(w, 'ccu-sandesh', 19, 9.2);
+    },
+  };
+}
+
+/** CCU-06 act: the island stop, the points, and the tram that goes straight on */
+const points: Act = {
+  id: 'ccu06-points',
+  w: 48,
+  cp0: false,
+  cps: [8],
+  advice: 'At the island stop, look at the pointsman: his lever is set for the other line, and this tram turns off there, step and all. Get off at the island and wait. The next tram comes along the straight line: hop on its step and stay on it through the second junction.',
+  paint: (g, c) => {
+    g.pit(c.x, c.x + 3).pit(c.x + 10, c.x + 47);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    khod(w, x, x + 4);
+    khod(w, x + 10, x + 48);
+    w.add(new Junction(c.X(30)));
+    w.add(new Points(c.X(16), true));
+    sign(w, x + 6.2, 8.4, 3.6, 'TRAM STOP', 'green', null, 'island');
+    const a = w.add(new Tram({ x: px(7), speed: 56, stops: [{ x: px(7), dwell: 0.6, ride: true }, { x: c.X(5) - 2, dwell: 1.8 }], junctions: [px(24)], turnAt: c.X(14), label: '5' }));
+    w.flags.tramA = a;
+    w.when(
+      (w2) => (a.state === 'turn' || a.state === 'gone') && w2.player.onGround && w2.player.cx > c.X(4) && w2.player.cx < c.X(10) && !a.riding(w2),
+      (w2) => {
+        const b = w2.add(new Tram({ x: c.X(4) - 300, speed: 70, stops: [{ x: c.X(5) - 2, dwell: 0.8, ride: true }], junctions: [c.X(30)], end: w2.flags.terminus, label: '25' }));
+        w2.flags.tramB = b;
+      },
+    );
+  },
+};
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -159,7 +215,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: todoRoom(3), par: 30, shape: 'long' }),
   longStage({ base: boiRoom(), par: 26, twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
   longStage({ base: todoRoom(5), par: 30, shape: 'long' }),
-  longStage({ base: todoRoom(6), par: 30, shape: 'long' }),
+  longStage({ base: poleRoom(), par: 60, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: todoRoom(7), par: 30, shape: 'long' }),
   longStage({ base: todoRoom(8), par: 30, shape: 'long' }),
   longStage({ base: todoRoom(9), par: 30, shape: 'long' }),
