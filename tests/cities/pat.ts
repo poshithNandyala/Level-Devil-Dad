@@ -248,18 +248,94 @@ const basketPolicy: Policy = (w, _m, d) => {
 };
 
 // ------------------------------------------------------------------ PAT-08
-const room08 = (): Step[] => [...hop(6.1, 'jump the hatch with 2 bricks'), ...hop(11.1, 'and the one with 4'), ...hop(16.1, 'and the one with 1'), { hold: 'R', until: X(34), max: 400, note: 'step on the hatch with 3 bricks' }];
+const room08 = (): Step[] => [...hop(5.5, 'jump the hatch with 2 bricks'), ...hop(10.5, 'and the one with 4'), ...hop(15.5, 'and the one with 1'), { hold: 'R', until: X(34), max: 400, note: 'step on the hatch with 3 bricks' }];
 const act08 = (x: number): Step[] => [...hop(x + 23.1, 'hop the last cell’s well'), { hold: 'R', until: X(x + 33.4), max: 600 }];
 /** the library mound: jump the three decoy hatches, walk into the cell with no bricks */
 const moundPolicy: Policy = (w, m) => {
   const hs = (w.flags.pat8e as { x: number }[]).slice().sort((a, b) => a.x - b.x);
   const p = w.player;
   if (m.hold > 0) return { move: 'R', jump: true };
-  const h = hs.find((q) => q.x + 32 > p.x);
-  if (h && p.onGround && p.x + p.w >= h.x - 6 && p.x < h.x) {
+  const h = hs.find((q) => q.x + 24 > p.x);
+  if (h && p.onGround && w.tick > (m.cool ?? 0) && p.x + p.w >= h.x - 19 && p.x < h.x) {
     m.hold = 11;
+    m.cool = w.tick + 45;
     return { move: 'R', jump: true };
   }
+  return go('R');
+};
+
+// ------------------------------------------------------------------ PAT-09
+type G9 = { t0: number; x0: number; x1: number; horse: { x: number } };
+/** walk in the gap right behind the horse, at his pace */
+function followHorse(key: string): (w: World) => Out {
+  return (w) => {
+    const g = w.flags[key] as G9;
+    const p = w.player;
+    if (g.t0 < 0 || g.horse.x > g.x1 + 40) return go('R');
+    const want = g.horse.x - 26;
+    return go(p.cx < want - 4 ? 'R' : p.cx > want + 6 ? 'L' : '');
+  };
+}
+const room09 = (): Step[] => [{ policy: followHorse('pat9'), until: and(ground, X(28.5)), max: 3000, note: 'right behind the horse through the crowd' }, { hold: 'R', until: X(31.5), max: 300 }];
+/** the wheel: an empty gondola on the way down, off at the far bank on its way up */
+function wheelRide(): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  let cool = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+      cool = 0;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const st = w.flags.pat9w as { cx: number; gond: { s: { th: number }; solid: any }[] };
+    const p = w.player;
+    const deg = (r: number) => (r * 180) / Math.PI;
+    const edgeL = st.cx - 72;
+    if (p.cx > st.cx + 74) return go('R');
+    const on = st.gond.find((g) => w.standing(g.solid));
+    if (on) {
+      const d = deg(on.s.th);
+      const gx = (on as unknown as { x: number }).x;
+      if (d >= 14 && p.x + p.w < gx + 29) return go('R');
+      if (d >= 22 && d <= 34 && w.tick > cool) {
+        jt = 12;
+        cool = w.tick + 60;
+        return { move: 'R', jump: true };
+      }
+      return go('');
+    }
+    if (p.cx < edgeL - 8) return go('R');
+    if (!p.onGround) return go('R');
+    if (p.onGround && w.tick > cool) {
+      const occ = [true, false, false, false, true, false];
+      const k = st.gond.findIndex((g, i) => !occ[i] && deg(g.s.th) >= -62 && deg(g.s.th) <= -48);
+      if (k >= 0) {
+        jt = 12;
+        cool = w.tick + 60;
+        return { move: 'R', jump: true };
+      }
+    }
+    return go('');
+  };
+}
+const act09 = (x: number): Step[] => [
+  { policy: wheelRide(), until: and(ground, X(x + 18.5)), max: 3000, note: 'across on an empty gondola' },
+  { policy: followHorse('pat9b'), until: and(ground, X(x + 56)), max: 3000, note: 'behind the faster horse, waiting when he stops' },
+  { hold: 'R', until: X(x + 59.4), max: 300 },
+];
+/** the spinning gate: go in just after an arm has swept by */
+const gatePolicy: Policy = (w) => {
+  const e = w.flags.pat9e as { A: number; pivx: number };
+  const p = w.player;
+  const a = ((w.tick / 120) * e.A) % Math.PI;
+  const dist = e.pivx - p.cx;
+  if (dist > 60) return go('R');
+  if (dist > 40 && !(a >= 0.72 && a <= 1.5)) return go('');
   return go('R');
 };
 
@@ -277,10 +353,13 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('PAT-07', 0, []);
   S['PAT-08'] = room08();
   lengthen('PAT-08', 0, []);
+  S['PAT-09'] = room09();
+  lengthen('PAT-09', 0, []);
 }
 
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-09': { steps: [{ hold: 'R', until: X(9), max: 400 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 20, ticks: 26 }))], cause: 'pat-bheed' },
   'PAT-08': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-kua' },
   'PAT-07': { steps: [{ hold: 'R', until: X(8.6), max: 400 }, { hold: 'R', jump: 12, ticks: 12, note: 'on to the tempo' }, { hold: 'R', until: (w) => w.player.onGround && w.player.cx >= w.flags.pat7.cx - 4, max: 300, note: 'stand in the middle' }, { hold: '', until: done, max: 2400 }], cause: 'pat-torana' },
   'PAT-06': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-jod' },
@@ -290,7 +369,8 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'PAT-01': { steps: [...upTo(21), { hold: 'R', until: done, max: 2400 }], cause: 'pat-bheed' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
-  'PAT-08': { steps: [...hop(6.1, 'skip the first hatch'), { hold: 'R', until: done, max: 900 }], cause: 'pat-kua' },
+  'PAT-09': { steps: [...room09().slice(0, 1), { hold: 'R', until: X(39.5), max: 400, note: 'the first gondola that comes' }, { hold: 'R', jump: 14, ticks: 14 }, { hold: '', until: done, max: 600 }], cause: 'pat-jhoola' },
+  'PAT-08': { steps: [...hop(5.5, 'skip the first hatch'), { hold: 'R', until: done, max: 900 }], cause: 'pat-kua' },
   'PAT-07': { steps: [{ policy: rideBalanced(false, false), until: done, max: 4500, note: 'stand on the road side whatever happens' }], cause: 'pat-dhakka' },
   'PAT-06': { steps: [{ hold: 'R', until: X(4.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12, note: 'jump every seam, to be safe' }, { hold: 'R', until: done, max: 600 }], cause: 'pat-taala' },
   'PAT-05': { steps: [{ hold: 'R', until: X(7.2), max: 600 }, { hold: '', until: (w) => w.flags.pat5.carts[0].s.cx > 236 && w.flags.pat5.carts[0].s.dir > 0, max: 900, note: 'let the cart go by down the deck' }, { hold: 'R', until: X(9.5), max: 300, note: 'step on to the high section behind it' }, { hold: '', until: done, max: 1800, note: 'and wait there' }], cause: 'pat-pipa' },
@@ -299,7 +379,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'PAT-01': { steps: [...upTo(24), { hold: '', until: done, max: 1500 }], cause: 'pat-tempo' },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
-  'PAT-08': [{ what: 'the hatch with 1 brick', steps: [...hop(6.1, ''), ...hop(11.1, ''), { hold: 'R', until: done, max: 900 }], cause: 'pat-kua' }],
+  'PAT-08': [{ what: 'the hatch with 1 brick', steps: [...hop(5.5, ''), ...hop(10.5, ''), { hold: 'R', until: done, max: 900 }], cause: 'pat-kua' }],
   'PAT-01': [{ what: 'run on at the hoarding', steps: [...upTo(32), { hold: 'R', until: done, max: 900 }], cause: 'pat-hoarding' }],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
@@ -310,6 +390,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'pat07-sadak': act07a,
   'pat07-adda': act07b,
   'pat08-chowk': act08,
+  'pat09-jhoola': act09,
 };
 const endingPolicies: Record<string, Policy> = {
   'pat-musal': pestlePolicy,
@@ -318,6 +399,7 @@ const endingPolicies: Record<string, Policy> = {
   'pat-toll': tollPolicy,
   'pat-hauled-basket': basketPolicy,
   'pat-mound': moundPolicy,
+  'pat-charkhi': gatePolicy,
 };
 
 export const test: CityTests = {
@@ -327,5 +409,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['PAT-02', 'PAT-04', 'PAT-05', 'PAT-06', 'PAT-07', 'PAT-08'],
+  fair: ['PAT-02', 'PAT-04', 'PAT-05', 'PAT-06', 'PAT-07', 'PAT-08', 'PAT-09'],
 };

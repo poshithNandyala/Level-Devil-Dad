@@ -82,11 +82,11 @@ export interface Landing {
 /** a hatch (a flush plate in the courtyard floor): stepping on it takes Dad to where `dest` says */
 function hatch(w: World, x: number, n: number, dest: () => { x: number; y: number } | null, key: string) {
   const r = w.add(
-    new Rig(x, FL - 2, 32, 2, {
+    new Rig(x, FL - 2, 24, 2, {
       layer: 1,
       tick: (_r, w2) => {
         const p = w2.player;
-        if (p.onGround && p.cx >= x + 2 && p.cx < x + 30 && p.y + p.h >= FL - 1 && p.y + p.h <= FL + 1) {
+        if (p.onGround && p.cx >= x + 4 && p.cx < x + 20 && p.y + p.h >= FL - 1 && p.y + p.h <= FL + 1) {
           const d = dest();
           if (d) {
             w2.warp(d.x - 5, d.y, 'blink');
@@ -95,10 +95,10 @@ function hatch(w: World, x: number, n: number, dest: () => { x: number; y: numbe
         }
       },
       paint: (ctx, h) => {
-        box(ctx, h.x, FL - 2, 32, 2, '#3A2A1E');
-        box(ctx, h.x + 2, FL - 2, 28, 1, '#7A5A3A');
-        for (let i = 0; i < 5; i++) box(ctx, h.x + 3 + i * 6, FL - 1, 3, 1, '#C9A56B');
-        bricks(ctx, h.x + 16, FL - 18, n);
+        box(ctx, h.x, FL - 2, 24, 2, '#3A2A1E');
+        box(ctx, h.x + 2, FL - 2, 20, 1, '#7A5A3A');
+        for (let i = 0; i < 4; i++) box(ctx, h.x + 3 + i * 5, FL - 1, 3, 1, '#C9A56B');
+        bricks(ctx, h.x + 12, FL - 18, n);
       },
     }),
   );
