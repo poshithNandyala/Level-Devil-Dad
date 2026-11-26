@@ -29,7 +29,8 @@ function taxiArt(ctx: CanvasRenderingContext2D, x: number, y: number, w: number,
 }
 
 /** one taxi backing out of its slot at [x0] to x1 and pulling back in, on a clock that starts at `startX` */
-export function standTaxi(w: World, x0: number, x1: number, floor: number, startX: number, key: string, cause = 'gtk-taxi') {
+export function standTaxi(w: World, x0: number, x1: number, floor: number, startX: number, key: string, cfg = STAND as { period: number; out: number }) {
+  const cause = 'gtk-taxi';
   const st = { t0: -1 };
   w.flags[key] = st;
   onPass(w, startX, (w2) => {
@@ -40,11 +41,12 @@ export function standTaxi(w: World, x0: number, x1: number, floor: number, start
       layer: 3,
       cause,
       inset: 3,
-      live: () => st.t0 >= 0,
+      live: (r) => st.t0 >= 0 && (r.s.k ?? 0) > 0.03,
       tick: (r, w2) => {
         if (st.t0 < 0) return;
-        const u = cyc(w2, st.t0, STAND.period);
-        const k = u < STAND.out ? u / STAND.out : u < STAND.out * 2 ? 1 - (u - STAND.out) / STAND.out : 0;
+        const u = cyc(w2, st.t0, cfg.period);
+        const k = u < cfg.out ? u / cfg.out : u < cfg.out * 2 ? 1 - (u - cfg.out) / cfg.out : 0;
+        r.s.k = k;
         r.x = x0 + (x1 - x0) * Math.sin((k * Math.PI) / 2);
       },
       paint: (ctx, r) => taxiArt(ctx, r.x, r.y, r.w, r.h),
@@ -165,6 +167,30 @@ export const act: Act = {
     onPass(w, c.X(9), (w2) => npc(w2, 'Namaste! | Hello!', c.X(12), px(11) - 30, 1.2));
     w.add(new Rig(c.X(12) - 4, px(11) - 28, 10, 28, { layer: -1, paint: (ctx, r) => local(ctx, r.x + 5, r.y, 28, '#8E6C8A', { scarf: '#F4D35E' }) }));
     sign(w, x + 9.6, 6.6, 4, 'ROOF', 'shop', null, 'garden');
+  },
+};
+
+/** act 2: the next bend. Here the short cut down is the only way, and its foot is the taxi stand again: wait
+ *  on the last step while the taxi backs out, and go behind it as it pulls back in */
+export const STAND2 = { period: 3.8, out: 0.8 };
+export const act2: Act = {
+  id: 'gtk06-modh',
+  w: 30,
+  advice: 'At the next bend the only way on is the stair down, and it comes out at a taxi stand again. Wait on the last step while the taxi backs out over the foot of the stair; the moment it pulls back in, walk down and on past it.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x, x + 5, 9, 17, '#');
+    g.fill(x + 6, x + 7, 11, 17, '#');
+    g.fill(x + 8, x + 9, 13, 17, '#');
+  },
+  build: (w, c) => {
+    standTaxi(w, c.X(14), c.X(10.1), FL, c.X(4), 'gtk6m', STAND2);
+    decor(w, -3, (ctx) => {
+      box(ctx, c.X(13), px(12), px(6), 3, '#2E86AB');
+      box(ctx, c.X(13), px(12), 2, px(3), '#4E5A62');
+      box(ctx, c.X(19) - 2, px(12), 2, px(3), '#4E5A62');
+    });
+    sign(w, c.x + 3, 6.6, 3.8, 'TAXI STAND', 'green', 'down', 'seedhi');
   },
 };
 

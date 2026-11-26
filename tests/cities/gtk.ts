@@ -9,7 +9,7 @@ import { VENT, type Steamer } from '../../src/game/cities/gtk/s02';
 import type { Bag } from '../../src/game/cities/gtk/s03';
 import { FLOORS } from '../../src/game/cities/gtk/s04';
 import type { Rule } from '../../src/game/cities/gtk/s05';
-import { TANK } from '../../src/game/cities/gtk/s06';
+import { TANK, STAND2 } from '../../src/game/cities/gtk/s06';
 import type { Cloud } from '../../src/game/cities/gtk/s07';
 import { DOCK } from '../../src/game/cities/gtk/s08';
 import type { Yak } from '../../src/game/cities/gtk/s09';
@@ -370,6 +370,11 @@ const act06 = (x: number): Step[] => [
   { hold: 'R', jump: 12, ticks: 12, note: 'up to the road' },
   { hold: 'R', until: and(ground, X(x + 32)), max: 300 },
 ];
+const act06b = (x: number): Step[] => [
+  { hold: 'R', until: and(ground, X(x + 8.2), (w) => w.player.y + w.player.h <= 209), max: 600, note: 'down to the last step' },
+  { hold: '', until: (w) => { const st = w.flags.gtk6m as { t0: number }; if (st.t0 < 0) return false; const u = cyc(w, st.t0, STAND2.period); return u >= STAND2.out * 2 + 0.02 && u < STAND2.out * 2 + 0.25; }, max: 900, note: 'wait while the taxi backs out and in' },
+  { hold: 'R', until: and(ground, X(x + 29)), max: 600, note: 'down and past the stand' },
+];
 /** the tank: wait short of the gush till it stops, then walk in */
 const tankPolicy: Policy = (w, _m, d) => {
   const st = w.flags.gtk6e as { t0: number };
@@ -651,6 +656,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk05-shaam': act05,
   'gtk05-kachra': act05b,
   'gtk06-chhat': act06,
+  'gtk06-modh': act06b,
   'gtk07-thau': act07a,
   'gtk07-chitra': act07b,
   'gtk07-ghumti': act07c,
