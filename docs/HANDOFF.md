@@ -155,6 +155,9 @@ export const RPR: LevelDef[] = [
 
 ## 5. Adding a city: every file
 
+**New cities are modules now: follow `docs/CITY-MODULE.md` (one directory + one registry line, 10 stages).**
+The table below is how the 14 cities before Ranchi were added; it is kept for reading their code.
+
 Use the last city (Raipur) as the template and search for `RPR` to see each entry. For Ranchi:
 
 | # | File | Add |
