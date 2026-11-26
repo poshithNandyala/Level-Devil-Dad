@@ -1,9 +1,11 @@
 # Cities: what's done, what's next
 
 The journey runs south to north through every state and UT capital (36 chapters, `CHAPTERS` in
-`src/game/cities.ts`, pins in `src/map/india-data.ts`). **14 done (112 stages), 22 to go.**
-Each city has 8 stages: 01 is a welcome tour, 02–08 are long stages (a room + an act + a door ending),
-harder each time; 08 is the finale and may call back to its own city's ideas (never another city's).
+`src/game/cities.ts`, pins in `src/map/india-data.ts`). **15 done (120 stages), 21 to go.**
+The 15 done cities have 8 stages: 01 is a welcome tour, 02–08 are long stages (a room + an act + a door
+ending), harder each time; 08 is the finale and may call back to its own city's ideas (never another city's).
+**Every new city has 10 stages** (01 tour, 02–10 long stages, 10 the finale), built as a module:
+`docs/CITY-MODULE.md`.
 
 How to use this file:
 - **Done** tables are generated from the game itself, so they're exact. Ids in the Act and Door columns

@@ -1,7 +1,7 @@
 # Building a city as a module
 
-From v0.16.14 on, a city is one self-contained module. A new city is one directory, one test file, its docs,
-and **one line** in `src/game/cities/registry.ts`. The shared files (`cities.ts`, `levels/index.ts`,
+From v0.16.14 on, a city is one self-contained module. A new city is one directory, one test file and its docs:
+**no registry line; drop your folder in.** The shared files (`cities.ts`, `levels/index.ts`,
 `endings.ts`, `chunks.ts`, `tour.ts`, `props.ts`, `theme.ts`, `renderer.ts`, `tiles.ts`, `backgrounds.ts`,
 `scenes.ts`, `things.ts`, `audio.ts`, `app/citylines.ts`, `tests/solutions.ts`, `tests/acts.ts`,
 `tests/endings.ts`) never change for a new city. That is what lets many cities be built at once, each in its
@@ -12,7 +12,7 @@ Ranchi (`src/game/cities/rnc/`, `tests/cities/rnc.ts`) is the worked example. Co
 ## The rule
 
 **A city worker never edits any file outside `src/game/cities/<code>/`, `tests/cities/<code>.ts` and
-`docs/cities/<CODE>*.md`, except the single registry line.** (`<code>` is the city code in lower case,
+`docs/cities/<CODE>*.md`.** (`<code>` is the city code in lower case,
 `<CODE>` in upper case: `rnc`, `RNC`.) If you think you need a change to a shared file, you don't: stop and
 ask. The version bump, WAVE1.md, MECHANICS.md and CITIES.md are merged later by whoever integrates the
 cities, from your `docs/cities/<CODE>*.md` notes.
@@ -24,10 +24,10 @@ Everything in AGENTS.md (the bar, the hardness pass) and HANDOFF.md sections 3, 
 ```
 src/game/cities/
   module.ts            the CityModule interface (do not edit)
-  registry.ts          the ordered list of modules: your one line goes here
+  registry.ts          finds every ./<code>/index.ts and sorts them by journey order (do not edit)
   install.ts           adds every module to the shared tables (do not edit)
   rnc/                 one directory per city
-    index.ts           export const RNC: CityModule = { ... }  (the only thing registry.ts imports)
+    index.ts           export const RNC: CityModule = { ... }  (exactly one CityModule export)
     lines.ts           lines: CityLines
     levels.ts          levels = (): LevelDef[] => [tour(...), longStage(...), ...]  + the rooms and acts
     entities.ts        the city's own entities (classes: update, draw, solids, hazards)
@@ -41,7 +41,7 @@ src/game/cities/
     backdrop.ts        the skyline function
     things.ts          the hidden item: draw + size + the `declare module` that adds its kind
 tests/
-  cities/rnc.ts        export const test: CityTests = { solutions, naive, fix?, actRoutes, endingPolicies, fair? }
+  cities/rnc.ts        export const test: CityTests = { solutions, naive, fix?, mistakes?, actRoutes, endingPolicies, fair? }
   city-tests.ts        finds every tests/cities/*.ts by file name (do not edit)
 docs/cities/RNC*.md    your design table and notes (for MECHANICS / CITIES / WAVE1 later)
 ```
@@ -51,23 +51,13 @@ and `tests/cities/<code>.ts` exporting `test` are fixed. Import shared helpers (
 `trolls`, `endkit`, `Grid`, entities from `traps`/`basics`) from their usual places with `../../levels/...`.
 Never import another city's module.
 
-## The one registry line
+## No registry line: drop your folder in
 
-`src/game/cities/registry.ts`, in journey order (docs/CITIES.md, "The journey"):
-
-```ts
-import { RNC } from './rnc';
-import { PAT } from './pat';   // <- your line: the import ...
-
-export const CITY_MODULES: CityModule[] = [
-  RNC,
-  PAT,                         // <- ... and the entry
-];
-```
-
-(Strictly that is two lines, the import and the entry; they are the only registry edits, and with one city
-per worktree they merge trivially.) The test file needs no registration: `tests/city-tests.ts` picks up every
-`tests/cities/*.ts`.
+`src/game/cities/registry.ts` finds modules by folder with `import.meta.glob('./*/index.ts', { eager: true })`
+and sorts them by the city's position in `CHAPTERS` (journey order), so you edit no shared file at all. Your
+`index.ts` must export exactly one `CityModule` (anything else it exports is ignored). The test file is found
+the same way: `tests/city-tests.ts` picks up every `tests/cities/*.ts` and keys it by file name
+(`tests/cities/pat.ts` is `PAT`).
 
 The CityId (`src/game/constants.ts`) and the map chapter (`CHAPTERS` in `src/game/cities.ts`, with its pin in
 `src/map/india-data.ts`) already exist for all 36 stops. `install.ts` turns the chapter into a playable city:
@@ -122,9 +112,13 @@ Two details that trip people up:
   }
   ```
 
-  After that, `twist: 'ulta'` and `collectible(w, 'dhuska', ...)` typecheck like the built-in kinds. Ending
-  kinds, thing kinds, death causes and act ids are unique in the whole game: prefix act ids with your code
-  (`rnc02-...`), and grep before you name an ending or a thing.
+  After that, `twist: 'ulta'` and `collectible(w, 'dhuska', ...)` typecheck like the built-in kinds.
+
+**The prefix rule.** Every new key starts with your city code in lower case: ending kinds, death causes, thing
+kinds and scene features with `pat-` (`'pat-litti'`, `w.die('pat-ganga')`), act ids with the stage too
+(`pat02-golghar`). Then two builders can never pick the same key. `install.ts` throws on any key that is
+already used (ending kind, death cause, thing kind, scene feature, stage id), and `tests/modules.test.ts`
+fails on an unprefixed key or an act id used twice anywhere in the game. (RNC predates the rule.)
 
 ## The test file
 
@@ -135,6 +129,7 @@ export const test: CityTests = {
   solutions,        // (S, lengthen) => { S['RNC-02'] = [...]; lengthen('RNC-02', 0, []); ... }
   naive,            // { 'RNC-02': { steps, cause: 'tel' }, ... }  the obvious play, and what kills it
   // fix,           // { 'RNC-0n': { steps, cause } }  the obvious correction after the first death (hardness pass)
+  // mistakes,      // { 'RNC-0n': [{ what, steps, cause }] }  more scripted deaths, 'like last time' moves
   actRoutes,        // { 'rnc02-...': (x) => Step[] }  by act id
   endingPolicies,   // { ulta: (w, m, d) => Out }      by ending kind
   fair: ['RNC-02', 'RNC-03', 'RNC-04', 'RNC-05', 'RNC-06', 'RNC-07', 'RNC-08'],  // LDD_FAIR default ids
@@ -143,7 +138,14 @@ export const test: CityTests = {
 
 Import test helpers from `../runner`, `../moves` and so on (one folder up), and the game from `../../src/...`.
 `tests/solutions.ts`, `tests/acts.ts` and `tests/endings.ts` merge it into `SOLUTIONS`, `NAIVE`, `FIX`,
-`ACT_ROUTES` and `ENDING_POLICIES`, so every suite in HANDOFF section 6 covers your stages automatically.
+`MISTAKES`, `ACT_ROUTES` and `ENDING_POLICIES`, so every suite in HANDOFF section 6 covers your stages
+automatically.
+
+**The guard test** (`tests/modules.test.ts`) holds every module city to the bar, so nothing is optional:
+stages exactly `XXX-01`..`XXX-10` with `index` 1..10; a NAIVE for every stage; a FIX for at least 5 of the 10;
+one hidden item per stage; a route for every act; a policy for every ending; a non-empty `fair` list that
+names every stage whose `shape` is `long`, `marathon` or `wtf`; at least 9 `intro` lines; the prefix rule.
+RNC is excused from some checks by an explicit allow-list with a TODO; never add a city to it.
 
 ## Running only your city's tests
 
@@ -164,7 +166,29 @@ The tools in HANDOFF section 6 (`LDD_LEVEL=PAT-05 ... debug.test.ts`, `showmap`,
 Every new city has **10 stages, `XXX-01` to `XXX-10`**: 01 is the welcome tour (`tour()`), 02 to 10 are long
 stages (`longStage({ base, acts, twist, par })`), difficulty rising, 10 is the finale (it may call back to this
 city's own ideas only). Each `LevelDef` has `id: 'PAT-10'`, `index: 10`. That means 9 door endings, 9 rival
-`intro` lines (plus the tour's), and a NAIVE (and FIX where it applies) for each of 02 to 10.
+`intro` lines (`lines.intro`, one per stage 02-10; readers index `intro[n % intro.length]`), and a NAIVE for
+every stage (FIX for at least 5).
+
+Tag each long stage's shape: `longStage({ ..., shape: 'long' | 'marathon' | 'wtf' })` (`'tour'` and
+`'short'` exist too). Long, marathon and wtf stages must be in your `fair` list.
+
+### Long and marathon stages: lives, checkpoints, timing
+
+- **Lives.** 7 lives; by default the 7th death starts the stage over. Pass `lives: 'act'` to `longStage` (or
+  set it on a LevelDef) and the 7th death goes back to the start of the act Dad is in (the last act-start
+  checkpoint he passed, `LevelDef.actStarts`), with a full set of lives. Use it on every marathon.
+- **Marathon:** at most 120 s once known. **Long:** 60-80 s. Both: a calm checkpoint at least every 25 s
+  of play (an act start gets one; add more with the act's `cps`).
+- **Fairness:** 90% average-timing success for the whole stage (as today) and **95% for every stretch
+  between two checkpoints**. Put both numbers in `docs/cities/<CODE>.md`.
+
+### Hint parts
+
+`longStage` still joins the hint into one string (`hint`, kept for compatibility) and also gives
+`hintParts: string[]` (room hint, each troll section's advice, each act's advice, the door's advice) and
+`hintAt: number[]` (tile x where each part starts; the door part starts at the door's checkpoint).
+`hintPartAt(def, x)` (`src/game/levels/chunks.ts`) says which part Dad is in at world x. Write each act's
+`advice` so it stands on its own: the hint screen shows only the part for the stretch you are in.
 
 Everything else already handles 10: stage codes (`normalizeCode` reads `pat10`, `PAT-10`, `pat 9`), the
 stage list and map cards (built from `levelsOf(city)`), stars (`3 × stages`), unlocking (the stage before by
@@ -195,4 +219,5 @@ system keep their 8 stages. `tests/ten-stages.test.ts` proves a 10-stage module 
 3. Fairness model run on every precision section (numbers in your `docs/cities/<CODE>.md`).
 4. `npm run build:single && node scripts/flows.mjs` passes (set `CHROME_PATH` if Playwright can't find its
    browser), and you looked at screenshots of every stage.
-5. `git diff --stat` against your base shows only your directory, your test file, your docs and the registry.
+5. `git diff --stat` against your base shows only your directory, your test file and your docs.
+6. Commit on your own branch. Never push, never bump the version: the integrator does both.

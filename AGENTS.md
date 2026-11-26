@@ -4,11 +4,13 @@ Level Devil Dad is a troll platformer for Android and iPhone (TypeScript, Canvas
 India capital by capital, south to north; every stage betrays him with a trap built from that city's everyday
 life. 15 cities and 120 stages are done (Thiruvananthapuram to Ranchi).
 
-**The job now: the hardness pass.** The owner's verdict on the shipped stages: too easy and too obvious to
-win, nowhere near Level Devil. Before any new city, every existing stage gets harder, more complex and more
-unexpected, city by city in journey order (Thiruvananthapuram first). New cities wait until that's done.
+**The job now: new cities and the hardness pass, together.** The owner has said go for both. The owner's
+verdict on the shipped stages: too easy and too obvious to win, nowhere near Level Devil, so every existing
+stage gets harder, more complex and more unexpected. The 21 remaining cities are built in parallel, each as
+a city module with **10 stages**: the recipe is `docs/CITY-MODULE.md`.
 
 Read before you touch anything:
+0. `docs/CITY-MODULE.md`: how a new city is built (a module, 10 stages, which files you may touch).
 1. `docs/HANDOFF.md`: setup, how the engine works, how a stage is built, the file-by-file checklist for a
    new city, tests and tools.
 2. `docs/CITIES.md`: every done stage (what it is, its act and door ending), and notes for every city still
@@ -63,15 +65,15 @@ Read before you touch anything:
 ## Workflow per city
 
 1. Research the city (`docs/research-prompt.md` has the format if you can browse).
-2. Write the design table: 8 stages (01 is the welcome tour). For 02–08: the local thing, what the player
+2. Write the design table: 10 stages (01 is the welcome tour). For 02–10: the local thing, what the player
    expects, how it betrays them, the new mechanic, the act, the door ending, and the closest existing idea
-   with why this is different. Difficulty rises 02 → 08; 08 is the finale and may call back to this
-   city's own ideas only.
-3. Show the table to the owner (short) and wait for "go", unless they already said go.
-4. Build it with the checklist in HANDOFF.md section 5; test as in sections 6 and 7.
-5. Ship: bump the version (package.json and `src/config.ts`), add a WAVE1.md section, add the ideas to
-   MECHANICS.md, move the city to Done in CITIES.md, commit, push to `main`. CI builds the APK onto the
-   `test` release.
+   with why this is different. Difficulty rises 02 → 10; 10 is the finale and may call back to this
+   city's own ideas only. The go is already given.
+3. Build it as a module (`docs/CITY-MODULE.md`): only `src/game/cities/<code>/`, `tests/cities/<code>.ts`
+   and `docs/cities/<CODE>*.md`. Test as in HANDOFF.md sections 6 and 7; `tests/modules.test.ts` must pass.
+4. Hand over: commit on your own branch. **Builders never push and never bump the version.** The
+   integrator merges cities into `develop`, bumps the version, writes WAVE1.md / MECHANICS.md / CITIES.md
+   from your notes and publishes `develop` (never `main`). CI builds the APK onto the `test` release.
 
 ## Working with the owner
 

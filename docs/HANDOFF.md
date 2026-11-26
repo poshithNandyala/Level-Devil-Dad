@@ -4,7 +4,8 @@ Everything a new developer (human or AI) needs to carry on. Rules and the qualit
 `AGENTS.md`; what's done and what's next is in `docs/CITIES.md`; every idea already used is in
 `docs/MECHANICS.md`; the changelog with lessons learned is `docs/WAVE1.md`.
 
-Status: v0.14.4, 14 capitals, 112 stages, all proven beatable by scripted routes. Next city: Ranchi (RNC).
+Status: v0.16.14 on `develop`, 15 capitals, 120 stages, all proven beatable by scripted routes. New cities
+(10 stages each) are city modules: **`docs/CITY-MODULE.md` is the recipe**, and section 5 below is history.
 
 ## 1. Setup
 
@@ -19,7 +20,7 @@ Status: v0.14.4, 14 capitals, 112 stages, all proven beatable by scripted routes
 ```bash
 npm ci
 npm run dev            # http://localhost:5173 ; ?c=RPR-05 (or #RPR-05) opens that stage
-npm test               # every suite: 934 tests, under a minute
+npm test               # every suite: 1169 tests (12 tool files skipped), under a minute
 npm run typecheck      # tsc --noEmit
 npm run build:single   # dist-single/index.html: the whole game in one file (what the APK wraps)
 node scripts/flows.mjs # after build:single: menus, pause, hints, passport, share, in headless Chrome
@@ -155,7 +156,8 @@ export const RPR: LevelDef[] = [
 
 ## 5. Adding a city: every file
 
-**New cities are modules now: follow `docs/CITY-MODULE.md` (one directory + one registry line, 10 stages).**
+**New cities are modules now: follow `docs/CITY-MODULE.md` (drop a folder in `src/game/cities/<code>/` and a
+test file in `tests/cities/`; no shared file changes; 10 stages).**
 The table below is how the 14 cities before Ranchi were added; it is kept for reading their code.
 
 Use the last city (Raipur) as the template and search for `RPR` to see each entry. For Ranchi:
