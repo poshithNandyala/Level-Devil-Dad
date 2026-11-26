@@ -26,34 +26,6 @@ export type TourSeg =
 /** Every city walks its own course (tile columns); the door, the deck and the item are where they always were. */
 export const TOUR = { cols: 120, door: 112, deck: [94, 99] as [number, number], item: [96.5, 8.4] as [number, number] };
 export const COURSES = {
-  // a temple tank to walk down into, and a canoe across the canal
-  TVM: [{ k: 'wall', x: 12 }, { k: 'ditch', x: 24, w: 2, wet: true }, { k: 'steps', x: 36, n: 2, run: 3, top: 4 }, { k: 'parked', x: 56 }, { k: 'ferry', x: 68, w: 10, kind: 'odam', wet: true }],
-  // coral heads across the lagoon, and the jetty steps
-  KVT: [{ k: 'stones', x: 13, n: 4, wet: true }, { k: 'wall', x: 36 }, { k: 'parked', x: 48 }, { k: 'steps', x: 60, n: 2, run: 2, top: 6 }, { k: 'ditch', x: 82, w: 2, wet: true }],
-  // the auto stand, then up and down a gopuram's tiers, and the beach lamp posts
-  CHN: [{ k: 'parked', x: 14 }, { k: 'ditch', x: 26, w: 2 }, { k: 'steps', x: 36, n: 4, run: 2, top: 4 }, { k: 'posts', x: 64, n: 3 }, { k: 'wall', x: 80, w: 2 }],
-  // French bollards in a row, a canal, and the café terrace
-  // (no wall after the terrace: the street from there to the canal is where the policeman's cap blows down)
-  PDY: [{ k: 'posts', x: 12, n: 5 }, { k: 'ditch', x: 32, w: 2, wet: true }, { k: 'parked', x: 44 }, { k: 'steps', x: 52, n: 1, run: 2, top: 10 }, { k: 'ditch', x: 86, w: 2 }],
-  // over the dug-up road on the metro shuttle
-  // (the dug-up road after the metro is the city's own: a smart bridge over it, see blr.ts)
-  BLR: [{ k: 'wall', x: 12 }, { k: 'steps', x: 22, n: 2, run: 2, top: 3 }, { k: 'parked', x: 40 }, { k: 'ferry', x: 52, w: 12, kind: 'traincar', label: 'NAMMA METRO' }, { k: 'posts', x: 82, n: 2 }],
-  // the barrage piers across the Krishna
-  AMR: [{ k: 'ditch', x: 12, w: 2 }, { k: 'parked', x: 24 }, { k: 'stones', x: 36, n: 5, wet: true }, { k: 'wall', x: 66, w: 2 }, { k: 'steps', x: 74, n: 3, run: 2, top: 2 }],
-  // up the Charminar's steps, and the boat on Hussain Sagar
-  HYD: [{ k: 'parked', x: 12 }, { k: 'wall', x: 24 }, { k: 'steps', x: 32, n: 5, run: 1, top: 4 }, { k: 'ditch', x: 54, w: 2 }, { k: 'ferry', x: 66, w: 11, kind: 'odam', wet: true }, { k: 'posts', x: 84, n: 2 }],
-  // the laterite steps, a canoe hop, and the car ferry across the Mandovi to Betim
-  PNJ: [{ k: 'stones', x: 12, n: 3, wet: true }, { k: 'wall', x: 30 }, { k: 'ferry', x: 40, w: 18, kind: 'ferry', wet: true, label: 'BETIM' }, { k: 'parked', x: 66 }, { k: 'steps', x: 76, n: 3, run: 2, top: 2 }],
-  // the jetty bollards, the ferry from Nani to Moti Daman, and the fort steps
-  DMN: [{ k: 'posts', x: 12, n: 3 }, { k: 'ditch', x: 26, w: 2, wet: true }, { k: 'ferry', x: 38, w: 18, kind: 'ferry', wet: true, label: 'MOTI DAMAN' }, { k: 'wall', x: 64, w: 2 }, { k: 'steps', x: 74, n: 3, run: 2, top: 3 }],
-  // the sector circle's kerbs, the riverfront steps, a BRTS shuttle over the Sabarmati
-  GNR: [{ k: 'posts', x: 12, n: 4 }, { k: 'steps', x: 28, n: 2, run: 2, top: 3 }, { k: 'parked', x: 44 }, { k: 'ferry', x: 54, w: 16, kind: 'traincar', wet: true, label: 'BRTS' }, { k: 'ditch', x: 78, w: 2 }],
-  // the pink city's bollards, Hawa Mahal's steps, the metro over the dug-up road
-  RPR: [{ k: 'posts', x: 12, n: 3 }, { k: 'ditch', x: 26, w: 2 }, { k: 'steps', x: 40, n: 3, run: 2, top: 3 }, { k: 'ferry', x: 56, w: 14, kind: 'traincar', label: 'RAIPUR JN' }, { k: 'parked', x: 82 }],
-  BPL: [{ k: 'steps', x: 12, n: 3, run: 2, top: 3 }, { k: 'posts', x: 28, n: 3 }, { k: 'ditch', x: 44, w: 2 }, { k: 'ferry', x: 54, w: 14, kind: 'traincar', label: 'BHOPAL JN' }, { k: 'parked', x: 80 }],
-  JAI: [{ k: 'posts', x: 12, n: 3 }, { k: 'steps', x: 26, n: 3, run: 2, top: 3 }, { k: 'parked', x: 46 }, { k: 'ferry', x: 56, w: 14, kind: 'traincar', label: 'PINK LINE' }, { k: 'ditch', x: 80, w: 2 }],
-  // a ride on the local over the nala
-  BOM: [{ k: 'posts', x: 12, n: 3 }, { k: 'ditch', x: 24, w: 2 }, { k: 'parked', x: 34 }, { k: 'ferry', x: 46, w: 16, kind: 'traincar', wet: true, label: 'CHURCHGATE' }, { k: 'wall', x: 70 }, { k: 'steps', x: 78, n: 2, run: 2, top: 2 }],
   // the Rock Garden's steps and a ride up the plateau road from Ranchi station
 } as Record<CityId, TourSeg[]>;
 

@@ -991,20 +991,6 @@ export const ROOM = { W: ROOM_W, H: ROOM_H };
 /** per city: where its light comes from (fraction of the screen), the glow, a colour whisper, a vignette tint */
 export type Grade = { gx: number; gy: number; glow: string; tint: string; vig: string };
 export const GRADES: Record<string, Grade> = {
-  TVM: { gx: 0.82, gy: -0.15, glow: 'rgba(255,236,190,0.30)', tint: 'rgba(110,200,160,0.12)', vig: 'rgba(8,46,36,0.16)' },
-  KVT: { gx: 0.74, gy: -0.22, glow: 'rgba(255,255,236,0.34)', tint: 'rgba(60,220,235,0.10)', vig: 'rgba(0,48,86,0.12)' },
-  CHN: { gx: 0.84, gy: -0.12, glow: 'rgba(255,242,205,0.38)', tint: 'rgba(255,196,120,0.10)', vig: 'rgba(84,34,12,0.12)' },
-  PDY: { gx: 0.22, gy: -0.16, glow: 'rgba(255,246,220,0.32)', tint: 'rgba(255,214,140,0.08)', vig: 'rgba(26,48,96,0.12)' },
-  BLR: { gx: 0.12, gy: 0.34, glow: 'rgba(255,206,190,0.32)', tint: 'rgba(196,140,230,0.12)', vig: 'rgba(42,20,74,0.16)' },
-  AMR: { gx: 0.7, gy: -0.22, glow: 'rgba(255,228,160,0.42)', tint: 'rgba(255,160,70,0.12)', vig: 'rgba(96,32,8,0.16)' },
-  HYD: { gx: 0.18, gy: 0.56, glow: 'rgba(255,160,100,0.36)', tint: 'rgba(220,80,160,0.12)', vig: 'rgba(28,8,52,0.22)' },
-  PNJ: { gx: 0.22, gy: 0.5, glow: 'rgba(255,186,120,0.3)', tint: 'rgba(255,110,70,0.09)', vig: 'rgba(40,14,30,0.22)' },
-  DMN: { gx: 0.7, gy: 0.2, glow: 'rgba(255,240,200,0.24)', tint: 'rgba(60,140,200,0.08)', vig: 'rgba(10,30,50,0.2)' },
-  GNR: { gx: 0.6, gy: 0.25, glow: 'rgba(255,236,190,0.26)', tint: 'rgba(255,170,60,0.07)', vig: 'rgba(30,20,10,0.2)' },
-  RPR: { gx: 0.7, gy: 0.2, glow: 'rgba(255,240,190,0.26)', tint: 'rgba(120,170,60,0.07)', vig: 'rgba(20,35,10,0.2)' },
-  BPL: { gx: 0.3, gy: 0.24, glow: 'rgba(255,236,200,0.24)', tint: 'rgba(60,150,160,0.07)', vig: 'rgba(10,30,40,0.2)' },
-  JAI: { gx: 0.65, gy: 0.22, glow: 'rgba(255,222,196,0.26)', tint: 'rgba(230,100,120,0.07)', vig: 'rgba(40,15,20,0.2)' },
-  BOM: { gx: 0.8, gy: -0.1, glow: 'rgba(170,200,255,0.22)', tint: 'rgba(80,110,255,0.10)', vig: 'rgba(4,6,26,0.26)' },
 };
 /** tile cache slice width (world px) */
 const CHUNK = 512;

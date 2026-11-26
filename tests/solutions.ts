@@ -7,7 +7,7 @@ import { LEVEL_BY_ID } from '../src/game/levels';
 import { exitPolicy, longRun, solveChunk } from './chunks';
 import { DT } from '../src/game/constants';
 import { swim, skimmer, kicker } from './moves';
-import { Jelly } from '../src/game/levels/kvt';
+import { Jelly } from '../src/game/cities/kvt/levels';
 import { westSolutions } from './west';
 import { CITY_TESTS } from './city-tests';
 const px16 = (t: number) => t * 16;
