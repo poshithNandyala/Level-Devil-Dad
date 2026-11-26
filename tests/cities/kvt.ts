@@ -7,9 +7,8 @@ import type { World } from '../../src/game/world';
 import type { Door } from '../../src/game/entities/basics';
 import { Step, X, and, done, ground, thingOf } from '../runner';
 import type { CityTests } from '../city-tests';
-import { swimPolicy } from '../moves';
 import type { Heap } from '../../src/game/cities/kvt/encores';
-import { Eel, type Dolphin } from '../../src/game/cities/kvt/levels';
+import { Eel, Jelly, type Dolphin } from '../../src/game/cities/kvt/levels';
 import { DT } from '../../src/game/constants';
 
 type Move = 'L' | 'R' | '';
@@ -143,18 +142,18 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     return [
       { hold: 'R', until: X(x + 2.2), max: 400, note: 'to the edge: the tide is going out' },
       { hold: '', until: tide(0), max: 600, note: 'wait till the step is down to its top' },
-      { hold: 'R', jump: 30, ticks: 48, note: 'on to the coral top' },
+      { hold: 'R', jump: 30, ticks: 48, long: true, note: 'on to the coral top' },
       { hold: '', until: ground, max: 200 },
       { hold: '', until: still, max: 100 },
-      { hold: 'R', jump: 30, ticks: 42, note: 'off it, on to the rock' },
+      { hold: 'R', jump: 30, ticks: 42, long: true, note: 'off it, on to the rock' },
       { hold: '', until: ground, max: 200 },
       { hold: '', until: eelRests, max: 600, note: 'the hole with eyes: let the moray lunge and go back in' },
       { hold: 'R', until: X(x + 13.2), max: 300, note: 'now across' },
       { hold: '', until: tide(1), max: 600, note: 'wait for the second step' },
-      { hold: 'R', jump: 30, ticks: 48 },
+      { hold: 'R', jump: 30, ticks: 48, long: true },
       { hold: '', until: ground, max: 200 },
       { hold: '', until: still, max: 100 },
-      { hold: 'R', jump: 30, ticks: 42 },
+      { hold: 'R', jump: 30, ticks: 42, long: true },
       { hold: '', until: ground, max: 200 },
       { hold: 'R', until: X(x + 24), max: 400 },
     ];
@@ -166,6 +165,46 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { policy: rideDolphin(`kvt08-dolphins:dolphins`, 0, px(x + 16), 0.56, 0.06), until: (w) => w.player.onGround && w.player.x >= px(x + 16) && Math.abs(w.player.vx) < 1, max: 1500, note: 'ride the first dolphin to the sand' },
     { policy: rideDolphin(`kvt08-dolphins:dolphins`, 1, px(x + 34), 0.55, 0.06), until: (w) => w.player.onGround && w.player.x >= px(x + 34), max: 1500, note: 'and the second, to the beach' },
     { hold: 'R', until: X(x + 38), max: 200 },
+  ],
+  'kvt06-air': (x) => [
+    ...upRim(x),
+    {
+      policy: swimTo([
+        { x: px(x + 10), y: 236, tx: 8 },
+        { x: px(x + 18.2), y: 221, tx: 6 },
+        { x: px(x + 20), y: 172, tx: 5, ty: 6, wait: airFull },
+        { x: px(x + 20), y: 221, yFirst: true },
+        { x: px(x + 35.2), y: 221, tx: 6 },
+        { x: px(x + 38.5), y: 120, tx: 4, ty: 4 },
+      ]),
+      until: (w) => w.player.y + w.player.h <= 176 && !w.player.swimming && w.player.x > px(x + 37),
+      max: 4000,
+      note: 'breathe in the pocket, go over the turtle, come up at the far end',
+    },
+    { hold: 'R', until: and(ground, X(x + 44)), max: 400 },
+  ],
+  // KVT-06's eel alley: the shared line, but a swimmer who calls a point reached within 6 px of its depth (the
+  // shared one, 3 px, hovers 4 px off forever when his thumb is late, and drowns there)
+  'kvt06-eels': (x) => [
+    ...upRim(x),
+    {
+      policy: swimTo([
+        { x: px(x + 10), y: 218, tx: 8, ty: 3 },
+        { x: px(x + 15.6), y: 218, tx: 4, ty: 3 },
+        { x: px(x + 15.8), y: 258, yFirst: true, ty: 4 },
+        { x: px(x + 19.5), y: 258, tx: 5 },
+        { x: px(x + 21), y: 172, tx: 5, ty: 6, wait: airFull },
+        { x: px(x + 21), y: 218, yFirst: true, ty: 3 },
+        { x: px(x + 25.6), y: 218, tx: 4, ty: 3 },
+        { x: px(x + 25.6), y: 240, yFirst: true, ty: 4 },
+        { x: px(x + 31), y: 240, tx: 6 },
+        { x: px(x + 37.5), y: 120, tx: 4, ty: 4 },
+      ]),
+      until: (w) => w.player.y + w.player.h <= 176 && !w.player.swimming && w.player.x > px(x + 36),
+      max: 4000,
+      note: 'over the floor eels, under the roof one, through the middle of the pair',
+    },
+    { hold: 'R', until: and(ground, X(x + 42)), max: 400 },
   ],
   'kvt09-pavizham': (x) => [
     ...deepOn(x + 3.3, 20, 'stop at the water, land deep'),
@@ -292,10 +331,10 @@ const endingPolicies: Record<string, Policy> = {
         return wall ? jump(w, m, 14, 'R') : go('R');
       }
       const [lx, ky] = w.flags.knot as [number, number];
-      m.sw = swimPolicy([
+      m.sw = swimTo([
         { x: lx - 6, y: ky, tx: 4, ty: 4, wait: (w2) => w2.flags.twist === 'ok' },
         { x: d.x - 62, y: 200, tx: 4, yFirst: false },
-        { x: d.x - 62, y: 120, tx: 4, ty: 30 },
+        { x: d.x - 54, y: 120, tx: 4, ty: 30 },
       ]);
     }
     if (p.swimming) return m.sw(w);
@@ -431,16 +470,79 @@ const rideDolphin = (key: string, i: number, landX0: number, off: number, lead: 
   };
 };
 
+// ------------------------------------------------------------------ the reef (KVT-06), as in tests/acts.ts
+const upRim = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 1.6), max: 400 },
+  { hold: 'R', jump: 14, ticks: 14, note: 'up the rock' },
+  { hold: 'R', until: and(ground, X(x + 3.6)), max: 200 },
+  { hold: 'R', jump: 14, ticks: 14, note: 'up to the rim' },
+  { hold: 'R', until: (w) => w.player.swimming, max: 300, note: 'and in' },
+];
+const airFull = (w: World) => w.player.air > 4.95;
+/** jellyfish i is drifting down, well under the surface: room to swim over it (as in tests/solutions.ts) */
+const jellyLow = (i: number) => (w: World) => {
+  const j = w.entities.filter((e) => e instanceof Jelly)[i] as Jelly;
+  const k = ((((w.tick * DT + j.phase) % j.period) + j.period) % j.period) / j.period;
+  return k >= 0.28 && j.y > 200;
+};
+interface SwimPt {
+  x: number;
+  y: number;
+  tx?: number;
+  ty?: number;
+  yFirst?: boolean;
+  wait?: (w: World) => boolean;
+}
+/** tests/moves.ts's swimmer, with one change: a point counts as reached anywhere he would hover at it. (The
+ *  shared one hovers from 8 px above a point but only calls it reached within `ty`: a late thumb that settles
+ *  6 px high hovers there for ever, and drowns.) */
+function swimTo(pts: SwimPt[]) {
+  let i = 0,
+    last = -99,
+    world: World | null = null;
+  return (w: World): Out => {
+    if (world !== w) {
+      world = w;
+      i = 0;
+      last = -99;
+    }
+    const p = w.player;
+    let pt = pts[Math.min(i, pts.length - 1)];
+    const band = (q: SwimPt) => (q.ty ?? 5) - 1;
+    const near = (q: SwimPt) => Math.abs(q.x - p.cx) < (q.tx ?? 4) && q.y - p.cy <= band(q) && q.y - p.cy >= -Math.max(8, band(q) + 3);
+    while (i < pts.length && near(pt) && (!pt.wait || pt.wait(w))) {
+      i++;
+      pt = pts[Math.min(i, pts.length - 1)];
+    }
+    const dx = pt.x - p.cx,
+      dy = pt.y - p.cy;
+    let jump: boolean;
+    if (dy < -Math.max(8, band(pt) + 3)) {
+      if (w.tick - last >= 14) {
+        if (w.input.jump) jump = false;
+        else {
+          jump = true;
+          last = w.tick;
+        }
+      } else jump = true;
+    } else if (dy > band(pt)) jump = false;
+    else jump = true;
+    const yOk = !pt.yFirst || Math.abs(dy) < 8;
+    const move: Move = yOk && Math.abs(dx) > 3 ? (dx > 0 ? 'R' : 'L') : '';
+    return { move, jump };
+  };
+}
+
 // ------------------------------------------------------------------ the tour's coral step (KVT-01)
 const coral = (st: string) => (w: World) => w.flags.coral === st;
 /** wait at the water's edge for the tide to finish, then a timed jump on to the coral top and one off it */
 const coralCrossing = (r1: number, r2: number): Step[] => [
   { hold: 'R', until: X(81.2), max: 600, note: 'to the water’s edge' },
   { hold: '', until: (w) => coral('top')(w) && still(w), max: 600, note: 'wait for the tide: the step shrinks to its top' },
-  { hold: 'R', jump: 30, ticks: r1, note: 'on to the coral top' },
+  { hold: 'R', jump: 30, ticks: r1, long: true, note: 'on to the coral top' },
   { hold: '', until: ground, max: 200 },
   { hold: '', until: still, max: 100 },
-  { hold: 'R', jump: 30, ticks: r2, note: 'and off to the beach' },
+  { hold: 'R', jump: 30, ticks: r2, long: true, note: 'and off to the beach' },
   { hold: '', until: ground, max: 200 },
 ];
 /** the shared tour route with its old ditch hop (now the coral step) swapped for `w` */
@@ -484,6 +586,26 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
 
   // the runway lights were spikes: so hop every light and run on. The baggage tug comes the other way
   fix['KVT-04'] = { steps: [...upTo(S['KVT-04'], 'hop the baggage tug'), { hold: 'R', until: done, max: 600 }], cause: 'hit' };
+
+  // ---------------------------------------------------------------- KVT-06: the same swim, by the swimmer above
+  {
+    const r = S['KVT-06'];
+    const i = r.findIndex((st) => st.note === 'under the sea stack, between the jellyfish, up at the pier');
+    r[i] = {
+      ...r[i],
+      policy: swimTo([
+        { x: 190, y: 236, tx: 6 },
+        { x: 270, y: 236, tx: 6 },
+        { x: 285, y: 148, tx: 5, ty: 4, wait: jellyLow(0) },
+        { x: 345, y: 148, tx: 5, ty: 4, wait: jellyLow(1) },
+        { x: 425, y: 148, tx: 6, ty: 4 },
+        { x: 475, y: 100, tx: 4, ty: 4 },
+      ]),
+    };
+    // (a leap out that clears the pier and lands on the rocks past it is just as good)
+    const j = r.findIndex((st) => st.note === 'on to the pier');
+    r[j] = { ...r[j], until: (w) => w.player.onGround && (w.player.y < 128 || w.player.x >= px(32)) };
+  }
 
   // ---------------------------------------------------------------- KVT-06 to 08: the obvious plays
   // straight in off the jetty and on along the bottom: the urchins under the sea stack
