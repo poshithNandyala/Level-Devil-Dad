@@ -6,10 +6,12 @@ import { tourLevel, meta01 } from './s01';
 import { room as room02, act as act02, meta02 } from './s02';
 import { room as room03, act as act03, meta03 } from './s03';
 import { room as room04, act as act04, meta04 } from './s04';
+import { room as room05, act1 as act05a, act2 as act05b, meta05 } from './s05';
 
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: meta01 },
   longStage({ base: room02(), acts: [act02], twist: 'gtk-steam-vent', par: 40, shape: 'long', meta: meta02 }),
   longStage({ base: room03(), acts: [act03], twist: 'gtk-jhola-entry', par: 36, shape: 'long', meta: meta03 }),
   longStage({ base: room04(), acts: [act04], twist: 'gtk-lift-counts-down', par: 40, shape: 'long', meta: meta04 }),
+  longStage({ base: room05(), acts: [act05a, act05b], twist: 'gtk-taxi-meter', par: 60, shape: 'wtf', meta: meta05 }),
 ];
