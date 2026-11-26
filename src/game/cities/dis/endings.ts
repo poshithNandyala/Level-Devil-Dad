@@ -6,9 +6,11 @@ import { Hedge, Plucker } from './pluck';
 import { Pan } from './pitha';
 import { roller } from '../../levels/kit';
 import { Host, gam } from './gamosa';
+import { TeaBoy } from './bank';
+import { Slab } from './entities';
 import type { Ending } from '../../levels/endkit';
 
-export type DisEndingKind = 'dis-hut-shut' | 'dis-tea-chest' | 'dis-laru-plate' | 'dis-gamosa-latch';
+export type DisEndingKind = 'dis-hut-shut' | 'dis-tea-chest' | 'dis-laru-plate' | 'dis-gamosa-latch' | 'dis-tea-ladder';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<DisEndingKind, true> {}
@@ -163,6 +165,58 @@ export const endings: Record<DisEndingKind, Ending> = {
           ctx.fillRect(d.x + 1, d.y - 4, 14, 1.2);
           ctx.fillRect(d.x + 1, d.y - 1.4, 14, 1.2);
         }, 3),
+      );
+    },
+  },
+  // ================================================================ DIS-06: the ladder for the tea boy
+  /** The door is up in a stilt house. Its ladder is pulled up until the tea boy walks up the path and the family lets it down for him. */
+  'dis-tea-ladder': {
+    space: 26,
+    after: 5,
+    advice: 'The door is up in a stilt house, and its ladder is pulled up. Wait at the foot of it: when the tea boy walks up the path, the family lets the ladder down for him, and for you. Climb it, and then on to the door.',
+    paint: (g, D) => {
+      g.put(D, 14, '.');
+      g.fill(D - 1, D + 3, 11, 14, '#');
+      g.put(D + 1, 10, 'E');
+    },
+    build(w: World, d) {
+      const D = Math.round(d.x / 16) - 1;
+      const boy = w.add(new TeaBoy(px(D - 17), px(D - 24), px(D - 5)));
+      const rung = w.add(
+        new Slab(px(D - 5), 208, px(3), 6, (ctx, s) => {
+          // the ladder: hooked up against the stilts until it is let down
+          ctx.fillStyle = '#8D6B2E';
+          if (boy.down) {
+            ctx.fillRect(s.solid.x, s.solid.y, s.solid.w, 5);
+            ctx.fillRect(s.solid.x, s.solid.y, 2, 32);
+            ctx.fillRect(s.solid.x + s.solid.w - 2, s.solid.y, 2, 32);
+          } else {
+            ctx.fillRect(px(D - 1) - 3, 176, 2, 62);
+            ctx.fillRect(px(D - 1) - 8, 176, 2, 62);
+            for (let y = 184; y < 236; y += 12) ctx.fillRect(px(D - 1) - 8, y, 7, 2);
+          }
+        }),
+      );
+      rung.solid.oneWay = true;
+      w.onTick(() => {
+        rung.solid.collidable = boy.down;
+      });
+      w.flags.ladder = { boy, rung };
+      w.flags.twist = 'up';
+      w.add(
+        new Decor((ctx) => {
+          // the stilt house over its posts
+          const x0 = px(D - 1);
+          ctx.fillStyle = '#6A4B1C';
+          for (const dx of [2, 28, 52, 76]) ctx.fillRect(x0 + dx, 190, 4, 50);
+          ctx.fillStyle = '#B08B3C';
+          ctx.beginPath();
+          ctx.moveTo(x0 - 6, 160);
+          ctx.lineTo(x0 + 42, 140);
+          ctx.lineTo(x0 + 90, 160);
+          ctx.closePath();
+          ctx.fill();
+        }, -4),
       );
     },
   },

@@ -12,6 +12,7 @@ import { Grid } from '../../levels/grid';
 import { lock, tara as taraSays } from '../../levels/endkit';
 import type { Door } from '../../entities/basics';
 import { Pan } from './pitha';
+import { Bank, type BankDef } from './bank';
 import { Cloth, Host, gam, pitDanger } from './gamosa';
 import { Hedge, Plucker, Sprinkler } from './pluck';
 import { Carrier, Decor, River, SandField, levelPost, river, sand, type Span } from './entities';
@@ -346,6 +347,66 @@ const atithi: Act = {
   },
 };
 
+// ================================================================== DIS-06: Majuli ka Paar (the retreating bank)
+/** a bank of slabs over a channel: the river takes them on a clock that starts when Dad passes `from` (tile column) */
+export function bank(w: World, defs: BankDef[], from: number, reset: number, c0: number, c1: number) {
+  river(w, c0, c1, 'dis-bank');
+  const b = w.add(new Bank(defs, px(from), px(reset)));
+  b.setup(w);
+  (w.flags.banks ??= []).push(b);
+  return b;
+}
+
+function majuliRoom(): LevelDef {
+  return {
+    id: 'DIS-06',
+    city: 'DIS',
+    index: 6,
+    name: 'Majuli ka Paar',
+    nameEn: 'Across from Majuli',
+    tagline: 'Majuli is the biggest river island in the world, and the river takes a little of its bank every year. Today it takes it by the slab.',
+    hint: 'Nobody is floating: the river is eating the island, a slab at a time, from the water’s edge inland: the slab nearest the water goes first, so the far bank keeps getting farther. The bank starts going the moment you set out, and cracks and a dark wet line show a slab seconds before it goes. Cross at a run: don’t stop at the edge, don’t wait on a slab, and keep moving across the slabs.',
+    par: 22,
+    map: Grid.ground(15).pit(13, 26).put(1, 14, '@').put(30, 14, 'E').rows(),
+    build(w: World) {
+      door(w);
+      bank(w, [{ x: 15, w: 4, t: 240 }, { x: 19, w: 4, t: 380 }, { x: 23, w: 4, t: 520 }], 5, 3, 13, 27);
+      sign(w, 8.2, 10.4, 3.4, 'MAJULI', 'shop', null, 'ferry ghat');
+      rival(w, 3, 15, 1, tara(4));
+      onPass(w, px(4), (w2) => taraSays(w2, 'Lahe lahe, Dad. | Slowly, slowly, Dad.', 2.4));
+      collectible(w, 'dis-tenga', 20.5, 10.4);
+    },
+  };
+}
+
+/** DIS-06 act: four slabs with a gap between each, taken quickly one after another. */
+const majuli: Act = {
+  id: 'dis06-majuli',
+  w: 42,
+  advice: 'Another stretch of bank: four slabs with a gap between each, and the river is at the first one the moment you set out. Run and hop from slab to slab without stopping; each is gone a little after you were on it. Then the stilt house ladder: it is pulled up until the tea boy comes.',
+  cps: [1.5],
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 24);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    bank(
+      w,
+      [
+        { x: x + 5, w: 4, t: 230 },
+        { x: x + 10, w: 4, t: 320 },
+        { x: x + 15, w: 4, t: 410 },
+        { x: x + 20, w: 4, t: 500 },
+      ],
+      x + 0.6,
+      x - 4,
+      x + 3,
+      x + 25,
+    );
+    sign(w, x + 0.4, 10.4, 3.4, 'MAJULI GHAT', 'shop', null, 'run');
+  },
+};
+
 // the hut door: the farmer shuts it while the river is moving
 const hutDoor = (w: World, d: Door, field: SandField) => {
   const L = lock(w, d, 'Roba! Chah khaba. | Wait! Have some tea.');
@@ -363,7 +424,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: teaRoom(), acts: [bagan], twist: 'dis-tea-chest', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-tea-chest' } }),
   longStage({ base: pithaRoom(), acts: [tawa], twist: 'dis-laru-plate', par: 40, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
   longStage({ base: gamosaRoom(), acts: [atithi], twist: 'dis-gamosa-latch', par: 60, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
-  longStage({ base: todoRoom(6), par: 30, shape: 'long' }), // DIS-06 TODO: acts, twist (a dis-... ending), par
+  longStage({ base: majuliRoom(), acts: [majuli], twist: 'dis-tea-ladder', par: 50, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
   longStage({ base: todoRoom(7), par: 30, shape: 'long' }), // DIS-07 TODO: acts, twist (a dis-... ending), par
   longStage({ base: todoRoom(8), par: 30, shape: 'long' }), // DIS-08 TODO: acts, twist (a dis-... ending), par
   longStage({ base: todoRoom(9), par: 30, shape: 'long' }), // DIS-09 TODO: acts, twist (a dis-... ending), par

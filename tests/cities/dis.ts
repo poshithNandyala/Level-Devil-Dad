@@ -8,6 +8,7 @@ import type { CityTests } from '../city-tests';
 import { Carrier, SandField } from '../../src/game/cities/dis/entities';
 import { Plucker, Sprinkler } from '../../src/game/cities/dis/pluck';
 import type { Pan } from '../../src/game/cities/dis/pitha';
+import type { Bank } from '../../src/game/cities/dis/bank';
 
 type Out = { move: 'L' | 'R' | ''; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
@@ -138,6 +139,8 @@ const gamosaSet = (x: number, pit = 18): Step[] => [
   { hold: 'R', until: and(ground, (w) => w.player.y > 220 && w.player.x > px(x + 15.2)), max: 400, note: 'down again' },
   ...hopR(x + pit - 1.8, 'over the pit', 14),
 ];
+// ------------------------------------------------------------------ DIS-06: the bank
+const banks = (w: World) => (w.flags.banks ?? []) as Bank[];
 const tourEnd = (): Step[] => [...hop(94 - 1.6, 'up on the deck'), { hold: 'R', until: done, max: 900 }];
 
 /** S['DIS-0n'] = room route; lengthen(id, drop, extra) appends each act's route and the door's policy */
@@ -167,10 +170,18 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('DIS-04', 0, []);
   S['DIS-05'] = gamosaSet(0, 18);
   lengthen('DIS-05', 0, []);
+  S['DIS-06'] = [
+    { hold: 'R', until: X(12.6), max: 600, note: 'at a run to the edge' },
+    { hold: 'R', jump: 14, ticks: 14, note: 'over the channel on to the first slab' },
+    { hold: 'R', until: and(ground, X(28)), max: 600, note: 'on across the slabs without stopping' },
+  ];
+  lengthen('DIS-06', 0, []);
 }
 
 /** the obvious play per stage, and the cause it must die of (every stage, 01-10). TODO */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  // stop at the edge to have a look: by the time you jump, the near slab has gone
+  'DIS-06': { steps: [{ hold: 'R', until: X(12.6), max: 600 }, { hold: '', ticks: 190 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 900 }], cause: 'dis-bank' },
   // straight through every host, under the platform: three gamosas, and the pit is under the cloth
   'DIS-05': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'dis-gamosa' },
   // run at it: the next crepe isn't poured yet
@@ -194,6 +205,8 @@ const dis02Start: Step[] = [
   { hold: 'R', until: ground, max: 200 },
 ];
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  // go at once, but stop on the first slab to think: it is gone beneath you
+  'DIS-06': { steps: [{ hold: 'R', until: X(12.6), max: 600 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: done, max: 1500 }], cause: 'dis-bank' },
   // wait on the first shiny crepe and stay: it dulls, sets, and is rolled with you in it
   'DIS-04': { steps: [{ hold: 'R', until: X(6.3), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: done, max: 1500 }], cause: 'dis-roll' },
   // hop over her to get ahead: pinned against the hedge when she picks
@@ -219,6 +232,16 @@ const hopR0 = 0;
 void hopR0;
 const hopR = (at: number, note: string, ticks = 14): Step[] => [{ hold: 'R', until: X(at), max: 900 }, { hold: 'R', jump: ticks, ticks, note }, { hold: 'R', until: ground, max: 300 }];
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'dis06-majuli': (x) => [
+    { hold: 'R', until: X(x + 2.7), max: 600, note: 'run to the edge' },
+    { hold: 'R', jump: 14, ticks: 14, note: 'over the channel' },
+    { hold: 'R', until: ground, max: 200 },
+    ...hopR(x + 7.4, 'to the second slab', 12),
+    ...hopR(x + 12.4, 'to the third slab', 12),
+    ...hopR(x + 17.4, 'to the fourth slab', 12),
+    ...hopR(x + 22.4, 'off the last slab', 12),
+    { hold: 'R', until: X(x + 41), max: 600 },
+  ],
   'dis05-atithi': (x) => [
     ...gamosaSet(x, 19),
     { hold: 'R', until: X(x + 22.2), max: 300 },
@@ -247,6 +270,26 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 
 /** a policy for each door ending, by kind ('dis-...'). TODO */
 const endingPolicies: Record<string, Policy> = {
+  'dis-tea-ladder'(w, m, d) {
+    const k = w.flags.ladder as { boy: { down: boolean }; rung: { solid: { x: number; w: number } & object } };
+    const D = Math.round(d.x / 16) - 1;
+    const p = w.player;
+    if (m.hold > 0) return { move: 'R', jump: true };
+    if (p.y + p.h <= 177 && p.cx > px(D - 1)) return go(toward(w, d.x + 8, 1) || 'R');
+    if (!p.onGround) return go('R');
+    const rungS = (k.rung as any).solid;
+    if (w.standing(rungS)) {
+      if (p.cx > rungS.x + rungS.w - 24) {
+        m.hold = 10;
+        return { move: 'R', jump: true };
+      }
+      return go('R');
+    }
+    if (p.cx < rungS.x - 24) return go(p.cx < px(D - 8) || k.boy.down ? 'R' : '');
+    if (!k.boy.down) return go('');
+    m.hold = 9;
+    return { move: 'R', jump: true };
+  },
   'dis-gamosa-latch'(w, _m, d) {
     return go(toward(w, d.x + 8, 1) || 'R');
   },

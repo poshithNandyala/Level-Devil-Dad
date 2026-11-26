@@ -199,10 +199,11 @@ export class River extends Entity {
     readonly x0: number,
     readonly x1: number,
     readonly top = GROUND + 10,
+    cause = 'dis-luit',
   ) {
     super();
     this.layer = 1;
-    this.danger = new Danger({ x: x0, y: top, w: x1 - x0, h: 80 }, 'dis-luit');
+    this.danger = new Danger({ x: x0, y: top, w: x1 - x0, h: 80 }, cause);
     this.hazard = this.danger.hazard;
   }
   draw(ctx: CanvasRenderingContext2D, w: World) {
@@ -427,8 +428,8 @@ export function levelPost(w: World, field: SandField, tx: number, rows: number) 
 }
 
 /** a river between tile columns c0 and c1 (the pit is painted by the stage; this is the water and the deadly part) */
-export function river(w: World, c0: number, c1: number) {
-  w.add(new River(px(c0), px(c1)));
+export function river(w: World, c0: number, c1: number, cause = 'dis-luit') {
+  w.add(new River(px(c0), px(c1), GROUND + 10, cause));
 }
 /** a field of sandbars whose slabs are built on add */
 export function sand(w: World, spans: Span[][], trig: number[], hut: number[] = []) {
