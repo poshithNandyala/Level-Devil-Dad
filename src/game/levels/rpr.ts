@@ -12,7 +12,7 @@ import { Baaj, Chapda, Gedi, Ghadi, Hand, Heap, Kosa, Mud, Sack, Swarm, Top } fr
 
 const TAUNTS = LINES.RPR.taunt;
 const G = 15;
-const tara = (n: number, beaten = 0) => ({ intro: LINES.RPR.intro[n], point: 1 as const, introAt: 0.5, taunts: TAUNTS, beaten: LINES.RPR.beaten[beaten] });
+const tara = (n: number, beaten = 0) => ({ intro: LINES.RPR.intro[n % LINES.RPR.intro.length], point: 1 as const, introAt: 0.5, taunts: TAUNTS, beaten: LINES.RPR.beaten[beaten % LINES.RPR.beaten.length] });
 
 // ================================================================== RPR-02: Hareli (the stilts)
 export function gedi(w: World, c0: number, c1: number) {

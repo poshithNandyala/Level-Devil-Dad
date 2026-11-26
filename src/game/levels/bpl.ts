@@ -13,7 +13,7 @@ import { Bison, Chumbak, Gate, Katori, Lake, Ledge, Morph, Sailboat, Shelter, Sh
 
 const TAUNTS = LINES.BPL.taunt;
 const G = 15;
-const tara = (n: number, beaten = 0) => ({ intro: LINES.BPL.intro[n], point: 1 as const, introAt: 0.5, taunts: TAUNTS, beaten: LINES.BPL.beaten[beaten] });
+const tara = (n: number, beaten = 0) => ({ intro: LINES.BPL.intro[n % LINES.BPL.intro.length], point: 1 as const, introAt: 0.5, taunts: TAUNTS, beaten: LINES.BPL.beaten[beaten % LINES.BPL.beaten.length] });
 
 // ================================================================== BPL-02: Bada Talab (skip like a stone)
 /** the lake over tile columns c0..c1 (which the map leaves as a pit) */

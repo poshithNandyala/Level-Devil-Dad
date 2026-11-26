@@ -19,7 +19,7 @@ await shot('hint');
 // city escaped: mark HYD-01..07 as cleared, then clear HYD-08
 await page.evaluate(() => {
   const a = window.__ldd;
-  for (const [i, d] of [[1, 3], [2, 5], [3, 9], [4, 4], [5, 2], [6, 7], [7, 1]]) Object.assign(a.store.stage('HYD-0' + i), { cleared: true, best: 5 + i, firstClearDeaths: d, deaths: d });
+  for (const [i, d] of [[1, 3], [2, 5], [3, 9], [4, 4], [5, 2], [6, 7], [7, 1]]) Object.assign(a.store.stage('HYD-' + String(i).padStart(2, '0')), { cleared: true, best: 5 + i, firstClearDeaths: d, deaths: d });
   a.startStage('HYD-08', null);
   a.session.deaths = 6; a.session.lastTime = 9.4; a.session.done = true;
   a.store.stage('HYD-08').deaths = 6;

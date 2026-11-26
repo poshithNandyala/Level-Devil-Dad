@@ -20,11 +20,12 @@ export interface CityLines {
   /** what the city is known for, in a sentence */
   famous: string;
   lang: string;
-  /** Tara's opening lines, one per stage (wraps) */
+  /** Tara's opening lines, one per long stage: 7 for the 8-stage cities, 9 (stages 02-10) for a module city
+   * (tests/modules.test.ts checks it). Readers index with `n % intro.length`, so a short list repeats, never breaks. */
   intro: string[];
   /** after you die in her stage */
   taunt: string[];
-  /** when you clear her stage */
+  /** when you clear her stage (readers index with `% beaten.length`) */
   beaten: string[];
   /** quips when there is no rival on screen */
   death: string[];

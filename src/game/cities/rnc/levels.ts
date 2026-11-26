@@ -15,7 +15,7 @@ import { Artisan, Boss, CastMould, ChhauDancer, Cook, Crucible, DhuskaStall, Mas
 const TAUNTS = L.taunt;
 const G = 15;
 const FLOOR = px(15);
-const tara = (n: number, beaten = 0) => ({ intro: L.intro[n], point: 1 as const, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[beaten] });
+const tara = (n: number, beaten = 0) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[beaten % L.beaten.length] });
 
 // ================================================================== RNC-02: Dhuska (the kadhai)
 /** the usual routine for n dhuska: batter into each in turn, flip each in turn, scoop each in turn */
