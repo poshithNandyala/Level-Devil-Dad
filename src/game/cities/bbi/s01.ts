@@ -159,7 +159,7 @@ export const tourLevel = (): LevelDef =>
       [104, 'BHUBANESWAR', 'welcome'],
     ],
     props: [],
-    par: 26,
+    par: 22,
     cps: [8, 33.5, 52, 77, 90],
     paint: (g) => {
       g.pit(G1.drain[0], G1.drain[1]).pit(G2.drain[0], G2.drain[1]);
