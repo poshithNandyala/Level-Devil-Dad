@@ -335,7 +335,7 @@ export const endings: Record<CcuEndingKind, Ending> = {
     },
     build(w, d) {
       const D = Math.round(d.x / 16);
-      const tin = w.add(new Tin({ x0: px(D - 9), x1: px(D - 2), every: 2.6 }));
+      const tin = w.add(new Tin({ x0: px(D - 9), x1: px(D - 2), every: 3.2 }));
       w.flags.tin2 = tin;
       w.flags.twist = 'tin';
       w.when(

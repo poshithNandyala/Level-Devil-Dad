@@ -470,6 +470,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu03-dokan': (x) => [crossTin('tinB', px(x + 28)), walk(x + 29.4)],
   'ccu04-thak': (x) => [
     walk(x + 0.6),
     { hold: '', until: (w) => w.flags.thak.t2.n === 3 && !w.flags.thak.t2.pointed, max: 1200, note: 'wait on the pavement while he buys the tall pile down' },
@@ -578,10 +579,9 @@ const endingPolicies: Record<string, Policy> = {
   'ccu-thonga'(w, _m, d) {
     const t = w.flags.tin2 as Tin;
     const p = w.player;
-    if (p.cx > t.o.x0 - 2) return go(toward(w, d.x + 8, 1) || 'R');
-    const fresh = t.shakes > 0 && t.phase(w) === 'calm' && t.untilTell(w) > 0.85;
-    if (fresh) return go('R');
-    return go(toward(w, t.o.x0 - 14, 2));
+    const fresh = t.shakes > 0 && t.phase(w) === 'calm' && t.untilTell(w) > 1.2;
+    if (p.cx > t.o.x0 + 6 || (fresh && p.cx > t.o.x0 - 30)) return go(toward(w, d.x + 8, 1) || 'R');
+    return go(toward(w, t.o.x0 - 20, 3));
   },
   'ccu-wall'(w, m, d) {
     const k = w.flags.wall as { st: Stack; D: number };

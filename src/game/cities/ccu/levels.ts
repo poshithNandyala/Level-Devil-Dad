@@ -702,6 +702,27 @@ const thak: Act = {
   },
 };
 
+
+/** CCU-03 act: the second seller's tin, wider, with fewer peanuts and a quicker hand */
+const dui3: Act = {
+  id: 'ccu03-dokan',
+  w: 30,
+  cps: [1.5],
+  advice: 'The next seller’s tin is wider and his hand is quicker, and his peanuts are further apart. Same rules: wait on the rim for his first shake, be on a peanut for every shake, and hop on as the chilli comes up under you.',
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 26);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const tin = w.add(new Tin({ x0: c.X(3), x1: c.X(27), nuts: [5, 8, 11, 14, 17, 20, 23].map((k) => c.X(k)), every: 3.0, chilliFrom: 2 }));
+    w.flags.tinB = tin;
+    onPass(w, c.X(0.5), (w2) => {
+      if (tin.t0 < 0) tin.t0 = w2.tick + 60;
+    });
+    sign(w, x + 0.4, 10.4, 3.4, 'JHALMURI', 'shop', null, 'Gariahat');
+  },
+};
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -750,7 +771,7 @@ export const levels = (): LevelDef[] => [
     meta: meta('rail-groove-sticks-foot', ['groove-catch'], 'ccu-esplanade-tram-shuttle'),
   },
   longStage({ base: aasteRoom(), par: 30, twist: 'ccu-stop', shape: 'short', meta: meta('exit-moving-vehicle-on-shout', ['exit-facing-forward'], 'ccu-bus-crawls-for-whoever-waits') }),
-  longStage({ base: muriRoom(), par: 30, twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
+  longStage({ base: muriRoom(), par: 30, acts: [dui3], twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
   longStage({ base: boiRoom(), par: 26, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
   longStage({ base: kumartuliRoom(), par: 50, acts: [uthon, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-finished-figure-carried-over-the-lane') }),
   longStage({ base: poleRoom(), par: 60, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
