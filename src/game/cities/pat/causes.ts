@@ -1,2 +1,27 @@
 /** Tara's line for each new death cause ('pat-...'): [what happened, how to beat it] */
-export const causeLines: Record<string, string[]> = {};
+export const causeLines: Record<string, string[]> = {
+  'pat-bheed': ['The crowd got you! It runs at its tempo, or walks behind its horse.', 'At the bus stop climb on to the kerb board. At the fair, keep right behind the horse rider.'],
+  'pat-tempo': ['The tempo pulled out and took you with it.', 'Get off the kerb board once the crowd has gone by, and run on before the tempo moves.'],
+  'pat-hoarding': ['A coaching hoarding came down on you!', 'It falls when you get close. Wait for it to land, then hop it.'],
+  'pat-angara': ['The poker threw the embers at you!', 'A crack in the ash glows just before it strikes. Stand between the cracks, and go once it has struck.'],
+  'pat-chimta': ['The cook raked the whole bed and you were in it.', 'After the last strike, keep moving out of the bed. Hop the rake if it catches up.'],
+  'pat-musal': ['A pestle came down on the chokha, and you.', 'Cross each mortar just after the pestle lifts, and wait in the gap between them.'],
+  'pat-jam': ['You fell into the traffic jam below the hoardings.', 'Read the roll above each hoarding before the bell: narrower banners lose their left end.'],
+  'pat-ghanti': ['The big iron bell swung into you.', 'A bell is only low near the bottom of its swing. Cross while it is out at the far end, and do not jump.'],
+  'pat-bojh': ['A porter with a full sack walked into you.', 'This is the porters’ down stair. Wait at the foot until both have gone by, then climb.'],
+  'pat-anaaj': ['The grain rose to the roof and buried you.', 'Step off on to the window ledge before the grain reaches the roof.'],
+  'pat-bhitar': ['The door of Golghar opens inwards, into you.', 'Stay back while it swings, and walk in when it has swung open.'],
+  'pat-ganga': ['You went into the Ganga between the pontoon sections.', 'Hop from section to section, and jump over the one the cart is on.'],
+  'pat-pipa': ['That pontoon section went under with you on it.', 'A section sinks under the cart. Never wait on one the cart is coming to.'],
+  'pat-jod': ['That seam had no plate: it is a drop to the river.', 'Count the plates. The missing ones are the multiples of the number of sacks on the cart: jump them from the deck.'],
+  'pat-taala': ['The plate flipped up under you.', 'A plate only holds a walker. Walk over the plates, and keep your jumps for the missing seams.'],
+  'pat-barrier': ['The toll barrier slammed down on you.', 'The sensor strip triggers it. Stand still on it until it has come down and gone up again.'],
+  'pat-torana': ['The tempo scraped the arch with you aboard.', 'The deck was tilted. Stand where the weights cancel before every arch, not at it.'],
+  'pat-dhakka': ['The tempo hit the hump leaning over.', 'A truck on the road side pulls the deck the other way: stand in the middle while it passes.'],
+  'pat-bhid': ['The third tempo backed in and shut the gap on you.', 'Cross the lane only while the third tempo is out of it.'],
+  'pat-rassi': ['The basket rope slipped with you in it.', 'Step off at the top at once. Do not wait up there.'],
+  'pat-kua': ['You came up in a cell with a well in it.', 'Each hatch leads to the cell with the same number of bricks. Read the bricks and step on the one that stands on solid ground.'],
+  'pat-jhoola': ['The gondola swung you off, or you missed the far bank.', 'Ride an empty gondola, and hop off to the far bank while it is still low on the way up.'],
+  'pat-charkhi': ['The spinning gate swept you.', 'Go in just after an arm has swept by.'],
+  'pat-bora': ['A stack of sacks came down on you.', 'Step only on the pad with the same number as the sacks on the cart. Hop the others.'],
+};
