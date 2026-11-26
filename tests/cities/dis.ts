@@ -6,6 +6,7 @@ import type { Door } from '../../src/game/entities/basics';
 import { Step, X, and, ground } from '../runner';
 import type { CityTests } from '../city-tests';
 import { Carrier, SandField } from '../../src/game/cities/dis/entities';
+import { Plucker, Sprinkler } from '../../src/game/cities/dis/pluck';
 
 type Out = { move: 'L' | 'R' | ''; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
@@ -51,6 +52,41 @@ const barUp = (f: number, i: number, tiles = 3) => (w: World) => fields(w)[f].ba
 const barGone = (f: number, i: number) => (w: World) => fields(w)[f].bars[i].slab.solid.w === 0;
 const standing = (w: World, f: number, i: number) => w.standing(fields(w)[f].bars[i].slab.solid);
 void barGone; void standing;
+// ------------------------------------------------------------------ DIS-03: the pluckers
+const pluckers = (w: World) => (w.flags.pluckers ?? []) as Plucker[];
+const sprinklers = (w: World) => (w.flags.sprinklers ?? []) as Sprinkler[];
+/** follow plucker k at a distance (px), hopping each hedge once it is a step; hold still while the wet path is ahead */
+function follow(k: number, gap = 58, wetK = -1): (w: World) => { move: 'L' | 'R' | ''; jump: boolean } {
+  let W: World | null = null;
+  let hold = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      hold = 0;
+    }
+    const p = w.player;
+    const pl = pluckers(w)[k];
+    if (hold > 0) {
+      hold--;
+      return { move: 'R', jump: true };
+    }
+    if (!pl || pl.phase === 'end') return { move: 'R', jump: false };
+    if (wetK >= 0) {
+      const s = sprinklers(w)[wetK];
+      if (s && p.cx > s.x0 - 26 && p.cx < s.x1 && s.slippery && p.cx < s.x0 + 2) return { move: '', jump: false };
+    }
+    if (pl.x - p.cx < gap) return { move: '', jump: false };
+    if (p.onGround && w.solidAt(p.x + p.w + 2, p.y + 2, 1, p.h - 4)) {
+      const hd = pl.hedges.find((h) => p.cx < h.x0 && h.x0 - p.cx < 16);
+      if (hd && hd.h <= 16) {
+        hold = 7;
+        return { move: 'R', jump: true };
+      }
+      return { move: '', jump: false };
+    }
+    return { move: 'R', jump: false };
+  };
+}
 const tourEnd = (): Step[] => [...hop(94 - 1.6, 'up on the deck'), { hold: 'R', until: done, max: 900 }];
 
 /** S['DIS-0n'] = room route; lengthen(id, drop, extra) appends each act's route and the door's policy */
@@ -74,10 +110,14 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { hold: 'R', until: and(ground, X(28.4)), max: 300 },
   ];
   lengthen('DIS-02', 0, []);
+  S['DIS-03'] = [{ policy: follow(0), until: and(ground, X(31.4)), max: 4000, note: 'a few steps behind the plucker, up each hedge once it is picked' }];
+  lengthen('DIS-03', 0, []);
 }
 
 /** the obvious play per stage, and the cause it must die of (every stage, 01-10). TODO */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  // run at the plucker and the hedge
+  'DIS-03': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'dis-basket' },
   // run and jump from bar to bar: the next one isn't there yet
   'DIS-02': { steps: [{ hold: 'R', until: X(6.3), max: 400 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 14, ticks: 22 }))], cause: 'dis-luit' },
   // down into the ghat and straight out again, then run at him
@@ -95,6 +135,8 @@ const dis02Start: Step[] = [
   { hold: 'R', until: ground, max: 200 },
 ];
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  // hop over her to get ahead: pinned against the hedge when she picks
+  'DIS-03': { steps: [{ hold: 'R', until: (w) => pluckers(w)[0].phase !== 'wait' && pluckers(w)[0].x - w.player.cx < 30, max: 900 }, { hold: 'R', jump: 20, ticks: 20, note: 'over her' }, { hold: 'R', until: done, max: 1500 }], cause: 'dis-basket' },
   // the obvious correction: wait on every bar for the next one. The narrowing bar goes out from under the right end
   'DIS-02': { steps: [...dis02Start, { hold: 'R', until: X(19.0), max: 200 }, { hold: '', until: done, max: 1500 }], cause: 'dis-luit' },
   // hop clean over him instead: the tray tips on to where you land
@@ -103,14 +145,22 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** more scripted first-timer deaths and 'like last time' moves. TODO */
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'DIS-03': [
+    { what: 'follows her too close on the wet path and slides into her basket', steps: [{ policy: follow(0), until: and(ground, X(31.4)), max: 4000 }, { policy: follow(1, 34), until: done, max: 4000 }], cause: 'dis-basket' },
+  ],
   'DIS-02': [
     { what: 'waits on the first bar for ever: it sinks once the next one is up', steps: [{ hold: 'R', until: X(6.3), max: 400 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: done, max: 1500 }], cause: 'dis-luit' },
   ],
 };
 
 /** a route for each act, by act id ('dis02-...'). TODO */
+const hopR0 = 0;
+void hopR0;
 const hopR = (at: number, note: string, ticks = 14): Step[] => [{ hold: 'R', until: X(at), max: 900 }, { hold: 'R', jump: ticks, ticks, note }, { hold: 'R', until: ground, max: 300 }];
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'dis03-bagan': (x) => [
+    { policy: follow(1, 58, 0), until: and(ground, X(x + 33.4)), max: 6000, note: 'behind her again; before the wet path, wait till it is dry' },
+  ],
   'dis02-chapori': (x) => [
     ...hopR(x + 1.4, 'on to the first bar', 12),
     ...hopR(x + 7.2, 'on to the big bar', 14),
@@ -124,6 +174,23 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 
 /** a policy for each door ending, by kind ('dis-...'). TODO */
 const endingPolicies: Record<string, Policy> = {
+  'dis-tea-chest'(w, m, d) {
+    const pl = pluckers(w)[pluckers(w).length - 1];
+    const p = w.player;
+    if (w.flags.twist === 'open') return go(toward(w, d.x + 8, 1) || 'R');
+    if (m.hold > 0) return { move: 'R', jump: true };
+    if (pl.phase === 'wait') return go('R');
+    if (pl.x - p.cx < 58) return go('');
+    if (p.onGround && w.solidAt(p.x + p.w + 2, p.y + 2, 1, p.h - 4)) {
+      const hd = pl.hedges.find((h) => p.cx < h.x0 && h.x0 - p.cx < 16);
+      if (hd && hd.h <= 16) {
+        m.hold = 7;
+        return { move: 'R', jump: true };
+      }
+      return go('');
+    }
+    return go('R');
+  },
   'dis-hut-shut'(w, m, d) {
     const f = fields(w)[fields(w).length - 1];
     const p = w.player;
