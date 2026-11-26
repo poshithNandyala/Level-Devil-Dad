@@ -12,7 +12,7 @@ import { onPass } from '../../levels/trolls';
 import { FL, Rig, box, decor, px } from './entities';
 import { taraScript } from './common';
 import { FLOORS, house, houseDecor } from './s04';
-import { fog, rope } from './s07';
+import { fog, rope, type Cloud } from './s07';
 import { ACT_CFG, steamer } from './s02';
 import { bin, litter, mgRule } from './s05';
 
@@ -161,6 +161,38 @@ export const act4: Act = {
     fog(w, c.x + 8, c.x + 27, null);
     stairRails(w, c.x + 8);
     sign(w, c.x + 3.4, 0.6, 3.4, 'LOWER RD', 'green', 'down', '1 floor down');
+  },
+};
+
+/** act 5: the cloud bank rolls up behind you, there's a wrapper underfoot, and the bin ahead is full: back into
+ *  the cloud to the empty one, then run, jumping where the rope stops */
+const BANK_PITS: [number, number][] = [
+  [10, 11],
+  [16, 17],
+  [22, 23],
+  [28, 29],
+];
+export const act5: Act = {
+  id: 'gtk10-peechha',
+  w: 34,
+  advice: 'A cloud bank rolls up behind you, there’s a wrapper underfoot and the bin ahead is full. Go back into the cloud to the empty bin (nothing to fall into behind you), then run, and jump where the rope stops.',
+  paint: (g, c) => {
+    for (const [a, b] of BANK_PITS) g.pit(c.x + a, c.x + b);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const pits = BANK_PITS.map(([a, b]) => [x + a, x + b] as [number, number]);
+    bin(w, x + 1, false);
+    litter(w, x + 4);
+    bin(w, x + 7, true);
+    const cl: Cloud = { t0: -1, thick: 0, clear: 0, roll: 60 };
+    w.flags.gtk10c = cl;
+    onPass(w, c.X(3), (w2) => {
+      cl.t0 = w2.tick;
+    });
+    fog(w, x - 2, x + 33, cl);
+    rope(w, x + 1, x + 33, pits);
+    for (const [a, b] of pits) w.add(new Rig(px(a), FL + 20, px(b - a + 1), 40, { cause: 'gtk-badal', inset: 0 }));
   },
 };
 

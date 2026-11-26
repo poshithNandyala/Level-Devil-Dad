@@ -636,6 +636,11 @@ const act10c = (x: number): Step[] => [
   { policy: climbAll(), until: (w) => w.player.onGround && w.player.y + w.player.h <= 64 && w.player.x > px(x + 30), max: 1500, note: 'up the stair in the cloud, on to the next loop' },
 ];
 const act10d = (x: number): Step[] => [{ policy: houseRoute(x + 8, 1), until: and(ground, X(x + 25)), max: 2400, note: 'one flight down, out' }, { hold: 'R', until: X(x + 27.5), max: 300 }];
+const act10e = (x: number): Step[] => [
+  { policy: stepper(), until: X(x + 7.3), max: 900, note: 'the wrapper; the bin ahead is full' },
+  { hold: 'L', until: XL(x + 1.4), max: 600, note: 'back into the cloud to the empty bin' },
+  { policy: gapJumper(), until: X(x + 33.5), max: 1500, note: 'run, jumping where the rope stops' },
+];
 const views = new WeakMap<World, (w: World) => Out>();
 const viewBack = new WeakMap<World, boolean>();
 const viewPolicy: Policy = (w, _m, d) => {
@@ -724,6 +729,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk07-chhaya': thauRoute('gtk7d'),
   'gtk07-rang': act07b,
   'gtk07-bhaga': act07c,
+  'gtk07-dagar': act07c,
   'gtk08-tar': act08,
   'gtk08-upar': act08b,
   'gtk09-chamri': act09,
@@ -732,6 +738,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk10-rassi': act10b,
   'gtk10-chadhai': act10c,
   'gtk10-ghar': act10d,
+  'gtk10-peechha': act10e,
 };
 const endingPolicies: Record<string, Policy> = {
   'gtk-steam-vent': ventPolicy,

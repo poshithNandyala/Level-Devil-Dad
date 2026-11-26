@@ -99,6 +99,21 @@ function drops(w: World, pits: [number, number][], cause: string) {
   for (const [a, b] of pits) w.add(new Rig(px(a), FL + 20, px(b - a + 1), 40, { cause, inset: 0 }));
 }
 
+/** the painted retaining wall: a road drawn over the holes, seen only when the cloud is up (it's on the wall behind) */
+function mural(w: World, pits: [number, number][]) {
+    decor(w, -3, (ctx) => {
+      for (const [a, b] of pits) {
+        const x0 = px(a),
+          ww = px(b - a + 1);
+        box(ctx, x0 - 8, FL - 80, ww + 16, 80, '#C9C2B2');
+        box(ctx, x0, FL, ww, 16, '#B9B3A5');
+        box(ctx, x0, FL, ww, 4, '#D9D4C7');
+        box(ctx, x0, FL + 4, ww, 2, '#8C8678');
+        box(ctx, x0 + 4, FL - 40, ww - 8, 2, 'rgba(90,80,70,0.25)');
+      }
+    });
+}
+
 const ROOM_PITS: [number, number][] = [
   [9, 10],
   [16, 17],
@@ -190,18 +205,7 @@ export const chitraAct = (id: string, PITS: number[][], CL: Cloud, key: string):
       cl.t0 = w2.tick;
     });
     const pits = PITS.map(([a, b]) => [c.x + a, c.x + b] as [number, number]);
-    // the mural: drawn road over the holes, only to be seen when the cloud is up (it's on the wall behind)
-    decor(w, -3, (ctx) => {
-      for (const [a, b] of pits) {
-        const x0 = px(a),
-          ww = px(b - a + 1);
-        box(ctx, x0 - 8, FL - 80, ww + 16, 80, '#C9C2B2');
-        box(ctx, x0, FL, ww, 16, '#B9B3A5');
-        box(ctx, x0, FL, ww, 4, '#D9D4C7');
-        box(ctx, x0, FL + 4, ww, 2, '#8C8678');
-        box(ctx, x0 + 4, FL - 40, ww - 8, 2, 'rgba(90,80,70,0.25)');
-      }
-    });
+    mural(w, pits);
     fog(w, c.x, c.x + 31, cl);
     rope(w, c.x + 1, c.x + 31, pits);
     drops(w, pits, 'gtk-deewar');
@@ -244,6 +248,37 @@ export const ghumtiAct = (id: string, PITS: number[][], CL: Cloud, key: string):
 export const act1 = thauAct('gtk07-thau', THAU_PITS, THAU, 'gtk7a');
 export const act2 = chitraAct('gtk07-chitra', CHITRA_PITS, CHITRA, 'gtk7b');
 export const act3 = ghumtiAct('gtk07-ghumti', GHUMTI_PITS, GHUMTI, 'gtk7c');
+/** the last stretch: clear air, the cloud bank behind you again, the rope back, and the painted wall too: run,
+ *  and jump where the rope stops even where the road looks whole */
+export const act7: Act = {
+  id: 'gtk07-dagar',
+  w: 40,
+  advice: 'The last stretch: the cloud bank is behind you again, the rope is back, and so is the painted wall. Keep running, and jump wherever the rope stops, even where the road looks whole.',
+  paint: (g, c) => {
+    for (const [a, b] of DAGAR_PITS) g.pit(c.x + a, c.x + b);
+  },
+  build: (w, c) => {
+    const cl: Cloud = { t0: -1, thick: 0, clear: 0, roll: 96 };
+    w.flags.gtk7g = cl;
+    onPass(w, c.X(1.5), (w2) => {
+      cl.t0 = w2.tick;
+    });
+    const pits = DAGAR_PITS.map(([a, b]) => [c.x + a, c.x + b] as [number, number]);
+    mural(w, pits.filter((_p, i) => i % 2 === 1));
+    fog(w, c.x - 2, c.x + 39, cl);
+    rope(w, c.x + 1, c.x + 39, pits);
+    drops(w, pits, 'gtk-deewar');
+    sign(w, c.x + 36.5, 9.4, 3.8, 'GANGTOK', 'green', null, '1 km');
+  },
+};
+export const DAGAR_PITS: [number, number][] = [
+  [5, 6],
+  [11, 12],
+  [17, 18],
+  [23, 24],
+  [29, 30],
+  [34, 35],
+];
 /** the second round, harder: a longer wait for a shorter lift, the mural over two holes in a row, a quicker cloud */
 export const act4 = thauAct('gtk07-chhaya', [[5, 6], [9, 10], [15, 16], [22, 23], [28, 29], [34, 35]], { t0: -1, thick: 4.8, clear: 1.4 }, 'gtk7d');
 export const act5 = chitraAct('gtk07-rang', [[6, 7], [11, 12], [20, 21], [27, 28]], { t0: -1, thick: 3.2, clear: 1.8 }, 'gtk7e');
