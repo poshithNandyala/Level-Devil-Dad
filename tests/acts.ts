@@ -5,8 +5,8 @@ import { DT } from '../src/game/constants';
 import { Step, X, and, ground, or } from './runner';
 import { Blast } from '../src/game/levels/acts';
 import { swim, skimmer, kicker, type Out } from './moves';
-import type { Dolphin } from '../src/game/levels/kvt';
-import { HOLI_TILES } from '../src/game/levels/bom';
+import type { Dolphin } from '../src/game/cities/kvt/levels';
+import { HOLI_TILES } from '../src/game/cities/bom/levels';
 import { WEST_ACT_ROUTES } from './west';
 import { CITY_TESTS } from './city-tests';
 

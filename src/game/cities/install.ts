@@ -16,7 +16,7 @@ import { MUSIC } from '../../audio/audio';
 import { CITY_ORDER, THEMES } from '../../render/theme';
 import { GRADES } from '../../render/renderer';
 import { CAP } from '../../render/art/tiles';
-import { MODULE_BACKDROPS } from '../../render/backgrounds';
+import { MODULE_AMBIENT, MODULE_BACKDROPS } from '../../render/backgrounds';
 import { MODULE_SCENE_FEATURES } from '../../render/scenes';
 import { BASE_THING_SIZE, MODULE_THING_DRAW, MODULE_THING_SIZE, type ThingKind } from '../../render/art/things';
 
@@ -53,6 +53,7 @@ function install(m: CityModule) {
   GRADES[id] = m.grade;
   CAP[id] = m.tileCaps;
   MODULE_BACKDROPS[id] = m.backdrop;
+  if (m.ambient) MODULE_AMBIENT[id] = m.ambient;
   addAll(id, 'scene feature', MODULE_SCENE_FEATURES, m.sceneFeatures);
   for (const [k, t] of Object.entries(m.things ?? {})) {
     if (k in MODULE_THING_SIZE || k in BASE_THING_SIZE) throw new Error(`city module ${id}: thing kind '${k}' is already used (start new keys with '${id.toLowerCase()}')`);

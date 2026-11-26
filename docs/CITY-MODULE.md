@@ -9,6 +9,14 @@ own git worktree, and merged without conflicts.
 
 Ranchi (`src/game/cities/rnc/`, `tests/cities/rnc.ts`) is the worked example. Copy its shape.
 
+All 15 shipped cities are modules: the 14 older ones (TVM to RPR) were moved into `src/game/cities/<code>/`
+unchanged in infra round 4, so a pass over an existing city (encore stages, hardness, lines) edits that
+folder and `tests/cities/<code>.ts` only. Two things of theirs are still shared: their routes, NAIVE, FIX and
+MISTAKES plays in `tests/solutions.ts` / `tests/west.ts` / `tests/acts.ts` / `tests/endings.ts` (a city's own
+`tests/cities/<code>.ts` entry replaces the shared one for the same key, so write new and changed plays
+there), and the scene kinds in `render/scenes.ts`, the prop art in `render/art/props.ts` and the things two
+cities share in `render/art/things.ts`.
+
 ## The rule
 
 **A city worker never edits any file outside `src/game/cities/<code>/`, `tests/cities/<code>.ts`,
@@ -117,7 +125,8 @@ export const RNC: CityModule = {
 | `theme` | `Theme` | `THEMES[id]`; appended to `CITY_ORDER` | `rnc/theme.ts` |
 | `grade` | `Grade` | `GRADES[id]` | `rnc/look.ts` |
 | `tileCaps` | `GroundCaps` | the ground caps (`CAP[id]` in tiles.ts) | `rnc/look.ts` |
-| `backdrop` | `(ctx, th, x0, x1) => void` | the skyline behind every stage | `rnc/backdrop.ts`: `ranchi` |
+| `backdrop` | `(ctx, th, x0, x1, variant) => void` | the skyline behind every stage (`variant` is the stage's index) | `rnc/backdrop.ts`: `ranchi` |
+| `ambient?` | `(ctx, x0, x1, t, reduced) => void` | the animated layer over the skyline, every frame (rain, birds, kites) | not used by RNC; `tvm/ambient.ts` |
 | `sceneFeatures?` | `Record<name, (ctx, x0, x1, sky) => void>` | extra features for stages with `scene: { with: [name] }` | not used by RNC |
 | `things?` | `Record<kind, { size, draw }>` | thing sizes and drawing (hidden item, props) | `rnc/things.ts`: `dhuska` 12×10 |
 
@@ -173,7 +182,9 @@ automatically.
 stages exactly `XXX-01`..`XXX-10` with `index` 1..10; a NAIVE for every stage; a FIX for at least 5 of the 10;
 one hidden item per stage; a route for every act; a policy for every ending; a non-empty `fair` list that
 names every stage whose `shape` is `long`, `marathon` or `wtf`; at least 9 `intro` lines; the prefix rule.
-RNC is excused from some checks by an explicit allow-list with a TODO; never add a city to it.
+RNC and the 14 older cities are excused from some checks by an explicit allow-list with a TODO (8 stages,
+7 intros, no fair list, keys from before the prefix rule, and for some a NAIVE or FIX per stage); a city's
+pass removes its entry. Never add a new city to it.
 
 ## Running only your city's tests
 
@@ -221,7 +232,7 @@ Tag each long stage's shape: `longStage({ ..., shape: 'long' | 'marathon' | 'wtf
 Everything else already handles 10: stage codes (`normalizeCode` reads `pat10`, `PAT-10`, `pat 9`), the
 stage list and map cards (built from `levelsOf(city)`), stars (`3 × stages`), unlocking (the stage before by
 `index`), the next stage, the share card and the store (keyed by stage id). The 15 cities before the module
-system keep their 8 stages. `tests/ten-stages.test.ts` proves a 10-stage module registers and routes.
+system keep their 8 stages until their own pass. `tests/ten-stages.test.ts` proves a 10-stage module registers and routes.
 
 ### Stage meta: stay on your allocation
 

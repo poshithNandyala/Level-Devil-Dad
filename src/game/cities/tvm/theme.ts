@@ -1,0 +1,25 @@
+import type { Theme } from '../../../render/theme';
+
+export const theme: Theme = {
+  city: 'TVM',
+  name: 'Thiruvananthapuram',
+  local: 'തിരുവനന്തപുരം',
+  sky: ['#2E6278', '#86BCB0', '#F7E6BC'],
+  sun: '#FFF4CF',
+  far: '#78B39A',
+  mid: '#348A5C',
+  near: '#1B6843',
+  accent: '#D32F2F',
+  accent2: '#FBC02D',
+  tileBase: '#7A3E26',
+  tileTop: '#B5653A',
+  tileEdge: '#5C2C1A',
+  tileDark: '#45200F',
+  topper: '#5FA34A',
+  pattern: 'brick',
+  spike: '#FFF8E7',
+  spikeEdge: '#2A160D',
+  ink: '#2A160D',
+  rim: null,
+  ui: '#D32F2F',
+};
