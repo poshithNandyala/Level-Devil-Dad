@@ -6,4 +6,5 @@ export const causeLines: Record<string, string[]> = {
   'gtk-jhora': ['Into the jhora, Dad. That’s the drain.', 'Stay on the bags all the way across.'],
   'gtk-polythene': ['A thin polythene bag! It tore.', 'Stand only on cloth bags: stitched handles, a hem.'],
   'gtk-jaanch': ['The inspector lifted your bag to check it.', 'Keep hopping ahead of him: don’t stop on a bag.'],
+  'gtk-galat-tala': ['Wrong floor! That door opens over the jhora.', 'Count the flights of stairs from where you came in, not the doors.'],
 };

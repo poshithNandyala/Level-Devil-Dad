@@ -2,8 +2,9 @@
 import type { Ending } from '../../levels/endkit';
 import { ending as e02 } from './s02';
 import { ending as e03 } from './s03';
+import { ending as e04 } from './s04';
 
-export type GtkEndingKind = 'gtk-steam-vent' | 'gtk-jhola-entry';
+export type GtkEndingKind = 'gtk-steam-vent' | 'gtk-jhola-entry' | 'gtk-lift-counts-down';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<GtkEndingKind, true> {}
@@ -12,4 +13,5 @@ declare module '../../levels/endings' {
 export const endings: Record<GtkEndingKind, Ending> = {
   'gtk-steam-vent': e02,
   'gtk-jhola-entry': e03,
+  'gtk-lift-counts-down': e04,
 };
