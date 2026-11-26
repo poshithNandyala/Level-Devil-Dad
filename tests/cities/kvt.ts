@@ -9,7 +9,8 @@ import { Step, X, and, done, ground, thingOf } from '../runner';
 import type { CityTests } from '../city-tests';
 import { swimPolicy } from '../moves';
 import type { Heap } from '../../src/game/cities/kvt/encores';
-import { Eel } from '../../src/game/cities/kvt/levels';
+import { Eel, type Dolphin } from '../../src/game/cities/kvt/levels';
+import { DT } from '../../src/game/constants';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -158,6 +159,14 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { hold: 'R', until: X(x + 24), max: 400 },
     ];
   },
+  // KVT-08's dolphins: the shared ride, tuned for a person: off each dolphin a little before the top of its leap
+  'kvt08-dolphins': (x) => [
+    { hold: 'R', until: X(x + 1.4), max: 300 },
+    { hold: '', ticks: 6 },
+    { policy: rideDolphin(`kvt08-dolphins:dolphins`, 0, px(x + 16), 0.56, 0.06), until: (w) => w.player.onGround && w.player.x >= px(x + 16) && Math.abs(w.player.vx) < 1, max: 1500, note: 'ride the first dolphin to the sand' },
+    { policy: rideDolphin(`kvt08-dolphins:dolphins`, 1, px(x + 34), 0.55, 0.06), until: (w) => w.player.onGround && w.player.x >= px(x + 34), max: 1500, note: 'and the second, to the beach' },
+    { hold: 'R', until: X(x + 38), max: 200 },
+  ],
   'kvt09-pavizham': (x) => [
     ...deepOn(x + 3.3, 20, 'stop at the water, land deep'),
     ...stepUp(x + 8, 'up under the lip: a tap, never a full leap'),
@@ -236,8 +245,13 @@ const endingPolicies: Record<string, Policy> = {
     if (w.flags.twist === 'wait') return go('R');
     const live = prints.filter((f) => w.tick - f.t < LIFE - 30);
     const on = live.find((f) => Math.abs(f.x - p.cx) < 8);
-    // in the air: steer for the target, letting go early (he keeps drifting)
-    if (!p.onGround) return go(m.tx !== undefined && p.cx < m.tx - 9 ? 'R' : '');
+    // in the air: steer for the target, letting go early (he keeps drifting). The steer starts a few ticks after
+    // the jump, so a late thumb on it doesn't also keep it held on after it should let go
+    if (!p.onGround) {
+      m.air = (m.air ?? 0) + 1;
+      return go(m.air > 3 && m.tx !== undefined && p.cx < m.tx - 9 ? 'R' : '');
+    }
+    m.air = 0;
     if (p.cx > x1 - 2) return go(toward(w, doorCx(d)));
     const next = live.filter((f) => f.x > p.cx + 20).sort((a, b) => a.x - b.x)[0];
     // standing on a print (or on the shore): settle, then hop for the next one, or for the far shore
@@ -250,7 +264,7 @@ const endingPolicies: Record<string, Policy> = {
     const target = next ? next.x : p.cx > x1 - 60 ? x1 + 12 : undefined;
     if (target === undefined) return go('');
     m.tx = target;
-    return jump(w, m, 9, 'R');
+    return jump(w, m, 14, '');
   },
 
   'kvt-pushoff'(w, m, d) {
@@ -308,6 +322,115 @@ const endingPolicies: Record<string, Policy> = {
   'kvt-sand-arm': sandArmPolicy,
 };
 
+/** run right, and hop anything coming at you once it is `ttc` seconds away (the jump held `hold` ticks) */
+function hopAt(ttc: number, hold: number): (w: World) => Out {
+  let seen: World | null = null;
+  let left = 0;
+  return (w) => {
+    if (seen !== w) {
+      seen = w;
+      left = 0;
+    }
+    const p = w.player;
+    if (left > 0) {
+      left--;
+      return { move: 'R', jump: true };
+    }
+    if (!p.onGround) return go('R');
+    for (const e of w.entities as any[]) {
+      if (!e.alive || !(e.vx < 0) || !e.hazard?.active || e.x === undefined) continue;
+      if (e.y + (e.h ?? 12) < p.y - 6 || e.y > p.y + p.h + 2) continue;
+      const ahead = e.x - (p.x + p.w);
+      if (ahead > -4 && ahead / (-e.vx + Math.max(0, p.vx)) <= ttc) {
+        left = hold - 1;
+        return { move: 'R', jump: true };
+      }
+    }
+    return go('R');
+  };
+}
+
+/** KVT-05's lighthouse: up the zigzag steps, straight up through each from under the overlap, never into a gull */
+function lighthouse(): (w: World) => Out {
+  let seen: World | null = null;
+  let left = 0;
+  return (w) => {
+    if (seen !== w) {
+      seen = w;
+      left = 0;
+    }
+    const p = w.player;
+    if (left > 0) {
+      left--;
+      return { move: '', jump: true };
+    }
+    if (!p.onGround) return go('');
+    const feet = Math.round((p.y + p.h) / 16);
+    if (feet <= 5) return go('R');
+    // the first step from the shore: a running hop on to its middle
+    if (feet >= 13) {
+      if (p.x < px(22.6)) return go('R');
+      left = 13;
+      return { move: 'R', jump: true };
+    }
+    // under the overlap at column 26, still
+    const target = px(26.05);
+    if (Math.abs(p.x - target) > 2.5) return go(p.x < target ? 'R' : 'L');
+    if (Math.abs(p.vx) > 1) return go('');
+    if (w.entities.some((e: any) => e.kind === 'crow' && e.alive && e.x > p.x - 30)) return go('');
+    left = 13;
+    return { move: '', jump: true };
+  };
+}
+
+// ------------------------------------------------------------------ the dolphins (KVT-08), from tests/acts.ts
+/** wait on the sand for dolphin i, run out with it, hop on, ride, jump off at `off` of its leap, stop on the land.
+ *  `lead` s: how early to start the run (a person starts a moment before the leap, not on the frame) */
+const rideDolphin = (key: string, i: number, landX0: number, off: number, lead: number) => {
+  let st = 0,
+    hold = 0,
+    world: World | null = null;
+  return (w: World): Out => {
+    if (world !== w) {
+      world = w;
+      st = 0;
+      hold = 0;
+    }
+    const d = (w.flags[key] as Dolphin[])[i];
+    const p = w.player;
+    const mid = d.solid.x + 22;
+    if (hold > 0) {
+      hold--;
+      return { move: st === 3 ? 'R' : mid > p.cx + 2 ? 'R' : '', jump: true };
+    }
+    if (st === 0) {
+      const t = (((w.tick * DT + d.phase) % d.period) + d.period) % d.period;
+      const until = d.period - t;
+      const dist = d.x0 - 10 - p.cx;
+      if (d.k < 0 && until <= Math.max(0, dist) / 140 + lead) st = 1;
+      return { move: '', jump: false };
+    }
+    if (st === 1) {
+      if (w.standing(d.solid as never)) st = 2;
+      else if (p.onGround && d.k >= 0 && !w.input.jump) {
+        hold = 9;
+        return { move: 'R', jump: true };
+      }
+      return { move: p.onGround || mid > p.cx + 2 ? 'R' : '', jump: false };
+    }
+    if (st === 2) {
+      if (d.k >= off) {
+        st = 3;
+        hold = 14;
+        return { move: 'R', jump: true };
+      }
+      return { move: mid > p.cx + 3 ? 'R' : mid < p.cx - 3 ? 'L' : '', jump: false };
+    }
+    if (p.onGround && p.x >= landX0 + 2) return { move: '', jump: false };
+    return { move: p.cx < landX0 + 14 ? 'R' : '', jump: false };
+  };
+};
+
 // ------------------------------------------------------------------ the tour's coral step (KVT-01)
 const coral = (st: string) => (w: World) => w.flags.coral === st;
 /** wait at the water's edge for the tide to finish, then a timed jump on to the coral top and one off it */
@@ -347,7 +470,32 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { hold: '', until: (w) => thingOf(w, 'odam').x <= px(10) + 3 && !w.entities.some((e: any) => e.kind === 'kvt-tuna' && e.alive && e.x > w.player.x - 30), max: 900, dodge: 40, note: 'wait for the boat, back from the end of the pier' },
     ...S['KVT-05'].slice(2, S['KVT-05'].findIndex((st) => st.note === 'over the top of the lighthouse and down the steps')),
   ];
+  // (up the lighthouse steps by a climber who just tries the hop again if a gull or a late thumb drops him a step)
+  {
+    const r = S['KVT-05'];
+    const i = r.findIndex((st) => st.note === 'first step');
+    S['KVT-05'] = [...r.slice(0, i), { policy: lighthouse(), until: (w) => w.player.onGround && w.player.y + w.player.h <= px(5) + 1 && w.player.x >= px(27), max: 2400, note: 'up the lighthouse steps' }];
+  }
   lengthen('KVT-05', 0, [{ hold: 'R', until: X(44), max: 600, note: 'over the top of the lighthouse and down the steps' }]);
+
+  // ---------------------------------------------------------------- KVT-04: hop the tug from further off
+  // (a person sees the tug coming the whole width of the screen and hops it a fifth of a second out, not at the last moment)
+  S['KVT-04'] = S['KVT-04'].map((st) => (st.note === 'hop the baggage tug' ? { ...st, dodge: undefined, policy: hopAt(0.16, 12) } : st));
+
+  // the runway lights were spikes: so hop every light and run on. The baggage tug comes the other way
+  fix['KVT-04'] = { steps: [...upTo(S['KVT-04'], 'hop the baggage tug'), { hold: 'R', until: done, max: 600 }], cause: 'hit' };
+
+  // ---------------------------------------------------------------- KVT-06 to 08: the obvious plays
+  // straight in off the jetty and on along the bottom: the urchins under the sea stack
+  naive['KVT-06'] = { steps: [{ hold: 'R', until: done, max: 1500 }], cause: 'spikes' };
+  // the crab is up the trunk: jump for it anyway, straight away
+  naive['KVT-07'] = { steps: swapAt(S['KVT-07'], 'wait for the crab to head down low', 1, []), cause: 'kvt-pinched' };
+  // wait for the crab, then leap on from low down on the bare trunk, where you grabbed it: short of the crown
+  fix['KVT-07'] = { steps: [...upTo(S['KVT-07'], 'climb high, above the crab'), { hold: 'R', until: (w) => w.player.gripS >= 0.3, max: 300 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 600 }], cause: 'splash' };
+  // flat out across the lagoon, into the rock
+  naive['KVT-08'] = { steps: [{ hold: 'R', until: done, max: 1500 }], cause: 'splash' };
+  // hop the rock and keep running flat out: the seaweed beds after the beach slow you down, and down you go
+  fix['KVT-08'] = { steps: [...upTo(S['KVT-08'], 'flat out, hopping every seaweed bed'), { hold: 'R', until: done, max: 900 }], cause: 'splash' };
 
   // ---------------------------------------------------------------- KVT-10
   S['KVT-10'] = kvt10Room;

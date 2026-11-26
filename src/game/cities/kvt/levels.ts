@@ -118,7 +118,8 @@ const tailwind: Act = {
   advice: 'The tailwind throws your jumps long and shoves you along the ground: jump to the little island while it is calm, and leave it before the next gust.',
   paint: (g, c) => {
     g.pit(c.x + 6, c.x + 8).pit(c.x + 14, c.x + 16);
-    g.fill(c.x + 19, c.x + 20, G - 1, G - 1, '^');
+    // (one tile of spikes, a tile further on: a late thumb taking off from the landing still clears it)
+    g.fill(c.x + 20, c.x + 20, G - 1, G - 1, '^');
   },
   build: (w, c) => {
     // a steady tailwind over the first pit (a helping hand), then gusts over the island (not so helpful)
