@@ -401,10 +401,64 @@ const padPolicy: Policy = (w, m) => {
   return go('R');
 };
 
+// ------------------------------------------------------------------ PAT-03
+const t3 = (key: string) => (w: World) => (w.flags[key].t0 < 0 ? -1 : (w.tick - w.flags[key].t0) / 120);
+const room03 = (): Step[] => [
+  { hold: 'R', until: X(12.6), max: 600, note: 'along the first hoardings' },
+  { hold: '', until: (w) => t3('pat3')(w) >= 1.55, max: 600, note: 'the first bell: this roll is wider, so it only grows' },
+  { hold: 'R', until: X(15.9), max: 300, note: 'to the right end of it' },
+  { hold: 'R', jump: 12, ticks: 12, note: 'across to the narrowed one' },
+  { hold: 'R', until: ground, max: 200 },
+  { hold: '', until: (w) => t3('pat3')(w) >= 3.85, max: 600, note: 'the second bell: stay on the one that is not changing' },
+  { hold: 'R', until: X(20.9), max: 300, note: 'to its right end' },
+  { hold: 'R', jump: 12, ticks: 12, note: 'across to the last hoarding' },
+  { hold: 'R', until: ground, max: 200 },
+  { hold: 'R', until: X(27), max: 400 },
+];
+const act03 = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 7.2), max: 700, note: 'over the first hoarding' },
+  { hold: 'R', jump: 12, ticks: 12, note: 'on to the second' },
+  { hold: 'R', until: ground, max: 200 },
+  { hold: '', until: (w) => t3('pat3a')(w) >= 1.55, max: 600, note: 'the first bell: it grows towards you' },
+  { hold: 'R', until: X(x + 14.0), max: 300 },
+  { hold: 'R', jump: 12, ticks: 12, note: 'across to the third' },
+  { hold: 'R', until: and(ground, X(x + 16.5)), max: 200 },
+  { hold: 'R', until: X(x + 19.4), max: 200, note: 'to its right end, before it narrows' },
+  { hold: '', until: (w) => t3('pat3a')(w) >= 3.7, max: 600, note: 'the second bell' },
+  { hold: 'R', until: X(x + 20.2), max: 200 },
+  { hold: 'R', jump: 12, ticks: 12, note: 'on to the fourth' },
+  { hold: 'R', until: ground, max: 200 },
+  { hold: 'R', until: X(x + 26.0), max: 300, note: 'to its right end, before the third bell' },
+  { hold: 'R', jump: 12, ticks: 12, note: 'off to the far bank' },
+  { hold: 'R', until: ground, max: 200 },
+  { hold: 'R', until: X(x + 33.4), max: 600 },
+];
+const BELLC = { T: 3.0, A: 0.6, L: 160, piv: 240 - 172, phase: [0, 1.5] };
+/** the bell rope: cross under a bell only while it is out at the far end of its swing */
+function bellsPolicy(w: World): Out {
+  const e = w.flags.pat3e as { xs: number[] };
+  const p = w.player;
+  const bobAt = (i: number, tau: number) => {
+    const th = BELLC.A * Math.sin((((w.tick + tau * 120) / 120 + BELLC.phase[i]) * 2 * Math.PI) / BELLC.T);
+    return { x: e.xs[i] + BELLC.L * Math.sin(th) - 9, y: BELLC.piv + BELLC.L * Math.cos(th) - 4 };
+  };
+  const hit = (px0: number, tau: number) =>
+    e.xs.some((_, i) => {
+      const b = bobAt(i, tau);
+      return b.y + 19 > 226 && px0 + 10 > b.x + 1 && px0 < b.x + 17;
+    });
+  // would walking on from here over the next 1.6 s hit a bell?
+  let goOk = true;
+  for (let tau = 0; tau <= 1.6; tau += 0.04) if (hit(p.x + 140 * tau, tau)) goOk = false;
+  return go(goOk ? 'R' : '');
+}
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['PAT-01'] = tourRoute();
   S['PAT-02'] = room02();
   lengthen('PAT-02', 0, []);
+  S['PAT-03'] = room03();
+  lengthen('PAT-03', 0, []);
   S['PAT-04'] = room04();
   lengthen('PAT-04', 0, []);
   S['PAT-05'] = room05();
@@ -423,6 +477,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
 
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-03': { steps: [{ hold: 'R', until: X(6), max: 400 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 20, ticks: 26 }))], cause: 'pat-jam' },
   'PAT-10': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-jod' },
   'PAT-09': { steps: [{ hold: 'R', until: X(9), max: 400 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 20, ticks: 26 }))], cause: 'pat-bheed' },
   'PAT-08': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-kua' },
@@ -434,6 +489,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'PAT-01': { steps: [...upTo(21), { hold: 'R', until: done, max: 2400 }], cause: 'pat-bheed' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-03': { steps: [...room03().slice(0, 2), { hold: '', until: done, max: 900, note: 'stay on the one that grew' }], cause: 'pat-jam' },
   'PAT-10': { steps: [{ hold: 'R', until: X(3.3), max: 600 }, { hold: 'R', jump: 12, ticks: 12, note: 'a hop on to the first plate, to be safe' }, { hold: 'R', until: done, max: 600 }], cause: 'pat-taala' },
   'PAT-09': { steps: [...room09().slice(0, 1), { hold: 'R', until: X(39.5), max: 400, note: 'the first gondola that comes' }, { hold: 'R', jump: 14, ticks: 14 }, { hold: '', until: done, max: 600 }], cause: 'pat-jhoola' },
   'PAT-08': { steps: [...hop(5.5, 'skip the first hatch'), { hold: 'R', until: done, max: 900 }], cause: 'pat-kua' },
@@ -450,6 +506,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'pat02-chokha': act02,
+  'pat03-batch': act03,
   'pat04-anaaj': act04,
   'pat05-ghat': act05,
   'pat06-sau': act06,
@@ -462,6 +519,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 };
 const endingPolicies: Record<string, Policy> = {
   'pat-musal': pestlePolicy,
+  'pat-ghanti': (w) => bellsPolicy(w),
   'pat-bhitar': leafPolicy,
   'pat-nawka': floatPolicy,
   'pat-toll': tollPolicy,
@@ -478,5 +536,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['PAT-02', 'PAT-04', 'PAT-05', 'PAT-06', 'PAT-07', 'PAT-08', 'PAT-09', 'PAT-10'],
+  fair: ['PAT-02', 'PAT-03', 'PAT-04', 'PAT-05', 'PAT-06', 'PAT-07', 'PAT-08', 'PAT-09', 'PAT-10'],
 };

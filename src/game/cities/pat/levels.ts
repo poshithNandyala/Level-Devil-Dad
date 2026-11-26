@@ -12,6 +12,7 @@ import { room as room07, act1 as act07a, act2 as act07b, meta07 } from './s07';
 import { room as room08, act as act08, meta08 } from './s08';
 import { room as room09, act as act09, meta09 } from './s09';
 import { room as room10, act1 as act10a, act2 as act10b, meta10 } from './s10';
+import { room as room03, act as act03, meta03 } from './s03';
 import { room as room02, act as act02, meta02 } from './s02';
 import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
@@ -41,7 +42,7 @@ function todoRoom(n: number): LevelDef {
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: { family: meta01.family, betrayals: meta01.betrayals } },
   longStage({ base: room02(), acts: [act02], twist: 'pat-musal', par: 40, shape: 'long', meta: meta02 }), // PAT-02 TODO: acts, twist (a pat-... ending), par
-  longStage({ base: todoRoom(3), par: 30, shape: 'long' }), // PAT-03 TODO: acts, twist (a pat-... ending), par
+  longStage({ base: room03(), acts: [act03], twist: 'pat-ghanti', par: 45, shape: 'long', meta: meta03 }), // PAT-03 TODO: acts, twist (a pat-... ending), par
   longStage({ base: room04(), acts: [act04], twist: 'pat-bhitar', par: 50, shape: 'long', meta: meta04 }), // PAT-04 TODO: acts, twist (a pat-... ending), par
   longStage({ base: room05(), acts: [act05], twist: 'pat-nawka', par: 60, shape: 'long', meta: meta05 }), // PAT-05 TODO: acts, twist (a pat-... ending), par
   longStage({ base: room06(), acts: [act06], twist: 'pat-toll', par: 55, shape: 'long', meta: meta06 }), // PAT-06 TODO: acts, twist (a pat-... ending), par
