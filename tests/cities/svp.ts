@@ -11,6 +11,7 @@ import type { Viewpoint } from '../../src/game/cities/svp/s05';
 import type { Bough, Flock } from '../../src/game/cities/svp/s06';
 import type { Crowd, Hall, Ship } from '../../src/game/cities/svp/s07';
 import type { Weather } from '../../src/game/cities/svp/s08';
+import type { Root } from '../../src/game/cities/svp/s09';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -121,6 +122,66 @@ function streetPolicy(w: World): Out {
 }
 const streetUntil = (idx: number, note: string): Step => ({ policy: streetPolicy, until: (w) => !!wx(w).awnings[idx] && Math.abs(w.player.cx - (wx(w).awnings[idx].lee(wx(w).raining ? wx(w).dir : wx(w).next)[0] + 19)) < 4 && w.player.onGround, max: 6000, note });
 
+// ------------------------------------------------------------------ SVP-09: the roots
+const allRoots = (w: World) => w.entities.filter((e) => e.constructor.name === 'Root') as unknown as Root[];
+const rootAt = (w: World, tx: number) => allRoots(w).find((r) => Math.abs(r.x0 - px(tx)) < 2)!;
+const roots = (w: World) => w.flags.roots as Root[];
+/** along the living roots (their first tile columns), then on to the ground at `groundX` px: wait at the start of a root until the next is within a run-up's reach, then run and jump from its end */
+function rootsPolicy(txs: number[], groundX: number, note: string, until: (w: World) => boolean, lead = 60, firstHold = 24): Step {
+  let W: World | null = null;
+  let jt = 0;
+  let committed = false;
+  let up = false;
+  return {
+    policy: (w) => {
+      if (W !== w) {
+        W = w;
+        jt = 0;
+        committed = false;
+        up = false;
+      }
+      const p = w.player;
+      if (jt > 0) {
+        if (!p.onGround) up = true;
+        if (p.onGround && up) jt = 0;
+        else {
+          jt--;
+          return { move: 'R', jump: true };
+        }
+      }
+      if (!p.onGround) return go('R');
+      const rs = txs.map((t) => rootAt(w, t));
+      const cur = rs.findIndex((r) => w.standing(r.plat.solid));
+      if (cur < 0) {
+        // on the bank: run at the first root and hop up when close
+        const first = rs[0];
+        if (p.cx >= first.plat.x - 6) return go('L');
+        if (p.cx >= first.plat.x - lead && p.cx < first.plat.x) {
+          jt = firstHold;
+          up = false;
+          return { move: 'R', jump: true };
+        }
+        return go('R');
+      }
+      const r = rs[cur];
+      const nx = cur + 1 < rs.length ? rs[cur + 1] : null;
+      const nextX = nx ? nx.plat.x : groundX;
+      const gap = nextX - (r.plat.x + r.plat.w) + (nx ? (nx.plat.solid.velX ?? 0) * 0.32 : 0) + ((r.plat.solid.velX ?? 0) * -0.32);
+      if (!committed && gap <= 36) committed = true;
+      if (!committed) return go(toward(w, r.plat.x + 6, 2));
+      if (p.cx < r.plat.x + r.plat.w - (gap > 28 ? 14 : 22) && p.cx >= r.plat.x + 4) return go('R');
+      if (p.cx < r.plat.x + 4) return go('R');
+      committed = false;
+      jt = gap > 28 ? 20 : 14;
+      up = false;
+      return { move: 'R', jump: true };
+    },
+    until,
+    max: 4000,
+    note,
+  };
+}
+
 // ------------------------------------------------------------------ SVP-02: the saw mill
 const hall = (w: World, i = 0) => (i < 0 ? (w.flags.saw as SawHall) : ((w.flags.halls ?? []) as SawHall[])[i]);
 /** stay at `off` px from the log's own left end (the log moves, so follow it) until the carriage has docked */
@@ -171,10 +232,16 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('SVP-07', 0, []);
   S['SVP-08'] = [streetUntil(2, 'awning to awning, in the lee of the rain that is coming')];
   lengthen('SVP-08', 0, []);
+  S['SVP-09'] = [
+    rootsPolicy([9, 14, 20], 24 * 16, 'up on the roots, across the swinging one, and off on to the road', and(ground, (w) => w.player.x >= 24 * 16 + 2)),
+    { hold: 'R', until: and(ground, X(26)), max: 300 },
+  ];
+  lengthen('SVP-09', 0, []);
 }
 
 /** the obvious play per stage, and the cause it must die of */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'SVP-09': { steps: [{ hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'across the brick floor' }], cause: 'svp-eent' },
   'SVP-08': { steps: [{ hold: 'R', until: (w) => w.state !== 'play', max: 1500, note: 'run for it' }], cause: 'svp-baarish' },
   'SVP-07': { steps: [hopUntil(and(ground, X(11.5)), 'on to the luggage'), { hold: '', until: (w) => w.state !== 'play', max: 1500, note: 'ship late hai: sit on the luggage like everyone' }], cause: 'svp-saman' },
   'SVP-06': { steps: [{ hold: 'R', until: X(11.2), max: 400 }, { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'run at the creek and jump for the cliff' }], cause: 'svp-kichad' },
@@ -192,6 +259,15 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'SVP-09': {
+    steps: [
+      { hold: 'R', until: X(7.6), max: 400 },
+      { hold: 'R', jump: 14, until: (w) => w.standing(roots(w)[0].plat.solid), max: 200, note: 'up on to the roots' },
+      { policy: (w) => go(toward(w, roots(w)[0].plat.x + 40, 2)), until: (w) => roots(w)[1].plat.x - (roots(w)[0].plat.x + roots(w)[0].plat.w) >= 28 && (roots(w)[1].plat.solid.velX ?? 0) > 0 && Math.abs(w.player.cx - (roots(w)[0].plat.x + 40)) < 4, max: 1200, note: 'at the end of the first root while the swinging one is away' },
+      { hold: 'R', jump: 6, until: (w) => w.state !== 'play', max: 600, note: 'and step across to where the root was' },
+    ],
+    cause: 'svp-eent',
+  },
   'SVP-08': { steps: [{ policy: (w) => go(toward(w, 6 * 16 + 80 - 19, 2)), until: (w) => w.state !== 'play', max: 3000, note: 'shelter at the right end of the first awning, and stay put' }], cause: 'svp-baarish' },
   'SVP-07': { steps: [hopUntil(and(ground, X(37)), 'over the luggage and the trench, to the jetty edge'), { hold: '', until: (w) => w.state !== 'play', max: 1800, note: 'wait there for the ship to be called' }], cause: 'svp-bheed' },
   'SVP-06': {
@@ -264,6 +340,12 @@ function crossGaps(): Step {
   };
 }
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp09-pul': (x) => [
+    rootsPolicy([x + 4, x + 10, x + 17], px(x + 20), 'the green roots, skipping the grey step', and(ground, (w) => w.player.x >= px(x + 20) + 2)),
+    { hold: 'R', until: and(ground, X(x + 22.5)), max: 300 },
+    rootsPolicy([x + 29, x + 35, x + 41], px(x + 45), 'the second creek of ruin', and(ground, (w) => w.player.x >= px(x + 45) + 2), 74, 26),
+    { hold: 'R', until: and(ground, X(x + 47)), max: 300 },
+  ],
   'svp08-gali': () => [streetUntil(6, 'the longer street, awning to awning')],
   'svp07-ghat': (x) => [
     { hold: 'R', until: and(ground, (w) => w.player.x >= px(x + 4)), max: 600, note: 'on along the pier to the quay' },
@@ -315,6 +397,12 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 
 /** a policy for each door ending, by kind */
 const endingPolicies: Record<string, Policy> = {
+  'svp-frame-door'(w, _m, d) {
+    const D = Math.round(d.x / 16);
+    if (w.player.cx > px(D - 3)) return go(toward(w, d.x + 8, 1) || 'R');
+    const k = ((w.flags as any).framePolicy ??= rootsPolicy([D - 12, D - 8], px(D - 3), '', () => false));
+    return k.policy(w);
+  },
   'svp-gutter-river'(w, m, d) {
     const D = Math.round(d.x / 16);
     const gx0 = px(D - 8),
@@ -382,5 +470,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['SVP-02', 'SVP-03', 'SVP-04', 'SVP-05', 'SVP-06', 'SVP-07', 'SVP-08'],
+  fair: ['SVP-02', 'SVP-03', 'SVP-04', 'SVP-05', 'SVP-06', 'SVP-07', 'SVP-08', 'SVP-09'],
 };

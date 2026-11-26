@@ -11,4 +11,5 @@ export const causeLines: Record<string, string[]> = {
   'svp-jahaz': ['Jahaz! You got on the first ship, and it sailed.', 'The first ship is the crowd’s. Wait for the second, and step over to it when it docks.'],
   'svp-baarish': ['Baarish! The rain came in hard from the other side.', 'Only the lee end of an awning is dry: the end the wind blows towards. When the cloud bank shows on the other horizon, change ends.'],
   'svp-nala': ['Nala! The gutter runs like a river while it rains.', 'Cross the gutter in the lull, when it has drained.'],
+  'svp-eent': ['Eent! The brick gave way under you.', 'Brick crumbles a moment after you land on it. Roots hold, and a dead grey root is no better than brick.'],
 };

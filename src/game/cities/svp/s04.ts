@@ -195,6 +195,7 @@ export class Herd extends Entity {
 export class LateBoat extends Entity {
   boat: Plat;
   docked = false;
+  private prevX = 0;
   private t = 0;
   private plan: ('wait' | 'go' | 'back')[] = [];
   constructor(
@@ -206,6 +207,7 @@ export class LateBoat extends Entity {
   ) {
     super();
     this.layer = 1;
+    this.prevX = R0;
     this.boat = new Plat(R0, FLOOR, 40, 8, (ctx, q) => {
       ctx.fillStyle = '#F2F2EA';
       ctx.beginPath();
@@ -239,7 +241,9 @@ export class LateBoat extends Entity {
     else x = this.R0;
     this.docked = Math.abs(x - this.L0) < 1 && t < this.waitS + this.goS + 1.6 - 0.2;
     const dx = Math.round(x) - s.x;
-    s.velX = dx ? dx / DT : 0;
+    // the true speed, not the pixel steps it is drawn in, so a hop off the boat carries the right momentum
+    s.velX = (x - this.prevX) / DT;
+    this.prevX = x;
     if (dx) s.moveBy(w, dx, 0);
     void w;
   }
