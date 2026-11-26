@@ -254,6 +254,14 @@ twice anywhere, no family in two cities, no betrayal type twice in one city, 10 
    lies; `npc` locals are honest flavour. Every line is `"Local | English"`, max 8 words a side.
 8. Every death cause (`w.die('cause')`) gets a `causeLines` entry: `[what happened, how to beat it]`.
 
+## Shipped cities: one route file each
+
+Each of the 15 shipped cities has its own `tests/cities/<code>.ts` (same `test` shape as a module city). Its
+existing plays still live in the shared tables (`tests/solutions.ts`, `tests/west.ts`, `tests/acts.ts`,
+`tests/endings.ts`), but whatever the city's file sets is merged last and **replaces** that stage's route,
+NAIVE, FIX or MISTAKES entry, or that act's route or ending's policy. So a hardness-pass worker edits only the
+city's stage files and its own `tests/cities/<code>.ts`, never a shared test file.
+
 ## Shipped cities: frozen behaviour
 
 `tests/frozen-behaviour.test.ts` compares every shipped stage with its snapshot in

@@ -1286,7 +1286,6 @@ for (const t of CITY_TESTS) t.solutions(SOLUTIONS, lengthen);
 
 /** The obvious play that a trap is designed to punish. */
 export const NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
-  ...Object.assign({}, ...CITY_TESTS.map((t) => t.naive)),
   'TVM-01': { steps: tourRun('TVM'), cause: 'spikes' },
   'KVT-01': { steps: tourRun('KVT'), cause: 'hatchling' },
   'CHN-01': { steps: tourRun('CHN'), cause: 'burnt' },
@@ -1642,4 +1641,7 @@ export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
   },
 };
 for (const t of CITY_TESTS) Object.assign(FIX, t.fix ?? {});
-for (const t of CITY_TESTS) for (const [id, ms] of Object.entries(t.mistakes ?? {})) MISTAKES[id] = [...(MISTAKES[id] ?? []), ...ms];
+// Each city's own file (tests/cities/<code>.ts) is merged last, so for a shipped city it REPLACES that stage's
+// entry above: the hardness pass writes new plays there and never edits this file.
+for (const t of CITY_TESTS) Object.assign(NAIVE, t.naive);
+for (const t of CITY_TESTS) Object.assign(MISTAKES, t.mistakes ?? {});

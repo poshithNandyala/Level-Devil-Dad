@@ -18,9 +18,10 @@ Paths used below:
 ## Builder rules
 
 1. Work only in your worktree, on `city/<code>`, cut from `develop`.
-2. Edit only `src/game/cities/<code>/`, `tests/cities/<code>.ts`, `docs/cities/<CODE>*.md` and your city's own
+2. Edit only `src/game/cities/<code>/`, `tests/cities/<code>.ts`, `docs/cities/<CODE>*.md` and your city’s own
    row in `docs/CITIES.md`. A shipped city's hardness pass edits that city's stage file(s) and
-   `tests/cities/<code>.ts` only. Anything else: stop and ask the integrator.
+   `tests/cities/<code>.ts` only (its replacements win over the shared tables), then re-freezes it:
+   `npm run refreeze -- TVM`. Anything else: stop and ask the integrator.
 3. **Never push. Never bump the version.** Commit on your branch with plain messages (no brackets or braces);
    the integrator takes it from there.
 4. Before you say done: typecheck, the full suite, your city's guard test and the fairness script are green
