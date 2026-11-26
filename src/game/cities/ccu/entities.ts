@@ -128,6 +128,8 @@ export interface BusSpec {
   /** what he shouts as it goes by full tilt */
   call?: string;
   label?: string;
+  /** not there at all (drawn or solid) until it sets off */
+  hidden?: boolean;
 }
 /**
  * A Kolkata private bus, seen side-on, and its footboard (a one-way step at the door). It never stops: it
@@ -155,6 +157,7 @@ export class Bus extends Entity {
     this.deck = new Solid(o.x, FLOOR - 9, 26, 4);
     this.deck.oneWay = true;
     this.deck.velX = 0;
+    if (o.hidden) this.deck.collidable = false;
     this.solids = [this.deck];
   }
   get fast() {
@@ -168,7 +171,10 @@ export class Bus extends Entity {
   }
   update(w: World) {
     const p = w.player;
-    if (!this.started && (this.o.go ? this.o.go(w) : true)) this.started = true;
+    if (!this.started && (this.o.go ? this.o.go(w) : true)) {
+      this.started = true;
+      if (this.o.hidden) this.deck.collidable = true;
+    }
     if (!this.gone && this.started) {
       const want = this.crawling() || this.slowed ? this.crawl : this.fast;
       const a = 260 * DT;
@@ -211,7 +217,7 @@ export class Bus extends Entity {
     if (on) this.left = null;
   }
   draw(ctx: CanvasRenderingContext2D, w: World) {
-    if (this.gone) return;
+    if (this.gone || (this.o.hidden && !this.started)) return;
     const x = this.x - 34,
       y = FLOOR - 46,
       bw = 116,

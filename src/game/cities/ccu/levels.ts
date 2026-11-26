@@ -504,7 +504,7 @@ const bus10: Act = {
     pool(w, c.x + 12, c.x + 25, 16, { colors: NALA, cause: 'ccu-nala' });
     sign(w, c.x + 2, 10.4, 3.2, 'BUS STOP', 'green', null, 'Esplanade');
     const stop = [c.X(1), c.X(5)];
-    const bus = w.add(new Bus({ x: c.X(-14), go: (w2) => w2.player.cx > c.X(1), slow: [[c.X(25), c.X(28.5)]], end: c.X(31), fast: 130, crawl: 20, label: 'ESPLANADE' }));
+    const bus = w.add(new Bus({ x: c.X(-14), go: (w2) => w2.player.cx > c.X(1), slow: [[c.X(25), c.X(28.5)]], end: c.X(31), fast: 130, crawl: 20, label: 'ESPLANADE', hidden: true }));
     w.flags.bus10 = { bus, stop };
     w.add(
       new (class extends Entity {
