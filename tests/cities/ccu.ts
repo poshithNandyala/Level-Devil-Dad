@@ -430,6 +430,8 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'CCU-01': { steps: tourRun('off'), cause: 'ccu-rail' },
+  'CCU-08': { steps: [...addaRoute(), { policy: hopWater(), until: and(ground, X(32 + 38)), max: 1800 }, walk(76 - 1.8), steerHop(px(76.8), 12, 'up'), walk(76 + 12.2), { hold: 'R', jump: 30, ticks: 30, long: true, note: 'never stop on the rok: jump the broken bit' }, { hold: 'R', until: done, max: 300 }], cause: 'ccu-khod' },
   'CCU-04': { steps: boiRoute(true, 300), cause: 'ccu-boi' },
   'CCU-05': { steps: kumartuliRoute(false, 600), cause: 'ccu-murti' },
   'CCU-03': { steps: [{ ...crossTin('tin', px(27), { stay: true }), until: done }], cause: 'ccu-lonka' },
@@ -445,7 +447,6 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'CCU-09': [{ what: 'resting on the new panel at the top of the staircase', steps: [...pandalRoute(), steerHop(px(35), 10, 'bamboo'), steerHop(px(38), 10, 'up'), steerHop(px(41), 10, 'up'), steerHop(px(45), 30, 'high', true), steerHop(px(49), 10, 'on to the new panel'), { hold: '', until: done, max: 300 }], cause: 'crushed' }],
   'CCU-08': [
     { what: 'waiting by the second adda for the water to stop', steps: [...addaRoute(), walk(32 + 24.5), { hold: '', until: done, max: 1500 }], cause: 'ccu-dhowa' },
-    { what: 'trying to jump the broken rok', steps: [...addaRoute(), { policy: hopWater(), until: and(ground, X(32 + 38)), max: 1800 }, walk(76 - 1.8), steerHop(px(76.8), 12, 'up'), walk(76 + 12.2), { hold: 'R', jump: 30, ticks: 30, long: true }, { hold: 'R', until: done, max: 300 }], cause: 'ccu-khod' },
   ],
   'CCU-05': [
     {
@@ -456,7 +457,6 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   ],
 
   'CCU-07': [{ what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), walk(124 + 3.9), ...hopTo(px(130.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
-  'CCU-01': [{ what: 'up on the thela and a hop down off it, on to the rail', steps: tourRun('off'), cause: 'ccu-rail' }],
   'CCU-02': [
     {
       what: 'stepping off backwards on the crawl',
@@ -470,6 +470,19 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu10-rok': (x) => [walk(x + 3.6), steerHop(px(x + 7), 12, 'up on the rok'), { policy: hopWater(), until: and(ground, X(x + 31)), max: 1800, note: 'through the adda, hopping the water' }, walk(x + 33.4)],
+  'ccu10-kumor': (x) => [
+    steerHop(px(x + 1.8), 12, 'up on the first'),
+    steerHop(px(x + 4.8), 12, 'up, and on at once'),
+    walkOnto(x + 6, 'walk off on to the dry one'),
+    steerHop(px(x + 9.8), 12, 'up on the next'),
+    { hold: 'R', until: X(x + 10.2), max: 120 },
+    steerHop(px(x + 13.8), 12, 'across to the horse'),
+    walkOnto(x + 15, 'walk off on to the dry one'),
+    { hold: 'R', until: X(x + 16.2), max: 120 },
+    steerHop(px(x + 20.8), 10, 'down on to the lane'),
+    walk(x + 23.4),
+  ],
   'ccu03-dokan': (x) => [crossTin('tinB', px(x + 28)), walk(x + 29.4)],
   'ccu04-thak': (x) => [
     walk(x + 0.6),

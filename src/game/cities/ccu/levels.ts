@@ -723,6 +723,62 @@ const dui3: Act = {
   },
 };
 
+
+/** CCU-10 act 3: north Kolkata's rok again, an adda and the maid's bucket on a beat */
+const rok10: Act = {
+  id: 'ccu10-rok',
+  w: 34,
+  cp0: false,
+  cps: [3.5],
+  advice: 'The rok again: walk through the adda without stopping, and hop each sheet of water from the door.',
+  paint: (g, c) => {
+    g.pit(c.x + 6, c.x + 29).fill(c.x + 6, c.x + 29, 13, 14, '#');
+  },
+  build: (w, c) => {
+    w.add(new House(c.X(6), c.X(30)));
+    khod(w, c.x + 6, c.x + 30);
+    const a = w.add(new Adda(c.X(12), c.X(18), 3));
+    const wash = w.add(new Wash(c.X(27), c.X(9)));
+    teaRound(w, [a], c.X(31));
+    let beat = -1;
+    w.add(
+      new (class extends Entity {
+        update(w2: World) {
+          if (beat < 0 && w2.player.cx > c.X(7)) beat = w2.tick;
+          if (beat >= 0 && (w2.tick - beat) % 360 === 0) wash.throw(w2);
+        }
+      })(),
+    );
+    w.flags.rokWash = wash;
+  },
+};
+
+/** CCU-10 act 4: Kumartuli once more, the figures finishing fast */
+const kumor10: Act = {
+  id: 'ccu10-kumor',
+  w: 24,
+  advice: 'Kumartuli once more: on the ones painted below the waist, quickly off the others, and walk (never jump) down on to the pale dry ones.',
+  paint: (g, c) => {
+    g.pit(c.x, c.x + 19);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(new Ghat(c.X(0), c.X(20)));
+    figures(
+      w,
+      [
+        [x + 1, 2, 0.3, 0.12, 'man'],
+        [x + 4, 3, 0.55, 0.16, 'horse'],
+        [x + 6, 2, 0, 0, 'woman'],
+        [x + 9, 3, 0.2, 0.12, 'man'],
+        [x + 13, 3, 0.4, 0.14, 'horse'],
+        [x + 15, 2, 0, 0, 'woman'],
+      ],
+      c.X(0),
+    );
+  },
+};
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -778,5 +834,5 @@ export const levels = (): LevelDef[] => [
   longStage({ base: howrahRoom(), par: 90, acts: [girder, dui, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 40, acts: [rok, tokta], twist: 'ccu-bhanr', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-door-opens-for-a-cup-of-tea') }),
   longStage({ base: pandalRoom(), par: 40, acts: [sinri, chala], twist: 'ccu-dhak', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-dhak-beat-lifts-the-gate-curtain') }),
-  longStage({ base: finaleRoom(), par: 80, acts: [bus10, tram10], twist: 'ccu-wall', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-customers-buy-the-wall-down') }),
+  longStage({ base: finaleRoom(), par: 80, acts: [bus10, tram10, rok10, kumor10], twist: 'ccu-wall', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-customers-buy-the-wall-down') }),
 ];
