@@ -26,8 +26,6 @@ export type TourSeg =
 /** Every city walks its own course (tile columns); the door, the deck and the item are where they always were. */
 export const TOUR = { cols: 120, door: 112, deck: [94, 99] as [number, number], item: [96.5, 8.4] as [number, number] };
 export const COURSES = {
-  // the auto stand, then up and down a gopuram's tiers, and the beach lamp posts
-  CHN: [{ k: 'parked', x: 14 }, { k: 'ditch', x: 26, w: 2 }, { k: 'steps', x: 36, n: 4, run: 2, top: 4 }, { k: 'posts', x: 64, n: 3 }, { k: 'wall', x: 80, w: 2 }],
   // French bollards in a row, a canal, and the café terrace
   // (no wall after the terrace: the street from there to the canal is where the policeman's cap blows down)
   PDY: [{ k: 'posts', x: 12, n: 5 }, { k: 'ditch', x: 32, w: 2, wet: true }, { k: 'parked', x: 44 }, { k: 'steps', x: 52, n: 1, run: 2, top: 10 }, { k: 'ditch', x: 86, w: 2 }],

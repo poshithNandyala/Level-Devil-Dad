@@ -39,12 +39,10 @@ export type BaseThingKind =
   | 'hermit'
   // Chennai
   | 'shareauto'
-  | 'lorry'
   | 'kudam'
   | 'kite'
   | 'tumbler'
   | 'pillar'
-  | 'mirage'
   // Puducherry
   | 'cyclist'
   | 'baguette'
@@ -61,7 +59,6 @@ export type BaseThingKind =
   | 'frond'
   | 'garland'
   | 'traincar'
-  | 'loco'
   | 'surfboard'
   | 'lantern'
   | 'rocket'
@@ -98,7 +95,6 @@ export type BaseThingKind =
   | 'kaapi'
   | 'cable'
   | 'vada'
-  | 'ball'
   // Goa
   | 'ferry'
   | 'poi'
@@ -148,12 +144,10 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   jetty: [48, 8],
   hermit: [32, 14],
   shareauto: [64, 36],
-  lorry: [96, 44],
   kudam: [16, 16],
   kite: [20, 16],
   tumbler: [12, 12],
   pillar: [32, 96],
-  mirage: [16, 32],
   cyclist: [32, 30],
   baguette: [24, 6],
   croissant: [12, 12],
@@ -188,7 +182,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   frond: [24, 10],
   garland: [32, 6],
   traincar: [48, 26],
-  loco: [56, 32],
   surfboard: [32, 6],
   lantern: [12, 16],
   rocket: [6, 14],
@@ -203,7 +196,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   spark: [5, 5],
   plank: [16, 5],
   sub: [112, 18],
-  ball: [8, 8],
   ferry: [48, 10],
   poi: [12, 10],
   football: [10, 10],
@@ -231,7 +223,7 @@ export interface ThingDrawOpts {
   state?: string;
 }
 
-function wheel(ctx: Ctx, x: number, y: number, r: number, spin: number) {
+export function wheel(ctx: Ctx, x: number, y: number, r: number, spin: number) {
   circle(ctx, x, y, r, '#2B2B2E');
   circle(ctx, x, y, r * 0.45, '#9AA0A6');
   ctx.strokeStyle = '#2B2B2E';
@@ -665,27 +657,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       wheel(ctx, x + w - 16, y + h - 5, 5, o.anim * 0.25);
       break;
     }
-    case 'lorry': {
-      fillRR(ctx, x + 2, y + 8, w - 30, h - 16, 10, '#1F5FA8', '#123A66', 1);
-      ctx.fillStyle = '#2F7BD0';
-      ctx.fillRect(x + 6, y + 14, w - 38, 3);
-      fillRR(ctx, x + w - 28, y + 4, 26, h - 12, 3, '#F2F2F2', '#555', 1);
-      fillRR(ctx, x + w - 22, y + 8, 16, 10, 2, '#9FD0E6');
-      ctx.strokeStyle = '#123A66';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(x + 2, y + h - 12);
-      ctx.quadraticCurveTo(x - 6, y + h - 6, x - 2, y + h);
-      ctx.stroke();
-      wheel(ctx, x + 16, y + h - 6, 6, o.anim * 0.2);
-      wheel(ctx, x + 40, y + h - 6, 6, o.anim * 0.2);
-      wheel(ctx, x + w - 16, y + h - 6, 6, o.anim * 0.2);
-      if (o.look === 'leak') {
-        ctx.fillStyle = 'rgba(120,190,230,0.8)';
-        for (let i = 0; i < 4; i++) circle(ctx, x - 2 - ((t + i * 6) % 18), y + h - 2, 1.4, 'rgba(120,190,230,0.8)');
-      }
-      break;
-    }
     case 'kudam': {
       // plastic water pot, bright and round
       const c = o.tint ?? '#E53935';
@@ -739,13 +710,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.lineTo(x + w - 8, y + 14);
       ctx.lineTo(x + 8, y + 14);
       ctx.fill();
-      break;
-    }
-    case 'mirage': {
-      // the shimmering fake exit
-      ctx.globalAlpha = 0.45 + 0.25 * Math.sin(t * 0.15);
-      fillRR(ctx, x + 1, y + 1, w - 2, h - 1, 3, '#FFE082', '#FFB300', 1);
-      ctx.globalAlpha = 1;
       break;
     }
     // ------------------------------------------------------------ Puducherry
@@ -1227,23 +1191,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       wheel(ctx, x + w - 9, y + h - 4, 4, o.anim * 0.3);
       break;
     }
-    case 'loco': {
-      // a small diesel engine, faces left, big lamp
-      fillRR(ctx, x + 2, y + 8, w - 4, h - 14, 2, '#1565C0', '#0D47A1');
-      fillRR(ctx, x + w - 22, y, 20, 12, 2, '#1565C0', '#0D47A1');
-      ctx.fillStyle = '#FFCA28';
-      ctx.fillRect(x + 2, y + 14, w - 4, 3);
-      ctx.fillStyle = '#B3E5FC';
-      ctx.fillRect(x + w - 18, y + 3, 12, 6);
-      circle(ctx, x + 4, y + 12, 2.2, '#FFF6C2');
-      const g = ctx.createRadialGradient(x + 4, y + 12, 1, x - 10, y + 14, 24);
-      g.addColorStop(0, 'rgba(255,246,194,0.6)');
-      g.addColorStop(1, 'rgba(255,246,194,0)');
-      ctx.fillStyle = g;
-      ctx.fillRect(x - 30, y - 6, 34, 36);
-      for (const wx of [10, 22, w - 22, w - 10]) wheel(ctx, x + wx, y + h - 5, 5, o.anim * 0.3);
-      break;
-    }
     case 'surfboard': {
       ctx.fillStyle = o.tint ?? '#FF7043';
       ctx.beginPath();
@@ -1372,17 +1319,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.fillRect(x + 3, y + 4, w - 6, 7);
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(x, y + h - 5, w, 1.5);
-      break;
-    }
-    case 'ball': {
-      // a cricket ball: red leather, a white seam
-      circle(ctx, x + w / 2, y + h / 2, w / 2, '#C62828', '#7F1010', 0.8);
-      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
-      ctx.lineWidth = 0.7;
-      ctx.beginPath();
-      ctx.arc(x + w / 2 + 3.5, y + h / 2, 3.6, Math.PI * 0.72, Math.PI * 1.28);
-      ctx.stroke();
-      circle(ctx, x + w / 2 - 1.5, y + h / 2 - 1.5, 1.1, 'rgba(255,255,255,0.45)');
       break;
     }
     case 'cannonball': {

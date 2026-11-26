@@ -30,6 +30,7 @@ const EXEMPT: Record<string, Excuse[]> = {
   RNC: ['ten', 'tour-naive', 'fix', 'intro', 'prefix'],
   TVM: OLD,
   KVT: [...OLD, 'naive', 'fix'],
+  CHN: OLD,
 };
 type Excuse = 'ten' | 'tour-naive' | 'naive' | 'fix' | 'intro' | 'prefix' | 'fair';
 const exempt = (m: CityModule, k: Excuse) => (EXEMPT[m.id] ?? []).includes(k);

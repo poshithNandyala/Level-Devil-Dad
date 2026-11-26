@@ -1,24 +1,23 @@
-import type { LevelDef, World } from '../world';
-import { LINES } from '../cities';
-import { Door } from '../entities/basics';
-import { Gust } from '../entities/traps';
-import { Floater, Water } from '../entities/mumbai';
-import { arc, collapseOnStand, collectible, door, geyser, group, gust, panel, prop, px, rider, rival, roller, shot, sign, spring, thing, thingOn, water } from './kit';
-import { Act, Blast, Decal, G, Ladi, Shimmer, pool } from './acts';
-import { onPass } from './trolls';
-import { Thing } from '../entities/traps';
-import type { ThingKind } from '../../render/art/things';
-import { DT } from '../constants';
-import { tour } from './tour';
-import { longStage } from './chunks';
-import { Grid } from './grid';
-import { exitTwist } from './twists';
-import { PongalPot } from '../entities/tamil';
+import type { LevelDef, World } from '../../world';
+import { lines as L } from './lines';
+import { Door } from '../../entities/basics';
+import { Gust } from '../../entities/traps';
+import { Floater, Water } from '../../entities/mumbai';
+import { arc, collapseOnStand, collectible, door, geyser, group, gust, panel, prop, px, rider, rival, roller, shot, sign, spring, thing, thingOn, water } from '../../levels/kit';
+import { Act, Blast, Decal, G, Ladi, Shimmer, pool } from '../../levels/acts';
+import { onPass } from '../../levels/trolls';
+import { Thing } from '../../entities/traps';
+import type { ThingKind } from '../../../render/art/things';
+import { DT } from '../../constants';
+import { tour } from '../../levels/tour';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
+import { exitTwist } from '../../levels/twists';
+import { PongalPot } from '../../entities/tamil';
 
 // Chennai: share autos, plastic water pots, a flooding subway, filter kaapi
 // poured in long arcs, and a sun that makes doors appear. Chennai Tamil + English.
 
-const L = LINES.CHN;
 const tara = (n: number, point: 1 | -1 = 1) => ({ intro: L.intro[n % L.intro.length], point, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[n % L.beaten.length] });
 
 
@@ -293,7 +292,7 @@ const trainRoof: Act = {
   },
 };
 
-export const CHN: LevelDef[] = [
+export const levels = (): LevelDef[] => [
   tour({
     id: 'CHN-01',
     city: 'CHN',

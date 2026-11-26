@@ -25,29 +25,6 @@ export interface Theme {
 }
 
 export const THEMES = {
-  CHN: {
-    city: 'CHN',
-    name: 'Chennai',
-    local: 'சென்னை',
-    sky: ['#2B7FCC', '#86CBEC', '#FFE6B0'],
-    sun: '#FFFDF2',
-    far: '#E9C29A',
-    mid: '#D49162',
-    near: '#A65E3B',
-    accent: '#FFB300',
-    accent2: '#0288D1',
-    tileBase: '#7B2C2C',
-    tileTop: '#B4483F',
-    tileEdge: '#5A1E1E',
-    tileDark: '#431515',
-    topper: '#E8C27A',
-    pattern: 'brick',
-    spike: '#FFF6E8',
-    spikeEdge: '#2A1414',
-    ink: '#2A1414',
-    rim: null,
-    ui: '#FFB300',
-  },
   PDY: {
     city: 'PDY',
     name: 'Puducherry',
@@ -304,7 +281,7 @@ export const THEMES = {
 } as Record<CityId, Theme>;
 
 /** playable cities in journey order (south to north) */
-export const CITY_ORDER: CityId[] = ['CHN', 'PDY', 'BLR', 'AMR', 'HYD', 'PNJ', 'BOM', 'DMN', 'GNR', 'JAI', 'BPL', 'RPR'];
+export const CITY_ORDER: CityId[] = ['PDY', 'BLR', 'AMR', 'HYD', 'PNJ', 'BOM', 'DMN', 'GNR', 'JAI', 'BPL', 'RPR'];
 
 /** Future chapters, honestly labelled as not built yet. */
 export const COMING_SOON = [
