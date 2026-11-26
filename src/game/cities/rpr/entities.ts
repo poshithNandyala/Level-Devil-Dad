@@ -1,9 +1,9 @@
 // Raipur's (and Chhattisgarh's) moving parts: gedi stilts over the paddy mud, a clock that only ticks
 // when Dad moves, hills of rice poured from sacks, bhaunra spinning tops, kosa cocoons, and the red
 // weaver ants' living bridges.
-import { Entity, type Hazard, type World } from '../world';
-import { Solid } from '../body';
-import { DT } from '../constants';
+import { Entity, type Hazard, type World } from '../../world';
+import { Solid } from '../../body';
+import { DT } from '../../constants';
 
 /** Gedi: the bamboo stilts of Hareli. From the stand at x0 Dad is up on them: taller, slower, safe from
  *  the mud, and his jump is a great deal higher. But come down from a jump still moving and over he

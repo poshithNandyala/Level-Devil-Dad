@@ -82,7 +82,7 @@ export type BaseThingKind =
   | 'football'
   // Daman
   // Gandhinagar
-  | 'chila';
+  ;
 /** every thing kind: the built-in ones plus each city module's own (declared in its things.ts, see docs/CITY-MODULE.md) */
 export type ThingKind = BaseThingKind | keyof ModuleThingKinds;
 
@@ -157,7 +157,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   plank: [16, 5],
   ferry: [48, 10],
   football: [10, 10],
-  chila: [12, 10],
 };
 
 /** the built-in kinds' sizes (install checks a module's new kinds against these) */
@@ -1153,27 +1152,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
         circle(ctx, x + w / 2 + Math.cos(a) * 2.6, y + h / 2 + Math.sin(a) * 2.6, 1.4, '#263238');
       }
       circle(ctx, x + w / 2, y + h / 2, 1.3, '#263238');
-      break;
-    }
-    case 'chila': {
-      // a rice-flour chila folded on a sal leaf, with green chutney and a tomato one
-      const cx = x + w / 2,
-        cy = y + h / 2 + 1;
-      ctx.fillStyle = '#558B2F';
-      ctx.beginPath();
-      ctx.ellipse(cx, cy + 1.5, w / 2, h / 2 - 1.5, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#FFF3D6';
-      ctx.beginPath();
-      ctx.moveTo(cx - 5, cy + 2);
-      ctx.quadraticCurveTo(cx, cy - 6, cx + 5, cy + 2);
-      ctx.fill();
-      ctx.fillStyle = '#E8C98A';
-      for (let i = 0; i < 5; i++) ctx.fillRect(cx - 3 + ((i * 3) % 6), cy - 2 + ((i * 2) % 3), 1, 1);
-      ctx.fillStyle = '#7CB342';
-      ctx.fillRect(cx - 5.5, cy + 2, 2.4, 1.6);
-      ctx.fillStyle = '#E53935';
-      ctx.fillRect(cx + 3.2, cy + 2, 2.4, 1.6);
       break;
     }
     case 'vada': {

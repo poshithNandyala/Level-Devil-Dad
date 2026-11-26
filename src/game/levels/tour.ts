@@ -26,8 +26,6 @@ export type TourSeg =
 /** Every city walks its own course (tile columns); the door, the deck and the item are where they always were. */
 export const TOUR = { cols: 120, door: 112, deck: [94, 99] as [number, number], item: [96.5, 8.4] as [number, number] };
 export const COURSES = {
-  // the pink city's bollards, Hawa Mahal's steps, the metro over the dug-up road
-  RPR: [{ k: 'posts', x: 12, n: 3 }, { k: 'ditch', x: 26, w: 2 }, { k: 'steps', x: 40, n: 3, run: 2, top: 3 }, { k: 'ferry', x: 56, w: 14, kind: 'traincar', label: 'RAIPUR JN' }, { k: 'parked', x: 82 }],
   // the Rock Garden's steps and a ride up the plateau road from Ranchi station
 } as Record<CityId, TourSeg[]>;
 

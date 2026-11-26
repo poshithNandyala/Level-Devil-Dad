@@ -1,18 +1,18 @@
 // Raipur: the rice bowl. Gedi stilts over the paddy mud, a clock that only ticks when you move, hills
 // of rice poured from sacks, bhaunra spinning tops, kosa cocoons, and the red ants' living bridges.
-import { Entity, type LevelDef, type World } from '../world';
-import { LINES } from '../cities';
-import { collectible, door, px, rival, sign } from './kit';
-import type { Act } from './acts';
-import { onPass } from './trolls';
-import { tour } from './tour';
-import { longStage } from './chunks';
-import { Grid } from './grid';
-import { Baaj, Chapda, Gedi, Ghadi, Hand, Heap, Kosa, Mud, Sack, Swarm, Top } from '../entities/raipur';
+import { Entity, type LevelDef, type World } from '../../world';
+import { lines as L } from './lines';
+import { collectible, door, px, rival, sign } from '../../levels/kit';
+import type { Act } from '../../levels/acts';
+import { onPass } from '../../levels/trolls';
+import { tour } from '../../levels/tour';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
+import { Baaj, Chapda, Gedi, Ghadi, Hand, Heap, Kosa, Mud, Sack, Swarm, Top } from './entities';
 
-const TAUNTS = LINES.RPR.taunt;
+const TAUNTS = L.taunt;
 const G = 15;
-const tara = (n: number, beaten = 0) => ({ intro: LINES.RPR.intro[n % LINES.RPR.intro.length], point: 1 as const, introAt: 0.5, taunts: TAUNTS, beaten: LINES.RPR.beaten[beaten % LINES.RPR.beaten.length] });
+const tara = (n: number, beaten = 0) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[beaten % L.beaten.length] });
 
 // ================================================================== RPR-02: Hareli (the stilts)
 export function gedi(w: World, c0: number, c1: number) {
@@ -397,7 +397,7 @@ const dussehra: Act = {
   },
 };
 
-export const RPR: LevelDef[] = [
+export const levels = (): LevelDef[] => [
   tour({
     id: 'RPR-01',
     city: 'RPR',

@@ -991,7 +991,6 @@ export const ROOM = { W: ROOM_W, H: ROOM_H };
 /** per city: where its light comes from (fraction of the screen), the glow, a colour whisper, a vignette tint */
 export type Grade = { gx: number; gy: number; glow: string; tint: string; vig: string };
 export const GRADES: Record<string, Grade> = {
-  RPR: { gx: 0.7, gy: 0.2, glow: 'rgba(255,240,190,0.26)', tint: 'rgba(120,170,60,0.07)', vig: 'rgba(20,35,10,0.2)' },
 };
 /** tile cache slice width (world px) */
 const CHUNK = 512;

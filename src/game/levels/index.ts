@@ -1,9 +1,8 @@
 import type { LevelDef } from '../world';
 import type { CityId } from '../constants';
-import { RPR } from './rpr';
 
-export const LEVELS: LevelDef[] = [...RPR];
-// city modules (src/game/cities/registry.ts) are appended by src/game/cities/install.ts
+/** every stage; each city module's stages are added in journey order by src/game/cities/install.ts */
+export const LEVELS: LevelDef[] = [];
 
 export const LEVEL_BY_ID = new Map(LEVELS.map((l) => [l.id, l]));
 
