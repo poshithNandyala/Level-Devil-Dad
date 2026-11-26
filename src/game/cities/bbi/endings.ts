@@ -5,8 +5,9 @@ import { ending as e03 } from './s03';
 import { ending as e04 } from './s04';
 import { ending as e05 } from './s05';
 import { ending as e06 } from './s06';
+import { ending as e07 } from './s07';
 
-export type BbiEndingKind = 'bbi-goal-net' | 'bbi-lantern-drop' | 'bbi-curl-stair' | 'bbi-behind-step' | 'bbi-motif-door';
+export type BbiEndingKind = 'bbi-goal-net' | 'bbi-lantern-drop' | 'bbi-curl-stair' | 'bbi-behind-step' | 'bbi-motif-door' | 'bbi-pose-gate';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<BbiEndingKind, true> {}
@@ -18,4 +19,5 @@ export const endings: Record<BbiEndingKind, Ending> = {
   'bbi-curl-stair': e04,
   'bbi-behind-step': e05,
   'bbi-motif-door': e06,
+  'bbi-pose-gate': e07,
 };

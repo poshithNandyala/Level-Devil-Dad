@@ -19,4 +19,7 @@ export const causeLines: Record<string, string[]> = {
   'bbi-ranga': ['Into the dye, Dad: the beat moved your patch.', 'Count the beats: one in five, the patches line up into a bridge.'],
   'bbi-shuttle': ['The shuttle! It flies across on the bridge beat.', 'When the motif lines up, let the shuttle pass first, then walk over.'],
   'bbi-tana': ['The threads closed on you, Dad.', 'Walk through the curtain only on the motif beat, and straight through.'],
+  'bbi-nacha': ['Into the pit, Dad: they were still dancing.', 'While the drum plays, nobody holds still. Wait for a pose.'],
+  'bbi-thrown': ['The drum started again and the pose threw you off.', 'Go the moment the drum stops, and be off before he lifts his sticks.'],
+  'bbi-kick': ['A Gotipua kick, Dad! They were still whirling.', 'Wait for the gate pose, then walk straight through.'],
 };

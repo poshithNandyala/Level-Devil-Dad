@@ -274,6 +274,40 @@ const motifPolicy: Policy = (w) => {
   return go(p.x + p.w < px(D - 3) - 6 ? 'R' : '');
 };
 
+// ------------------------------------------------------------------ BBI-07
+type TrSt = { pose: string | null; into: number; left: number };
+const tr = (w: World, k: string) => w.flags[k] as TrSt;
+/** be at the pit edge; the moment the drum stops for the bridge, walk over */
+const onBridge = (k: string, edge: number, far: number, note: string): Step[] => [
+  { hold: 'R', until: (w) => w.player.x + w.player.w >= px(edge) - 2, max: 900, note: 'to the edge' },
+  waitFor((w) => tr(w, k).pose === 'bridge' && tr(w, k).into < 0.2, note, 2400),
+  { hold: 'R', until: and(ground, X(far)), max: 400, note: 'straight over' },
+];
+const room07 = (): Step[] => [...onBridge('bbi7', 10, 18.2, 'the drum stops for the bridge'), { hold: 'R', until: X(31.5), max: 600 }];
+const act07a = (x: number): Step[] => [
+  ...onBridge('bbi7a1', x + 4, x + 10.2, 'the first troupe’s bridge'),
+  { hold: '', until: () => true, ticks: 1 },
+  ...onBridge('bbi7a2', x + 14, x + 21.2, 'rest on the bank; the second bridge in its own time'),
+  { hold: 'R', until: X(x + 25.5), max: 400 },
+];
+const act07b = (x: number): Step[] => [
+  ...onBridge('bbi7b1', x + 3, x + 14.2, 'the long bridge: go at once'),
+  { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 19) - 2, max: 600 },
+  waitFor((w) => tr(w, 'bbi7b2').pose === 'wheel' && tr(w, 'bbi7b2').into < 0.2, 'wait for the wheel', 2400),
+  leap(() => px(x + 22), 'on to the top of the wheel'),
+  leap(() => px(x + 26), 'up on to the high bank'),
+  { hold: 'R', until: X(x + 33.5), max: 400 },
+];
+const gatePolicy: Policy = (w) => {
+  const st = tr(w, 'bbi7e');
+  const d = w.entities.find((e: any) => e.constructor?.name === 'Door' && !e.fake) as any;
+  const D = Math.round(d.x / 16);
+  const p = w.player;
+  if (p.x + p.w >= px(D - 3) - 1) return go('R');
+  if (st.pose === 'gate' && st.left > 0.9) return go('R');
+  return go(p.x + p.w < px(D - 3) - 8 ? 'R' : '');
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['BBI-01'] = [...pastG1(), ...tourTail()];
   S['BBI-02'] = room02();
@@ -286,11 +320,14 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('BBI-05', 0, []);
   S['BBI-06'] = room06();
   lengthen('BBI-06', 0, []);
+  S['BBI-07'] = room07();
+  lengthen('BBI-07', 0, []);
   fix['BBI-05'].steps = [...S['BBI-05'].slice(0, -1), { policy: (w) => verandahPolicy(w, fixMem(w), null as unknown as Door), until: done, max: 1500, note: 'up to the front door on the verandah' }];
   void lengthen;
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'BBI-07': { steps: [...hop(8.8, 'jump on to the dancers'), { hold: 'R', until: done, max: 600 }], cause: 'bbi-nacha' },
   'BBI-06': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'bbi-ranga' },
   'BBI-05': { steps: [{ hold: 'R', until: X(11.7), max: 600 }, { hold: 'R', jump: 3, ticks: 8, note: 'a little hop on to the stone in the channel' }, { hold: '', until: done, max: 600 }], cause: 'bbi-jaanta' },
   'BBI-04': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'bbi-agni' },
@@ -299,6 +336,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'BBI-01': { steps: [...tourHead(), ...hop(28.6, 'just walk on and hop the drain'), { hold: 'R', until: done, max: 900 }], cause: 'bbi-nala' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'BBI-07': { steps: [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(10) - 2, max: 900 }, waitFor((w) => tr(w, 'bbi7').pose === 'bridge' && tr(w, 'bbi7').into > 0.35, 'wait for the bridge to be whole'), { hold: '', ticks: 18, note: 'a look to be sure' }, { hold: 'R', until: done, max: 900 }], cause: 'bbi-thrown' },
   'BBI-06': { steps: [{ hold: 'R', until: X(6.8), max: 600 }, waitFor((w) => lm(w, 'bbi6').bridge, 'the motif lines up: go'), { hold: 'R', until: done, max: 600 }], cause: 'bbi-shuttle' },
   'BBI-05': { steps: [], cause: 'bbi-sila' },
   'BBI-04': { steps: [passTorch(9, r4on, 'keep moving, as learnt'), { hold: 'R', until: X(15.6), max: 400 }, { hold: 'R', jump: 15, ticks: 15, note: 'and jump the trough' }, { hold: 'R', until: done, max: 600 }], cause: 'bbi-kunda' },
@@ -318,8 +356,8 @@ const fixMem = (w: World) => {
   if (fm.m.hold > 0) fm.m.hold--;
   return fm.m;
 };
-const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06 };
-const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy };
+const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b };
+const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy, 'bbi-pose-gate': gatePolicy };
 void and;
 
 export const test: CityTests = {
@@ -329,5 +367,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['BBI-01', 'BBI-02', 'BBI-03', 'BBI-04', 'BBI-05', 'BBI-06'],
+  fair: ['BBI-01', 'BBI-02', 'BBI-03', 'BBI-04', 'BBI-05', 'BBI-06', 'BBI-07'],
 };
