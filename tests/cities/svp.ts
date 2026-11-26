@@ -237,10 +237,19 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { hold: 'R', until: and(ground, X(26)), max: 300 },
   ];
   lengthen('SVP-09', 0, []);
+  S['SVP-10'] = [
+    { hold: 'R', until: (w) => herd0(w).carrying, max: 600, note: 'past the stall: the fritter is yours' },
+    putDown(herd0, 'put it down here, well back from the mill'),
+    board((w) => hall(w, -1), 'on to the log'),
+    stayOnLog((w) => hall(w, -1), 12, 'stay on the end that stays'),
+    { hold: 'R', until: and(ground, X(31)), max: 600, note: 'off on to the far bank' },
+  ];
+  lengthen('SVP-10', 0, []);
 }
 
 /** the obvious play per stage, and the cause it must die of */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'SVP-10': { steps: [{ hold: 'R', until: (w) => herd0(w).carrying, max: 600 }, board((w) => hall(w, -1), 'on to the log with the food'), stayOnLog((w) => hall(w, -1), 12, 'and stay on the end that stays, with the herd behind you')], cause: 'svp-aari' },
   'SVP-09': { steps: [{ hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'across the brick floor' }], cause: 'svp-eent' },
   'SVP-08': { steps: [{ hold: 'R', until: (w) => w.state !== 'play', max: 1500, note: 'run for it' }], cause: 'svp-baarish' },
   'SVP-07': { steps: [hopUntil(and(ground, X(11.5)), 'on to the luggage'), { hold: '', until: (w) => w.state !== 'play', max: 1500, note: 'ship late hai: sit on the luggage like everyone' }], cause: 'svp-saman' },
@@ -340,6 +349,9 @@ function crossGaps(): Step {
   };
 }
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp10-nadi': (x) => actRoutes['svp03-nala'](x),
+  'svp10-jad': (x) => actRoutes['svp09-pul'](x),
+  'svp10-saman': (x) => actRoutes['svp07-doosra'](x),
   'svp09-pul': (x) => [
     rootsPolicy([x + 4, x + 10, x + 17], px(x + 20), 'the green roots, skipping the grey step', and(ground, (w) => w.player.x >= px(x + 20) + 2)),
     { hold: 'R', until: and(ground, X(x + 22.5)), max: 300 },
@@ -397,6 +409,10 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 
 /** a policy for each door ending, by kind */
 const endingPolicies: Record<string, Policy> = {
+  'svp-dweep-gate'(w) {
+    const h = w.flags.guard as Herd;
+    return h.carrying ? go('') : go('R');
+  },
   'svp-frame-door'(w, _m, d) {
     const D = Math.round(d.x / 16);
     if (w.player.cx > px(D - 3)) return go(toward(w, d.x + 8, 1) || 'R');
@@ -470,5 +486,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['SVP-02', 'SVP-03', 'SVP-04', 'SVP-05', 'SVP-06', 'SVP-07', 'SVP-08', 'SVP-09'],
+  fair: ['SVP-02', 'SVP-03', 'SVP-04', 'SVP-05', 'SVP-06', 'SVP-07', 'SVP-08', 'SVP-09', 'SVP-10'],
 };

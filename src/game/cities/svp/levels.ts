@@ -15,6 +15,7 @@ import { toteRoom, sanjh } from './s06';
 import { jettyRoom, ghatSte, doosra } from './s07';
 import { monsoonRoom, gali } from './s08';
 import { jadRoom, pul } from './s09';
+import { dweepRoom, nadi, jadFin, samanFin } from './s10';
 
 const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
 
@@ -61,5 +62,5 @@ export const levels = (): LevelDef[] => [
   longStage({ base: jettyRoom(), acts: [ghatSte, doosra], twist: 'svp-ticket-window', par: 100, shape: 'marathon', lives: 'act', cps: [23.4], meta: { family: 'luggage-stacks-as-floor', betrayals: ['crowd-belongings-floor'], ending: 'svp-ticket-window' } }), // SVP-07
   longStage({ base: monsoonRoom(), acts: [gali], twist: 'svp-gutter-river', par: 70, shape: 'wtf', meta: { family: 'rain-direction-reverses-awnings', betrayals: ['second-season'], ending: 'svp-gutter-river' } }), // SVP-08
   longStage({ base: jadRoom(), acts: [pul], twist: 'svp-frame-door', par: 62, shape: 'long', meta: { family: 'brick-crumbles-roots-hold', betrayals: ['visual-rule-brick-root'], ending: 'svp-frame-door' } }), // SVP-09
-  longStage({ base: todoRoom(10), par: 30, shape: 'long' }), // SVP-10 TODO: acts, twist (a svp-... ending), par
+  longStage({ base: dweepRoom(), acts: [nadi, jadFin, samanFin], twist: 'svp-dweep-gate', par: 120, shape: 'marathon', lives: 'act', meta: { family: 'finale-food-through-sawmill', betrayals: ['food-through-sawmill'], ending: 'svp-dweep-gate' } }), // SVP-10
 ];
