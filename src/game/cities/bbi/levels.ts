@@ -5,6 +5,7 @@ import { type LevelDef, type World } from '../../world';
 import { lines as L } from './lines';
 import { door, rival } from '../../levels/kit';
 import { tourLevel, meta01 } from './s01';
+import { room as room02, act as act02, meta02 } from './s02';
 import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
 
@@ -32,7 +33,7 @@ function todoRoom(n: number): LevelDef {
 
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: meta01 },
-  longStage({ base: todoRoom(2), par: 30, shape: 'long' }), // BBI-02 TODO: acts, twist (a bbi-... ending), par
+  longStage({ base: room02(), acts: [act02], twist: 'bbi-goal-net', par: 34, shape: 'short', meta: meta02 }),
   longStage({ base: todoRoom(3), par: 30, shape: 'long' }), // BBI-03 TODO: acts, twist (a bbi-... ending), par
   longStage({ base: todoRoom(4), par: 30, shape: 'long' }), // BBI-04 TODO: acts, twist (a bbi-... ending), par
   longStage({ base: todoRoom(5), par: 30, shape: 'long' }), // BBI-05 TODO: acts, twist (a bbi-... ending), par
