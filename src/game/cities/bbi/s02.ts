@@ -254,6 +254,23 @@ export const act: Act = {
   },
 };
 
+/** act 2: a second keeper by a second drain, the flicker further off: the same ride, longer */
+export const act2: Act = {
+  id: 'bbi02-dive',
+  w: 30,
+  advice: 'Another keeper by another drain. Same as before: his back pad, the dive, the rebound off the boards and back, then step off before he gets up.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + 6, c.x + 13);
+  },
+  build: (w, c) => {
+    turf(w, c.x, c.x + 29);
+    channel(w, c.x + 6, c.x + 13, 'bbi-turf', 'water');
+    keeperOn(w, { x0: c.X(2.5), travel: px(9), boards: c.X(22), ballFrom: c.X(21) }, 'bbi2b');
+    sign(w, c.x + 17, 10.4, 3.4, 'ASTRO TURF', 'shop', null, 'D');
+  },
+};
+
 /** ending: the door is inside a goal net, closed until a goal goes in; a flick comes from behind along the turf */
 export const GOAL = { flicker: 12, bench: 6, at: 10, delay: 1.0, v: 200 };
 export const ending: Ending = {

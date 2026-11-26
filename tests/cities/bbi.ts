@@ -349,7 +349,7 @@ const platePolicy: Policy = (w) => {
 // ------------------------------------------------------------------ BBI-09
 type ChSt = { started: number; moving: boolean; stopped: boolean; hub: { x: number; y: number }; plinth: { x: number; w: number } };
 const ch = (w: World) => w.flags.bbi9 as ChSt;
-const toHorses = (): Step[] => [...hop(4.6, 'up on the plinth'), { hold: 'R', until: X(15.2), max: 400 }, { hold: 'R', jump: 12, ticks: 12, note: 'up on the horses' }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: (w) => ch(w).started >= 0, max: 300, note: 'stand on the horses: the chariot moves' }];
+const toHorses = (): Step[] => [...hop(4.6, 'up on the plinth'), { hold: 'R', until: X(13.7), max: 400 }, { hold: 'R', jump: 12, ticks: 12, note: 'up on the horses' }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: (w) => ch(w).started >= 0, max: 300, note: 'stand on the horses: the chariot moves' }];
 const room09 = (): Step[] => [
   ...toHorses(),
   {
@@ -404,7 +404,7 @@ const onPad10 = (a: number, b: number): Step => ({
   note: 'settle on a pad',
 });
 const board10 = (): Step[] => [{ hold: 'R', until: X(3.4), max: 600 }, { hold: 'R', jump: 9, ticks: 9, note: 'up on the keeper' }, { hold: 'R', until: ground, max: 200 }];
-const hubJump = (c: (w: World) => ChSt): Step => ({
+const hubJump = (c: (w: World) => ChSt, walk = true): Step => ({
   note: 'when the hub is just ahead, jump up on to it',
   max: 900,
   long: true,
@@ -412,7 +412,7 @@ const hubJump = (c: (w: World) => ChSt): Step => ({
     const p = w.player;
     const d = c(w).hub.x + 20 - p.cx;
     const ahead = c(w).hub.x - (p.x + p.w);
-    if (p.onGround) return ahead < 24 ? { move: 'R', jump: true } : go(p.x + p.w < c(w).plinth.x + c(w).plinth.w - 4 && ahead > 30 ? 'R' : '');
+    if (p.onGround) return ahead < 24 ? { move: 'R', jump: true } : go(walk && p.x + p.w < c(w).plinth.x + c(w).plinth.w - 4 && ahead > 30 ? 'R' : '');
     return { move: d > 3 ? 'R' : d < -3 ? 'L' : '', jump: p.vy < 0 };
   },
   until: (w) => w.player.onGround && w.player.y + w.player.h <= c(w).hub.y + 1,
@@ -464,6 +464,58 @@ const ribbonPolicy: Policy = (w) => {
   return go(p.x + p.w < px(D - 3) - 6 ? 'R' : '');
 };
 
+// ------------------------------------------------------------------ the added acts
+const kOf = (w: World, k: string) => w.flags[k] as { t0: number; ball: string; kx: number };
+const onPadK = (k: string, a: number, b: number): Step => ({
+  steer: (w) => {
+    const c = w.player.cx - kOf(w, k).kx;
+    return c < a ? 'R' : c > b ? 'L' : '';
+  },
+  until: (w) => w.player.onGround && w.player.cx - kOf(w, k).kx >= a && w.player.cx - kOf(w, k).kx <= b && Math.abs(w.player.vx) < 1,
+  max: 400,
+  note: 'settle on the back pad',
+});
+const act02b = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 0.6), max: 400 },
+  { hold: 'R', jump: 9, ticks: 9, note: 'up on the keeper' },
+  { hold: 'R', until: ground, max: 200 },
+  onPadK('bbi2b', 4, 12),
+  { hold: '', until: (w) => kOf(w, 'bbi2b').ball === 'gone', max: 900, note: 'the dive, the rebound, back' },
+  { hold: 'R', until: and(ground, X(x + 14.6)), max: 300, note: 'off before he gets up' },
+  { hold: 'R', until: X(x + 29.5), max: 400 },
+];
+const act06b = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 0.9), max: 300 },
+  waitFor((w) => lm(w, 'bbi6d').bridge && lm(w, 'bbi6d').into > 1.1, 'across and back'),
+  { hold: 'R', until: and(ground, X(x + 11.4)), max: 400, note: 'across' },
+  { hold: 'R', until: X(x + 15.5), max: 300 },
+];
+const act07c = (x: number): Step[] => [
+  ...onBridge('bbi7c1', x + 3, x + 9.2, 'the first bridge'),
+  { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 12) - 2, max: 600 },
+  waitFor((w) => tr(w, 'bbi7c2').pose === 'wheel' && tr(w, 'bbi7c2').into < 0.2, 'no bridge here: wait for the wheel', 2400),
+  leap(() => px(x + 15) + 8, 'on to the wheel'),
+  leap(() => px(x + 20), 'off on to the far bank'),
+  ...onBridge('bbi7c3', x + 23, x + 29.2, 'the quick drummer’s bridge'),
+  { hold: 'R', until: X(x + 31.5), max: 300 },
+];
+const chOf = (w: World, k: string) => w.flags[k] as ChSt;
+/** a chariot act: on to the plinth, up on the horses at its front, the hub as it comes over, the wall */
+const chariotRun = (k: string, x: number, horses: number, wallTop: number, end: number): Step[] => [
+  ...hop(x + 1.4, 'up on the plinth'),
+  { hold: 'R', until: X(horses - 1.3), max: 400 },
+  { hold: 'R', jump: 11, ticks: 11, note: 'up on the horses' },
+  { hold: 'R', until: ground, max: 200 },
+  { hold: 'R', until: ground, max: 200 },
+  { hold: '', until: (w) => chOf(w, k).started >= 0, max: 300, note: 'stand on the horses: it moves' },
+  hubJump((w) => chOf(w, k), false),
+  stayOn((w) => chOf(w, k).hub.x + 20, (w) => chOf(w, k).stopped, 'the plinth slams under the hub'),
+  leap(() => px(wallTop), 'up on to the wall'),
+  { hold: 'R', until: and(ground, X(end)), max: 400 },
+];
+const act09b = (x: number): Step[] => chariotRun('bbi9b', x, x + 10, x + 23.5, x + 27.5);
+const act10c = (x: number): Step[] => chariotRun('bbi10c2', x, x + 11, x + 23.5, x + 27.5);
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['BBI-01'] = [...pastG1(), ...tourTail()];
   S['BBI-02'] = room02();
@@ -484,7 +536,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('BBI-09', 0, []);
   S['BBI-10'] = room10();
   lengthen('BBI-10', 0, []);
-  fix['BBI-09'].steps = [...room09(), { hold: 'R', until: X(33.3), max: 300 }, leap(() => px(35) + 12, 'spoke 1'), { hold: '', ticks: 70, note: 'make sure of it' }, leap(() => px(37.5) + 12, 'spoke 2'), { hold: '', until: done, ticks: 70 }, leap(() => px(40) + 12, 'spoke 3'), { hold: '', until: done, max: 400 }];
+  fix['BBI-09'].steps = [...room09(), ...act09b(32), { hold: 'R', until: X(61.3), max: 300 }, leap(() => px(63) + 14, 'spoke 1'), { hold: '', ticks: 70, note: 'make sure of it' }, leap(() => px(65.5) + 14, 'spoke 2'), { hold: '', ticks: 70 }, leap(() => px(68) + 14, 'spoke 3'), { hold: '', until: done, max: 400 }];
   fix['BBI-05'].steps = [...S['BBI-05'].slice(0, -1), { policy: (w) => verandahPolicy(w, fixMem(w), null as unknown as Door), until: done, max: 1500, note: 'up to the front door on the verandah' }];
   void lengthen;
 }
@@ -525,7 +577,7 @@ const fixMem = (w: World) => {
   if (fm.m.hold > 0) fm.m.hold--;
   return fm.m;
 };
-const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b };
+const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi10-ratha': act10c, 'bbi02-dive': act02b, 'bbi06-buni': act06b, 'bbi07-sahi': act07c, 'bbi09-ratha': act09b };
 const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy, 'bbi-pose-gate': gatePolicy, 'bbi-leaf-plate': platePolicy, 'bbi-horse-gap': horseGap, 'bbi-ribbon-snip': ribbonPolicy };
 void and;
 

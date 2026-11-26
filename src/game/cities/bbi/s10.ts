@@ -109,6 +109,22 @@ export const act2: Act = {
   },
 };
 
+/** act 3: the stone chariot once more, with its horses: start it, wait on the hub, up the wall */
+export const act3: Act = {
+  id: 'bbi10-ratha',
+  w: 28,
+  advice: 'The chariot once more, horses and all: stand on the horses to start it, jump up to the hub as it comes over, and up on to the wall after the slam.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 21).fill(c.x + 22, c.x + 25, 11, 14, '#');
+  },
+  build: (w, c) => {
+    channel(w, c.x + 3, c.x + 21, 'bbi-khai', 'water');
+    chariot(w, { c0: c.x + 3, len: 11, stopAt: c.x + 22, hub: c.x + 18, hubY: FL - 58, wait: 0.4 }, 'bbi10c2');
+    templeWall(w, c.x + 22, px(11));
+  },
+};
+
 /** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */
 export const RIB = { period: 2.2, shut: 0.5, at: 9 };
 export const ending: Ending = {

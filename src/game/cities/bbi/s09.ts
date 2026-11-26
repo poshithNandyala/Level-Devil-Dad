@@ -98,13 +98,14 @@ export function chariot(w: World, cfg: ChariotCfg, key: string) {
     }),
   );
   const horses = w.add(
-    new Rig(x0 + L - 32, FL - 36, 32, 20, {
+    new Rig(x0 + L - 48, FL - 36, 48, 20, {
       solid: true,
       layer: 3,
       paint: (ctx, r) => {
         if (cfg.bare) return;
         horseArt(ctx, r.x, r.y, 15, 20);
         horseArt(ctx, r.x + 16, r.y, 15, 20);
+        horseArt(ctx, r.x + 32, r.y, 15, 20);
       },
     }),
   );
@@ -153,7 +154,7 @@ export function chariot(w: World, cfg: ChariotCfg, key: string) {
           }
           st.x = nx;
           plinth.moveTo(w2, nx, FL - 16);
-          horses.moveTo(w2, nx + L - 32, FL - 36);
+          horses.moveTo(w2, nx + L - 48, FL - 36);
           // a jump off the sliding stone keeps none of its speed: it's a heavy, slow push
           plinth.solid!.velX = 0;
           horses.solid!.velX = 0;
@@ -261,6 +262,22 @@ export const act: Act = {
     }
     w.add(new Rig(0, 0, 0, 0, { layer: -4, paint: (ctx) => wheelArt(ctx, c.X(12), FL - 30, 70, false) }));
     void spokes;
+  },
+};
+
+/** act 2: a second chariot, longer, its hub further along: start it, wait for the hub */
+export const act2: Act = {
+  id: 'bbi09-ratha',
+  w: 28,
+  advice: 'A second chariot, its hub further along. Start it from the horses, jump up to the hub as it comes over, wait for the slam, then up on to the wall.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 21).fill(c.x + 22, c.x + 25, 11, 14, '#');
+  },
+  build: (w, c) => {
+    channel(w, c.x + 3, c.x + 21, 'bbi-khai', 'water');
+    chariot(w, { c0: c.x + 3, len: 10, stopAt: c.x + 22, hub: c.x + 17, hubY: FL - 58, wait: 0.4 }, 'bbi9b');
+    templeWall(w, c.x + 22, px(11));
   },
 };
 

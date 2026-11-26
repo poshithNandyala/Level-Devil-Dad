@@ -191,6 +191,25 @@ export const act: Act = {
   },
 };
 
+/** act 2: the last loom: the shuttle comes back first, then goes across */
+export const L06B: LoomCfg = { c0: 3, n: 8, speeds: [4, 1, 3, 2, 1, 4, 2, 3], beat: 0.8, hold: 2.7, shuttle: [[0, -1], [0.6, 1]] };
+export const act2: Act = {
+  id: 'bbi06-buni',
+  w: 16,
+  advice: 'The last loom: on its motif beat the shuttle comes across and goes back. Wait for both, then cross.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + L06B.c0, c.x + L06B.c0 + L06B.n - 1);
+  },
+  build: (w, c) => {
+    const st = { t0: -1 };
+    w.flags.bbi6c = st;
+    onPass(w, c.X(0.5), (w2) => (st.t0 = w2.tick));
+    channel(w, c.x + L06B.c0, c.x + L06B.c0 + L06B.n - 1, 'bbi-ranga', 'water');
+    loom(w, { ...L06B, c0: c.x + L06B.c0 }, () => st.t0, 'bbi6d');
+  },
+};
+
 /** ending: a curtain of warp threads in front of the door; only on the motif beat do they part into its shape */
 export const L06E: LoomCfg = { c0: 0, n: 3, speeds: [1, 2, 3], beat: 0.8, hold: 1.6, shuttle: [] };
 export const ending: Ending = {
