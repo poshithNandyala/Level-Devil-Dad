@@ -12,8 +12,11 @@ import { Paint } from '../../levels/endkit';
 import { ChaiBoard, Road } from './porters';
 import { Tin } from './muri';
 import { BigFigure } from './kumartuli';
+import { Adda, House, ROK, TeaSeller } from './adda';
+import { ClothPanel, Decorator, Stakes } from './pandal';
+import { person } from '../../levels/endkit';
 
-export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn' | 'ccu-arch' | 'ccu-bhanr' | 'ccu-dhak' | 'ccu-wall' | 'ccu-thonga' | 'ccu-murti';
+export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn' | 'ccu-arch' | 'ccu-dorja' | 'ccu-dwar-kapor' | 'ccu-stup' | 'ccu-thonga' | 'ccu-murti';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<CcuEndingKind, true> {}
@@ -195,135 +198,6 @@ export const endings: Record<CcuEndingKind, Ending> = {
       );
     },
   },
-  // ================================================================ CCU-08: a cup of tea
-  /** The door is locked, and the tea seller stands beside it. This time standing still is the answer: stop
-   *  beside him and he hands you a clay cup, and the door opens. */
-  'ccu-bhanr': {
-    space: 12,
-    advice: 'The door is locked, and the tea seller stands beside it with his clay cups. This time, stop: stand still beside him till he hands you a cup, and the door opens.',
-    build(w, d) {
-      const D = Math.round(d.x / 16);
-      const L = lock(w, d, 'Thamun! | Stop!');
-      const x = px(D - 2) + 8;
-      let still = 0;
-      w.flags.bhanr = { x };
-      w.flags.twist = 'locked';
-      w.add(
-        new (class extends Entity {
-          got = false;
-          update(w2: World) {
-            const p = w2.player;
-            if (this.got) return;
-            if (p.onGround && Math.abs(p.cx - x) < 14 && Math.abs(p.vx) < 5) still += 1 / 120;
-            else still = 0;
-            if (still >= 0.8) {
-              this.got = true;
-              w2.flags.cup = 1;
-              w2.sfx('collect', p.cx, p.y);
-              L.unlock();
-            }
-          }
-          draw(ctx: CanvasRenderingContext2D, w2: World) {
-            const y = FLOOR_Y - 24;
-            ctx.fillStyle = '#8D6E63';
-            ctx.fillRect(x - 3, y + 8, 6, 9);
-            ctx.fillStyle = '#C68B59';
-            ctx.beginPath();
-            ctx.arc(x, y + 4, 4, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#8E9399';
-            ctx.fillRect(x - 12, y + 11, 7, 7);
-            ctx.fillStyle = '#B5562B';
-            for (let i = 0; i < 4; i++) ctx.fillRect(x + 5, y + 8 + i * 2.5, 5, 2);
-            if (this.got) {
-              const p = w2.player;
-              ctx.fillStyle = '#B5562B';
-              ctx.fillRect(p.cx + 4, p.y + 4, 4, 5);
-            } else if (still > 0) {
-              ctx.fillStyle = 'rgba(255,255,255,0.8)';
-              ctx.fillRect(x - 8, y - 6, 16 * Math.min(1, still / 0.8), 2);
-            }
-          }
-        })(),
-      );
-    },
-  },
-  // ================================================================ CCU-09: the dhak gate
-  /** The pandal's gate is a cloth curtain that the dhaki's drumming lifts: up on every beat for half a beat,
-   *  down (a wall) in between. Go through on the beat. */
-  'ccu-dhak': {
-    space: 12,
-    advice: 'The pandal’s gate is a cloth curtain, and it lifts on every beat of the dhak. Stand close, and walk through as it goes up.',
-    build(w, d) {
-      const D = Math.round(d.x / 16);
-      const cur = new Solid(px(D - 1), FLOOR_Y - 48, 12, 48);
-      cur.velX = 0;
-      const beat = 108;
-      const up = (w2: World) => w2.tick % beat < 54;
-      w.flags.dhak = { cur, beat, D };
-      w.flags.twist = 'down';
-      w.add(
-        new (class extends Entity {
-          solid = cur;
-          update(w2: World) {
-            const u = up(w2);
-            if (u !== (w2.flags.twist === 'up')) {
-              w2.flags.twist = u ? 'up' : 'down';
-              if (u) w2.sfx('stamp', px(D), FLOOR_Y);
-            }
-            cur.collidable = !u;
-            d.hidden = !u;
-          }
-          draw(ctx: CanvasRenderingContext2D, w2: World) {
-            const u = up(w2);
-            const h = u ? 10 : 48;
-            ctx.fillStyle = '#C62828';
-            ctx.fillRect(px(D - 1), FLOOR_Y - 48, 12, h);
-            ctx.fillStyle = '#F2C14E';
-            for (let y = FLOOR_Y - 46; y < FLOOR_Y - 48 + h; y += 7) ctx.fillRect(px(D - 1), y, 12, 2);
-            // the dhaki beside the gate, his drum on his hip, feather plumes on top
-            const x = px(D - 3) + 8;
-            ctx.fillStyle = '#E8E2D0';
-            ctx.fillRect(x - 3, FLOOR_Y - 20, 6, 20);
-            ctx.fillStyle = '#C68B59';
-            ctx.beginPath();
-            ctx.arc(x, FLOOR_Y - 24, 4, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#8B5A2B';
-            ctx.fillRect(x + 2, FLOOR_Y - 16, 12, 9);
-            ctx.fillStyle = '#F4F1E8';
-            ctx.fillRect(x + 10, FLOOR_Y - 26 - (u ? 3 : 0), 3, 10);
-          }
-        })(),
-      );
-    },
-  },
-  // ================================================================ CCU-10: they buy the wall down
-  /** A porter has set his pile of bundles down at the CHA board, right in front of the door: four high,
-   *  too high to jump. Customers come and buy it down one bundle at a time. Wait till it's two high, then
-   *  over it and in. */
-  'ccu-wall': {
-    space: 14,
-    advice: 'A porter has set his pile of bundles down in front of the door for his tea: four high, too high to jump. The customers buy it down a bundle at a time. Wait till it’s two high, then hop over and in.',
-    build(w, d) {
-      const D = Math.round(d.x / 16);
-      w.add(new ChaiBoard(px(D - 4)));
-      const st = w.add(new Stack(px(D - 3), px(2), 4, FLOOR_Y));
-      const c = w.add(new Customer(px(D - 6), '#A0522D', FLOOR_Y - 58));
-      w.flags.wall = { st, D };
-      w.flags.twist = 'wall';
-      w.when(
-        (w2) => w2.player.cx > px(D - 10),
-        (w2) => [0.6, 1.6, 2.6].forEach((t) => w2.after(t, () => c.ask(w2, st, 1, 0.6))),
-      );
-      w.when(
-        () => st.n <= 2,
-        (w2) => {
-          w2.flags.twist = 'low';
-        },
-      );
-    },
-  },
   // ================================================================ CCU-03: the last tin, no peanuts in it
   /** A second tin in front of the door with no big pieces at all: only muri. Nothing to stand on in a
    *  shake, so cross it between two shakes, straight after one. */
@@ -374,6 +248,136 @@ export const endings: Record<CcuEndingKind, Ending> = {
         () => {
           d.hidden = false;
         },
+      );
+    },
+  },
+  // ================================================================ CCU-08: the doorstep adda
+  /** Two old men sit right across the door's step, deep in their own adda: a wall of knees. They only get
+   *  up for the tea seller, and he only comes when someone else is sitting in an adda. So sit down in the
+   *  one before the door, and when he lets you go, they've got up too. */
+  'ccu-dorja': {
+    space: 16,
+    advice: 'Two old men are sitting right across the door’s step, and they only get up for the tea seller. He only comes when someone’s sitting in an adda: stand still among the men before the door, and when he’s let you go, the doorstep is clear.',
+    paint: (g, D) => {
+      g.fill(D - 12, D + 3, 13, 14, '#');
+      g.put(D, 14, '#');
+      g.put(D, 12, 'E');
+    },
+    build(w, d) {
+      const D = Math.round(d.x / 16);
+      w.add(new House(px(D - 12), px(D + 4)));
+      const a = w.add(new Adda(px(D - 10), px(D - 5), 2));
+      const men = new Solid(px(D - 2), ROK - 30, px(2), 30);
+      men.velX = 0;
+      const seller = w.add(new TeaSeller(px(D + 6), -70, [a]));
+      w.when(() => a.held, () => w.after(0.3, () => { if (!seller.active) seller.send(px(D + 6)); }), false);
+      w.flags.dorja = { a, D };
+      w.flags.twist = 'blocked';
+      w.add(
+        new (class extends Entity {
+          solid = men;
+          update(w2: World) {
+            if (men.collidable && seller.active && seller.x < px(D - 1)) {
+              men.collidable = false;
+              w2.flags.twist = 'clear';
+            }
+          }
+          draw(ctx: CanvasRenderingContext2D, w2: World) {
+            const up = !men.collidable;
+            for (let i = 0; i < 2; i++) {
+              const x = px(D - 2) + 8 + i * 14 + (up ? -40 - i * 10 : 0);
+              ctx.fillStyle = '#F4F1E8';
+              ctx.fillRect(x - 4, ROK - 10, 8, 10);
+              person(ctx, x, ROK - (up ? 26 : 20), up ? 26 : 20, i ? '#E8E2D0' : '#D7CCB5', '#B98A62', { arms: up ? 0 : 3 + Math.sin(w2.tick * 0.12 + i) * 2 });
+            }
+          }
+        })(),
+      );
+    },
+  },
+  // ================================================================ CCU-09: the last panel over the door
+  /** The decorator waits by the door with the gate's last panel. Land in front of the door and the door is
+   *  your next foothold: he ties the cloth over it. Don't land in front of it: jump from the bamboo straight
+   *  into the doorway. */
+  'ccu-dwar-kapor': {
+    space: 12,
+    advice: 'The decorator by the door has the gate’s last panel ready: land on the ledge in front of the door and he ties it over the door, because that’s your next foothold. Jump from the bamboo straight into the doorway instead (he unties it again if you’re slow).',
+    paint: (g, D) => {
+      g.fill(D - 1, D + 2, 12, 14, '#');
+      g.put(D, 14, '#');
+      g.put(D, 11, 'E');
+      g.fill(D - 4, D - 3, 12, 12, '=');
+      g.fill(D - 7, D - 7, 13, 14, '#');
+    },
+    build(w, d) {
+      const D = Math.round(d.x / 16);
+      w.add(new Stakes(px(D - 6), px(D - 1)));
+      const cloth = w.add(new ClothPanel(px(D), px(1), px(12), 2, 0));
+      w.add(new Decorator(px(D + 1) + 6, px(12), cloth));
+      w.flags.kapor = { D, cloth };
+      w.flags.twist = 'open';
+      let tiedAt = -1;
+      w.add(
+        new (class extends Entity {
+          update(w2: World) {
+            const p = w2.player;
+            const onLedge = p.onGround && p.y + p.h === px(12) && p.cx > px(D - 1) && p.cx < px(D);
+            if (!cloth.tied && onLedge) {
+              cloth.tie(w2);
+              tiedAt = w2.tick;
+              d.hidden = true;
+              w2.flags.twist = 'tied';
+            }
+            // he takes it down again to re-measure, once you've stepped back off the ledge
+            if (cloth.tied && w2.tick - tiedAt > 300 && !onLedge) {
+              cloth.tied = false;
+              cloth.h = 0;
+              cloth.target = 0;
+              cloth.solid.collidable = false;
+              cloth.solid.place(px(D), px(12) - 1);
+              cloth.solid.h = 1;
+              d.hidden = false;
+              w2.flags.twist = 'open';
+            }
+          }
+        })(),
+      );
+    },
+  },
+  // ================================================================ CCU-10: the door on the pile
+  /** The door stands on a pile of bundles out in the drain, and a customer is buying the pile down. Its
+   *  step is too high to reach till the pile's down to two; at none, the door's in the drain (and the seller
+   *  piles it up again). Step in while it's low. */
+  'ccu-stup': {
+    space: 12,
+    advice: 'The door is standing on a pile of bundles out in the drain, and the customer is buying the pile down a bundle at a time. When it’s down to two, step across into the door before it goes any lower.',
+    paint: (g, D) => {
+      g.pit(D - 1, D + 2);
+      g.put(D, 14, '.');
+      g.put(D, 10, 'E');
+    },
+    build(w, d) {
+      const D = Math.round(d.x / 16);
+      w.add(new Muck(px(D - 1), px(D + 3), (w2) => (w2.flags.yanked ? 'ccu-boi' : 'ccu-kada')));
+      const st = w.add(new Stack(px(D) - 4, px(1) + 8, 5, FLOOR_Y + 16, 2.0));
+      const c = w.add(new Customer(px(D - 4), '#A0522D', FLOOR_Y - 58));
+      w.flags.stup = { st, D };
+      w.flags.twist = 'high';
+      let next = -1;
+      d.follow = () => ({ x: px(D), y: (st.n > 0 ? st.top() : FLOOR_Y + 40) - 32 });
+      w.add(
+        new (class extends Entity {
+          update(w2: World) {
+            d.hidden = st.n <= 0;
+            w2.flags.twist = st.n <= 2 && st.n > 0 ? 'low' : 'high';
+            if (w2.player.cx > px(D - 10) && next < 0) next = w2.tick + 60;
+            if (next >= 0 && w2.tick >= next && st.n > 0 && !st.pointed) {
+              c.ask(w2, st, 1, 0.8);
+              next = w2.tick + 160;
+            }
+            if (st.n === st.n0 && next >= 0 && w2.tick >= next) next = w2.tick + 60;
+          }
+        })(),
       );
     },
   },

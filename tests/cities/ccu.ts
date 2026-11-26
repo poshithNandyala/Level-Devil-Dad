@@ -12,7 +12,7 @@ import type { Tram } from '../../src/game/cities/ccu/tram';
 import { BookPorter, Porter } from '../../src/game/cities/ccu/porters';
 import type { Tin } from '../../src/game/cities/ccu/muri';
 import { Figure, type BigFigure } from '../../src/game/cities/ccu/kumartuli';
-import type { Wash } from '../../src/game/cities/ccu/adda';
+import type { Adda, Wash } from '../../src/game/cities/ccu/adda';
 import type { ClothPanel } from '../../src/game/cities/ccu/pandal';
 
 type Move = 'L' | 'R' | '';
@@ -604,6 +604,52 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 /** a policy for each door ending, by kind */
 const SETHOP = hopGaps();
 const endingPolicies: Record<string, Policy> = {
+  'ccu-dorja'(w, _m, d) {
+    const k = w.flags.dorja as { a: Adda; D: number };
+    const p = w.player;
+    if (w.flags.twist === 'clear' && !k.a.held) return go(p.onGround || p.y + p.h < 212 ? toward(w, d.x + 8, 1) || 'R' : 'R');
+    if (p.y + p.h > 230 && p.onGround) {
+      // up on to the rok
+      if (p.cx > px(k.D - 14)) return { move: 'R', jump: true };
+      return go('R');
+    }
+    if (!p.onGround) return go('R');
+    return go(toward(w, (k.a.x0 + k.a.x1) / 2, 4));
+  },
+  'ccu-dwar-kapor'(w, m, d) {
+    const k = w.flags.kapor as { D: number };
+    const p = w.player;
+    if (m.hold > 0) return { move: 'R', jump: true };
+    if (w.flags.twist === 'tied') return go('');
+    const onBamboo = p.onGround && p.y + p.h === px(12) && p.cx < px(k.D - 2);
+    const onStep = p.onGround && p.y + p.h === px(13);
+    if (onBamboo && p.cx > px(k.D - 3) + 4) {
+      m.hold = 12;
+      return { move: 'R', jump: true };
+    }
+    if (onStep && p.cx > px(k.D - 7) + 6) {
+      m.hold = 10;
+      return { move: 'R', jump: true };
+    }
+    if (p.onGround && p.y + p.h === 240 && p.cx > px(k.D - 8) + 2) {
+      m.hold = 12;
+      return { move: 'R', jump: true };
+    }
+    return go('R');
+  },
+  'ccu-stup'(w, m, d) {
+    const k = w.flags.stup as { st: Stack; D: number };
+    const p = w.player;
+    if (m.hold > 0) return { move: 'R', jump: true };
+    const stand = px(k.D - 1) - 7;
+    if (w.flags.twist === 'low' && k.st.n === 2 && p.onGround && Math.abs(p.cx - stand) < 4 && k.st.left(w) > 0.5) {
+      m.hold = 10;
+      return { move: 'R', jump: true };
+    }
+    if (!p.onGround) return go('R');
+    if (k.st.n === 1 && !k.st.pointed) return go('R');
+    return go(toward(w, stand, 2));
+  },
   'ccu-murti'(w, m, d) {
     const k = w.flags.big as { big: BigFigure; dip: number; D: number };
     const p = w.player;
@@ -625,31 +671,9 @@ const endingPolicies: Record<string, Policy> = {
     if (p.cx > t.o.x0 + 6 || (fresh && p.cx > t.o.x0 - 30)) return go(toward(w, d.x + 8, 1) || 'R');
     return go(toward(w, t.o.x0 - 20, 3));
   },
-  'ccu-wall'(w, m, d) {
-    const k = w.flags.wall as { st: Stack; D: number };
-    const p = w.player;
-    if (m.hold > 0) return { move: 'R', jump: true };
-    if (p.cx > k.st.x + k.st.wd || w.flags.twist !== 'wall' && p.y + p.h < FLOOR - 1) return go(p.onGround ? toward(w, d.x + 8, 1) || 'R' : 'R');
-    const stand = k.st.x - 14;
-    if (w.flags.twist === 'low' && p.onGround && Math.abs(p.cx - stand) < 3) {
-      m.hold = 12;
-      return { move: 'R', jump: true };
-    }
-    return go(p.onGround ? toward(w, stand, 1) : 'R');
-  },
-  'ccu-dhak'(w, _m, d) {
-    const k = w.flags.dhak as { beat: number; D: number };
-    const p = w.player;
-    const stand = px(k.D - 1) - 9;
-    if (p.cx > stand + 4) return go('R');
-    if (w.flags.twist === 'up' && w.tick % k.beat < 24) return go('R');
-    return go(toward(w, stand, 1));
-  },
-  'ccu-bhanr'(w, _m, d) {
-    const k = w.flags.bhanr as { x: number };
-    if (w.flags.twist === 'open') return go(toward(w, d.x + 8, 1) || 'R');
-    return go(toward(w, k.x, 3));
-  },
+
+
+
   'ccu-arch'(w, _m, d) {
     const k = w.flags.arch as { D: number };
     const p = w.player;

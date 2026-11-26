@@ -889,7 +889,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: kumartuliRoom(), par: 50, acts: [uthon, lane, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-finished-figure-carried-over-the-lane') }),
   longStage({ base: poleRoom(), par: 60, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 90, acts: [girder, dui, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
-  longStage({ base: addaRoom(), par: 40, acts: [rok, tokta], twist: 'ccu-bhanr', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-door-opens-for-a-cup-of-tea') }),
-  longStage({ base: pandalRoom(), par: 40, acts: [sinri, toran, chala], twist: 'ccu-dhak', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-dhak-beat-lifts-the-gate-curtain') }),
-  longStage({ base: finaleRoom(), par: 80, acts: [bus10, tram10, rok10, kumor10], twist: 'ccu-wall', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-customers-buy-the-wall-down') }),
+  longStage({ base: addaRoom(), par: 40, acts: [rok, tokta], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
+  longStage({ base: pandalRoom(), par: 40, acts: [sinri, toran, chala], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
+  longStage({ base: finaleRoom(), par: 80, acts: [bus10, tram10, rok10, kumor10], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];
