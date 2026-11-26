@@ -11,4 +11,6 @@ export const causeLines: Record<string, string[]> = {
   'gtk-taxi': ['The short cut came out at the taxi stand. Right behind a reversing taxi.', 'Take the stair up to the loop above, and walk down the road.'],
   'gtk-khaai': ['Down the gully. That’s a long way.', 'Look where the stair comes out before you take it.'],
   'gtk-chhat': ['Off the doorstep, on to the roof. Too far down.', 'Take the stair down to the roof garden instead.'],
+  'gtk-badal': ['Off the edge in the cloud. The road had stopped.', 'Where the kerb rope stops, the road stops: jump there.'],
+  'gtk-deewar': ['That was a painting of a road, on the wall behind.', 'Trust the rope, not the view: where it stops, jump.'],
 };
