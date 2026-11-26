@@ -9,6 +9,7 @@ import { VENT, type Steamer } from '../../src/game/cities/gtk/s02';
 import type { Bag } from '../../src/game/cities/gtk/s03';
 import { FLOORS } from '../../src/game/cities/gtk/s04';
 import type { Rule } from '../../src/game/cities/gtk/s05';
+import { TANK } from '../../src/game/cities/gtk/s06';
 import { XL } from '../runner';
 
 type Move = 'L' | 'R' | '';
@@ -320,6 +321,55 @@ const taxiPolicy: Policy = (w, _m, d) => {
   return { move: '', jump: p.onGround && !held(w) && w.tick % 40 < 20 };
 };
 
+// ------------------------------------------------------------------ GTK-06
+/** walk right, jumping up on to any one-way step just ahead and above (a footpath stair) */
+function stairUp(): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const p = w.player;
+    if (p.onGround) {
+      const fr = Math.round((p.y + p.h) / 16);
+      for (const tx of [Math.floor((p.x + p.w + 3) / 16)])
+        for (let ty = fr - 2; ty <= fr - 1; ty++)
+          if (w.tileAt(tx, ty) === 3) {
+            jt = 10;
+            return { move: 'R', jump: true };
+          }
+    }
+    return go('R');
+  };
+}
+const room06 = (): Step[] => [
+  { policy: stairUp(), until: (w) => w.player.onGround && w.player.y + w.player.h <= 64, max: 900, note: 'up the stair to the top loop' },
+  { hold: 'R', until: and(ground, X(26)), max: 900, note: 'along the top loop and down on the far side of the bend' },
+  { hold: 'R', until: X(30), max: 300 },
+];
+const act06 = (x: number): Step[] => [
+  { hold: 'R', until: and(ground, X(x + 23.2), (w) => w.player.y < 170), max: 900, note: 'down the stair to the roof garden, along the roof' },
+  { hold: 'R', jump: 12, ticks: 12, note: 'up to the road' },
+  { hold: 'R', until: and(ground, X(x + 32)), max: 300 },
+];
+/** the tank: wait short of the gush till it stops, then walk in */
+const tankPolicy: Policy = (w, _m, d) => {
+  const st = w.flags.gtk6e as { t0: number };
+  const p = w.player;
+  const g0 = d.x - 32;
+  if (p.x + p.w < g0 - 30 || p.x > g0) return go('R');
+  if (st.t0 < 0) return go('');
+  const u = cyc(w, st.t0, TANK.period);
+  if (p.x + p.w >= g0 - 4) return go('R');
+  return go(u >= TANK.on + 0.02 && u <= TANK.on + 0.8 ? 'R' : '');
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['GTK-01'] = tourRoute();
   S['GTK-02'] = room02();
@@ -330,9 +380,12 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('GTK-04', 0, []);
   S['GTK-05'] = room05();
   lengthen('GTK-05', 0, []);
+  S['GTK-06'] = room06();
+  lengthen('GTK-06', 0, []);
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'GTK-06': { steps: [{ hold: 'R', until: done, max: 900, note: 'the shortcut stairs, down' }], cause: 'gtk-taxi' },
   'GTK-05': { steps: [{ policy: stepper(), until: done, max: 1200, note: 'hop the flowers, as Tara says' }], cause: 'gtk-jurmana' },
   'GTK-04': { steps: [{ policy: stepper(), until: done, max: 2400, note: 'straight on, out of the first door' }], cause: 'gtk-galat-tala' },
   'GTK-03': { steps: [{ policy: bagHop('gtk3', { every: true, dwell: 0.3 }), until: done, max: 2400, note: 'on to every bag' }], cause: 'gtk-polythene' },
@@ -343,6 +396,10 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'GTK-06': {
+    steps: [...room06(), { policy: stairUp(), until: (w) => w.player.x > px(32) && w.player.onGround && w.player.y + w.player.h <= 64, max: 900, note: 'up again: the stair up worked last time' }, { hold: 'R', until: X(39.2), max: 300 }, { hold: 'R', jump: 14, ticks: 14, note: 'and off it, over the gully' }, { hold: 'R', until: done, max: 600 }],
+    cause: 'gtk-chhat',
+  },
   'GTK-05': { steps: [room05()[0], { policy: stepper(), until: done, max: 1500, note: 'bin it, then trust the next bin too' }], cause: 'gtk-jurmana' },
   'GTK-04': { steps: [{ policy: houseRoute(10, 4), until: done, max: 2400, note: 'count three doors down (the shop has none): the basement' }], cause: 'gtk-jhora' },
   'GTK-03': { steps: [{ policy: bagHop('gtk3', { dwell: 1.4 }), until: and(ground, X(24)), max: 2400 }, { hold: 'R', until: X(x3(0)), max: 300 }, { policy: bagHop('gtk3a', { dwell: 1.4 }), until: done, max: 3000, note: 'stop on each cloth bag to check the stitches' }], cause: 'gtk-jaanch' },
@@ -360,12 +417,14 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk04-ghar': act04,
   'gtk05-shaam': act05,
   'gtk05-kachra': act05b,
+  'gtk06-chhat': act06,
 };
 const endingPolicies: Record<string, Policy> = {
   'gtk-steam-vent': ventPolicy,
   'gtk-jhola-entry': jholaPolicy,
   'gtk-lift-counts-down': liftPolicy,
   'gtk-taxi-meter': taxiPolicy,
+  'gtk-tank-overflow': tankPolicy,
 };
 void hop;
 
@@ -376,5 +435,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['GTK-01', 'GTK-02', 'GTK-03', 'GTK-04', 'GTK-05'],
+  fair: ['GTK-01', 'GTK-02', 'GTK-03', 'GTK-04', 'GTK-05', 'GTK-06'],
 };

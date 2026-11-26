@@ -8,4 +8,7 @@ export const causeLines: Record<string, string[]> = {
   'gtk-jaanch': ['The inspector lifted your bag to check it.', 'Keep hopping ahead of him: don’t stop on a bag.'],
   'gtk-galat-tala': ['Wrong floor! That door opens over the jhora.', 'Count the flights of stairs from where you came in, not the doors.'],
   'gtk-jurmana': ['You jumped and dropped the wrapper. Fined, and swept up.', 'Walk past a bin before you jump. A heaped one is full: use the next.'],
+  'gtk-taxi': ['The short cut came out at the taxi stand. Right behind a reversing taxi.', 'Take the stair up to the loop above, and walk down the road.'],
+  'gtk-khaai': ['Down the gully. That’s a long way.', 'Look where the stair comes out before you take it.'],
+  'gtk-chhat': ['Off the doorstep, on to the roof. Too far down.', 'Take the stair down to the roof garden instead.'],
 };
