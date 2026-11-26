@@ -5,7 +5,7 @@ import { px, sand, river, Decor, GROUND, levelPost } from './entities';
 import { Hedge, PathBars, Plucker } from './pluck';
 import { Pan } from './pitha';
 import { roller } from '../../levels/kit';
-import { Host, gam } from './gamosa';
+import { Host, gam, machan } from './gamosa';
 import { TeaBoy } from './bank';
 import { husori } from './husori';
 import { charge } from './gorh';
@@ -147,6 +147,7 @@ export const endings: Record<DisEndingKind, Ending> = {
     build(w: World, d) {
       const D = Math.round(d.x / 16);
       w.add(new Host(px(D - 8) + 8, px(13), 'give'));
+      machan(w, D - 10, D - 6);
       const L = lock(w, d, 'Roba! Gamosa! | Stop! The gamosa!');
       w.flags.twist = 'latched';
       const open = d.onReach;

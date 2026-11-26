@@ -104,6 +104,8 @@ export class Carrier extends Entity {
     readonly from: number,
     readonly stop: number,
     readonly speed = 56,
+    /** the ghat he walks over (px): while he is over it and just past it he swings the tray right back behind him, off the steps */
+    readonly ghat: [number, number] = [0, 0],
   ) {
     super();
     this.x = x0;
@@ -126,7 +128,12 @@ export class Carrier extends Entity {
     return Math.cos(((w.tick - 0) * DT * Math.PI * 2) / 1.8);
   }
   private lastSwing = 1;
+  /** swung right back behind him (to the right) as he passes the ghat */
+  get back() {
+    return this.walking && !this.stopped && this.x <= this.ghat[1] && this.x >= this.ghat[0] - 48;
+  }
   tray(): Box {
+    if (this.back) return { x: this.x + 4, y: GROUND - 30, w: 46, h: 12 };
     const d = -1; // he walks left
     return { x: this.x + d * 17 * this.lastSwing - 6, y: GROUND - 28, w: 12, h: 8 };
   }
@@ -173,7 +180,13 @@ export class Carrier extends Entity {
     const x = this.x;
     person(ctx, x, GROUND - 28, 28, '#FDF0D5', '#B9855A', { cap: '#C1121F', arms: 0 });
     // the tray and its glasses
-    const t = this.stopped ? { x: x - 14, y: GROUND - 12, w: 12, h: 8 } : this.tray();
+    const tb = this.tray();
+    const t = this.stopped ? { x: x - 14, y: GROUND - 12, w: 12, h: 8 } : this.back ? { x: tb.x + tb.w - 12, y: GROUND - 28, w: 12, h: 8 } : tb;
+    if (this.back) {
+      // the long swing: a blur of tea along the arc behind him
+      ctx.fillStyle = 'rgba(155,45,31,0.35)';
+      ctx.fillRect(tb.x, tb.y + 4, tb.w, 4);
+    }
     ctx.fillStyle = '#9AA0A6';
     ctx.fillRect(t.x, t.y + 5, t.w, 3);
     ctx.fillStyle = '#9B2D1F';

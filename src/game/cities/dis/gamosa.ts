@@ -114,3 +114,31 @@ export class Cloth extends Entity {
 export function pitDanger(w: World, c0: number, c1: number) {
   return w.add(new Danger({ x: px(c0), y: GROUND + 8, w: px(c1 - c0 + 1), h: 80 }, 'dis-gamosa'));
 }
+
+/** a bamboo machan (raised stage) drawn over one-way tiles c0..c1 on row `row`, with its legs */
+export function machan(w: World, c0: number, c1: number, row = 13) {
+  w.add(
+    new (class extends Entity {
+      constructor() {
+        super();
+        this.layer = -1;
+      }
+      draw(ctx: CanvasRenderingContext2D) {
+        const x0 = px(c0);
+        const x1 = px(c1 + 1);
+        const y = px(row);
+        ctx.fillStyle = '#B8A04A';
+        ctx.fillRect(x0, y, x1 - x0, 4);
+        ctx.fillStyle = '#8D6B2E';
+        ctx.fillRect(x0, y + 4, x1 - x0, 1.5);
+        for (const x of [x0 + 2, x1 - 5]) ctx.fillRect(x, y + 4, 3, GROUND - y - 4);
+        ctx.strokeStyle = '#8D6B2E';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x0 + 3, GROUND);
+        ctx.lineTo(x1 - 4, y + 6);
+        ctx.stroke();
+      }
+    })(),
+  );
+}

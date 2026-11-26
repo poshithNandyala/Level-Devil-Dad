@@ -74,13 +74,13 @@ export function dispur(ctx: Ctx, th: Theme, x0: number, x1: number) {
   }
 
   // the Saraighat bridge: a steel truss on piers across the river
-  const by = 158;
-  ctx.strokeStyle = '#5B6670';
-  ctx.fillStyle = '#5B6670';
+  const by = 150;
+  ctx.strokeStyle = withAlpha('#5B6670', 0.7);
+  ctx.fillStyle = withAlpha('#5B6670', 0.7);
   ctx.lineWidth = 1.2;
   const span = 64;
   for (let x = x0 - (x0 % span) - span; x <= x1 + span; x += span) {
-    ctx.fillRect(x - 2, by + 2, 4, 36);
+    ctx.fillRect(x - 2, by + 2, 4, 22);
     ctx.beginPath();
     ctx.moveTo(x, by - 10);
     ctx.lineTo(x + span, by - 10);
@@ -96,9 +96,9 @@ export function dispur(ctx: Ctx, th: Theme, x0: number, x1: number) {
   ctx.fillRect(x0 - 8, by + 1, x1 - x0 + 16, 3);
 
   // near slope: tea rows, flat-topped, with a few tall shade trees
-  ctx.fillStyle = th.near;
-  ctx.fillRect(x0 - 8, 210, x1 - x0 + 16, 40);
-  ctx.fillStyle = '#4C8C3A';
+  ctx.fillStyle = withAlpha(th.near, 0.75);
+  ctx.fillRect(x0 - 8, 212, x1 - x0 + 16, 40);
+  ctx.fillStyle = withAlpha('#4C8C3A', 0.7);
   for (let row = 0; row < 3; row++)
     for (let x = x0 - 10 + row * 13; x <= x1 + 10; x += 26) {
       ctx.beginPath();

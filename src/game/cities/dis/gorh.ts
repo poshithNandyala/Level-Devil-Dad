@@ -105,7 +105,12 @@ export class Charge extends Entity {
     // the field in front of everything: tall grass on every column that has no floor yet, a low flat mat where it has
     for (let c = d.c0; c <= d.c1; c++) {
       const x = px(c);
+      // under the grass: the beel's dark water, all the way down
+      ctx.fillStyle = '#3C4A36';
+      ctx.fillRect(x, GROUND + 2, 16, 60);
       if (this.flat[c - d.c0]) {
+        ctx.fillStyle = '#7A6A45';
+        ctx.fillRect(x, GROUND, 16, 16);
         ctx.fillStyle = '#C9C26A';
         ctx.fillRect(x, GROUND - 2, 16, 3);
         ctx.fillStyle = '#A99B45';
@@ -114,7 +119,7 @@ export class Charge extends Entity {
       } else {
         const sway = Math.sin(w.tick * 0.05 + c * 0.7) * 1.5;
         ctx.fillStyle = '#4C8C3A';
-        ctx.fillRect(x, GROUND - 26, 16, 40);
+        ctx.fillRect(x, GROUND - 26, 16, 34);
         ctx.fillStyle = '#6FAF4A';
         for (let k = 0; k < 4; k++) {
           ctx.beginPath();

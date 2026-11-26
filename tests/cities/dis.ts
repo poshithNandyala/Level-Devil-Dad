@@ -311,7 +311,26 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 };
 
 /** more scripted first-timer deaths and 'like last time' moves. */
+/** with the singers through every gate, but at the gamosa gate walk on as soon as they stop: the gate is still shut */
+function tooEarly(): (w: World) => { move: 'L' | 'R' | ''; jump: boolean } {
+  return (w) => {
+    const p = w.player;
+    const g = gatesOf(w).find((gt) => gt.gx + 14 > p.cx);
+    if (!g) return { move: 'R', jump: false };
+    if (g.open || (g.def.ritual > 0 && g.group.at === g.idx)) return { move: 'R', jump: false };
+    if (p.cx < g.gx - 26) return { move: 'R', jump: false };
+    return { move: '', jump: false };
+  };
+}
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'DIS-07': [{ what: 'goes on at the gamosa gate before the host has finished: the stakes', steps: [{ policy: tooEarly(), until: done, max: 20000 }], cause: 'dis-gate' }],
+  'DIS-01': [
+    {
+      what: 'climbs out of the ghat the moment the boy is overhead: the tray swings back',
+      steps: [...tourStart(), { hold: 'R', until: inGhat, max: 700 }, { hold: '', until: (w) => boy(w).x < px(79), max: 1500 }, { hold: 'R', until: (w) => w.player.x >= px(79) - 2, max: 200 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 900 }],
+      cause: 'dis-spill',
+    },
+  ],
   'DIS-03': [
     { what: 'follows her too close on the wet path and slides into her basket', steps: [{ policy: follow(0), until: and(ground, X(31.4)), max: 4000 }, { policy: follow(1, 34), until: done, max: 4000 }], cause: 'dis-basket' },
   ],
@@ -334,6 +353,14 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: and(ground, X(x + 38)), max: 900 },
   ],
   'dis10-tawa': (x) => [{ policy: crossPan(0, 60), until: and(ground, X(x + 29)), max: 4000, note: 'the pan over the water' }],
+  'dis10-bagan': (x) => [{ policy: follow(0), until: and(ground, X(x + 29.4)), max: 4000, note: 'behind the plucker through the tea rows' }],
+  'dis09-dhal': (x) => [
+    { hold: 'R', until: X(x + 5.2), max: 1200, note: 'across the first oil to the pad' },
+    ...roofLeap(x + 5.2, 'over the rib and the oil'),
+    ...roofLeap(x + 12.2, 'and the next'),
+    ...roofLeap(x + 19.2, 'and the last'),
+    { hold: 'R', until: and(ground, X(x + 32)), max: 900 },
+  ],
   'dis10-gate': (x) => [{ policy: atTheGate(0), until: and(ground, X(x + 39)), max: 6000, note: 'the husori gate and the host’s ritual' }],
   'dis10-bank': (x) => [
     { hold: 'R', until: X(x + 2.7), max: 600, note: 'run to the edge' },
@@ -366,6 +393,20 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...hopR(x + 17.4, 'to the fourth slab', 12),
     ...hopR(x + 22.4, 'off the last slab', 12),
     { hold: 'R', until: X(x + 41), max: 600 },
+  ],
+  'dis05-biya': (x) => [
+    { hold: 'R', until: X(x + 7.2), max: 900, note: 'two givers' },
+    { hold: 'R', jump: 10, ticks: 10, note: 'up to the first red sash' },
+    { hold: 'R', until: and(ground, (w) => w.player.y > 220 && w.player.x > px(x + 11.2)), max: 400 },
+    { hold: 'R', until: X(x + 16.2), max: 900, note: 'two more' },
+    { hold: 'R', jump: 10, ticks: 10, note: 'up to the second' },
+    { hold: 'R', until: and(ground, (w) => w.player.y > 220 && w.player.x > px(x + 20.2)), max: 400 },
+    { hold: 'R', until: X(x + 25.2), max: 900, note: 'and two more' },
+    { hold: 'R', jump: 10, ticks: 10, note: 'up to the third' },
+    { hold: 'R', until: and(ground, (w) => w.player.y > 220 && w.player.x > px(x + 29.2)), max: 400 },
+    ...hopR(x + 31.4, 'over the first pit', 12),
+    ...hopR(x + 38.4, 'over the second', 12),
+    { hold: 'R', until: and(ground, X(x + 51)), max: 600 },
   ],
   'dis05-atithi': (x) => [
     ...gamosaSet(x, 19),
