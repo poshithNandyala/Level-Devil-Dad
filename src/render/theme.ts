@@ -25,29 +25,6 @@ export interface Theme {
 }
 
 export const THEMES = {
-  PDY: {
-    city: 'PDY',
-    name: 'Puducherry',
-    local: 'புதுச்சேரி',
-    sky: ['#4AAFDF', '#A8DDF0', '#FFF2D8'],
-    sun: '#FFFDF0',
-    far: '#F6D47F',
-    mid: '#E9AE43',
-    near: '#C3862A',
-    accent: '#D81B60',
-    accent2: '#1976D2',
-    tileBase: '#B27C24',
-    tileTop: '#F5B041',
-    tileEdge: '#8C5F18',
-    tileDark: '#6E4A12',
-    topper: '#F8F1E0',
-    pattern: 'concrete',
-    spike: '#FFFFFF',
-    spikeEdge: '#2B2216',
-    ink: '#2B2216',
-    rim: null,
-    ui: '#D81B60',
-  },
   AMR: {
     city: 'AMR',
     name: 'Amaravati',
@@ -281,7 +258,7 @@ export const THEMES = {
 } as Record<CityId, Theme>;
 
 /** playable cities in journey order (south to north) */
-export const CITY_ORDER: CityId[] = ['PDY', 'BLR', 'AMR', 'HYD', 'PNJ', 'BOM', 'DMN', 'GNR', 'JAI', 'BPL', 'RPR'];
+export const CITY_ORDER: CityId[] = ['BLR', 'AMR', 'HYD', 'PNJ', 'BOM', 'DMN', 'GNR', 'JAI', 'BPL', 'RPR'];
 
 /** Future chapters, honestly labelled as not built yet. */
 export const COMING_SOON = [

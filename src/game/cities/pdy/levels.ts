@@ -1,21 +1,20 @@
-import type { LevelDef, World } from '../world';
-import { LINES } from '../cities';
-import { Thing } from '../entities/traps';
-import { collectible, door, geyser, group, gust, prop, px, rider, rival, roller, shot, sign, spikes, thing, thingOn, water } from './kit';
-import { Act, G, deco, pool } from './acts';
-import { dropFloor, onPass, popOnJump } from './trolls';
-import { DT } from '../constants';
-import { exitTwist } from './twists';
-import { tour } from './tour';
-import { longStage } from './chunks';
-import { Grid } from './grid';
-import { Kepi } from '../entities/tamil';
+import type { LevelDef, World } from '../../world';
+import { lines as L } from './lines';
+import { Thing } from '../../entities/traps';
+import { collectible, door, geyser, group, gust, prop, px, rider, rival, roller, shot, sign, spikes, thing, thingOn, water } from '../../levels/kit';
+import { Act, G, deco, pool } from '../../levels/acts';
+import { dropFloor, onPass, popOnJump } from '../../levels/trolls';
+import { DT } from '../../constants';
+import { exitTwist } from '../../levels/twists';
+import { tour } from '../../levels/tour';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
+import { Kepi } from '../../entities/tamil';
 
 // Puducherry: yellow walls, cobbled rues, a rocky seafront that sneezes,
 // bollards that close the beach road at six, and a canal bridge that opens
 // for boats. Tamil + English, with a little French.
 
-const L = LINES.PDY;
 const tara = (n: number, point: 1 | -1 = 1) => ({ intro: L.intro[n % L.intro.length], point, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[n % L.beaten.length] });
 const YELLOW = { fill: '#F2C14E', trim: '#FFF8E7', line: 'rgba(150,95,20,0.35)' };
 
@@ -271,7 +270,7 @@ const sparkRain: Act = {
   },
 };
 
-export const PDY: LevelDef[] = [
+export const levels = (): LevelDef[] => [
   tour({
     id: 'PDY-01',
     city: 'PDY',

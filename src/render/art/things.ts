@@ -11,12 +11,10 @@ export type BaseThingKind =
   // generic
   | 'crate'
   | 'gate'
-  | 'bollard'
   | 'slab'
   | 'boulder'
   | 'barricade'
   | 'shutter'
-  | 'awning'
   | 'pad'
   | 'beam'
   | 'board'
@@ -28,7 +26,6 @@ export type BaseThingKind =
   | 'scooter'
   | 'dog'
   | 'leaf'
-  | 'umbrella'
   // Lakshadweep
   | 'odam'
   | 'crab'
@@ -46,11 +43,9 @@ export type BaseThingKind =
   // Puducherry
   | 'cyclist'
   | 'baguette'
-  | 'croissant'
   | 'flowers'
   | 'rock'
   | 'spout'
-  | 'lights'
   | 'cart'
   | 'roadroller'
   | 'spikerow'
@@ -59,9 +54,7 @@ export type BaseThingKind =
   | 'frond'
   | 'garland'
   | 'traincar'
-  | 'surfboard'
   | 'lantern'
-  | 'rocket'
   | 'bulbs'
   | 'coracle'
   | 'log'
@@ -119,12 +112,10 @@ export const MODULE_THING_SIZE: Partial<Record<ThingKind, [number, number]>> = {
 const SIZE: Record<BaseThingKind, [number, number]> = {
   crate: [16, 16],
   gate: [16, 48],
-  bollard: [8, 16],
   slab: [48, 12],
   boulder: [32, 24],
   barricade: [32, 24],
   shutter: [32, 32],
-  awning: [32, 8],
   pad: [16, 8],
   beam: [48, 8],
   board: [48, 16],
@@ -135,7 +126,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   scooter: [24, 16],
   dog: [24, 12],
   leaf: [32, 4],
-  umbrella: [16, 16],
   odam: [64, 16],
   crab: [16, 10],
   coral: [32, 8],
@@ -150,7 +140,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   pillar: [32, 96],
   cyclist: [32, 30],
   baguette: [24, 6],
-  croissant: [12, 12],
   flowers: [32, 16],
   rock: [32, 16],
   spout: [16, 8],
@@ -173,7 +162,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   kaapi: [12, 12],
   cable: [16, 24],
   vada: [12, 12],
-  lights: [32, 12],
   cart: [32, 24],
   roadroller: [48, 32],
   spikerow: [16, 10],
@@ -182,9 +170,7 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   frond: [24, 10],
   garland: [32, 6],
   traincar: [48, 26],
-  surfboard: [32, 6],
   lantern: [12, 16],
-  rocket: [6, 14],
   bulbs: [32, 6],
   coracle: [32, 12],
   log: [32, 10],
@@ -284,12 +270,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       }
       break;
     }
-    case 'bollard': {
-      fillRR(ctx, x, y, w, h, 3, '#E9E2D2', '#3D3A36');
-      ctx.fillStyle = '#D23B2E';
-      ctx.fillRect(x + 1, y + 3, w - 2, 3);
-      break;
-    }
     case 'slab': {
       if (o.look === 'hook' || o.look === 'slip') {
         // hanging from a crane: two chains to a hook, a cable to the sky
@@ -349,18 +329,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
         ctx.stroke();
       }
       fillRR(ctx, x + w / 2 - 4, y + h - 4, 8, 3, 1, '#3B3E41');
-      break;
-    }
-    case 'awning': {
-      for (let i = 0; i < w; i += 8) {
-        ctx.fillStyle = (i / 8) % 2 ? '#F2F0E6' : o.tint ?? '#C8462E';
-        ctx.beginPath();
-        ctx.moveTo(x + i, y);
-        ctx.lineTo(x + i + 8, y);
-        ctx.lineTo(x + i + 8, y + h - 2);
-        ctx.quadraticCurveTo(x + i + 4, y + h + 2, x + i, y + h - 2);
-        ctx.fill();
-      }
       break;
     }
     case 'pad': {
@@ -497,22 +465,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.beginPath();
       ctx.moveTo(x + 2, y + h - 1);
       ctx.lineTo(x + w - 2, y + h - 1);
-      ctx.stroke();
-      break;
-    }
-    case 'umbrella': {
-      ctx.fillStyle = o.tint ?? '#1D1D22';
-      ctx.beginPath();
-      ctx.moveTo(x, y + 7);
-      ctx.quadraticCurveTo(x + w / 2, y - 3, x + w, y + 7);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = '#1D1D22';
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(x + w / 2, y + 6);
-      ctx.lineTo(x + w / 2, y + h - 2);
-      ctx.quadraticCurveTo(x + w / 2 + 3, y + h, x + w / 2 + 3, y + h - 3);
       ctx.stroke();
       break;
     }
@@ -788,22 +740,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       }
       break;
     }
-    case 'croissant': {
-      ctx.fillStyle = '#E0A458';
-      ctx.beginPath();
-      ctx.arc(x + 6, y + 9, 6, Math.PI, 0);
-      ctx.quadraticCurveTo(x + 6, y + 6, x, y + 9);
-      ctx.fill();
-      ctx.strokeStyle = '#A86B2D';
-      ctx.lineWidth = 0.8;
-      for (let i = 0; i < 3; i++) {
-        ctx.beginPath();
-        ctx.moveTo(x + 3 + i * 3, y + 4);
-        ctx.lineTo(x + 3 + i * 3, y + 8);
-        ctx.stroke();
-      }
-      break;
-    }
     case 'flowers': {
       // bougainvillea spilling over a wall
       ctx.fillStyle = '#5E8B3E';
@@ -1058,25 +994,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.stroke();
       break;
     }
-    case 'lights': {
-      // a string of festoon bulbs between lamp posts: pretty, and hot
-      ctx.strokeStyle = '#2B2B2E';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(x - 6, y);
-      ctx.quadraticCurveTo(x + w / 2, y + h, x + w + 6, y);
-      ctx.stroke();
-      const cols = ['#FFD54F', '#FF7043', '#81C784', '#4FC3F7', '#F06292'];
-      const on = o.look !== 'off';
-      for (let i = 0; i < 5; i++) {
-        const k = (i + 0.5) / 5;
-        const bx = x + w * k;
-        const by = y + 4 * k * (1 - k) * h + 3;
-        if (on) circle(ctx, bx, by, 4.2, 'rgba(255,236,170,0.28)');
-        circle(ctx, bx, by, 2.2, on ? cols[(i + Math.floor(t / 30)) % 5] : '#8D8D8D');
-      }
-      break;
-    }
     case 'cart': {
       // a tender-coconut push cart
       fillRR(ctx, x + 2, y + 7, w - 4, 9, 1.5, '#A0522D', '#5D2E0C');
@@ -1191,15 +1108,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       wheel(ctx, x + w - 9, y + h - 4, 4, o.anim * 0.3);
       break;
     }
-    case 'surfboard': {
-      ctx.fillStyle = o.tint ?? '#FF7043';
-      ctx.beginPath();
-      ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(x + 4, y + h / 2 - 0.6, w - 8, 1.2);
-      break;
-    }
     case 'lantern': {
       // a paper sky lantern, glowing
       const g = ctx.createRadialGradient(x + 6, y + 8, 1, x + 6, y + 8, 14);
@@ -1212,17 +1120,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.fillRect(x + 3, y + 3, w - 6, h - 9);
       ctx.fillStyle = '#E65100';
       ctx.fillRect(x + 4, y + h - 3, w - 8, 3);
-      break;
-    }
-    case 'rocket': {
-      fillRR(ctx, x, y + 3, w, h - 6, 1, '#E53935', '#7F1D1D');
-      ctx.fillStyle = '#FFD54F';
-      ctx.beginPath();
-      ctx.moveTo(x, y + 3);
-      ctx.lineTo(x + w / 2, y - 1);
-      ctx.lineTo(x + w, y + 3);
-      ctx.fill();
-      circle(ctx, x + w / 2, y + h - 1, 2 + Math.sin(t * 0.9), '#FFB300');
       break;
     }
     case 'bulbs': {

@@ -26,9 +26,6 @@ export type TourSeg =
 /** Every city walks its own course (tile columns); the door, the deck and the item are where they always were. */
 export const TOUR = { cols: 120, door: 112, deck: [94, 99] as [number, number], item: [96.5, 8.4] as [number, number] };
 export const COURSES = {
-  // French bollards in a row, a canal, and the café terrace
-  // (no wall after the terrace: the street from there to the canal is where the policeman's cap blows down)
-  PDY: [{ k: 'posts', x: 12, n: 5 }, { k: 'ditch', x: 32, w: 2, wet: true }, { k: 'parked', x: 44 }, { k: 'steps', x: 52, n: 1, run: 2, top: 10 }, { k: 'ditch', x: 86, w: 2 }],
   // over the dug-up road on the metro shuttle
   // (the dug-up road after the metro is the city's own: a smart bridge over it, see blr.ts)
   BLR: [{ k: 'wall', x: 12 }, { k: 'steps', x: 22, n: 2, run: 2, top: 3 }, { k: 'parked', x: 40 }, { k: 'ferry', x: 52, w: 12, kind: 'traincar', label: 'NAMMA METRO' }, { k: 'posts', x: 82, n: 2 }],
