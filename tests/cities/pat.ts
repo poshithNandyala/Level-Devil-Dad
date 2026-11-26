@@ -58,23 +58,69 @@ const tourRoute = (): Step[] => [
   { hold: 'R', until: done, max: 900 },
 ];
 
+// ------------------------------------------------------------------ PAT-02
+const t2 = (w: World) => (w.tick - w.flags.pat2.t0) / 120;
+const room02 = (): Step[] => [
+  { hold: 'R', until: X(6.5), max: 600 },
+  { hold: '', until: (w) => w.flags.pat2.t0 >= 0 && t2(w) >= 1.3, max: 400, note: 'the first strike goes in at the crack: wait' },
+  { hold: 'R', until: X(13.2), max: 300, note: 'on, between the cracks' },
+  { hold: '', until: (w) => t2(w) >= 3.2, max: 600, note: 'the second strike' },
+  { hold: 'R', until: X(19.2), max: 300 },
+  { hold: '', until: (w) => t2(w) >= 5.05, max: 600, note: 'the third strike' },
+  { hold: 'R', until: X(27), max: 600, note: 'out of the bed before the rake' },
+];
+/** the act's bed: behind the rolling litti until its strike has gone, then past it */
+function pastMarker(w: World): Out {
+  const st = w.flags.pat2a as { t0: number; x: number };
+  const p = w.player;
+  if (st.t0 < 0 || st.x === 0) return go('R');
+  const into = ((w.tick - st.t0) / 120) % 2.6;
+  const t = (w.tick - st.t0) / 120;
+  if (p.cx > st.x + 30) return go('R');
+  if (p.cx > st.x - 40 && p.cx < st.x + 30) return go('R');
+  if (p.cx > st.x - 90 && !(t >= 1.5 && into >= 0.6 && into <= 1.2)) return go('');
+  return go('R');
+}
+const act02 = (x: number): Step[] => [{ policy: pastMarker, until: and(ground, X(x + 33)), max: 3000, note: 'behind the litti, then past it' }, { hold: 'R', until: X(x + 35.4), max: 400 }];
+/** both pestles of the door: cross one just after it lifts, wait in the gap */
+function pestles(w: World): Out {
+  const cols = w.flags.pat2e as { x: number; w: number; s: { period: number; phase: number; down: number } }[];
+  const p = w.player;
+  const next = cols.find((c) => p.cx < c.x + c.w);
+  if (!next) return go('R');
+  const t = (((w.tick / 120 + next.s.phase) % next.s.period) + next.s.period) % next.s.period;
+  const inside = p.cx >= next.x - 8;
+  const open = t >= next.s.down + 0.1 && t <= next.s.down + 0.9;
+  if (inside || open) return go('R');
+  if (p.cx < next.x - 22) return go('R');
+  return go('');
+}
+const pestlePolicy: Policy = (w) => pestles(w);
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['PAT-01'] = tourRoute();
-  void lengthen;
+  S['PAT-02'] = room02();
+  lengthen('PAT-02', 0, []);
 }
 
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-02': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-angara' },
   'PAT-01': { steps: [...upTo(21), { hold: 'R', until: done, max: 2400 }], cause: 'pat-bheed' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-02': { steps: [...room02().slice(0, 4), { hold: '', until: done, max: 1500 }], cause: 'pat-chimta' },
   'PAT-01': { steps: [...upTo(24), { hold: '', until: done, max: 1500 }], cause: 'pat-tempo' },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
   'PAT-01': [{ what: 'run on at the hoarding', steps: [...upTo(32), { hold: 'R', until: done, max: 900 }], cause: 'pat-hoarding' }],
 };
-const actRoutes: Record<string, (x: number) => Step[]> = {};
-const endingPolicies: Record<string, Policy> = {};
+const actRoutes: Record<string, (x: number) => Step[]> = {
+  'pat02-chokha': act02,
+};
+const endingPolicies: Record<string, Policy> = {
+  'pat-musal': pestlePolicy,
+};
 
 export const test: CityTests = {
   solutions,
@@ -83,5 +129,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: [],
+  fair: ['PAT-02'],
 };
