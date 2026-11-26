@@ -651,19 +651,24 @@ const endingPolicies: Record<string, Policy> = {
     return go(toward(w, stand, 2));
   },
   'ccu-murti'(w, m, d) {
-    const k = w.flags.big as { big: BigFigure; dip: number; D: number };
+    const k = w.flags.big as { big: BigFigure; D: number };
     const p = w.player;
     if (m.hold > 0) return { move: 'R', jump: true };
-    if (w.flags.twist !== 'gone' && w.flags.twist !== 'carry' || k.big.state !== 'gone' && k.big.x > p.cx - 50) {
-      if (p.y + p.h > 240) return go(toward(w, k.dip, 2));
-      return go(toward(w, k.dip, 2));
-    }
-    if (p.y + p.h > 240 && p.onGround) {
-      m.hold = 16;
+    if (k.big.riding(w)) return go(k.big.state === 'down' ? 'R' : '');
+    if (p.onGround && p.y + p.h <= px(12) && p.cx > px(k.D)) return go(toward(w, d.x + 8, 1) || 'R');
+    // up the block, then on to the figure's head
+    if (p.onGround && p.y + p.h === 240 && p.cx > px(k.D - 15) + 4) {
+      m.hold = 12;
       return { move: 'R', jump: true };
     }
-    return go(toward(w, d.x + 8, 1) || 'R');
+    if (p.onGround && p.y + p.h === px(13) && p.cx > px(k.D - 13) + 4) {
+      m.hold = 10;
+      return { move: 'R', jump: true };
+    }
+    if (!p.onGround) return go(toward(w, k.big.x + 20, 2));
+    return go('R');
   },
+
   'ccu-thonga'(w, _m, d) {
     const t = w.flags.tin2 as Tin;
     const p = w.player;

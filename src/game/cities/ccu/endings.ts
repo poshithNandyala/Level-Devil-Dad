@@ -11,7 +11,7 @@ import { Customer, Muck, Stack, Stall } from './books';
 import { Paint } from '../../levels/endkit';
 import { ChaiBoard, Road } from './porters';
 import { Tin } from './muri';
-import { BigFigure } from './kumartuli';
+import { BigFigure, Ghat } from './kumartuli';
 import { Adda, House, ROK, TeaSeller } from './adda';
 import { ClothPanel, Decorator, Stakes } from './pandal';
 import { person } from '../../levels/endkit';
@@ -220,33 +220,32 @@ export const endings: Record<CcuEndingKind, Ending> = {
       );
     },
   },
-  // ================================================================ CCU-05: the big figure carried out
-  /** The door is hidden behind the lane's biggest figure, and it's nearly done. When the paint reaches its
-   *  crown, the men carry it out down the lane at a man's height: get down on the ghat step and let it pass
-   *  over you, then the door is there. */
+  // ================================================================ CCU-05: ride the finished figure out
+  /** The door is up on the ghat's top landing across the mud, out of reach. The lane's biggest figure is
+   *  nearly painted: stand on it, and when the paint reaches its crown the men carry it out, over the mud
+   *  and along the landing, with you on top. Step off at the door. */
   'ccu-murti': {
-    space: 16,
-    advice: 'The door is hidden behind the biggest figure, nearly done. When the paint reaches its crown they carry it out down the lane at a man’s height: get down on the ghat step in front of it and let it go over you. Then the door is there.',
+    space: 18,
+    after: 10,
+    advice: 'The door is up on the ghat’s top landing, across the mud, out of reach. Climb on the big figure that’s nearly painted and stay on it: when the paint reaches its crown they carry it out over the mud, with you on top. Step off on to the landing.',
     paint: (g, D) => {
-      g.fill(D - 10, D - 8, 15, 16, '.');
+      g.pit(D - 9, D - 1);
+      g.fill(D, D + 9, 12, 14, '#');
+      g.put(D + 3, 14, '#');
+      g.put(D + 3, 11, 'E');
+      g.fill(D - 14, D - 13, 13, 14, '#');
     },
     build(w, d) {
-      const D = Math.round(d.x / 16);
-      const big = w.add(new BigFigure(px(D - 2), 0.33));
-      w.flags.bigStop = px(D - 34);
-      w.flags.big = { big, dip: px(D - 9) + 8, D };
+      const D = Math.round(d.x / 16) - 3;
+      w.add(new Ghat(px(D - 9), px(D)));
+      const big = w.add(new BigFigure(px(D - 12), 0.18));
+      big.stopX = px(D - 1.5);
+      w.flags.big = { big, D };
       w.flags.twist = 'wait';
-      d.hidden = true;
       w.when(
-        (w2) => w2.player.cx > px(D - 14),
+        (w2) => w2.player.cx > px(D - 16),
         () => {
           big.state = 'paint';
-        },
-      );
-      w.when(
-        () => big.state === 'gone' || big.x < px(D - 4),
-        () => {
-          d.hidden = false;
         },
       );
     },

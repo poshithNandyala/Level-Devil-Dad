@@ -171,25 +171,26 @@ export class Ghat extends Entity {
   }
 }
 
-/** a finished big figure in front of the door: carried out over the lane at a man's height when done */
+/** the lane's biggest figure, nearly painted: stand on its head; when the paint reaches the crown four men
+ *  carry it out (to the right) and set it down at `stopX`, whoever is on top coming along */
 export class BigFigure extends Entity {
-  paint = 0;
+  paint = 0.55;
   x: number;
-  state: 'wait' | 'paint' | 'carry' | 'gone' = 'wait';
-  hazard: Hazard;
+  state: 'wait' | 'paint' | 'carry' | 'down' = 'wait';
+  solid: Solid;
+  stopX = Infinity;
   constructor(
     x: number,
-    readonly rate = 0.3,
+    readonly rate = 0.2,
   ) {
     super();
     this.layer = 3;
     this.x = x;
-    const self = this;
-    this.hazard = {
-      active: true,
-      cause: 'ccu-murti2',
-      hits: (hx, hy, hw, hh) => self.state === 'carry' && hx < self.x + 40 && hx + hw > self.x && hy < FLOOR - 2 && hy + hh > FLOOR - 70,
-    };
+    this.solid = new Solid(x, FLOOR - 64, 40, 64);
+    this.solid.velX = 0;
+  }
+  riding(w: World) {
+    return w.player.onGround && w.player.isRiding(this.solid);
   }
   update(w: World) {
     if (this.state === 'paint') {
@@ -200,41 +201,50 @@ export class BigFigure extends Entity {
         w.sfx('creak', this.x, FLOOR - 40);
       }
     } else if (this.state === 'carry') {
-      this.x -= 70 * DT;
-      if (this.x < -80 || this.x < w.flags.bigStop) {
-        this.state = 'gone';
-        w.flags.twist = 'gone';
+      const v = 45;
+      this.solid.velX = v;
+      this.solid.moveBy(w, v * DT, 0);
+      this.x = this.solid.x;
+      if (this.x >= this.stopX) {
+        this.state = 'down';
+        this.solid.velX = 0;
+        w.flags.twist = 'down';
       }
     }
   }
   draw(ctx: CanvasRenderingContext2D) {
-    if (this.state === 'gone') return;
-    const x = this.x,
-      lift = this.state === 'carry' ? 4 : 0;
-    const top = FLOOR - 74 - lift;
+    const x = this.x;
+    const top = this.solid.y;
     ctx.fillStyle = '#8C7A6B';
-    ctx.fillRect(x + 6, top + 12, 28, 58);
+    ctx.fillRect(x + 6, top + 14, 28, 50);
     ctx.beginPath();
     ctx.arc(x + 20, top + 8, 8, 0, Math.PI * 2);
     ctx.fill();
-    const ph = 70 * this.paint;
+    ctx.fillRect(x + 4, top, 32, 3);
+    const ph = 64 * this.paint;
     ctx.save();
     ctx.beginPath();
-    ctx.rect(x, FLOOR - 4 - lift - ph, 40, ph);
+    ctx.rect(x, top + 64 - ph, 40, ph);
     ctx.clip();
     ctx.fillStyle = '#1D5C96';
-    ctx.fillRect(x + 6, top + 12, 28, 58);
+    ctx.fillRect(x + 6, top + 14, 28, 50);
     ctx.fillStyle = '#F2C14E';
     ctx.beginPath();
     ctx.arc(x + 20, top + 8, 8, 0, Math.PI * 2);
     ctx.fill();
+    ctx.fillRect(x + 4, top, 32, 3);
     ctx.restore();
+    ctx.strokeStyle = '#3B2A1E';
+    ctx.lineWidth = 1.2;
+    ctx.strokeRect(x + 6.5, top + 14.5, 27, 49);
+    ctx.fillStyle = '#FFF8E1';
+    ctx.fillRect(x + 2, top + 64 - ph - 1, 36, 1.5);
+    // the bamboo stretcher and its carriers
+    ctx.fillStyle = '#8B6B3E';
+    ctx.fillRect(x - 8, top + 60, 56, 3);
     if (this.state === 'carry') {
-      person(ctx, x - 2, FLOOR - 24, 24, '#B23A2E');
-      person(ctx, x + 42, FLOOR - 24, 24, '#B23A2E');
-    } else {
-      ctx.fillStyle = '#8B6B3E';
-      ctx.fillRect(x - 2, FLOOR - 4, 44, 4);
-    }
+      person(ctx, x - 6, FLOOR - 24, 24, '#B23A2E');
+      person(ctx, x + 46, FLOOR - 24, 24, '#B23A2E');
+    } else if (this.state !== 'down') person(ctx, x + 50, FLOOR - 20, 20, '#6D4C41', '#9C6B48', { arms: 8 });
   }
 }

@@ -20,5 +20,4 @@ export const causeLines: Record<string, string[]> = {
   'ccu-murti': ['The paint reached the top, and they carried the figure out, with you on it.', 'Stand only on figures painted below the waist.'],
   'ccu-phata': ['You jumped down on to dry clay, and its top cracked away.', 'Walk off on to the pale ones. Never jump down on them.'],
   'ccu-ganga': ['Into the ghat’s mud.', 'Figure to figure: they’re close enough to hop.'],
-  'ccu-murti2': ['They carried the big figure out right through you.', 'Get down on the ghat step and let it pass over.'],
 };
