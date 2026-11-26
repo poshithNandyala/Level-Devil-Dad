@@ -9,7 +9,7 @@ import { lock, npc, tara } from '../../levels/endkit';
 import { Grid } from '../../levels/grid';
 import { collectible, door, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
-import { FL, Rig, box, local, px } from './entities';
+import { FL, Rig, box, gullyBack, local, px } from './entities';
 import { taraScript } from './common';
 
 export const BAG = { w: 32, h: 14, top: FL - 32, step: 40, tear: 0.04 };
@@ -20,6 +20,7 @@ export interface Bag extends Rig {
 
 /** water in the jhora: whoever falls in is done */
 function jhora(w: World, c0: number, c1: number, key: string) {
+  gullyBack(w, px(c0), px(c1 + 1), FL - 90);
   w.add(
     new Rig(px(c0), FL + 8, px(c1 - c0 + 1), 40, {
       layer: 3,

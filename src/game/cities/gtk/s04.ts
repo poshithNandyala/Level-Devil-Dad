@@ -9,7 +9,7 @@ import { lock, tara, text } from '../../levels/endkit';
 import { Grid } from '../../levels/grid';
 import { collectible, door, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
-import { FL, Rig, box, decor, px } from './entities';
+import { FL, Rig, box, decor, gullyBack, px } from './entities';
 import { taraScript } from './common';
 
 /** floor surfaces (tile rows): G at the top road, then a floor every three rows down the slope */
@@ -49,6 +49,7 @@ export function house(g: Grid, c: number, doors: ('none' | 'exit' | 'drop' | 'wa
 
 /** the jhora at the foot of the gully, the stair drawings and the shop shutter, for the house at column c */
 export function houseDecor(w: World, c: number, doors: ('none' | 'exit' | 'drop' | 'water')[], key: string) {
+  gullyBack(w, px(c + 13), px(c + 16), 0, px(18));
   // water at the bottom of the gully: the basement door opens straight on to it
   w.add(
     new Rig(px(c + 13), px(15) + 6, px(3), px(3), {

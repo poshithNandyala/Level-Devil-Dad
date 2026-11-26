@@ -118,3 +118,16 @@ export function local(ctx: CanvasRenderingContext2D, x: number, y: number, h: nu
   ctx.fill();
   if (o.cap) box(ctx, x - h * 0.15, y + h * 0.02, h * 0.3, h * 0.08, o.cap);
 }
+
+/** the dark stone walls of a jhora or gully behind a drop, so whatever hangs or rides over it reads clearly */
+export function gullyBack(w: World, x0: number, x1: number, top: number, bottom = FL + 48) {
+  return decor(w, -3, (ctx) => {
+    const g = ctx.createLinearGradient(0, top, 0, bottom);
+    g.addColorStop(0, 'rgba(62,72,70,0.0)');
+    g.addColorStop(0.25, 'rgba(62,72,70,0.85)');
+    g.addColorStop(1, 'rgba(34,42,40,0.95)');
+    ctx.fillStyle = g;
+    ctx.fillRect(x0, top, x1 - x0, bottom - top);
+    for (let x = x0 + 6; x < x1 - 4; x += 22) for (let y = top + 24; y < bottom; y += 14) box(ctx, x + ((y >> 2) % 9), y, 12, 1, 'rgba(255,255,255,0.08)');
+  });
+}

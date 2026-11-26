@@ -10,7 +10,7 @@ import { npc, tara } from '../../levels/endkit';
 import { Grid } from '../../levels/grid';
 import { collectible, door, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
-import { FL, Rig, box, cyc, decor, px } from './entities';
+import { FL, Rig, box, cyc, decor, gullyBack, px } from './entities';
 import { taraScript } from './common';
 
 export const CAB = { w: 40, h: 26 };
@@ -131,6 +131,7 @@ export function room(): LevelDef {
         box(ctx, px(0), px(12) - 28, 4, 28, '#5E5A50');
         box(ctx, px(27) - 4, px(6) - 34, px(5) + 4, 6, '#5E5A50');
       });
+      gullyBack(w, px(5), px(27), px(7));
       w.add(new Rig(px(0), FL + 20, px(32), 40, { cause: 'gtk-khaai', inset: 0 }));
       sign(w, 0.4, 6.8, 4.2, 'ROPEWAY', 'station', null, 'deorali');
       rival(w, 2, 12, 1, taraScript(8));
@@ -170,6 +171,7 @@ export const act: Act = {
     stations(w, start, [c.X(17), px(8)], [c.X(29), px(12)], c.X(17));
     cabin(w, L.a, start[0], start[1], mid[0], mid[1], '#3E8E41', 'gtk8ac');
     cabin(w, L.b, end[0], end[1], midB[0], midB[1], '#8E6C8A', 'gtk8ac');
+    gullyBack(w, c.X(5), c.X(29), px(5));
     w.add(new Rig(c.X(0), FL + 20, px(34), 40, { cause: 'gtk-khaai', inset: 0 }));
     sign(w, x + 0.4, 1.4, 3.6, 'TASHI', 'station', null, 'second span');
   },
