@@ -6,8 +6,9 @@ import { pool } from '../../levels/acts';
 import { sign } from '../../levels/kit';
 import type { Ending } from '../../levels/endkit';
 import { Bus } from './entities';
+import { Customer, Muck, Stack, Stall } from './books';
 
-export type CcuEndingKind = 'ccu-stop';
+export type CcuEndingKind = 'ccu-stop' | 'ccu-set';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<CcuEndingKind, true> {}
@@ -60,6 +61,39 @@ export const endings: Record<CcuEndingKind, Ending> = {
       );
       void lock;
       void npc;
+    },
+  },
+  // ================================================================ CCU-04: the whole set
+  /** Three one-book stacks across the last drain, and a customer who wants the whole set: he points at all
+   *  three, and the seller pulls them one after another, then re-shelves them. Rush on and you're in the
+   *  drain; wait at the edge till he's done, and walk across his returned books. */
+  'ccu-set': {
+    space: 24,
+    advice: 'The last drain has three one-book stacks across it, and the customer by the door wants the whole set: he points at all three. Wait at the edge while the seller pulls them and shelves them back, then hop across.',
+    paint: (g, D) => {
+      g.pit(D - 17, D - 3);
+    },
+    build(w, d) {
+      const D = Math.round(d.x / 16);
+      w.add(new Stall(px(D - 17), px(D - 2), 'FULL SET'));
+      w.add(new Muck(px(D - 17), px(D - 2), (w2) => (w2.flags.yanked ? 'ccu-boi' : 'ccu-kada')));
+      const st = [D - 15, D - 10, D - 5].map((c) => w.add(new Stack(px(c), px(3), 1, undefined, 2.2)));
+      const c = w.add(new Customer(px(D - 10), '#5C6BC0'));
+      w.flags.ccuSet = { st, edge: px(D - 17), D };
+      w.flags.twist = 'set';
+      w.when(
+        (w2) => w2.player.cx > px(D - 21),
+        (w2) => {
+          st.forEach((s, i) => w2.after(0.2 + i * 0.35, () => c.ask(w2, s, 1, 1.1)));
+        },
+      );
+      w.when(
+        (w2) => st.every((s) => s.pulls > 0 && s.n === 1),
+        (w2) => {
+          w2.flags.twist = 'back';
+          c.target = null;
+        },
+      );
     },
   },
 };
