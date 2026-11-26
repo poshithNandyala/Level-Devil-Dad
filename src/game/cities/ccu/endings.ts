@@ -11,8 +11,9 @@ import { Customer, Muck, Stack, Stall } from './books';
 import { Paint } from '../../levels/endkit';
 import { ChaiBoard, Road } from './porters';
 import { Tin } from './muri';
+import { BigFigure } from './kumartuli';
 
-export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn' | 'ccu-arch' | 'ccu-bhanr' | 'ccu-dhak' | 'ccu-wall' | 'ccu-thonga';
+export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn' | 'ccu-arch' | 'ccu-bhanr' | 'ccu-dhak' | 'ccu-wall' | 'ccu-thonga' | 'ccu-murti';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<CcuEndingKind, true> {}
@@ -341,6 +342,37 @@ export const endings: Record<CcuEndingKind, Ending> = {
         (w2) => w2.player.cx > px(D - 14),
         (w2) => {
           if (tin.t0 < 0) tin.t0 = w2.tick + 40;
+        },
+      );
+    },
+  },
+  // ================================================================ CCU-05: the big figure carried out
+  /** The door is hidden behind the lane's biggest figure, and it's nearly done. When the paint reaches its
+   *  crown, the men carry it out down the lane at a man's height: get down on the ghat step and let it pass
+   *  over you, then the door is there. */
+  'ccu-murti': {
+    space: 16,
+    advice: 'The door is hidden behind the biggest figure, nearly done. When the paint reaches its crown they carry it out down the lane at a man’s height: get down on the ghat step in front of it and let it go over you. Then the door is there.',
+    paint: (g, D) => {
+      g.fill(D - 10, D - 8, 15, 16, '.');
+    },
+    build(w, d) {
+      const D = Math.round(d.x / 16);
+      const big = w.add(new BigFigure(px(D - 2), 0.33));
+      w.flags.bigStop = px(D - 34);
+      w.flags.big = { big, dip: px(D - 9) + 8, D };
+      w.flags.twist = 'wait';
+      d.hidden = true;
+      w.when(
+        (w2) => w2.player.cx > px(D - 14),
+        () => {
+          big.state = 'paint';
+        },
+      );
+      w.when(
+        () => big.state === 'gone' || big.x < px(D - 4),
+        () => {
+          d.hidden = false;
         },
       );
     },

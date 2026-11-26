@@ -17,4 +17,8 @@ export const causeLines: Record<string, string[]> = {
   'ccu-bansh': ['On to the cut bamboo stakes. The cloth went up where you were jumping.', 'Watch the decorator with the roll: jump on to the top of his panel.'],
   'ccu-muri': ['He shook the tin, and you went under the muri.', 'When he lifts the tin, be on a peanut.'],
   'ccu-lonka': ['A green chilli came up right where you landed.', 'From the second shake on, hop to the next peanut as he shakes.'],
+  'ccu-murti': ['The paint reached the top, and they carried the figure out, with you on it.', 'Stand only on figures painted below the waist.'],
+  'ccu-phata': ['You jumped down on to dry clay, and its top cracked away.', 'Walk off on to the pale ones. Never jump down on them.'],
+  'ccu-ganga': ['Into the ghat’s mud.', 'Figure to figure: they’re close enough to hop.'],
+  'ccu-murti2': ['They carried the big figure out right through you.', 'Get down on the ghat step and let it pass over.'],
 };

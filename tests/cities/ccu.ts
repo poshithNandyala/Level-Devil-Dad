@@ -11,6 +11,7 @@ import type { Stack } from '../../src/game/cities/ccu/books';
 import type { Tram } from '../../src/game/cities/ccu/tram';
 import { BookPorter, Porter } from '../../src/game/cities/ccu/porters';
 import type { Tin } from '../../src/game/cities/ccu/muri';
+import { Figure, type BigFigure } from '../../src/game/cities/ccu/kumartuli';
 import type { Wash } from '../../src/game/cities/ccu/adda';
 import type { ClothPanel } from '../../src/game/cities/ccu/pandal';
 
@@ -331,6 +332,31 @@ function crossTin(key: string, toX: number, opts: { stay?: boolean } = {}): Step
   };
 }
 
+
+// ------------------------------------------------------------------ CCU-05: Kumartuli
+const figAt = (w: World, c: number) => w.entities.find((e) => e instanceof Figure && Math.abs((e as Figure).o.x - px(c)) < 2) as Figure;
+/** walk off the edge of the figure you're on, down on to the (dry) one beside it */
+const walkOnto = (c: number, note: string): Step => ({ hold: 'R', until: (w) => figAt(w, c).riding(w) && w.player.cx > px(c) + 8, max: 120, note });
+function kumartuliRoute(jumpDry = false, waitOnHorse = 0): Step[] {
+  return [
+    walk(2.6),
+    steerHop(px(6), 12, 'on to the first figure'),
+    steerHop(px(8.8), 12, 'up on the horse (painted past the waist: don’t stay)'),
+    ...(waitOnHorse ? [{ hold: '' as const, ticks: waitOnHorse, note: 'rest on the horse' }] : []),
+    jumpDry ? steerHop(px(10.8), 10, 'a hop down on to the pale one') : walkOnto(10, 'walk off on to the dry pale one'),
+    steerHop(px(13.8), 12, 'up on the next'),
+    { hold: 'R', until: X(14.2), max: 120 },
+    steerHop(px(17.8), 14, 'up on the tall horse, and straight off it'),
+    { hold: 'R', until: X(18.2), max: 120 },
+    steerHop(px(20.6), 10, 'down on to the next'),
+    walkOnto(22, 'walk off on to the dry one'),
+    { hold: 'R', until: X(22.8), max: 120 },
+    steerHop(px(26.8), 12, 'across to the last'),
+    { hold: 'R', until: X(26.8), max: 120 },
+    steerHop(px(30.8), 10, 'down on to the lane'),
+  ];
+}
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['CCU-01'] = tourRun('onto');
   S['CCU-02'] = [...ride(px(25), px(28.5), 'past the first “aaste” (over the drain), off on the second'), walk(30)];
@@ -353,6 +379,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('CCU-10', 0, []);
   S['CCU-03'] = [crossTin('tin', px(27)), walk(30)];
   lengthen('CCU-03', 0, []);
+  S['CCU-05'] = kumartuliRoute();
+  lengthen('CCU-05', 0, []);
   S['CCU-04'] = boiRoute(true);
   lengthen('CCU-04', 0, []);
 }
@@ -376,6 +404,7 @@ function boiRoute(skip: boolean, wait = 0): Step[] {
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-01': { steps: tourRun('long'), cause: 'ccu-rail' },
   'CCU-04': { steps: boiRoute(false), cause: 'ccu-boi' },
+  'CCU-05': { steps: [...kumartuliRoute(true), { hold: '', until: done, max: 300 }], cause: 'ccu-phata' },
   'CCU-03': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk across the muri' }], cause: 'ccu-muri' },
   'CCU-10': { steps: [finaleRoom()[0], finaleRoom()[1], { hold: '', until: done, max: 2400, note: 'ride the single bundle across' }], cause: 'ccu-boi' },
   'CCU-09': { steps: [...pandalStart(), steerHop(px(14), 10, 'on to the third bamboo'), { hold: '', until: done, max: 300 }], cause: 'ccu-bansh' },
@@ -391,6 +420,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-04': { steps: boiRoute(true, 300), cause: 'ccu-boi' },
+  'CCU-05': { steps: kumartuliRoute(false, 600), cause: 'ccu-murti' },
   'CCU-03': { steps: [{ ...crossTin('tin', px(27), { stay: true }), until: done }], cause: 'ccu-lonka' },
   'CCU-09': { steps: pandalRoute(200), cause: 'crushed' },
   'CCU-07': { steps: [howrahRoom()[0], howrahRoom()[1], hopUp((w) => porters(w).find((p) => p.o.v < 0), 'jump for the first load that comes by'), { hold: '', until: done, max: 900 }], cause: 'ccu-bojha' },
@@ -416,6 +446,17 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu05-ghat': (x) => [
+    steerHop(px(x + 1.8), 12, 'up on the first'),
+    steerHop(px(x + 4.8), 12, 'the next, up'),
+    walkOnto(x + 6, 'walk off on to the dry one'),
+    steerHop(px(x + 9.8), 12, 'up on the next'),
+    walkOnto(x + 11, 'walk off on to the dry one'),
+    steerHop(px(x + 14.8), 12, 'up on the next'),
+    steerHop(px(x + 18.8), 10, 'down on to the last'),
+    steerHop(px(x + 22.8), 10, 'down on to the lane'),
+    walk(x + 25.5),
+  ],
   'ccu10-bus': (x) => [
     boardAtStop((w) => w.flags.bus10),
     ...ride(px(x + 25), px(x + 28.5), 'over the drain, and off on his one “aaste”'),
@@ -451,6 +492,20 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 /** a policy for each door ending, by kind */
 const SETHOP = hopGaps();
 const endingPolicies: Record<string, Policy> = {
+  'ccu-murti'(w, m, d) {
+    const k = w.flags.big as { big: BigFigure; dip: number; D: number };
+    const p = w.player;
+    if (m.hold > 0) return { move: 'R', jump: true };
+    if (w.flags.twist !== 'gone' && w.flags.twist !== 'carry' || k.big.state !== 'gone' && k.big.x > p.cx - 50) {
+      if (p.y + p.h > 240) return go(toward(w, k.dip, 2));
+      return go(toward(w, k.dip, 2));
+    }
+    if (p.y + p.h > 240 && p.onGround) {
+      m.hold = 16;
+      return { move: 'R', jump: true };
+    }
+    return go(toward(w, d.x + 8, 1) || 'R');
+  },
   'ccu-thonga'(w, _m, d) {
     const t = w.flags.tin2 as Tin;
     const p = w.player;
@@ -533,5 +588,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['CCU-02', 'CCU-03', 'CCU-04', 'CCU-06', 'CCU-07', 'CCU-08', 'CCU-09', 'CCU-10'],
+  fair: ['CCU-02', 'CCU-03', 'CCU-04', 'CCU-05', 'CCU-06', 'CCU-07', 'CCU-08', 'CCU-09', 'CCU-10'],
 };

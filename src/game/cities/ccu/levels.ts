@@ -17,31 +17,12 @@ import { BookPorter, ChaiBoard, Girders, Pointer, Porter, Road, SHORT, TALL } fr
 import { Adda, House, TeaSeller, Wash } from './adda';
 import { ClothPanel, Decorator, Skeleton, Stakes } from './pandal';
 import { Tin } from './muri';
+import { Figure, Ghat } from './kumartuli';
 import type { Act } from '../../levels/acts';
 
 const tara = (n: number, beaten = 0) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[beaten % L.beaten.length] });
 /** the allocation slot, plus the door ending's idea key (the uniqueness test reads `ending`) */
 const meta = (family: string, betrayals: string[], ending: string): StageMeta => ({ family, betrayals, ending }) as StageMeta;
-
-/** placeholder room for a stage still to build */
-function todoRoom(n: number): LevelDef {
-  return {
-    id: `CCU-${String(n).padStart(2, '0')}`,
-    city: 'CCU',
-    index: n,
-    name: `Stage ${n}`,
-    nameEn: 'Stage',
-    tagline: 'Stage.',
-    hint: 'Walk.',
-    par: 30,
-    map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').rows(),
-    build(w: World) {
-      door(w);
-      rival(w, 3, 15, 1, tara(n - 2));
-      collectible(w, 'ccu-doi', 16, 12);
-    },
-  };
-}
 
 // ================================================================== CCU-02: Aaste! (the bus)
 function aasteRoom(): LevelDef {
@@ -484,6 +465,78 @@ function muriRoom(): LevelDef {
   };
 }
 
+
+// ================================================================== CCU-05: Kumartuli (the potters' lane)
+type Fig = [number, number, number, number, Figure['o']['look']?];
+/** figures from columns: [col, height tiles, paint at start, paint rate (0: dry clay)] ; all start painting when Dad passes `go` */
+function figures(w: World, list: Fig[], go: number) {
+  const fs = list.map(([c, h, paint, rate, look]) => w.add(new Figure({ x: px(c), h, paint, rate, look })));
+  onPass(w, go, () => fs.forEach((f) => (f.started = true)));
+  (w.flags.figures ??= []).push(...fs);
+  return fs;
+}
+function kumartuliRoom(): LevelDef {
+  return {
+    id: 'CCU-05',
+    city: 'CCU',
+    index: 5,
+    name: 'Kumartuli',
+    nameEn: 'The potters’ lane',
+    tagline: 'On the Hooghly’s bank, Kumartuli’s potters shape clay figures by the hundred, paint them from the feet up, and carry each one out the moment it’s done.',
+    hint: 'The lane is over the ghat’s mud: go figure to figure. Each one is being painted from the feet up, and when the paint reaches the top they carry it out, with you on it. Stand only on figures the paint hasn’t passed the waist of (the little mark), and move on quickly from the others. The pale ones aren’t painted yet: they’re dry, and their top cracks under a landing from a height. Walk off on to a pale one; never jump down on to it.',
+    par: 18,
+    map: Grid.ground(15).pit(4, 29).put(1, 14, '@').rows(),
+    build(w: World) {
+      w.add(new Ghat(px(4), px(30)));
+      figures(
+        w,
+        [
+          [5, 2, 0.1, 0.05, 'man'],
+          [8, 3, 0.55, 0.12, 'horse'],
+          [10, 2, 0, 0, 'woman'],
+          [13, 3, 0.3, 0.08, 'man'],
+          [17, 4, 0.62, 0.14, 'horse'],
+          [20, 3, 0.15, 0.08, 'woman'],
+          [22, 2, 0, 0, 'man'],
+          [26, 2, 0, 0.06, 'horse'],
+        ],
+        px(2),
+      );
+      sign(w, 0.3, 10.4, 3.6, 'KUMARTULI', 'green', null, 'potters');
+      rival(w, 2, 15, 1, tara(3));
+      onPass(w, px(1.5), (w2) => w2.guide('Ei je, shunun! | Excuse me, listen!', (w3) => w3.player.cx < px(5)));
+      collectible(w, 'ccu-roll', 15.5, 9.4);
+    },
+  };
+}
+
+/** CCU-05 act: the lane where they're finishing in order, one after another behind you */
+const ghat: Act = {
+  id: 'ccu05-ghat',
+  w: 26,
+  advice: 'Here they finish one after another, from the near end, and carry each one out as you go: keep moving, never wait, and still walk off (never jump) on to the pale dry ones.',
+  paint: (g, c) => {
+    g.pit(c.x, c.x + 21);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(new Ghat(c.X(0), c.X(22)));
+    figures(
+      w,
+      [
+        [x + 1, 2, 0.45, 0.14, 'horse'],
+        [x + 4, 3, 0.35, 0.14, 'man'],
+        [x + 6, 2, 0, 0, 'woman'],
+        [x + 9, 3, 0.3, 0.13, 'horse'],
+        [x + 11, 2, 0, 0, 'man'],
+        [x + 14, 3, 0.2, 0.13, 'woman'],
+        [x + 18, 2, 0.15, 0.13, 'horse'],
+      ],
+      c.X(0),
+    );
+  },
+};
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -534,7 +587,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: aasteRoom(), par: 30, twist: 'ccu-stop', shape: 'short', meta: meta('exit-moving-vehicle-on-shout', ['exit-facing-forward'], 'ccu-bus-crawls-for-whoever-waits') }),
   longStage({ base: muriRoom(), par: 30, twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
   longStage({ base: boiRoom(), par: 26, twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
-  longStage({ base: todoRoom(5), par: 30, shape: 'long' }),
+  longStage({ base: kumartuliRoom(), par: 50, acts: [ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-finished-figure-carried-over-the-lane') }),
   longStage({ base: poleRoom(), par: 60, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 90, acts: [girder, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 40, acts: [rok], twist: 'ccu-bhanr', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-door-opens-for-a-cup-of-tea') }),
