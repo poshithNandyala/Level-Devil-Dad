@@ -39,6 +39,124 @@ function turf(w: World, c0: number, c1: number) {
   );
 }
 
+
+/** the keeper and his pads on a bank at x0 (px), the flicker at ballFrom; he dives `travel` px at the flick,
+ *  and the save rebounds off the boards (px) back to his front pad */
+export function keeperOn(w: World, o: { x0: number; travel: number; boards: number; ballFrom: number; ballY?: number; drop?: boolean; feet?: number }, key: string) {
+  const st = { t0: -1, flick: -1, save: -1, bx: 0, by: 0, bvx: 0, bvy: 0, ball: 'none' as 'none' | 'flick' | 'rebound' | 'roll' | 'back' | 'gone', kx: o.x0 };
+  (w.flags[key] as unknown) = st;
+  const keeper = w.add(
+    new Rig(o.x0, FL - 10, K.w, 10, {
+      solid: true,
+      layer: 3,
+      tick: (r, w2) => {
+        if (st.t0 < 0 && r.rides(w2)) st.t0 = w2.tick;
+        let x = o.x0;
+        if (st.t0 >= 0) {
+          const t = since(w2, st.t0) - K.wait;
+          if (t > 0 && st.flick < 0) st.flick = w2.tick;
+          if (t > 0) {
+            const a = Math.min(1, t / K.dive);
+            const b = t > K.dive + K.down ? Math.min(1, (t - K.dive - K.down) / K.back) : 0;
+            x = o.x0 + o.travel * (a - b);
+            if (t > K.dive + K.down + K.back) {
+              st.t0 = -1;
+              st.flick = -1;
+              st.ball = 'none';
+            }
+          }
+        }
+        r.moveTo(w2, x, FL - 10);
+        st.kx = r.x;
+      },
+      paint: (ctx, r, w2) => {
+        const diving = st.t0 >= 0 && since(w2, st.t0) > K.wait;
+        // the body: a keeper in a yellow kit, lying flat when he dives; his two pads at each end
+        if (diving) {
+          box(ctx, r.x + 8, r.y - 4, r.w - 16, 8, '#F4D35E');
+          box(ctx, r.x + r.w - 14, r.y - 9, 8, 7, '#B07A4E');
+          box(ctx, r.x + r.w - 15, r.y - 11, 10, 4, '#1E2B3A');
+        } else {
+          folk(ctx, r.x + r.w / 2, r.y, 28, '#F4D35E', { skirt: '#1E2B3A' });
+          box(ctx, r.x + r.w / 2 - 6, r.y - 33, 12, 6, '#1E2B3A');
+        }
+        for (const dx of [0, r.w - 16]) {
+          box(ctx, r.x + dx, r.y, 16, 10, '#E9EEF5');
+          box(ctx, r.x + dx + 2, r.y + 2, 12, 2, '#2A9D8F');
+          box(ctx, r.x + dx + 2, r.y + 6, 12, 2, '#2A9D8F');
+        }
+      },
+    }),
+  );
+  // the flicker on the far side, and the ball
+  const fx = o.ballFrom;
+  w.add(
+    new Rig(fx, FL - 22, BALL, BALL, {
+      cause: 'bbi-ball',
+      inset: 1,
+      layer: 4,
+      live: () => st.ball !== 'none' && st.ball !== 'gone',
+      tick: (r, w2) => {
+        if (st.flick >= 0 && st.ball === 'none') {
+          st.ball = 'flick';
+          st.bx = fx;
+          st.by = o.ballY ?? FL - 22;
+        }
+        if (st.ball === 'flick') {
+          st.bx -= K.ballV / 120;
+          if (st.bx <= keeper.x + keeper.w - 18) {
+            st.ball = 'rebound';
+            st.save = w2.tick;
+            st.bvx = o.drop ? 0 : 220;
+            st.bvy = o.drop ? 60 : -200;
+            w2.emit('shake', st.bx, st.by, { amount: 2 });
+          }
+        } else if (st.ball === 'rebound') {
+          st.bx += st.bvx / 120;
+          st.bvy += 900 / 120;
+          st.by += st.bvy / 120;
+          if (o.drop && st.by >= FL + 30) st.ball = 'gone';
+          else if (!o.drop && st.by >= FL - BALL) {
+            st.by = FL - BALL;
+            st.ball = 'roll';
+          }
+        } else if (st.ball === 'roll') {
+          // on along the turf to the boards...
+          st.bx += 220 / 120;
+          if (st.bx >= o.boards - BALL) st.ball = 'back';
+        } else if (st.ball === 'back') {
+          // ...and back off them, all the way to the keeper's front pad
+          st.bx -= 180 / 120;
+          if (st.bx <= keeper.x + keeper.w) st.ball = 'gone';
+        }
+        r.x = st.bx || fx;
+        r.y = st.by || FL - 22;
+        r.hazard!.cause = st.ball === 'flick' ? 'bbi-ball' : 'bbi-rebound';
+      },
+      paint: (ctx, r) => {
+        if (st.ball !== 'none' && st.ball !== 'gone') ballArt(ctx, r.x, r.y);
+      },
+    }),
+  );
+  w.add(
+    new Rig(0, 0, 0, 0, {
+      layer: 3,
+      paint: (ctx, _r, w2) => {
+        const swung = st.flick >= 0 && since(w2, st.flick) < 0.4;
+        folk(ctx, fx + 16, o.feet ?? FL, 26, '#E63946', { skirt: '#F5F5F5', face: -1, arm: swung ? -0.9 : 0.6 });
+        ctx.strokeStyle = '#6D4C2F';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(fx + 12, (o.feet ?? FL) - 16);
+        ctx.lineTo(fx + (swung ? 0 : 6), (o.feet ?? FL) - 2);
+        ctx.stroke();
+        if (st.ball === 'none') ballArt(ctx, fx, (o.feet ?? FL) - BALL);
+      },
+    }),
+  );
+  return { st, keeper };
+}
+
 export function room(): LevelDef {
   return {
     id: 'BBI-02',
@@ -54,116 +172,7 @@ export function room(): LevelDef {
       door(w);
       turf(w, 0, 31);
       channel(w, K.gap[0], K.gap[1], 'bbi-turf', 'water');
-      const st = { t0: -1, flick: -1, save: -1, bx: 0, by: 0, bvx: 0, bvy: 0, ball: 'none' as 'none' | 'flick' | 'rebound' | 'roll' | 'back' | 'gone', kx: px(K.c0) };
-      w.flags.bbi2 = st;
-      const keeper = w.add(
-        new Rig(px(K.c0), FL - 10, K.w, 10, {
-          solid: true,
-          layer: 3,
-          tick: (r, w2) => {
-            if (st.t0 < 0 && r.rides(w2)) st.t0 = w2.tick;
-            let x = px(K.c0);
-            if (st.t0 >= 0) {
-              const t = since(w2, st.t0) - K.wait;
-              if (t > 0 && st.flick < 0) st.flick = w2.tick;
-              if (t > 0) {
-                const a = Math.min(1, t / K.dive);
-                const b = t > K.dive + K.down ? Math.min(1, (t - K.dive - K.down) / K.back) : 0;
-                x = px(K.c0) + K.travel * (a - b);
-                if (t > K.dive + K.down + K.back) {
-                  st.t0 = -1;
-                  st.flick = -1;
-                  st.ball = 'none';
-                }
-              }
-            }
-            r.moveTo(w2, x, FL - 10);
-            st.kx = r.x;
-          },
-          paint: (ctx, r, w2) => {
-            const diving = st.t0 >= 0 && since(w2, st.t0) > K.wait;
-            // the body: a keeper in a yellow kit, lying flat when he dives; his two pads at each end
-            if (diving) {
-              box(ctx, r.x + 8, r.y - 4, r.w - 16, 8, '#F4D35E');
-              box(ctx, r.x + r.w - 14, r.y - 9, 8, 7, '#B07A4E');
-              box(ctx, r.x + r.w - 15, r.y - 11, 10, 4, '#1E2B3A');
-            } else {
-              folk(ctx, r.x + r.w / 2, r.y, 28, '#F4D35E', { skirt: '#1E2B3A' });
-              box(ctx, r.x + r.w / 2 - 6, r.y - 33, 12, 6, '#1E2B3A');
-            }
-            for (const dx of [0, r.w - 16]) {
-              box(ctx, r.x + dx, r.y, 16, 10, '#E9EEF5');
-              box(ctx, r.x + dx + 2, r.y + 2, 12, 2, '#2A9D8F');
-              box(ctx, r.x + dx + 2, r.y + 6, 12, 2, '#2A9D8F');
-            }
-          },
-        }),
-      );
-      // the flicker on the far side, and the ball
-      const fx = px(K.ballFrom);
-      w.add(
-        new Rig(fx, FL - 22, BALL, BALL, {
-          cause: 'bbi-ball',
-          inset: 1,
-          layer: 4,
-          live: () => st.ball !== 'none' && st.ball !== 'gone',
-          tick: (r, w2) => {
-            if (st.flick >= 0 && st.ball === 'none') {
-              st.ball = 'flick';
-              st.bx = fx;
-              st.by = FL - 22;
-            }
-            if (st.ball === 'flick') {
-              st.bx -= K.ballV / 120;
-              if (st.bx <= keeper.x + keeper.w - 18) {
-                st.ball = 'rebound';
-                st.save = w2.tick;
-                st.bvx = 220;
-                st.bvy = -200;
-                w2.emit('shake', st.bx, st.by, { amount: 2 });
-              }
-            } else if (st.ball === 'rebound') {
-              st.bx += st.bvx / 120;
-              st.bvy += 900 / 120;
-              st.by += st.bvy / 120;
-              if (st.by >= FL - BALL) {
-                st.by = FL - BALL;
-                st.ball = 'roll';
-              }
-            } else if (st.ball === 'roll') {
-              // on along the turf to the boards...
-              st.bx += 220 / 120;
-              if (st.bx >= px(30) - BALL) st.ball = 'back';
-            } else if (st.ball === 'back') {
-              // ...and back off them, all the way to the keeper's front pad
-              st.bx -= 180 / 120;
-              if (st.bx <= keeper.x + keeper.w) st.ball = 'gone';
-            }
-            r.x = st.bx || fx;
-            r.y = st.by || FL - 22;
-            r.hazard!.cause = st.ball === 'flick' ? 'bbi-ball' : 'bbi-rebound';
-          },
-          paint: (ctx, r) => {
-            if (st.ball !== 'none' && st.ball !== 'gone') ballArt(ctx, r.x, r.y);
-          },
-        }),
-      );
-      w.add(
-        new Rig(0, 0, 0, 0, {
-          layer: 3,
-          paint: (ctx, _r, w2) => {
-            const swung = st.flick >= 0 && since(w2, st.flick) < 0.4;
-            folk(ctx, fx + 16, FL, 26, '#E63946', { skirt: '#F5F5F5', face: -1, arm: swung ? -0.9 : 0.6 });
-            ctx.strokeStyle = '#6D4C2F';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(fx + 12, FL - 16);
-            ctx.lineTo(fx + (swung ? 0 : 6), FL - 2);
-            ctx.stroke();
-            if (st.ball === 'none') ballArt(ctx, fx, FL - BALL);
-          },
-        }),
-      );
+      const { st, keeper } = keeperOn(w, { x0: px(K.c0), travel: K.travel, boards: px(30), ballFrom: px(K.ballFrom) }, 'bbi2');
       sign(w, 21, 10.4, 3.4, 'KALINGA', 'shop', null, 'hockey');
       rival(w, 3, 15, 1, taraScript(2));
       onPass(w, px(8.5) + 24, (w2) => {

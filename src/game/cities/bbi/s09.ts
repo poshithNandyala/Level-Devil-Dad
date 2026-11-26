@@ -64,6 +64,10 @@ export interface ChariotCfg {
   hubY: number;
   /** seconds on the horses before it moves */
   wait: number;
+  /** it moves for anyone standing anywhere on it, not only on the horses */
+  any?: boolean;
+  /** no horses on this one (the finale's plinth) */
+  bare?: boolean;
 }
 export interface ChariotSt {
   started: number;
@@ -98,11 +102,13 @@ export function chariot(w: World, cfg: ChariotCfg, key: string) {
       solid: true,
       layer: 3,
       paint: (ctx, r) => {
+        if (cfg.bare) return;
         horseArt(ctx, r.x, r.y, 15, 20);
         horseArt(ctx, r.x + 16, r.y, 15, 20);
       },
     }),
   );
+  if (cfg.bare) horses.setSolid(false);
   const hub = w.add(
     new Rig(px(cfg.hub), cfg.hubY, 40, 6, {
       solid: true,
@@ -121,7 +127,7 @@ export function chariot(w: World, cfg: ChariotCfg, key: string) {
       layer: -3,
       tick: (_r, w2) => {
         if (st.started < 0) {
-          st.on = horses.rides(w2) ? st.on + 1 : 0;
+          st.on = horses.rides(w2) || (cfg.any && plinth.rides(w2)) ? st.on + 1 : 0;
           if (st.on >= cfg.wait * 120) st.started = w2.tick;
         }
         if (st.started >= 0 && !st.stopped) {
@@ -135,8 +141,9 @@ export function chariot(w: World, cfg: ChariotCfg, key: string) {
             // the slam: whoever rides the chariot is thrown forward against the temple wall
             if (plinth.rides(w2) || horses.rides(w2)) {
               const p = w2.player;
-              p.vx = 230;
-              p.vy = -120;
+              // hard enough to reach the wall from anywhere on the stone
+              p.vx = Math.max(240, (px(cfg.stopAt) - p.x) * 2.6);
+              p.vy = -230;
               p.onGround = false;
               p.coyoteT = 0;
               p.launched = true;
@@ -159,7 +166,7 @@ export function chariot(w: World, cfg: ChariotCfg, key: string) {
 }
 
 /** the temple wall the chariot slams into: carved, with sharp stone relief on its face */
-function templeWall(w: World, c: number, top: number) {
+export function templeWall(w: World, c: number, top: number) {
   w.add(
     new Rig(px(c) - 4, top, 6, FL - 16 - top, {
       cause: 'bbi-chakka',
