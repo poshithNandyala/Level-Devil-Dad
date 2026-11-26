@@ -9,7 +9,7 @@ name: Test APK (sideload, rolling "test" release)
 # (Settings > Secrets and variables > Actions). Without it, a throwaway key is used: uninstall the old app first.
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   workflow_dispatch:
 
 permissions:
