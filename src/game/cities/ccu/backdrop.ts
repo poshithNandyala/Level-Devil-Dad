@@ -85,13 +85,13 @@ export function backdrop(ctx: Ctx, th: Theme, x0: number, x1: number) {
     const hw = 64 + ((i * 13) % 18);
     const top = 150 + ((i * 29) % 26);
     const wall = ['#D9C7A3', '#C9A889', '#E2D2B6', '#BFA08A'][((i % 4) + 4) % 4];
-    ctx.fillStyle = withAlpha(wall, 0.95);
+    ctx.fillStyle = withAlpha(wall, 0.62);
     ctx.fillRect(hx, top, hw, 244 - top);
     ctx.fillStyle = withAlpha(th.ink, 0.25);
     ctx.fillRect(hx - 2, top - 3, hw + 4, 4);
     for (let r = top + 8; r < 228; r += 20)
       for (let c = hx + 6; c < hx + hw - 10; c += 15) {
-        ctx.fillStyle = '#3F7A55';
+        ctx.fillStyle = withAlpha('#3F7A55', 0.55);
         ctx.fillRect(c, r, 8, 12);
         ctx.fillStyle = withAlpha('#1F3D2A', 0.6);
         ctx.fillRect(c + 3.5, r, 1, 12);

@@ -266,7 +266,7 @@ function boardAtStop(get: (w: World) => { bus: Bus; stop: number[] }): Step {
       const p = w.player;
       const mid = (stop[0] + stop[1]) / 2;
       if (Math.abs(p.cx - mid) > 3) return go(toward(w, mid, 2));
-      if (b.slowed && b.v < 30 && b.deck.x <= p.x - 1 && b.deck.x + b.deck.w >= p.x + p.w + 1 && p.onGround) {
+      if (b.slowed && b.v < 45 && b.deck.x <= p.x - 1 && b.deck.x + b.deck.w >= p.x + p.w + 1 && p.onGround) {
         hold = 10;
         return { move: '', jump: true };
       }
@@ -655,7 +655,7 @@ const endingPolicies: Record<string, Policy> = {
     const mid = (k.stop[0] + k.stop[1]) / 2;
     if (Math.abs(p.cx - mid) > 3) return go(toward(w, mid, 2));
     // waiting still: hop as the crawling footboard is about to reach me
-    if (b.slowed && b.v < 30 && b.deck.x <= p.x - 1 && b.deck.x + b.deck.w >= p.x + p.w + 1 && p.onGround) {
+    if (b.slowed && b.v < 45 && b.deck.x <= p.x - 1 && b.deck.x + b.deck.w >= p.x + p.w + 1 && p.onGround) {
       m.hold = 10;
       return { move: '', jump: true };
     }

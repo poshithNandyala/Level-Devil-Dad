@@ -38,7 +38,7 @@ export const endings: Record<CcuEndingKind, Ending> = {
       const stop = [px(D - 16), px(D - 13)];
       let bus: Bus | null = null;
       const next = (w2: World) => {
-        bus = w2.add(new Bus({ x: px(D - 34), end: px(D + 14), fast: 130, crawl: 20, shout: 'Howrah, Howrah, Howrah! | Howrah, Howrah, Howrah!', label: 'HOWRAH' }));
+        bus = w2.add(new Bus({ x: px(D - 34), end: px(D + 14), fast: 130, crawl: 40, shout: 'Howrah, Howrah, Howrah! | Howrah, Howrah, Howrah!', label: 'HOWRAH' }));
         w2.flags.ccuStop = { bus, stop, D };
       };
       w.flags.twist = 'wait';

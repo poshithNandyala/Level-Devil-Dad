@@ -106,6 +106,10 @@ export class Figure extends Entity {
       ctx.fill();
       ctx.fillRect(x + 1, top + 12, wd - 2, 4);
     }
+    // a dark outline so the figure reads against the lane behind
+    ctx.strokeStyle = '#3B2A1E';
+    ctx.lineWidth = 1.2;
+    ctx.strokeRect(x + 0.5, top + 0.5, wd - 1, FLOOR - 6 - top);
     // its standing top (where Dad goes): a flat headpiece or saddle
     ctx.fillStyle = this.dry ? '#E8DCC0' : '#7A6A5C';
     ctx.fillRect(x, top, wd, 3);
@@ -158,8 +162,8 @@ export class Ghat extends Entity {
   }
   draw(ctx: CanvasRenderingContext2D, w: World) {
     const g = ctx.createLinearGradient(0, FLOOR + 6, 0, FLOOR + 48);
-    g.addColorStop(0, 'rgba(120,100,78,0.95)');
-    g.addColorStop(1, 'rgba(70,90,96,0.98)');
+    g.addColorStop(0, 'rgba(110,84,58,0.98)');
+    g.addColorStop(1, 'rgba(60,78,84,1)');
     ctx.fillStyle = g;
     ctx.fillRect(this.x0, FLOOR + 6, this.x1 - this.x0, 60);
     ctx.fillStyle = 'rgba(200,190,160,0.35)';

@@ -147,6 +147,7 @@ export class Bus extends Entity {
   private left: { v: number; back: boolean } | null = null;
   private said = -999;
   private called = false;
+  private wasSlow = false;
   constructor(readonly o: BusSpec) {
     super();
     this.layer = 2;
@@ -172,8 +173,10 @@ export class Bus extends Entity {
       const want = this.crawling() || this.slowed ? this.crawl : this.fast;
       const a = 260 * DT;
       this.v = this.v < want ? Math.min(want, this.v + a) : Math.max(want, this.v - a);
-      if (this.crawling() || this.slowed) {
-        if (w.tick - this.said > 150 && this.o.shout !== '') {
+      const slow = this.crawling() || this.slowed;
+      if (slow) {
+        // one shout each time it starts to crawl
+        if (!this.wasSlow && w.tick - this.said > 240 && this.o.shout !== '') {
           this.said = w.tick;
           w.say(this.o.shout ?? 'Aaste! Aaste! | Slowly! Slowly!', this.x + 40, FLOOR - 52, 1.6, 'npc');
         }
@@ -181,6 +184,7 @@ export class Bus extends Entity {
         this.called = true;
         w.say(this.o.call, this.x + 40, FLOOR - 52, 1.6, 'npc');
       }
+      this.wasSlow = slow;
       this.deck.velX = this.v;
       this.deck.moveBy(w, this.v * DT, 0);
       this.x = this.deck.x;
