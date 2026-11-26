@@ -258,3 +258,51 @@ export class Points extends Entity {
     ctx.fillRect(this.x + (this.turn ? 8 : -8), FLOOR - 18, 6, 5);
   }
 }
+
+/** a tram on the other line, coming the other way: it passes right by a stopped tram's rear step, and
+ *  anyone standing on that step is brushed off (the island beside the line is clear of it) */
+export class OtherTram extends Entity {
+  x: number;
+  go = false;
+  passed = false;
+  hazard: Hazard;
+  constructor(
+    readonly x0: number,
+    readonly x1: number,
+  ) {
+    super();
+    this.layer = 3;
+    this.x = x0;
+    const self = this;
+    this.hazard = {
+      active: true,
+      cause: 'ccu-dui',
+      hits: (x, y, w, h) => self.go && !self.passed && x < self.x + BODY && x + w > self.x && y + h > FLOOR - 14 && y + h < FLOOR - 4,
+    };
+  }
+  update(w: World) {
+    if (!this.go || this.passed) return;
+    this.x -= 200 * DT;
+    if (this.x + BODY < this.x1) {
+      this.passed = true;
+      w.flags.otherPassed = 1;
+    }
+  }
+  draw(ctx: CanvasRenderingContext2D) {
+    if (!this.go || this.passed) return;
+    ctx.save();
+    ctx.globalAlpha = 0.9;
+    const x = this.x,
+      top = ROOF + 4;
+    ctx.fillStyle = '#E8E2D0';
+    rr(ctx, x, top, BODY, 28, 4);
+    ctx.fill();
+    ctx.fillStyle = '#2E5E8E';
+    ctx.fillRect(x, top + 16, BODY, 16);
+    ctx.fillStyle = '#9FC3DC';
+    for (let i = 0; i < 7; i++) ctx.fillRect(x + 12 + i * 14, top + 4, 10, 9);
+    ctx.fillStyle = '#C9CDD1';
+    ctx.fillRect(x + BODY - 24, FLOOR - 12, 22, 3);
+    ctx.restore();
+  }
+}

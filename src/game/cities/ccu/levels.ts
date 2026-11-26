@@ -13,7 +13,7 @@ import { pool } from '../../levels/acts';
 import { Bus, Rail, feet } from './entities';
 import { NALA } from './endings';
 import { Customer, Muck, Stack, Stall } from './books';
-import { Junction, Points, Tram } from './tram';
+import { Junction, OtherTram, Points, Tram } from './tram';
 import { BookPorter, ChaiBoard, Girders, Pointer, Porter, Road, SHORT, TALL } from './porters';
 import { Adda, House, TeaSeller, Wash } from './adda';
 import { ClothPanel, Decorator, Skeleton, Stakes } from './pandal';
@@ -121,6 +121,38 @@ function poleRoom(): LevelDef {
   };
 }
 
+
+/** CCU-06 act: the double line. Two more junctions (the step again), and an island stop where a tram on
+ *  the other line comes past right by the step: off on to the island till it's gone, then back on */
+const duiLine: Act = {
+  id: 'ccu06-duiline',
+  w: 48,
+  cp0: false,
+  cps: [23.5],
+  advice: 'Two more junctions: stay on the step. At the island stop a tram on the other line comes past, right by the step: get off on to the island, let it go by, and hop back on before yours leaves.',
+  paint: (g, c) => {
+    g.pit(c.x, c.x + 19).pit(c.x + 26, c.x + 47);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    khod(w, x, x + 20);
+    khod(w, x + 26, x + 48);
+    w.add(new Junction(c.X(8)));
+    w.add(new Junction(c.X(40)));
+    sign(w, x + 21.5, 8.4, 3.6, 'TRAM STOP', 'green', null, 'double line');
+    w.flags.junctions6 = [c.X(8), c.X(40)];
+    w.flags.stops6 = [{ x: c.X(20) - 2, dwell: 3.4, ride: true }];
+    const other = w.add(new OtherTram(c.X(36), c.X(12)));
+    w.when(
+      (w2) => w2.flags.tramB && w2.flags.tramB.state === 'stop' && w2.flags.tramB.x > c.X(19),
+      (w2) => {
+        other.go = true;
+        w2.after(0.1, () => (w2.flags.other6 = other));
+      },
+    );
+  },
+};
+
 /** CCU-06 act: the island stop, the points, and the tram that goes straight on */
 const points: Act = {
   id: 'ccu06-points',
@@ -143,7 +175,7 @@ const points: Act = {
     w.when(
       (w2) => (a.state === 'turn' || a.state === 'gone') && w2.player.onGround && w2.player.cx > c.X(4) && w2.player.cx < c.X(10) && !a.riding(w2),
       (w2) => {
-        const b = w2.add(new Tram({ x: c.X(4) - 300, speed: 70, stops: [{ x: c.X(5) - 2, dwell: 0.8, ride: true }], junctions: [c.X(30)], end: w2.flags.terminus, label: '25' }));
+        const b = w2.add(new Tram({ x: c.X(4) - 300, speed: 70, stops: [{ x: c.X(5) - 2, dwell: 0.8, ride: true }, ...(w2.flags.stops6 ?? [])], junctions: [c.X(30), ...(w2.flags.junctions6 ?? [])], end: w2.flags.terminus, label: '25' }));
         w2.flags.tramB = b;
       },
     );
@@ -921,7 +953,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: muriRoom(), par: 38, acts: [dui3], twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
   longStage({ base: boiRoom(), par: 24, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
   longStage({ base: kumartuliRoom(), par: 32, acts: [uthon, lane, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
-  longStage({ base: poleRoom(), par: 57, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
+  longStage({ base: poleRoom(), par: 84, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 160, acts: [girder, dui, sandhya, ulto, bhor, dupur, raat, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 32, acts: [rok, tokta], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
   longStage({ base: pandalRoom(), par: 24, acts: [sinri, toran, chala], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),

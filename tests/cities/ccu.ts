@@ -414,17 +414,31 @@ function relayRoute(x: number, v: [number, number, number], tallFirst: boolean):
   ];
 }
 
+
+// ------------------------------------------------------------------ CCU-06 helpers
+const S06 = (): Step[] => [
+  walk(2.4),
+  ...hopTo(px(5), 12, 'over the stop’s step'),
+  { hold: 'R', until: (w) => w.player.onGround && w.player.y > 222 && w.player.cx > px(6.6), max: 300 },
+  ...hopTo(px(7) + 12, 8, 'on to the tram’s rear step'),
+  { hold: '', until: X(32.5), max: 2400, note: 'ride the step through the junction' },
+];
+const tramA6 = (w: World) => w.flags.tramA as Tram;
+const tramB6 = (w: World) => w.flags.tramB as Tram | undefined;
+const ACT06 = (x: number): Step[] => [
+  { hold: '', until: (w) => tramA6(w).state === 'stop' && w.player.cx > px(x + 4), max: 1800, note: 'ride to the island stop' },
+  { hold: 'R', until: and(ground, X(x + 8.2)), max: 300, note: 'off at the island: the points are set for the other line' },
+  { hold: '', until: (w) => !!tramB6(w) && tramB6(w)!.state === 'stop', max: 2400, note: 'wait for the tram on the straight line' },
+  { hold: 'L', until: (w) => w.player.cx < tramB6(w)!.step.x + 14, max: 300 },
+  { hold: '', jump: 8, until: (w) => tramB6(w)!.onStep(w), max: 120, note: 'up on to its step' },
+  { hold: '', until: (w) => w.player.cx > px(x + 44.5), max: 3000, note: 'through the second junction' },
+];
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['CCU-01'] = tourRun('onto');
   S['CCU-02'] = [...ride(px(25), px(28.5), 'past the first “aaste” (over the drain), off on the second'), walk(30)];
   lengthen('CCU-02', 0, []);
-  S['CCU-06'] = [
-    walk(2.4),
-    ...hopTo(px(5), 12, 'over the stop’s step'),
-    { hold: 'R', until: (w) => w.player.onGround && w.player.y > 222 && w.player.cx > px(6.6), max: 300 },
-    ...hopTo(px(7) + 12, 8, 'on to the tram’s rear step'),
-    { hold: '', until: X(32.5), max: 2400, note: 'ride the step through the junction' },
-  ];
+  S['CCU-06'] = S06();
   lengthen('CCU-06', 0, []);
   S['CCU-07'] = howrahRoom();
   lengthen('CCU-07', 0, []);
@@ -489,6 +503,10 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** more scripted first-timer deaths and 'like last time' moves */
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'CCU-06': [
+    { what: 'staying on the step at the double-line island', steps: [...S06(), ...ACT06(32), { hold: '', until: done, max: 3000, note: 'stay on the step' }], cause: 'ccu-dui' },
+    { what: 'climbing on to the roof for the double junction', steps: [...S06(), ...ACT06(32), { hold: '', jump: 10, ticks: 30, note: 'up on to the roof' }, { hold: '', until: done, max: 3000 }], cause: 'ccu-dando' },
+  ],
   'CCU-04': [{ what: 'waiting on the short stack in front of the tall pile', steps: [...boiRoute(true).slice(0, -1), walk(32 + 2.6), steerHop(px(32 + 5), 10, 'on to the short stack'), { hold: '', until: done, max: 900 }], cause: 'ccu-boi' }],
   'CCU-09': [{ what: 'resting on the new panel at the top of the staircase', steps: [...pandalRoute(), steerHop(px(35), 10, 'bamboo'), steerHop(px(38), 10, 'up'), steerHop(px(41), 10, 'up'), steerHop(px(45), 30, 'high', true), steerHop(px(49), 10, 'on to the new panel'), { hold: '', until: done, max: 300 }], cause: 'crushed' }],
   'CCU-08': [
@@ -647,13 +665,14 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'ccu08-rok': (x) => [{ policy: hopWater(), until: and(ground, X(x + 38)), max: 1800, note: 'through both addas, hopping the water' }],
   'ccu07-girder': girderRoute,
   'ccu07-pylon': (x) => [walk(x + 3.9), ...hopTo(px(x + 6.4), 10, 'up the pylon step'), hopUp((w) => ahead(w, 55, 54), 'wait for the tall porter, and up on his load'), { hold: '', until: X(x + 40.6), max: 1800, note: 'ride him to Howrah' }],
-  'ccu06-points': (x) => [
-    { hold: '', until: (w) => tramA(w).state === 'stop' && w.player.cx > px(x + 4), max: 1800, note: 'ride to the island stop' },
-    { hold: 'R', until: and(ground, X(x + 8.2)), max: 300, note: 'off at the island: the points are set for the other line' },
-    { hold: '', until: (w) => !!tramB(w) && tramB(w)!.state === 'stop', max: 2400, note: 'wait for the tram on the straight line' },
+  'ccu06-points': ACT06,
+  'ccu06-duiline': (x) => [
+    { hold: '', until: (w) => tramB(w)!.state === 'stop' && w.player.cx > px(x + 19), max: 2400, note: 'through two junctions on the step, to the island' },
+    { hold: 'R', until: and(ground, X(x + 23.6)), max: 300, note: 'off on to the island: the other line’s tram is coming' },
+    { hold: '', until: (w) => !!w.flags.otherPassed, max: 600, note: 'let it go by' },
     { hold: 'L', until: (w) => w.player.cx < tramB(w)!.step.x + 14, max: 300 },
-    { hold: '', jump: 8, until: (w) => tramB(w)!.onStep(w), max: 120, note: 'up on to its step' },
-    { hold: '', until: (w) => tramB(w)!.state === 'end', max: 3000, note: 'through the second junction, to the end of the line' },
+    { hold: '', jump: 8, until: (w) => tramB(w)!.onStep(w), max: 120, note: 'back up on to the step' },
+    { hold: '', until: (w) => tramB(w)!.state === 'end', max: 3000, note: 'to the end of the line' },
   ],
 };
 
