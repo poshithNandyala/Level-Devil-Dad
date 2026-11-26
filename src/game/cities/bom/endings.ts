@@ -5,8 +5,45 @@ import { DT, secs } from '../../constants';
 import { px } from '../../levels/kit';
 import { rr } from '../../../render/art/common';
 import { ChawlWall, Facade } from '../../entities/abilities';
-import { drawLocal } from '../../levels/endings2';
 import type { Ending } from '../../levels/endkit';
+
+/** a Mumbai local's car, cream and maroon, with people at the windows; its doorway at dx */
+export function drawLocal(ctx: CanvasRenderingContext2D, x: number, floor: number, t: number, doorX: number) {
+  const top = floor - 40;
+  for (let c = 0; c < 2; c++) {
+    const cx = x + c * 100;
+    ctx.fillStyle = '#F3E5C8';
+    ctx.fillRect(cx, top, 96, 40);
+    ctx.fillStyle = '#8E2A20';
+    ctx.fillRect(cx, top + 26, 96, 14);
+    ctx.fillRect(cx, top, 96, 4);
+    ctx.fillStyle = '#5D4037';
+    ctx.fillRect(cx, floor - 2, 96, 2);
+    // windows with people
+    for (let i = 0; i < 4; i++) {
+      const wx = cx + 6 + i * 23;
+      if (Math.abs(wx + 7 - doorX) < 14) continue;
+      ctx.fillStyle = '#263238';
+      ctx.fillRect(wx, top + 8, 14, 12);
+      ctx.fillStyle = ['#C68B59', '#8D5524', '#E0AC69'][(i + c) % 3];
+      ctx.beginPath();
+      ctx.arc(wx + 7, top + 15 + Math.sin(t * 3 + i) * 0.6, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    text(ctx, c ? 'CHURCHGATE' : 'S  L  O  W', cx + 48, top + 33, 5, '#FFE082', '');
+  }
+  // the open doorway, packed: arms hanging out
+  ctx.fillStyle = '#1C1C1C';
+  ctx.fillRect(doorX - 9, top + 4, 18, 36);
+  ctx.strokeStyle = '#C68B59';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(doorX - 8, top + 12);
+  ctx.lineTo(doorX - 14, top + 18 + Math.sin(t * 4) * 2);
+  ctx.moveTo(doorX + 8, top + 10);
+  ctx.lineTo(doorX + 13, top + 15 - Math.sin(t * 4) * 2);
+  ctx.stroke();
+}
 
 export type BomEndingKind = 'bollywood' | 'kabaddi' | 'dahihandi' | 'credits' | 'dabbacode' | 'lightwell' | 'local';
 

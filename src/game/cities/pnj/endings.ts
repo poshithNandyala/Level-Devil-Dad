@@ -7,8 +7,10 @@ import { pool } from '../../levels/acts';
 import { FLOOR, lock, npc, Paint, RIVER, tara, text } from '../../levels/endkit';
 import { aunty, poderArt } from '../../levels/westkit';
 import { Football, footballer, goalArt, palmArt } from './entities';
-import { cyc } from '../../levels/endings3';
 import type { Ending } from '../../levels/endkit';
+
+/** time within a repeating cycle */
+export const cyc = (w: World, period: number, phase = 0) => ((((w.tick * DT - phase) % period) + period) % period);
 
 export type PnjEndingKind = 'poder' | 'penalty' | 'clockhand' | 'hammock' | 'gangway' | 'sandcastle' | 'decree';
 

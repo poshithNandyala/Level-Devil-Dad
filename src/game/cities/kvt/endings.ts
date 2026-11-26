@@ -5,8 +5,99 @@ import { px, shot } from '../../levels/kit';
 import { pool } from '../../levels/acts';
 import { Thing } from '../../entities/traps';
 import { Sea } from '../../entities/abilities';
-import { Kayak } from '../../levels/endings2';
 import type { Ending } from '../../levels/endkit';
+import { Entity, type World } from '../../world';
+import { Solid } from '../../body';
+
+/** A beached kayak: walk into it to push it down the sand. In the water it floats off by itself. */
+export class Kayak extends Entity {
+  solid: Solid;
+  state: 'beached' | 'afloat' | 'docked' | 'back' = 'beached';
+  private t0 = 0;
+  constructor(
+    x: number,
+    readonly ground: number,
+    readonly shore: number,
+    readonly dock: number,
+  ) {
+    super();
+    this.layer = 1;
+    this.solid = new Solid(x, ground - 12, 34, 12);
+  }
+  update(w: World) {
+    const p = w.player;
+    const s = this.solid;
+    const aboard = w.standing(s);
+    if (this.state === 'beached') {
+      // Dad leaning into its back end
+      const touching = p.onGround && !aboard && p.inputDir > 0 && p.x + p.w >= s.x - 1 && p.x + p.w <= s.x + 2 && p.y + p.h > s.y && p.y < s.y + s.h;
+      if (touching) {
+        s.moveBy(w, 62 * DT, 0);
+        if (w.tick % 18 === 0) w.sfx('slide', s.x, s.y);
+      }
+      if (s.x + s.w > this.shore + 8) {
+        // over the edge and in: it sits a little lower in the water and floats away
+        this.state = 'afloat';
+        s.moveBy(w, 0, 6);
+        w.sfx('splash', s.x + 17, s.y);
+        w.emit('fx', s.x + 17, s.y + 8, { kind: 'splash' });
+        w.flags.twist = 'afloat';
+      }
+    } else if (this.state === 'afloat') {
+      s.velX = 46;
+      s.moveBy(w, 46 * DT, 0);
+      if (s.x + s.w >= this.dock) {
+        s.velX = 0;
+        this.state = 'docked';
+        this.t0 = w.tick;
+        w.flags.twist = 'docked';
+      }
+    } else if (this.state === 'docked') {
+      // nobody aboard: the tide takes it back to the beach
+      if (aboard) this.t0 = w.tick;
+      else if (w.tick - this.t0 > secs(1.5)) {
+        this.state = 'back';
+        w.flags.twist = 'idle';
+      }
+    } else if (this.state === 'back') {
+      s.velX = -46;
+      s.moveBy(w, -46 * DT, 0);
+      if (s.x + s.w <= this.shore + 8) {
+        s.velX = 0;
+        s.moveBy(w, 0, -6);
+        this.state = 'beached';
+      }
+    }
+  }
+  draw(ctx: CanvasRenderingContext2D, w: World) {
+    const s = this.solid;
+    const bob = this.state === 'beached' ? 0 : Math.sin(w.tick * 0.08) * 0.8;
+    const x = s.x,
+      y = s.y + bob;
+    ctx.fillStyle = '#F4511E';
+    ctx.strokeStyle = '#8D2A0E';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(x, y + 3);
+    ctx.lineTo(x + s.w, y + 3);
+    ctx.quadraticCurveTo(x + s.w - 2, y + 12, x + s.w - 9, y + 12);
+    ctx.lineTo(x + 7, y + 12);
+    ctx.quadraticCurveTo(x + 1, y + 11, x, y + 3);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#FFE0B2';
+    ctx.fillRect(x + 4, y + 1, s.w - 8, 2.4);
+    ctx.fillStyle = '#3E2723';
+    ctx.fillRect(x + 13, y + 1.5, 8, 2);
+    // the paddle lying across it
+    ctx.strokeStyle = '#6D4C41';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(x + 6, y - 1);
+    ctx.lineTo(x + 28, y + 2);
+    ctx.stroke();
+  }
+}
 
 export type KvtEndingKind = 'reflection' | 'glider' | 'trapdoor' | 'footsteps' | 'pushoff' | 'safetystop' | 'loading';
 

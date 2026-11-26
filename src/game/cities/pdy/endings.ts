@@ -1,13 +1,13 @@
 // Puducherry's door endings.
 import { Door } from '../../entities/basics';
 import type { World } from '../../world';
-import { FLOOR, lock, npc, Paint, tara, hits, Mover, person, text } from '../../levels/endkit';
+import { FLOOR, lock, npc, Paint, tara, hits, Mover, person, text, tt } from '../../levels/endkit';
 import { Thing } from '../../entities/traps';
 import { secs, DT } from '../../constants';
 import { px } from '../../levels/kit';
 import type { Ending } from '../../levels/endkit';
 
-export type PdyEndingKind = 'bells' | 'fakewin' | 'shuffle' | 'mirror' | 'mime';
+export type PdyEndingKind = 'bells' | 'fakewin' | 'shuffle' | 'mirror' | 'mime' | 'lamp';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<PdyEndingKind, true> {}
@@ -322,6 +322,52 @@ export const endings: Record<PdyEndingKind, Ending> = {
         if (said || w2.player.x < d.x - px(10)) return;
         said = true;
         tara(w2, 'A mime! He copies you, Dad... but look at his box. | He copies you... but look at his box.', 2.8);
+      });
+    },
+  },
+  /** At six the street lamp comes on, and the door only exists in its light. In the dark the paving
+   *  in front of it bristles with spikes. */
+  lamp: {
+    advice: 'The door is only there while the lamp is lit, and in the dark spikes come up in front of it: wait outside the light, then dash in the moment it comes on.',
+    build(w, d) {
+      const P = 2.5,
+        ON = 0.95;
+      const lit = (w2: World) => tt(w2) % P < ON;
+      const sx = d.x - px(3);
+      const sp = w.add(new Thing('spikerow', sx, FLOOR + 1, { solid: false, deadly: 'spikes', layer: -4, w: 48 }));
+      w.add(
+        new Paint((ctx, w2) => {
+          ctx.fillStyle = '#263238';
+          ctx.fillRect(d.x + 20, d.y - 40, 3, 72);
+          ctx.fillRect(d.x + 8, d.y - 40, 15, 3);
+          const on = lit(w2);
+          const flick = on && tt(w2) % P > ON - 0.28 && w2.tick % 8 < 4;
+          ctx.fillStyle = on && !flick ? '#FFF59D' : '#546E7A';
+          ctx.fillRect(d.x + 6, d.y - 37, 7, 4);
+          if (!on || flick) return;
+          const g = ctx.createRadialGradient(d.x + 9, d.y - 30, 0, d.x + 6, d.y + 12, 58);
+          g.addColorStop(0, 'rgba(255,236,160,0.7)');
+          g.addColorStop(1, 'rgba(255,236,160,0)');
+          ctx.fillStyle = g;
+          ctx.fillRect(d.x - 52, d.y - 40, 110, 76);
+        }, -3),
+      );
+      let was = true,
+        said = false;
+      w.onTick((w2) => {
+        const on = lit(w2);
+        d.hidden = !on;
+        if (on !== was) {
+          sp.moveTo(w2, sx, on ? FLOOR + 1 : FLOOR - 10, 0.06, 'out');
+          if (!on) w2.sfx('spikes', sx + 24, FLOOR);
+          was = on;
+        }
+        if (!said && w2.player.x > d.x - px(8)) {
+          said = true;
+          tara(w2, 'Six o’clock! The door only lives in the lamplight! | The door only lives in the lamplight!', 2.6);
+        }
+        w2.flags.twist = on ? 'lit' : 'dark';
+        w2.flags.litFor = on ? tt(w2) % P : -1;
       });
     },
   },
