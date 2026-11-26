@@ -73,7 +73,7 @@ const tourLevel = () =>
       ['lamp', 104, {}],
     ],
     things: [],
-    par: 34,
+    par: 24,
     hint: 'A boy walks the promenade with a tray of hot lal chah, and the tray swings on his arm. Touch him, or hop clean over him (the tray tips and the tea spreads over where you land), and you are scalded. There is a ghat, a step down to the river, in the middle of the promenade: climb down into it and let him walk over your head. Climb out only once he is a few steps past.',
     cps: [27.5, 50.5, 58.5],
     paint: (g) => {
@@ -223,8 +223,8 @@ void hutDoor;
 
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), shape: 'tour', meta: { family: 'carrier-spills-on-contact', betrayals: ['carrier-spill'], ending: 'dis-tea-tray' } },
-  longStage({ base: charRoom(), acts: [chapori], twist: 'dis-hut-shut', par: 46, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
-  longStage({ base: teaRoom(), acts: [bagan], twist: 'dis-tea-chest', par: 46, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-tea-chest' } }),
+  longStage({ base: charRoom(), acts: [chapori], twist: 'dis-hut-shut', par: 24, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
+  longStage({ base: teaRoom(), acts: [bagan], twist: 'dis-tea-chest', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-tea-chest' } }),
   longStage({ base: todoRoom(4), par: 30, shape: 'long' }), // DIS-04 TODO: acts, twist (a dis-... ending), par
   longStage({ base: todoRoom(5), par: 30, shape: 'long' }), // DIS-05 TODO: acts, twist (a dis-... ending), par
   longStage({ base: todoRoom(6), par: 30, shape: 'long' }), // DIS-06 TODO: acts, twist (a dis-... ending), par
