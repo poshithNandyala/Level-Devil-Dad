@@ -237,7 +237,7 @@ export function aariRoom(): LevelDef {
       w.flags.saw = hall;
       sign(w, 2.4, 10.4, 4.6, 'CHATHAM MILL', 'shop', null, 'aari');
       rival(w, 3, 15, 1, { intro: L.intro[0], point: 1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
-      collectible(w, 'svp-padauk', 20.5, 8.6);
+      collectible(w, 'svp-padauk', 18.5, 11.2);
     },
   };
 }

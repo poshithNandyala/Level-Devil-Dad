@@ -163,7 +163,9 @@ export class Root extends Entity {
         ctx.stroke();
       }
     }
-    ctx.fillStyle = '#5A3E2B';
+    ctx.fillStyle = 'rgba(244,236,214,0.35)';
+    ctx.fillRect(q.x - 2, q.y - 3, q.w + 4, 1.4);
+    ctx.fillStyle = '#7A5232';
     ctx.beginPath();
     ctx.moveTo(q.x - 4, q.y + 5);
     ctx.quadraticCurveTo(q.x + q.w * 0.3, q.y - 3, q.x + q.w * 0.5, q.y + 1);
@@ -178,10 +180,10 @@ export class Root extends Entity {
     ctx.moveTo(q.x, q.y + 3);
     ctx.quadraticCurveTo(q.x + q.w * 0.5, q.y - 1, q.x + q.w, q.y + 2);
     ctx.stroke();
-    ctx.fillStyle = '#3F9A4E';
+    ctx.fillStyle = '#4FC060';
     for (let x = q.x + 5; x < q.x + q.w - 3; x += 11) {
       ctx.beginPath();
-      ctx.ellipse(x, q.y - 1.5, 3.4, 1.7, -0.5, 0, TAU);
+      ctx.ellipse(x, q.y - 2.5, 4.6, 2.4, -0.5, 0, TAU);
       ctx.fill();
       ctx.beginPath();
       ctx.ellipse(x + 4, q.y + 8, 2.8, 1.4, 0.6, 0, TAU);

@@ -114,7 +114,7 @@ export class Weather extends Entity {
       ctx.fillRect(a, FLOOR - 36, b - a, 36);
     }
     for (const a of this.awnings) {
-      const lean = -a.tilt * 9;
+      const lean = -a.tilt * 14;
       drawAwning(ctx, a.x0, a.x1, a.y, '#1F7A8C', '#F4ECD6', lean);
       // shop front behind: a shutter and a plank counter
       ctx.fillStyle = 'rgba(58,30,18,0.35)';

@@ -58,9 +58,11 @@ export class Viewpoint extends Entity {
       ctx.fillRect(q.x, q.y + q.h - 2, q.w, 2);
     } else {
       // the ledge as the note shows it: dashes in the air
-      ctx.strokeStyle = 'rgba(244,236,214,0.7)';
-      ctx.lineWidth = 1.4;
-      ctx.setLineDash([4, 3]);
+      ctx.fillStyle = 'rgba(244,236,214,0.14)';
+      ctx.fillRect(q.x, q.y, q.w, q.h);
+      ctx.strokeStyle = 'rgba(255,250,235,0.95)';
+      ctx.lineWidth = 1.8;
+      ctx.setLineDash([5, 3]);
       ctx.strokeRect(q.x + 0.5, q.y + 0.5, q.w - 1, q.h - 1);
       ctx.setLineDash([]);
     }

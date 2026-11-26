@@ -26,7 +26,7 @@ export function dweepRoom(): LevelDef {
     index: 10,
     name: 'Dweep',
     nameEn: 'The island',
-    tagline: 'Everything the island has, in the wrong order: the mill, the deer, the crocodile’s creek, the roots, the luggage. And the fritter stall is on the way in.',
+    tagline: 'Everything the island has, in the wrong order: the mill, the creek, the roots, the luggage. The fritter stall is on the way in.',
     hint: 'The stall hands you a fritter as you pass, and the herd follows whoever holds food. On the log they lean on you from behind and the saw has you. Put the food down well back from the mill: stand still till it is down, and the herd stays with it. Then board the log and stay on the end you boarded, as before: it is the end that stays.',
     par: 30,
     map: Grid.ground(15).pit(10, 23).put(1, 14, '@').put(30, 14, 'E').rows(),
