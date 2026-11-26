@@ -34,31 +34,51 @@ export class HintSheet {
   el: HTMLElement;
   private textEl: HTMLElement;
   private countEl: HTMLElement;
-  private pages: string[];
+  private hereEl: HTMLElement;
+  private backEl: HTMLElement;
   page: number;
+  private here = -1;
   private closed = false;
 
+  /**
+   * `pages` in the order you meet them. `partOf[i]` (long stages only) is the stretch page i belongs to:
+   * pages of the stretch Dad is in (`setHere`) get a "You are here" label.
+   */
   constructor(
-    text: string,
+    private pages: string[],
     start: number,
     private onClose: () => void,
     private onPage: (page: number) => void,
+    private partOf: number[] | null = null,
   ) {
-    this.pages = hintPages(text);
     this.page = Math.min(Math.max(0, start), this.pages.length - 1);
+    if (partOf) this.here = partOf[this.page];
     this.textEl = h('div.hs-text');
     this.countEl = h('span.hs-count');
+    this.hereEl = h('span.hs-here', 'You are here');
     const x = h('button.hs-x', { type: 'button', 'aria-label': 'Close hint' }, '×');
     x.addEventListener('click', (e) => {
       e.stopPropagation();
       this.close();
     });
-    this.el = h('div.hintsheet', { role: 'button', 'aria-live': 'polite', 'aria-label': 'Hint. Tap for the next part, swipe up to close.' }, h('div.hs-tag', '💡', this.countEl), this.textEl, x);
+    this.backEl = h('button.hs-b', { type: 'button', 'aria-label': 'Previous part' }, '‹');
+    this.backEl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.prev();
+    });
+    this.el = h(
+      'div.hintsheet',
+      { role: 'button', 'aria-live': 'polite', 'aria-label': 'Hint. Tap for the next part, swipe up to close.' },
+      h('div.hs-tag', h('div', '💡', this.countEl), this.hereEl),
+      this.backEl,
+      this.textEl,
+      x,
+    );
     let y0 = 0,
       x0 = 0,
       down = false;
     this.el.addEventListener('pointerdown', (e) => {
-      if ((e.target as Element).closest('.hs-x')) return;
+      if ((e.target as Element).closest('.hs-x, .hs-b')) return;
       down = true;
       y0 = e.clientY;
       x0 = e.clientX;
@@ -93,7 +113,27 @@ export class HintSheet {
     const n = this.pages.length;
     this.countEl.textContent = n > 1 ? ` ${this.page + 1}/${n}` : '';
     this.el.classList.toggle('more', this.page < n - 1);
+    this.backEl.classList.toggle('off', this.page === 0);
+    this.markHere();
     this.onPage(this.page);
+  }
+
+  private markHere() {
+    const on = !!this.partOf && this.partOf[this.page] === this.here;
+    this.el.classList.toggle('here', on);
+  }
+
+  /** the stretch Dad is in now (long stages); the label follows him as he moves */
+  setHere(part: number) {
+    if (part === this.here) return;
+    this.here = part;
+    this.markHere();
+  }
+
+  prev() {
+    if (this.page === 0) return;
+    this.page--;
+    this.show();
   }
 
   next() {
@@ -117,4 +157,15 @@ export class HintSheet {
     this.el.classList.add('out');
     setTimeout(() => this.el.remove(), 240);
   }
+}
+
+/** A long stage's hint by stretch: each of `parts` split into pages, and which part every page came from. */
+export function partPages(parts: string[]): { pages: string[]; partOf: number[] } {
+  const pages: string[] = [],
+    partOf: number[] = [];
+  parts.forEach((t, i) => {
+    if (!t.trim()) return;
+    for (const p of hintPages(t)) pages.push(p), partOf.push(i);
+  });
+  return { pages, partOf };
 }

@@ -14,8 +14,9 @@ import { fmtTime, h, toast } from '../ui/dom';
 import { IndiaMap, ChapterStatus } from '../ui/mapview';
 import { CHAPTERS, Chapter, LINES, chapterOf } from '../game/cities';
 import { makeCard } from '../ui/card';
-import { HintSheet } from '../ui/hintsheet';
-import { homeChapter, homeId, homeLine, homePicker, setHome } from '../ui/home';
+import { HintSheet, hintPages, partPages } from '../ui/hintsheet';
+import { hintPartAt } from '../game/levels/chunks';
+import { cityName, homeChapter, homeId, homeLine, homePicker, setHome } from '../ui/home';
 import { drawIcon } from '../render/art/icon';
 import { GAME } from '../config';
 import { Challenge, LIVES, Session } from './session';
@@ -48,8 +49,10 @@ export class App {
   private unlocked = false;
   pending: Challenge | null = null;
   private hint: HintSheet | null = null;
+  /** a home-city preview run: the stage id and its save record as it was before, put back when the run ends */
+  private preview: { id: string; rec: string | undefined; deaths: number } | null = null;
   /** what the hint was opened at: a death or a restart after this closes it */
-  private hintAt = { attempt: 0, deaths: 0 };
+  private hintAt = { attempt: 0, deaths: 0, restarts: 0 };
   /** the hint page you last read, per stage (reopening carries on from there) */
   private hintPage = new Map<string, number>();
 
@@ -551,6 +554,19 @@ export class App {
         ...(bi(c.hello).en ? [h('div.cc-hello-en', bi(c.hello).en!)] : []),
         h('p.cc-famous', c.famous),
       );
+      if (st === 'soon' && home?.id === c.id) {
+        // your city is not built yet: a postcard from it, so there is still something to look forward to
+        card.append(
+          h(
+            'div.homepost',
+            h('div.hpo-stamp', 'Postcard from home'),
+            h('div.hpo-line', `Dad's on his way to ${c.name}. Traps being built here:`),
+            ...(c.teasers ?? []).map((t) => h('div.hpo-teaser', t)),
+            h('div.hpo-foot', 'Coming in a future update'),
+          ),
+        );
+        return;
+      }
       if (st === 'soon') {
         card.append(h('div.cc-soon', 'Coming in the next update'), ...(c.teasers ?? []).map((t) => h('div.cc-teaser', '🔒  ' + t)));
         return;
@@ -561,6 +577,16 @@ export class App {
         const prev = c.preview ? list[list.length - 1] : list[list.findIndex((x) => x.id === c.id) - 1] ?? list.filter((x) => CHAPTERS.indexOf(x) < CHAPTERS.indexOf(c)).pop();
         card.append(h('div.cc-soon', `🔒  Escape ${prev?.name ?? 'the city before'} first`));
       }
+      // your city, still locked: its first stage as a preview, right under the lock line so it is in view
+      if (st === 'locked' && home?.id === c.id && lvls[0])
+        card.append(
+          h(
+            'button.btn.big.cc-play.cc-peek',
+            { onclick: () => (this.audio.play('ui'), tryFullscreen(), this.startStage(lvls[0].id, null, true)) },
+            `🏠  Sneak a peek: ${lvls[0].id}`,
+          ),
+          h('div.cc-peek-note', 'A preview. No stars, nothing unlocks. Dad still has to get here the long way.'),
+        );
       const starsTotal = lvls.reduce((a, l) => a + this.stars(l), 0);
       if (st === 'cleared') card.append(h('div.cc-stamp', h('b', 'ESCAPED'), h('span', `${d.stamps[c.city!]}☠ · ★ ${starsTotal}/${lvls.length * 3}`)));
       const rows = lvls.map((l) => {
@@ -712,13 +738,18 @@ export class App {
   }
 
   // ================================================================== play
-  startStage(id: string, challenge: Challenge | null) {
+  startStage(id: string, challenge: Challenge | null, preview = false) {
     const def = LEVEL_BY_ID.get(id);
     if (!def) return this.showTitle();
     if (!this.store.data.seenControls && !challenge) {
-      return this.showControlsIntro(() => this.startStage(id, null));
+      return this.showControlsIntro(() => this.startStage(id, null, preview));
     }
     this.endSession();
+    if (preview) {
+      const rec = this.store.data.stages[id];
+      this.preview = { id, rec: rec ? JSON.stringify(rec) : undefined, deaths: this.store.data.totalDeaths };
+      this.store.log('preview', id);
+    }
     this.clearUI();
     this.screen = 'play';
     this.setMenuCity(def.city);
@@ -728,6 +759,7 @@ export class App {
     this.session = new Session(this, def, challenge);
     this.store.log('start', def.id, { challenge: !!challenge });
     this.hud = new Hud(this, this.session);
+    if (preview) this.hud.el.querySelector('.tl')?.append(h('div.pill.previewbadge', 'Preview'));
     const sp = this.session.world.player;
     this.irisOpen(sp.cx, sp.cy);
     if (firstVisit && !challenge) this.postcard(def.city);
@@ -741,6 +773,14 @@ export class App {
       this.store.log('quit', this.session.def.id, { attempts: this.session.attempt, deaths: this.session.deaths });
     }
     this.session = null;
+    if (this.preview) {
+      // a preview leaves the save as it found it: no attempts, deaths, stars or unlocks from it
+      const { id, rec, deaths } = this.preview;
+      if (rec === undefined) delete this.store.data.stages[id];
+      else this.store.data.stages[id] = JSON.parse(rec);
+      this.store.data.totalDeaths = deaths;
+      this.preview = null;
+    }
     this.hint?.close(true);
     this.hud?.destroy();
     this.hud = null;
@@ -814,14 +854,20 @@ export class App {
     // the postcard and the stage title sit in the same spot: the hint replaces them
     this.hudEl.querySelectorAll('.postcard, .stagebanner').forEach((e) => e.remove());
     const id = s.def.id;
+    // long stages: open on the stretch Dad is in, the rest a tap away; other stages: where you stopped reading
+    const parts = s.def.hintParts?.length ? partPages(s.def.hintParts) : null;
+    const pages = parts?.pages.length ? parts.pages : hintPages(s.def.hint);
+    const partOf = parts?.pages.length ? parts.partOf : null;
+    const start = partOf ? Math.max(0, partOf.findIndex((i) => i >= hintPartAt(s.def, s.world.player.cx))) : (this.hintPage.get(id) ?? 0);
     const sheet = new HintSheet(
-      s.def.hint,
-      this.hintPage.get(id) ?? 0,
+      pages,
+      start,
       () => this.hint === sheet && (this.hint = null),
       (p) => this.hintPage.set(id, p),
+      partOf,
     );
     this.hint = sheet;
-    this.hintAt = { attempt: s.attempt, deaths: s.deaths };
+    this.hintAt = { attempt: s.attempt, deaths: s.deaths, restarts: s.restarts };
     this.hudEl.appendChild(sheet.el);
   }
 
@@ -830,7 +876,7 @@ export class App {
     const sheet = this.hint,
       s = this.session;
     if (!sheet) return;
-    if (!s || s.done || s.attempt !== this.hintAt.attempt || s.deaths !== this.hintAt.deaths) return sheet.close();
+    if (!s || s.done || s.attempt !== this.hintAt.attempt || s.deaths !== this.hintAt.deaths || s.restarts !== this.hintAt.restarts) return sheet.close();
     const w = s.world,
       v = this.view,
       k = v.s;
@@ -842,6 +888,7 @@ export class App {
       return { x: sx, y: v.oy + y * k, w: bw * k, h: bh * k };
     };
     const p = w.player;
+    if (s.def.hintParts?.length) sheet.setHere(hintPartAt(s.def, p.cx));
     const boxes = [box(p.x, p.y, p.w, p.h)];
     for (const ex of w.exits) {
       const z = ex.zone();
@@ -862,13 +909,14 @@ export class App {
     const panel = homePicker({
       current: homeId(d) || undefined,
       first: from === 'first',
+      status: (c) => this.chapterStatus(c),
       onPick: (c) => {
         setHome(d, c.id);
         this.store.save(true);
         this.store.log('home', c.id);
         this.audio.play('ui');
         done();
-        toast(this.ui, `${c.name}: ${homeLine(c, (x) => this.chapterStatus(x))}`);
+        toast(this.ui, `${cityName(c)}: ${homeLine(c, (x) => this.chapterStatus(x))}`);
       },
       onSkip: () => {
         if (homeId(d) === undefined) setHome(d, '');
@@ -894,6 +942,7 @@ export class App {
   }
 
   leaveToStages() {
+    if (this.preview) return this.showJourney(chapterOf(this.session?.def.city ?? this.menuCity).id);
     const city = this.session?.def.city ?? this.menuCity;
     this.showStages(city);
   }
@@ -901,6 +950,13 @@ export class App {
   onStageClear(s: Session) {
     const def = s.def;
     const store = this.store;
+    if (this.preview) {
+      store.log('preview_clear', def.id, { deaths: s.deaths });
+      this.audio.duckMusic(true);
+      this.showJourney(chapterOf(def.city).id);
+      toast(this.ui, 'Home, sweet trap. Now come back the long way!');
+      return;
+    }
     const rec = store.stage(def.id);
     const t = s.lastTime ?? s.elapsed;
     const firstClear = !rec.cleared;
@@ -1182,7 +1238,7 @@ export class App {
         h('div.section', 'Home city'),
         h(
           'div.setting',
-          h('span.lbl', 'Where are you from?', h('small', homeChapter(this.store.data)?.name ?? 'not set')),
+          h('span.lbl', 'Where are you from?', h('small', ((c) => (c ? cityName(c) : 'not set'))(homeChapter(this.store.data)))),
           h('button.btn.small.ghost', { onclick: () => (this.audio.play('ui'), this.showHomePicker(from)) }, homeChapter(this.store.data) ? 'Change' : 'Pick'),
         ),
         h('div.section', 'Progress'),

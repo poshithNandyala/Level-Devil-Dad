@@ -38,8 +38,20 @@ export function homeLine(home: Chapter, status: (c: Chapter) => ChapterStatus): 
   return `${n} ${n === 1 ? 'city' : 'cities'} away`;
 }
 
-/** The picker panel: every capital in journey order, grouped by region. */
-export function homePicker(o: { current?: string; first: boolean; onPick: (c: Chapter) => void; onSkip: () => void; onClear?: () => void }): HTMLElement {
+/** "Chandigarh (Punjab)" when two capitals share a name, else the name */
+export function cityName(c: Chapter): string {
+  return CHAPTERS.some((x) => x !== c && x.name === c.name) ? `${c.name} (${c.state})` : c.name;
+}
+
+/** The picker panel: every capital in journey order, grouped by region; cities not built yet say so. */
+export function homePicker(o: {
+  current?: string;
+  first: boolean;
+  status: (c: Chapter) => ChapterStatus;
+  onPick: (c: Chapter) => void;
+  onSkip: () => void;
+  onClear?: () => void;
+}): HTMLElement {
   const grid = h('div.hp-grid');
   let region: RegionId | null = null;
   for (const c of CHAPTERS) {
@@ -48,14 +60,16 @@ export function homePicker(o: { current?: string; first: boolean; onPick: (c: Ch
       grid.append(h('div.hp-region', region));
     }
     const local = c.city ? THEMES[c.city].local : '';
-    grid.append(
-      h(
-        'button.hp-city' + (c.id === o.current ? '.on' : ''),
-        { type: 'button', onclick: () => o.onPick(c) },
-        h('span.hp-name', c.name),
-        h('span.hp-state', c.state, local ? h('span.hp-local', local) : null),
-      ),
+    const soon = o.status(c) === 'soon';
+    const btn = h(
+      'button.hp-city' + (c.id === o.current ? '.on' : '') + (soon ? '.soon' : '.built'),
+      { type: 'button', onclick: () => o.onPick(c) },
+      h('span.hp-name', c.name),
+      h('span.hp-state', c.state, local ? h('span.hp-local', local) : null),
+      h('span.hp-tag', soon ? 'Coming soon' : 'Ready to play'),
     );
+    if (c.city) btn.style.setProperty('--cc', THEMES[c.city].ui);
+    grid.append(btn);
   }
   return h(
     'div.panel.homepick.fade-in',
