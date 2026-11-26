@@ -302,19 +302,19 @@ export const sam: Ending = {
 /** The full performance: she spins the length of the stage and back without stopping, and the floor is
  *  hers. The musicians' takhts are the only place out of her way. Ring a strip and she turns back at once,
  *  towards the sound. */
-const MEHFIL = [6, 14, 22, 30, 38];
+const MEHFIL = [6, 14, 22, 30, 38, 46, 54, 62, 70];
 export const mehfil: Act = {
   id: 'lko06-mehfil',
-  w: 48,
+  w: 80,
   advice: 'The full performance: she spins the length of the stage and back, end to end, and the floor is hers. Wait up on a takht till she has spun past beneath you, going away, then cross to the next takht, over the red strip. Ring a strip and she turns straight back towards you.',
-  cps: [1],
+  cps: [1, 38.5],
   paint: (g, c) => {
     for (const t of MEHFIL) g.fill(c.x + t, c.x + t + 1, 13, 13, '=');
   },
   build: (w, c) => {
     const x = c.x;
-    boards(w, x, x + 47);
-    const D = { x: c.X(44), v: -1.0, go: false, lo: c.X(4) + 8, hi: c.X(44) };
+    boards(w, x, x + 79);
+    const D = { x: c.X(76), v: -1.0, go: false, lo: c.X(4) + 8, hi: c.X(76) };
     w.flags[c.f('d')] = D;
     const z = w.add(new Zone(D.x - 9, FLOOR - 28, 18, 28, 'lko-mehfil'));
     const look = { x: D.x, s: 'out', floor: FLOOR } as unknown as Dancer;

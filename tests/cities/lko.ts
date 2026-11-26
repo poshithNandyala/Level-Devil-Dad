@@ -278,15 +278,6 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-01': { steps: [...room01.slice(0, 3), { hold: '', ticks: 40, note: 'catch your breath after the bolts' }, { hold: 'R', until: done, max: 400 }], cause: 'lko-parda' },
   'LKO-02': { steps: [runTo(8.2), until(done, 900, 'bow, and keep bowing')], cause: 'lko-dhakka' },
   'LKO-10': { steps: [walkTo(13.5, 400, 'up to the gentlemen'), until(done, 600, 'and bow, as learned')], cause: 'lko-tehzeeb' },
-  'LKO-09': {
-    steps: [
-      ...room09,
-      walkTo(32 + 4.9, 300),
-      hops([[32 + 7.6, redSeen('lko09-hawa:k')], 32 + 10.1, [32 + 13.6, redSeen('lko09-hawa:k')], 32 + 16.1, [32 + 19.6, redSeen('lko09-hawa:k')], 32 + 22.1], 'watch the flag, as learned: go on the red you see'),
-      until(done, 600),
-    ],
-    cause: 'lko-kabootar',
-  },
   'LKO-08': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk, as learned, through every arch' }], cause: 'lko-kuan' },
   'LKO-07': { steps: [...room07.slice(0, 3), runTo(32 + 8, 400), pause('stroll on, as learned'), runTo(32 + 14, 300), pause(), until(done, 300)], cause: 'lko-shamiyana' },
   'LKO-06': { steps: [walkTo(5.9, 200), hops([8.5, 10.6, 13.3, 15.6, 18.3], 'plain boards only'), { hold: 'R', until: done, max: 600 }], cause: 'lko-tatkar' },
@@ -372,7 +363,7 @@ const R_lko06_tatkar = (id: string) => (x: number): Step[] => {
 };
 actRoutes['lko06-tatkar'] = R_lko06_tatkar('lko06-tatkar');
 
-const MEHFIL = [6, 14, 22, 30, 38];
+const MEHFIL = [6, 14, 22, 30, 38, 46, 54, 62, 70];
 const R_lko06_mehfil = (id: string) => (x: number): Step[] => {
   const D = (w: World) => w.flags[`${id}:d`] as { x: number; v: number };
   const steps: Step[] = [walkTo(x + 3.6, 300), hops([x + 6.5], 'up on to the first takht')];
@@ -380,16 +371,16 @@ const R_lko06_mehfil = (id: string) => (x: number): Step[] => {
     const nxt = MEHFIL[k + 1];
     // go when she is far enough away, whichever way she is spinning, to cross before she can come back
     const s0 = px(x + t + 2),
-      s1 = px(x + (nxt ?? 46)) + 4;
+      s1 = px(x + (nxt ?? 78)) + 4;
     const lo = px(x + 4) + 8,
-      hi = px(x + 44);
+      hi = px(x + 76);
     const safe = (w: World) => {
       const d = D(w);
       if (d.v < 0) return d.x < s0 - 12 && (d.x - lo + (s0 - lo)) / 120 > 2.3;
       return d.x > s1 + 12 && (hi - d.x + (hi - s1)) / 120 > 2.3;
     };
     steps.push(until(safe, 2400, 'wait till she is far enough away to cross before she comes back'));
-    if (nxt === undefined) steps.push(runTo(x + 46, 300));
+    if (nxt === undefined) steps.push(runTo(x + 78, 300));
     else steps.push(hops([x + t + 1.6, x + t + 2.9, x + t + 5.6, x + nxt + 0.6], 'down, over the strip, up on to the next takht'));
   });
   return steps;
@@ -503,7 +494,43 @@ const R_lko09_hawa = (id: string) => (x: number): Step[] => {
     hops([...[7, 13, 19, 25, 31, 37, 43, 49].flatMap((a) => [[x + a + 0.6, ok] as [number, (w: World) => boolean], x + a + 3.1]), [x + 55.6, ok], x + 57], 'cross while you see white: the birds see red'),
   ];
 };
-actRoutes['lko09-hawa'] = R_lko09_hawa('lko09-hawa');
+actRoutes['lko09-hawa'] = (x) => [stroll(x + 3, 'up on to the roofs'), ...R_lko09_hawa('lko09-hawa')(x)];
+const GUMBAD = [5, 13, 21, 29, 37, 45];
+/** stand where the dome is your size (its terrace 24 px up), then jump on to it */
+const domeJump = (id: string, k: number, d: number, x: number): Step => {
+  let jt = 0;
+  let W: World | null = null;
+  const tgt = px(x + d + 2.5);
+  return {
+    policy: (w) => {
+      if (W !== w) {
+        W = w;
+        jt = 0;
+      }
+      const o = (w.flags[`${id}:domes`] as { b: { solid: { y: number }; on: boolean }; line: number }[])[k];
+      const p = w.player;
+      if (jt > 0) {
+        jt--;
+        return { move: 'R', jump: true };
+      }
+      if (!p.onGround) return go(airTo(w, tgt));
+      if (o.b.on && o.b.solid.y === FLOOR_Y - 24 && Math.abs(p.vx) < 5) {
+        jt = 12;
+        return { move: 'R', jump: true };
+      }
+      return go(toward(w, px(x + d - 2) + 8, 2));
+    },
+    until: (w) => w.player.onGround && w.player.y + w.player.h < FLOOR_Y - 10,
+    max: 900,
+    note: 'from the red paving line, where the dome is your size',
+  };
+};
+const FLOOR_Y = 240;
+const R_lko09_gumbad = () => (x: number): Step[] => [
+  ...GUMBAD.flatMap((d, k) => [walkTo(x + d - 2, 400, 'to the red paving line'), domeJump('lko09-gumbad', k, d, x), hops([x + d + 3.1, x + d + 6], 'off the far side, on to the paving')]),
+  runTo(x + 53, 300),
+];
+actRoutes['lko09-gumbad'] = R_lko09_gumbad();
 
 actRoutes['lko10-dhulai'] = (x) => {
   const k = 'lko10-dhulai:wash';
@@ -663,6 +690,20 @@ mistakes['LKO-08'] = [
 ];
 /** the room's route and the routes of the stage's first n acts */
 const through = (id: string, room: Step[], n: number) => [...room, ...LEVEL_BY_ID.get(id)!.parts!.slice(0, n).flatMap((pt) => actRoutes0(pt.kind, pt.x0))];
+fix['LKO-09'] = {
+  steps: [
+    ...through('LKO-09', room09, 1),
+    stroll(actX('LKO-09', 1) + 3),
+    walkTo(actX('LKO-09', 1) + 4.9, 300),
+    hops([7, 13, 19].flatMap((a) => [[actX('LKO-09', 1) + a + 0.6, redSeen('lko09-hawa:k')] as [number, (w: World) => boolean], actX('LKO-09', 1) + a + 3.1]), 'watch the flag, as learned: go on the red you see'),
+    until(done, 600),
+  ],
+  cause: 'lko-kabootar',
+};
+mistakes['LKO-09'] = [
+  { what: 'walking up to the white dome', steps: [...room09, { hold: 'R', until: done, max: 900 }], cause: 'lko-gumbad' },
+  { what: 'jumping for the dome from far back, where it looked big', steps: [...room09, walkTo(actX('LKO-09', 0) + 2.2, 300), { hold: 'R', jump: 14, ticks: 60 }, until(done, 300)], cause: 'lko-gumbad' },
+];
 mistakes['LKO-06'] = [
   { what: 'in the mehfil, crossing her floor', steps: [...through('LKO-06', room06, 1), walkTo(actX('LKO-06', 1) + 3.6, 300), hops([actX('LKO-06', 1) + 6.5, actX('LKO-06', 1) + 9.3, actX('LKO-06', 1) + 11.6]), until(done, 1200)], cause: 'lko-mehfil' },
   {

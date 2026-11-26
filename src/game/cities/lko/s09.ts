@@ -8,7 +8,7 @@ import { collectible, door, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
 import { Grid } from '../../levels/grid';
 import type { Act } from '../../levels/acts';
-import { Art, FLOOR, Zone, gent, px, TAU, type Ctx } from './kit';
+import { Art, Block, FLOOR, Zone, gent, px, TAU, type Ctx } from './kit';
 import { tara } from './s02';
 
 export type Roof = { x0: number; x1: number; top: number };
@@ -301,5 +301,77 @@ export const chhatri: Ending = {
   },
 };
 
-export const s09 = { room: kabootarRoom, acts: [hawa] };
+// ================================================================ act 2: the white domes (the Taj reserve)
+/** From the rooftops a row of white domed kiosks stands in the long garden pool. A dome seems bigger the
+ *  farther you stand from it, and so does its terrace: from far away the terrace is high above your jump;
+ *  walk up to it and it shrinks into the water. Only from the paving line (the inlaid strip) is it your size.
+ *  The dome keeps the size it had when you left the ground. */
+const GUMBAD = [5, 13, 21, 29, 37, 45];
+export const gumbad: Act = {
+  id: 'lko09-gumbad',
+  w: 54,
+  advice: 'A dome seems bigger the farther you stand from it, and its terrace with it: from far away the terrace is far above your jump, and walk right up and it shrinks into the pool. Stand on the inlaid paving line in front of each dome and jump from there: it keeps the size it had when you left the ground.',
+  cps: [27.5],
+  paint: (g, c) => {
+    for (const d of GUMBAD) g.pit(c.x + d, c.x + d + 4);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const domes = GUMBAD.map((d, k) => {
+      const x0 = c.X(d + 1),
+        line = x0 - 38;
+      const S = { y: FLOOR - 24, line };
+      const b = w.add(
+        new Block(x0, S.y, 48, 6, (ctx, bb) => {
+          // the marble terrace and its dome, drawn at the size it seems from where you stand
+          const k2 = Math.max(0.35, Math.min(1.8, (FLOOR - bb.y) / 24));
+          ctx.fillStyle = '#F7F4EE';
+          ctx.fillRect(bb.x, bb.y, 48, 6);
+          ctx.beginPath();
+          ctx.ellipse(bb.x + 24, bb.y, 14 * k2, 14 * k2, 0, Math.PI, 0);
+          ctx.fill();
+          ctx.fillStyle = '#E3DCCF';
+          ctx.fillRect(bb.x + 23, bb.y - 16 * k2, 2, 4 * k2);
+          for (const mx of [3, 43]) ctx.fillRect(bb.x + mx, bb.y - 10 * k2, 2, 10 * k2);
+        }, 2),
+      );
+      w.onTick((w2) => {
+        const p = w2.player;
+        if (!p.onGround || p.isRiding(b.solid)) return;
+        // the size it seems from where you stand (only while you're on the ground)
+        const d = x0 - (p.x + p.w);
+        if (d < -4 || d > 140) return;
+        let y = FLOOR - 24;
+        if (d > 46) y = FLOOR - 24 - (d - 46) * 1.1;
+        else if (d < 22) y = FLOOR - 24 + (22 - d) * 3;
+        b.set(y < FLOOR + 4);
+        b.solid.y = Math.round(y);
+      });
+      w.add(
+        new Art((ctx) => {
+          // the paving line, an inlaid strip of red sandstone
+          ctx.fillStyle = '#B5562E';
+          ctx.fillRect(line - 3, FLOOR - 1, 12, 3);
+        }, -1),
+      );
+      return { b, line: line + 3, k };
+    });
+    w.flags[c.f('domes')] = domes;
+    // the long garden pool
+    for (const d of GUMBAD) {
+      w.add(
+        new Art((ctx, w2) => {
+          ctx.fillStyle = '#6FA3B8';
+          ctx.fillRect(c.X(d), FLOOR + 4, px(5), 44);
+          ctx.fillStyle = 'rgba(255,255,255,0.4)';
+          for (let xx = c.X(d) + ((w2.tick >> 2) % 9); xx < c.X(d + 5) - 3; xx += 9) ctx.fillRect(xx, FLOOR + 6, 4, 1);
+        }, -4),
+      );
+      w.add(new Zone(c.X(d) + 1, FLOOR + 14, px(5) - 2, 30, 'lko-gumbad'));
+    }
+    sign(w, x + 0.2, 10.4, 3.4, 'BAGH', 'shop', null, 'gumbad');
+  },
+};
+
+export const s09 = { room: kabootarRoom, acts: [gumbad, hawa] };
 export const meta09 = { family: 'flag-colour-steers-flock', betrayals: ['flag-signal'], ending: 'lko-chhatri' } as StageMeta;
