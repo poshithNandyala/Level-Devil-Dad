@@ -11,7 +11,7 @@ import { crumble, dropFloor, fakeFloor, noLanding, onPass, popAt, popOnJump, ris
 import { Counterweight, IceSlab, Launch, Puddle, Slab, Tarp } from './entities';
 import { Droni } from './dhara';
 import { longStage } from '../../levels/chunks';
-import { DHARA_META, KOVALAM_META, ashoka, chanda, dharaRoom, kizhi, kovalamRoom, pozhikkara, samudra, theeram, uzhichil, vilakku } from './encores';
+import { DHARA_META, KOVALAM_META, ashoka, chanda, dharaRoom, kadappuram, thira, thumba, kizhi, kovalamRoom, pozhikkara, samudra, theeram, uzhichil, vilakku } from './encores';
 
 // Thiruvananthapuram: monsoon puddles, a red express bus, a tea stall,
 // coconut palms and the old fort gate. Lines: Malayalam + English.
@@ -933,5 +933,5 @@ export const levels = (): LevelDef[] => [
   },
   // the encores (allocation v2 slots 9 and 10)
   longStage({ base: kovalamRoom(), acts: [vilakku, samudra, pozhikkara, ashoka], twist: 'tvm-backwash-ride', par: 80, shape: 'long', meta: KOVALAM_META }),
-  longStage({ base: dharaRoom(), acts: [kizhi, theeram, uzhichil, chanda], lives: 'act', twist: 'tvm-oily-feet-coir-mat', par: 40, shape: 'long', meta: DHARA_META }),
+  longStage({ base: dharaRoom(), acts: [kizhi, thumba, theeram, kadappuram, uzhichil, thira, chanda], lives: 'act', twist: 'tvm-oily-feet-coir-mat', par: 110, shape: 'long', meta: DHARA_META }),
 ];

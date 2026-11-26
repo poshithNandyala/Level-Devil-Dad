@@ -40,6 +40,8 @@ export class Surf extends Entity {
   /** the walk in progress: from, to, start, length (s) */
   private walk: { from: number; to: number; t0: number; sec: number } | null = null;
   private mi = 0;
+  /** the strip's left edge (px) when this wave's whistle went, if he has moved the flags off it since */
+  prev: number | null = null;
   readonly name: string;
   constructor(o: { x0: number; x1: number; strip: number; waves: WaveSpec[]; name?: string }) {
     super();
@@ -58,7 +60,10 @@ export class Surf extends Entity {
         const cx = x + w / 2;
         if (cx < self.x0 || cx > self.x1) return false;
         if (cx >= self.strip && cx <= self.strip + STRIP) return false;
-        return y + h > FLOOR - 7;
+        if (y + h <= FLOOR - 7) return false;
+        // the strip the flags stood in before this wave is where the backwash runs out hardest: the rip
+        self.hazard.cause = self.prev !== null && cx >= self.prev && cx <= self.prev + STRIP ? 'tvm-rip' : 'tvm-drift';
+        return true;
       },
     };
   }
@@ -94,6 +99,7 @@ export class Surf extends Entity {
       this.state = 'walk';
       this.t = 0;
       this.mi = 0;
+      this.prev = this.strip;
       this.startWalk(w);
       w.sfx('ding', this.strip + STRIP / 2, FLOOR - 30);
       w.say('Priii! Thira varunnu! | Whistle! A wave is coming!', this.strip + STRIP / 2, FLOOR - 34, 1.2, 'npc');
@@ -119,6 +125,7 @@ export class Surf extends Entity {
       this.state = 'calm';
       this.i++;
       this.walk = null;
+      this.prev = null;
     }
   }
   /** how far the foam has come up the beach, 0..1 */
@@ -151,6 +158,20 @@ export class Surf extends Entity {
         ctx.fillRect(a, FLOOR - h, b - a, h + 2);
         ctx.fillStyle = 'rgba(255,255,255,0.9)';
         for (let x = a; x < b; x += 6) ctx.fillRect(x, FLOOR - h - 1 + Math.sin(tick * 0.2 + x * 0.3) * 1.2, 3, 1.5);
+      }
+      // the old strip, if the flags have left it: the rip, darker, running out to sea
+      if (this.prev !== null && Math.abs(this.prev - this.strip) >= STRIP) {
+        ctx.fillStyle = 'rgba(20,70,95,0.75)';
+        ctx.fillRect(this.prev, FLOOR - h, STRIP, h + 2);
+        ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+        ctx.lineWidth = 0.8;
+        for (let x = this.prev + 4; x < this.prev + STRIP - 2; x += 10) {
+          const o = (tick * 0.8 + x) % 8;
+          ctx.beginPath();
+          ctx.moveTo(x, FLOOR - h + o);
+          ctx.lineTo(x, FLOOR - h + o + 3);
+          ctx.stroke();
+        }
       }
       // the strip stays dry: the drift runs round the flags
       ctx.fillStyle = 'rgba(255,236,170,0.35)';

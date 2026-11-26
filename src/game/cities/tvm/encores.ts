@@ -8,7 +8,7 @@ import { onPass } from '../../levels/trolls';
 import { tara as taraSays } from '../../levels/endkit';
 import { Surf } from './kovalam';
 import { Dhara, Droni } from './dhara';
-import { IceSlab, Tarp } from './entities';
+import { IceSlab, Launch, Tarp } from './entities';
 import { coconut, drop } from './levels';
 
 const meta = (family: string, betrayals: string[], ending: string): StageMeta => ({ family, betrayals, ending });
@@ -183,7 +183,7 @@ export const pozhikkara: Act = {
 export const theeram: Act = {
   id: 'tvm10-theeram',
   w: 36,
-  advice: 'On the shore the lifeguard moves the flags before each wave again, and a pot drips its oil into the new strip: stand on the dry sand at its edge, not on the oil in the middle (your feet go, and you slide out of the flags).',
+  advice: 'On the shore the lifeguard moves the flags before each wave again, and a pot drips its oil into the strip: stand on the dry sand at its left edge, not on the oil in the middle (your feet go, and you slide out of the flags). When he brings them back, jump over the oil to that dry edge.',
   paint: (g, c) => {
     const x = c.x;
     g.fill(x, x + 2, 14, 14, '#').fill(x + 33, x + 35, 14, 14, '#');
@@ -197,8 +197,10 @@ export const theeram: Act = {
         x1: x + 33,
         strip: x + 6,
         waves: [
-          { at: x + 7, moves: [{ to: x + 14, sec: 0.9 }], inAt: 2.4, inFor: 2.0 },
-          { moves: [{ to: x + 26, sec: 1.2 }], inAt: 2.6, inFor: 2.0 },
+          { at: x + 7, moves: [{ to: x + 14, sec: 0.9 }], inAt: 2.4, inFor: 2.6 },
+          { moves: [{ to: x + 26, sec: 1.2 }], inAt: 2.6, inFor: 2.6 },
+          { moves: [{ to: x + 14, sec: 1.2 }], inAt: 3.0, inFor: 2.6 },
+          { moves: [{ to: x + 27, sec: 1.2 }], inAt: 2.8, inFor: 2.6 },
         ],
       }),
     );
@@ -221,6 +223,87 @@ export const chanda: Act = {
     w.add(new Droni(x + 8, x + 14, 'tvm-chaal', 'drain'));
     w.add(new Dhara({ hookTx: x + 17, offTx: -2.4, slick: [x + 14, x + 15], ty: 8 }));
     w.add(new Droni(x + 15, x + 17, 'tvm-kindi'));
+  },
+};
+
+/** TVM-10 act: Kovalam again, under the palms (TVM-04): the new strip has a coconut palm over it, and a coconut
+ *  drops on whoever stands still under a palm. Stand in the part of the strip clear of the crown. */
+export const kadappuram: Act = {
+  id: 'tvm10-kadappuram',
+  w: 36,
+  advice: 'On the beach the flags move before every wave, and this time a coconut palm leans over the new strip: whoever stands still under it gets a coconut. Stand in the flags, clear of the crown. Then he carries them back, then far on.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x, x + 2, 14, 14, '#').fill(x + 33, x + 35, 14, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const s = w.add(
+      new Surf({
+        name: 'kadappuram',
+        x0: x + 3,
+        x1: x + 33,
+        strip: x + 4,
+        waves: [
+          { at: x + 5, moves: [{ to: x + 12, sec: 0.9 }], inAt: 2.6, inFor: 2.8 },
+          { moves: [{ to: x + 5, sec: 1.0 }], inAt: 2.6, inFor: 2.8 },
+          { moves: [{ to: x + 24, sec: 1.4 }], inAt: 3.4, inFor: 2.8 },
+        ],
+      }),
+    );
+    prop(w, 'palm', x + 15, 15, { h: 84, lean: -6 });
+    const nut = coconut(w, px(x + 13.8), px(9));
+    w.when(
+      (w2) => w2.player.onGround && Math.abs(w2.player.vx) < 30 && w2.player.cx > px(x + 13.5) && w2.player.cx < px(x + 16.4),
+      (w2) => drop(w2, nut, { shake: 0.1, v0: 60, land: false }),
+    );
+    w.when(
+      () => s.i === 0 && s.state === 'rise',
+      (w2) => taraSays(w2, 'Thanalil nilkku, Dad! | Stand in the shade, Dad!', 1.4),
+    );
+  },
+};
+
+/** TVM-10 act: the stall's tarp from the welcome tour, over the new strip: let it empty before you step in */
+export const thira: Act = {
+  id: 'tvm10-thira',
+  w: 34,
+  advice: 'He plants the flags under a stall tarp full of rain: step up to it, back off and let it empty, then get between the flags before the wave. Then he paces and puts them back where they were: stay. Then far on.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x, x + 2, 14, 14, '#').fill(x + 31, x + 33, 14, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(
+      new Surf({
+        name: 'thira',
+        x0: x + 3,
+        x1: x + 31,
+        strip: x + 4,
+        waves: [
+          { at: x + 5, moves: [{ to: x + 12, sec: 0.9 }], inAt: 3.4, inFor: 2.8 },
+          { moves: [{ to: x + 16, sec: 0.6 }, { to: x + 12, sec: 0.6 }], inAt: 2.6, inFor: 2.8 },
+          { moves: [{ to: x + 23, sec: 1.2 }], inAt: 3.2, inFor: 2.8 },
+        ],
+      }),
+    );
+    w.flags.thiraTarp = w.add(new Tarp({ tx0: x + 12, tx1: x + 15.6, ty: 11, groundTy: 15, drop: [x + 12.2, x + 15.4], triggerTx: x + 10.8 }));
+  },
+};
+
+/** TVM-10 act: Thumba again (the welcome tour's two-stage rocket), on flat ground this time: it goes as you pass
+ *  the gate, the booster comes down just ahead and the last stage where you'd stop short of the fire. Stop at once. */
+export const thumba: Act = {
+  id: 'tvm10-thumba',
+  w: 30,
+  advice: 'At Thumba the rocket goes as you pass the gate: stop at once. The booster comes down just ahead of you and the last stage further on, where you would wait for the fire to die. Once both are down, hop them and go.',
+  build: (w, c) => {
+    const x = c.x;
+    const rocket = Launch.place(w, { tx: x + 21, groundTy: 15, blast: [x + 18, x + 24], blastSec: 2.4, stageTx: x + 13, sepAt: 1.7, boosters: [{ tx: x + 8, sepAt: 0.9 }] });
+    onPass(w, px(x + 6), (w2) => rocket.fire(w2));
+    sign(w, x + 4, 10.6, 3, 'THUMBA', 'green', null, 'launch station');
+    w.flags.thumba = rocket;
   },
 };
 

@@ -55,6 +55,16 @@ function follow(name: string, i: number, note: string): Step {
 }
 const kovalamRoom = (): Step[] => [walk(8.7, 'into the flags'), follow('hawa', 0, 'go with him to the new flags'), follow('hawa', 1, 'and on again'), ...hopAt(27.2, 12, 'up on the rocks'), walk(31.5)];
 
+/** stand at tile x `tx` (not the strip's middle) through wave `i` of surf `name` */
+function standAt(name: string, i: number, tx: number, note: string): Step {
+  return {
+    note,
+    max: 1500,
+    until: (w) => (surfOf(w, name)?.i ?? 0) > i,
+    policy: (w) => ({ move: toward(w, px(tx), 3), jump: false }),
+  };
+}
+
 // ------------------------------------------------------------------ TVM-10: Dhara
 const dharaRoom = (): Step[] => [
   ...hopAt(7.6, 30, 'over the oil and the trough, from before the oil', true),
@@ -310,6 +320,12 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     const r = S['TVM-10'];
     const i = r.findIndex((st) => st.note === 'with him, to the dry edge of the new strip');
     mistakes['TVM-10'].push({ what: 'go to the middle of the new flags, on the oil', steps: [...r.slice(0, i), follow('theeram', 0, 'to the middle of the strip'), die], cause: 'tvm-drift' });
+    const g = r.findIndex((st) => st.note === 'through the gate: the rocket goes');
+    mistakes['TVM-10'].push({ what: 'stop short of the rocket fire, like the tour', steps: [...r.slice(0, g), { hold: 'R', until: (w) => w.player.x >= px(32 + 34 + 13.2), max: 600 }, { hold: '', until: (w) => w.state !== 'play', max: 600 }], cause: 'crushed' });
+    const k = r.findIndex((st) => st.note === 'in the new flags, clear of the palm');
+    mistakes['TVM-10'].push({ what: 'stand in the middle of the flags, under the palm', steps: [...r.slice(0, k), follow('kadappuram', 0, 'to the middle of the strip'), die], cause: 'coconut' });
+    const t = r.findIndex((st) => st.note === 'up to the tarp');
+    mistakes['TVM-10'].push({ what: 'walk straight into the flags under the full tarp', steps: [...r.slice(0, t), follow('thira', 0, 'to the middle of the strip'), die], cause: 'tvm-drenched' });
   }
 };
 
@@ -320,13 +336,13 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   // first death: ran on out of the strip. So: stop in the flags you reached... and he moves them again
-  'TVM-09': { steps: [walk(8.7), follow('hawa', 0, 'to the new flags'), until(done, 'and stay in them', 900)], cause: 'tvm-drift' },
+  'TVM-09': { steps: [walk(8.7), follow('hawa', 0, 'to the new flags'), until(done, 'and stay in them', 900)], cause: 'tvm-rip' },
   // first death: slid off the oil into the trough. So: jump long from before the oil, every trough
   'TVM-10': { steps: [...hopAt(7.6, 30, 'from before the oil', true), walk(18.4), ...hopAt(18.7, 30, 'the same long jump', true), { hold: 'R', until: done, max: 300 }], cause: 'tvm-kindi' },
 };
 
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
-  'TVM-09': [{ what: 'stand still in the first flags', steps: [walk(8.7), until(done, 'stay', 900)], cause: 'tvm-drift' }],
+  'TVM-09': [{ what: 'stand still in the first flags', steps: [walk(8.7), until(done, 'stay', 900)], cause: 'tvm-rip' }],
   'TVM-10': [{ what: 'jump the first trough from its edge', steps: [...hopAt(9.4, 30, 'from the edge, on the oil'), { hold: 'R', until: done, max: 300 }], cause: 'tvm-droni' }],
 };
 
@@ -343,6 +359,12 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', jump: 30, ticks: 30, long: true, note: 'over the oil' },
     { hold: 'R', until: ground, max: 300 },
     follow('theeram', 1, 'and the long run on'),
+    { hold: 'L', until: (w) => w.player.x <= px(x + 18.6), max: 600, note: 'he brings them back: with him, up to the oil' },
+    { hold: '', ticks: 16 },
+    { hold: 'L', jump: 30, ticks: 30, long: true, note: 'over the oil to the dry edge' },
+    { hold: '', until: ground, max: 300 },
+    standAt('theeram', 2, x + 14.4, 'on the dry edge'),
+    follow('theeram', 3, 'and on again'),
     ...hopAt(x + 32.2, 12, 'up on the rocks'),
     walk(x + 35.5),
   ],
@@ -358,6 +380,35 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: ground, max: 300 },
     walk(x + 29.5),
   ],
+  'tvm10-thumba': (x) => [
+    { hold: 'R', until: X(x + 6.1), max: 600, note: 'through the gate: the rocket goes' },
+    until((w) => w.flags.thumba.stage === 'down' && !w.flags.thumba.burning, 'stop at once; let both stages come down and the fire die', 600),
+    ...hopAt(x + 6.6, 14, 'over the booster'),
+    walk(x + 11.4),
+    ...hopAt(x + 11.6, 14, 'over the last stage'),
+    walk(x + 29.2),
+  ],
+  'tvm10-kadappuram': (x) => [
+    ...hopAt(x - 0.9, 12, 'up on the rocks'),
+    walk(x + 5.2, 'into the flags'),
+    standAt('kadappuram', 0, x + 12.8, 'in the new flags, clear of the palm'),
+    follow('kadappuram', 1, 'back with him'),
+    follow('kadappuram', 2, 'and far on'),
+    ...hopAt(x + 32.2, 12, 'up on the rocks'),
+    walk(x + 35.2),
+  ],
+  'tvm10-thira': (x) => [
+    ...hopAt(x - 0.9, 12, 'up on the rocks'),
+    walk(x + 5.2, 'into the flags'),
+    { hold: 'R', until: X(x + 10.7), max: 300, note: 'up to the tarp' },
+    { hold: 'L', until: (w) => w.player.x <= px(x + 9.8), max: 120, note: 'and back off' },
+    until((w) => w.flags.thiraTarp.state === 'empty', 'let it empty', 400),
+    standAt('thira', 0, x + 14, 'in the flags under the empty tarp'),
+    standAt('thira', 1, x + 14, 'he paces and puts them back: stay'),
+    follow('thira', 2, 'then on with him'),
+    ...hopAt(x + 30.2, 12, 'up on the rocks'),
+    walk(x + 33.2),
+  ],
   'tvm10-uzhichil': (x) => [
     walk(x + 4.3),
     { hold: '', ticks: 24, note: 'stop at the edge of the first trough' },
@@ -371,7 +422,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: '', ticks: 24, note: 'stop before the oil' },
     { hold: 'R', jump: 30, ticks: 30, long: true, note: 'over the oil and the last trough' },
     { hold: 'R', until: ground, max: 300 },
-    walk(x + 25.5),
+    walk(x + 24.8),
   ],
   'tvm10-kizhi': (x) => [
     walk(x + 6.0, 'stop short of the tarp'),
