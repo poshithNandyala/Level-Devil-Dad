@@ -1,5 +1,6 @@
 // Kolkata's door endings, one per stage 02-10, each a new idea. Kinds start with 'ccu-'.
 import { Entity, type World } from '../../world';
+import { Solid } from '../../body';
 import { lock, npc } from '../../levels/endkit';
 import { px } from '../../levels/kit';
 import { pool } from '../../levels/acts';
@@ -10,7 +11,7 @@ import { Customer, Muck, Stack, Stall } from './books';
 import { Paint } from '../../levels/endkit';
 import { Road } from './porters';
 
-export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn' | 'ccu-arch' | 'ccu-bhanr';
+export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn' | 'ccu-arch' | 'ccu-bhanr' | 'ccu-dhak';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<CcuEndingKind, true> {}
@@ -240,6 +241,56 @@ export const endings: Record<CcuEndingKind, Ending> = {
               ctx.fillStyle = 'rgba(255,255,255,0.8)';
               ctx.fillRect(x - 8, y - 6, 16 * Math.min(1, still / 0.8), 2);
             }
+          }
+        })(),
+      );
+    },
+  },
+  // ================================================================ CCU-09: the dhak gate
+  /** The pandal's gate is a cloth curtain that the dhaki's drumming lifts: up on every beat for half a beat,
+   *  down (a wall) in between. Go through on the beat. */
+  'ccu-dhak': {
+    space: 12,
+    advice: 'The pandal’s gate is a cloth curtain, and it lifts on every beat of the dhak. Stand close, and walk through as it goes up.',
+    build(w, d) {
+      const D = Math.round(d.x / 16);
+      const cur = new Solid(px(D - 1), FLOOR_Y - 48, 12, 48);
+      cur.velX = 0;
+      const beat = 108;
+      const up = (w2: World) => w2.tick % beat < 54;
+      w.flags.dhak = { cur, beat, D };
+      w.flags.twist = 'down';
+      w.add(
+        new (class extends Entity {
+          solid = cur;
+          update(w2: World) {
+            const u = up(w2);
+            if (u !== (w2.flags.twist === 'up')) {
+              w2.flags.twist = u ? 'up' : 'down';
+              if (u) w2.sfx('stamp', px(D), FLOOR_Y);
+            }
+            cur.collidable = !u;
+            d.hidden = !u;
+          }
+          draw(ctx: CanvasRenderingContext2D, w2: World) {
+            const u = up(w2);
+            const h = u ? 10 : 48;
+            ctx.fillStyle = '#C62828';
+            ctx.fillRect(px(D - 1), FLOOR_Y - 48, 12, h);
+            ctx.fillStyle = '#F2C14E';
+            for (let y = FLOOR_Y - 46; y < FLOOR_Y - 48 + h; y += 7) ctx.fillRect(px(D - 1), y, 12, 2);
+            // the dhaki beside the gate, his drum on his hip, feather plumes on top
+            const x = px(D - 3) + 8;
+            ctx.fillStyle = '#E8E2D0';
+            ctx.fillRect(x - 3, FLOOR_Y - 20, 6, 20);
+            ctx.fillStyle = '#C68B59';
+            ctx.beginPath();
+            ctx.arc(x, FLOOR_Y - 24, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#8B5A2B';
+            ctx.fillRect(x + 2, FLOOR_Y - 16, 12, 9);
+            ctx.fillStyle = '#F4F1E8';
+            ctx.fillRect(x + 10, FLOOR_Y - 26 - (u ? 3 : 0), 3, 10);
           }
         })(),
       );

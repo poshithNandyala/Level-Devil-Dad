@@ -14,4 +14,5 @@ export const causeLines: Record<string, string[]> = {
   'ccu-bojha': ['A load coming the other way knocked you off.', 'Only ride loads going your way. Let the others pass.'],
   'ccu-arch': ['The station arch swept you off the load.', 'Step off on to the platform before the arch.'],
   'ccu-dhowa': ['You stood still by the old men and joined their adda. Then the maid washed the rok.', 'Never stop beside the adda. Walk through, and hop the water.'],
+  'ccu-bansh': ['On to the cut bamboo stakes. The cloth went up where you were jumping.', 'Watch the decorator with the roll: jump on to the top of his panel.'],
 };

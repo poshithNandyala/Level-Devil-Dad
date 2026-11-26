@@ -15,6 +15,7 @@ import { Customer, Muck, Stack, Stall } from './books';
 import { Junction, Points, Tram } from './tram';
 import { ChaiBoard, Girders, Porter, Road, SHORT, TALL } from './porters';
 import { Adda, House, TeaSeller, Wash } from './adda';
+import { ClothPanel, Decorator, Skeleton, Stakes } from './pandal';
 import type { Act } from '../../levels/acts';
 
 const tara = (n: number, beaten = 0) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[beaten % L.beaten.length] });
@@ -301,6 +302,75 @@ const rok: Act = {
   },
 };
 
+
+// ================================================================== CCU-09: Pandal (the bamboo skeleton)
+/** a decorator ties `panel` on as soon as Dad lands on the bamboo between columns c0 and c1 at row top y */
+function tieWhenOn(w: World, panel: ClothPanel, c0: number, c1: number, y = px(12)) {
+  w.when(
+    (w2) => w2.player.onGround && w2.player.y + w2.player.h === y && w2.player.cx > px(c0) && w2.player.cx < px(c1),
+    (w2) => panel.tie(w2),
+  );
+}
+/** the next panel goes on above `panel` a moment after Dad stands on its top */
+function stackWhenOn(w: World, panel: ClothPanel, more: number, delay = 0.35) {
+  w.when(
+    (w2) => panel.tied && w2.player.onGround && w2.player.isRiding(panel.solid),
+    (w2) => w2.after(delay, () => panel.raise(w2, more)),
+  );
+}
+function pandalRoom(): LevelDef {
+  return {
+    id: 'CCU-09',
+    city: 'CCU',
+    index: 9,
+    name: 'Pandal',
+    nameEn: 'The bamboo skeleton',
+    tagline: 'Weeks before the festival, every para in Kolkata builds its pandal: a palace of cloth over a skeleton of bamboo, tied on panel by panel.',
+    hint: 'Cross on the bamboo; the floor is all cut stakes. The decorators tie a cloth panel on exactly where your next foothold was, the moment you land before it: it’s a solid wall, but you can stand on its top. Jump high (hold it) on to the top of the cloth, not at the bamboo under it. And don’t stay on a cloth top under the roof frame: they tie the next panel on above it, and up you go.',
+    par: 14,
+    map: Grid.ground(15).fill(3, 3, 13, 14, '#').fill(5, 6, 12, 12, '=').fill(9, 10, 12, 12, '=').fill(13, 14, 12, 12, '=').fill(17, 18, 12, 12, '=').fill(21, 22, 12, 12, '=').fill(24, 26, 12, 12, '=').fill(19, 23, 7, 7, '#').fill(28, 31, 12, 14, '#').put(1, 14, '@').rows(),
+    build(w: World) {
+      w.add(new Skeleton(px(4), px(32)));
+      w.add(new Stakes(px(4), px(28)));
+      const p3 = w.add(new ClothPanel(px(13), px(2), px(12), 2, 0));
+      const p5 = w.add(new ClothPanel(px(21), px(2), px(12), 2, 1));
+      w.add(new Decorator(px(15) + 6, px(12), p3));
+      w.add(new Decorator(px(23) + 6, px(12), p5));
+      tieWhenOn(w, p3, 9, 11);
+      tieWhenOn(w, p5, 17, 19);
+      stackWhenOn(w, p5, 2);
+      w.flags.panels = [p3, p5];
+      sign(w, 0.3, 10.4, 3.6, 'KUMARTULI PARK', 'green', null, 'pandal');
+      rival(w, 1, 15, 1, tara(7));
+      onPass(w, px(2), (w2) => w2.guide('Ei je, shunun! | Excuse me, listen!', (w3) => w3.player.cx < px(6)));
+      collectible(w, 'ccu-sandesh', 23.5, 9.2);
+    },
+  };
+}
+
+/** CCU-09 act: a wide panel across the next bamboo, and no roof frame over it: this time, ride the raise */
+const chala: Act = {
+  id: 'ccu09-chala',
+  w: 40,
+  cp0: false,
+  cps: [27.5],
+  advice: 'A wide panel goes up across the long bamboo: a full jump on to its top. Here there’s no roof frame over it, and the high bamboo ahead is out of reach: stay on the cloth while they tie the next panel on above, and ride it up to the high bamboo.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 2, x + 3, 12, 12, '=').fill(x + 6, x + 11, 12, 12, '=').fill(x + 14, x + 17, 6, 6, '=').fill(x + 20, x + 23, 9, 9, '=');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(new Skeleton(c.X(0), c.X(40)));
+    w.add(new Stakes(c.X(0), c.X(25)));
+    const wide = w.add(new ClothPanel(c.X(6), px(6), px(12), 2, 2));
+    w.add(new Decorator(c.X(12) + 6, px(12), wide));
+    tieWhenOn(w, wide, x + 2, x + 4);
+    stackWhenOn(w, wide, 3, 0.25);
+    w.flags.wide = wide;
+  },
+};
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -355,6 +425,6 @@ export const levels = (): LevelDef[] => [
   longStage({ base: poleRoom(), par: 60, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 90, acts: [girder, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 40, acts: [rok], twist: 'ccu-bhanr', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-door-opens-for-a-cup-of-tea') }),
-  longStage({ base: todoRoom(9), par: 30, shape: 'long' }),
+  longStage({ base: pandalRoom(), par: 40, acts: [chala], twist: 'ccu-dhak', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-dhak-beat-lifts-the-gate-curtain') }),
   longStage({ base: todoRoom(10), par: 30, shape: 'long' }),
 ];

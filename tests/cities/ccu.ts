@@ -11,6 +11,7 @@ import type { Stack } from '../../src/game/cities/ccu/books';
 import type { Tram } from '../../src/game/cities/ccu/tram';
 import { Porter } from '../../src/game/cities/ccu/porters';
 import type { Wash } from '../../src/game/cities/ccu/adda';
+import type { ClothPanel } from '../../src/game/cities/ccu/pandal';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -87,6 +88,28 @@ const hopTo = (x: number, jt: number, note: string): Step[] => [
   { hold: 'R', jump: jt, until: (w) => w.player.cx >= x, max: 90, note },
   { hold: '', until: ground, max: 200 },
 ];
+/** a hop steered like a person does it: jump, and lean towards the spot (x, px) you want to land on */
+function steerHop(x: number, jt: number, note: string, long = false): Step {
+  let W: World | null = null;
+  let t = 0,
+    up = false;
+  return {
+    policy: (w) => {
+      if (W !== w) {
+        W = w;
+        t = 0;
+        up = false;
+      }
+      t++;
+      if (!w.player.onGround) up = true;
+      return { move: toward(w, x, 2), jump: t <= jt };
+    },
+    until: (w) => up && w.player.onGround,
+    max: 200,
+    note,
+    long,
+  };
+}
 /** walk right, and hop every gap in the floor ahead */
 function hopGaps(): (w: World) => Out {
   let W: World | null = null;
@@ -195,6 +218,24 @@ function hopWater(): (w: World) => Out {
 }
 const addaRoute = (): Step[] => [walk(2.6), ...hopTo(px(5), 12, 'up on the rok'), { hold: 'R', until: X(32.2), max: 600, note: 'straight through the adda, never stopping' }];
 
+
+// ------------------------------------------------------------------ CCU-09: the pandal
+const pandalStart = (): Step[] => [
+  walk(1.6),
+  steerHop(px(3.5), 12, 'up the bamboo step'),
+  steerHop(px(6), 10, 'on to the first bamboo'),
+  steerHop(px(10), 10, 'the second: a panel goes up over the third'),
+];
+const pandalRoute = (wait = 0): Step[] => [
+  ...pandalStart(),
+  steerHop(px(14), 34, 'a full jump on to the top of the new cloth', true),
+  steerHop(px(18), 10, 'down to the next bamboo: a panel goes up over the one after'),
+  steerHop(px(22), 34, 'a full jump on to its top', true),
+  ...(wait ? [{ hold: '' as const, ticks: wait, note: 'stay on the cloth' }] : []),
+  steerHop(px(25.3), 10, 'and off at once, before they tie the next panel above it'),
+  steerHop(px(29.5), 12, 'on to the deck'),
+  walk(31.4),
+];
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['CCU-01'] = tourRun('onto');
   S['CCU-02'] = [...ride(px(25), px(28.5), 'past the first “aaste” (over the drain), off on the second'), walk(30)];
@@ -211,6 +252,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('CCU-07', 0, []);
   S['CCU-08'] = addaRoute();
   lengthen('CCU-08', 0, []);
+  S['CCU-09'] = pandalRoute();
+  lengthen('CCU-09', 0, []);
   S['CCU-04'] = boiRoute(true);
   lengthen('CCU-04', 0, []);
 }
@@ -234,6 +277,7 @@ function boiRoute(skip: boolean, wait = 0): Step[] {
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-01': { steps: tourRun('long'), cause: 'ccu-rail' },
   'CCU-04': { steps: boiRoute(false), cause: 'ccu-boi' },
+  'CCU-09': { steps: [...pandalStart(), steerHop(px(14), 10, 'on to the third bamboo'), { hold: '', until: done, max: 300 }], cause: 'ccu-bansh' },
   'CCU-08': { steps: [walk(2.6), ...hopTo(px(5), 12, 'up on the rok'), walk(14.2), { hold: '', until: done, max: 1200, note: 'stop to listen to the old men' }], cause: 'ccu-dhowa' },
   'CCU-07': { steps: [howrahRoom()[0], howrahRoom()[1], { hold: '', until: done, max: 3000, note: 'ride him all the way' }], cause: 'ccu-cha' },
   'CCU-06': {
@@ -246,6 +290,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-04': { steps: boiRoute(true, 300), cause: 'ccu-boi' },
+  'CCU-09': { steps: pandalRoute(200), cause: 'crushed' },
   'CCU-07': { steps: [howrahRoom()[0], howrahRoom()[1], hopUp((w) => porters(w).find((p) => p.o.v < 0), 'jump for the first load that comes by'), { hold: '', until: done, max: 900 }], cause: 'ccu-bojha' },
   'CCU-06': { steps: [walk(2.4), ...hopTo(px(5), 12, 'over the stop’s step'), { hold: 'R', until: (w) => w.player.onGround && w.player.y > 222 && w.player.cx > px(6.6), max: 300 }, ...hopTo(px(7) + 12, 8, 'on to the rear step'), { hold: '', until: done, max: 4000, note: 'stay on the step, past the island' }], cause: 'ccu-points' },
   'CCU-02': { steps: [...ride(px(16), px(19.5), 'off on the first “aaste”'), { hold: 'R', until: (w) => w.state !== 'play', max: 300 }], cause: 'ccu-nala' },
@@ -269,6 +314,14 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu09-chala': (x) => [
+    steerHop(px(x + 3), 10, 'on to the bamboo: the wide panel goes up'),
+    steerHop(px(x + 7.5), 34, 'a full jump on to the wide cloth', true),
+    { hold: '', until: (w) => (w.flags.wide as ClothPanel).top() <= px(7), max: 300, note: 'ride the next panel up' },
+    steerHop(px(x + 15.5), 10, 'on to the high bamboo'),
+    steerHop(px(x + 22), 8, 'down to the next'),
+    walk(x + 38, 'down to the pandal floor'),
+  ],
   'ccu08-rok': (x) => [{ policy: hopWater(), until: and(ground, X(x + 38)), max: 1800, note: 'through both addas, hopping the water' }],
   'ccu07-girder': girderRoute,
   'ccu07-pylon': (x) => [walk(x + 3.9), ...hopTo(px(x + 6.4), 10, 'up the pylon step'), hopUp((w) => ahead(w, 55, 54), 'wait for the tall porter, and up on his load'), { hold: '', until: X(x + 40.6), max: 1800, note: 'ride him to Howrah' }],
@@ -285,6 +338,14 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 /** a policy for each door ending, by kind */
 const SETHOP = hopGaps();
 const endingPolicies: Record<string, Policy> = {
+  'ccu-dhak'(w, _m, d) {
+    const k = w.flags.dhak as { beat: number; D: number };
+    const p = w.player;
+    const stand = px(k.D - 1) - 9;
+    if (p.cx > stand + 4) return go('R');
+    if (w.flags.twist === 'up' && w.tick % k.beat < 24) return go('R');
+    return go(toward(w, stand, 1));
+  },
   'ccu-bhanr'(w, _m, d) {
     const k = w.flags.bhanr as { x: number };
     if (w.flags.twist === 'open') return go(toward(w, d.x + 8, 1) || 'R');
@@ -339,5 +400,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['CCU-02', 'CCU-04', 'CCU-06', 'CCU-07', 'CCU-08'],
+  fair: ['CCU-02', 'CCU-04', 'CCU-06', 'CCU-07', 'CCU-08', 'CCU-09'],
 };
