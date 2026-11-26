@@ -18,7 +18,6 @@ export type { Ending } from './endkit';
 import type { Ending } from './endkit';
 import { NEW_ENDINGS, type NewEndingKind } from './endings2';
 import { WEST_ENDINGS, type WestEndingKind } from './endings3';
-import { EAST_ENDINGS, type EastEndingKind } from './endings4';
 
 export type EndingKind =
   | 'knock' | 'loading' | 'reflection' | 'glider' | 'trapdoor'
@@ -30,9 +29,13 @@ export type EndingKind =
   | 'bollywood' | 'kabaddi' | 'dahihandi' | 'credits'
   | NewEndingKind
   | WestEndingKind
-  | EastEndingKind;
+  // each city module's own endings (declared in its endings.ts, see docs/CITY-MODULE.md)
+  | keyof ModuleEndingKinds;
 
-const OLD_ENDINGS: Record<Exclude<EndingKind, NewEndingKind | WestEndingKind | EastEndingKind>, Ending> = {
+/** filled in by city modules: `declare module` this to add an ending kind */
+export interface ModuleEndingKinds {}
+
+const OLD_ENDINGS: Record<Exclude<EndingKind, NewEndingKind | WestEndingKind | keyof ModuleEndingKinds>, Ending> = {
   // ================================================================ Thiruvananthapuram
   /** The door is locked. Knock: jump into it, three times, and Ammachi opens up. */
   knock: {
@@ -2520,6 +2523,7 @@ const OLD_ENDINGS: Record<Exclude<EndingKind, NewEndingKind | WestEndingKind | E
   },
 };
 
-export const ENDINGS: Record<EndingKind, Ending> = { ...OLD_ENDINGS, ...NEW_ENDINGS, ...WEST_ENDINGS, ...EAST_ENDINGS };
+/** every door ending; city modules' endings are added by src/game/cities/install.ts */
+export const ENDINGS = { ...OLD_ENDINGS, ...NEW_ENDINGS, ...WEST_ENDINGS } as Record<EndingKind, Ending>;
 
 export const isEnding = (k: string | undefined): k is EndingKind => !!k && k in ENDINGS;

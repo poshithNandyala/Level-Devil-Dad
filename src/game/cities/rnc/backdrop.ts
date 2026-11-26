@@ -1,5 +1,5 @@
-import type { Theme } from './theme';
-import { Ctx, withAlpha } from './art/common';
+import type { Theme } from '../../../render/theme';
+import { Ctx, withAlpha } from '../../../render/art/common';
 
 /**
  * Ranchi: the plateau edge, a waterfall dropping off it, sal on the near

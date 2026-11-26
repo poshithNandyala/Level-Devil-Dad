@@ -9,7 +9,7 @@ import { DT } from '../src/game/constants';
 import { swim, skimmer, kicker } from './moves';
 import { Jelly } from '../src/game/levels/kvt';
 import { westSolutions } from './west';
-import { eastSolutions, EAST_NAIVE } from './east';
+import { CITY_TESTS } from './city-tests';
 const px16 = (t: number) => t * 16;
 /** a tile group that has moved away (fallen, slid) is back home and still */
 const groupBack = (letter: string) => (w: World) => {
@@ -1282,11 +1282,11 @@ SOLUTIONS['BOM-08'] = [
 ];
 lengthen('BOM-08', 0, []);
 westSolutions(SOLUTIONS, lengthen);
-eastSolutions(SOLUTIONS, lengthen);
+for (const t of CITY_TESTS) t.solutions(SOLUTIONS, lengthen);
 
 /** The obvious play that a trap is designed to punish. */
 export const NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
-  ...EAST_NAIVE,
+  ...Object.assign({}, ...CITY_TESTS.map((t) => t.naive)),
   'TVM-01': { steps: tourRun('TVM'), cause: 'spikes' },
   'KVT-01': { steps: tourRun('KVT'), cause: 'hatchling' },
   'CHN-01': { steps: tourRun('CHN'), cause: 'burnt' },
@@ -1641,3 +1641,4 @@ export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
     cause: 'spikes',
   },
 };
+for (const t of CITY_TESTS) Object.assign(FIX, t.fix ?? {});

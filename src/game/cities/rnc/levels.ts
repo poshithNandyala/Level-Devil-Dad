@@ -1,21 +1,21 @@
 // Ranchi: the city of waterfalls on the edge of the Chota Nagpur plateau. Dhuska frying on Main Road,
 // Jharkhand's archers, the monsoon storm and its rugra, Seraikela's Chhau masks, Dokra brass, and Hundru,
 // where the Subarnarekha drops off the plateau.
-import { type LevelDef, type World } from '../world';
-import { Paint } from './endkit';
-import { LINES } from '../cities';
-import { collectible, door, px, rival, sign } from './kit';
-import type { Act } from './acts';
-import { onPass } from './trolls';
-import { tour } from './tour';
-import { longStage } from './chunks';
-import { Grid } from './grid';
-import { Artisan, Boss, CastMould, ChhauDancer, Cook, Crucible, DhuskaStall, MaskStand, Mould, Mound, Musicians, Pool, Railing, Range, River, Rugra, Sal, Storm, Stream, addKadhai, dadMask, falls, type Bowman, type CookStep } from '../entities/jharkhand';
+import { type LevelDef, type World } from '../../world';
+import { Paint } from '../../levels/endkit';
+import { lines as L } from './lines';
+import { collectible, door, px, rival, sign } from '../../levels/kit';
+import type { Act } from '../../levels/acts';
+import { onPass } from '../../levels/trolls';
+import { tour } from '../../levels/tour';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
+import { Artisan, Boss, CastMould, ChhauDancer, Cook, Crucible, DhuskaStall, MaskStand, Mould, Mound, Musicians, Pool, Railing, Range, River, Rugra, Sal, Storm, Stream, addKadhai, dadMask, falls, type Bowman, type CookStep } from './entities';
 
-const TAUNTS = LINES.RNC.taunt;
+const TAUNTS = L.taunt;
 const G = 15;
 const FLOOR = px(15);
-const tara = (n: number, beaten = 0) => ({ intro: LINES.RNC.intro[n], point: 1 as const, introAt: 0.5, taunts: TAUNTS, beaten: LINES.RNC.beaten[beaten] });
+const tara = (n: number, beaten = 0) => ({ intro: L.intro[n], point: 1 as const, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[beaten] });
 
 // ================================================================== RNC-02: Dhuska (the kadhai)
 /** the usual routine for n dhuska: batter into each in turn, flip each in turn, scoop each in turn */
@@ -481,7 +481,8 @@ const ghagh: Act = {
   },
 };
 
-export const RNC: LevelDef[] = [
+/** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
+export const levels = (): LevelDef[] => [
   tour({
     id: 'RNC-01',
     city: 'RNC',

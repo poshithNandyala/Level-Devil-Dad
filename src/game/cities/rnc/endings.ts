@@ -1,15 +1,19 @@
 // Ranchi's door endings: the flip that throws you up on to the counter, the target sheet over the door, the
 // lightning arrester and its earth pit, the swapped masks, the row of brass elephants, the hollow halfway
 // down the falls, and the door you cast yourself.
-import { Entity, type World } from '../world';
-import { FLOOR, Paint, lock, npc, tara } from './endkit';
-import { px } from './kit';
-import type { Ending } from './endkit';
-import { CastMould, ChhauDancer, Cook, Crucible, ElephantRow, MaskStand, Pool, Range, Rugra, Steps, Storm, Stream, Tadit, addKadhai, dadMask, falls, type Bowman } from '../entities/jharkhand';
+import { Entity, type World } from '../../world';
+import { FLOOR, Paint, lock, npc, tara } from '../../levels/endkit';
+import { px } from '../../levels/kit';
+import type { Ending } from '../../levels/endkit';
+import { CastMould, ChhauDancer, Cook, Crucible, ElephantRow, MaskStand, Pool, Range, Rugra, Steps, Storm, Stream, Tadit, addKadhai, dadMask, falls, type Bowman } from './entities';
 
-export type EastEndingKind = 'ulta' | 'nishana' | 'tadit' | 'chehra' | 'kataar' | 'khoh' | 'dwar';
+export type RncEndingKind = 'ulta' | 'nishana' | 'tadit' | 'chehra' | 'kataar' | 'khoh' | 'dwar';
 
-export const EAST_ENDINGS: Record<EastEndingKind, Ending> = {
+declare module '../../levels/endings' {
+  interface ModuleEndingKinds extends Record<RncEndingKind, true> {}
+}
+
+export const endings: Record<RncEndingKind, Ending> = {
   // ================================================================ RNC-02: the flip
   /** The door is up on the stall's counter, a step too high to jump. The last cook stands on your
    *  side of his kadhai, so his flips throw the other way: towards the counter. Let him flip you. */

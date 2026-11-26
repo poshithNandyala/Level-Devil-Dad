@@ -1097,6 +1097,10 @@ function filmset(ctx: Ctx, x0: number, x1: number) {
   }
 }
 
+/** a city module's own scene feature, drawn over the scene's backdrop */
+export type SceneFeature = (ctx: Ctx, x0: number, x1: number, sky: [string, string, string]) => void;
+export const MODULE_SCENE_FEATURES: Record<string, SceneFeature> = {};
+
 export function sceneSky(sc: SceneDef): [string, string, string] {
   return sc.sky ?? SKY[sc.kind];
 }
@@ -1112,4 +1116,6 @@ export function drawScene(ctx: Ctx, sc: SceneDef, x0: number, x1: number) {
   else if (sc.kind === 'cave') cave(ctx, x0, x1);
   else if (sc.kind === 'market') market(ctx, x0, x1, f);
   else filmset(ctx, x0, x1);
+  // features a city module adds to a stage's `scene.with` (installed by src/game/cities/install.ts)
+  for (const k of f) MODULE_SCENE_FEATURES[k]?.(ctx, x0, x1, sky);
 }

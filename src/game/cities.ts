@@ -59,7 +59,7 @@ export interface Chapter {
   teasers?: string[];
 }
 
-export const LINES: Record<CityId, CityLines> = {
+export const LINES = {
   TVM: {
     hello: 'Namaskaram! | Hello!',
     famous: 'Red buses, coconut palms and chaaya in the rain.',
@@ -298,32 +298,7 @@ export const LINES: Record<CityId, CityLines> = {
     seven: 'Saat baar! Thala for a reason. | Seven times! Back to the start.',
     lastLife: 'Aakhri mauka, Dad! Dheere dheere! | Last chance, Dad! Slowly!',
   },
-  RNC: {
-    hello: 'Johar! | Greetings!',
-    famous: 'The city of waterfalls up on the plateau: hot dhuska, Chhau masks, Dokra brass and rugra after the storm.',
-    lang: 'Nagpuri (Sadri) + Hindi + English',
-    intro: [
-      'Hian aao, Dad! Dhuska garam hai! | Come here, Dad! The dhuska’s hot!',
-      'Teer upar se jaate hain, chalte raho! | The arrows go overhead, keep walking!',
-      'Barkha aayi, rugra laayi! | The rains came, and brought the rugra!',
-      'Mukhauta pehno aur naacho, Dad! | Put on a mask and dance, Dad!',
-      'Mom pighla, ab seedha ghuso! | The wax has melted, go straight in!',
-      'Kood ja, Dad! Neeche paani hai! | Jump, Dad! There’s water below!',
-      'Toofan aa gaya! Jaldi kood, Dad! | The storm’s here! Jump in quick, Dad!',
-    ],
-    taunt: ['Ka, Dad? Phir se? | What, Dad? Again?', 'Kale gir gaye, Dad? | Why did you fall, Dad?', 'Toen kaisan aahis, Dad? | How are you doing, Dad?', 'Moen thik aahon. Toen? | I’m fine. And you?', 'Dheere, Dad, sambhal ke! | Slowly, Dad, careful!'],
-    beaten: ['Wah, Dad! Ekdum badhiya! | Wow, Dad! Brilliant!', 'Hian aao, jeetne wale! | Come here, champion!'],
-    death: ['Pathar pe gire, Dad! | Landed on the rocks, Dad!', 'Bijli ne dekh liya! | The lightning saw you!', 'Dhuska thanda ho gaya! | The dhuska went cold!', 'Kale, Dad? Kale? | Why, Dad? Why?', 'Phir se, Dad! | Again, Dad!'],
-    near: ['Bas thoda aur, Dad! | Just a bit more, Dad!', 'Ek kadam, bas! | Just one more step!'],
-    win: ['Johar, Dad! | Greetings, Dad!', 'Ekdum badhiya! | Brilliant!', 'Chal, aage! | Come on, onwards!'],
-    flip: 'Ulta-pulta ho gaya! | It’s all topsy-turvy!',
-    cleared: 'Ranchi cleared. Johar! | Ranchi cleared. Greetings!',
-    brag: 'Johar! | Greetings!',
-    idle: ['Ka soch rahe ho, Dad? | What are you thinking, Dad?', 'Hian aao, chalo na! | Come here, come on!', 'Toen kaisan aahis? | How are you?', 'Dhuska-ghugni khaoge? | Fancy dhuska and ghugni?'],
-    seven: 'Saat baar! Wapas shuru! | Seven times! Back to the start.',
-    lastLife: 'Ek jaan bachi hai, Dad! | One life left, Dad!',
-  },
-};
+} as Record<CityId, CityLines>;
 
 /** South to north. Bonus chapters are optional side trips; previews are early peeks. */
 export const CHAPTERS: Chapter[] = [
@@ -341,7 +316,7 @@ export const CHAPTERS: Chapter[] = [
   { id: 'JAI', name: 'Jaipur', state: 'Rajasthan', region: 'West', city: 'JAI', hello: LINES.JAI.hello, famous: LINES.JAI.famous },
   { id: 'BPL', name: 'Bhopal', state: 'Madhya Pradesh', region: 'Central', city: 'BPL', hello: LINES.BPL.hello, famous: LINES.BPL.famous },
   { id: 'RPR', name: 'Raipur', state: 'Chhattisgarh', region: 'Central', city: 'RPR', hello: LINES.RPR.hello, famous: LINES.RPR.famous },
-  { id: 'RNC', name: 'Ranchi', state: 'Jharkhand', region: 'Central', city: 'RNC', hello: LINES.RNC.hello, famous: LINES.RNC.famous },
+  { id: 'RNC', name: 'Ranchi', state: 'Jharkhand', region: 'Central', hello: "Johar! | Greetings!", famous: 'Waterfalls all around and hot dhuska at breakfast.', teasers: ['Dhuska Trampoline', 'Hundru Mist'] },
   { id: 'PAT', name: 'Patna', state: 'Bihar', region: 'Central', hello: "Ka haal ba? | How's it going?", famous: 'The Ganga, litti chokha and the old Golghar dome.', teasers: ['Golghar Spiral', 'Gandhi Setu Peel'] },
   { id: 'LKO', name: 'Lucknow', state: 'Uttar Pradesh', region: 'Central', hello: "Aadaab! | Respectful greetings!", famous: 'Kebabs, chikan embroidery and pehle-aap politeness.', teasers: ['Pehle Aap Trap', 'Door Number 489'] },
   { id: 'BBI', name: 'Bhubaneswar', state: 'Odisha', region: 'East', hello: "Kemiti achha? | How are you?", famous: 'Wide new roads, an old town and dahibara stalls.', teasers: ['Pipli Parachute', 'Kalbaishakhi Gust'] },

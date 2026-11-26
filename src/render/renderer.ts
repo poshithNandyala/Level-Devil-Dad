@@ -989,7 +989,8 @@ export class Renderer {
 export const ROOM = { W: ROOM_W, H: ROOM_H };
 /** per-city colour grade: light from above, shadow tint below, a soft bloom */
 /** per city: where its light comes from (fraction of the screen), the glow, a colour whisper, a vignette tint */
-const GRADES: Record<string, { gx: number; gy: number; glow: string; tint: string; vig: string }> = {
+export type Grade = { gx: number; gy: number; glow: string; tint: string; vig: string };
+export const GRADES: Record<string, Grade> = {
   TVM: { gx: 0.82, gy: -0.15, glow: 'rgba(255,236,190,0.30)', tint: 'rgba(110,200,160,0.12)', vig: 'rgba(8,46,36,0.16)' },
   KVT: { gx: 0.74, gy: -0.22, glow: 'rgba(255,255,236,0.34)', tint: 'rgba(60,220,235,0.10)', vig: 'rgba(0,48,86,0.12)' },
   CHN: { gx: 0.84, gy: -0.12, glow: 'rgba(255,242,205,0.38)', tint: 'rgba(255,196,120,0.10)', vig: 'rgba(84,34,12,0.12)' },
@@ -1004,7 +1005,6 @@ const GRADES: Record<string, { gx: number; gy: number; glow: string; tint: strin
   BPL: { gx: 0.3, gy: 0.24, glow: 'rgba(255,236,200,0.24)', tint: 'rgba(60,150,160,0.07)', vig: 'rgba(10,30,40,0.2)' },
   JAI: { gx: 0.65, gy: 0.22, glow: 'rgba(255,222,196,0.26)', tint: 'rgba(230,100,120,0.07)', vig: 'rgba(40,15,20,0.2)' },
   BOM: { gx: 0.8, gy: -0.1, glow: 'rgba(170,200,255,0.22)', tint: 'rgba(80,110,255,0.10)', vig: 'rgba(4,6,26,0.26)' },
-  RNC: { gx: 0.68, gy: 0.12, glow: 'rgba(255,246,205,0.27)', tint: 'rgba(90,150,80,0.07)', vig: 'rgba(18,32,14,0.2)' },
 };
 /** tile cache slice width (world px) */
 const CHUNK = 512;

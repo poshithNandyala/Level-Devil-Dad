@@ -10,7 +10,9 @@ import { DT } from '../../src/game/constants';
 import { swim, skimmer, kicker } from '../moves';
 import { Jelly } from '../../src/game/levels/kvt';
 import { westSolutions } from '../west';
-import { eastSolutions, EAST_NAIVE } from '../east';
+import { test as rnc } from '../cities/rnc';
+const eastSolutions = rnc.solutions;
+const EAST_NAIVE = rnc.naive;
 const px16 = (t: number) => t * 16;
 /** a tile group that has moved away (fallen, slid) is back home and still */
 const groupBack = (letter: string) => (w: World) => {

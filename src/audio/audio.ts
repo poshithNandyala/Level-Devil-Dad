@@ -520,8 +520,8 @@ export class Audio {
   }
 }
 
-type Bol = 'dha' | 'na' | 'ge' | 'ti' | null;
-interface MusicCfg {
+export type Bol = 'dha' | 'na' | 'ge' | 'ti' | null;
+export interface MusicCfg {
   bpm: number;
   sa: number;
   scale: number[];
@@ -530,7 +530,7 @@ interface MusicCfg {
 }
 
 const _ = null;
-const MUSIC: Record<CityId, MusicCfg> = {
+export const MUSIC = {
   // Kerala: brisk chenda-like groove on Mohanam (major pentatonic)
   TVM: {
     bpm: 112,
@@ -684,15 +684,4 @@ const MUSIC: Record<CityId, MusicCfg> = {
       [7, _, _, _, 6, _, 5, _, 4, _, _, _, 3, _, 4, _, 2, _, 1, _, 0, _, _, _, _, _, _, _, _, _, _, _],
     ],
   },
-  // Nagpuri dhun: a bright folk scale on the dhol-mandar, flute over it
-  RNC: {
-    bpm: 116,
-    sa: 155.56,
-    scale: [0, 2, 4, 5, 7, 9, 10],
-    theka: ['dha', 'ge', 'na', 'ti', 'na', 'ge', 'dha', 'ti'],
-    phrases: [
-      [4, _, 5, 4, 3, _, 4, _, 5, _, 6, 5, 4, _, 3, _, 2, _, 3, 4, 3, _, 2, _, 1, _, 2, _, 0, _, _, _],
-      [7, _, 6, 5, 6, _, 4, _, 5, 4, 3, _, 4, _, _, _, 2, _, 1, 0, 1, _, 2, _, 4, _, 3, _, 2, _, _, _],
-    ],
-  },
-};
+} as Record<CityId, MusicCfg>;

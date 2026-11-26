@@ -14,9 +14,9 @@ import { GNR } from './gnr';
 import { JAI } from './jai';
 import { BPL } from './bpl';
 import { RPR } from './rpr';
-import { RNC } from './rnc';
 
-export const LEVELS: LevelDef[] = [...TVM, ...KVT, ...CHN, ...PDY, ...BLR, ...AMR, ...HYD, ...PNJ, ...BOM, ...DMN, ...GNR, ...JAI, ...BPL, ...RPR, ...RNC];
+export const LEVELS: LevelDef[] = [...TVM, ...KVT, ...CHN, ...PDY, ...BLR, ...AMR, ...HYD, ...PNJ, ...BOM, ...DMN, ...GNR, ...JAI, ...BPL, ...RPR];
+// city modules (src/game/cities/registry.ts) are appended by src/game/cities/install.ts
 
 export const LEVEL_BY_ID = new Map(LEVELS.map((l) => [l.id, l]));
 

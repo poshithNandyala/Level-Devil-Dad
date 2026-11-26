@@ -24,7 +24,8 @@ export function mix(a: string, b: string, k: number) {
   return `rgb(${c[0]},${c[1]},${c[2]})`;
 }
 
-const CAP: Record<string, { cap: string; capHi: string; blades?: string; flowers?: string[]; pebbles?: string }> = {
+export type GroundCaps = { cap: string; capHi: string; blades?: string; flowers?: string[]; pebbles?: string };
+export const CAP: Record<string, GroundCaps> = {
   TVM: { cap: '#4E9A3C', capHi: '#7CC255', blades: '#3E8530', flowers: ['#F4D35E', '#FFFFFF'] },
   KVT: { cap: '#F1E7CF', capHi: '#FFF9EA', pebbles: '#D9CBAA' },
   CHN: { cap: '#E2B86C', capHi: '#F3D597', pebbles: '#B98E4E' },
@@ -39,7 +40,6 @@ const CAP: Record<string, { cap: string; capHi: string; blades?: string; flowers
   RPR: { cap: '#9CCC65', capHi: '#C5E1A5', pebbles: '#8D5A3B' },
   BPL: { cap: '#B9C7A6', capHi: '#D9E3C8', pebbles: '#7E8F6E' },
   BOM: { cap: '#4A4858', capHi: '#6B6980', pebbles: '#2E2D3A' },
-  RNC: { cap: '#7CB342', capHi: '#AED581', blades: '#5E8C33', pebbles: '#8D5A3B' },
 };
 
 /** One ground tile in the city's style. Edges depend on neighbours so groups of tiles read as one mass. */

@@ -1,3 +1,4 @@
+import './game/cities/install';
 import './ui/style.css';
 import { Capacitor } from '@capacitor/core';
 import { App } from './app/app';

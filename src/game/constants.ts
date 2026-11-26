@@ -79,7 +79,11 @@ export const ROOM_PHYS: Phys = {
   fixedJump: true,
 };
 
-export type CityId = 'TVM' | 'KVT' | 'CHN' | 'PDY' | 'BLR' | 'AMR' | 'HYD' | 'PNJ' | 'BOM' | 'DMN' | 'GNR' | 'JAI' | 'BPL' | 'RPR' | 'RNC';
+/** every stop on the journey (docs/CITIES.md), built or not: a city module never has to edit this */
+export type CityId =
+  | 'TVM' | 'KVT' | 'CHN' | 'PDY' | 'BLR' | 'AMR' | 'HYD' | 'PNJ' | 'BOM' | 'DMN' | 'GNR' | 'JAI' | 'BPL' | 'RPR' | 'RNC'
+  | 'PAT' | 'LKO' | 'BBI' | 'CCU' | 'SVP' | 'GTK' | 'DIS' | 'SHL' | 'ITA' | 'KOH' | 'IMP' | 'AIZ' | 'AGT'
+  | 'DEL' | 'CHP' | 'CHH' | 'DDN' | 'SML' | 'JMU' | 'SXR' | 'LEH';
 
 export interface Rect {
   x: number;

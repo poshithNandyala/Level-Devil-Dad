@@ -35,7 +35,7 @@ export interface Skin {
   awning: { fill: string; trim: string; line: string };
 }
 
-export const SKINS: Record<CityId, Skin> = {
+export const SKINS = {
   TVM: { rock: 'boulder', rockLine: 'Kallu veezhunnu! | Rocks coming down!', vehicle: 'jeep', reverse: 'Reverse gear! | Backing up!', sorry: 'Sorry, sorry! | Sorry!', roll: 'coconut', bird: 'crow', jet: 'water', mist: '236,244,240', lie: 'Ippo chaadu, Dad! | Jump now, Dad!', chaser: 'dog', chaseLine: 'Patti! Odu! | Dog! Run!', awning: { fill: '#3E7C59', trim: '#2C5A40', line: 'rgba(0,0,0,0.2)' } },
   KVT: { rock: 'crate', rockLine: 'Petti veezhunnu! | Crates falling!', vehicle: 'jeep', reverse: 'Pinnottu! | Backing up!', sorry: 'Kshamikkanam! | Sorry!', roll: 'coconut', bird: 'crow', jet: 'water', mist: '240,248,250', lie: 'Ippo chaadu, Dad! | Jump now, Dad!', chaser: 'crab', chaseLine: 'Njandu! Odu! | Crab! Run!', awning: { fill: '#2E8FA3', trim: '#1F6575', line: 'rgba(0,0,0,0.2)' } },
   CHN: { rock: 'kudam', rockLine: 'Kudam vizhudhu! | Pots falling!', vehicle: 'scooter', reverse: 'Reverse-u, thalli po! | Reversing, move aside!', sorry: 'Mannichidunga! | Sorry!', roll: 'kudam', bird: 'crow', jet: 'water', mist: '238,228,208', lie: 'Ippo jump pannu, Dad! | Jump now, Dad!', chaser: 'dog', chaseLine: 'Naai! Odu machi! | Dog! Run, buddy!', awning: { fill: '#C0392B', trim: '#8E2A20', line: 'rgba(0,0,0,0.2)' } },
@@ -50,8 +50,7 @@ export const SKINS: Record<CityId, Skin> = {
   BPL: { rock: 'crate', rockLine: 'Patthar gir riye hain! | Stones falling!', vehicle: 'scooter', reverse: 'Peeche aa riya hai! | It’s coming back!', sorry: 'Maaf karna, khan! | Sorry, friend!', roll: 'coconut', bird: 'crow', jet: 'water', mist: '232,240,244', lie: 'Abhi koodo! | Jump now!', chaser: 'dog', chaseLine: 'Kutta! Bhaago! | Dog! Run!', awning: { fill: '#00897B', trim: '#00695C', line: 'rgba(0,0,0,0.2)' } },
   GNR: { rock: 'crate', rockLine: 'Petiyo pade chhe! | Crates falling!', vehicle: 'scooter', reverse: 'Pachhu aave chhe! | Coming back!', sorry: 'Maaf karjo! | Sorry!', roll: 'coconut', bird: 'crow', jet: 'water', mist: '244,240,228', lie: 'Have kudo! | Jump now!', chaser: 'dog', chaseLine: 'Kutro! Bhaago! | Dog! Run!', awning: { fill: '#E53935', trim: '#B71C1C', line: 'rgba(0,0,0,0.2)' } },
   BOM: { rock: 'crate', rockLine: 'Khoka padla! | A box fell!', vehicle: 'cart', reverse: 'Maage yeto, bhau! | Coming back, bro!', sorry: 'Sorry bhau! | Sorry, bro!', roll: 'vada', bird: 'crow', jet: 'water', mist: '222,224,228', lie: 'Aata udi maar! | Jump now!', chaser: 'dog', chaseLine: 'Kutra! Pal, bhau! | Dog! Run, bro!', awning: { fill: '#1E88E5', trim: '#1565C0', line: 'rgba(0,0,0,0.2)' } },
-  RNC: { rock: 'boulder', rockLine: 'Patthar gir raha hai! | Rocks falling!', vehicle: 'scooter', reverse: 'Peechhe aa raha hai! | It’s coming back!', sorry: 'Maaf karna, Dad! | Sorry, Dad!', roll: 'coconut', bird: 'crow', jet: 'water', mist: '228,240,234', lie: 'Abhi kood, Dad! | Jump now, Dad!', chaser: 'dog', chaseLine: 'Kutta! Bhaago! | Dog! Run!', awning: { fill: '#33691E', trim: '#1B5E20', line: 'rgba(0,0,0,0.2)' } },
-};
+} as Record<CityId, Skin>;
 
 /** one line of advice per section, appended to the room's hint */
 const ADVICE: Record<ChunkKind, string> = {

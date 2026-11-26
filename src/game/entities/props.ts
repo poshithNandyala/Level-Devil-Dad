@@ -133,7 +133,7 @@ export interface RivalScript {
 }
 
 /** What Tara says when she saw exactly how you went down. */
-const CAUSE_LINES: Record<string, string[]> = {
+export const CAUSE_LINES: Record<string, string[]> = {
   fell: ['Mind the gap, Dad!', 'Gravity: 1. Dad: 0.'],
   spikes: ['Ouch. Pointy, no?', 'Those were not decorations!'],
   crushed: ['Flat Dad! Hahaha!', 'Squished like a dosa!'],
@@ -190,14 +190,6 @@ const CAUSE_LINES: Record<string, string[]> = {
   spilled: ['Dabbawalas never spill, Dad!', 'Lunch is on the floor now!'],
   'holi-fell': ['Wrong colour, Dad!', 'Bura na mano, Holi hai!'],
   bends: ['Safety stop, Dad! Safety stop!', 'Up too fast!'],
-  tel: ['Tel! Hot oil is not a pool, Dad.', 'Off the dhuska before the spoon gets there!'],
-  teer: ['Teer! You jumped right into its height.', 'Walk under the arrows. Climb them between shots.'],
-  bijli: ['Bijli! You were the tallest thing about.', 'When the cloud flickers, don’t be the highest thing under it.'],
-  baagh: ['Baagh! The tiger only runs from a hunter.', 'Put the right mask on before you go near him.'],
-  mom: ['Mom! Hot wax, running out of the mould.', 'Wait till it’s hollow, then straight through.'],
-  pital: ['Pital! That brass was still molten.', 'Glowing means wait. Gold means it’s set.'],
-  pathar: ['Pathar! A long fall on to Hundru’s rocks.', 'The soft way down is inside the falling water.'],
-  chhalang: ['Chhalang! Your jump made the fall too long.', 'Off a high rock, walk off the edge. Don’t jump.'],
 };
 
 /** Tara, the rival who sets traps. A/B variants: a mascot monkey, or a plain sign. */

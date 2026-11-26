@@ -35,7 +35,7 @@ const toward = (w: World, x: number, slack = 2): Move => {
 const doorCx = (d: Door) => d.x + 8;
 import { swimPolicy, kicker } from './moves';
 import { WEST_ENDING_POLICIES } from './west';
-import { EAST_ENDING_POLICIES } from './east';
+import { CITY_TESTS } from './city-tests';
 const go = (move: Move): Out => ({ move, jump: false });
 
 type Policy = (w: World, m: Mem, d: Door) => Out;
@@ -579,4 +579,4 @@ export const ENDING_POLICIES: Record<string, Policy> = {
   },
 };
 Object.assign(ENDING_POLICIES, WEST_ENDING_POLICIES);
-Object.assign(ENDING_POLICIES, EAST_ENDING_POLICIES);
+for (const t of CITY_TESTS) Object.assign(ENDING_POLICIES, t.endingPolicies);

@@ -17,6 +17,7 @@ import { makeCard } from '../ui/card';
 import { drawIcon } from '../render/art/icon';
 import { GAME } from '../config';
 import { Challenge, LIVES, Session } from './session';
+import { CITY_LINE } from './citylines';
 
 const SIZE_MUL = { S: 0.8, M: 1, L: 1.2, XL: 1.45 } as const;
 
@@ -1204,24 +1205,6 @@ export class App {
     this.modalEl.append(layer);
   }
 }
-
-const CITY_LINE: Record<CityId, string> = {
-  TVM: 'Monsoon puddles, red buses and coconuts with perfect timing.',
-  KVT: 'The lagoon, the tide and the boat all keep their own schedule.',
-  CHN: 'Share autos, water pots and a sun that plays tricks on you.',
-  PDY: 'Yellow lanes, rock beach spouts and baguettes at speed.',
-  AMR: 'A capital under construction: cranes, barrage gates and chilli dust.',
-  HYD: 'The auto carrying the exit reacts to how you move.',
-  BLR: 'Signals stop and rearrange the vehicles you stand on.',
-  PNJ: 'Gossip you can stand on, a siesta you mustn’t break, and a ferry that waits for nobody.',
-  BOM: 'The platform moves. The train stays still. Mostly.',
-  GNR: 'A bamboo to vault on, a dinosaur that stomps, and a garba ring to slip through.',
-  JAI: 'Puppet strings, a marble bowl to swing out of, a horse that won’t stop, and an elephant with a trunk.',
-  RPR: 'Stilts over the paddy mud, a clock that only ticks when you move, and a hill of rice to climb.',
-  RNC: 'Trade at the haat, dive into Hundru’s pool, carry the Pahan’s pot and pour Dokra brass.',
-  BPL: 'Skip like a stone across the big lake, step in to a cave painting, and never believe Surma Bhopali.',
-  DMN: 'Boats you pedal by running, ice that melts under you, and a whole boatyard passing you along.',
-};
 
 /** The in-game HUD (DOM): stage name, deaths, timer, hint and pause. */
 class Hud {

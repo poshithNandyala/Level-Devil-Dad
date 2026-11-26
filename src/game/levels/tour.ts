@@ -25,7 +25,7 @@ export type TourSeg =
 
 /** Every city walks its own course (tile columns); the door, the deck and the item are where they always were. */
 export const TOUR = { cols: 120, door: 112, deck: [94, 99] as [number, number], item: [96.5, 8.4] as [number, number] };
-export const COURSES: Record<CityId, TourSeg[]> = {
+export const COURSES = {
   // a temple tank to walk down into, and a canoe across the canal
   TVM: [{ k: 'wall', x: 12 }, { k: 'ditch', x: 24, w: 2, wet: true }, { k: 'steps', x: 36, n: 2, run: 3, top: 4 }, { k: 'parked', x: 56 }, { k: 'ferry', x: 68, w: 10, kind: 'odam', wet: true }],
   // coral heads across the lagoon, and the jetty steps
@@ -55,8 +55,7 @@ export const COURSES: Record<CityId, TourSeg[]> = {
   // a ride on the local over the nala
   BOM: [{ k: 'posts', x: 12, n: 3 }, { k: 'ditch', x: 24, w: 2 }, { k: 'parked', x: 34 }, { k: 'ferry', x: 46, w: 16, kind: 'traincar', wet: true, label: 'CHURCHGATE' }, { k: 'wall', x: 70 }, { k: 'steps', x: 78, n: 2, run: 2, top: 2 }],
   // the Rock Garden's steps and a ride up the plateau road from Ranchi station
-  RNC: [{ k: 'ditch', x: 12, w: 2 }, { k: 'steps', x: 24, n: 3, run: 2, top: 3 }, { k: 'posts', x: 44, n: 3 }, { k: 'parked', x: 62 }, { k: 'ferry', x: 76, w: 14, kind: 'traincar', label: 'RANCHI JN' }],
-};
+} as Record<CityId, TourSeg[]>;
 
 /** the far end of a piece, in tiles */
 export const segEnd = (s: TourSeg) =>

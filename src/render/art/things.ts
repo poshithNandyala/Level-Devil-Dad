@@ -6,7 +6,8 @@ import { circle, Ctx, ellipse, fillRR, rr, shade, text } from './common';
  * never a copy of any brand, logo or real person.
  */
 
-export type ThingKind =
+/** the things built into the shared art (cities before the module system) */
+export type BaseThingKind =
   // generic
   | 'crate'
   | 'gate'
@@ -113,10 +114,18 @@ export type ThingKind =
   | 'dhokla'
   | 'ghevar'
   | 'poha'
-  | 'chila'
-  | 'dhuska';
+  | 'chila';
+/** every thing kind: the built-in ones plus each city module's own (declared in its things.ts, see docs/CITY-MODULE.md) */
+export type ThingKind = BaseThingKind | keyof ModuleThingKinds;
 
-const SIZE: Record<ThingKind, [number, number]> = {
+/** filled in by city modules: `declare module` this to add a kind (docs/CITY-MODULE.md) */
+export interface ModuleThingKinds {}
+/** how a city module draws its own things (installed by src/game/cities/install.ts) */
+export type ThingDraw = (ctx: Ctx, x: number, y: number, w: number, h: number, o: ThingDrawOpts) => void;
+export const MODULE_THING_DRAW: Partial<Record<ThingKind, ThingDraw>> = {};
+export const MODULE_THING_SIZE: Partial<Record<ThingKind, [number, number]>> = {};
+
+const SIZE: Record<BaseThingKind, [number, number]> = {
   crate: [16, 16],
   gate: [16, 48],
   bollard: [8, 16],
@@ -213,11 +222,10 @@ const SIZE: Record<ThingKind, [number, number]> = {
   ghevar: [12, 10],
   poha: [12, 10],
   chila: [12, 10],
-  dhuska: [12, 10],
 };
 
 export function thingSize(k: ThingKind): [number, number] {
-  return SIZE[k];
+  return (SIZE as Partial<Record<ThingKind, [number, number]>>)[k] ?? MODULE_THING_SIZE[k]!;
 }
 
 export interface ThingDrawOpts {
@@ -1712,26 +1720,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.fillRect(x + 5, y + 1, 5, 1.2);
       break;
     }
-    case 'dhuska': {
-      // a dhuska on a sal-leaf dona, with a spoon of ghugni on the side
-      const cx = x + w / 2,
-        cy = y + h / 2 + 1.5;
-      ctx.fillStyle = '#558B2F';
-      ctx.beginPath();
-      ctx.ellipse(cx, cy + 1.5, w / 2, h / 2 - 1.5, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#E8A33D';
-      ctx.beginPath();
-      ctx.ellipse(cx - 0.5, cy - 0.5, 4.6, 3.4, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#C97B22';
-      ctx.fillRect(cx - 4.4, cy - 1.2, 8, 0.9);
-      ctx.fillStyle = '#6D4C41';
-      ctx.beginPath();
-      ctx.arc(cx + 3.6, cy + 1.6, 1.8, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-    }
     case 'chila': {
       // a rice-flour chila folded on a sal leaf, with green chutney and a tomato one
       const cx = x + w / 2,
@@ -1819,6 +1807,8 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       fillRR(ctx, x + 1, y + 7, 10, 3, 1.5, '#F5DEB3');
       break;
     }
+    default:
+      (MODULE_THING_DRAW as Record<string, ThingDraw | undefined>)[kind as string]?.(ctx, x, y, w, h, o);
   }
   ctx.restore();
 }

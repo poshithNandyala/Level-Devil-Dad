@@ -1,9 +1,10 @@
 // Proven routes for Ranchi (the eastern chapter): each stage's room, its acts, and its door.
-// Merged into SOLUTIONS, ACT_ROUTES and ENDING_POLICIES by solutions.ts, acts.ts and endings.ts.
-import type { World } from '../src/game/world';
-import type { Door } from '../src/game/entities/basics';
-import { Step, X, and, ground } from './runner';
-import { ChhauDancer, Cook, Range, falls, type Boss, type CastMould, type CookStep, type Crucible, type Dhuska, type ElephantRow, type Mould, type Rugra, type Storm, type Tadit } from '../src/game/entities/jharkhand';
+// Found by tests/city-tests.ts and merged into SOLUTIONS, NAIVE, FIX, ACT_ROUTES and ENDING_POLICIES.
+import type { World } from '../../src/game/world';
+import type { Door } from '../../src/game/entities/basics';
+import { Step, X, and, ground } from '../runner';
+import type { CityTests } from '../city-tests';
+import { ChhauDancer, Cook, Range, falls, type Boss, type CastMould, type CookStep, type Crucible, type Dhuska, type ElephantRow, type Mould, type Rugra, type Storm, type Tadit } from '../../src/game/cities/rnc/entities';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -433,7 +434,7 @@ function railHop(): (w: World) => Out {
 }
 
 // ------------------------------------------------------------------ rooms
-export function eastSolutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
+function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['RNC-02'] = [kadhaiRun(23.6, 'on to each dhuska as it comes up, off before the spoon'), { hold: 'R', until: and(ground, X(28)), max: 600 }];
   lengthen('RNC-02', 0, []);
   S['RNC-03'] = [arrowRun(25.5, 'between shots, up the arrows, on top before the whistle')];
@@ -468,7 +469,7 @@ export function eastSolutions(S: Record<string, Step[]>, lengthen: (id: string, 
 }
 
 /** the obvious play, and what it dies of */
-export const EAST_NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
+const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'RNC-02': { steps: [{ hold: 'R', until: X(29), max: 600 }], cause: 'tel' },
   'RNC-03': { steps: [{ hold: 'R', until: X(22.5), max: 600 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 20, ticks: 26 }))], cause: 'teer' },
   'RNC-04': { steps: [{ hold: 'R', until: X(5), max: 600 }, ...Array.from({ length: 60 }, (): Step => ({ hold: 'R', jump: 20, ticks: 26 }))], cause: 'bijli' },
@@ -479,7 +480,7 @@ export const EAST_NAIVE: Record<string, { steps: Step[]; cause?: string }> = {
 };
 
 // ------------------------------------------------------------------ acts
-export const EAST_ACT_ROUTES: Record<string, (x: number) => Step[]> = {
+const actRoutes: Record<string, (x: number) => Step[]> = {
   'rnc08-ghagh': (x) => [
     ...wear(px(x + 2) + 8, 'mayur', 'the peacock mask'),
     { policy: peacockFlight(px(x + 8) + 20), until: and(ground, (w) => w.player.x >= px(x + 22) && w.player.y + w.player.h === px(6)), max: 2400, note: 'on the wing, the tiger mask, and a flight over the river on to the high rock' },
@@ -512,7 +513,7 @@ export const EAST_ACT_ROUTES: Record<string, (x: number) => Step[]> = {
 };
 
 // ------------------------------------------------------------------ doors
-export const EAST_ENDING_POLICIES: Record<string, Policy> = {
+const endingPolicies: Record<string, Policy> = {
   dwar(w, m, d) {
     const k = w.flags.dwar as { m: CastMould; k: Crucible };
     const p = w.player;
@@ -609,4 +610,12 @@ export const EAST_ENDING_POLICIES: Record<string, Policy> = {
     }
     return go(toward(w, k.edge - 8, 2));
   },
+};
+
+export const test: CityTests = {
+  solutions,
+  naive,
+  actRoutes,
+  endingPolicies,
+  fair: ['RNC-02', 'RNC-03', 'RNC-04', 'RNC-05', 'RNC-06', 'RNC-07', 'RNC-08'],
 };

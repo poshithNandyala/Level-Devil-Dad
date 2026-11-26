@@ -2,9 +2,9 @@
 // straw boss, a monsoon storm whose lightning finds the tallest thing and whose thunder pushes the rugra up,
 // Seraikela's Chhau dancers who become whoever their mask says, Dokra's lost wax and brass, and Hundru's
 // falls, where a long drop on to the rocks kills and the falling water is the soft way down.
-import { Entity, type Hazard, type World } from '../world';
-import { Solid } from '../body';
-import { DT, PHYS, ROWS, TILE } from '../constants';
+import { Entity, type Hazard, type World } from '../../world';
+import { Solid } from '../../body';
+import { DT, PHYS, ROWS, TILE } from '../../constants';
 
 const FLOOR = 15 * TILE;
 const TAU = Math.PI * 2;

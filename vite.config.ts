@@ -30,6 +30,6 @@ export default defineConfig(({ mode }) => {
       ...(single ? [viteSingleFile({ removeViteModuleLoader: true })] : []),
     ],
     server: { host: true },
-    test: { environment: 'node', include: ['tests/**/*.test.ts'] },
+    test: { environment: 'node', include: ['tests/**/*.test.ts'], setupFiles: ['tests/setup.ts'] },
   };
 });
