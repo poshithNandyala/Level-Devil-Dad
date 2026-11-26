@@ -99,7 +99,7 @@ export const actSetu: Act = {
   id: 'pat10-sau',
   w: 62,
   advice: 'Back on the bridge, and the cart at the foot of it carries five sacks: every fifth plate is gone, the five and the ten. Walk the plates, jump the gaps.',
-  cps: [20, 42],
+  cps: [],
   paint: (g, c) => {
     for (let i = 0; i < 10; i++) g.fill(c.x + 6 + i * 5, c.x + 7 + i * 5, 15, 17, '.');
   },
@@ -165,6 +165,7 @@ export const actGaadi: Act = {
 export const act2: Act = {
   id: 'pat10-anaaj',
   w: 20,
+  cp0: false,
   advice: 'The granary yard: a plain walk to the door, and a breath before the last count.',
   cps: [],
   paint: () => {},

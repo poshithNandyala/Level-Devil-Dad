@@ -13,6 +13,8 @@ export interface RigOpts {
   /** px the deadly box is smaller than the drawn one on each side */
   inset?: number;
   layer?: number;
+  /** only update while Dad is within this many px (far-off pieces of a long stage cost nothing) */
+  near?: number;
   /** is the deadly box live right now? (default: when `on`) */
   live?: (r: Rig, w: World) => boolean;
   /** runs every tick, before Dad moves */
@@ -54,6 +56,7 @@ export class Rig extends Entity {
   }
   update(w: World) {
     this.W = w;
+    if (this.o.near && Math.abs(w.player.x - this.x) > this.o.near) return;
     this.o.tick?.(this, w);
   }
   /** move to (x, y); a solid carries whoever stands on it */

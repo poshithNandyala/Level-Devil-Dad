@@ -36,6 +36,7 @@ function plate(w: World, c: number, n: number, key: string) {
     new Rig(px(c), FL, 32, 8, {
       solid: true,
       layer: 2,
+      near: 900,
       cause: 'pat-taala',
       inset: -2,
       live: (s, w2) => s.s.drop !== undefined && w2.tick - s.s.drop < 40,
@@ -183,16 +184,20 @@ export function liftSeams(w: World, c0: number, cols: number[], key: string, num
       st.t0 = w2.tick;
     },
   );
+  const byK: Lift[][] = cols.map((_, k) => lifts.filter((q) => q.k === k));
   const open = (k: number, w2: World, ahead = 0) => {
     if (st.t0 < 0) return false;
     const t = since(w2, st.t0) + ahead;
-    return lifts.some((q) => q.k === k && t >= q.at && t < q.at + q.dur);
+    const qs = byK[k];
+    for (let i = 0; i < qs.length; i++) if (t >= qs[i].at && t < qs[i].at + qs[i].dur) return true;
+    return false;
   };
   cols.forEach((c, k) => {
     const r = w.add(
       new Rig(px(c), FL, 32, 8, {
         solid: true,
         layer: 2,
+        near: 900,
         tick: (pl, w2) => {
           const out = open(k, w2);
           pl.solid!.collidable = !out;

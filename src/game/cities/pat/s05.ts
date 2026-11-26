@@ -72,6 +72,7 @@ export function pontoon(w: World, c0: number, n: number, carts: { lo: number; hi
       new Rig(x0 + i * SEC, FL, SEC, 20, {
         solid: true,
         layer: 2,
+        near: 900,
         cause: 'pat-pipa',
         inset: -3,
         live: (s) => s.y >= 250,
