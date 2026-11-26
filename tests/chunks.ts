@@ -7,7 +7,7 @@ import { Door } from '../src/game/entities/basics';
 import { DT } from '../src/game/constants';
 import { Step, X, and, done, ground } from './runner';
 import { ACT_ROUTES } from './acts';
-import { ENDING_POLICIES, freshMem, type Mem } from './endings';
+import { freshMem, policyFor, type Mem } from './endings';
 import { ENDINGS, type EndingKind } from '../src/game/levels/endings';
 
 const px = (t: number) => t * 16;
@@ -150,7 +150,7 @@ export function exitPolicy() {
     const tw = w.flags.twist as string | undefined;
     const p = w.player;
     const d = w.entities.find((e) => e instanceof Door && !(e as Door).fake) as Door;
-    const ending = ENDING_POLICIES[k];
+    const ending = policyFor(k);
     if (ending) {
       const holding = mem.e.hold > 0;
       if (holding) mem.e.hold--;

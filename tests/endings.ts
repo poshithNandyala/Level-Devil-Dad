@@ -580,3 +580,5 @@ export const ENDING_POLICIES: Record<string, Policy> = {
 };
 Object.assign(ENDING_POLICIES, WEST_ENDING_POLICIES);
 for (const t of CITY_TESTS) Object.assign(ENDING_POLICIES, t.endingPolicies);
+/** the policy for an ending kind, also when its city's pass prefixed the kind ('tvm-knock' finds 'knock') */
+export const policyFor = (kind: string): Policy | undefined => ENDING_POLICIES[kind] ?? (/^[a-z]{3}-/.test(kind) ? ENDING_POLICIES[kind.slice(4)] : undefined);
