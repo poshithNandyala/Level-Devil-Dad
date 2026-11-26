@@ -259,3 +259,98 @@ export class Girders extends Entity {
     }
   }
 }
+
+// ================================================================== CCU-10: book bundles on the porters' heads
+/** a porter carrying a pile of book bundles from College Street: n bundles, each 10 px; a customer points at
+ *  one and the porter hands it down, so the pile drops by one, and with it whoever rides it */
+export class BookPorter extends Porter {
+  n: number;
+  pointAt = -1;
+  delay = 1;
+  constructor(o: PorterSpec, n: number) {
+    super({ ...o, h: 18 + n * 10, kind: 'books' });
+    this.n = n;
+  }
+  get pointed() {
+    return this.pointAt >= 0;
+  }
+  point(w: World, delay = 1) {
+    if (this.n <= 0 || this.pointed) return;
+    this.pointAt = w.tick;
+    this.delay = delay;
+  }
+  update(w: World) {
+    super.update(w);
+    if (this.pointed && w.tick - this.pointAt >= Math.round(this.delay * 120)) {
+      this.pointAt = -1;
+      this.n--;
+      w.sfx('slide', this.x, this.load.y);
+      const rid = this.riding(w);
+      if (this.n <= 0) {
+        if (rid) {
+          w.flags.yanked = 1;
+          w.player.coyoteT = 0;
+        }
+        this.load.collidable = false;
+      } else this.load.moveBy(w, 0, 10);
+    }
+  }
+  draw(ctx: CanvasRenderingContext2D) {
+    if (this.state === 'gone') return;
+    const x = this.x;
+    const bodyH = 26;
+    person(ctx, x, FLOOR - bodyH, bodyH, '#B23A2E', '#9C6B48', { arms: Math.max(0, FLOOR - bodyH - this.load.y - 4) });
+    const sp = ['#8E2C24', '#1D5C96', '#2E7D32', '#C9A227', '#6A1B9A'];
+    for (let i = 0; i < this.n; i++) {
+      const y = this.load.y + i * 10;
+      ctx.fillStyle = sp[(i + Math.round(this.o.x / 16)) % sp.length];
+      ctx.fillRect(this.load.x, y, LW, 9);
+      ctx.fillStyle = 'rgba(255,248,225,0.6)';
+      ctx.fillRect(this.load.x, y, LW, 1);
+      ctx.fillStyle = '#E8E2D0';
+      ctx.fillRect(this.load.x + LW / 2 - 0.5, y, 1, 9);
+    }
+    if (this.pointed && this.n > 0) {
+      ctx.strokeStyle = 'rgba(255,236,120,0.85)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(this.load.x - 1, this.load.y + (this.n - 1) * 10, LW + 2, 10);
+    }
+  }
+}
+
+/** a customer on the pavement pointing at a porter's bundle (drawn; the porter does the pulling) */
+export class Pointer extends Entity {
+  target: BookPorter | null = null;
+  private said = -999;
+  constructor(
+    readonly x: number,
+    readonly shirt = '#7B8D6E',
+  ) {
+    super();
+    this.layer = -4;
+  }
+  ask(w: World, p: BookPorter, delay = 1) {
+    if (p.n <= 0 || p.state === 'gone') return;
+    this.target = p;
+    p.point(w, delay);
+    if (w.tick - this.said > 220) {
+      this.said = w.tick;
+      w.say('Ei jinishtar dam koto? | How much is this?', this.x, FLOOR - 62, 1.6, 'npc');
+    }
+  }
+  draw(ctx: CanvasRenderingContext2D) {
+    const y = FLOOR - 56;
+    person(ctx, this.x, y, 22, this.shirt);
+    const t = this.target;
+    if (t && t.pointed && t.n > 0) {
+      ctx.setLineDash([2, 3]);
+      ctx.strokeStyle = 'rgba(255,236,120,0.8)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(this.x + 5, y + 9);
+      ctx.lineTo(t.x, t.load.y + (t.n - 1) * 10 + 5);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+}

@@ -9,7 +9,7 @@ import type { CityTests } from '../city-tests';
 import { Bus } from '../../src/game/cities/ccu/entities';
 import type { Stack } from '../../src/game/cities/ccu/books';
 import type { Tram } from '../../src/game/cities/ccu/tram';
-import { Porter } from '../../src/game/cities/ccu/porters';
+import { BookPorter, Porter } from '../../src/game/cities/ccu/porters';
 import type { Wash } from '../../src/game/cities/ccu/adda';
 import type { ClothPanel } from '../../src/game/cities/ccu/pandal';
 
@@ -236,6 +236,46 @@ const pandalRoute = (wait = 0): Step[] => [
   steerHop(px(29.5), 12, 'on to the deck'),
   walk(31.4),
 ];
+
+// ------------------------------------------------------------------ CCU-10: the finale
+const book = (w: World) => w.flags.book as { b1: BookPorter; b2: BookPorter };
+const finaleRoom = (): Step[] => [
+  { hold: 'R', until: (w) => w.player.cx >= px(5) - 1, max: 300 },
+  hopUp((w) => book(w).b1, 'up on the porter with one bundle'),
+  hopUp((w) => (book(w).b2.state === 'walk' ? book(w).b2 : undefined), 'up on the porter with three as he passes'),
+  { hold: '', until: (w) => w.player.cx > px(28.8), max: 1800, note: 'ride him while they buy two of his bundles' },
+  { hold: 'R', until: (w) => w.player.onGround && !riding(w), max: 200, note: 'off on to the far kerb' },
+];
+/** stand still at a bus stop, and hop on as the crawling bus's footboard comes under you */
+function boardAtStop(get: (w: World) => { bus: Bus; stop: number[] }): Step {
+  let hold = 0;
+  let W: World | null = null;
+  return {
+    policy: (w) => {
+      if (W !== w) {
+        W = w;
+        hold = 0;
+      }
+      if (hold > 0) {
+        hold--;
+        return { move: '', jump: true };
+      }
+      const { bus: b, stop } = get(w);
+      const p = w.player;
+      const mid = (stop[0] + stop[1]) / 2;
+      if (Math.abs(p.cx - mid) > 3) return go(toward(w, mid, 2));
+      if (b.slowed && b.v < 30 && b.deck.x <= p.x - 1 && b.deck.x + b.deck.w >= p.x + p.w + 1 && p.onGround) {
+        hold = 10;
+        return { move: '', jump: true };
+      }
+      return go('');
+    },
+    until: onBus,
+    max: 2400,
+    note: 'wait still at the stop, and on to the footboard',
+  };
+}
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['CCU-01'] = tourRun('onto');
   S['CCU-02'] = [...ride(px(25), px(28.5), 'past the first “aaste” (over the drain), off on the second'), walk(30)];
@@ -254,6 +294,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('CCU-08', 0, []);
   S['CCU-09'] = pandalRoute();
   lengthen('CCU-09', 0, []);
+  S['CCU-10'] = finaleRoom();
+  lengthen('CCU-10', 0, []);
   S['CCU-04'] = boiRoute(true);
   lengthen('CCU-04', 0, []);
 }
@@ -277,6 +319,7 @@ function boiRoute(skip: boolean, wait = 0): Step[] {
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-01': { steps: tourRun('long'), cause: 'ccu-rail' },
   'CCU-04': { steps: boiRoute(false), cause: 'ccu-boi' },
+  'CCU-10': { steps: [finaleRoom()[0], finaleRoom()[1], { hold: '', until: done, max: 2400, note: 'ride the single bundle across' }], cause: 'ccu-boi' },
   'CCU-09': { steps: [...pandalStart(), steerHop(px(14), 10, 'on to the third bamboo'), { hold: '', until: done, max: 300 }], cause: 'ccu-bansh' },
   'CCU-08': { steps: [walk(2.6), ...hopTo(px(5), 12, 'up on the rok'), walk(14.2), { hold: '', until: done, max: 1200, note: 'stop to listen to the old men' }], cause: 'ccu-dhowa' },
   'CCU-07': { steps: [howrahRoom()[0], howrahRoom()[1], { hold: '', until: done, max: 3000, note: 'ride him all the way' }], cause: 'ccu-cha' },
@@ -314,6 +357,17 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu10-bus': (x) => [
+    boardAtStop((w) => w.flags.bus10),
+    ...ride(px(x + 25), px(x + 28.5), 'over the drain, and off on his one “aaste”'),
+    walk(x + 38),
+  ],
+  'ccu10-tram': (x) => [
+    { hold: 'R', until: (w) => w.player.cx >= (w.flags.tram10 as Tram).step.x + 12, max: 300 },
+    { hold: '', jump: 8, until: (w) => (w.flags.tram10 as Tram).onStep(w), max: 120, note: 'up on to the tram’s step' },
+    { hold: '', until: (w) => (w.flags.tram10 as Tram).state === 'stop' && w.player.cx > px(x + 22), max: 2400, note: 'through the junction on the step' },
+    { hold: 'R', until: and(ground, X(x + 43.5)), max: 600, note: 'off at the island, before the points' },
+  ],
   'ccu09-chala': (x) => [
     steerHop(px(x + 3), 10, 'on to the bamboo: the wide panel goes up'),
     steerHop(px(x + 7.5), 34, 'a full jump on to the wide cloth', true),
@@ -338,6 +392,18 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 /** a policy for each door ending, by kind */
 const SETHOP = hopGaps();
 const endingPolicies: Record<string, Policy> = {
+  'ccu-wall'(w, m, d) {
+    const k = w.flags.wall as { st: Stack; D: number };
+    const p = w.player;
+    if (m.hold > 0) return { move: 'R', jump: true };
+    if (p.cx > k.st.x + k.st.wd || w.flags.twist !== 'wall' && p.y + p.h < FLOOR - 1) return go(p.onGround ? toward(w, d.x + 8, 1) || 'R' : 'R');
+    const stand = k.st.x - 14;
+    if (w.flags.twist === 'low' && p.onGround && Math.abs(p.cx - stand) < 3) {
+      m.hold = 12;
+      return { move: 'R', jump: true };
+    }
+    return go(p.onGround ? toward(w, stand, 1) : 'R');
+  },
   'ccu-dhak'(w, _m, d) {
     const k = w.flags.dhak as { beat: number; D: number };
     const p = w.player;
@@ -400,5 +466,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['CCU-02', 'CCU-04', 'CCU-06', 'CCU-07', 'CCU-08', 'CCU-09'],
+  fair: ['CCU-02', 'CCU-04', 'CCU-06', 'CCU-07', 'CCU-08', 'CCU-09', 'CCU-10'],
 };

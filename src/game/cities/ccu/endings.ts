@@ -9,9 +9,9 @@ import type { Ending } from '../../levels/endkit';
 import { Bus, FLOOR as FLOOR_Y } from './entities';
 import { Customer, Muck, Stack, Stall } from './books';
 import { Paint } from '../../levels/endkit';
-import { Road } from './porters';
+import { ChaiBoard, Road } from './porters';
 
-export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn' | 'ccu-arch' | 'ccu-bhanr' | 'ccu-dhak';
+export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn' | 'ccu-arch' | 'ccu-bhanr' | 'ccu-dhak' | 'ccu-wall';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<CcuEndingKind, true> {}
@@ -293,6 +293,32 @@ export const endings: Record<CcuEndingKind, Ending> = {
             ctx.fillRect(x + 10, FLOOR_Y - 26 - (u ? 3 : 0), 3, 10);
           }
         })(),
+      );
+    },
+  },
+  // ================================================================ CCU-10: they buy the wall down
+  /** A porter has set his pile of bundles down at the CHA board, right in front of the door: four high,
+   *  too high to jump. Customers come and buy it down one bundle at a time. Wait till it's two high, then
+   *  over it and in. */
+  'ccu-wall': {
+    space: 14,
+    advice: 'A porter has set his pile of bundles down in front of the door for his tea: four high, too high to jump. The customers buy it down a bundle at a time. Wait till it’s two high, then hop over and in.',
+    build(w, d) {
+      const D = Math.round(d.x / 16);
+      w.add(new ChaiBoard(px(D - 4)));
+      const st = w.add(new Stack(px(D - 3), px(2), 4, FLOOR_Y));
+      const c = w.add(new Customer(px(D - 6), '#A0522D', FLOOR_Y - 58));
+      w.flags.wall = { st, D };
+      w.flags.twist = 'wall';
+      w.when(
+        (w2) => w2.player.cx > px(D - 10),
+        (w2) => [0.6, 1.6, 2.6].forEach((t) => w2.after(t, () => c.ask(w2, st, 1, 0.6))),
+      );
+      w.when(
+        () => st.n <= 2,
+        (w2) => {
+          w2.flags.twist = 'low';
+        },
       );
     },
   },

@@ -13,7 +13,7 @@ import { Bus, Rail, feet } from './entities';
 import { NALA } from './endings';
 import { Customer, Muck, Stack, Stall } from './books';
 import { Junction, Points, Tram } from './tram';
-import { ChaiBoard, Girders, Porter, Road, SHORT, TALL } from './porters';
+import { BookPorter, ChaiBoard, Girders, Pointer, Porter, Road, SHORT, TALL } from './porters';
 import { Adda, House, TeaSeller, Wash } from './adda';
 import { ClothPanel, Decorator, Skeleton, Stakes } from './pandal';
 import type { Act } from '../../levels/acts';
@@ -371,6 +371,90 @@ const chala: Act = {
   },
 };
 
+
+// ================================================================== CCU-10: Kolkata Kolkata (the finale)
+const road10 = (w: World, x0: number, x1: number) => w.add(new Road(x0, x1, (w2) => (w2.flags.yanked ? 'ccu-boi' : w2.flags.cha ? 'ccu-cha' : 'ccu-gaari')));
+function finaleRoom(): LevelDef {
+  return {
+    id: 'CCU-10',
+    city: 'CCU',
+    index: 10,
+    name: 'Kolkata Kolkata',
+    nameEn: 'Kolkata, Kolkata',
+    tagline: 'Everything at once: College Street’s bundles on the porters’ heads, a bus that never stops, a tram on its pole, and the customers who want that book.',
+    hint: 'The porters are carrying book bundles across the road, and the customers on the pavement point at the bundle they want: the porter hands it down and his pile drops by one. A pile of one goes from under you. Count the bundles: off the single on to the porter with three as he passes, and stay on him while they buy, down to the far kerb.',
+    par: 14,
+    map: Grid.ground(15).fill(28, 31, 14, 14, '#').put(1, 14, '@').rows(),
+    build(w: World) {
+      w.add(new Girders(px(4), px(30)));
+      road10(w, px(6), px(28));
+      const b1 = w.add(new BookPorter({ x: px(5), v: 40, h: 0, go: (w2, me) => w2.player.isRiding(me.load), off: px(48) }, 1));
+      const b2 = w.add(new BookPorter({ x: px(0), v: 58, h: 0, go: () => b1.state !== 'idle', off: px(48) }, 3));
+      const c1 = w.add(new Pointer(px(14), '#7B8D6E'));
+      const c2 = w.add(new Pointer(px(21), '#A0522D'));
+      const c3 = w.add(new Pointer(px(26), '#5C6BC0'));
+      w.when(() => b1.x > px(12), (w2) => c1.ask(w2, b1, 2.0));
+      w.when(() => b2.x > px(19), (w2) => c2.ask(w2, b2, 1.0));
+      w.when(() => b2.x > px(24), (w2) => c3.ask(w2, b2, 1.0));
+      w.flags.book = { b1, b2 };
+      w.add(new Stall(px(6), px(28), 'COLLEGE ST'));
+      sign(w, 0.3, 10.4, 3.4, 'BOI PARA', 'green', null, 'finale');
+      rival(w, 2, 15, 1, tara(8, 1));
+      onPass(w, px(2.5), (w2) => w2.guide('Ei jinishtar dam koto? | How much is this?'));
+      collectible(w, 'ccu-doi', 17, 9.6);
+    },
+  };
+}
+
+/** CCU-10 act 1: the bus again, in a new order: it crawls for you at the stop, flies the drain, and its one
+ *  "aaste" is the last chance before the depot */
+const bus10: Act = {
+  id: 'ccu10-bus',
+  w: 40,
+  cps: [3.5],
+  advice: 'A bus stop, and a drain too wide to jump. Stand still at the stop: the conductor crawls for you. Hop on the footboard, keep on over the drain, and step off forwards on his one “aaste” after it. There isn’t a second one: he turns into the depot.',
+  paint: (g, c) => {
+    g.pit(c.x + 12, c.x + 24);
+  },
+  build: (w, c) => {
+    pool(w, c.x + 12, c.x + 25, 16, { colors: NALA, cause: 'ccu-nala' });
+    sign(w, c.x + 2, 10.4, 3.2, 'BUS STOP', 'green', null, 'Esplanade');
+    const stop = [c.X(1), c.X(5)];
+    const bus = w.add(new Bus({ x: c.X(-14), go: (w2) => w2.player.cx > c.X(1), slow: [[c.X(25), c.X(28.5)]], end: c.X(31), fast: 130, crawl: 20, label: 'ESPLANADE' }));
+    w.flags.bus10 = { bus, stop };
+    w.add(
+      new (class extends Entity {
+        update(w2: World) {
+          const p = w2.player;
+          const still = p.onGround && Math.abs(p.vx) < 4 && p.cx > stop[0] && p.cx < stop[1];
+          if (!bus.slowed && still && bus.x < stop[0] - 8 && bus.x > stop[0] - 150) bus.slowed = true;
+          if (bus.slowed && bus.x > c.X(9)) bus.slowed = false;
+        }
+      })(),
+    );
+  },
+};
+
+/** CCU-10 act 2: the tram once more: through a junction on its step, off at the island before the points */
+const tram10: Act = {
+  id: 'ccu10-tram',
+  w: 44,
+  cp0: false,
+  cps: [26.5],
+  advice: 'The tram: on to its rear step, never the roof. Through the junction on the step, and off at the island: the pointsman has it set for the other line.',
+  paint: (g, c) => {
+    g.pit(c.x + 6, c.x + 21);
+  },
+  build: (w, c) => {
+    khod(w, c.x + 6, c.x + 22);
+    w.add(new Junction(c.X(14)));
+    w.add(new Points(c.X(30), true));
+    sign(w, c.x + 1.5, 8.4, 3.6, 'TRAM STOP', 'green', null, 'route 25');
+    const t = w.add(new Tram({ x: c.X(2), speed: 60, stops: [{ x: c.X(2), dwell: 0.5, ride: true }, { x: c.X(22), dwell: 1.6 }], junctions: [c.X(14)], turnAt: c.X(28), label: '25' }));
+    w.flags.tram10 = t;
+  },
+};
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -426,5 +510,5 @@ export const levels = (): LevelDef[] => [
   longStage({ base: howrahRoom(), par: 90, acts: [girder, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 40, acts: [rok], twist: 'ccu-bhanr', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-door-opens-for-a-cup-of-tea') }),
   longStage({ base: pandalRoom(), par: 40, acts: [chala], twist: 'ccu-dhak', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-dhak-beat-lifts-the-gate-curtain') }),
-  longStage({ base: todoRoom(10), par: 30, shape: 'long' }),
+  longStage({ base: finaleRoom(), par: 80, acts: [bus10, tram10], twist: 'ccu-wall', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-customers-buy-the-wall-down') }),
 ];
