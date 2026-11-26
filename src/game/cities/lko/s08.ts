@@ -292,7 +292,7 @@ function drawSquare(ctx: Ctx, b: Block, i: number, w: World, S: { lit: Set<numbe
   void w;
 }
 
-const chaupar: Act = {
+export const chaupar: Act = {
   id: 'lko08-chausar',
   w: 40,
   advice: 'A pachisi court over the well. Each throw of the cowries (count the dark mouths) lights that many squares ahead of yours; only lit squares and your own hold, and they go dark at the next throw. Never hop past the lit ones, and never on to the courtier’s square: wait on yours for a throw that takes you past him.',

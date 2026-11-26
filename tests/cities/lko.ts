@@ -484,6 +484,12 @@ actRoutes['lko10-dhulai'] = (x) => {
     runTo(x + 35.5, 300),
   ];
 };
+actRoutes['lko10-tawa'] = R_lko05_tawa('lko10-tawa');
+actRoutes['lko10-tatkar'] = R_lko06_tatkar('lko10-tatkar');
+actRoutes['lko10-julus'] = R_lko07_julus('lko10-julus');
+actRoutes['lko10-hawa'] = (x) => [stroll(x + 3, 'up on to the roofs'), ...R_lko09_hawa('lko10-hawa')(x)];
+actRoutes['lko10-chausar'] = R_lko08_chausar('lko10-chausar');
+actRoutes['lko10-kunda'] = R_lko03_kunda('lko10-kunda');
 actRoutes['lko10-galiyara'] = (x) => [runTo(x + 12, 400, 'walk over the drain, through the first arch'), hop(x + 14.6, x + 17, 'at a jump through the second', 30), runTo(x + 34.5, 600, 'along the gallery without stopping')];
 
 const endingPolicies: Record<string, Policy> = {
@@ -616,9 +622,13 @@ mistakes['LKO-08'] = [
   { what: 'in the vault, hopping the drain into the arch', steps: [...pre08(), runTo(actX('LKO-08', 1) + 1, 300), hop(actX('LKO-08', 1) + 3, actX('LKO-08', 1) + 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-mehrab' },
   { what: 'hopping the crack into the last arch', steps: [...pre08(), ...actRoutes0('lko08-mehrab', actX('LKO-08', 1)), runTo(doorX('LKO-08') - 8.5, 300), hop(doorX('LKO-08') - 6, doorX('LKO-08') - 2), { hold: 'R', until: done, max: 400 }], cause: 'lko-bhool' },
 ];
+/** the room's route and the routes of the stage's first n acts */
+const through = (id: string, room: Step[], n: number) => [...room, ...LEVEL_BY_ID.get(id)!.parts!.slice(0, n).flatMap((pt) => actRoutes0(pt.kind, pt.x0))];
 mistakes['LKO-10'] = [
-  { what: 'stopping on the gallery’s covered bells', steps: [...room10, ...actRoutes0('lko10-dhulai', actX('LKO-10', 0)), runTo(actX('LKO-10', 1) + 12, 400), hop(actX('LKO-10', 1) + 14.6, actX('LKO-10', 1) + 17, '', 30), runTo(actX('LKO-10', 1) + 22, 300), until(done, 500)], cause: 'lko-tehzeeb' },
-  { what: 'bowing to the last door from right in front of it', steps: [...room10, ...actRoutes0('lko10-dhulai', actX('LKO-10', 0)), ...actRoutes0('lko10-galiyara', actX('LKO-10', 1)), walkTo(doorX('LKO-10') - 1.5, 600), until(done, 600)], cause: 'lko-tehzeeb' },
+  { what: 'stopping on the gallery’s covered bells', steps: [...through('LKO-10', room10, 7), runTo(actX('LKO-10', 7) + 12, 400), hop(actX('LKO-10', 7) + 14.6, actX('LKO-10', 7) + 17, '', 30), runTo(actX('LKO-10', 7) + 22, 300), until(done, 500)], cause: 'lko-tehzeeb' },
+  { what: 'bowing to the last door from right in front of it', steps: [...through('LKO-10', room10, 8), walkTo(doorX('LKO-10') - 1.5, 600), until(done, 600)], cause: 'lko-tehzeeb' },
+  { what: 'the procession again: rushing up behind it', steps: [...through('LKO-10', room10, 3), hop(actX('LKO-10', 3) + 12, actX('LKO-10', 3) + 14.5), { hold: 'R', until: done, max: 1200 }], cause: 'lko-julus' },
+  { what: 'the court again: hopping on square after square', steps: [...through('LKO-10', room10, 5), walkTo(actX('LKO-10', 5) + 3.2, 300), hops([0, 1, 2, 3, 4, 5].map((i) => actX('LKO-10', 5) + 5 + 3 * i + 0.5)), until(done, 300)], cause: 'lko-kuan' },
 ];
 
 export const test: CityTests = {

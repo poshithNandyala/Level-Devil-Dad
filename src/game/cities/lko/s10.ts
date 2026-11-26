@@ -11,11 +11,16 @@ import { Grid } from '../../levels/grid';
 import type { Act } from '../../levels/acts';
 import { Art, FLOOR, px, stillness, bowIcon, TAU } from './kit';
 import { archway, looseStone, pehleDoorway, tara } from './s02';
-import { washLine } from './s03';
+import { washLine, kunda } from './s03';
 import { Heap, karahi, shadows, type Light } from './s04';
 import { Dancer } from './s06';
 import { arch, well, hooks } from './s08';
-import { on } from './kit';
+import { on, again } from './kit';
+import { tawa2 } from './s05';
+import { tatkar } from './s06';
+import { julus } from './s07';
+import { hawa } from './s09';
+import { chaupar } from './s08';
 
 /** ghungroo sewn under a chikan cover, columns [c0, c1]: a step is silent, but stand still on it (a bow)
  *  for a moment and the bells ring, and the dancer spins to the sound */
@@ -200,5 +205,12 @@ export const tehzeeb: Ending = {
   },
 };
 
-export const s10 = { room: tehzeebRoom, acts: [dhulai, galiyara] };
+// the callbacks, in a new order: kebabs, the dancer's patch, the slow procession, the pigeons, the court
+const tawa10 = again(tawa2, 'lko10-tawa', 'Aminabad’s tawa once more: thin kebabs at once, full heaps once they squash. Tap the jump.');
+const tatkar10 = again(tatkar, 'lko10-tatkar', 'The dancer’s tatkar patch again: wait for it to come at you and hop clean over it; keep off the red strips.');
+const julus10 = again(julus, 'lko10-julus', 'The slow procession again: walk behind it at its pace, and wait at each nala till they’re well across.');
+const hawa10 = again(hawa, 'lko10-hawa', 'Up on the roofs with the flyer behind you and his two-faced flag: cross while you see white, the birds see red.');
+const chausar10 = again(chaupar, 'lko10-chausar', 'The pachisi court once more: one lit square at a time, never the courtier’s.');
+const kunda10 = again(kunda, 'lko10-kunda', 'The rinsing vats again: each washer whistles a beat after you step on his print. Run each without stopping.');
+export const s10 = { room: tehzeebRoom, acts: [dhulai, tawa10, tatkar10, julus10, hawa10, chausar10, kunda10, galiyara] };
 export const meta10 = { family: 'finale-bow-meets-bells', betrayals: ['bow-vs-bells'], ending: 'lko-tehzeeb' } as StageMeta;
