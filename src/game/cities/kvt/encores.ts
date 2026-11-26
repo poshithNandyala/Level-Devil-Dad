@@ -153,7 +153,7 @@ function stormBankRoom(): LevelDef {
       prop(w, 'palm', 1, 15, { h: 72, lean: 6 });
       sign(w, 2.6, 10.6, 3.6, 'KALPENI', 'wood', 'right', 'storm bank');
       rival(w, 4, 15, 1, taraOf(7));
-      onPass(w, px(4.5), (w2) => w2.guide('Ithu kodumkaattu ittu poya pavizham! | A cyclone left all this coral here!'));
+      onPass(w, px(4.5), (w2) => w2.guide('Ithu kodumkaattu ittu poya pavizham! | A cyclone left all this coral here!', (w3) => w3.player.x < px(14)));
       collectible(w, 'shell', 15.5, 9.2);
     },
   };
@@ -184,7 +184,7 @@ const overhang: Act = {
     pool(w, c.x + 4, c.x + 6, 15.3, { colors: LAGOON });
     w.add(new RubbleBank(bankUpRects(c.x + 6, 5, 3, 14)));
     sign(w, c.x + 0.4, G - 4.4, 3.4, 'LOOSE', 'warn', null, 'coral rubble');
-    onPass(w, X(1), (w2) => w2.guide('Randaamathe kunnu, Dad. | The second bank, Dad.'));
+    onPass(w, X(1), (w2) => w2.guide('Randaamathe kunnu, Dad. | The second bank, Dad.', (w3) => w3.player.x < X(9)));
   },
 };
 
@@ -334,7 +334,7 @@ const summit: Act = {
     w.add(new RubbleBank(DOWN(c.x), 1));
     onPass(w, X(24), (w2) => taraSays(w2, 'Chaadi irangu, Dad! Vegam! | Hop down, Dad! Quick!', 2.4));
     sign(w, c.x + 0.4, G - 4.4, 3.4, 'KODUMUDI', 'wood', null, 'the top');
-    onPass(w, X(1), (w2) => w2.guide('Mukalil padikal cheruthaanu. | The steps are small at the top.'));
+    onPass(w, X(1), (w2) => w2.guide('Mukalil padikal cheruthaanu. | The steps are small at the top.', (w3) => w3.player.x < X(14)));
   },
 };
 
@@ -510,7 +510,7 @@ function octopusRoom(): LevelDef {
       w.add(new CoralHead(21, 14, 3, 'pink'));
       sign(w, 2.4, 10.6, 3.6, 'REEF', 'wood', 'right', 'look, don’t touch');
       rival(w, 4, 15, 1, taraOf(8));
-      onPass(w, px(4.5), (w2) => w2.guide('Ee reef-il neerali undu. | There are octopuses on this reef.'));
+      onPass(w, px(4.5), (w2) => w2.guide('Ee reef-il neerali undu. | There are octopuses on this reef.', (w3) => w3.player.x < px(11)));
       collectible(w, 'shell', 13, 11.4);
     },
   };
@@ -555,7 +555,7 @@ const midden: Act = {
       w2.flags[c.f('crawled')] = 1;
     });
     sign(w, c.x + 0.4, G - 4.4, 3.4, 'DENS', 'wood', null, 'shells at the door');
-    onPass(w, X(1), (w2) => w2.guide('Shankhu ulla kuzhi neeraliyude veedu. | A hole with shells is an octopus’s home.'));
+    onPass(w, X(1), (w2) => w2.guide('Shankhu ulla kuzhi neeraliyude veedu. | A hole with shells is an octopus’s home.', (w3) => w3.player.x < X(13)));
   },
 };
 
