@@ -12,6 +12,7 @@ import { room as room05, act1 as act05a, act2 as act05b, meta05 } from './s05';
 import { room as room06, act as act06, meta06 } from './s06';
 import { room as room07, act1 as act07a, act2 as act07b, meta07 } from './s07';
 import { room as room08, act as act08, meta08 } from './s08';
+import { room as room09, act as act09, meta09 } from './s09';
 import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
 
@@ -46,6 +47,6 @@ export const levels = (): LevelDef[] => [
   longStage({ base: room06(), acts: [act06], twist: 'bbi-motif-door', par: 24, shape: 'long', meta: meta06 }),
   longStage({ base: room07(), acts: [act07a, act07b], twist: 'bbi-pose-gate', par: 60, shape: 'marathon', lives: 'act', meta: meta07 }),
   longStage({ base: room08(), acts: [act08], twist: 'bbi-leaf-plate', par: 40, shape: 'wtf', meta: meta08 }),
-  longStage({ base: todoRoom(9), par: 30, shape: 'long' }), // BBI-09 TODO: acts, twist (a bbi-... ending), par
+  longStage({ base: room09(), acts: [act09], twist: 'bbi-horse-gap', par: 40, shape: 'long', meta: meta09 }),
   longStage({ base: todoRoom(10), par: 30, shape: 'long' }), // BBI-10 TODO: acts, twist (a bbi-... ending), par
 ];

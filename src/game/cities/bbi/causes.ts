@@ -24,4 +24,8 @@ export const causeLines: Record<string, string[]> = {
   'bbi-kick': ['A Gotipua kick, Dad! They were still whirling.', 'Wait for the gate pose, then walk straight through.'],
   'bbi-pakhala': ['You sank in the pakhala, Dad. The rice floated apart.', 'The rice is a floor only till the water goes in. Stand on a badi before the jug tips.'],
   'bbi-dhara': ['The second jug pushed your badi under.', 'Not the badi by the right rim: be on the one in the middle.'],
+  'bbi-chakka': ['The chariot slammed into the temple wall, with you on it.', 'The wheel never turns: start the chariot from the horses, then wait on the hub.'],
+  'bbi-khai': ['Into the moat, Dad.', 'The plinth is the bridge: start it, and let it slide under the hub.'],
+  'bbi-ara': ['The spoke sank under you: they go in order.', 'Once you’re on spoke 1, climb steadily, one hop after another; don’t stop.'],
+  'bbi-ghoda': ['The horses’ plinths slid together, with you between.', 'Don’t touch the horses: jump right over the near one into the gap.'],
 };
