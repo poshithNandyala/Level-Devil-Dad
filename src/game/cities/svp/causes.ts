@@ -12,4 +12,5 @@ export const causeLines: Record<string, string[]> = {
   'svp-baarish': ['Baarish! The rain came in hard from the other side.', 'Only the lee end of an awning is dry: the end the wind blows towards. When the cloud bank shows on the other horizon, change ends.'],
   'svp-nala': ['Nala! The gutter runs like a river while it rains.', 'Cross the gutter in the lull, when it has drained.'],
   'svp-eent': ['Eent! The brick gave way under you.', 'Brick crumbles a moment after you land on it. Roots hold, and a dead grey root is no better than brick.'],
+  'svp-baha': ['Baha! The sheet of rain water carried you back into the drain.', 'Wait under the awning until the sun is out: the cloud has two lobes, and the lull between them is not the end.'],
 };

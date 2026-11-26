@@ -12,6 +12,7 @@ import type { Bough, Flock } from '../../src/game/cities/svp/s06';
 import type { Crowd, Hall, Ship } from '../../src/game/cities/svp/s07';
 import type { Weather } from '../../src/game/cities/svp/s08';
 import type { Root } from '../../src/game/cities/svp/s09';
+import type { Lane } from '../../src/game/cities/svp/s01';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -182,6 +183,33 @@ function rootsPolicy(txs: number[], groundX: number, note: string, until: (w: Wo
   };
 }
 
+// ------------------------------------------------------------------ SVP-01: the welcome tour
+const lane = (w: World) => w.flags.lane as Lane;
+const hop = (at: number, note: string, ticks = 12): Step[] => [
+  { hold: 'R', until: X(at), max: 900 },
+  { hold: 'R', jump: ticks, ticks, note },
+  { hold: 'R', until: ground, max: 300 },
+];
+const ferryOf = (w: World) => w.entities.find((e: any) => e.ferry) as any;
+/** posts and steps up to the awning, standing under it */
+const tourToAwning = (): Step[] => [...hop(8.6, 'a bollard'), ...hop(11.6, 'a bollard'), ...hop(14.6, 'a bollard'), ...hop(18.7, 'a step'), ...hop(20.7, 'a step'), { hold: 'R', until: X(36.4), max: 900, note: 'under the awning' }];
+/** from the drain to the door */
+const tourFromDrain = (): Step[] => [
+  ...hop(39.4, 'the drain', 14),
+  { hold: 'R', until: X(65.8), max: 900, note: 'up the lane' },
+  { hold: 'R', jump: 14, ticks: 14, note: 'hop the cart' },
+  { hold: 'R', until: (w) => w.player.onGround && w.player.y > 220, max: 400 },
+  { hold: 'R', until: X(74.8), max: 900 },
+  { hold: '', until: (w) => { const f = ferryOf(w); return f.state === 'rest' && f.x === 76 * 16; }, max: 900, note: 'wait for the shuttle' },
+  { hold: 'R', until: (w) => w.standing(ferryOf(w).solid) && w.player.x >= ferryOf(w).x + 10, max: 200, note: 'step aboard' },
+  { hold: '', until: (w) => { const f = ferryOf(w); return f.state === 'rest' && f.x === (76 + 14 - 3) * 16; }, max: 900, note: 'ride across' },
+  { hold: 'R', until: X(90.4), max: 200, note: 'step off' },
+  { hold: 'R', until: X(94 - 1.6), max: 900 },
+  { hold: 'R', jump: 12, ticks: 12, note: 'up on the deck' },
+  { hold: 'R', until: ground, max: 200 },
+  { hold: 'R', until: (w) => w.state !== 'play', max: 900 },
+];
+
 // ------------------------------------------------------------------ SVP-02: the saw mill
 const hall = (w: World, i = 0) => (i < 0 ? (w.flags.saw as SawHall) : ((w.flags.halls ?? []) as SawHall[])[i]);
 /** stay at `off` px from the log's own left end (the log moves, so follow it) until the carriage has docked */
@@ -197,6 +225,7 @@ const stayOnLog = (get: (w: World) => SawHall, off: number, note: string): Step 
 const board = (get: (w: World) => SawHall, note: string): Step => ({ hold: 'R', until: (w) => w.player.x >= get(w).bankX + 6 && w.player.onGround, max: 600, note });
 
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
+  S['SVP-01'] = [...tourToAwning(), { hold: '', until: (w) => lane(w).done, max: 2400, note: 'under the awning till the cloud has gone' }, ...tourFromDrain()];
   S['SVP-02'] = [
     board((w) => hall(w, -1), 'on to the boarding end of the log'),
     stayOnLog((w) => hall(w, -1), 12, 'stay on the end that is left: it rides over'),
@@ -249,6 +278,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
 
 /** the obvious play per stage, and the cause it must die of */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'SVP-01': { steps: [hopUntil((w) => w.state !== 'play', 'up the lane in the rain')], cause: 'svp-baha' },
   'SVP-10': { steps: [{ hold: 'R', until: (w) => herd0(w).carrying, max: 600 }, board((w) => hall(w, -1), 'on to the log with the food'), stayOnLog((w) => hall(w, -1), 12, 'and stay on the end that stays, with the herd behind you')], cause: 'svp-aari' },
   'SVP-09': { steps: [{ hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'across the brick floor' }], cause: 'svp-eent' },
   'SVP-08': { steps: [{ hold: 'R', until: (w) => w.state !== 'play', max: 1500, note: 'run for it' }], cause: 'svp-baarish' },
@@ -268,6 +298,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'SVP-01': { steps: [...tourToAwning(), { hold: '', until: (w) => lane(w).t > 70 + 264 + 40, max: 1200, note: 'under the awning till the rain stops' }, hopUntil((w) => w.state !== 'play', 'and up the lane at once')], cause: 'svp-baha' },
   'SVP-09': {
     steps: [
       { hold: 'R', until: X(7.6), max: 400 },
@@ -486,5 +517,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['SVP-02', 'SVP-03', 'SVP-04', 'SVP-05', 'SVP-06', 'SVP-07', 'SVP-08', 'SVP-09', 'SVP-10'],
+  fair: ['SVP-01', 'SVP-02', 'SVP-03', 'SVP-04', 'SVP-05', 'SVP-06', 'SVP-07', 'SVP-08', 'SVP-09', 'SVP-10'],
 };

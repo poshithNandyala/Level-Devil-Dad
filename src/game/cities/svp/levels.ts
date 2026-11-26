@@ -1,12 +1,11 @@
-// Sri Vijaya Puram's ten stages: 01 the welcome tour, 02-10 long stages (room + act + door ending), harder each time,
-// 10 the finale. Each slot below is a TODO placeholder (an empty room with a door): replace it with the stage
-// from the allocation (docs/allocation.json), and set its meta. Keep `levels` a function (docs/CITY-MODULE.md).
-import { type LevelDef, type World } from '../../world';
-import { lines as L } from './lines';
-import { door, rival } from '../../levels/kit';
+// Sri Vijaya Puram's ten stages: 01 the welcome tour, 02-10 a room, its acts and a door ending each, harder each time,
+// 10 the finale. Each stage's own file is s01.ts .. s10.ts; this file only puts them in order (docs/CITY-MODULE.md:
+// `levels` stays a function, because tour() and longStage() read the city's course, skin and endings when they run).
+import type { LevelDef } from '../../world';
 import { tour } from '../../levels/tour';
 import { longStage } from '../../levels/chunks';
-import { Grid } from '../../levels/grid';
+import { X } from './lines';
+import { extra, paint } from './s01';
 import { aariRoom, chirai } from './s02';
 import { magarRoom, nala } from './s03';
 import { hiranRoom, ghat } from './s04';
@@ -17,50 +16,50 @@ import { monsoonRoom, gali } from './s08';
 import { jadRoom, pul } from './s09';
 import { dweepRoom, nadi, jadFin, samanFin } from './s10';
 
-const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
-
-/** TODO placeholder room for stage `n`: replace with the real room (its own idea, sign, Tara, hidden item) */
-function todoRoom(n: number): LevelDef {
-  return {
-    id: `SVP-${String(n).padStart(2, '0')}`,
-    city: 'SVP',
-    index: n,
-    name: `TODO stage ${n}`,
-    nameEn: 'TODO',
-    tagline: 'TODO',
-    hint: 'TODO: what kills you and how to beat it.',
-    par: 30,
-    map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').rows(),
-    build(w: World) {
-      door(w);
-      rival(w, 3, 15, 1, tara(n - 2));
-      // TODO: the mechanic's entities, a sign, the guide's lines, one collectible(w, 'svp-item', tx, ty)
-    },
-  };
-}
-
 export const levels = (): LevelDef[] => [
-  tour({
-    id: 'SVP-01',
-    city: 'SVP',
-    name: 'TODO welcome',
-    nameEn: 'TODO',
-    tagline: 'TODO',
-    lines: ['TODO | TODO', 'TODO | TODO', 'TODO | TODO', 'TODO | TODO', 'TODO | TODO', 'TODO | TODO'],
-    shouts: [],
-    ride: 'cart',
-    item: 'svp-machhli',
-    signs: [],
-    props: [],
-    things: [],
-  }),
-  longStage({ base: aariRoom(), acts: [chirai], twist: 'svp-timber-stack', par: 40, shape: 'short', meta: { family: 'cut-floor-saw-carriage', betrayals: ['cut-floor'], ending: 'svp-timber-stack' } }), // SVP-02
-  longStage({ base: magarRoom(), acts: [nala], twist: 'svp-board-bridge', par: 44, shape: 'short', meta: { family: 'warning-board-arrow-turns', betrayals: ['honest-moving-sign'], ending: 'svp-board-bridge' } }), // SVP-03
-  longStage({ base: hiranRoom(), acts: [ghat], twist: 'svp-jetty-guard', par: 50, shape: 'short', meta: { family: 'food-holder-followed-by-deer', betrayals: ['carry-attracts'], ending: 'svp-jetty-guard' } }), // SVP-04
-  longStage({ base: tasveerRoom(), acts: [dekho], twist: 'svp-note-door', par: 58, shape: 'wtf', meta: { family: 'picture-aligns-ledge-from-spot', betrayals: ['viewpoint-align'], ending: 'svp-note-door' } }), // SVP-05
-  longStage({ base: toteRoom(), acts: [sanjh], twist: 'svp-bough-door', par: 62, shape: 'long', meta: { family: 'bird-weight-bends-tree', betrayals: ['crowd-weight-bends'], ending: 'svp-bough-door' } }), // SVP-06
-  longStage({ base: jettyRoom(), acts: [ghatSte, doosra], twist: 'svp-ticket-window', par: 100, shape: 'marathon', lives: 'act', cps: [23.4], meta: { family: 'luggage-stacks-as-floor', betrayals: ['crowd-belongings-floor'], ending: 'svp-ticket-window' } }), // SVP-07
-  longStage({ base: monsoonRoom(), acts: [gali], twist: 'svp-gutter-river', par: 70, shape: 'wtf', meta: { family: 'rain-direction-reverses-awnings', betrayals: ['second-season'], ending: 'svp-gutter-river' } }), // SVP-08
-  longStage({ base: jadRoom(), acts: [pul], twist: 'svp-frame-door', par: 62, shape: 'long', meta: { family: 'brick-crumbles-roots-hold', betrayals: ['visual-rule-brick-root'], ending: 'svp-frame-door' } }), // SVP-09
-  longStage({ base: dweepRoom(), acts: [nadi, jadFin, samanFin], twist: 'svp-dweep-gate', par: 120, shape: 'marathon', lives: 'act', meta: { family: 'finale-food-through-sawmill', betrayals: ['food-through-sawmill'], ending: 'svp-dweep-gate' } }), // SVP-10
+  {
+    ...tour({
+      id: 'SVP-01',
+      city: 'SVP',
+      name: 'Namaste SVP',
+      nameEn: 'Hello, Sri Vijaya Puram',
+      tagline: 'The island capital, once Port Blair, with its harbour, its steep lanes and its sudden rain. Welcome.',
+      lines: [X.welcome, X.tour, X.ship, X.deer, X.queue, X.nextShip],
+      shouts: [
+        [27, X.queue],
+        [86, X.ship],
+      ],
+      ride: 'cart',
+      item: 'svp-machhli',
+      signs: [
+        [6, 'SRI VIJAYA PURAM', 'harbour'],
+        [45, 'ABERDEEN BAZAAR', 'the lane'],
+        [100, 'JETTY 1', 'ships'],
+      ],
+      props: [
+        ['lamp', 4, {}],
+        ['stall', 16, { label: 'FISH' }],
+        ['lamp', 62, {}],
+        ['crowd', 88, { n: 3 }],
+        ['lamp', 106, {}],
+      ],
+      things: [],
+      paint,
+      extra,
+      cps: [32.2, 69, 91],
+      par: 40,
+      hint: 'A walk round town: hop the bollards and the steps. The lane after the awning is steep, and when the cloud comes over it a sheet of water runs down it and pushes you back into the drain. Shelter under the awning. The cloud has two lobes with a lull between them: wait until the sun is out before you go.',
+    }),
+    shape: 'tour',
+    meta: { family: 'lane-sheet-flow-push', betrayals: ['sheet-flow'], ending: 'svp-lane-sun' },
+  },
+  longStage({ base: aariRoom(), acts: [chirai], twist: 'svp-timber-stack', par: 40, shape: 'short', meta: { family: 'cut-floor-saw-carriage', betrayals: ['cut-floor'], ending: 'svp-timber-stack' } }),
+  longStage({ base: magarRoom(), acts: [nala], twist: 'svp-board-bridge', par: 44, shape: 'short', meta: { family: 'warning-board-arrow-turns', betrayals: ['honest-moving-sign'], ending: 'svp-board-bridge' } }),
+  longStage({ base: hiranRoom(), acts: [ghat], twist: 'svp-jetty-guard', par: 50, shape: 'short', meta: { family: 'food-holder-followed-by-deer', betrayals: ['carry-attracts'], ending: 'svp-jetty-guard' } }),
+  longStage({ base: tasveerRoom(), acts: [dekho], twist: 'svp-note-door', par: 58, shape: 'wtf', meta: { family: 'picture-aligns-ledge-from-spot', betrayals: ['viewpoint-align'], ending: 'svp-note-door' } }),
+  longStage({ base: toteRoom(), acts: [sanjh], twist: 'svp-bough-door', par: 62, shape: 'long', meta: { family: 'bird-weight-bends-tree', betrayals: ['crowd-weight-bends'], ending: 'svp-bough-door' } }),
+  longStage({ base: jettyRoom(), acts: [ghatSte, doosra], twist: 'svp-ticket-window', par: 100, shape: 'marathon', lives: 'act', cps: [23.4], meta: { family: 'luggage-stacks-as-floor', betrayals: ['crowd-belongings-floor'], ending: 'svp-ticket-window' } }),
+  longStage({ base: monsoonRoom(), acts: [gali], twist: 'svp-gutter-river', par: 70, shape: 'wtf', meta: { family: 'rain-direction-reverses-awnings', betrayals: ['second-season'], ending: 'svp-gutter-river' } }),
+  longStage({ base: jadRoom(), acts: [pul], twist: 'svp-frame-door', par: 62, shape: 'long', meta: { family: 'brick-crumbles-roots-hold', betrayals: ['visual-rule-brick-root'], ending: 'svp-frame-door' } }),
+  longStage({ base: dweepRoom(), acts: [nadi, jadFin, samanFin], twist: 'svp-dweep-gate', par: 120, shape: 'marathon', lives: 'act', meta: { family: 'finale-food-through-sawmill', betrayals: ['food-through-sawmill'], ending: 'svp-dweep-gate' } }),
 ];
