@@ -10,6 +10,7 @@ import { aariRoom, chirai } from './s02';
 import { magarRoom, nala } from './s03';
 import { hiranRoom, ghat } from './s04';
 import { tasveerRoom, dekho } from './s05';
+import { rassi } from './rassi';
 import { toteRoom, sanjh } from './s06';
 import { jettyRoom, ghatSte, doosra, teesra } from './s07';
 import { monsoonRoom, gali } from './s08';
@@ -56,7 +57,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: aariRoom(), acts: [chirai], twist: 'svp-timber-stack', par: 29, shape: 'short', meta: { family: 'cut-floor-saw-carriage', betrayals: ['cut-floor'], ending: 'svp-timber-stack' } }),
   longStage({ base: magarRoom(), acts: [nala], twist: 'svp-board-bridge', par: 33, shape: 'short', meta: { family: 'warning-board-arrow-turns', betrayals: ['honest-moving-sign'], ending: 'svp-board-bridge' } }),
   longStage({ base: hiranRoom(), acts: [ghat], twist: 'svp-jetty-guard', par: 29, shape: 'short', meta: { family: 'food-holder-followed-by-deer', betrayals: ['carry-attracts'], ending: 'svp-jetty-guard' } }),
-  longStage({ base: tasveerRoom(), acts: [dekho], twist: 'svp-note-door', par: 28, shape: 'wtf', meta: { family: 'picture-aligns-ledge-from-spot', betrayals: ['viewpoint-align'], ending: 'svp-note-door' } }),
+  longStage({ base: tasveerRoom(), acts: [dekho, rassi], twist: 'svp-note-door', par: 28, shape: 'wtf', meta: { family: 'picture-aligns-ledge-from-spot', betrayals: ['viewpoint-align'], ending: 'svp-note-door' } }),
   longStage({ base: toteRoom(), acts: [sanjh], twist: 'svp-bough-door', par: 49, shape: 'long', meta: { family: 'bird-weight-bends-tree', betrayals: ['crowd-weight-bends'], ending: 'svp-bough-door' } }),
   longStage({ base: jettyRoom(), acts: [ghatSte, doosra, teesra], twist: 'svp-ticket-window', par: 80, shape: 'marathon', lives: 'act', cps: [23.4], meta: { family: 'luggage-stacks-as-floor', betrayals: ['crowd-belongings-floor'], ending: 'svp-ticket-window' } }),
   longStage({ base: monsoonRoom(), acts: [gali], twist: 'svp-gutter-river', par: 56, shape: 'wtf', meta: { family: 'rain-direction-reverses-awnings', betrayals: ['second-season'], ending: 'svp-gutter-river' } }),

@@ -4,6 +4,8 @@ import type { World } from '../../src/game/world';
 import type { Door } from '../../src/game/entities/basics';
 import { Step, X, and, ground } from '../runner';
 import type { CityTests } from '../city-tests';
+import { LEVELS } from '../../src/game/levels';
+import type { Rope } from '../../src/game/cities/svp/rassi';
 import type { SawHall } from '../../src/game/cities/svp/s02';
 import type { Creek } from '../../src/game/cities/svp/s03';
 import type { Herd, LateBoat } from '../../src/game/cities/svp/s04';
@@ -224,6 +226,8 @@ const stayOnLog = (get: (w: World) => SawHall, off: number, note: string): Step 
 });
 const board = (get: (w: World) => SawHall, note: string): Step => ({ hold: 'R', until: (w) => w.player.x >= get(w).bankX + 6 && w.player.onGround, max: 600, note });
 
+/** each stage's own room steps, before its acts and door are added (for the act-level plays) */
+const ROOM: Record<string, Step[]> = {};
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['SVP-01'] = [...tourToAwning(), { hold: '', until: (w) => lane(w).done, max: 2400, note: 'under the awning till the cloud has gone' }, ...tourFromDrain()];
   S['SVP-02'] = [
@@ -231,6 +235,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     stayOnLog((w) => hall(w, -1), 12, 'stay on the end that is left: it rides over'),
     { hold: 'R', until: and(ground, X(31)), max: 600, note: 'off on to the far bank' },
   ];
+  ROOM['SVP-02'] = S['SVP-02'];
   lengthen('SVP-02', 0, []);
   S['SVP-03'] = [
     { hold: 'R', until: (w) => (w.flags.creek as Creek).state !== 'sun', max: 900, note: 'wade into the creek: the crocodile slides in after you' },
@@ -238,6 +243,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { hold: 'L', jump: 14, until: (w) => w.player.onGround && w.player.y + w.player.h <= 241, max: 200, note: 'up out of the creek on to the bank' },
     hopUntil((w) => w.player.x > 31 * 16 && w.player.onGround, 'the logs are only logs now: hop them'),
   ];
+  ROOM['SVP-03'] = S['SVP-03'];
   lengthen('SVP-03', 0, []);
   S['SVP-04'] = [
     { hold: 'R', until: (w) => herd0(w).carrying, max: 600, note: 'past the stall: the fritter is yours, and the herd is up' },
@@ -246,10 +252,13 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     ...boatRide(herd0, boat0, 20 * 16, 26 * 16 + 4),
     { hold: 'R', until: and(ground, X(31)), max: 400 },
   ];
+  ROOM['SVP-04'] = S['SVP-04'];
   lengthen('SVP-04', 0, []);
   S['SVP-05'] = [standOn(vp0, 'on the footprints by the bench: the view lines up'), hopUntil(and(ground, X(25)), 'across the ledge while it holds')];
+  ROOM['SVP-05'] = S['SVP-05'];
   lengthen('SVP-05', 0, []);
   S['SVP-06'] = [...boughCross(fl0, bg0, 172, 144, 24 * 16), { hold: 'R', until: and(ground, X(31)), max: 300 }];
+  ROOM['SVP-06'] = S['SVP-06'];
   lengthen('SVP-06', 0, []);
   S['SVP-07'] = [
     hopUntil(and(ground, X(14.5)), 'across the luggage, no stopping'),
@@ -258,13 +267,16 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     climbRight('out behind the crowd', 25 * 16),
     { hold: 'R', until: and(ground, X(31)), max: 300 },
   ];
+  ROOM['SVP-07'] = S['SVP-07'];
   lengthen('SVP-07', 0, []);
   S['SVP-08'] = [streetUntil(2, 'awning to awning, in the lee of the rain that is coming')];
+  ROOM['SVP-08'] = S['SVP-08'];
   lengthen('SVP-08', 0, []);
   S['SVP-09'] = [
     rootsPolicy([9, 14, 20], 24 * 16, 'up on the roots, across the swinging one, and off on to the road', and(ground, (w) => w.player.x >= 24 * 16 + 2)),
     { hold: 'R', until: and(ground, X(26)), max: 300 },
   ];
+  ROOM['SVP-09'] = S['SVP-09'];
   lengthen('SVP-09', 0, []);
   S['SVP-10'] = [
     { hold: 'R', until: (w) => herd0(w).carrying, max: 600, note: 'past the stall: the fritter is yours' },
@@ -273,6 +285,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     stayOnLog((w) => hall(w, -1), 12, 'stay on the end that stays'),
     { hold: 'R', until: and(ground, X(31)), max: 600, note: 'off on to the far bank' },
   ];
+  ROOM['SVP-10'] = S['SVP-10'];
   lengthen('SVP-10', 0, []);
 }
 
@@ -333,6 +346,27 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** more scripted first-timer deaths and 'like last time' moves */
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {};
+/** the stage played properly up to act `act`, then `then(x0)`: for the plays that must die inside an added act */
+function atAct(id: string, act: string, then: (x: number) => Step[]): Step[] {
+  const def = LEVELS.find((l) => l.id === id)!;
+  const out: Step[] = [...ROOM[id]];
+  for (const p of def.parts ?? []) {
+    if (p.kind === act) return [...out, ...then(p.x0)];
+    out.push(...actRoutes[p.kind](p.x0));
+  }
+  throw new Error(`${id} has no act ${act}`);
+}
+/** a death that must happen in an added act: the NAIVE play and the obvious FIX of it */
+function actDeath(id: string, act: string, what: string, cause: string, then: (x: number) => Step[]) {
+  (mistakes[id] ??= []).push({
+    what,
+    cause,
+    get steps() {
+      return atAct(id, act, then);
+    },
+  });
+}
+
 
 /** a route for each act, by act id */
 const patrols = (w: World) => (w.flags.patrols ?? []) as { cx: number; heading: number }[];
@@ -379,7 +413,18 @@ function crossGaps(): Step {
     max: 1,
   };
 }
+// ------------------------------------------------------------------ SVP-05 act 2: the mooring rope
+const rope = (i: number) => (w: World) => (w.flags.ropes as Rope[])[i];
+/** by the bollard: hop until the boat is alongside, step on, ride across and walk off on to `farX` */
+const ropeCross = (i: number, bollardTx: number, farTx: number): Step[] => [
+  { policy: (w) => go(toward(w, px(bollardTx) + 8, 3)), until: (w) => Math.abs(w.player.cx - (px(bollardTx) + 8)) < 6 && w.player.onGround, max: 900, note: 'to the bollard' },
+  { policy: (w) => ({ move: toward(w, px(bollardTx) + 8, 14), jump: w.player.onGround && rope(i)(w).state === 'out' }), until: (w) => rope(i)(w).state !== 'out', max: 2400, note: 'hop by the bollard: every hop pulls the boat in' },
+  { hold: 'R', until: (w) => w.standing(rope(i)(w).boat.solid), max: 900, note: 'step on to the boat' },
+  { hold: '', until: (w) => rope(i)(w).state === 'docked', max: 3000, note: 'the boat poles across' },
+  { hold: 'R', until: and(ground, X(farTx)), max: 900, note: 'off on to the far bank' },
+];
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp05-rassi': (x) => [...ropeCross(0, x + 4, x + 29), ...ropeCross(1, x + 27, x + 57)],
   'svp07-teesra': (x) => [
     hopUntil(and(ground, X(x + 12.5)), 'across the luggage, no stopping'),
     { hold: 'R', until: inTrench, max: 600, note: 'into the trench' },
@@ -526,6 +571,18 @@ const endingPolicies: Record<string, Policy> = {
     return go(toward(w, st.zone.x - 28, 2));
   },
 };
+
+// ------------------------------------------------------------------ the plays that must die in an added act
+actDeath('SVP-05', 'svp05-rassi', 'run to the edge and jump for the tied-up boat', 'svp-rassi', (x) => [
+  { hold: 'R', until: X(x + 9.4), max: 600 },
+  { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'jump for the boat from the edge' },
+]);
+actDeath('SVP-05', 'svp05-rassi', 'two hops at the bollard, then jump for the boat from the edge', 'svp-rassi', (x) => [
+  { policy: (w) => go(toward(w, px(x + 4) + 8, 3)), until: (w) => Math.abs(w.player.cx - (px(x + 4) + 8)) < 6 && w.player.onGround, max: 900 },
+  { policy: (w) => ({ move: '', jump: w.player.onGround }), until: (w) => rope(0)(w).hauls >= 2, max: 900, note: 'a couple of hops' },
+  { hold: 'R', until: X(x + 9.4), max: 600 },
+  { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'and jump for it' },
+]);
 
 export const test: CityTests = {
   solutions,
