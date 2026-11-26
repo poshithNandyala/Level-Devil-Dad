@@ -17,8 +17,8 @@ const FL = 240;
 export const STAIR = { c0: 3, steps: 4, top: 64, landing: [11, 18] as [number, number], period: 8, topEmerge: 1.0, midEmerge: 4.4, midCol: 7 };
 
 /** where the stair surface is at column x (px): the height of the step under it */
-const stairY = (x: number) => {
-  const c = x / 16;
+const stairY = (x: number, o = 0) => {
+  const c = x / 16 - o;
   const k = Math.min(4, Math.max(0, Math.floor((c - STAIR.c0) / 2) + 1));
   return FL - k * 16;
 };
@@ -29,6 +29,55 @@ function porter(ctx: CanvasRenderingContext2D, x: number, y: number, t: number) 
   box(ctx, x - 8, y, 16, 16, '#C9A56B');
   box(ctx, x - 8, y, 16, 3, '#E3C58A');
   void t;
+}
+
+/** the stairs of Golghar, painted into a map from column `o` */
+export function stairPaint(g: Grid, o: number) {
+  for (let i = 0; i < STAIR.steps; i++) g.fill(o + STAIR.c0 + i * 2, o + STAIR.c0 + i * 2 + 1, 14 - i, 14, '#');
+  g.fill(o + 11, o + 18, 11, 14, '#');
+  for (let i = 0; i < STAIR.steps; i++) g.fill(o + 19 + i * 2, o + 19 + i * 2 + 1, 11 + i, 14, '#');
+}
+
+/** the porters of the stair at column `o`: A comes down from the landing, B steps out of the landing door */
+export function stairBuild(w: World, o: number, key: string, truth: boolean) {
+  const st = { t0: -1 };
+  w.flags[key] = st;
+  onPass(w, px(o + 1), (w2) => {
+    st.t0 = w2.tick;
+    if (truth) tara(w2, L.intro[2 + 2], 2.4); // 'Rook! | Stop!': the one time in the city Tara tells the truth
+  });
+  const mk = (emerge: number, fromCol: number) =>
+    w.add(
+      new Rig(px(o + fromCol), 0, 16, 44, {
+        layer: 3,
+        cause: 'pat-bojh',
+        inset: 2,
+        live: (r) => !!r.on,
+        tick: (r, w2) => {
+          if (st.t0 < 0) {
+            r.on = false;
+            return;
+          }
+          const t = since(w2, st.t0) - emerge;
+          const k = ((t % STAIR.period) + STAIR.period) % STAIR.period;
+          const walk = ((fromCol - 2) * 16) / 56;
+          r.on = t >= 0 && k < walk;
+          if (r.on) {
+            r.x = px(o + fromCol) - k * 56;
+            r.y = stairY(r.x + 8, o) - 44;
+            r.s.k = k;
+          }
+        },
+        paint: (ctx, r, w2) => porter(ctx, r.x + 8, r.y, w2.tick),
+      }),
+    );
+  w.flags[key + 'p'] = { a: mk(STAIR.topEmerge, 11), b: mk(STAIR.midEmerge, STAIR.midCol) };
+  w.add(
+    new Paint((ctx) => {
+      box(ctx, px(o + STAIR.midCol) - 4, FL - 48 - 26, 14, 26, '#2B1A10');
+      for (let i = 0; i < 4; i++) box(ctx, px(o + STAIR.c0 + i * 2) + 8, FL - 18 - i * 16, 8, 2, '#D7262E');
+    }, -4),
+  );
 }
 
 export function room(): LevelDef {
@@ -43,53 +92,12 @@ export function room(): LevelDef {
     par: 22,
     map: (() => {
       const g = Grid.ground(15);
-      for (let i = 0; i < STAIR.steps; i++) g.fill(STAIR.c0 + i * 2, STAIR.c0 + i * 2 + 1, 14 - i, 14, '#');
-      g.fill(11, 18, 11, 14, '#');
-      for (let i = 0; i < STAIR.steps; i++) g.fill(19 + i * 2, 19 + i * 2 + 1, 11 + i, 14, '#');
+      stairPaint(g, 0);
       return g.put(1, 14, '@').put(30, 14, 'E').rows();
     })(),
     build(w: World) {
       door(w);
-      const st = { t0: -1 };
-      w.flags.pat4 = st;
-      onPass(w, px(1), (w2) => {
-        st.t0 = w2.tick;
-        tara(w2, L.intro[2 + 2], 2.4); // 'Rook! | Stop!': the one time in the city Tara tells the truth
-      });
-      // porters: A walks down from the top of the landing, B from a door at the mid landing, every `period` seconds
-      const mk = (emerge: number, fromCol: number, key: string) =>
-        w.add(
-          new Rig(px(fromCol), 0, 16, 44, {
-            layer: 3,
-            cause: 'pat-bojh',
-            inset: 2,
-            live: (r) => !!r.on,
-            tick: (r, w2) => {
-              if (st.t0 < 0) {
-                r.on = false;
-                return;
-              }
-              const t = since(w2, st.t0) - emerge;
-              const k = ((t % STAIR.period) + STAIR.period) % STAIR.period;
-              const walk = ((fromCol - 2) * 16) / 56;
-              r.on = t >= 0 && k < walk;
-              if (r.on) {
-                r.x = px(fromCol) - k * 56;
-                r.y = stairY(r.x + 8) - 44;
-                r.s.k = k;
-              }
-            },
-            paint: (ctx, r, w2) => porter(ctx, r.x + 8, r.y, w2.tick),
-          }),
-        );
-      w.flags.pat4p = { a: mk(STAIR.topEmerge, 11, 'a'), b: mk(STAIR.midEmerge, STAIR.midCol, 'b') };
-      w.add(
-        new Paint((ctx) => {
-          // the great dome behind, the landing door (a dark arch at column 7), and arrows painted on the stair
-          box(ctx, px(STAIR.midCol) - 4, FL - 48 - 26, 14, 26, '#2B1A10');
-          for (let i = 0; i < 4; i++) box(ctx, px(STAIR.c0 + i * 2) + 8, FL - 18 - i * 16, 8, 2, '#D7262E');
-        }, -4),
-      );
+      stairBuild(w, 0, 'pat4', true);
       sign(w, 21, 6.2, 4.4, 'GOLGHAR', 'shop', null, '1786 granary');
       rival(w, 14, 10, 1, taraScript(4));
       collectible(w, 'pat-khaja', 15, 8.4);

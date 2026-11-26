@@ -12,6 +12,7 @@ import { Rig, box } from './entities';
 import { taraScript } from './common';
 import { pontoon } from './s05';
 import { seams, under } from './s06';
+import { stairBuild, stairPaint } from './s04';
 import { lines as L } from './lines';
 
 const FL = 240;
@@ -109,6 +110,19 @@ export const actSetu: Act = {
     for (const [col, , present] of list) under(w, col, col + 1, present ? 'pat-taala' : 'pat-jod');
     cart(w, px(c.x + 1), 5);
     sign(w, c.x + 1.2, 10.4, 3, 'SETU', 'shop', null, 'load: 5 sacks');
+  },
+};
+
+/** Golghar's stairs again, on the way to the granary: the porters come down the stair you climb */
+export const actStair: Act = {
+  id: 'pat10-sidhi',
+  w: 34,
+  advice: 'Golghar’s stair once more: the porters come down it with their sacks, one from the top and one from the door on the landing. Wait at the foot until both have gone by, then go up in one go and down the far stair.',
+  cps: [],
+  paint: (g, c) => stairPaint(g, c.x + 2),
+  build: (w, c) => {
+    stairBuild(w, c.x + 2, 'pat10g', false);
+    sign(w, c.x + 22, 6.4, 4.4, 'GOLGHAR', 'shop', null, 'anaaj ghar');
   },
 };
 

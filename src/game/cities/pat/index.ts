@@ -1,5 +1,4 @@
-// Patna (Bihar) as a city module. Scaffolded by scripts/dev/new-city.mjs: replace every TODO.
-// Recipe: docs/CITY-MODULE.md. Found by src/game/cities/registry.ts; nothing to register.
+// Patna (Bihar) as a city module. Recipe: docs/CITY-MODULE.md. Found by src/game/cities/registry.ts; nothing to register.
 import type { CityModule } from '../module';
 import { lines } from './lines';
 import { levels } from './levels';
@@ -12,6 +11,7 @@ import { theme } from './theme';
 import { cityLine, grade, tileCaps } from './look';
 import { backdrop } from './backdrop';
 import { things } from './things';
+import { ambient } from './ambient';
 
 export const PAT: CityModule = {
   id: 'PAT',
@@ -27,5 +27,6 @@ export const PAT: CityModule = {
   grade,
   tileCaps,
   backdrop,
+  ambient,
   things,
 };
