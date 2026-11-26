@@ -1,6 +1,7 @@
 import { it } from 'vitest';
 import { LEVELS } from '../src/game/levels';
 import { SOLUTIONS } from './solutions';
+import { CITY_TESTS } from './city-tests';
 import { World, type InputState } from '../src/game/world';
 import { incoming, windOn, type Step } from './runner';
 import { INFO } from './helpers';
@@ -99,7 +100,7 @@ function lagged(id: string, steps: Step[], lag: number, idle: number) {
 }
 
 it.runIf(!!process.env.LDD_FAIR)('Ranchi, human timing', () => {
-  const ids = (process.env.LDD_IDS ?? 'RNC-02,RNC-03,RNC-04,RNC-05,RNC-06,RNC-07,RNC-08').split(',');
+  const ids = (process.env.LDD_IDS ?? CITY_TESTS.flatMap((t) => t.fair ?? []).join(',')).split(',');
   const N = +(process.env.LDD_N ?? 40);
   const out: string[] = [];
   for (const id of ids) {
