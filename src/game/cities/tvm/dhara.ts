@@ -115,8 +115,10 @@ export class Droni extends Entity {
   readonly x0: number;
   readonly x1: number;
   hazard: Hazard;
-  constructor(tx0: number, tx1: number, cause: string) {
+  readonly look: 'oil' | 'drain';
+  constructor(tx0: number, tx1: number, cause: string, look: 'oil' | 'drain' = 'oil') {
     super();
+    this.look = look;
     this.layer = 2;
     this.x0 = tx0 * TILE;
     this.x1 = tx1 * TILE;
@@ -130,11 +132,11 @@ export class Droni extends Entity {
     };
   }
   draw(ctx: CanvasRenderingContext2D) {
-    // the trough's wooden sides and the oil in it
-    ctx.fillStyle = '#6D4C41';
+    // the trough's wooden sides and the oil in it (or the market drain's stone sides and its grey water)
+    ctx.fillStyle = this.look === 'oil' ? '#6D4C41' : '#78909C';
     ctx.fillRect(this.x0, FLOOR, 2, 30);
     ctx.fillRect(this.x1 - 2, FLOOR, 2, 30);
-    ctx.fillStyle = 'rgba(196,140,40,0.92)';
+    ctx.fillStyle = this.look === 'oil' ? 'rgba(196,140,40,0.92)' : 'rgba(70,90,80,0.92)';
     ctx.fillRect(this.x0 + 2, FLOOR + 8, this.x1 - this.x0 - 4, 22);
     ctx.fillStyle = 'rgba(255,230,150,0.6)';
     ctx.fillRect(this.x0 + 3, FLOOR + 8, this.x1 - this.x0 - 6, 1);

@@ -4,7 +4,7 @@ import type { ThingDraw } from '../../../render/art/things';
 
 declare module '../../../render/art/things' {
   interface ModuleThingKinds {
-    chaaya: true;
+    'tvm-chaaya': true;
     net: true;
     parunthu: true;
     snakeboat: true;
@@ -161,7 +161,7 @@ const snakeboat: ThingDraw = (ctx, x, y, w, h, o) => {
 };
 
 export const things = {
-  chaaya: { size: [12, 12] as [number, number], draw: chaaya },
+  'tvm-chaaya': { size: [12, 12] as [number, number], draw: chaaya },
   net: { size: [32, 6] as [number, number], draw: net },
   parunthu: { size: [22, 12] as [number, number], draw: parunthu },
   snakeboat: { size: [128, 10] as [number, number], draw: snakeboat },

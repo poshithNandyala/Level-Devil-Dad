@@ -7,10 +7,11 @@ import { tour } from '../../levels/tour';
 import { Grid } from '../../levels/grid';
 import { exitTwist } from '../../levels/twists';
 import { tara as taraSays } from '../../levels/endkit';
-import { crumble, dropFloor, fakeFloor, gapAhead, noLanding, onPass, popAt, popOnJump, riseWall, shyLedge } from '../../levels/trolls';
-import { Counterweight, Launch, Puddle, Slab, Tarp } from './entities';
+import { crumble, dropFloor, fakeFloor, noLanding, onPass, popAt, popOnJump, riseWall, shyLedge } from '../../levels/trolls';
+import { Counterweight, IceSlab, Launch, Puddle, Slab, Tarp } from './entities';
+import { Droni } from './dhara';
 import { longStage } from '../../levels/chunks';
-import { DHARA_META, KOVALAM_META, dharaRoom, kizhi, kovalamRoom, samudra, vilakku } from './encores';
+import { DHARA_META, KOVALAM_META, ashoka, dharaRoom, kizhi, kovalamRoom, samudra, uzhichil, vilakku } from './encores';
 
 // Thiruvananthapuram: monsoon puddles, a red express bus, a tea stall,
 // coconut palms and the old fort gate. Lines: Malayalam + English.
@@ -62,7 +63,7 @@ export const levels = (): LevelDef[] => [
       [85, "Puttum kadalayum ready! | Puttu and kadala curry, ready!"],
     ],
     ride: "scooter",
-    item: "chaaya",
+    item: "tvm-chaaya",
     signs: [[8, "KSRTC", "bus stand"], [55, "THUMBA", "rocket station"], [102, "KOVALAM", "16 km"]],
     props: [
       ["palm", 2, { h: 80, lean: 6 }],
@@ -75,12 +76,12 @@ export const levels = (): LevelDef[] => [
     things: [["redbus", 29]],
     // three long runs, Level Devil style: dying sends you back to the start of the run, not the last step
     cps: [32, 67, 81],
-    hint: 'The soaked road after Tara holds you if you walk: hop on it and it breaks. Any hop near the compound wall puts broken glass on it: jump clean over it, then hop again at once, the road past it is full of glass too. The ditch is only a puddle: walk in and climb out (jump it from the road and spikes meet you on the far side). The rocket at Thumba goes up as you come over the top of the steps, and the road burns: stop up there. It has two stages: the first comes down on the last step, the second at the foot of the steps. Hop them once they’re down. The canoe’s landing gives way: hop off it. At the puttu stall, stop short of the blue tarp and let it empty, then jump the puddle after it: that one is a pothole. At the very end the road opens in front of you: don’t jump it (the far side breaks), wait, it closes again.',
+    hint: 'The soaked road after Tara holds you if you walk: hop on it and it breaks. Any hop near the compound wall puts broken glass on it: jump clean over it, then hop again at once, the road past it is full of glass too. The ditch is only a puddle: walk in and climb out (jump it from the road and spikes meet you on the far side). The rocket at Thumba goes up as you come over the top of the steps, and the road burns: stop up there. It has two stages: the first comes down on the last step, the second at the foot of the steps. Hop them once they’re down. The canoe’s landing gives way: hop off it. At the puttu stall, stop short of the blue tarp and let it empty, then jump the puddle after it: that one is a pothole. At Connemara market a slab of fish ice bridges the drain: it twitches on as you come, and two beats later the porter yanks it on to the far side. Don’t step on it after the twitch: wait for the yank, then a long jump over the drain on to the ice.',
     // the monsoon has eaten the road after Tara; the compound wall wears broken glass (Kerala's
     // walls do) and the road below it is strewn with more; the ditch is just a puddle to wade, but
     // jump it and its far side bristles; Thumba's rocket goes up as you come down the steps; the
     // canoe's landing gives way; the puttu stall's tarp is full of rain, and the puddle past it is
-    // a pothole; and the road at the very end opens up
+    // a pothole; and at Connemara market the fish ice over the drain moves twice
     paint: (g) =>
       g
         .fill(8, 10, 15, 17, 'a')
@@ -89,8 +90,7 @@ export const levels = (): LevelDef[] => [
         .fill(26, 30, 14, 14, 'J')
         .fill(78, 79, 15, 17, 'c')
         .fill(89, 90, 15, 16, '.')
-        .fill(104, 106, 15, 17, 'g')
-        .fill(107, 110, 15, 17, 'h'),
+        .fill(103, 108, 15, 17, '.'),
     extra: (w) => {
       // the monsoon has soaked the road after Tara: it holds a dad who walks over it, not one who hops at it
       // (last time it caved in and you hopped; this time the hop is what breaks it)
@@ -123,8 +123,11 @@ export const levels = (): LevelDef[] => [
       // the puttu stall's tarp is full of rain; the puddle past it is a pothole, not a ditch to wade
       w.add(new Tarp({ tx0: 85.6, tx1: 88.6, ty: 11, groundTy: 15, drop: [86.2, 89], triggerTx: 83.6 }));
       w.add(new Puddle(px(89), px(91)));
-      gapAhead(w, 'g', { lead: 30, back: 0.8 });
-      noLanding(w, 'h');
+      // Connemara market: the fish-ice slab over the drain twitches as you come, and two beats later it's
+      // dragged back the other way, out from under whoever trusted the twitch
+      w.add(new IceSlab(103, 2, 101.6));
+      w.add(new Droni(103, 109, 'tvm-chaal', 'drain'));
+      onPass(w, px(99.6), (w2) => taraSays(w2, 'Meen vandi varunnu! Vegam kadakku! | The fish cart is coming! Cross quick!', 1.6));
     },
   }),
   {
@@ -282,7 +285,7 @@ export const levels = (): LevelDef[] => [
       sign(w, 36.6, 6.4, 3.8, 'STATUE', 'green', null, 'next stop', false);
       prop(w, 'palm', 92, 12, { h: 70, lean: 6 });
       rival(w, 91, 12, -1, tara(1, -1));
-      collectible(w, 'chaaya', 48, 8.6);
+      collectible(w, 'tvm-chaaya', 48, 8.6);
     },
   },
   {
@@ -387,7 +390,7 @@ export const levels = (): LevelDef[] => [
       prop(w, 'palm', 55, 15, { h: 88, lean: 6 });
       prop(w, 'umbrellas', 66, 15, { n: 2 });
       rival(w, 74, 15, -1, tara(2, -1));
-      collectible(w, 'chaaya', 28, 9.2);
+      collectible(w, 'tvm-chaaya', 28, 9.2);
     },
   },
   {
@@ -493,7 +496,7 @@ export const levels = (): LevelDef[] => [
       );
       prop(w, 'palm', 88, 15, { h: 76, lean: 4 });
       rival(w, 4, 15, 1, tara(3, 1));
-      collectible(w, 'chaaya', 41, 10.6);
+      collectible(w, 'tvm-chaaya', 41, 10.6);
     },
   },
   {
@@ -609,7 +612,7 @@ export const levels = (): LevelDef[] => [
       prop(w, 'palm', 62, 15, { h: 80, lean: 5 });
       prop(w, 'umbrellas', 70, 15, { n: 1 });
       rival(w, 21, 6, -1, tara(4, -1));
-      collectible(w, 'chaaya', 45.5, 10.2);
+      collectible(w, 'tvm-chaaya', 45.5, 10.2);
     },
   },
   // ------------------------------------------------------------------ around Kerala
@@ -716,8 +719,8 @@ export const levels = (): LevelDef[] => [
         },
       );
       prop(w, 'netpole', 59, 13);
-      rival(w, 62, 13, -1, { intro: 'Kochi vala kando? Keri po! | Seen the Kochi nets? Climb on!', point: -1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
-      collectible(w, 'chaaya', 13.5, 9.6);
+      rival(w, 62, 13, -1, { intro: L.intro[5], point: -1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
+      collectible(w, 'tvm-chaaya', 13.5, 9.6);
     },
   },
   {
@@ -831,8 +834,8 @@ export const levels = (): LevelDef[] => [
       sign(w, 86.3, 7.6, 4.2, 'TEA FACTORY', 'wood', null, 'est. 1890');
       prop(w, 'teabush', 66, 7, { w: 3 });
       prop(w, 'tree', 64, 7, { h: 70 }, -8);
-      rival(w, 90, 11, -1, { intro: 'Munnar thottam! Mukalil kayari vaa! | Munnar tea gardens! Climb up to the top!', point: 1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[1] });
-      collectible(w, 'chaaya', 60.5, 2.2);
+      rival(w, 90, 11, -1, { intro: L.intro[6], point: 1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[1] });
+      collectible(w, 'tvm-chaaya', 60.5, 2.2);
     },
   },
   {
@@ -923,11 +926,11 @@ export const levels = (): LevelDef[] => [
       sign(w, 87.4, 8.6, 3.4, 'FINISH', 'warn', null, 'vallam kali');
       prop(w, 'palm', 1, 13, { h: 80, lean: 6 });
       prop(w, 'palm', 92, 13, { h: 86, lean: -5 }, -8);
-      rival(w, 91, 13, -1, { intro: 'Vallam kali! Vegam keri iriku! | Boat race! Quick, hop on and sit!', point: -1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
-      collectible(w, 'chaaya', 22.5, 8.6);
+      rival(w, 91, 13, -1, { intro: L.intro[7], point: -1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
+      collectible(w, 'tvm-chaaya', 22.5, 8.6);
     },
   },
   // the encores (allocation v2 slots 9 and 10)
-  longStage({ base: kovalamRoom(), acts: [vilakku, samudra], twist: 'tvm-backwash-ride', par: 70, shape: 'long', meta: KOVALAM_META }),
-  longStage({ base: dharaRoom(), acts: [kizhi], twist: 'tvm-oily-feet-coir-mat', par: 60, shape: 'long', meta: DHARA_META }),
+  longStage({ base: kovalamRoom(), acts: [vilakku, samudra, ashoka], twist: 'tvm-backwash-ride', par: 65, shape: 'long', meta: KOVALAM_META }),
+  longStage({ base: dharaRoom(), acts: [kizhi, uzhichil], twist: 'tvm-oily-feet-coir-mat', par: 25, shape: 'long', meta: DHARA_META }),
 ];

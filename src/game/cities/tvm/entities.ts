@@ -470,7 +470,7 @@ export class Tarp extends Entity {
     const self = this;
     this.hazard = {
       active: true,
-      cause: 'drenched',
+      cause: 'tvm-drenched',
       hits(x, y, w, h) {
         if (self.state !== 'dump') return false;
         const [top, bottom] = self.column();
@@ -617,5 +617,80 @@ export class Puddle extends Entity {
       ctx.lineTo(x + 5, y + 0.5);
       ctx.stroke();
     }
+  }
+}
+
+/**
+ * Connemara market: a slab of fish ice laid over the drain as a bridge. When Dad comes near it twitches
+ * (16 px, toward the far side), and two beats later the porter drags it 3 tiles back the other way, out
+ * from under whoever trusted the twitch. It doesn't carry you: it slides away under your feet.
+ */
+export class IceSlab extends Entity {
+  solid: Solid;
+  readonly x0: number;
+  readonly trigger: number;
+  t = -1;
+  state: 'rest' | 'twitch' | 'wait' | 'slide' | 'done' = 'rest';
+  static readonly TWITCH = 0.1;
+  static readonly BEATS = 0.5;
+  static readonly SLIDE = 0.15;
+  constructor(tx: number, wTiles: number, triggerTx: number) {
+    super();
+    this.layer = 2;
+    this.x0 = tx * TILE;
+    this.trigger = triggerTx * TILE;
+    this.solid = new Solid(this.x0, 15 * TILE, wTiles * TILE, TILE);
+  }
+  /** the slab's offset from where it started, px */
+  offset(): number {
+    const t = this.t;
+    if (this.state === 'rest') return 0;
+    if (t < IceSlab.TWITCH) return 16 * (t / IceSlab.TWITCH);
+    if (t < IceSlab.TWITCH + IceSlab.BEATS) return 16;
+    const k = Math.min(1, (t - IceSlab.TWITCH - IceSlab.BEATS) / IceSlab.SLIDE);
+    return 16 + 48 * k;
+  }
+  update(w: World) {
+    if (this.state === 'rest') {
+      if (w.player.cx < this.trigger) return;
+      this.state = 'twitch';
+      this.t = 0;
+      w.sfx('slide', this.x0 + 24, 15 * TILE);
+    } else if (this.state !== 'done') {
+      this.t += DT;
+      const before = this.state;
+      this.state = this.t < IceSlab.TWITCH ? 'twitch' : this.t < IceSlab.TWITCH + IceSlab.BEATS ? 'wait' : this.t < IceSlab.TWITCH + IceSlab.BEATS + IceSlab.SLIDE ? 'slide' : 'done';
+      if (before === 'wait' && this.state === 'slide') {
+        w.sfx('slide', this.x0 + 24, 15 * TILE);
+        w.say('Valikku! | Pull!', this.x0 - 10, 15 * TILE - 30, 0.9, 'npc');
+      }
+    }
+    this.solid.x = this.x0 + this.offset();
+    w.flags.ice = this.state;
+  }
+  draw(ctx: CanvasRenderingContext2D, w: World) {
+    const s = this.solid;
+    // a block of crushed fish ice, a few sardines on top
+    ctx.fillStyle = '#DCEFF5';
+    ctx.fillRect(s.x, s.y, s.w, 8);
+    ctx.fillStyle = '#B5D8E4';
+    ctx.fillRect(s.x, s.y + 8, s.w, 3);
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    for (let x = s.x + 2; x < s.x + s.w - 2; x += 7) ctx.fillRect(x, s.y + 2 + ((x * 3) % 4), 2, 1);
+    ctx.fillStyle = '#90A4AE';
+    for (let i = 0; i < 2; i++) {
+      ctx.beginPath();
+      ctx.ellipse(s.x + 9 + i * 14, s.y - 1, 4, 1.4, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (this.state === 'twitch') {
+      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(s.x - 4, s.y + 4);
+      ctx.lineTo(s.x - 1, s.y + 4);
+      ctx.stroke();
+    }
+    void w;
   }
 }

@@ -57,7 +57,7 @@ export function kovalamRoom(): LevelDef {
         () => s.i === 1 && s.state === 'rise',
         (w2) => w2.guide('Flag ippo avide aanu. | The flags are over there now.', () => s.i === 1 && s.state !== 'calm'),
       );
-      collectible(w, 'chaaya', 11.5, 11.4);
+      collectible(w, 'tvm-chaaya', 11.5, 11.4);
     },
   };
 }
@@ -66,7 +66,6 @@ export function kovalamRoom(): LevelDef {
 export const vilakku: Act = {
   id: 'tvm09-vilakku',
   w: 40,
-  cps: [38.5],
   advice: 'At the lighthouse he carries the flags back behind you: turn round and follow him. Next time he runs them far ahead, past the rock pool: hop it and get between them.',
   paint: (g, c) => {
     const x = c.x;
@@ -94,7 +93,6 @@ export const vilakku: Act = {
 export const samudra: Act = {
   id: 'tvm09-samudra',
   w: 34,
-  cps: [33.0],
   advice: 'At Samudra beach he plants the flags ahead, thinks again and brings them back: stay with the flags till he stops, not where he first put them. Then he runs them a long way on: go at once.',
   paint: (g, c) => {
     const x = c.x;
@@ -122,7 +120,56 @@ export const samudra: Act = {
   },
 };
 
+/** Ashoka beach: he whistles and doesn't move the flags at all; then he does, a long way */
+export const ashoka: Act = {
+  id: 'tvm09-ashoka',
+  w: 30,
+  advice: 'At Ashoka beach he whistles and paces, but plants the flags right back where they were: stay put. At the next whistle he does carry them on.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x, x + 2, 14, 14, '#').fill(x + 27, x + 29, 14, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const s = w.add(
+      new Surf({
+        name: 'ashoka',
+        x0: x + 3,
+        x1: x + 27,
+        strip: x + 5,
+        waves: [
+          { at: x + 6.5, moves: [{ to: x + 9, sec: 0.5 }, { to: x + 5, sec: 0.5 }], inAt: 2.3, inFor: 2.0 },
+          { moves: [{ to: x + 18, sec: 1.1 }], inAt: 2.5, inFor: 2.0 },
+        ],
+      }),
+    );
+    w.when(
+      () => s.i === 0 && s.state === 'walk' && s.strip >= px(x + 8.9),
+      (w2) => taraSays(w2, 'Pinnaale po! | Follow him!', 1.2),
+    );
+  },
+};
+
 // ================================================================== TVM-10: Dhara
+/** TVM-10's second act: the treatment rooms in a row, the pots in the order the room taught them backwards */
+export const uzhichil: Act = {
+  id: 'tvm10-uzhichil',
+  w: 26,
+  advice: 'In the treatment rooms the pots come the other way round: a short hop over the first trough (its oil is where a long jump lands, before the kindi), a long jump over the oil and the kindi, then the oil at the edge of the last trough: jump from before it.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 5, x + 6).pit(x + 11, x + 12).pit(x + 18, x + 19);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(new Droni(x + 5, x + 7, 'tvm-droni'));
+    w.add(new Dhara({ hookTx: x + 6, offTx: 4.2, slick: [x + 9.6, x + 10.9], ty: 8 }));
+    w.add(new Droni(x + 11, x + 13, 'tvm-kindi'));
+    w.add(new Dhara({ hookTx: x + 20.5, offTx: -3, slick: [x + 17, x + 18], ty: 8 }));
+    w.add(new Droni(x + 18, x + 20, 'tvm-droni'));
+  },
+};
+
 export const DHARA_META = meta('pendulum-oil-slick', ['offset-swing'], 'tvm-oily-feet-coir-mat');
 
 /**
@@ -153,7 +200,7 @@ export function dharaRoom(): LevelDef {
       sign(w, 0.3, 10.4, 3.4, 'VAIDYASALA', 'green', null, 'dhara');
       rival(w, 5, 15, 1, tara(9));
       onPass(w, px(2), (w2) => w2.guide('Ennayil chavittaruthu. | Don’t step in the oil.'));
-      collectible(w, 'chaaya', 15.5, 10.4);
+      collectible(w, 'tvm-chaaya', 15.5, 10.4);
     },
   };
 }
