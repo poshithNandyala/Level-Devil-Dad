@@ -12,6 +12,7 @@ import type { Rule } from '../../src/game/cities/gtk/s05';
 import { TANK } from '../../src/game/cities/gtk/s06';
 import type { Cloud } from '../../src/game/cities/gtk/s07';
 import { DOCK } from '../../src/game/cities/gtk/s08';
+import type { Yak } from '../../src/game/cities/gtk/s09';
 import type { Rig } from '../../src/game/cities/gtk/entities';
 import { XL } from '../runner';
 
@@ -474,6 +475,77 @@ const dockPolicy: Policy = (w, _m, d) => {
   return go(u >= 0.02 && u <= 0.9 ? 'R' : '');
 };
 
+// ------------------------------------------------------------------ GTK-09
+/** get on the yak, keep to the middle of its back, and get off: at the far bank (`at`, px), by a jump at the photo
+ *  stop (`jumpAtPhoto`), or the moment it first stops (`offAtStop`, the obvious fix that dies) */
+function yakRide(key: string, o: { at?: number; jumpAt?: boolean; jumpAtPhoto?: boolean; offAtStop?: boolean; mountLeft?: number }): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  let off = false;
+  let rode = false;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+      off = false;
+      rode = false;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const y = (w.flags[key] as Yak[])[0];
+    const p = w.player;
+    const on = y.carries(w);
+    if (on) rode = true;
+    if (off || (rode && !on && p.onGround)) {
+      off = true;
+      return go('R');
+    }
+    if (!p.onGround) {
+      if (rode && !on && off) return go('R');
+      const c = y.x + y.w / 2;
+      return go(p.cx < c - 5 ? 'R' : p.cx > c + 5 ? 'L' : '');
+    }
+    if (!on) {
+      // mount: from beside it, when it's at the near end
+      if (o.mountLeft !== undefined && Math.abs(y.x - o.mountLeft) > 6) return go(p.x + p.w < o.mountLeft - 14 ? 'R' : '');
+      if (p.x + p.w < y.x - 6) return go('R');
+      jt = 14;
+      return { move: 'R', jump: true };
+    }
+    const stopped = y.s.leg % 2 === 0 || 'wait' in ({} as any) ? !y.s.dir || y.s.t > 0 : false;
+    if (o.offAtStop && y.s.t > 6) {
+      off = true;
+      return go('R');
+    }
+    if (o.jumpAtPhoto && y.s.photo && y.s.t > 10) {
+      off = true;
+      jt = 15;
+      return { move: 'R', jump: true };
+    }
+    if (o.at !== undefined && y.x >= o.at - 1 && y.s.t > 4) {
+      off = true;
+      if (o.jumpAt) {
+        jt = 15;
+        return { move: 'R', jump: true };
+      }
+      return go('R');
+    }
+    void stopped;
+    const c = y.x + y.w / 2;
+    return go(p.cx < c - 4 ? 'R' : p.cx > c + 4 ? 'L' : '');
+  };
+}
+const room09 = (): Step[] => [{ policy: yakRide('gtk9', { at: px(26) }), until: and(ground, X(28.5)), max: 4000, note: 'ride across, stay on for the photo, off on the far bank' }, { hold: 'R', until: X(30), max: 300 }];
+const act09 = (x: number): Step[] => [{ policy: yakRide('gtk9a', { jumpAtPhoto: true }), until: and(ground, X(x + 25.5)), max: 4000, note: 'ride out, jump for the bank at the photo stop' }, { hold: 'R', until: X(x + 33), max: 300 }];
+const gateRides = new WeakMap<World, (w: World) => Out>();
+const gateYak: Policy = (w, _m, d) => {
+  const D = Math.round(d.x / 16);
+  if (!gateRides.has(w)) gateRides.set(w, yakRide('gtk9e', { mountLeft: px(D - 9), at: px(D - 4.5), jumpAt: true }));
+  return gateRides.get(w)!(w);
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['GTK-01'] = tourRoute();
   S['GTK-02'] = room02();
@@ -490,9 +562,12 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('GTK-07', 0, []);
   S['GTK-08'] = room08();
   lengthen('GTK-08', 0, []);
+  S['GTK-09'] = room09();
+  lengthen('GTK-09', 0, []);
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'GTK-09': { steps: [{ hold: 'R', until: done, max: 900, note: 'the ice holds, surely: walk across' }], cause: 'gtk-hiun' },
   'GTK-08': { steps: [{ policy: ropeway('gtk8c', { stay: true }), until: done, max: 3000, note: 'ride it all the way, as Tara says' }], cause: 'gtk-ropeway' },
   'GTK-07': { steps: [{ hold: 'R', until: done, max: 900, note: 'just run, as Tara says' }], cause: 'gtk-badal' },
   'GTK-06': { steps: [{ hold: 'R', until: done, max: 900, note: 'the shortcut stairs, down' }], cause: 'gtk-taxi' },
@@ -506,6 +581,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'GTK-09': { steps: [{ policy: yakRide('gtk9', { offAtStop: true }), until: done, max: 3000, note: 'ride the yak, off when it stops, as Tara says' }], cause: 'gtk-hiun' },
   'GTK-07': { steps: [...room07(), ...act07a(32), { hold: 'R', until: X(74), max: 300 }, waitClear('gtk7b'), { hold: 'R', until: done, max: 900, note: 'the cloud has lifted and the road looks whole: walk it' }], cause: 'gtk-deewar' },
   'GTK-06': {
     steps: [...room06(), { policy: stairUp(), until: (w) => w.player.x > px(32) && w.player.onGround && w.player.y + w.player.h <= 64, max: 900, note: 'up again: the stair up worked last time' }, { hold: 'R', until: X(39.2), max: 300 }, { hold: 'R', jump: 14, ticks: 14, note: 'and off it, over the gully' }, { hold: 'R', until: done, max: 600 }],
@@ -533,6 +609,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk07-chitra': act07b,
   'gtk07-ghumti': act07c,
   'gtk08-tar': act08,
+  'gtk09-chamri': act09,
 };
 const endingPolicies: Record<string, Policy> = {
   'gtk-steam-vent': ventPolicy,
@@ -542,6 +619,7 @@ const endingPolicies: Record<string, Policy> = {
   'gtk-tank-overflow': tankPolicy,
   'gtk-rope-climbs-to-door': ropeDoor,
   'gtk-cabin-both-doors': dockPolicy,
+  'gtk-gate-yak-snowbank': gateYak,
 };
 void hop;
 
@@ -552,5 +630,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['GTK-01', 'GTK-02', 'GTK-03', 'GTK-04', 'GTK-05', 'GTK-06', 'GTK-07', 'GTK-08'],
+  fair: ['GTK-01', 'GTK-02', 'GTK-03', 'GTK-04', 'GTK-05', 'GTK-06', 'GTK-07', 'GTK-08', 'GTK-09'],
 };
