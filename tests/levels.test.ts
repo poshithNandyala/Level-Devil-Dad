@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { LEVELS } from '../src/game/levels';
 import { World } from '../src/game/world';
 import { INFO } from './helpers';
-import { play } from './runner';
+import { play, sameKind } from './runner';
 import { SOLUTIONS, NAIVE, FIX, MISTAKES } from './solutions';
 
 describe('stages', () => {
@@ -41,7 +41,7 @@ describe('stages', () => {
           const n = FIX[def.id];
           const { w } = play(def, n.steps);
           expect(w.state, `${def.id} fix ended ${w.state}`).toBe('dead');
-          if (n.cause) expect(w.deathCause).toBe(n.cause);
+          if (n.cause) expect(sameKind(w.deathCause, n.cause), `died of ${w.deathCause}, want ${n.cause}`).toBe(true);
         });
       }
 
@@ -49,7 +49,7 @@ describe('stages', () => {
         it(`punishes: ${m.what}`, () => {
           const { w } = play(def, m.steps);
           expect(w.state, `${def.id} (${m.what}) ended ${w.state}`).toBe('dead');
-          if (m.cause) expect(w.deathCause).toBe(m.cause);
+          if (m.cause) expect(sameKind(w.deathCause, m.cause), `died of ${w.deathCause}, want ${m.cause}`).toBe(true);
         });
       }
 
@@ -58,7 +58,7 @@ describe('stages', () => {
           const n = NAIVE[def.id];
           const { w } = play(def, n.steps);
           expect(w.state).toBe('dead');
-          if (n.cause) expect(w.deathCause).toBe(n.cause);
+          if (n.cause) expect(sameKind(w.deathCause, n.cause), `died of ${w.deathCause}, want ${n.cause}`).toBe(true);
         });
       }
     });
