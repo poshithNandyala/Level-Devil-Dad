@@ -5,4 +5,5 @@ export const causeLines: Record<string, string[]> = {
   'svp-lakdi': ['Lakdi! A plank came down on your head.', 'Wait back from the stack: the shadow shows where the next one lands.'],
   'svp-magar': ['Magarmachh! The board’s arrow was pointing right at it.', 'The arrow always points at the crocodile: if it points at the log you’re landing on, don’t land.'],
   'svp-hiran': ['Hiran! The herd nudged you off the edge.', 'The deer follow the food. Put it down well back from the pit, then wait for the boat.'],
+  'svp-nazar': ['Nazar! The ledge was only a picture from the bench.', 'Stand on the footprints without moving, and the view lines up. Then run, it only holds a few seconds.'],
 };

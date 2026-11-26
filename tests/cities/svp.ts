@@ -7,6 +7,8 @@ import type { CityTests } from '../city-tests';
 import type { SawHall } from '../../src/game/cities/svp/s02';
 import type { Creek } from '../../src/game/cities/svp/s03';
 import type { Herd, LateBoat } from '../../src/game/cities/svp/s04';
+import type { Viewpoint } from '../../src/game/cities/svp/s05';
+import type { Bough, Flock } from '../../src/game/cities/svp/s06';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -61,6 +63,26 @@ const boat0 = (w: World) => w.flags.boat as LateBoat;
 const herdA = (w: World) => (w.flags.herds as Herd[])[0];
 const boatA = (w: World) => (w.flags.boats as LateBoat[])[0];
 
+// ------------------------------------------------------------------ SVP-05: the view from the bench
+/** stand on the footprints until the view lines up */
+const standOn = (get: (w: World) => Viewpoint, note: string): Step => ({ policy: (w) => go(toward(w, get(w).spot, 2)), until: (w) => get(w).aligned > 0, max: 900, note });
+const vp0 = (w: World) => w.flags.vp as Viewpoint;
+const vpN = (i: number) => (w: World) => (w.flags.vps as Viewpoint[])[i];
+
+// ------------------------------------------------------------------ SVP-06: the parrots
+const fl0 = (w: World) => w.flags.flock as Flock;
+const bg0 = (w: World) => w.flags.bough as Bough;
+const flN = (i: number) => (w: World) => (w.flags.flocks as Flock[])[i];
+const bgN = (i: number) => (w: World) => (w.flags.boughs as Bough[])[i];
+/** over a creek by its branch: wait back for the flock to bend it, hop on, out to the tip, and wait for the horn to lift it */
+const boughCross = (fl: (w: World) => Flock, bg: (w: World) => Bough, waitX: number, upY: number, farX: number): Step[] => [
+  { policy: (w) => go(toward(w, waitX, 3)), until: (w) => fl(w).weight >= 0.95 && Math.abs(w.player.cx - waitX) < 6, max: 2400, note: 'back from the edge until the flock has landed and bent the branch' },
+  { hold: 'R', jump: 14, until: (w) => w.standing(bg(w).plat.solid), max: 200, note: 'hop on to the bent branch' },
+  { hold: 'R', until: (w) => w.player.x >= bg(w).x1 - 20, max: 400, note: 'out to the tip' },
+  { hold: '', until: (w) => fl(w).weight < 0.02 && bg(w).plat.y <= upY + 1, max: 2000, note: 'wait for the horn: the branch lifts you up' },
+  { hold: 'R', until: and(ground, (w) => w.player.x >= farX), max: 300, note: 'off on to the cliff' },
+];
+
 // ------------------------------------------------------------------ SVP-02: the saw mill
 const hall = (w: World, i = 0) => (i < 0 ? (w.flags.saw as SawHall) : ((w.flags.halls ?? []) as SawHall[])[i]);
 /** stay at `off` px from the log's own left end (the log moves, so follow it) until the carriage has docked */
@@ -97,10 +119,16 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { hold: 'R', until: and(ground, X(31)), max: 400 },
   ];
   lengthen('SVP-04', 0, []);
+  S['SVP-05'] = [standOn(vp0, 'on the footprints by the bench: the view lines up'), hopUntil(and(ground, X(25)), 'across the ledge while it holds')];
+  lengthen('SVP-05', 0, []);
+  S['SVP-06'] = [...boughCross(fl0, bg0, 172, 144, 24 * 16), { hold: 'R', until: and(ground, X(31)), max: 300 }];
+  lengthen('SVP-06', 0, []);
 }
 
 /** the obvious play per stage, and the cause it must die of */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'SVP-06': { steps: [{ hold: 'R', until: X(11.2), max: 400 }, { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'run at the creek and jump for the cliff' }], cause: 'svp-kichad' },
+  'SVP-05': { steps: [hopUntil((w) => w.state !== 'play', 'at the gap, run and hop the dashes')], cause: 'svp-nazar' },
   'SVP-04': { steps: [{ hold: 'R', until: X(19.2), max: 600 }, ...Array.from({ length: 40 }, (): Step => ({ hold: '', jump: 8, ticks: 40, note: 'waiting for the boat, hopping to keep warm' }))], cause: 'svp-hiran' },
   'SVP-03': { steps: [hopUntil((w) => w.state !== 'play', 'hop the logs')], cause: 'svp-magar' },
   'SVP-02': {
@@ -114,6 +142,16 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'SVP-06': {
+    steps: [
+      { policy: (w) => go(toward(w, 172, 3)), until: (w) => fl0(w).weight >= 0.95 && Math.abs(w.player.cx - 172) < 6, max: 2400, note: 'wait for the parrots' },
+      { hold: 'R', jump: 14, until: (w) => w.standing(bg0(w).plat.solid), max: 200 },
+      { hold: 'R', until: (w) => w.player.x >= bg0(w).x1 - 14, max: 400, note: 'out on the bent branch' },
+      { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'and jump for the cliff from the tip' },
+    ],
+    cause: 'svp-kichad',
+  },
+  'SVP-05': { steps: [standOn(vp0, 'stand at the bench spot'), { hold: '', ticks: 330, note: 'and make sure of the view for a while' }, hopUntil((w) => w.state !== 'play', 'then go')], cause: 'svp-nazar' },
   'SVP-04': { steps: [{ hold: 'R', until: X(19.2), max: 600 }, { hold: '', until: (w) => w.state !== 'play', max: 1500, note: 'put it down right here at the edge, and wait for the boat' }], cause: 'svp-hiran' },
   'SVP-03': { steps: [{ hold: 'R', until: (w) => w.state !== 'play', max: 1500, note: 'wade the creek instead' }], cause: 'svp-magar' },
   'SVP-02': {
@@ -174,6 +212,21 @@ function crossGaps(): Step {
   };
 }
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp06-sanjh': (x) => [
+    hopUntil(and(ground, X(x + 12.5)), 'the branch is up, level with the cliff: across before the flock comes'),
+    { hold: 'R', until: and(ground, X(x + 21)), max: 600, note: 'down off the cliff' },
+    ...boughCross(flN(1), bgN(1), px(x + 25) + 12, 144, px(x + 36)),
+    { hold: 'R', until: and(ground, X(x + 45)), max: 600 },
+  ],
+  'svp05-dekho': (x) => [
+    standOn(vpN(0), 'the first footprints'),
+    hopUntil(and(ground, (w) => w.player.x >= px(x + 15.5)), 'over the first slabs to the island'),
+    standOn(vpN(1), 'the island’s own footprints'),
+    hopUntil(and(ground, X(x + 28)), 'over the rest'),
+    standOn(vpN(2), 'the third footprints: not at the bench'),
+    hopUntil(and(ground, X(x + 51)), 'three slabs and across'),
+    { hold: 'R', until: and(ground, X(x + 55)), max: 300 },
+  ],
   'svp04-ghat': (x) => [
     { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },
     putDown(herdA, 'put it down at the stall: the herd gathers there'),
@@ -195,6 +248,23 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 
 /** a policy for each door ending, by kind */
 const endingPolicies: Record<string, Policy> = {
+  'svp-bough-door'(w, m, d) {
+    const { flock, b } = w.flags.boughdoor as { flock: Flock; b: Bough };
+    const p = w.player;
+    if (m.hold > 0) return { move: 'R', jump: true };
+    if (!p.onGround && p.cx > b.x0 - 24) return go('R');
+    if (w.standing(b.plat.solid)) return go(toward(w, d.x + 8, 1) || 'R');
+    if (flock.weight >= 0.95 && p.onGround && p.cx > b.x0 - 24) {
+      m.hold = 12;
+      return { move: 'R', jump: true };
+    }
+    return go(toward(w, b.x0 - 15, 2));
+  },
+  'svp-note-door'(w, _m, d) {
+    const vp = w.flags.notedoor as Viewpoint;
+    if (vp.everAligned) return go(toward(w, d.x + 8, 1) || 'R');
+    return go(toward(w, vp.spot, 2));
+  },
   'svp-jetty-guard'(w) {
     const h = w.flags.guard as Herd;
     return h.carrying ? go('') : go('R');
@@ -218,5 +288,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['SVP-02', 'SVP-03', 'SVP-04'],
+  fair: ['SVP-02', 'SVP-03', 'SVP-04', 'SVP-05', 'SVP-06'],
 };
