@@ -106,6 +106,64 @@ export const act2: Act = {
   },
 };
 
+/** act 3: the shortcut stair up in the cloud, with a wrapper lying at its foot. The rope climbs with the stair;
+ *  every step up is a jump, so bin the wrapper first (the bin at the foot is full: the one back down the road) */
+export const act3: Act = {
+  id: 'gtk10-chadhai',
+  w: 30,
+  advice: 'The stair up to the next loop is in the cloud: the rope goes up with it. There’s a wrapper at its foot, and every step is a jump: the bin by the stair is full, so take it back to the empty one down the road first.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 12, x + 15, 13, 13, '=');
+    g.fill(x + 15, x + 18, 11, 11, '=');
+    g.fill(x + 18, x + 21, 9, 9, '=');
+    g.fill(x + 21, x + 29, 7, 14, '#');
+    g.fill(x + 26, x + 29, 5, 5, '=');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    bin(w, x + 3, false);
+    litter(w, x + 8);
+    bin(w, x + 10, true);
+    fog(w, x + 6, x + 29, null);
+    decor(w, 3, (ctx) => {
+      ctx.strokeStyle = '#F4D35E';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      [
+        [x + 12, 13],
+        [x + 15, 11],
+        [x + 18, 9],
+        [x + 21, 7],
+      ].forEach(([cc, r], i) => {
+        box(ctx, px(cc) + 7, px(r) - 14, 2, 14, '#F4F1EA');
+        if (i === 0) ctx.moveTo(px(cc) + 8, px(r) - 11);
+        else ctx.lineTo(px(cc) + 8, px(r) - 11);
+      });
+      ctx.stroke();
+    });
+    sign(w, x + 1, 9.4, 3.4, 'SEEDHI', 'green', 'up', 'next loop');
+  },
+};
+
+/** act 4: down off the loop, one more house in the cloud; its sign says one floor down */
+const DOORS2: ('none' | 'exit' | 'drop' | 'water')[] = ['none', 'exit', 'none', 'drop', 'water'];
+export const act4: Act = {
+  id: 'gtk10-ghar',
+  w: 28,
+  advice: 'One more house in the cloud, and its sign says one floor down: out of the door at the bottom of the first flight, whatever the last house taught you.',
+  paint: (g, c) => {
+    g.fill(c.x, c.x + 7, 4, 17, '#');
+    house(g, c.x + 8, DOORS2, 4);
+  },
+  build: (w, c) => {
+    houseDecor(w, c.x + 8, DOORS2, 'gtk10b');
+    fog(w, c.x + 8, c.x + 27, null);
+    stairRails(w, c.x + 8);
+    sign(w, c.x + 3.4, 0.6, 3.4, 'LOWER RD', 'green', 'down', '1 floor down');
+  },
+};
+
 /** door: the viewpoint house in the cloud. Its doors are stacked up the front, G, 1, 2: the exit is two floors up */
 export const ending: Ending = {
   space: 18,

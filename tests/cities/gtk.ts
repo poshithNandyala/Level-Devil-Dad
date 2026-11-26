@@ -586,9 +586,25 @@ const act10a = (x: number): Step[] => [
   { hold: 'R', until: and(ground, X(x + 31)), max: 600 },
 ];
 const act10b = (x: number): Step[] => [{ policy: gapJumper(), until: X(x + 29.5), max: 1500, note: 'jump where the rope stops' }];
+const act10c = (x: number): Step[] => [
+  { policy: stepper(), until: X(x + 10.3), max: 900, note: 'the wrapper at the foot of the stair; this bin is full' },
+  { hold: 'L', until: XL(x + 3.4), max: 600, note: 'back to the empty bin' },
+  { policy: climbAll(), until: (w) => w.player.onGround && w.player.y + w.player.h <= 64 && w.player.x > px(x + 30), max: 1500, note: 'up the stair in the cloud, on to the next loop' },
+];
+const act10d = (x: number): Step[] => [{ policy: houseRoute(x + 8, 1), until: and(ground, X(x + 25)), max: 2400, note: 'one flight down, out' }, { hold: 'R', until: X(x + 27.5), max: 300 }];
 const views = new WeakMap<World, (w: World) => Out>();
-const viewPolicy: Policy = (w) => {
+const viewBack = new WeakMap<World, boolean>();
+const viewPolicy: Policy = (w, _m, d) => {
   if (!views.has(w)) views.set(w, climbAll());
+  const p = w.player;
+  const first = d.x - px(14);
+  // fell off a step and ended up under the stair: back out and start the climb again
+  const under = p.onGround && p.y + p.h >= 240 && p.x > first + 20;
+  if (under) viewBack.set(w, true);
+  if (viewBack.get(w)) {
+    if (p.x > first - 24) return go('L');
+    viewBack.set(w, false);
+  }
   return views.get(w)!(w);
 };
 
@@ -667,6 +683,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk09-chamri': act09,
   'gtk10-thela': act10a,
   'gtk10-rassi': act10b,
+  'gtk10-chadhai': act10c,
+  'gtk10-ghar': act10d,
 };
 const endingPolicies: Record<string, Policy> = {
   'gtk-steam-vent': ventPolicy,
