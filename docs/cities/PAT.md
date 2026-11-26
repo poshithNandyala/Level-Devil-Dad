@@ -34,3 +34,9 @@ Spoken lines are only the ones `docs/cities/PAT.md` of the city bible marks VERI
 `Sab badhiya ba...`. One deviation: `seven` is `Saat baar! Wapas shuru!` (the bible's text for that line is garbled).
 Tara tells the truth once: `Rook!` at the foot of Golghar's stair (waiting is right there). Everything else she says
 is `Chalo, aage!`, which is a lie at every trap.
+
+## Length pass (acts added to 05, 06, 07, 09, 10)
+
+Clear times of the scripted route, before -> after: 05 37 -> 64 s, 06 23 -> 64 s, 07 50 -> 131 s, 09 41 -> 72 s,
+10 30 -> 92 s. Added acts: `pat05-bori`; `pat06-gaadi`, `pat06-kumhrar`; `pat07-pul`, `pat07-haat`, `pat07-mandi`;
+`pat09-wapsi`; `pat10-bori`, `pat10-gaadi`. Details and what stays short: `reports/cities/pat/LENGTH.md`.
