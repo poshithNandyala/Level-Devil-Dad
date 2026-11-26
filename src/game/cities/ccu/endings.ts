@@ -10,8 +10,9 @@ import { Bus, FLOOR as FLOOR_Y } from './entities';
 import { Customer, Muck, Stack, Stall } from './books';
 import { Paint } from '../../levels/endkit';
 import { ChaiBoard, Road } from './porters';
+import { Tin } from './muri';
 
-export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn' | 'ccu-arch' | 'ccu-bhanr' | 'ccu-dhak' | 'ccu-wall';
+export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn' | 'ccu-arch' | 'ccu-bhanr' | 'ccu-dhak' | 'ccu-wall' | 'ccu-thonga';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<CcuEndingKind, true> {}
@@ -318,6 +319,28 @@ export const endings: Record<CcuEndingKind, Ending> = {
         () => st.n <= 2,
         (w2) => {
           w2.flags.twist = 'low';
+        },
+      );
+    },
+  },
+  // ================================================================ CCU-03: the last tin, no peanuts in it
+  /** A second tin in front of the door with no big pieces at all: only muri. Nothing to stand on in a
+   *  shake, so cross it between two shakes, straight after one. */
+  'ccu-thonga': {
+    space: 13,
+    advice: 'The last tin, in front of the door, has no peanuts in it: nothing to stand on when he shakes. Wait on the rim for a shake to finish, then run straight across before the next.',
+    paint: (g, D) => {
+      g.pit(D - 9, D - 3);
+    },
+    build(w, d) {
+      const D = Math.round(d.x / 16);
+      const tin = w.add(new Tin({ x0: px(D - 9), x1: px(D - 2), every: 2.6 }));
+      w.flags.tin2 = tin;
+      w.flags.twist = 'tin';
+      w.when(
+        (w2) => w2.player.cx > px(D - 14),
+        (w2) => {
+          if (tin.t0 < 0) tin.t0 = w2.tick + 40;
         },
       );
     },

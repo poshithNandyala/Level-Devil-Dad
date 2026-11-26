@@ -10,6 +10,7 @@ import { Bus } from '../../src/game/cities/ccu/entities';
 import type { Stack } from '../../src/game/cities/ccu/books';
 import type { Tram } from '../../src/game/cities/ccu/tram';
 import { BookPorter, Porter } from '../../src/game/cities/ccu/porters';
+import type { Tin } from '../../src/game/cities/ccu/muri';
 import type { Wash } from '../../src/game/cities/ccu/adda';
 import type { ClothPanel } from '../../src/game/cities/ccu/pandal';
 
@@ -276,6 +277,60 @@ function boardAtStop(get: (w: World) => { bus: Bus; stop: number[] }): Step {
   };
 }
 
+
+// ------------------------------------------------------------------ CCU-03: the jhalmuri tin
+/** across a shaken tin, peanut to peanut: on the rim till the first shake shows them, on a peanut through
+ *  every shake (hopping on to the next one if a chilli comes up under you), along the muri in between */
+function crossTin(key: string, toX: number, opts: { stay?: boolean } = {}): Step {
+  let W: World | null = null;
+  let jt = 0,
+    tgt = 0;
+  return {
+    policy: (w) => {
+      if (W !== w) {
+        W = w;
+        jt = 0;
+      }
+      const t = w.flags[key] as Tin;
+      const p = w.player;
+      if (jt > 0) {
+        jt--;
+        return { move: toward(w, tgt, 1), jump: true };
+      }
+      if (!p.onGround) return go(toward(w, tgt, 2));
+      const ph = t.phase(w);
+      const nuts = t.nuts.filter((n) => n.up && !n.gone);
+      const on = nuts.find((n) => p.isRiding(n.solid));
+      const inTin = p.cx > t.o.x0 + 4;
+      if (!inTin && (t.shakes === 0 || ph !== 'calm' || t.untilTell(w) < 1.05)) return go(toward(w, t.o.x0 - 16, 2));
+      const next = nuts.find((n) => n.x + 4 > p.cx);
+      // a chilli coming up under me: on to the next peanut now
+      if (on && t.chilli && Math.abs(t.chilli.x - on.x) < 4 && !opts.stay) {
+        tgt = next ? next.x + 12 : t.o.x1 + 12;
+        jt = 13;
+        return { move: 'R', jump: true };
+      }
+      const hopNext = (): Out => {
+        if (next && Math.abs(p.cx - (next.x + 12)) < 26) {
+          tgt = next.x + 12;
+          jt = 8;
+          return { move: 'R', jump: true };
+        }
+        return go('R');
+      };
+      // on the muri: keep going for the next peanut whatever the tin is doing
+      if (!on) return next || p.cx > t.o.x0 + 4 ? hopNext() : go('R');
+      if (ph !== 'calm') return go(toward(w, on.x + 12, 5));
+      // on a peanut and calm: leave only with time to reach the next before the tell
+      if (t.untilTell(w) > 1.05) return next ? hopNext() : go('R');
+      return go(toward(w, on.x + 12, 5));
+    },
+    until: and(ground, (w) => w.player.cx > toX),
+    max: 3000,
+    note: 'peanut to peanut across the tin',
+  };
+}
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['CCU-01'] = tourRun('onto');
   S['CCU-02'] = [...ride(px(25), px(28.5), 'past the first “aaste” (over the drain), off on the second'), walk(30)];
@@ -296,6 +351,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('CCU-09', 0, []);
   S['CCU-10'] = finaleRoom();
   lengthen('CCU-10', 0, []);
+  S['CCU-03'] = [crossTin('tin', px(27)), walk(30)];
+  lengthen('CCU-03', 0, []);
   S['CCU-04'] = boiRoute(true);
   lengthen('CCU-04', 0, []);
 }
@@ -319,6 +376,7 @@ function boiRoute(skip: boolean, wait = 0): Step[] {
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-01': { steps: tourRun('long'), cause: 'ccu-rail' },
   'CCU-04': { steps: boiRoute(false), cause: 'ccu-boi' },
+  'CCU-03': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk across the muri' }], cause: 'ccu-muri' },
   'CCU-10': { steps: [finaleRoom()[0], finaleRoom()[1], { hold: '', until: done, max: 2400, note: 'ride the single bundle across' }], cause: 'ccu-boi' },
   'CCU-09': { steps: [...pandalStart(), steerHop(px(14), 10, 'on to the third bamboo'), { hold: '', until: done, max: 300 }], cause: 'ccu-bansh' },
   'CCU-08': { steps: [walk(2.6), ...hopTo(px(5), 12, 'up on the rok'), walk(14.2), { hold: '', until: done, max: 1200, note: 'stop to listen to the old men' }], cause: 'ccu-dhowa' },
@@ -333,6 +391,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-04': { steps: boiRoute(true, 300), cause: 'ccu-boi' },
+  'CCU-03': { steps: [{ ...crossTin('tin', px(27), { stay: true }), until: done }], cause: 'ccu-lonka' },
   'CCU-09': { steps: pandalRoute(200), cause: 'crushed' },
   'CCU-07': { steps: [howrahRoom()[0], howrahRoom()[1], hopUp((w) => porters(w).find((p) => p.o.v < 0), 'jump for the first load that comes by'), { hold: '', until: done, max: 900 }], cause: 'ccu-bojha' },
   'CCU-06': { steps: [walk(2.4), ...hopTo(px(5), 12, 'over the stop’s step'), { hold: 'R', until: (w) => w.player.onGround && w.player.y > 222 && w.player.cx > px(6.6), max: 300 }, ...hopTo(px(7) + 12, 8, 'on to the rear step'), { hold: '', until: done, max: 4000, note: 'stay on the step, past the island' }], cause: 'ccu-points' },
@@ -392,6 +451,14 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 /** a policy for each door ending, by kind */
 const SETHOP = hopGaps();
 const endingPolicies: Record<string, Policy> = {
+  'ccu-thonga'(w, _m, d) {
+    const t = w.flags.tin2 as Tin;
+    const p = w.player;
+    if (p.cx > t.o.x0 - 2) return go(toward(w, d.x + 8, 1) || 'R');
+    const fresh = t.shakes > 0 && t.phase(w) === 'calm' && t.untilTell(w) > 0.85;
+    if (fresh) return go('R');
+    return go(toward(w, t.o.x0 - 14, 2));
+  },
   'ccu-wall'(w, m, d) {
     const k = w.flags.wall as { st: Stack; D: number };
     const p = w.player;
@@ -466,5 +533,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['CCU-02', 'CCU-04', 'CCU-06', 'CCU-07', 'CCU-08', 'CCU-09', 'CCU-10'],
+  fair: ['CCU-02', 'CCU-03', 'CCU-04', 'CCU-06', 'CCU-07', 'CCU-08', 'CCU-09', 'CCU-10'],
 };

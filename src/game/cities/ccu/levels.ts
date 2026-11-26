@@ -16,6 +16,7 @@ import { Junction, Points, Tram } from './tram';
 import { BookPorter, ChaiBoard, Girders, Pointer, Porter, Road, SHORT, TALL } from './porters';
 import { Adda, House, TeaSeller, Wash } from './adda';
 import { ClothPanel, Decorator, Skeleton, Stakes } from './pandal';
+import { Tin } from './muri';
 import type { Act } from '../../levels/acts';
 
 const tara = (n: number, beaten = 0) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[beaten % L.beaten.length] });
@@ -455,6 +456,34 @@ const tram10: Act = {
   },
 };
 
+
+// ================================================================== CCU-03: Jhalmuri (the shaken tin)
+function muriRoom(): LevelDef {
+  return {
+    id: 'CCU-03',
+    city: 'CCU',
+    index: 3,
+    name: 'Jhalmuri',
+    nameEn: 'The shaken tin',
+    tagline: 'Every Kolkata street corner has a jhalmuri man: puffed rice, peanuts, onion, chilli and mustard oil, tossed in a big tin and shaken.',
+    hint: 'The tin is the floor, and the muri holds you up, until he shakes it: then the light muri sinks and the big pieces come up. Watch him lift the tin: that’s the shake coming. Be on a peanut when it comes, never on the muri. And from the second shake, a green chilli comes up right where you last landed: as he shakes, hop on to the next peanut.',
+    par: 14,
+    map: Grid.ground(15).pit(6, 25).put(1, 14, '@').rows(),
+    build(w: World) {
+      const tin = w.add(new Tin({ x0: px(6), x1: px(26), nuts: [8, 10.5, 13, 15.5, 18, 20.5, 23].map((c) => px(c)), every: 3.4, chilliFrom: 2 }));
+      w.flags.tin = tin;
+      // the seller starts shaking as Dad comes up to his tin
+      onPass(w, px(3), (w2) => {
+        if (tin.t0 < 0) tin.t0 = w2.tick + 72;
+      });
+      sign(w, 0.3, 10.4, 3.6, 'JHALMURI', 'shop', null, 'Esplanade');
+      rival(w, 2, 15, 1, tara(1));
+      onPass(w, px(2), (w2) => w2.guide('Ei je, shunun! | Excuse me, listen!', (w3) => w3.player.cx < px(6)));
+      collectible(w, 'ccu-jhalmuri', 15.5, 11.4);
+    },
+  };
+}
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -503,7 +532,7 @@ export const levels = (): LevelDef[] => [
     meta: meta('rail-groove-sticks-foot', ['groove-catch'], 'ccu-esplanade-tram-shuttle'),
   },
   longStage({ base: aasteRoom(), par: 30, twist: 'ccu-stop', shape: 'short', meta: meta('exit-moving-vehicle-on-shout', ['exit-facing-forward'], 'ccu-bus-crawls-for-whoever-waits') }),
-  longStage({ base: todoRoom(3), par: 30, shape: 'long' }),
+  longStage({ base: muriRoom(), par: 30, twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
   longStage({ base: boiRoom(), par: 26, twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
   longStage({ base: todoRoom(5), par: 30, shape: 'long' }),
   longStage({ base: poleRoom(), par: 60, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
