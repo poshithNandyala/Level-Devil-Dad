@@ -669,6 +669,39 @@ const ghat: Act = {
   },
 };
 
+
+/** CCU-04 act: the tall stack. A pile too tall to climb blocks the drain; a customer is working down it,
+ *  bottom book by bottom book. The short stack in front of it is wanted too: wait on the pavement, not on it */
+const thak: Act = {
+  id: 'ccu04-thak',
+  w: 24,
+  advice: 'A pile too tall to climb stands in the drain, and a customer is buying it down from the bottom, one book at a time. The short stack in front of it is wanted too, so don’t wait on that: wait on the pavement till the tall pile is three high, then jump straight on to it.',
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 17);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(new Stall(c.X(3), c.X(18), 'SECOND HAND'));
+    boiDrain(w, x + 3, x + 18);
+    const t1 = w.add(new Stack(c.X(4), px(2), 2));
+    const t2 = w.add(new Stack(c.X(6), px(2), 7));
+    const t3 = w.add(new Stack(c.X(10), px(2), 2));
+    const t4 = w.add(new Stack(c.X(14), px(2), 1));
+    const a = w.add(new Customer(c.X(7), '#6D4C41'));
+    const b = w.add(new Customer(c.X(4.5), '#5C6BC0'));
+    w.flags.thak = { t1, t2, t3, t4 };
+    w.when(
+      (w2) => w2.player.cx > c.X(0.5),
+      (w2) => {
+        [0.6, 1.6, 2.6, 3.6].forEach((t) => w2.after(t, () => a.ask(w2, t2, 1, 0.5)));
+        [0.4, 1.8].forEach((t) => w2.after(t, () => b.ask(w2, t1, 1, 0.6)));
+      },
+    );
+    void t3;
+    void t4;
+  },
+};
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -718,7 +751,7 @@ export const levels = (): LevelDef[] => [
   },
   longStage({ base: aasteRoom(), par: 30, twist: 'ccu-stop', shape: 'short', meta: meta('exit-moving-vehicle-on-shout', ['exit-facing-forward'], 'ccu-bus-crawls-for-whoever-waits') }),
   longStage({ base: muriRoom(), par: 30, twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
-  longStage({ base: boiRoom(), par: 26, twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
+  longStage({ base: boiRoom(), par: 26, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
   longStage({ base: kumartuliRoom(), par: 50, acts: [uthon, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-finished-figure-carried-over-the-lane') }),
   longStage({ base: poleRoom(), par: 60, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 90, acts: [girder, dui, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),

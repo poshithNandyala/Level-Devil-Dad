@@ -441,6 +441,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** more scripted first-timer deaths and 'like last time' moves */
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'CCU-04': [{ what: 'waiting on the short stack in front of the tall pile', steps: [...boiRoute(true).slice(0, -1), walk(32 + 2.6), steerHop(px(32 + 5), 10, 'on to the short stack'), { hold: '', until: done, max: 900 }], cause: 'ccu-boi' }],
   'CCU-09': [{ what: 'resting on the new panel at the top of the staircase', steps: [...pandalRoute(), steerHop(px(35), 10, 'bamboo'), steerHop(px(38), 10, 'up'), steerHop(px(41), 10, 'up'), steerHop(px(45), 30, 'high', true), steerHop(px(49), 10, 'on to the new panel'), { hold: '', until: done, max: 300 }], cause: 'crushed' }],
   'CCU-08': [
     { what: 'waiting by the second adda for the water to stop', steps: [...addaRoute(), walk(32 + 24.5), { hold: '', until: done, max: 1500 }], cause: 'ccu-dhowa' },
@@ -469,6 +470,19 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu04-thak': (x) => [
+    walk(x + 0.6),
+    { hold: '', until: (w) => w.flags.thak.t2.n === 3 && !w.flags.thak.t2.pointed, max: 1200, note: 'wait on the pavement while he buys the tall pile down' },
+    { hold: 'R', until: X(x + 2.1), max: 120, note: 'a run up' },
+    steerHop(px(x + 7), 24, 'then a jump straight on to it', true),
+    { hold: 'R', until: X(x + 7.2), max: 60 },
+    steerHop(px(x + 11), 12, 'down to the next'),
+    { hold: 'R', until: X(x + 11.2), max: 60 },
+    steerHop(px(x + 15), 12, 'and the next'),
+    { hold: 'R', until: X(x + 15.2), max: 60 },
+    steerHop(px(x + 19), 12, 'on to the pavement'),
+    walk(x + 23.4),
+  ],
   'ccu09-sinri': (x) => [
     steerHop(px(x + 3), 10, 'on to the bamboo'),
     steerHop(px(x + 6), 10, 'up the cloth staircase'),
