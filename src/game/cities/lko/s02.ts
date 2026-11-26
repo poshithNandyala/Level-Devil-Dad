@@ -221,7 +221,7 @@ export function pehleDoorway(w: World, c: number, hole: ReturnType<typeof looseS
 
 // ================================================================ the act: the gali behind the haveli
 /** A man coming up behind you offers you the way first. Here the loose stone hasn't dropped yet. */
-const gali: Act = {
+export const gali: Act = {
   id: 'lko02-gali',
   w: 30,
   advice: 'In the gali a gentleman comes up behind you and offers you the way: "pehle aap". Here the stone ahead hasn’t gone yet, so whoever goes first falls. Stand still and let him go first, then hop the hole he leaves.',

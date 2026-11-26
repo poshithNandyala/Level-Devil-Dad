@@ -155,7 +155,7 @@ function ganjRoom(): LevelDef {
 
 // ================================================================ act 1: dusk, and the awnings come down
 /** At dusk the shops let their awnings down one after another, from behind you: keep moving and you stay ahead. */
-const shaam: Act = {
+export const shaam: Act = {
   id: 'lko07-shaam',
   w: 46,
   advice: 'Dusk: the shops let their awnings down one after another, starting behind you, and a falling awning flattens a stroller. Here, don’t pause: run the row without stopping.',
@@ -302,7 +302,7 @@ function lamp(w: World, x: number, ll: () => Lamplighter, i: number) {
     }, -3),
   );
 }
-const batti: Act = {
+export const batti: Act = {
   id: 'lko07-batti',
   w: 58,
   advice: 'The lamplighter walks ahead with his ladder, and at each lamp swings it up: the swing sweeps the pavement behind him. Hang back while it swings; while he’s up the ladder, go under it and past; never be under it when he brings it down.',
@@ -345,7 +345,7 @@ const batti: Act = {
 // ================================================================ act 3: the crowd under the awnings
 /** The strollers again, gathered under the awnings, and dusk again: stroll up so they part, then run, because
  *  the awnings over them come down as soon as they've stepped aside. */
-const chowk: Act = {
+export const chowk: Act = {
   id: 'lko07-chauraha',
   w: 32,
   advice: 'Strollers again, under the awnings: pause before you reach them so they part, then run through at once, because now the awnings over them come down behind them, one by one from where you came in.',
@@ -438,5 +438,66 @@ export const darban: Ending = {
   },
 };
 
-export const s07 = { room: ganjRoom, acts: [shaam, batti, chowk] };
+
+// ================================================================ act 4: the julus, the slow procession
+/** A slow group of strollers going your way, the whole length of the arcade, stepping over the open nalas.
+ *  Walk behind them at their pace. Rush up and bump them, or hop a nala straight on to their heels, and the
+ *  last one steps back and tuts you into the nala you just crossed. */
+export const julus: Act = {
+  id: 'lko07-julus',
+  w: 74,
+  advice: 'A slow group of strollers going your way, all down the arcade, stepping over the open nalas. Walk behind them at their pace, pausing as they do. Rush up and bump them, or hop a nala straight on to their heels, and the last one steps back and tuts you into the nala you just crossed. Wait at each nala till they’re well clear of it.',
+  cps: [24.5, 48.5],
+  paint: (g, c) => {
+    for (const n of JULUS_NALAS) g.pit(c.x + n, c.x + n + 1);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    arcade(w, x, x + 73);
+    const strolling = pace(w);
+    for (const n of JULUS_NALAS) nala(w, x + n, x + n + 1, 'lko-julus');
+    const G = { x: c.X(6), go: false, hop: 0, shoved: -999 };
+    w.flags[c.f('g')] = G;
+    const body = w.add(new Block(G.x, FLOOR - 28, 52, 28, () => {}, 0));
+    w.add(
+      new Art((ctx) => {
+        if (G.x > c.X(66)) return;
+        for (let i = 0; i < 4; i++) {
+          const xx = G.x + 6 + i * 13;
+          const over = JULUS_NALAS.some((n) => xx > c.X(n) - 4 && xx < c.X(n + 2) + 4);
+          gent(ctx, xx, FLOOR - (over ? 6 : 0), 25, KURTA[i % KURTA.length], { face: 1, topi: i % 2 ? '#F5F0E6' : undefined, dupatta: i === 1 ? '#C2485B' : undefined });
+        }
+      }, 3),
+    );
+    w.onTick((w2) => {
+      const p = w2.player;
+      if (!G.go && p.cx > c.X(2)) G.go = true;
+      // they stroll at a steady 45 px/s; across a nala they don't hurry
+      if (G.go && G.x < c.X(80)) G.x += 0.375;
+      body.solid.x = Math.round(G.x);
+      // at the end of the arcade they turn off into a lane
+      const gone = G.x > c.X(66);
+      body.set(!gone);
+      if (gone) return;
+      // rush into them, or come down on their heels from a hop: the last one steps back and tuts
+      const touch = p.x + p.w >= G.x - 1 && p.x < G.x + 4 && p.y + p.h > FLOOR - 30;
+      if (touch && w2.tick - G.shoved > 60 && (!strolling() || !p.onGround)) {
+        G.shoved = w2.tick;
+        const back = [...JULUS_NALAS].reverse().map((n) => c.X(n) + 16).find((nx) => nx < p.x) ?? p.x - 40;
+        w2.flags.shoveCause = 'lko-julus';
+        p.vx = -Math.max(60, (p.x + 5 - back) / 0.27);
+        p.vy = -170;
+        p.onGround = false;
+        p.coyoteT = 0;
+        p.launched = true;
+        p.stun = 40;
+        w2.say('Zehmat na kijiye. | Please don’t trouble yourself.', G.x, FLOOR - 36, 2, 'npc');
+      }
+    });
+    sign(w, x + 0.4, 10.4, 3.4, 'JULUS', 'shop', null, 'ganj');
+  },
+};
+const JULUS_NALAS = [12, 24, 36, 48, 60];
+
+export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, chowk] };
 export const meta07 = { family: 'pace-sets-crowd-shape', betrayals: ['pace-crowd', 'ladder-block'], ending: 'lko-darban' } as StageMeta;

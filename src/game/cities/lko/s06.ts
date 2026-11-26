@@ -205,7 +205,7 @@ function kathakRoom(): LevelDef {
 // ================================================================ the act: where she isn't tapping
 /** She dances tatkar along the stage, to and fro: the boards right in front of her feet ring with her. Hop
  *  over the ringing patch as it comes at you, never on to it; ring a red strip and she spins at you. */
-const tatkar: Act = {
+export const tatkar: Act = {
   id: 'lko06-tatkar',
   w: 34,
   advice: 'Now she dances tatkar to and fro along the stage, and the boards just in front of her feet ring with her steps. Go where she isn’t tapping: wait for her patch to come towards you, hop clean over it, and keep off the red strips.',

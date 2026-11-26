@@ -170,7 +170,7 @@ function galoutiRoom(): LevelDef {
 /** Some heaps were squashed flat already by the last customer: they're thin from the start. Hop off a thin
  *  one at once; wait on a thick one till it squashes. */
 const TAWA2 = 'FTFTTFTFFTFTTFFT';
-const tawa2: Act = {
+export const tawa2: Act = {
   id: 'lko05-tawa',
   w: 54,
   advice: 'Down the long tawa some kebabs are already flat, squashed by the last customer: they’re thin, and the heat comes through fast. Hop off a flat one at once; on a full heap, wait till it squashes, then hop.',
@@ -187,7 +187,7 @@ const tawa2: Act = {
 // ================================================================ act 2: the low lane
 /** Under the lowest rack there's no hopping at all: one long slab of galouti mince. Stand at its start and
  *  it squashes flat from your feet forwards, a tile at a time: a lane low enough to walk under the skewers. */
-const lane: Act = {
+export const lane: Act = {
   id: 'lko05-lane',
   w: 34,
   advice: 'Under the lowest rack there’s no room to hop: one long slab of galouti. Stand at its start and it squashes flat from your feet forwards, a tile at a time. Walk the flat lane right behind the squash, and don’t jump. Linger and the thin lane burns.',

@@ -227,7 +227,7 @@ const HAWA: [number, number][] = [
   [43, 13],
   [49, 12],
 ];
-const hawa: Act = {
+export const hawa: Act = {
   id: 'lko09-hawa',
   w: 58,
   advice: 'Now the flyer is behind you, and his flag has two faces, red and white. The birds ahead go by the face turned towards them, the one you can’t see: the flag you see is the opposite of their order. Read the tip where the cloth curls over: that’s their colour. Cross while you see white.',

@@ -8,7 +8,7 @@ import { collectible, door, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
 import { Grid } from '../../levels/grid';
 import type { Act } from '../../levels/acts';
-import { Art, FLOOR, Zone, px } from './kit';
+import { Art, Block, FLOOR, Zone, gent, on, px, type Ctx } from './kit';
 import { tara } from './s02';
 
 /** An arch at world x on the level whose floor is at y. Cross it in the air and you come out at `up`
@@ -214,5 +214,99 @@ export const doorway489: Ending = {
   },
 };
 
-export const s08 = { room: bhoolRoom, acts: [mehrab] };
+
+// ================================================================ act 2: the chausar court (the Pachisi reserve)
+/** A courtyard laid out as a pachisi board over the well. Each throw of the cowries lights as many squares
+ *  ahead of yours as fell mouth-up; only lit squares (and the one you stand on) hold. A courtier moves on
+ *  the board too: land on his square and he knocks you off. */
+const CHAUSAR_THROWS = [2, 1, 3, 1, 2, 3, 1, 2, 2, 3, 1, 2];
+const CHAUSAR_PIECE = [5, 5, 6, 6, 3, 3, 7, 8, 8, 2, 2, 2];
+export function chausar(w: World, c0: number, n: number, key: string, period = 200) {
+  const sq = Array.from({ length: n }, (_, i) => w.add(new Block(px(c0 + 3 * i), px(13), 32, 8, (ctx, b, w2) => drawSquare(ctx, b, i, w2, S), 2)));
+  const S = { t0: -1, k: -1, cur: -1, lit: new Set<number>(), piece: -1, n: 0 };
+  w.flags[key] = S;
+  const piece = w.add(new Zone(0, px(13) - 26, 20, 26, 'lko-goti'));
+  piece.on = false;
+  const update = () => {
+    sq.forEach((b, i) => b.set(i === S.cur || S.lit.has(i)));
+  };
+  update();
+  w.onTick((w2) => {
+    const p = w2.player;
+    const onI = sq.findIndex((b) => b.on && on(w2, b.solid));
+    if (onI >= 0) S.cur = onI;
+    else if (p.onGround && p.cx < px(c0)) S.cur = -1;
+    if (S.t0 < 0 && p.onGround && p.cx > px(c0 - 3)) S.t0 = w2.tick;
+    if (S.t0 < 0) return;
+    const k = Math.floor((w2.tick - S.t0) / period);
+    if (k !== S.k) {
+      S.k = k;
+      S.n = CHAUSAR_THROWS[k % CHAUSAR_THROWS.length];
+      S.piece = CHAUSAR_PIECE[k % CHAUSAR_PIECE.length];
+      if (S.piece <= S.cur) S.piece = S.cur + 2;
+      if (S.piece >= n - 1) S.piece = -1;
+      S.lit = new Set(Array.from({ length: S.n }, (_, j) => S.cur + 1 + j).filter((j) => j < n));
+      // the courtier's square always holds (he's standing on it)
+      if (S.piece < n) S.lit.add(S.piece);
+      w2.sfx('click', px(c0), px(12));
+      update();
+    }
+    piece.on = S.piece >= 0 && S.piece < n;
+    if (piece.on) piece.x = px(c0 + 3 * S.piece) + 6;
+  });
+  w.add(
+    new Art((ctx) => {
+      // the thrower and his cowries
+      const tx = px(c0 - 2) + 8;
+      gent(ctx, tx, px(13) - 1, 24, '#C9A27E', { face: 1, arms: 0.6, topi: '#F5F0E6' });
+      if (S.t0 >= 0) {
+        for (let i = 0; i < 4; i++) {
+          ctx.fillStyle = '#F5F1E8';
+          ctx.beginPath();
+          ctx.ellipse(tx + 10 + i * 5, px(13) - 3, 2, 1.4, 0, 0, Math.PI * 2);
+          ctx.fill();
+          if (i < S.n) {
+            ctx.fillStyle = '#3B2E22';
+            ctx.fillRect(tx + 9.5 + i * 5, px(13) - 3.3, 1.2, 0.7);
+          }
+        }
+      }
+      if (S.piece >= 0 && S.piece < n) gent(ctx, px(c0 + 3 * S.piece) + 16, px(13), 26, '#7A4E6E', { face: -1, topi: '#E8C547' });
+    }, 3),
+  );
+  return { sq, S };
+}
+function drawSquare(ctx: Ctx, b: Block, i: number, w: World, S: { lit: Set<number>; cur: number }) {
+  const x = b.x,
+    y = b.y;
+  const solid = b.on;
+  ctx.fillStyle = solid ? (i % 2 ? '#C2485B' : '#F3EEE6') : 'rgba(243,238,230,0.15)';
+  ctx.fillRect(x, y, 32, 8);
+  ctx.strokeStyle = solid ? '#5A3E2B' : 'rgba(243,238,230,0.5)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x + 0.5, y + 0.5, 31, 7);
+  if (solid && S.lit.has(i) && i !== S.cur) {
+    ctx.fillStyle = 'rgba(255,230,120,0.6)';
+    ctx.fillRect(x + 4, y + 2, 24, 2);
+  }
+  void w;
+}
+
+const chaupar: Act = {
+  id: 'lko08-chausar',
+  w: 40,
+  advice: 'A pachisi court over the well. Each throw of the cowries (count the dark mouths) lights that many squares ahead of yours; only lit squares and your own hold, and they go dark at the next throw. Never hop past the lit ones, and never on to the courtier’s square: wait on yours for a throw that takes you past him.',
+  cps: [1.5],
+  paint: (g, c) => {
+    g.pit(c.x + 4, c.x + 34, 15);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    well(w, x + 4, x + 34);
+    chausar(w, x + 5, 10, c.f('court'));
+    sign(w, x + 0.4, 10.4, 3.4, 'CHAUSAR', 'shop', null, 'pachisi');
+  },
+};
+
+export const s08 = { room: bhoolRoom, acts: [chaupar, mehrab] };
 export const meta08 = { family: 'entry-height-routes-level', betrayals: ['enter-height'], ending: 'lko-489' } as StageMeta;

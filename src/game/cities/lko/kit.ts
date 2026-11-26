@@ -177,3 +177,6 @@ export function bowIcon(w: World, still: () => number, need = 36) {
     }, 6),
   );
 }
+
+/** the same act under a new id (the finale's callbacks): its flags are keyed by the new id */
+export const again = <A extends { id: string; advice: string }>(a: A, id: string, advice?: string): A => ({ ...a, id, advice: advice ?? a.advice });
