@@ -157,12 +157,12 @@ function ganjRoom(): LevelDef {
 /** At dusk the shops let their awnings down one after another, from behind you: keep moving and you stay ahead. */
 const shaam: Act = {
   id: 'lko07-shaam',
-  w: 30,
+  w: 46,
   advice: 'Dusk: the shops let their awnings down one after another, starting behind you, and a falling awning flattens a stroller. Here, don’t pause: run the row without stopping.',
   build: (w, c) => {
     const x = c.x;
-    arcade(w, x, x + 29);
-    const shops = [0, 1, 2, 3, 4, 5].map((k) => {
+    arcade(w, x, x + 45);
+    const shops = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => {
       const x0 = c.X(2 + 4 * k);
       const z = w.add(
         new Zone(x0, FLOOR - 40, px(4), 40, 'lko-shamiyana', (ctx, zz, w2) => {
@@ -304,12 +304,12 @@ function lamp(w: World, x: number, ll: () => Lamplighter, i: number) {
 }
 const batti: Act = {
   id: 'lko07-batti',
-  w: 40,
+  w: 58,
   advice: 'The lamplighter walks ahead with his ladder, and at each lamp swings it up: the swing sweeps the pavement behind him. Hang back while it swings; while he’s up the ladder, go under it and past; never be under it when he brings it down.',
-  cps: [21.5],
+  cps: [21.5, 40.5],
   build: (w, c) => {
     const x = c.x;
-    arcade(w, x, x + 39);
+    arcade(w, x, x + 57);
     const l1 = new Lamplighter(w, c.X(4), [], c.f('ll1'));
     w.when(
       (w2) => w2.player.cx > c.X(0.5),
@@ -327,6 +327,15 @@ const batti: Act = {
       () => {
         (l2 as { lamps: number[] }).lamps.push(c.X(30));
         l2.body.set(true);
+      },
+    );
+    const l3 = new Lamplighter(w, c.X(44), [], c.f('ll3'));
+    lamp(w, c.X(51) + 4, () => l3, 0);
+    w.when(
+      (w2) => w2.player.cx > c.X(36),
+      () => {
+        (l3 as { lamps: number[] }).lamps.push(c.X(51));
+        l3.body.set(true);
       },
     );
     sign(w, x + 0.2, 10.4, 3.4, 'BATTI', 'shop', null, 'ganj');

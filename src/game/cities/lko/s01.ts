@@ -205,7 +205,7 @@ export const s01 = () =>
         ['lamp', 106, {}],
       ],
       things: [],
-      par: 40,
+      par: 24,
       hint: 'A walk round town: jump the ditch, climb the steps, hop the posts and the cart. In Chowk you cross the dug-up lane on the cloth bolts hung overhead: a bolt is sold the moment you land on it, and the shopkeeper’s hook comes up and slides it out sideways. Hop on to the next one before the hook has its grip, don’t stand about. After the bolts, a long bolt unrolls down across the road: run under it straight away, before its roller reaches the ground.',
       paint: (g) => {
         g.pit(38, 50, 15);

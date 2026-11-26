@@ -169,24 +169,16 @@ function galoutiRoom(): LevelDef {
 // ================================================================ act 1: thin ones and thick ones
 /** Some heaps were squashed flat already by the last customer: they're thin from the start. Hop off a thin
  *  one at once; wait on a thick one till it squashes. */
+const TAWA2 = 'FTFTTFTFFTFTTFFT';
 const tawa2: Act = {
   id: 'lko05-tawa',
-  w: 30,
-  advice: 'Further down the tawa some kebabs are already flat, squashed by the last customer: they’re thin, and the heat comes through fast. Hop off a flat one at once; on a full heap, wait till it squashes, then hop.',
+  w: 54,
+  advice: 'Down the long tawa some kebabs are already flat, squashed by the last customer: they’re thin, and the heat comes through fast. Hop off a flat one at once; on a full heap, wait till it squashes, then hop.',
   build: (w, c) => {
     const x = c.x;
-    tawa(w, x + 2, x + 25);
-    seekhRack(w, x + 2, x + 25, 70);
-    const plan: [number, boolean][] = [
-      [x + 3, false],
-      [x + 6, true],
-      [x + 9, false],
-      [x + 12, true],
-      [x + 15, true],
-      [x + 18, false],
-      [x + 21, true],
-      [x + 24, false],
-    ];
+    tawa(w, x + 2, x + 49);
+    seekhRack(w, x + 2, x + 49, 70);
+    const plan: [number, boolean][] = [...TAWA2].map((k, i) => [x + 3 + 3 * i, k === 'T']);
     w.flags[c.f('kebabs')] = plan.map(([cc, thin]) => w.add(new Galouti(px(cc), thin, 40, thin ? 45 : 120)));
     sign(w, x + 0.2, 10.4, 3.2, 'TAWA', 'shop', null, 'aminabad');
   },
@@ -197,15 +189,15 @@ const tawa2: Act = {
  *  it squashes flat from your feet forwards, a tile at a time: a lane low enough to walk under the skewers. */
 const lane: Act = {
   id: 'lko05-lane',
-  w: 26,
+  w: 34,
   advice: 'Under the lowest rack there’s no room to hop: one long slab of galouti. Stand at its start and it squashes flat from your feet forwards, a tile at a time. Walk the flat lane right behind the squash, and don’t jump. Linger and the thin lane burns.',
   cps: [1.5],
   build: (w, c) => {
     const x = c.x;
-    tawa(w, x + 3, x + 16);
-    seekhRack(w, x + 5, x + 16, 30);
+    tawa(w, x + 3, x + 24);
+    seekhRack(w, x + 5, x + 24, 30);
     // the slab: one tile per piece, the first one squashes when you stand on it, each squashes the next
-    const pcs = Array.from({ length: 14 }, (_, i) => w.add(new Galouti(px(x + 3 + i), false, i === 0 ? 40 : 1e9, 150)));
+    const pcs = Array.from({ length: 22 }, (_, i) => w.add(new Galouti(px(x + 3 + i), false, i === 0 ? 40 : 1e9, 150)));
     w.flags[c.f('slab')] = pcs;
     let wave = -1;
     w.onTick((w2) => {
@@ -214,7 +206,7 @@ const lane: Act = {
       const n = Math.floor((w2.tick - wave) / 14);
       for (let i = 1; i <= Math.min(n, pcs.length - 1); i++) if (!pcs[i].flat) pcs[i].force = true;
     });
-    sign(w, x + 18, 10.4, 3.2, 'SEEKH', 'shop', null, 'jhuk ke');
+    sign(w, x + 26, 10.4, 3.2, 'SEEKH', 'shop', null, 'jhuk ke');
   },
 };
 

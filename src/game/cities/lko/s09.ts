@@ -217,28 +217,35 @@ function kabootarRoom(): LevelDef {
 // ================================================================ the act: the flag in the wind
 /** The flyer is behind you now, and his flag is two-sided: red one face, white the other. The birds ahead
  *  go by the face that's turned to them, the far face. What you see is the near face: the opposite. */
+const HAWA: [number, number][] = [
+  [7, 13],
+  [13, 12],
+  [19, 13],
+  [25, 12],
+  [31, 13],
+  [37, 12],
+  [43, 13],
+  [49, 12],
+];
 const hawa: Act = {
   id: 'lko09-hawa',
-  w: 34,
+  w: 58,
   advice: 'Now the flyer is behind you, and his flag has two faces, red and white. The birds ahead go by the face turned towards them, the one you can’t see: the flag you see is the opposite of their order. Read the tip where the cloth curls over: that’s their colour. Cross while you see white.',
   cps: [9.5],
   paint: (g, c) => {
     const x = c.x;
-    g.pit(x + 0, x + 33, 15);
+    g.pit(x + 0, x + 57, 15);
     g.fill(x + 0, x + 5, 14, 17, '#');
-    g.fill(x + 7, x + 10, 13, 17, '#');
-    g.fill(x + 13, x + 16, 12, 17, '#');
-    g.fill(x + 19, x + 22, 13, 17, '#');
-    g.fill(x + 25, x + 28, 12, 17, '#');
-    g.fill(x + 31, x + 33, 14, 17, '#');
+    HAWA.forEach(([a, r]) => g.fill(x + a, x + a + 3, r, 17, '#'));
+    g.fill(x + 55, x + 57, 14, 17, '#');
   },
   build: (w, c) => {
     const x = c.x;
-    const rs = [roofOf(x + 7, x + 10, 13), roofOf(x + 13, x + 16, 12), roofOf(x + 19, x + 22, 13), roofOf(x + 25, x + 28, 12), roofOf(x + 31, x + 33, 14)];
-    roofs(w, [roofOf(x, x + 5, 14), ...rs], c.X(0), c.X(34));
+    const rs = [...HAWA.map(([a, r]) => roofOf(x + a, x + a + 3, r)), roofOf(x + 55, x + 57, 14)];
+    roofs(w, [roofOf(x, x + 5, 14), ...rs], c.X(0), c.X(58));
     const f = new Flyer(c.X(1) + 8, px(14), [['white', 1.6], ['red', 2.4]], c.X(2.5), true);
     drawFlyer(w, f);
-    const fl = new Flock(w, rs, f, { x: c.X(22), y: px(4) });
+    const fl = new Flock(w, rs, f, { x: c.X(30), y: px(4) });
     w.flags[c.f('k')] = { f, fl };
   },
 };

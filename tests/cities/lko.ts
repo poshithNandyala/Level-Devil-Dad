@@ -331,14 +331,15 @@ actRoutes['lko04-chowk'] = (x) => [
 
 actRoutes['lko05-tawa'] = (x) => {
   const k = 'lko05-tawa:kebabs';
-  return [runTo(x + 0.5, 300), hops([x + 3, ...[6, 9, 12, 15, 18, 21, 24, 26.5].map((c, i) => [x + c, kflat(k, i)] as [number, (w: World) => boolean])], 'thin ones at once, thick ones once squashed'), runTo(x + 29.5, 300)];
+  const cols = [...Array.from({ length: 15 }, (_, i) => 6 + 3 * i), 50.5];
+  return [runTo(x + 0.5, 300), hops([x + 3, ...cols.map((c, i) => [x + c, kflat(k, i)] as [number, (w: World) => boolean])], 'thin ones at once, thick ones once squashed'), runTo(x + 53.5, 300)];
 };
 actRoutes['lko05-lane'] = (x) => [
   runTo(x + 1.2, 300),
   hops([x + 3], 'on to the end of the slab'),
   until(kflat('lko05-lane:slab', 0), 300, 'it squashes under you'),
-  { hold: 'R', until: and(ground, X(x + 18)), max: 900, note: 'walk the lane right behind the squash, no jumping' },
-  runTo(x + 25, 300),
+  { hold: 'R', until: and(ground, X(x + 26)), max: 1200, note: 'walk the lane right behind the squash, no jumping' },
+  runTo(x + 33, 300),
 ];
 
 actRoutes['lko06-tatkar'] = (x) => {
@@ -366,8 +367,8 @@ actRoutes['lko06-tatkar'] = (x) => {
   ];
 };
 
-actRoutes['lko07-shaam'] = (x) => [runTo(x + 29, 600, 'run the row, no pause')];
-actRoutes['lko07-batti'] = (x) => [behindLamp('lko07-batti:ll1', x + 13), behindLamp('lko07-batti:ll2', x + 37), runTo(x + 39, 300)];
+actRoutes['lko07-shaam'] = (x) => [runTo(x + 45, 800, 'run the row, no pause')];
+actRoutes['lko07-batti'] = (x) => [behindLamp('lko07-batti:ll1', x + 13), behindLamp('lko07-batti:ll2', x + 34), behindLamp('lko07-batti:ll3', x + 56), runTo(x + 57, 300)];
 actRoutes['lko07-chauraha'] = (x) => [walkTo(x + 3, 300), hop(x + 5, x + 7.3, 'over the nala'), pause('pause before the strollers'), runTo(x + 31, 600, 'stroll up, then run through')];
 
 actRoutes['lko08-mehrab'] = (x) => [runTo(x + 12, 400, 'on foot through the vault arch'), hop(x + 14.6, x + 17, 'at a jump through the next, up past the well', 30), runTo(x + 29.5, 300)];
@@ -376,7 +377,7 @@ actRoutes['lko09-hawa'] = (x) => {
   const ok = redNow('lko09-hawa:k');
   return [
     walkTo(x + 4.9, 300),
-    hops([[x + 7.6, ok], x + 10.1, [x + 13.6, ok], x + 16.1, [x + 19.6, ok], x + 22.1, [x + 25.6, ok], x + 28.1, [x + 31.6, ok], x + 33], 'cross while you see white: the birds see red'),
+    hops([...[7, 13, 19, 25, 31, 37, 43, 49].flatMap((a) => [[x + a + 0.6, ok] as [number, (w: World) => boolean], x + a + 3.1]), [x + 55.6, ok], x + 57], 'cross while you see white: the birds see red'),
   ];
 };
 
