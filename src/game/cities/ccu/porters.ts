@@ -88,7 +88,10 @@ export class Porter extends Entity {
         this.state = 'down';
         this.t = 0;
         this.load.velX = 0;
-        if (this.riding(w)) w.flags.cha = 1;
+        if (this.riding(w)) {
+          w.flags.cha = 1;
+          w.flags.chaBy = this;
+        }
         w.sfx('thud', this.x, FLOOR - this.o.h);
       }
       if (this.o.off !== undefined && (this.x - this.o.off) * Math.sign(this.o.v) >= 0) {
@@ -104,6 +107,8 @@ export class Porter extends Entity {
         this.t = 0;
       }
     } else if (this.state === 'rest') {
+      // he set it down on a pylon and you stepped off: that wasn't a death
+      if (w.flags.chaBy === this && !this.riding(w) && w.player.onGround) w.flags.cha = 0;
       if (r && this.t >= r[1]) {
         this.state = 'up';
         this.t = 0;

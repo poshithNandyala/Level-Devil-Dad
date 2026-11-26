@@ -368,6 +368,52 @@ const duiRoute = (x: number): Step[] => [
   { hold: 'R', until: (w) => w.player.onGround && !riding(w), max: 200, note: 'off on to the pylon' },
 ];
 
+
+/** CCU-07 relay acts: porter 1 from the pylon, then 2, then 3 (told apart by speed), to the next pylon */
+const nearAct = (x: number) => (p: Porter) => p.o.x >= px(x - 13) && p.o.x <= px(x + 6);
+function relayRoute(x: number, v: [number, number, number], tallFirst: boolean): Step[] {
+  const by = (sp: number) => (w: World) => porters(w).find((p) => p.o.v === sp && nearAct(x)(p));
+  const under = (from: number, to: number): Step[] => [
+    { hold: '', until: (w) => { const a = by(from)(w), b = by(to)(w); return !!a && !!b && a.riding(w) && !porters(w).some((o) => o.o.v < 0 && o.state === 'walk' && o.x - w.player.cx < 70 && o.x - w.player.cx > -10) && b.x - a.x > 20 && b.x - a.x < 34; }, max: 2400, note: 'till the short porter is just ahead, under you' },
+    { hold: 'R', until: (w) => !w.player.onGround || !!by(to)(w)?.riding(w), max: 200, note: 'step off the front' },
+    { hold: '', until: (w) => !!by(to)(w)?.riding(w), max: 200, note: 'and drop on to his load' },
+  ];
+  const up = (to: number): Step => ({ ...hopUp((w) => (clearOverhead(w) && by(to)(w)?.state === 'walk' ? by(to)(w) : undefined), 'up on the tall one as he overtakes, nothing coming over'), until: (w) => !!by(to)(w)?.riding(w), max: 2400 });
+  // on to the pylon step, whether you came in off a tall load or along the kerb
+  let hold = 0;
+  let W: World | null = null;
+  const onStep: Step = {
+    policy: (w) => {
+      if (W !== w) {
+        W = w;
+        hold = 0;
+      }
+      const p = w.player;
+      if (hold > 0) {
+        hold--;
+        return { move: toward(w, px(x + 2), 2), jump: true };
+      }
+      if (!p.onGround) return go(toward(w, px(x + 2), 2));
+      if (p.y + p.h > px(13) && p.cx > px(x) - 4) {
+        hold = 10;
+        return { move: 'R', jump: true };
+      }
+      return go(toward(w, px(x + 2), 2));
+    },
+    until: (w) => w.player.onGround && w.player.y + w.player.h === px(13) && Math.abs(w.player.cx - px(x + 2)) < 6,
+    max: 600,
+    note: 'up the pylon step',
+  };
+  return [
+    onStep,
+    ...(tallFirst ? [walk(x + 2.4), ...hopTo(px(x + 5), 10, 'up on the tall porter')] : [{ hold: 'R' as const, until: (w: World) => !!by(v[0])(w)?.riding(w), max: 300, note: 'walk off on to the short porter' }]),
+    ...(tallFirst ? under(v[0], v[1]) : [up(v[1])]),
+    ...(tallFirst ? [up(v[2])] : under(v[1], v[2])),
+    { hold: '', until: (w) => w.player.cx > px(x + 59.6) || (w.player.onGround && !riding(w)), max: 2400, note: 'ride him to the next pylon' },
+    { hold: 'R', until: (w) => w.player.onGround && !riding(w), max: 200, note: 'off on to the pylon' },
+  ];
+}
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['CCU-01'] = tourRun('onto');
   S['CCU-02'] = [...ride(px(25), px(28.5), 'past the first “aaste” (over the drain), off on the second'), walk(30)];
@@ -456,7 +502,12 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     },
   ],
 
-  'CCU-07': [{ what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), walk(124 + 3.9), ...hopTo(px(130.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
+  'CCU-07': [
+    { what: 'staying on the first porter of the dusk span', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [42, 60, 80], true).slice(0, 4), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
+    { what: 'staying on the second porter of the dusk span', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [42, 60, 80], true).slice(0, 6), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
+    { what: 'staying on the first porter of the upside-down span', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [42, 60, 80], true), ...relayRoute(184, [41, 59, 79], false).slice(0, 2), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
+    { what: 'staying on the tall porter of the upside-down span', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [42, 60, 80], true), ...relayRoute(184, [41, 59, 79], false).slice(0, 3), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
+    { what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [42, 60, 80], true), ...relayRoute(184, [41, 59, 79], false), walk(244 + 3.9), ...hopTo(px(250.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
   'CCU-02': [
     {
       what: 'stepping off backwards on the crawl',
@@ -470,6 +521,8 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu07-sandhya': (x) => relayRoute(x, [42, 60, 80], true),
+  'ccu07-ulto': (x) => relayRoute(x, [41, 59, 79], false),
   'ccu09-toran': (x) => [
     steerHop(px(x + 3), 12, 'on to the bamboo: two panels go up'),
     steerHop(px(x + 7), 34, 'a full jump on to the first', true),

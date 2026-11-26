@@ -223,6 +223,36 @@ const dui: Act = {
   },
 };
 
+
+/** CCU-07 long acts: a relay of three porters over a long span of road. `v` are the speeds of the first,
+ *  second and third porter (also how the routes tell them apart); `tallFirst` swaps the heights */
+function relay(id: string, v: [number, number, number], tallFirst: boolean, advice: string): Act {
+  return {
+    id,
+    w: 60,
+    advice,
+    paint: (g, c) => {
+      g.fill(c.x, c.x + 3, 14, 14, '#').fill(c.x + 1, c.x + 3, 13, 13, '#');
+    },
+    build: (w, c) => {
+      w.add(new Girders(c.X(0), c.X(60)));
+      road(w, c.X(4), c.X(60));
+      // the third porter is a little taller or shorter than the first, so his load never sweeps you off the first one
+      const [h1, h2, h3] = tallFirst ? [TALL, SHORT, TALL + 8] : [SHORT, TALL, SHORT + 8];
+      const a1 = w.add(new Porter({ x: c.X(5), v: v[0], h: h1, rests: [[c.X(24), 3]], go: (w2, me) => w2.player.isRiding(me.load), kind: 'sack' }));
+      w.add(new Porter({ x: c.X(1), v: v[1], h: h2, rests: [[c.X(46), 3]], go: walking(a1), kind: 'books' }));
+      w.add(new Porter({ x: c.X(-12), v: v[2], h: h3, rests: [[c.X(60.8), Infinity]], go: walking(a1) }));
+      w.add(new Porter({ x: c.X(52), v: -48, h: TALL - 1, go: walking(a1), off: c.X(4) }));
+      w.add(new Porter({ x: c.X(80), v: -48, h: TALL - 1, go: walking(a1), off: c.X(4) }));
+      w.add(new ChaiBoard(c.X(24)));
+      w.add(new ChaiBoard(c.X(46)));
+      w.add(new ChaiBoard(c.X(2), true));
+    },
+  };
+}
+const sandhya = relay('ccu07-sandhya', [42, 60, 80], true, 'A long span at dusk and three porters. On to the tall one from the pylon step; a short one passes under you before his CHA board: walk off the front on to him. Then a tall one overtakes before the next board: hop up, but never with a load coming over.');
+const ulto = relay('ccu07-ulto', [41, 59, 79], false, 'The same span the other way up: a short porter from the pylon, a tall one overtaking (hop up when nothing is coming over), then a short one passing under (walk off the front on to him) before the second CHA board.');
+
 /** CCU-07 act 3: the second pylon, a porter who leaves at once (and stops for tea at once), and the one to wait for */
 const pylon: Act = {
   id: 'ccu07-pylon',
@@ -888,7 +918,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: boiRoom(), par: 24, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
   longStage({ base: kumartuliRoom(), par: 32, acts: [uthon, lane, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
   longStage({ base: poleRoom(), par: 57, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
-  longStage({ base: howrahRoom(), par: 70, acts: [girder, dui, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
+  longStage({ base: howrahRoom(), par: 70, acts: [girder, dui, sandhya, ulto, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 32, acts: [rok, tokta], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
   longStage({ base: pandalRoom(), par: 24, acts: [sinri, toran, chala], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
   longStage({ base: finaleRoom(), par: 68, acts: [bus10, tram10, rok10, kumor10], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
