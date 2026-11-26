@@ -11,6 +11,7 @@ import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
 import { lock, tara as taraSays } from '../../levels/endkit';
 import type { Door } from '../../entities/basics';
+import { Pan } from './pitha';
 import { Hedge, Plucker, Sprinkler } from './pluck';
 import { Carrier, Decor, River, SandField, levelPost, river, sand, type Span } from './entities';
 
@@ -210,6 +211,75 @@ const bagan: Act = {
   },
 };
 
+// ================================================================== DIS-04: Til Pitha (the pan)
+/** a pan over the pit columns c0..c1 with crepes; the clock starts when Dad passes `from` (tile column) */
+export function pitha(w: World, c0: number, c1: number, defs: { x: number; w: number; o: number }[], from: number, o: { period?: number; liquid?: number } = {}) {
+  const p = w.add(new Pan(px(c0), px(c1 + 1), defs, px(from), o.period, o.liquid));
+  p.setup(w);
+  (w.flags.pans ??= []).push(p);
+  return p;
+}
+
+function pithaRoom(): LevelDef {
+  return {
+    id: 'DIS-04',
+    city: 'DIS',
+    index: 4,
+    name: 'Til Pitha',
+    nameEn: 'The rolled crepe',
+    tagline: 'Magh Bihu morning: the cook pours thin rice batter on the pan, and rolls each crepe the moment it sets.',
+    hint: 'The crepes sit on a hot pan. A shiny crepe is still liquid and holds you; a matte one has set, and the cook rolls it up with you in it. Each crepe is poured, shines for a few seconds, sets, is rolled, and is poured again. Wait on a shiny one until the next is poured, hop across, and don’t be standing when yours goes matte (it dulls and blinks first).',
+    par: 24,
+    map: Grid.ground(15).pit(7, 25).put(1, 14, '@').put(30, 14, 'E').rows(),
+    build(w: World) {
+      door(w);
+      pitha(
+        w,
+        7,
+        25,
+        [
+          { x: 8, w: 4, o: 0 },
+          { x: 14, w: 4, o: 422 },
+          { x: 20, w: 4, o: 172 },
+        ],
+        6.5,
+      );
+      sign(w, 3.2, 10.4, 3.4, 'PITHA', 'shop', null, 'shiny = safe');
+      rival(w, 4, 15, 1, tara(2));
+      onPass(w, px(5), (w2) => w2.guide('Roba! | Stop!', (w3) => w3.info.deaths > 0 && w3.player.cx < px(8)));
+      collectible(w, 'dis-pitha', 16, 11);
+    },
+  };
+}
+
+/** DIS-04 act: a longer pan, crepes poured one after the other with only a short overlap. */
+const tawa: Act = {
+  id: 'dis04-tawa',
+  w: 38,
+  advice: 'A longer pan: four crepes, each poured about two seconds after the last, each shiny only a little while. Hop on to the next as soon as it is poured and shiny, never wait for yours to dull.',
+  cps: [1.5],
+  paint: (g, c) => {
+    g.pit(c.x + 2, c.x + 31);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    pitha(
+      w,
+      x + 2,
+      x + 31,
+      [
+        { x: x + 4, w: 4, o: 0 },
+        { x: x + 11, w: 4, o: 400 },
+        { x: x + 18, w: 4, o: 200 },
+        { x: x + 25, w: 4, o: 0 },
+      ],
+      x + 1,
+      { period: 600, liquid: 300 },
+    );
+    sign(w, x + 0.2, 10.4, 3.4, 'TAWA', 'shop', null, 'hot');
+  },
+};
+
 // the hut door: the farmer shuts it while the river is moving
 const hutDoor = (w: World, d: Door, field: SandField) => {
   const L = lock(w, d, 'Roba! Chah khaba. | Wait! Have some tea.');
@@ -225,7 +295,7 @@ export const levels = (): LevelDef[] => [
   { ...tourLevel(), shape: 'tour', meta: { family: 'carrier-spills-on-contact', betrayals: ['carrier-spill'], ending: 'dis-tea-tray' } },
   longStage({ base: charRoom(), acts: [chapori], twist: 'dis-hut-shut', par: 24, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
   longStage({ base: teaRoom(), acts: [bagan], twist: 'dis-tea-chest', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-tea-chest' } }),
-  longStage({ base: todoRoom(4), par: 30, shape: 'long' }), // DIS-04 TODO: acts, twist (a dis-... ending), par
+  longStage({ base: pithaRoom(), acts: [tawa], twist: 'dis-laru-plate', par: 40, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
   longStage({ base: todoRoom(5), par: 30, shape: 'long' }), // DIS-05 TODO: acts, twist (a dis-... ending), par
   longStage({ base: todoRoom(6), par: 30, shape: 'long' }), // DIS-06 TODO: acts, twist (a dis-... ending), par
   longStage({ base: todoRoom(7), par: 30, shape: 'long' }), // DIS-07 TODO: acts, twist (a dis-... ending), par

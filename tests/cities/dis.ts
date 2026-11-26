@@ -7,6 +7,7 @@ import { Step, X, and, ground } from '../runner';
 import type { CityTests } from '../city-tests';
 import { Carrier, SandField } from '../../src/game/cities/dis/entities';
 import { Plucker, Sprinkler } from '../../src/game/cities/dis/pluck';
+import type { Pan } from '../../src/game/cities/dis/pitha';
 
 type Out = { move: 'L' | 'R' | ''; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
@@ -87,6 +88,45 @@ function follow(k: number, gap = 58, wetK = -1): (w: World) => { move: 'L' | 'R'
     return { move: 'R', jump: false };
   };
 }
+// ------------------------------------------------------------------ DIS-04: the pan
+const pans = (w: World) => (w.flags.pans ?? []) as Pan[];
+/** across pan k, crepe by crepe: hop to the next one once it is poured and shiny, with time to spare */
+function crossPan(k: number, margin = 90, onto: 'bank' | 'ground' = 'bank'): (w: World) => { move: 'L' | 'R' | ''; jump: boolean } {
+  let W: World | null = null;
+  let hold = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      hold = 0;
+    }
+    void onto;
+    const pan = pans(w)[k];
+    const p = w.player;
+    if (hold > 0) {
+      hold--;
+      return { move: 'R', jump: true };
+    }
+    if (!p.onGround) return { move: 'R', jump: false };
+    const i = pan.slabs.findIndex((s) => s.solid.x > p.cx);
+    const curS = pan.slabs.find((s) => s.solid.collidable && p.cx >= s.solid.x && p.cx <= s.solid.x + s.solid.w);
+    const edge = curS ? curS.solid.x + curS.solid.w : pan.x0;
+    if (i < 0) {
+      if (curS && edge - p.cx > 8) return { move: 'R', jump: false };
+      if (curS) {
+        hold = 13;
+        return { move: 'R', jump: true };
+      }
+      return { move: 'R', jump: false };
+    }
+    if (pan.started < 0) return { move: 'R', jump: false };
+    const st = pan.stateOf(w, i);
+    const ready = st.s === 'liquid' && st.left > margin;
+    if (!ready) return { move: '', jump: false };
+    if (edge - p.cx > 9) return { move: 'R', jump: false };
+    hold = 13;
+    return { move: 'R', jump: true };
+  };
+}
 const tourEnd = (): Step[] => [...hop(94 - 1.6, 'up on the deck'), { hold: 'R', until: done, max: 900 }];
 
 /** S['DIS-0n'] = room route; lengthen(id, drop, extra) appends each act's route and the door's policy */
@@ -112,10 +152,14 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('DIS-02', 0, []);
   S['DIS-03'] = [{ policy: follow(0), until: and(ground, X(31.4)), max: 4000, note: 'a few steps behind the plucker, up each hedge once it is picked' }];
   lengthen('DIS-03', 0, []);
+  S['DIS-04'] = [{ policy: crossPan(0), until: and(ground, X(27.5)), max: 3000, note: 'crepe to crepe, only ever on a shiny one' }];
+  lengthen('DIS-04', 0, []);
 }
 
 /** the obvious play per stage, and the cause it must die of (every stage, 01-10). TODO */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  // run at it: the next crepe isn't poured yet
+  'DIS-04': { steps: [{ hold: 'R', until: X(6.3), max: 400 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 12, ticks: 20 }))], cause: 'dis-tawa' },
   // run at the plucker and the hedge
   'DIS-03': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'dis-basket' },
   // run and jump from bar to bar: the next one isn't there yet
@@ -135,6 +179,8 @@ const dis02Start: Step[] = [
   { hold: 'R', until: ground, max: 200 },
 ];
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  // wait on the first shiny crepe and stay: it dulls, sets, and is rolled with you in it
+  'DIS-04': { steps: [{ hold: 'R', until: X(6.3), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: done, max: 1500 }], cause: 'dis-roll' },
   // hop over her to get ahead: pinned against the hedge when she picks
   'DIS-03': { steps: [{ hold: 'R', until: (w) => pluckers(w)[0].phase !== 'wait' && pluckers(w)[0].x - w.player.cx < 30, max: 900 }, { hold: 'R', jump: 20, ticks: 20, note: 'over her' }, { hold: 'R', until: done, max: 1500 }], cause: 'dis-basket' },
   // the obvious correction: wait on every bar for the next one. The narrowing bar goes out from under the right end
@@ -158,6 +204,9 @@ const hopR0 = 0;
 void hopR0;
 const hopR = (at: number, note: string, ticks = 14): Step[] => [{ hold: 'R', until: X(at), max: 900 }, { hold: 'R', jump: ticks, ticks, note }, { hold: 'R', until: ground, max: 300 }];
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'dis04-tawa': (x) => [
+    { policy: crossPan(1, 60), until: and(ground, X(x + 37)), max: 4000, note: 'four crepes, one after the other' },
+  ],
   'dis03-bagan': (x) => [
     { policy: follow(1, 58, 0), until: and(ground, X(x + 33.4)), max: 6000, note: 'behind her again; before the wet path, wait till it is dry' },
   ],
@@ -174,6 +223,20 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 
 /** a policy for each door ending, by kind ('dis-...'). TODO */
 const endingPolicies: Record<string, Policy> = {
+  'dis-laru-plate'(w, m, d) {
+    const p = w.player;
+    const pan = pans(w)[pans(w).length - 1];
+    if (m.hold > 0) return { move: 'R', jump: true };
+    const f = crossPan(pans(w).length - 1)(w);
+    if (p.cx < pan.x1) return f;
+    // on the plate: hop each laru ball as it comes
+    const ball = w.entities.find((e: any) => e.kind === 'dis-laru' && e.alive && e.x > p.x && e.x - p.x < 64) as any;
+    if (p.onGround && ball) {
+      m.hold = 11;
+      return { move: 'R', jump: true };
+    }
+    return go(p.onGround ? toward(w, d.x + 8, 1) || 'R' : 'R');
+  },
   'dis-tea-chest'(w, m, d) {
     const pl = pluckers(w)[pluckers(w).length - 1];
     const p = w.player;

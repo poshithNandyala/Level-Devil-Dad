@@ -3,9 +3,11 @@ import { World } from '../../world';
 import { lock, tara } from '../../levels/endkit';
 import { px, sand, river, Decor, GROUND } from './entities';
 import { Hedge, Plucker } from './pluck';
+import { Pan } from './pitha';
+import { roller } from '../../levels/kit';
 import type { Ending } from '../../levels/endkit';
 
-export type DisEndingKind = 'dis-hut-shut' | 'dis-tea-chest';
+export type DisEndingKind = 'dis-hut-shut' | 'dis-tea-chest' | 'dis-laru-plate';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<DisEndingKind, true> {}
@@ -89,6 +91,41 @@ export const endings: Record<DisEndingKind, Ending> = {
           ctx.fillStyle = '#C9A253';
           ctx.fillRect(x + 4, GROUND - 17, 4, 4);
         }, -4),
+      );
+    },
+  },
+  // ================================================================ DIS-04: the laru plate
+  /** The door is on a plate of laru, past the last crepe. The cook's boy rolls laru balls down the plate at you. */
+  'dis-laru-plate': {
+    space: 30,
+    after: 5,
+    advice: 'The door is on a plate of laru past the last crepe: hop on to the plate, and hop each laru ball the boy rolls down it at you. Jump over them; never wait on a matte crepe.',
+    paint: (g, D) => {
+      g.pit(D - 21, D - 5);
+    },
+    build(w: World, d) {
+      const D = Math.round(d.x / 16);
+      const p = w.add(new Pan(px(D - 21), px(D - 4), [{ x: D - 19, w: 4, o: 0 }, { x: D - 14, w: 4, o: 400 }, { x: D - 9, w: 4, o: 200 }], px(D - 22), 600, 300));
+      p.setup(w);
+      (w.flags.pans ??= []).push(p);
+      let next = 0;
+      w.add(
+        new Decor(
+          (ctx) => {
+            // the plate under the door
+            ctx.fillStyle = '#C9A253';
+            ctx.fillRect(px(D - 4), GROUND - 1, px(9), 3);
+            ctx.fillStyle = '#8D6B2E';
+            ctx.fillRect(px(D - 4), GROUND + 2, px(9), 2);
+          },
+          -4,
+          (w2) => {
+            if (w2.player.cx > px(D - 8) && w2.player.cx < px(D - 1) && w2.tick >= next) {
+              next = w2.tick + 360;
+              roller(w2, 'dis-laru', px(D + 4), GROUND - 12, -50, { cause: 'dis-laru' });
+            }
+          },
+        ),
       );
     },
   },
