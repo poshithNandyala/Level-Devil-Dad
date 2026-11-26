@@ -126,15 +126,15 @@ export function bin(w: World, c: number, full: boolean) {
 }
 
 /** a wrapper someone left on the paving at column c: Dad picks it up as he walks over it */
-export function litter(w: World, c: number) {
+export function litter(w: World, c: number, top = FL) {
   const r = w.add(
-    new Rig(px(c) + 4, FL - 4, 8, 4, {
+    new Rig(px(c) + 4, top - 4, 8, 4, {
       layer: 3,
       tick: (rr, w2) => {
         const rule = w2.flags.gtk5 as Rule;
         const p = w2.player;
         if (rule.fined >= 0) return;
-        if (p.x < rr.x + rr.w && p.x + p.w > rr.x && p.y + p.h >= FL - 2) {
+        if (p.x < rr.x + rr.w && p.x + p.w > rr.x && p.y + p.h >= top - 2 && p.y + p.h <= top + 2) {
           rule.hold = true;
           rr.on = false;
           rr.alive = false;
@@ -267,6 +267,29 @@ export const act2: Act = {
       }),
     );
     sign(w, x + 18.5, 9.6, 4.6, 'BIN ROUND', 'green', null, 'every evening');
+  },
+};
+
+/** act 3: the high flower bed. The bench in front of it is the only step up, and someone has left a wrapper on
+ *  the bench. Stand on it and you've picked it up: walk off the end, back to the bin, and up again */
+export const act3: Act = {
+  id: 'gtk05-chabutra',
+  w: 30,
+  advice: 'The tall flower bed can only be climbed from the bench in front of it, and there’s a wrapper lying on the bench: stand on it and it’s in your hand. Walk off the bench (walking down isn’t a jump), take it back to the bin, then up on the bench and the bed.',
+  paint: (g, c) => {
+    g.fill(c.x + 7, c.x + 14, 12, 14, '#');
+    g.fill(c.x + 22, c.x + 23, 14, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    bin(w, x + 1, false);
+    bench(w, c.X(4), 40);
+    litter(w, x + 5, FL - 14);
+    planterPaint(w, x + 7, x + 14, 3);
+    litter(w, x + 18);
+    bin(w, x + 20, false);
+    planterPaint(w, x + 22, x + 23, 1);
+    sign(w, x + 9, 6.4, 4, 'FLOWER BED', 'green', null, 'MG Marg');
   },
 };
 

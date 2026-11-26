@@ -318,6 +318,17 @@ const act05b = (x: number): Step[] => [
   { hold: '', until: (w) => !held(w), max: 2400, note: 'wait for the bin round to empty it' },
   { policy: stepper(), until: X(x + 33), max: 900, note: 'over both beds' },
 ];
+const onBench = (w: World) => w.player.onGround && Math.abs(w.player.y + w.player.h - 226) <= 1;
+const act05c = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 3.1), max: 600 },
+  { hold: 'R', jump: 10, ticks: 10, note: 'up on the bench' },
+  { hold: 'R', until: onBench, max: 200, note: 'and there’s the wrapper, in hand' },
+  { hold: 'L', until: XL(x + 1.4), max: 600, note: 'walk off the bench, back to the bin' },
+  { hold: 'R', until: X(x + 3.1), max: 300 },
+  { hold: 'R', jump: 10, ticks: 10, note: 'up on the bench again' },
+  { hold: 'R', until: onBench, max: 200 },
+  { policy: stepper(), until: X(x + 29), max: 1200, note: 'up on the bed, down, the next wrapper into the next bin, over the low bed' },
+];
 /** the taxi: walk past the bin, jump up and pay at the meter, wait for it to go, walk in */
 const taxiPolicy: Policy = (w, _m, d) => {
   const st = w.flags.gtk5e as { paid: boolean };
@@ -703,6 +714,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk04-ghar': act04,
   'gtk05-shaam': act05,
   'gtk05-kachra': act05b,
+  'gtk05-chabutra': act05c,
   'gtk06-chhat': act06,
   'gtk06-modh': act06b,
   'gtk07-thau': act07a,
