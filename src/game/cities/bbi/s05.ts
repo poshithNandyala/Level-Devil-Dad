@@ -169,7 +169,10 @@ export function cart(w: World, c: number, beam: number) {
   return machine(w, x, FL - 18, 44, 18, {
     list: 'bbi5m',
     run: (_m, r, w2, k) => {
-      if (k > 0.3) r.moveTo(w2, Math.min(px(beam) + 16, r.x + 80 / 120), r.y);
+      if (k > 0.3) {
+        r.s.fx = Math.min(px(beam) + 16, ((r.s.fx as number | undefined) ?? r.x) + 80 / 120);
+        r.moveTo(w2, r.s.fx, r.y);
+      }
     },
     art: (ctx, r, k) => {
       box(ctx, r.x, r.y + 2, r.w, 6, '#8D5A2B');
