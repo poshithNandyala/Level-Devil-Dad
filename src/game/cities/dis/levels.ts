@@ -12,6 +12,8 @@ import { Grid } from '../../levels/grid';
 import { lock, tara as taraSays } from '../../levels/endkit';
 import type { Door } from '../../entities/basics';
 import { Pan } from './pitha';
+import { husori } from './husori';
+import { charge } from './gorh';
 import { Bank, type BankDef } from './bank';
 import { Cloth, Host, gam, pitDanger } from './gamosa';
 import { Hedge, Plucker, Sprinkler } from './pluck';
@@ -407,6 +409,168 @@ const majuli: Act = {
   },
 };
 
+// ================================================================== DIS-07: Husori (the carollers, marathon)
+function husoriRoom(): LevelDef {
+  return {
+    id: 'DIS-07',
+    city: 'DIS',
+    index: 7,
+    name: 'Husori',
+    nameEn: 'The carollers',
+    tagline: 'Bohag Bihu: the husori group goes from house to house, singing, and every gate in the village opens for them.',
+    hint: 'The bamboo gates open only for the husori group, and only for anyone inside its circle (the dashed ring round the dhol). The stakes on a shut gate kill you. Walk with the singers at their own slow pace, inside the ring, and go through each gate with them. A gate that has been opened for you shuts again a moment after you leave the ring: don’t be in the doorway then.',
+    par: 30,
+    map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').rows(),
+    build(w: World) {
+      door(w);
+      husori(w, 6, 2, [{ x: 22, ritual: 0, stay: 200 }]);
+      sign(w, 9.6, 10.4, 3.4, 'HUSORI', 'shop', null, 'bohag bihu');
+      rival(w, 3, 15, 1, tara(5));
+      onPass(w, px(3), (w2) => taraSays(w2, 'Bhal, Dad! | Good, Dad!', 2.2));
+      collectible(w, 'dis-pepa', 16.4, 10.2);
+    },
+  };
+}
+
+/** DIS-07 act 1: two more houses, a long walk between. */
+const ghar: Act = {
+  id: 'dis07-ghar',
+  w: 62,
+  advice: 'Two more houses, a long walk apart. The gates are the same: they open when the group is at them and you are inside the ring. Walk with them. Don’t run ahead to the next gate and wait at it: the stakes are on this side.',
+  cps: [14.5, 44.5],
+  build: (w, c) => {
+    const x = c.x;
+    husori(w, x + 4, x, [{ x: x + 24, ritual: 0, stay: 200 }, { x: x + 56, ritual: 0, stay: 200 }]);
+    sign(w, x + 0.6, 10.4, 3.4, 'BOHAG', 'shop', null, 'ghar ghar');
+  },
+};
+
+/** DIS-07 act 2: a house where the gamosa is handed out first, and the gate waits for it. */
+const chowk: Act = {
+  id: 'dis07-chowk',
+  w: 74,
+  advice: 'Three more gates. At the middle one the host gives the singers gamosas first, and the gate stays shut until he is done: stay in the ring till it opens, and don’t go through before it does. Leave early and the group leaves you behind the stakes.',
+  cps: [14.5, 36.5, 58.5],
+  build: (w, c) => {
+    const x = c.x;
+    husori(w, x + 4, x, [{ x: x + 22, ritual: 0, stay: 200 }, { x: x + 46, ritual: 170, stay: 330 }, { x: x + 70, ritual: 0, stay: 200 }]);
+    sign(w, x + 0.6, 10.4, 3.4, 'CHOWK', 'shop', null, 'the yard');
+  },
+};
+
+// ================================================================== DIS-08: Gorh (the rhino, HWIK)
+function gorhRoom(): LevelDef {
+  return {
+    id: 'DIS-08',
+    city: 'DIS',
+    index: 8,
+    name: 'Gorh',
+    nameEn: 'The rhino',
+    tagline: 'Kaziranga: elephant grass taller than a man, and under it more beel than ground. The rhino knows the way. The jeep makes it run.',
+    hint: 'Under the tall grass there is no floor, only beel (wetland): the only floor in the grass is a strip a rhino has flattened. A jeep somewhere out in the grass revs its engine, and a column of dust rises where it is: the rhino charges at it, straight along the grass, and stops there. Keep out of its way until it has gone, then walk the strip it made. It always runs towards the dust.',
+    par: 30,
+    map: Grid.ground(15).pit(8, 27).put(1, 14, '@').put(30, 14, 'E').rows(),
+    build(w: World) {
+      door(w);
+      charge(w, { trig: px(3), c0: 8, c1: 27, start: 30, plume: 8, delay: 170, rest: 100 });
+      sign(w, 3.4, 10.4, 3.4, 'KAZIRANGA', 'shop', null, 'tall grass');
+      rival(w, 2, 15, 1, tara(6));
+      onPass(w, px(2), (w2) => taraSays(w2, 'Xubhessa! | Best wishes!', 2.2));
+      collectible(w, 'dis-laru', 14.5, 10.4);
+    },
+  };
+}
+
+/** DIS-08 act: the same, then a plume on the far side with the rhino coming from behind you. */
+const kaziranga: Act = {
+  id: 'dis08-kaziranga',
+  w: 64,
+  advice: 'Two more fields. In the first the rhino comes from the far side again. In the second the dust is on the far side but the rhino starts BEHIND you, on the bank you are standing on: jump up through the haystack platform by the bank and stand on it while it runs past underneath.',
+  cps: [18.5, 40.5],
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 4, x + 17);
+    g.fill(x + 24, x + 27, 13, 13, '=');
+    g.pit(x + 32, x + 45);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    charge(w, { trig: px(x + 1), c0: x + 4, c1: x + 17, start: x + 21, plume: x + 4, delay: 160, rest: 90 });
+    charge(w, { trig: px(x + 19.5), c0: x + 32, c1: x + 45, start: x + 15, plume: x + 45, delay: 170, rest: 90 });
+    sign(w, x + 20.2, 10.4, 3.4, 'HAY', 'shop', null, 'climb');
+  },
+};
+
+// ================================================================== DIS-10: Luit (the finale)
+function luitRoom(): LevelDef {
+  return {
+    id: 'DIS-10',
+    city: 'DIS',
+    index: 10,
+    name: 'Luit',
+    nameEn: 'The river',
+    tagline: 'The Brahmaputra, once more, with everything it has taught you. This time the level post is on the far bank.',
+    hint: 'Everything on the river is as before, in a new order. The sandbars move at the siren (new bars first, yours last, a narrowing bar keeps its left end), but the level post is across on the far bank this time, so you have to remember the rule: wait where you are until the next bar is up. Then the pan, the husori gate, the bank. At the very end the way over the water is the plucker’s own path.',
+    par: 40,
+    map: Grid.ground(15).pit(8, 27).put(1, 14, '@').put(30, 14, 'E').rows(),
+    build(w: World) {
+      door(w);
+      river(w, 8, 28);
+      const f = sand(w, S2.room, [px(10) - 4, px(16) - 4]);
+      levelPost(w, f, 29.4, 3);
+      sign(w, 3.6, 10.4, 3.4, 'LUIT', 'shop', null, 'the post is over there');
+      rival(w, 4, 15, 1, tara(8));
+      onPass(w, px(5), (w2) => taraSays(w2, 'Luit one, Dad zero! | The river one, Dad zero!', 2.6));
+      collectible(w, 'dis-chah', 20.4, 11);
+    },
+  };
+}
+
+/** DIS-10 act 1: the pan from Til Pitha, now over the Luit's own water. */
+const luitTawa: Act = {
+  id: 'dis10-tawa',
+  w: 30,
+  advice: 'The crepes of the pitha pan, one after another over the water: on to the next only when it has been poured and shines, and don’t be standing when yours dulls.',
+  cps: [1.5],
+  paint: (g, c) => {
+    g.pit(c.x + 2, c.x + 22);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    pitha(w, x + 2, x + 22, [{ x: x + 4, w: 5, o: 0 }, { x: x + 10, w: 5, o: 400 }, { x: x + 16, w: 5, o: 200 }], x + 1, { period: 600, liquid: 300 });
+    sign(w, x + 0.2, 10.4, 3.4, 'TAWA', 'shop', null, 'shiny = safe');
+  },
+};
+
+/** DIS-10 act 2: the husori gate, this time with the host's ritual first. */
+const luitGate: Act = {
+  id: 'dis10-gate',
+  w: 40,
+  advice: 'The husori group, and a gate that waits for the host’s gamosa. Wait in front of it, not touching, until the group has come, the ritual is done and it opens for you inside the ring.',
+  cps: [3.5],
+  build: (w, c) => {
+    const x = c.x;
+    husori(w, x + 4, x, [{ x: x + 30, ritual: 140, stay: 300 }]);
+    sign(w, x + 0.6, 10.4, 3.4, 'HUSORI', 'shop', null, 'wait');
+  },
+};
+
+/** DIS-10 act 3: Majuli's bank, three slabs. */
+const luitBank: Act = {
+  id: 'dis10-bank',
+  w: 30,
+  advice: 'Majuli’s bank again: run at it and keep going across the slabs; the river takes each one in order, nearest the water first.',
+  cps: [1.5],
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 19);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    bank(w, [{ x: x + 5, w: 5, t: 230 }, { x: x + 10, w: 5, t: 330 }, { x: x + 15, w: 5, t: 430 }], x + 0.6, x - 4, x + 3, x + 20);
+    sign(w, x + 0.4, 10.4, 3.4, 'MAJULI', 'shop', null, 'run');
+  },
+};
+
 // the hut door: the farmer shuts it while the river is moving
 const hutDoor = (w: World, d: Door, field: SandField) => {
   const L = lock(w, d, 'Roba! Chah khaba. | Wait! Have some tea.');
@@ -425,8 +589,8 @@ export const levels = (): LevelDef[] => [
   longStage({ base: pithaRoom(), acts: [tawa], twist: 'dis-laru-plate', par: 40, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
   longStage({ base: gamosaRoom(), acts: [atithi], twist: 'dis-gamosa-latch', par: 60, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
   longStage({ base: majuliRoom(), acts: [majuli], twist: 'dis-tea-ladder', par: 50, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
-  longStage({ base: todoRoom(7), par: 30, shape: 'long' }), // DIS-07 TODO: acts, twist (a dis-... ending), par
-  longStage({ base: todoRoom(8), par: 30, shape: 'long' }), // DIS-08 TODO: acts, twist (a dis-... ending), par
+  longStage({ base: husoriRoom(), acts: [ghar, chowk], twist: 'dis-gamosa-door', par: 150, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-gamosa-door' } }),
+  longStage({ base: gorhRoom(), acts: [kaziranga], twist: 'dis-watch-tower', par: 70, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
   longStage({ base: todoRoom(9), par: 30, shape: 'long' }), // DIS-09 TODO: acts, twist (a dis-... ending), par
-  longStage({ base: todoRoom(10), par: 30, shape: 'long' }), // DIS-10 TODO: acts, twist (a dis-... ending), par
+  longStage({ base: luitRoom(), acts: [luitTawa, luitGate, luitBank], twist: 'dis-post-bank', par: 120, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
 ];

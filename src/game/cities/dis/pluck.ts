@@ -226,3 +226,57 @@ export class Sprinkler extends Entity {
     }
   }
 }
+
+/**
+ * A path across the river that exists only under a plucker's feet: each bar rises as she steps on it and stays up for `life`
+ * ticks (so a Dad who keeps up has a floor and one who dawdles has none).
+ */
+export class PathBars extends Entity {
+  slabs: Slab[] = [];
+  /** tick each bar came up (-1: not yet) */
+  up: number[] = [];
+  constructor(
+    readonly starts: number[],
+    readonly wTiles: number,
+    readonly who: Plucker,
+    readonly life = 560,
+  ) {
+    super();
+    this.layer = 0;
+  }
+  setup(w: World) {
+    this.starts.forEach((tx, i) => {
+      const s = new Slab(px(tx), GROUND, px(this.wTiles), 12, (ctx, sl) => this.paintBar(ctx, sl, i, w), 0);
+      s.solid.collidable = false;
+      w.add(s);
+      this.slabs.push(s);
+      this.up.push(-1);
+    });
+  }
+  update(w: World) {
+    this.starts.forEach((tx, i) => {
+      if (this.up[i] < 0 && this.who.phase !== 'wait' && this.who.x >= px(tx) - 6) {
+        this.up[i] = w.tick;
+        w.sfx('splash', px(tx) + 24, GROUND);
+      }
+      const on = this.up[i] >= 0 && w.tick - this.up[i] < this.life;
+      this.slabs[i].solid.collidable = on;
+    });
+  }
+  private paintBar(ctx: CanvasRenderingContext2D, sl: Slab, i: number, w: World) {
+    const { x, w: ww } = sl.solid;
+    const age = w.tick - this.up[i];
+    const left = this.life - age;
+    const sink = left < 90 && (w.tick >> 3) % 2 === 0;
+    ctx.fillStyle = sink ? '#BDAA84' : '#D8C8A8';
+    ctx.fillRect(x, GROUND, ww, 12);
+    ctx.fillStyle = '#C9B78F';
+    ctx.fillRect(x, GROUND, ww, 3);
+    ctx.fillStyle = '#E7DAC0';
+    ctx.fillRect(x + 3, GROUND, ww - 6, 1.2);
+  }
+  draw(ctx: CanvasRenderingContext2D, w: World) {
+    void ctx;
+    void w;
+  }
+}

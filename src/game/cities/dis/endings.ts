@@ -1,16 +1,18 @@
 // Dispur's door endings, one per stage 02-10, each a new idea. Kinds start with 'dis-'.
 import { World } from '../../world';
 import { lock, tara } from '../../levels/endkit';
-import { px, sand, river, Decor, GROUND } from './entities';
-import { Hedge, Plucker } from './pluck';
+import { px, sand, river, Decor, GROUND, levelPost } from './entities';
+import { Hedge, PathBars, Plucker } from './pluck';
 import { Pan } from './pitha';
 import { roller } from '../../levels/kit';
 import { Host, gam } from './gamosa';
 import { TeaBoy } from './bank';
+import { husori } from './husori';
+import { charge } from './gorh';
 import { Slab } from './entities';
 import type { Ending } from '../../levels/endkit';
 
-export type DisEndingKind = 'dis-hut-shut' | 'dis-tea-chest' | 'dis-laru-plate' | 'dis-gamosa-latch' | 'dis-tea-ladder';
+export type DisEndingKind = 'dis-hut-shut' | 'dis-tea-chest' | 'dis-laru-plate' | 'dis-gamosa-latch' | 'dis-tea-ladder' | 'dis-gamosa-door' | 'dis-watch-tower' | 'dis-post-bank';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<DisEndingKind, true> {}
@@ -218,6 +220,61 @@ export const endings: Record<DisEndingKind, Ending> = {
           ctx.fill();
         }, -4),
       );
+    },
+  },
+  // ================================================================ DIS-07: the host's door
+  /** The last house. The singers stop in the yard while the host hands them gamosas; the gate to his door opens when he is done. */
+  'dis-gamosa-door': {
+    space: 36,
+    after: 5,
+    advice: 'The last house: the singers stop in the yard while the host hands out the gamosas, and his gate opens only when he has finished, and only for you if you are still inside the ring. Wait in the ring. If you leave it, stay out of the doorway.',
+    build(w: World, d) {
+      const D = Math.round(d.x / 16);
+      husori(w, D - 28, D - 36, [{ x: D - 5, ritual: 300, stay: 480 }]);
+      w.flags.twist = 'host';
+    },
+  },
+  // ================================================================ DIS-08: the watch tower
+  /** The door is at the top of a watch tower's steps. One last field, then the rhino charges at the jeep parked by the tower, from behind you. */
+  'dis-watch-tower': {
+    space: 30,
+    after: 4,
+    advice: 'The door is at the top of the watch tower’s steps. Cross the last field on the strip, and the moment you are over, the jeep by the tower starts up: the rhino charges at it from behind you, along the bank. Go straight up the steps and wait on the top: it passes underneath.',
+    paint: (g, D) => {
+      g.pit(D - 26, D - 12);
+      g.fill(D - 6, D - 6, 14, 14, '#');
+      g.fill(D - 5, D - 5, 13, 14, '#');
+      g.fill(D - 4, D - 4, 12, 14, '#');
+      g.fill(D - 3, D + 1, 11, 14, '#');
+      g.put(D, 14, '.');
+      g.put(D, 10, 'E');
+    },
+    build(w: World, d) {
+      const D = Math.round(d.x / 16);
+      charge(w, { trig: px(D - 28), c0: D - 26, c1: D - 12, start: D - 9, plume: D - 26, delay: 150, rest: 80 });
+      charge(w, { trig: px(D - 11), c0: D - 11, c1: D - 12, start: D - 14, plume: D - 3, delay: 190, rest: 160 });
+      w.flags.twist = 'tower';
+    },
+  },
+  // ================================================================ DIS-10: the level post across the water
+  /** The level post stands on the far bank, and the way over the water is a plucker's own path: a bar comes up under each of her steps and stays up a few seconds. */
+  'dis-post-bank': {
+    space: 40,
+    after: 5,
+    advice: 'The level post is on the far bank, and the water between is crossed only on the plucker’s path: a bar comes up under each step she takes and goes a few seconds after. Follow her a few steps behind, not touching her basket, and keep up.',
+    paint: (g, D) => {
+      g.pit(D - 33, D - 4);
+    },
+    build(w: World, d) {
+      const D = Math.round(d.x / 16);
+      river(w, D - 33, D - 3);
+      const p = w.add(new Plucker(px(D - 26), px(D - 37), [], px(D - 3), 30));
+      (w.flags.pluckers ??= []).push(p);
+      const starts = [D - 32, D - 28, D - 24, D - 20, D - 16, D - 12, D - 8];
+      const pb = w.add(new PathBars(starts, 4, p, 640));
+      pb.setup(w);
+      levelPost(w, { level: 2, e: -1 } as never, D - 1.8, 3);
+      w.flags.twist = 'post';
     },
   },
 };

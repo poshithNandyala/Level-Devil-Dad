@@ -9,6 +9,8 @@ import { Carrier, SandField } from '../../src/game/cities/dis/entities';
 import { Plucker, Sprinkler } from '../../src/game/cities/dis/pluck';
 import type { Pan } from '../../src/game/cities/dis/pitha';
 import type { Bank } from '../../src/game/cities/dis/bank';
+import type { Gate, Husori } from '../../src/game/cities/dis/husori';
+import type { Charge } from '../../src/game/cities/dis/gorh';
 
 type Out = { move: 'L' | 'R' | ''; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
@@ -141,6 +143,24 @@ const gamosaSet = (x: number, pit = 18): Step[] => [
 ];
 // ------------------------------------------------------------------ DIS-06: the bank
 const banks = (w: World) => (w.flags.banks ?? []) as Bank[];
+// ------------------------------------------------------------------ DIS-07: the carollers
+const groups = (w: World) => (w.flags.husori ?? []) as Husori[];
+const gatesOf = (w: World) => (w.flags.gates ?? []) as Gate[];
+/** wait in front of each gate (never touching its stakes) until the group has come and the gate is open, then through */
+function atTheGate(k: number): (w: World) => { move: 'L' | 'R' | ''; jump: boolean } {
+  return (w) => {
+    const h = groups(w)[k];
+    const p = w.player;
+    const g = gatesOf(w).find((gt) => gt.group === h && gt.gx + 14 > p.cx);
+    if (!g) return { move: 'R', jump: false };
+    if (g.open) return { move: 'R', jump: false };
+    if (p.cx < g.gx - 26) return { move: 'R', jump: false };
+    return { move: '', jump: false };
+  };
+}
+// ------------------------------------------------------------------ DIS-08: the rhino
+const charges = (w: World) => (w.flags.charges ?? []) as Charge[];
+const chargeGone = (i: number) => (w: World) => charges(w)[i]?.phase === 'gone';
 const tourEnd = (): Step[] => [...hop(94 - 1.6, 'up on the deck'), { hold: 'R', until: done, max: 900 }];
 
 /** S['DIS-0n'] = room route; lengthen(id, drop, extra) appends each act's route and the door's policy */
@@ -176,10 +196,41 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { hold: 'R', until: and(ground, X(28)), max: 600, note: 'on across the slabs without stopping' },
   ];
   lengthen('DIS-06', 0, []);
+  S['DIS-07'] = [{ policy: atTheGate(0), until: and(ground, X(28)), max: 3000, note: 'wait for the singers at the gate, inside the ring, and through with them' }];
+  lengthen('DIS-07', 0, []);
+  S['DIS-08'] = [
+    { hold: 'R', until: X(3.2), max: 600, note: 'to the edge of the grass: the jeep starts up' },
+    { hold: '', until: chargeGone(0), max: 1500, note: 'keep clear while the rhino charges at the dust and trots off' },
+    { hold: 'R', until: and(ground, X(29.5)), max: 900, note: 'along the flattened strip' },
+  ];
+  lengthen('DIS-08', 0, []);
+  S['DIS-10'] = [
+    { hold: 'R', until: X(6.3), max: 400 },
+    { hold: 'R', jump: 14, ticks: 14, note: 'on to the first bar' },
+    { hold: 'R', until: ground, max: 200 },
+    { hold: '', until: and(ground, barUp(0, 1)), max: 600, note: 'wait for the siren and the next bar to come up' },
+    { hold: 'R', until: X(12.4), max: 200 },
+    { hold: 'R', jump: 14, ticks: 14, note: 'on to the new bar' },
+    { hold: 'R', until: ground, max: 200 },
+    { hold: '', until: and(ground, barUp(0, 2)), max: 600, note: 'wait for the siren and the bar after it' },
+    { hold: 'R', until: X(17.3), max: 200 },
+    { hold: 'R', jump: 14, ticks: 14, note: 'on to the last bar' },
+    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: X(24), max: 200 },
+    { hold: 'R', jump: 14, ticks: 14, note: 'on to the far bank' },
+    { hold: 'R', until: and(ground, X(28.4)), max: 300 },
+  ];
+  lengthen('DIS-10', 0, []);
 }
 
 /** the obvious play per stage, and the cause it must die of (every stage, 01-10). TODO */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  // the sandbars again: run on, the next one is not there yet
+  'DIS-10': { steps: [{ hold: 'R', until: X(6.3), max: 400 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 14, ticks: 22 }))], cause: 'dis-luit' },
+  // straight into the tall grass
+  'DIS-08': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'dis-beel' },
+  // run at the gate: the stakes
+  'DIS-07': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'dis-gate' },
   // stop at the edge to have a look: by the time you jump, the near slab has gone
   'DIS-06': { steps: [{ hold: 'R', until: X(12.6), max: 600 }, { hold: '', ticks: 190 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 900 }], cause: 'dis-bank' },
   // straight through every host, under the platform: three gamosas, and the pit is under the cloth
@@ -205,6 +256,8 @@ const dis02Start: Step[] = [
   { hold: 'R', until: ground, max: 200 },
 ];
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  // wait right at the edge of the grass for the strip: the rhino stops at the dust, which is right there
+  'DIS-08': { steps: [{ hold: 'R', until: X(7.2), max: 600 }, { hold: '', until: done, max: 1500 }], cause: 'dis-gorh' },
   // go at once, but stop on the first slab to think: it is gone beneath you
   'DIS-06': { steps: [{ hold: 'R', until: X(12.6), max: 600 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: done, max: 1500 }], cause: 'dis-bank' },
   // wait on the first shiny crepe and stay: it dulls, sets, and is rolled with you in it
@@ -232,6 +285,30 @@ const hopR0 = 0;
 void hopR0;
 const hopR = (at: number, note: string, ticks = 14): Step[] => [{ hold: 'R', until: X(at), max: 900 }, { hold: 'R', jump: ticks, ticks, note }, { hold: 'R', until: ground, max: 300 }];
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'dis10-tawa': (x) => [{ policy: crossPan(0, 60), until: and(ground, X(x + 29)), max: 4000, note: 'the pan over the water' }],
+  'dis10-gate': (x) => [{ policy: atTheGate(0), until: and(ground, X(x + 39)), max: 6000, note: 'the husori gate and the host’s ritual' }],
+  'dis10-bank': (x) => [
+    { hold: 'R', until: X(x + 2.7), max: 600, note: 'run to the edge' },
+    { hold: 'R', jump: 14, ticks: 14, note: 'over the channel' },
+    { hold: 'R', until: ground, max: 200 },
+    ...hopR(x + 9.4, 'to the second slab', 12),
+    ...hopR(x + 14.4, 'to the third slab', 12),
+    ...hopR(x + 19.4, 'off the last slab', 12),
+    { hold: 'R', until: X(x + 29), max: 600 },
+  ],
+  'dis08-kaziranga': (x) => [
+    { hold: 'R', until: X(x + 1.3), max: 600, note: 'the jeep starts up' },
+    { hold: '', until: chargeGone(1), max: 1500, note: 'keep clear of the rhino' },
+    { hold: 'R', until: and(ground, X(x + 19.6)), max: 900, note: 'along the strip to the bank' },
+    { hold: 'R', until: X(x + 24.6), max: 300 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'up through the haystack platform: the rhino starts from behind' },
+    { hold: '', until: and(ground, (w) => w.player.y < 200), max: 200 },
+    { hold: '', until: chargeGone(2), max: 1500, note: 'let it run underneath and trot off' },
+    { hold: 'R', until: and(ground, X(x + 31)), max: 900, note: 'off the hay and along the new strip' },
+    { hold: 'R', until: and(ground, X(x + 63)), max: 900 },
+  ],
+  'dis07-ghar': (x) => [{ policy: atTheGate(1), until: and(ground, X(x + 61)), max: 6000, note: 'gate by gate with the singers' }],
+  'dis07-chowk': (x) => [{ policy: atTheGate(2), until: and(ground, X(x + 73)), max: 7000, note: 'three gates, the middle one after the gamosas' }],
   'dis06-majuli': (x) => [
     { hold: 'R', until: X(x + 2.7), max: 600, note: 'run to the edge' },
     { hold: 'R', jump: 14, ticks: 14, note: 'over the channel' },
@@ -270,6 +347,42 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 
 /** a policy for each door ending, by kind ('dis-...'). TODO */
 const endingPolicies: Record<string, Policy> = {
+  'dis-post-bank'(w, m, d) {
+    const pl = pluckers(w)[pluckers(w).length - 1];
+    const p = w.player;
+    if (m.hold > 0) return { move: 'R', jump: true };
+    if (pl.phase === 'wait') return go('R');
+    if (p.cx > pl.endX + 8 || (pl.phase as string) === 'end') return go(toward(w, d.x + 8, 1) || 'R');
+    if (!p.onGround) return go('R');
+    const ground = w.solidAt(p.x + p.w + 3, p.y + p.h + 1, 1, 2);
+    if (ground && pl.x - p.cx < 62 && (pl.phase as string) !== 'end') return go('');
+    if (!ground) {
+      m.hold = 12;
+      return { move: 'R', jump: true };
+    }
+    return go('R');
+  },
+  'dis-watch-tower'(w, m, d) {
+    const cs = charges(w);
+    const A = cs[cs.length - 2];
+    const B = cs[cs.length - 1];
+    const p = w.player;
+    if (m.hold > 0) return { move: 'R', jump: true };
+    if (p.y + p.h <= 177 && p.cx > d.x - 56) return go(toward(w, d.x + 8, 1) || 'R');
+    if (A.phase === 'noise' || A.phase === 'charge' || A.phase === 'rest') return go('');
+    if (!p.onGround) return go('R');
+    if (w.solidAt(p.x + p.w + 2, p.y + 2, 1, p.h - 4) && p.cx > px(Math.round(d.x / 16) - 8)) {
+      m.hold = 9;
+      return { move: 'R', jump: true };
+    }
+    void B;
+    return go('R');
+  },
+  'dis-gamosa-door'(w, _m, d) {
+    const f = atTheGate(3)(w);
+    if (f.move === '' && gatesOf(w)[gatesOf(w).length - 1].open === false) return f;
+    return go(toward(w, d.x + 8, 1) || 'R');
+  },
   'dis-tea-ladder'(w, m, d) {
     const k = w.flags.ladder as { boy: { down: boolean }; rung: { solid: { x: number; w: number } & object } };
     const D = Math.round(d.x / 16) - 1;

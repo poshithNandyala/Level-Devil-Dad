@@ -8,4 +8,7 @@ export const causeLines: Record<string, string[]> = {
   'dis-laru': ['Laru! A rolling laru ball got you.', 'Hop each ball as it rolls at you.'],
   'dis-gamosa': ['Gamosa! Three gamosas on you and you could not see the pit.', 'Every host who touches you adds one. At three the cloth hides your feet: hop over the next giver, or walk into a host in a red sash to give one away.'],
   'dis-bank': ['Paar! The river took the bank before you got across.', 'The bank goes a slab at a time, from the water inland, on a clock that starts when you set out. Run, and keep going across the slabs.'],
+  'dis-gate': ['Gate! The bamboo stakes got you.', 'The gate opens only while the husori group is stopped at it and you are inside its ring. Walk with them, and stay in the ring till the gate is open.'],
+  'dis-beel': ['Beel! There is no floor under the tall grass.', 'Don’t step into grass that has not been flattened. A rhino flattens a strip when it charges at the jeep’s dust: wait, then walk its strip.'],
+  'dis-gorh': ['Gorh! You were in the rhino’s way.', 'It charges straight at the dust, along the grass and the bank. Stay clear of the line between where it starts and the dust, or climb up out of its way.'],
 };
