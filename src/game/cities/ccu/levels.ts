@@ -405,6 +405,33 @@ function pandalRoom(): LevelDef {
   };
 }
 
+
+/** CCU-09 act: the cloth already tied is a staircase up the skeleton; at its top a panel goes up across
+ *  the next foothold under the roof frame, so its top is no place to stand either */
+const sinri: Act = {
+  id: 'ccu09-sinri',
+  w: 30,
+  advice: 'The panels they’ve already tied make a staircase: climb it, cloth top to cloth top. At the top a new panel goes up across the next bamboo: a full jump on to it, and walk straight off the far side before they tie the next one above, into the roof frame.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 2, x + 3, 12, 12, '=').fill(x + 5, x + 6, 12, 12, '=').fill(x + 8, x + 9, 12, 12, '=').fill(x + 12, x + 13, 9, 9, '=').fill(x + 16, x + 17, 9, 9, '=').fill(x + 18, x + 20, 9, 9, '=').fill(x + 15, x + 17, 3, 3, '#').fill(x + 24, x + 29, 12, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(new Skeleton(c.X(0), c.X(30)));
+    w.add(new Stakes(c.X(0), c.X(24)));
+    // the staircase of cloth already tied, one, two and three tiles tall
+    w.add(new ClothPanel(c.X(5), px(2), px(12), 1, 3, true));
+    w.add(new ClothPanel(c.X(8), px(2), px(12), 2, 0, true));
+    w.add(new ClothPanel(c.X(12), px(2), px(9), 1, 1, true));
+    const top = w.add(new ClothPanel(c.X(16), px(2), px(9), 2, 2));
+    w.add(new Decorator(c.X(18) + 6, px(9), top));
+    tieWhenOn(w, top, x + 12, x + 14, px(8));
+    stackWhenOn(w, top, 3);
+    w.flags.sinri = top;
+  },
+};
+
 /** CCU-09 act: a wide panel across the next bamboo, and no roof frame over it: this time, ride the raise */
 const chala: Act = {
   id: 'ccu09-chala',
@@ -696,6 +723,6 @@ export const levels = (): LevelDef[] => [
   longStage({ base: poleRoom(), par: 60, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 90, acts: [girder, dui, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 40, acts: [rok, tokta], twist: 'ccu-bhanr', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-door-opens-for-a-cup-of-tea') }),
-  longStage({ base: pandalRoom(), par: 40, acts: [chala], twist: 'ccu-dhak', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-dhak-beat-lifts-the-gate-curtain') }),
+  longStage({ base: pandalRoom(), par: 40, acts: [sinri, chala], twist: 'ccu-dhak', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-dhak-beat-lifts-the-gate-curtain') }),
   longStage({ base: finaleRoom(), par: 80, acts: [bus10, tram10], twist: 'ccu-wall', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-customers-buy-the-wall-down') }),
 ];

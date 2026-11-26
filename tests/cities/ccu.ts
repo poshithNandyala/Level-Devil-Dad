@@ -441,6 +441,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** more scripted first-timer deaths and 'like last time' moves */
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'CCU-09': [{ what: 'resting on the new panel at the top of the staircase', steps: [...pandalRoute(), steerHop(px(35), 10, 'bamboo'), steerHop(px(38), 10, 'up'), steerHop(px(41), 10, 'up'), steerHop(px(45), 30, 'high', true), steerHop(px(49), 10, 'on to the new panel'), { hold: '', until: done, max: 300 }], cause: 'crushed' }],
   'CCU-08': [
     { what: 'waiting by the second adda for the water to stop', steps: [...addaRoute(), walk(32 + 24.5), { hold: '', until: done, max: 1500 }], cause: 'ccu-dhowa' },
     { what: 'trying to jump the broken rok', steps: [...addaRoute(), { policy: hopWater(), until: and(ground, X(32 + 38)), max: 1800 }, walk(76 - 1.8), steerHop(px(76.8), 12, 'up'), walk(76 + 12.2), { hold: 'R', jump: 30, ticks: 30, long: true }, { hold: 'R', until: done, max: 300 }], cause: 'ccu-khod' },
@@ -468,6 +469,17 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu09-sinri': (x) => [
+    steerHop(px(x + 3), 10, 'on to the bamboo'),
+    steerHop(px(x + 6), 10, 'up the cloth staircase'),
+    steerHop(px(x + 9), 10, 'up'),
+    steerHop(px(x + 13), 30, 'a full jump up to the high cloth', true),
+    steerHop(px(x + 17), 10, 'on to the new panel'),
+    { hold: 'R', until: (w) => w.player.onGround && w.player.y + w.player.h === px(9) && w.player.cx > px(x + 18.2), max: 120, note: 'and walk straight off the far side' },
+    { hold: 'R', until: X(x + 20.2), max: 120 },
+    steerHop(px(x + 25.5), 16, 'down on to the deck'),
+    walk(x + 29.4),
+  ],
   'ccu07-dui': (x) => duiRoute(x),
   'ccu08-tokta': (x) => [
     walk(x - 1.8),
