@@ -372,6 +372,29 @@ const R_lko06_tatkar = (id: string) => (x: number): Step[] => {
 };
 actRoutes['lko06-tatkar'] = R_lko06_tatkar('lko06-tatkar');
 
+const MEHFIL = [6, 14, 22, 30, 38];
+const R_lko06_mehfil = (id: string) => (x: number): Step[] => {
+  const D = (w: World) => w.flags[`${id}:d`] as { x: number; v: number };
+  const steps: Step[] = [walkTo(x + 3.6, 300), hops([x + 6.5], 'up on to the first takht')];
+  MEHFIL.forEach((t, k) => {
+    const nxt = MEHFIL[k + 1];
+    // go when she is far enough away, whichever way she is spinning, to cross before she can come back
+    const s0 = px(x + t + 2),
+      s1 = px(x + (nxt ?? 46)) + 4;
+    const lo = px(x + 4) + 8,
+      hi = px(x + 44);
+    const safe = (w: World) => {
+      const d = D(w);
+      if (d.v < 0) return d.x < s0 - 12 && (d.x - lo + (s0 - lo)) / 120 > 2.3;
+      return d.x > s1 + 12 && (hi - d.x + (hi - s1)) / 120 > 2.3;
+    };
+    steps.push(until(safe, 2400, 'wait till she is far enough away to cross before she comes back'));
+    if (nxt === undefined) steps.push(runTo(x + 46, 300));
+    else steps.push(hops([x + t + 1.6, x + t + 2.9, x + t + 5.6, x + nxt + 0.6], 'down, over the strip, up on to the next takht'));
+  });
+  return steps;
+};
+actRoutes['lko06-mehfil'] = R_lko06_mehfil('lko06-mehfil');
 const R_lko07_shaam = (id: string) => (x: number): Step[] => [runTo(x + 45, 800, 'run the row, no pause')];
 actRoutes['lko07-shaam'] = R_lko07_shaam('lko07-shaam');
 const R_lko07_batti = (id: string) => (x: number): Step[] => [behindLamp(`${id}:ll1`, x + 13), behindLamp(`${id}:ll2`, x + 34), behindLamp(`${id}:ll3`, x + 56), runTo(x + 57, 300)];
@@ -640,6 +663,14 @@ mistakes['LKO-08'] = [
 ];
 /** the room's route and the routes of the stage's first n acts */
 const through = (id: string, room: Step[], n: number) => [...room, ...LEVEL_BY_ID.get(id)!.parts!.slice(0, n).flatMap((pt) => actRoutes0(pt.kind, pt.x0))];
+mistakes['LKO-06'] = [
+  { what: 'in the mehfil, crossing her floor', steps: [...through('LKO-06', room06, 1), walkTo(actX('LKO-06', 1) + 3.6, 300), hops([actX('LKO-06', 1) + 6.5, actX('LKO-06', 1) + 9.3, actX('LKO-06', 1) + 11.6]), until(done, 1200)], cause: 'lko-mehfil' },
+  {
+    what: 'in the mehfil, stepping down on to the red strip as she goes away',
+    steps: [...through('LKO-06', room06, 1), walkTo(actX('LKO-06', 1) + 3.6, 300), hops([actX('LKO-06', 1) + 6.5]), until((w) => w.flags['lko06-mehfil:d'].v < 0 && w.flags['lko06-mehfil:d'].x < w.player.cx - 20, 1500), hops([actX('LKO-06', 1) + 8.6, actX('LKO-06', 1) + 10.5]), until(done, 1200)],
+    cause: 'lko-mehfil',
+  },
+];
 mistakes['LKO-10'] = [
   { what: 'stopping on the gallery’s covered bells', steps: [...through('LKO-10', room10, 7), runTo(actX('LKO-10', 7) + 12, 400), hop(actX('LKO-10', 7) + 14.6, actX('LKO-10', 7) + 17, '', 30), runTo(actX('LKO-10', 7) + 22, 300), until(done, 500)], cause: 'lko-tehzeeb' },
   { what: 'bowing to the last door from right in front of it', steps: [...through('LKO-10', room10, 8), walkTo(doorX('LKO-10') - 1.5, 600), until(done, 600)], cause: 'lko-tehzeeb' },
