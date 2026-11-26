@@ -124,21 +124,68 @@ const leafPolicy: Policy = (w, _m, d) => {
   return go(t >= 3.0 && p.cx > d.x - 62 ? 'R' : '');
 };
 
+// ------------------------------------------------------------------ PAT-05
+/** across a pontoon: run on, and jump over any section the cart is on or about to be on, from the edge of the one before */
+function deckPolicy(key: string, from: number): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const pt = w.flags[key] as { secs: { x: number }[]; carts: { s: { cx: number; dir: number } }[] };
+    const p = w.player;
+    // on the bank: wait for the cart to start rolling back towards you, then go and jump its section
+    if (p.cx < pt.secs[0].x - 4) {
+      if (p.cx < pt.secs[0].x - 14) return go('R');
+      const c = pt.carts[0].s;
+      return go(c.cx > pt.secs[from].x && c.cx < pt.secs[from].x + 80 && c.dir < 0 ? 'R' : '');
+    }
+    const ni = pt.secs.find((s) => s.x >= p.x + p.w - 6);
+    if (ni && p.onGround && ni.x - (p.x + p.w) < 10 && pt.carts.some((c) => Math.abs(c.s.cx - (ni.x + 20)) < 28)) {
+      jt = 15;
+      return { move: 'R', jump: true };
+    }
+    return go('R');
+  };
+}
+const room05 = (): Step[] => [{ policy: deckPolicy('pat5', 3), until: and(ground, X(21.2)), max: 1500, note: 'over the pontoon, jumping the cart’s section' }, { hold: 'R', until: X(29), max: 300 }];
+const act05 = (x: number): Step[] => [{ policy: deckPolicy('pat5a', 3), until: and(ground, X(x + 29.2)), max: 2500, note: 'across the long deck' }, { hold: 'R', until: X(x + 36), max: 300 }];
+/** the last float: wait at the bank edge for it to come back in, then walk aboard to the door */
+const floatPolicy: Policy = (w) => {
+  const f = w.flags.pat5e as { s: { x0: number } };
+  const st = w.flags.pat5t as { t0: number };
+  const p = w.player;
+  const t = st.t0 < 0 ? 0 : (((w.tick - st.t0) / 120) % 10 + 10) % 10;
+  if (t >= 8.0 || t < 0.2) return go('R');
+  if (p.cx < f.s.x0 - 14) return go('R');
+  return go('');
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['PAT-01'] = tourRoute();
   S['PAT-02'] = room02();
   lengthen('PAT-02', 0, []);
   S['PAT-04'] = room04();
   lengthen('PAT-04', 0, []);
+  S['PAT-05'] = room05();
+  lengthen('PAT-05', 0, []);
 }
 
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-05': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-ganga' },
   'PAT-04': { steps: [{ hold: 'R', until: X(2), max: 300 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 20, ticks: 26 }))], cause: 'pat-bojh' },
   'PAT-02': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-angara' },
   'PAT-01': { steps: [...upTo(21), { hold: 'R', until: done, max: 2400 }], cause: 'pat-bheed' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-05': { steps: [{ hold: 'R', until: X(7.2), max: 600 }, { hold: '', until: (w) => w.flags.pat5.carts[0].s.cx > 236 && w.flags.pat5.carts[0].s.dir > 0, max: 900, note: 'let the cart go by down the deck' }, { hold: 'R', until: X(9.5), max: 300, note: 'step on to the high section behind it' }, { hold: '', until: done, max: 1800, note: 'and wait there' }], cause: 'pat-pipa' },
   'PAT-04': { steps: [{ hold: '', until: (w) => w.flags.pat4.t0 >= 0 && t4(w) >= 3.7, max: 800 }, ...climb4().slice(1)], cause: 'pat-bojh' },
   'PAT-02': { steps: [...room02().slice(0, 4), { hold: '', until: done, max: 1500 }], cause: 'pat-chimta' },
   'PAT-01': { steps: [...upTo(24), { hold: '', until: done, max: 1500 }], cause: 'pat-tempo' },
@@ -149,10 +196,12 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'pat02-chokha': act02,
   'pat04-anaaj': act04,
+  'pat05-ghat': act05,
 };
 const endingPolicies: Record<string, Policy> = {
   'pat-musal': pestlePolicy,
   'pat-bhitar': leafPolicy,
+  'pat-nawka': floatPolicy,
 };
 
 export const test: CityTests = {
@@ -162,5 +211,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['PAT-02', 'PAT-04'],
+  fair: ['PAT-02', 'PAT-04', 'PAT-05'],
 };

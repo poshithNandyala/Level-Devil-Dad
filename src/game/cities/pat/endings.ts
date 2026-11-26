@@ -2,8 +2,9 @@
 import type { Ending } from '../../levels/endkit';
 import { ending as e02 } from './s02';
 import { ending as e04 } from './s04';
+import { ending as e05 } from './s05';
 
-export type PatEndingKind = 'pat-musal' | 'pat-bhitar';
+export type PatEndingKind = 'pat-musal' | 'pat-bhitar' | 'pat-nawka';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<PatEndingKind, true> {}
@@ -12,4 +13,5 @@ declare module '../../levels/endings' {
 export const endings: Record<PatEndingKind, Ending> = {
   'pat-musal': e02,
   'pat-bhitar': e04,
+  'pat-nawka': e05,
 };
