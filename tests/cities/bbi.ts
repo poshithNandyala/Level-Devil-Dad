@@ -559,6 +559,24 @@ const crossTroupe = (k: string, x: number, c0: number, n: number, pose: 'bridge'
 const act07d = (x: number): Step[] => [...crossTroupe('bbi7d0', x, 3, 5, 'tower'), ...crossTroupe('bbi7d1', x, 13, 6, 'wheel'), { hold: 'R', until: X(x + 22.5), max: 300 }];
 const act07e = (x: number): Step[] => [...crossTroupe('bbi7f0', x, 3, 7, 'bridge'), ...crossTroupe('bbi7f1', x, 13, 8, 'bridge'), ...crossTroupe('bbi7f2', x, 24, 9, 'bridge'), { hold: 'R', until: X(x + 35.5), max: 300 }];
 
+const act06c = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 0.2), max: 300 },
+  waitFor((w) => lm(w, 'bbi6f').bridge && lm(w, 'bbi6f').into > 1.55, 'three passes'),
+  { hold: 'R', until: and(ground, X(x + 13.4)), max: 400, note: 'across' },
+  { hold: 'R', until: X(x + 17.5), max: 300 },
+];
+const act09c = (x: number): Step[] => chariotRun('bbi9c', x, x + 9, x + 25.5, x + 29.5);
+const act10d = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 0.6), max: 400 },
+  { hold: 'R', jump: 9, ticks: 9, note: 'up on the keeper' },
+  { hold: 'R', until: ground, max: 200 },
+  onPadK('bbi10k2', 4, 12),
+  { hold: '', until: (w) => kOf(w, 'bbi10k2').ball === 'gone', max: 900, note: 'the dive, the rebound, back' },
+  { hold: 'R', until: and(ground, X(x + 14.6)), max: 300, note: 'off before he gets up' },
+  { hold: 'R', until: X(x + 25.5), max: 400 },
+];
+const act10e = (x: number): Step[] => [...crossTroupe('bbi10n0', x, 3, 5, 'tower'), ...crossTroupe('bbi10n1', x, 12, 8, 'bridge'), { hold: 'R', until: X(x + 22.5), max: 300 }];
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['BBI-01'] = [...pastG1(), ...tourTail()];
   S['BBI-02'] = room02();
@@ -620,7 +638,7 @@ const fixMem = (w: World) => {
   if (fm.m.hold > 0) fm.m.hold--;
   return fm.m;
 };
-const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi10-ratha': act10c, 'bbi02-dive': act02b, 'bbi06-buni': act06b, 'bbi07-sahi': act07c, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b, 'bbi08-thali': act08b, 'bbi07-stambha': act07d, 'bbi07-raati': act07e };
+const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi10-ratha': act10c, 'bbi02-dive': act02b, 'bbi06-buni': act06b, 'bbi07-sahi': act07c, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b, 'bbi08-thali': act08b, 'bbi07-stambha': act07d, 'bbi07-raati': act07e, 'bbi06-tani': act06c, 'bbi09-chakra': act09c, 'bbi10-khela': act10d, 'bbi10-nacha': act10e };
 const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy, 'bbi-pose-gate': gatePolicy, 'bbi-leaf-plate': platePolicy, 'bbi-horse-gap': horseGap, 'bbi-ribbon-snip': ribbonPolicy };
 void and;
 

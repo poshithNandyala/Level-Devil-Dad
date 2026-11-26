@@ -14,7 +14,7 @@ import { FL, channel, cyc, since, taraScript } from './common';
 import { keeperOn } from './s02';
 import { parasol } from './s03';
 import { loom, type LoomCfg } from './s06';
-import { troupe, type TroupeCfg } from './s07';
+import { troupe, troupeAct, type TroupeCfg } from './s07';
 import { chariot, templeWall, type ChariotCfg } from './s09';
 
 export const C10: ChariotCfg = { c0: 18, len: 10, stopAt: 36, hub: 30, hubY: FL - 58, wait: 0.35, any: true, bare: true };
@@ -124,6 +124,26 @@ export const act3: Act = {
     templeWall(w, c.x + 22, px(11));
   },
 };
+
+/** act 4: the keeper once more, over a wider drain, then the troupe whose only pose is a tower */
+export const act4: Act = {
+  id: 'bbi10-khela',
+  w: 26,
+  advice: 'The keeper again: his back pad, the dive across, the rebound back to him, and off before he gets up.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + 6, c.x + 13);
+  },
+  build: (w, c) => {
+    channel(w, c.x + 6, c.x + 13, 'bbi-turf', 'water');
+    keeperOn(w, { x0: c.X(2.5), travel: px(9), boards: c.X(21), ballFrom: c.X(20) }, 'bbi10k2');
+  },
+};
+export const T10b: TroupeCfg[] = [
+  { c0: 3, n: 5, drum: 1.2, hold: 1.8, poses: ['tower'], form: 0.3 },
+  { c0: 12, n: 8, drum: 1.0, hold: 1.4, poses: ['wheel', 'bridge'], form: 0.3, phase: 0.4 },
+];
+export const act5 = troupeAct('bbi10-nacha', 23, T10b, 'bbi10n', 'Two last troupes: the first only makes a tower (on to its top and off), the second a wheel and then the bridge.', [10.5]);
 
 /** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */
 export const RIB = { period: 2.2, shut: 0.5, at: 9 };

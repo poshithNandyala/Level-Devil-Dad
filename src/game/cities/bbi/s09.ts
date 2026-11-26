@@ -281,6 +281,22 @@ export const act2: Act = {
   },
 };
 
+/** act 3: the longest chariot, the hub right at the far end: wait on the horses longer before you jump */
+export const act3: Act = {
+  id: 'bbi09-chakra',
+  w: 30,
+  advice: 'The longest chariot, its hub near the far wall: ride the horses most of the way, jump up to the hub only as it comes over.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 23).fill(c.x + 24, c.x + 27, 11, 14, '#');
+  },
+  build: (w, c) => {
+    channel(w, c.x + 3, c.x + 23, 'bbi-khai', 'water');
+    chariot(w, { c0: c.x + 3, len: 9, stopAt: c.x + 24, hub: c.x + 20, hubY: FL - 58, wait: 0.4 }, 'bbi9c');
+    templeWall(w, c.x + 24, px(11));
+  },
+};
+
 /** ending: the door between two stone horses on little plinths; step on a horse and the plinths slide together */
 export const ending: Ending = {
   space: 16,

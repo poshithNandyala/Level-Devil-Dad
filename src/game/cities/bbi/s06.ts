@@ -210,6 +210,24 @@ export const act2: Act = {
   },
 };
 
+/** act 3: the widest loom, and its shuttle makes three passes on the motif beat */
+export const L06C: LoomCfg = { c0: 3, n: 10, speeds: [1, 4, 2, 3, 4, 1, 3, 2, 4, 1], beat: 0.8, hold: 3.4, shuttle: [[0, 1], [0.5, -1], [1.0, 1]] };
+export const act3: Act = {
+  id: 'bbi06-tani',
+  w: 18,
+  advice: 'The widest loom: on its motif beat the shuttle goes across, back and across again. Count three passes, then cross.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + L06C.c0, c.x + L06C.c0 + L06C.n - 1);
+  },
+  build: (w, c) => {
+    const st = { t0: -1 };
+    onPass(w, c.X(0.5), (w2) => (st.t0 = w2.tick));
+    channel(w, c.x + L06C.c0, c.x + L06C.c0 + L06C.n - 1, 'bbi-ranga', 'water');
+    loom(w, { ...L06C, c0: c.x + L06C.c0 }, () => st.t0, 'bbi6f');
+  },
+};
+
 /** ending: a curtain of warp threads in front of the door; only on the motif beat do they part into its shape */
 export const L06E: LoomCfg = { c0: 0, n: 3, speeds: [1, 2, 3], beat: 0.8, hold: 1.6, shuttle: [] };
 export const ending: Ending = {
