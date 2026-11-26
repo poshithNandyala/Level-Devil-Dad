@@ -190,6 +190,63 @@ const tollPolicy: Policy = (w) => {
   return go('R');
 };
 
+// ------------------------------------------------------------------ PAT-07
+type T7 = { cx: number; base: number; P: number; rig: { x: number; y: number }; stopAt: number; beats: { stops: { t?: number }[] } };
+/** board the tempo, keep it level (stand opposite the heavier side), step off at the stand, cross the lane when the third is out */
+function rideBalanced(withTruck: boolean, wide: boolean): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const st = w.flags.pat7 as T7;
+    const p = w.player;
+    const riding = p.onGround && p.y + p.h <= 224 + 1 && p.cx > st.rig.x - 2 && p.cx < st.rig.x + 114;
+    if (!riding && p.cx < st.rig.x - 4 && st.rig.x < px(20)) {
+      if (p.onGround && p.cx > st.rig.x - 16) {
+        jt = 12;
+        return { move: 'R', jump: true };
+      }
+      return go('R');
+    }
+    const g = w.flags.pat7g as { lane0: number; P: number } | undefined;
+    if (riding && st.cx >= st.stopAt - 1) return go('R');
+    if (riding) {
+      const base = withTruck ? st.base : st.P;
+      const off = base > 0 ? -34 : base < 0 ? 34 : 0;
+      return go(toward(w, st.cx + off, 4));
+    }
+    if (g && p.onGround) {
+      const t = ((w.tick / 120) % g.P + g.P) % g.P;
+      if (p.cx < g.lane0 - 34) return go('R');
+      if (p.cx < g.lane0 - 20 && !(t < 1.4)) return go('');
+      return go('R');
+    }
+    void wide;
+    return go('R');
+  };
+}
+const room07 = (): Step[] => [{ policy: rideBalanced(true, false), until: X(31.5), max: 2400, note: 'on to the tempo, to the road side while the rider sits on the kerb side' }];
+const act07a = (x: number): Step[] => [{ policy: rideBalanced(true, false), until: X(x + 69), max: 4000, note: 'balance for the truck, the humps, the halt and the arch' }];
+const act07b = (x: number): Step[] => [{ policy: rideBalanced(true, false), until: X(x + 75.2), max: 4500, note: 'the kerb-side truck, the rider, the stand and the lane' }];
+/** the hauled basket: step in when it is down, off at the top at once */
+const basketPolicy: Policy = (w, _m, d) => {
+  const b = w.flags.pat7b as { x: number; y: number; s: { k: number } };
+  const p = w.player;
+  const t = (w.tick / 120) % 9;
+  void d;
+  if (b.s.k >= 0.97 && p.y + p.h <= 161) return go('R');
+  if (p.cx > b.x + 4 && p.cx < b.x + 38 && p.y + p.h > 200) return go('');
+  if (p.cx < b.x - 10) return go('R');
+  return go(t < 1.8 ? 'R' : '');
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['PAT-01'] = tourRoute();
   S['PAT-02'] = room02();
@@ -200,10 +257,13 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('PAT-05', 0, []);
   S['PAT-06'] = room06();
   lengthen('PAT-06', 0, []);
+  S['PAT-07'] = room07();
+  lengthen('PAT-07', 0, []);
 }
 
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-07': { steps: [{ hold: 'R', until: X(8.6), max: 400 }, { hold: 'R', jump: 12, ticks: 12, note: 'on to the tempo' }, { hold: 'R', until: (w) => w.player.onGround && w.player.cx >= w.flags.pat7.cx - 4, max: 300, note: 'stand in the middle' }, { hold: '', until: done, max: 2400 }], cause: 'pat-torana' },
   'PAT-06': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-jod' },
   'PAT-05': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-ganga' },
   'PAT-04': { steps: [{ hold: 'R', until: X(2), max: 300 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 20, ticks: 26 }))], cause: 'pat-bojh' },
@@ -211,6 +271,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'PAT-01': { steps: [...upTo(21), { hold: 'R', until: done, max: 2400 }], cause: 'pat-bheed' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-07': { steps: [{ policy: rideBalanced(false, false), until: done, max: 4500, note: 'stand on the road side whatever happens' }], cause: 'pat-dhakka' },
   'PAT-06': { steps: [{ hold: 'R', until: X(4.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12, note: 'jump every seam, to be safe' }, { hold: 'R', until: done, max: 600 }], cause: 'pat-taala' },
   'PAT-05': { steps: [{ hold: 'R', until: X(7.2), max: 600 }, { hold: '', until: (w) => w.flags.pat5.carts[0].s.cx > 236 && w.flags.pat5.carts[0].s.dir > 0, max: 900, note: 'let the cart go by down the deck' }, { hold: 'R', until: X(9.5), max: 300, note: 'step on to the high section behind it' }, { hold: '', until: done, max: 1800, note: 'and wait there' }], cause: 'pat-pipa' },
   'PAT-04': { steps: [{ hold: '', until: (w) => w.flags.pat4.t0 >= 0 && t4(w) >= 3.7, max: 800 }, ...climb4().slice(1)], cause: 'pat-bojh' },
@@ -225,12 +286,15 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'pat04-anaaj': act04,
   'pat05-ghat': act05,
   'pat06-sau': act06,
+  'pat07-sadak': act07a,
+  'pat07-adda': act07b,
 };
 const endingPolicies: Record<string, Policy> = {
   'pat-musal': pestlePolicy,
   'pat-bhitar': leafPolicy,
   'pat-nawka': floatPolicy,
   'pat-toll': tollPolicy,
+  'pat-hauled-basket': basketPolicy,
 };
 
 export const test: CityTests = {
@@ -240,5 +304,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['PAT-02', 'PAT-04', 'PAT-05', 'PAT-06'],
+  fair: ['PAT-02', 'PAT-04', 'PAT-05', 'PAT-06', 'PAT-07'],
 };

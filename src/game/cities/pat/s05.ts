@@ -217,5 +217,5 @@ export const ending: Ending = {
   },
 };
 
-export const meta05 = { family: 'float-sinks-under-load', betrayals: ['load-sinks'], ending: 'last-float-drifts-with-door' };
+export const meta05 = { family: 'float-sinks-under-load', betrayals: ['load-sinks'], ending: 'pat-nawka' };
 void perTick;

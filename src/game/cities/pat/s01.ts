@@ -204,4 +204,4 @@ export const tourLevel = (): LevelDef =>
     },
   });
 
-export const meta01 = { family: 'crowd-carried-by-vehicle', betrayals: ['sidestep-surge'], ending: 'tour-door' };
+export const meta01 = { family: 'crowd-carried-by-vehicle', betrayals: ['sidestep-surge'], ending: 'pat-tour-bus-stop' };

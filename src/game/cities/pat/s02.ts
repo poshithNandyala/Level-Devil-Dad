@@ -202,4 +202,4 @@ export const ending: Ending = {
   },
 };
 
-export const meta02 = { family: 'ember-floor-poker-targets-food', betrayals: ['poker-targets-food'], ending: 'pestle-pounded-mortar-pair' };
+export const meta02 = { family: 'ember-floor-poker-targets-food', betrayals: ['poker-targets-food'], ending: 'pat-musal' };

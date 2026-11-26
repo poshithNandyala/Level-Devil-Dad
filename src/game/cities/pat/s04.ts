@@ -187,4 +187,4 @@ export const ending: Ending = {
   },
 };
 
-export const meta04 = { family: 'one-way-stairs-rising-grain', betrayals: ['one-way-porters'], ending: 'door-leaf-swings-into-you' };
+export const meta04 = { family: 'one-way-stairs-rising-grain', betrayals: ['one-way-porters'], ending: 'pat-bhitar' };

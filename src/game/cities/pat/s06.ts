@@ -1,6 +1,6 @@
 // PAT-06 Setu ka Jod: the Gandhi Setu's expansion joints. Each seam between two spans is covered by a numbered
 // steel plate, and one plate is missing: count them. Plates only hold a walker: land on one from a jump and it
-// drops. Act: a longer run of spans with two plates gone. Door: the toll booth that no longer charges.
+// flips up under you. Act: a longer run of spans with two plates gone. Door: the toll booth that no longer charges.
 import type { LevelDef, World } from '../../world';
 import type { Act } from '../../levels/acts';
 import type { Ending } from '../../levels/endkit';
@@ -36,30 +36,32 @@ function plate(w: World, c: number, n: number, key: string) {
     new Rig(px(c), FL, 32, 8, {
       solid: true,
       layer: 2,
+      cause: 'pat-taala',
+      inset: -2,
+      live: (s, w2) => s.s.drop !== undefined && w2.tick - s.s.drop < 40,
       tick: (s, w2) => {
         const p = w2.player;
         const on = w2.standing(s.solid!);
-        if (on && !s.s.was && s.s.air) s.s.drop = w2.tick;
-        s.s.was = on;
-        s.s.air = !p.onGround;
-        if (s.s.drop !== undefined && !s.s.gone && w2.tick - s.s.drop >= 3) {
-          s.s.gone = true;
-          s.solid!.collidable = false;
+        // landing on a plate from a jump springs it: it flips up under you
+        if (on && !s.s.was && s.s.air) {
+          s.s.drop = w2.tick;
           w2.sfx('snap', s.x + 16, FL);
         }
-        if (s.s.gone) s.moveTo(w2, s.x, s.y + 3);
-        else if (!on) s.s.air = !p.onGround;
+        s.s.was = on;
+        s.s.air = !p.onGround;
       },
-      paint: (ctx, s) => {
-        box(ctx, s.x, s.y, s.w, 8, '#8A8F96');
-        box(ctx, s.x, s.y, s.w, 2, '#B8BDC4');
-        box(ctx, s.x + 2, s.y + 3, 3, 3, '#555');
-        box(ctx, s.x + s.w - 5, s.y + 3, 3, 3, '#555');
+      paint: (ctx, s, w2) => {
+        const up = s.s.drop !== undefined && w2.tick - s.s.drop < 40;
+        const y = s.y - (up ? 5 : 0);
+        box(ctx, s.x, y, s.w, 8, up ? '#D7262E' : '#8A8F96');
+        box(ctx, s.x, y, s.w, 2, '#B8BDC4');
+        box(ctx, s.x + 2, y + 3, 3, 3, '#555');
+        box(ctx, s.x + s.w - 5, y + 3, 3, 3, '#555');
         // its number, scratched in
         ctx.fillStyle = '#2A2A2E';
         ctx.font = '700 8px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(String(n), s.x + 16, s.y + 7);
+        ctx.fillText(String(n), s.x + 16, y + 7);
       },
     }),
   );
@@ -97,7 +99,7 @@ export function room(): LevelDef {
     name: 'Setu ka Jod',
     nameEn: 'The Setu’s joint',
     tagline: 'Forty-five spans, forty-four joints, and a plate over each. Count them.',
-    hint: 'Each seam between two spans has a numbered steel plate over it, and one of them is missing: the seam with a black gap is a pit. Walk over the plates: a plate drops if you land on it from a jump. Jump only the one seam that has no plate, from the deck, and land on the deck.',
+    hint: 'Each seam between two spans has a numbered steel plate over it, and one of them is missing: the seam with a black gap is a pit. Walk over the plates: a plate flips up if you land on it from a jump. Jump only the one seam that has no plate, from the deck, and land on the deck.',
     par: 22,
     map: (() => {
       const g = Grid.ground(15).put(1, 14, '@').put(30, 14, 'E');
@@ -191,4 +193,4 @@ export const ending: Ending = {
   },
 };
 
-export const meta06 = { family: 'expansion-plate-count-missing', betrayals: ['missing-plate-count'], ending: 'toll-strip-slams-boom' };
+export const meta06 = { family: 'setu-joint-missing-plate', betrayals: ['missing-plate'], ending: 'pat-toll' };
