@@ -474,8 +474,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     steerHop(px(x + 3), 12, 'on to the bamboo: two panels go up'),
     steerHop(px(x + 7), 34, 'a full jump on to the first', true),
     { hold: 'R', until: (w) => w.player.onGround && w.player.cx > px(x + 10.2), max: 120, note: 'across both tops' },
-    steerHop(px(x + 14), 10, 'and off the far end at once, down to the bamboo'),
-    { hold: 'R', until: X(x + 14.2), max: 60 },
+    steerHop(px(x + 13.5), 10, 'and off the far end at once, down to the bamboo'),
+    { hold: 'R', until: X(x + 15.2), max: 90 },
     steerHop(px(x + 19), 12, 'on to the deck'),
     walk(x + 25.4),
   ],
@@ -619,29 +619,26 @@ const endingPolicies: Record<string, Policy> = {
   'ccu-dwar-kapor'(w, m, d) {
     const k = w.flags.kapor as { D: number };
     const p = w.player;
-    if (m.hold > 0) return { move: 'R', jump: true };
+    const feet = p.y + p.h;
+    if (m.hold > 0) return { move: toward(w, m.tgt, 2) || 'R', jump: true };
+    if (!p.onGround) return go(toward(w, m.tgt ?? d.x + 8, 2));
     if (w.flags.twist === 'tied') return go('');
-    const onBamboo = p.onGround && p.y + p.h === px(12) && p.cx < px(k.D - 2);
-    const onStep = p.onGround && p.y + p.h === px(13);
-    if (onBamboo && p.cx > px(k.D - 3) + 4) {
-      m.hold = 12;
+    if (feet === px(12) && p.cx > px(k.D - 1)) return go(toward(w, d.x + 8, 1) || 'R');
+    const jumpTo = (tgt: number, hold: number): Out => {
+      m.tgt = tgt;
+      m.hold = hold;
       return { move: 'R', jump: true };
-    }
-    if (onStep && p.cx > px(k.D - 7) + 6) {
-      m.hold = 10;
-      return { move: 'R', jump: true };
-    }
-    if (p.onGround && p.y + p.h === 240 && p.cx > px(k.D - 8) + 2) {
-      m.hold = 12;
-      return { move: 'R', jump: true };
-    }
+    };
+    if (feet === px(12)) return p.cx > px(k.D - 3) + 6 ? jumpTo(d.x + 9, 12) : go('R');
+    if (feet === px(13)) return p.cx > px(k.D - 7) + 8 ? jumpTo(px(k.D - 4) + 14, 10) : go('R');
+    if (p.cx > px(k.D - 8) - 2) return jumpTo(px(k.D - 7) + 8, 12);
     return go('R');
   },
   'ccu-stup'(w, m, d) {
     const k = w.flags.stup as { st: Stack; D: number };
     const p = w.player;
     if (m.hold > 0) return { move: 'R', jump: true };
-    const stand = px(k.D - 1) - 7;
+    const stand = px(k.D - 1) - 2;
     if (w.flags.twist === 'low' && k.st.n === 2 && p.onGround && Math.abs(p.cx - stand) < 4 && k.st.left(w) > 0.5) {
       m.hold = 10;
       return { move: 'R', jump: true };

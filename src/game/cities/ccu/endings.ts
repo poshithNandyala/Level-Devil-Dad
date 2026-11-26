@@ -300,7 +300,7 @@ export const endings: Record<CcuEndingKind, Ending> = {
    *  into the doorway. */
   'ccu-dwar-kapor': {
     space: 12,
-    advice: 'The decorator by the door has the gate’s last panel ready: land on the ledge in front of the door and he ties it over the door, because that’s your next foothold. Jump from the bamboo straight into the doorway instead (he unties it again if you’re slow).',
+    advice: 'The decorator by the door has the gate’s last panel ready: land on the ledge in front of the door and he ties it over the door, because that’s your next foothold. Jump from the bamboo straight into the doorway instead (if he catches you, wait: he takes it down again to measure).',
     paint: (g, D) => {
       g.fill(D - 1, D + 2, 12, 14, '#');
       g.put(D, 14, '#');
@@ -318,17 +318,20 @@ export const endings: Record<CcuEndingKind, Ending> = {
       let tiedAt = -1;
       w.add(
         new (class extends Entity {
+          was = false;
           update(w2: World) {
             const p = w2.player;
             const onLedge = p.onGround && p.y + p.h === px(12) && p.cx > px(D - 1) && p.cx < px(D);
-            if (!cloth.tied && onLedge) {
+            const landed = onLedge && !this.was;
+            this.was = onLedge;
+            if (!cloth.tied && landed) {
               cloth.tie(w2);
               tiedAt = w2.tick;
               d.hidden = true;
               w2.flags.twist = 'tied';
             }
-            // he takes it down again to re-measure, once you've stepped back off the ledge
-            if (cloth.tied && w2.tick - tiedAt > 300 && !onLedge) {
+            // he takes it down again to re-measure after a while
+            if (cloth.tied && w2.tick - tiedAt > 300) {
               cloth.tied = false;
               cloth.h = 0;
               cloth.target = 0;
@@ -358,7 +361,7 @@ export const endings: Record<CcuEndingKind, Ending> = {
     build(w, d) {
       const D = Math.round(d.x / 16);
       w.add(new Muck(px(D - 1), px(D + 3), (w2) => (w2.flags.yanked ? 'ccu-boi' : 'ccu-kada')));
-      const st = w.add(new Stack(px(D) - 4, px(1) + 8, 5, FLOOR_Y + 16, 2.0));
+      const st = w.add(new Stack(px(D) - 12, px(1) + 8, 5, FLOOR_Y + 16, 2.0));
       const c = w.add(new Customer(px(D - 4), '#A0522D', FLOOR_Y - 58));
       w.flags.stup = { st, D };
       w.flags.twist = 'high';

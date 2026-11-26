@@ -801,7 +801,7 @@ const lane: Act = {
         [x + 11, 3, 0.4, 0.1, 'woman'],
         [x + 13, 2, 0, 0, 'man'],
         [x + 15, 1, 0, 0, 'horse'],
-        [x + 18, 2, 0.6, 0.15, 'man'],
+        [x + 18, 2, 0.5, 0.08, 'man'],
         [x + 21, 3, 0.1, 0.08, 'woman'],
         [x + 23, 2, 0, 0, 'horse'],
         [x + 26, 2, 0.3, 0.1, 'man'],
@@ -820,7 +820,7 @@ const toran: Act = {
   advice: 'At the gate arch two panels go up at once, across both the next bamboos: a full jump on to the first, run across both tops, and off the far end at once, because the second is under the arch’s frame and they tie another on above it.',
   paint: (g, c) => {
     const x = c.x;
-    g.fill(x + 2, x + 3, 12, 12, '=').fill(x + 6, x + 7, 12, 12, '=').fill(x + 8, x + 9, 12, 12, '=').fill(x + 13, x + 14, 12, 12, '=').fill(x + 8, x + 11, 7, 7, '#').fill(x + 18, x + 25, 12, 14, '#');
+    g.fill(x + 2, x + 3, 12, 12, '=').fill(x + 6, x + 7, 12, 12, '=').fill(x + 8, x + 9, 12, 12, '=').fill(x + 12, x + 15, 12, 12, '=').fill(x + 8, x + 11, 7, 7, '#').fill(x + 18, x + 25, 12, 14, '#');
   },
   build: (w, c) => {
     const x = c.x;
@@ -831,7 +831,7 @@ const toran: Act = {
     w.add(new Decorator(c.X(10) + 6, px(12), p2));
     tieWhenOn(w, p1, x + 2, x + 4);
     tieWhenOn(w, p2, x + 2, x + 4);
-    stackWhenOn(w, p2, 2, 0.3);
+    stackWhenOn(w, p2, 2, 0.5);
     w.flags.toran = p2;
   },
 };
