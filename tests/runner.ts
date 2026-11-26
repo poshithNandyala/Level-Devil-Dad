@@ -101,7 +101,12 @@ export const float = (w: World, i = 0) => w.entities.filter((e) => e instanceof 
 
 import { Roller, Thing } from '../src/game/entities/traps';
 import { scheduleOn, scheduleLeft, Gust, Arc } from '../src/game/entities/traps';
-export const thingOf = (w: World, kind: string, i = 0) => w.entities.filter((e) => e instanceof Thing && (e as Thing).kind === kind)[i] as Thing;
+/**
+ * A city-owned key as the shared tests name it, before or after its city's pass prefixed it: 'net' matches
+ * 'net' and 'tvm-net'. Lets the shared route tables (and the frozen copies of old routes) keep the bare names.
+ */
+export const sameKind = (actual: string | undefined, bare: string) => actual === bare || (!!actual && /^[a-z]{3}-/.test(actual) && actual.slice(4) === bare);
+export const thingOf = (w: World, kind: string, i = 0) => w.entities.filter((e) => e instanceof Thing && sameKind((e as Thing).kind, kind))[i] as Thing;
 /** a rolling hazard ahead of the player (to the right) within `gap` px */
 export const rollerNear = (gap: number) => (w: World) => w.entities.some((e) => e instanceof Roller && (e as Roller).alive && (e as Roller).x > w.player.x - 2 && (e as Roller).x - w.player.x < gap);
 export const gustOn = (w: World) => w.entities.some((e) => e instanceof Gust && (e as Gust).schedule && scheduleOn(w, (e as Gust).schedule!));
