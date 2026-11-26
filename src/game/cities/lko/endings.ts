@@ -5,9 +5,11 @@ import { lock, tara as taraNow } from '../../levels/endkit';
 import { bakhiya } from './s03';
 import { kulhad } from './s04';
 import { sheermal } from './s05';
+import { sam } from './s06';
+import { darban } from './s07';
 import { Art, FLOOR, Zone, gent, px } from './kit';
 
-export type LkoEndingKind = 'lko-kiwad' | 'lko-bakhiya' | 'lko-kulhad' | 'lko-sheermal';
+export type LkoEndingKind = 'lko-kiwad' | 'lko-bakhiya' | 'lko-kulhad' | 'lko-sheermal' | 'lko-sam' | 'lko-darban';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<LkoEndingKind, true> {}
@@ -88,4 +90,4 @@ const kiwad: Ending = {
   },
 };
 
-export const endings: Record<LkoEndingKind, Ending> = { 'lko-kiwad': kiwad, 'lko-bakhiya': bakhiya, 'lko-kulhad': kulhad, 'lko-sheermal': sheermal };
+export const endings: Record<LkoEndingKind, Ending> = { 'lko-kiwad': kiwad, 'lko-bakhiya': bakhiya, 'lko-kulhad': kulhad, 'lko-sheermal': sheermal, 'lko-sam': sam, 'lko-darban': darban };

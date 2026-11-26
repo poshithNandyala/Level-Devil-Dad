@@ -1,0 +1,301 @@
+// LKO-06 Kathak (the spin and the bells). Lucknow's Kathak is all grace, footwork and chakkar spins, with
+// ghungroo on the ankles. On this stage the floor itself has bells in it: make one ring, and the dancer spins
+// across the stage to the sound.
+import type { LevelDef, StageMeta, World } from '../../world';
+import type { Ending } from '../../levels/endkit';
+import { lock, tara as taraNow } from '../../levels/endkit';
+import { collectible, door, rival, sign } from '../../levels/kit';
+import { onPass } from '../../levels/trolls';
+import { Grid } from '../../levels/grid';
+import type { Act } from '../../levels/acts';
+import { Art, FLOOR, Zone, px, TAU, type Ctx } from './kit';
+import { tara } from './s02';
+
+/** the dancer: poses at `home`; drawn to a sound, she spins along the floor to it, turns there, spins home */
+export class Dancer {
+  x: number;
+  s: 'pose' | 'out' | 'turn' | 'back' = 'pose';
+  target = 0;
+  t = 0;
+  z: Zone;
+  spins = 0;
+  constructor(
+    w: World,
+    readonly home: number,
+    readonly speed = 210,
+    cause = 'lko-chakkar',
+  ) {
+    this.x = home;
+    this.z = w.add(new Zone(home - 9, FLOOR - 28, 18, 28, cause));
+    this.z.on = false;
+    w.add(new Art((ctx, w2) => drawDancer(ctx, this, w2), 3));
+    w.onTick((w2) => this.tick(w2));
+  }
+  call(w: World, x: number, cause?: string) {
+    if (this.s !== 'pose' && this.s !== 'back') return;
+    this.target = x;
+    this.s = 'out';
+    this.t = w.tick;
+    if (cause) this.z.hazard.cause = cause;
+    w.sfx('bells', x, FLOOR - 4);
+    w.flags.chakkar = (w.flags.chakkar ?? 0) + 1;
+  }
+  tick(w: World) {
+    const step = this.speed / 120;
+    if (this.s === 'out') {
+      const d = this.target - this.x;
+      this.x += Math.sign(d) * Math.min(Math.abs(d), step);
+      if (Math.abs(d) < 1) {
+        this.s = 'turn';
+        this.t = w.tick;
+      }
+    } else if (this.s === 'turn') {
+      if (w.tick - this.t > 60) this.s = 'back';
+    } else if (this.s === 'back') {
+      const d = this.home - this.x;
+      this.x += Math.sign(d) * Math.min(Math.abs(d), 1);
+      if (Math.abs(d) < 1) this.s = 'pose';
+    }
+    this.z.on = this.s === 'out' || this.s === 'turn';
+    this.z.x = this.x - 9;
+  }
+}
+function drawDancer(ctx: Ctx, d: Dancer, w: World) {
+  const x = d.x,
+    f = FLOOR;
+  const spin = d.s === 'out' || d.s === 'turn';
+  const t = w.tick * 0.35;
+  // the angarkha flares into a bell when she spins
+  const flare = spin ? 11 : 5;
+  ctx.fillStyle = '#C2485B';
+  ctx.beginPath();
+  ctx.moveTo(x - 3, f - 18);
+  ctx.lineTo(x + 3, f - 18);
+  ctx.lineTo(x + flare, f - 3);
+  ctx.lineTo(x - flare, f - 3);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#E8C547';
+  ctx.fillRect(x - flare, f - 4, flare * 2, 1.5);
+  if (spin) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+    ctx.lineWidth = 1;
+    for (let k = 0; k < 3; k++) {
+      ctx.beginPath();
+      ctx.ellipse(x, f - 10, flare + 2, 3, 0, t + k * 2, t + k * 2 + 1.2);
+      ctx.stroke();
+    }
+  }
+  ctx.fillStyle = '#F2EEE4';
+  ctx.fillRect(x - 2, f - 3, 4, 3);
+  ctx.fillStyle = '#7A4E6E';
+  ctx.fillRect(x - 3, f - 24, 6, 7);
+  ctx.fillStyle = '#B07A52';
+  ctx.beginPath();
+  ctx.arc(x, f - 27, 3, 0, TAU);
+  ctx.fill();
+  ctx.fillStyle = '#1D1A1A';
+  ctx.beginPath();
+  ctx.arc(x + 1, f - 28, 3, Math.PI, TAU);
+  ctx.fill();
+  // arms: up in the pose, out in the spin
+  ctx.strokeStyle = '#B07A52';
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  if (spin) {
+    ctx.moveTo(x - 9 * Math.cos(t), f - 22);
+    ctx.lineTo(x + 9 * Math.cos(t), f - 22);
+  } else {
+    ctx.moveTo(x - 3, f - 22);
+    ctx.lineTo(x - 6, f - 31);
+    ctx.moveTo(x + 3, f - 22);
+    ctx.lineTo(x + 7, f - 26);
+  }
+  ctx.stroke();
+}
+
+/** ghungroo strips set in the stage floor, columns [c0, c1]: step on one and it rings */
+export function strips(w: World, spans: [number, number][], onRing: (w: World, x: number) => void, look: 'ring' | 'tap' = 'ring') {
+  w.add(
+    new Art((ctx, w2) => {
+      for (const [c0, c1] of spans) {
+        const x0 = px(c0),
+          x1 = px(c1 + 1);
+        ctx.fillStyle = look === 'tap' ? '#8D6E63' : '#7B1F1F';
+        ctx.fillRect(x0, FLOOR - 1, x1 - x0, 5);
+        ctx.fillStyle = '#E8C547';
+        for (let x = x0 + 3; x < x1 - 1; x += 4) {
+          ctx.beginPath();
+          ctx.arc(x, FLOOR + 1.5, 1.4, 0, TAU);
+          ctx.fill();
+        }
+        if (look === 'tap' && (w2.tick >> 4) % 2) {
+          ctx.strokeStyle = 'rgba(232,197,71,0.7)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc((x0 + x1) / 2, FLOOR, 10, Math.PI * 1.1, Math.PI * 1.9);
+          ctx.stroke();
+        }
+      }
+    }, -1),
+  );
+  const prev = spans.map(() => false);
+  w.onTick((w2) => {
+    const p = w2.player;
+    spans.forEach(([c0, c1], i) => {
+      const onIt = p.onGround && p.y + p.h >= FLOOR - 1 && p.x + p.w > px(c0) + 2 && p.x < px(c1 + 1) - 2;
+      if (onIt && !prev[i]) onRing(w2, px(c0) + (px(c1 + 1) - px(c0)) / 2);
+      prev[i] = onIt;
+    });
+  });
+}
+
+/** the stage: polished boards with a carved border, a little dais at the back */
+function boards(w: World, c0: number, c1: number) {
+  w.add(
+    new Art((ctx) => {
+      const x0 = px(c0),
+        x1 = px(c1 + 1);
+      ctx.fillStyle = '#8D5A3B';
+      ctx.fillRect(x0, FLOOR - 2, x1 - x0, 2);
+      ctx.fillStyle = 'rgba(255,230,190,0.15)';
+      for (let x = x0; x < x1; x += 16) ctx.fillRect(x, FLOOR - 2, 1, 2);
+    }, -2),
+  );
+}
+
+// ================================================================ the room
+function kathakRoom(): LevelDef {
+  return {
+    id: 'LKO-06',
+    city: 'LKO',
+    index: 6,
+    name: 'Kathak',
+    nameEn: 'The spin and the bells',
+    tagline: 'An evening of Lucknow Kathak: footwork, chakkar after chakkar, and ghungroo. This stage has ghungroo of its own, set in the floor.',
+    hint: 'The red strips have bells in them: step on one and it rings, and the dancer spins across the floor to the sound, through anything in the way. Hop over the red strips on to the plain boards. Near her, she is tapping the board in front of her: that one rings too. Go over it, along the takht.',
+    par: 18,
+    map: Grid.ground(15).fill(19, 24, 13, 13, '=').put(1, 14, '@').put(30, 14, 'E').rows(),
+    build(w: World) {
+      door(w);
+      boards(w, 0, 31);
+      const d = new Dancer(w, px(27) + 8);
+      w.flags.dancer = d;
+      strips(w, [[7, 7], [12, 12], [17, 17], [22, 23]], (w2, x) => d.call(w2, x, 'lko-chakkar'));
+      strips(w, [[20, 21]], (w2, x) => d.call(w2, x, 'lko-tatkar'), 'tap');
+      w.add(
+        new Art((ctx) => {
+          // the takht: a low wooden platform with a white chandni sheet, for the musicians
+          ctx.fillStyle = '#F5F1E8';
+          ctx.fillRect(px(19), px(13), px(6), 4);
+          ctx.fillStyle = '#6D4C33';
+          ctx.fillRect(px(19), px(13) + 4, px(6), 3);
+          for (const c of [19, 24]) ctx.fillRect(px(c) + 2, px(13) + 7, 3, FLOOR - px(13) - 7);
+        }, 1),
+      );
+      sign(w, 2.2, 10.4, 3.6, 'MAHOTSAV', 'shop', null, 'kathak');
+      rival(w, 3, 15, 1, tara(4));
+      onPass(w, px(4), (w2) => w2.guide('Wah! | Wow!', (w3) => !w3.flags.chakkar));
+      collectible(w, 'lko-ghungroo', 21.5, 10.6);
+    },
+  };
+}
+
+// ================================================================ the act: where she isn't tapping
+/** She dances tatkar along the stage, to and fro: the boards right in front of her feet ring with her. Hop
+ *  over the ringing patch as it comes at you, never on to it; ring a red strip and she spins at you. */
+const tatkar: Act = {
+  id: 'lko06-tatkar',
+  w: 34,
+  advice: 'Now she dances tatkar to and fro along the stage, and the boards just in front of her feet ring with her steps. Go where she isn’t tapping: wait for her patch to come towards you, hop clean over it, and keep off the red strips.',
+  cps: [26.5],
+  build: (w, c) => {
+    const x = c.x;
+    boards(w, x, x + 33);
+    const d = new Dancer(w, c.X(31) + 8, 230, 'lko-tatkar');
+    w.flags[c.f('dancer')] = d;
+    const T = { x: c.X(20), v: -0.45, lo: c.X(5), hi: c.X(22) };
+    w.flags[c.f('tap')] = T;
+    strips(w, [[x + 24, x + 24], [x + 28, x + 28]], (w2, xx) => d.call(w2, xx, 'lko-chakkar'));
+    const patch = w.add(
+      new Zone(T.x - 12, FLOOR - 3, 24, 3, 'lko-tatkar', (ctx, z, w2) => {
+        ctx.fillStyle = '#8D6E63';
+        ctx.fillRect(z.x, FLOOR - 1, z.w, 4);
+        ctx.strokeStyle = 'rgba(232,197,71,0.8)';
+        ctx.lineWidth = 1;
+        for (let k = 0; k < 3; k++) {
+          const r = 6 + (((w2.tick >> 1) + k * 10) % 30);
+          ctx.beginPath();
+          ctx.arc(z.x + z.w / 2, FLOOR, r * 0.7, Math.PI * 1.1, Math.PI * 1.9);
+          ctx.stroke();
+        }
+        // her little feet doing the tatkar at the back of the patch
+        ctx.fillStyle = '#C2485B';
+        ctx.fillRect(z.x + z.w / 2 - 3, FLOOR - 10, 6, 8);
+        ctx.fillStyle = '#E8C547';
+        ctx.fillRect(z.x + z.w / 2 - 4, FLOOR - 3, 8, 1.5);
+      }, 1),
+    );
+    w.onTick(() => {
+      T.x += T.v;
+      if (T.x < T.lo || T.x > T.hi) T.v = -T.v;
+      patch.x = T.x - 12;
+    });
+    sign(w, x + 0.4, 10.4, 3.4, 'TATKAR', 'shop', null, 'ta thei');
+  },
+};
+
+// ================================================================ the door: sam, the last stamp
+/** The door is shut until the dance ends. She comes across in three chakkars along the floor, and on her
+ *  last stamp (sam) the door opens. Keep up on the musicians' takht till she has stamped. */
+export const sam: Ending = {
+  space: 14,
+  advice: 'The door stays shut till the dance ends: she comes spinning along the floor, three chakkars and a stamp, and the door opens on the stamp. Wait up on the musicians’ takht, off the floor, till she has stamped, then go.',
+  paint: (g, D) => {
+    g.fill(D - 9, D - 6, 13, 13, '=');
+  },
+  build(w, d) {
+    const D = Math.round(d.x / 16);
+    const L = lock(w, d, 'Intezaar kis baat ka? | Waiting for what?');
+    const dn = new Dancer(w, px(D - 13) + 8, 150, 'lko-chakkar');
+    w.flags.sam = { dn, n: 0 };
+    w.flags.twist = 'dance';
+    let go = -1,
+      n = 0,
+      stamped = false;
+    w.onTick((w2) => {
+      if (go < 0 && w2.player.cx > px(D - 9)) go = w2.tick + 20;
+      if (go < 0 || stamped || w2.tick < go) return;
+      if (dn.s === 'pose' && n < 3) {
+        n++;
+        dn.call(w2, px(D - 13 + n * 4) + 8);
+      } else if (dn.s === 'turn' && n === 3 && !stamped) {
+        stamped = true;
+        w2.sfx('thud', dn.x, FLOOR);
+        w2.emit('shake', dn.x, FLOOR, { amount: 2 });
+        w2.flags.twist = 'sam';
+        L.unlock();
+      }
+      // she doesn't spin home in between: each chakkar starts where the last one ended
+      if (dn.s === 'back') {
+        (dn as { s: string }).s = 'pose';
+      }
+    });
+    w.add(
+      new Art((ctx) => {
+        ctx.fillStyle = '#F5F1E8';
+        ctx.fillRect(px(D - 9), px(13), px(4), 4);
+        ctx.fillStyle = '#6D4C33';
+        ctx.fillRect(px(D - 9), px(13) + 4, px(4), 3);
+        for (const c of [D - 9, D - 6]) ctx.fillRect(px(c) + 2, px(13) + 7, 3, FLOOR - px(13) - 7);
+      }, 1),
+    );
+    w.when(
+      (w2) => w2.player.cx > px(D - 12),
+      (w2) => taraNow(w2, 'Shukriya, aage chaliye. | Thank you, go ahead.', 2.2),
+    );
+  },
+};
+
+export const s06 = { room: kathakRoom, acts: [tatkar] };
+export const meta06 = { family: 'sound-draws-dancer-spin', betrayals: ['sound-draws'], ending: 'lko-sam' } as StageMeta;
