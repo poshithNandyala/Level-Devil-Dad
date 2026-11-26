@@ -148,6 +148,23 @@ export const act: Act = {
   },
 };
 
+/** the long run: eight spans, plates numbered 1-8, and every third one gone */
+export const act2: Act = {
+  id: 'pat06-nau',
+  w: 58,
+  advice: 'The far end of the bridge is eight spans long, and the plate numbers run from one to eight. Every third plate is gone: the three and the six. Walk the others, and jump the missing ones from the deck.',
+  cps: [14, 36],
+  paint: (g, c) => {
+    for (const x of [6, 12, 18, 24, 30, 36, 42, 48]) g.fill(c.x + x, c.x + x + 1, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const list: [number, number, boolean][] = [6, 12, 18, 24, 30, 36, 42, 48].map((x, i) => [c.x + x, i + 1, (i + 1) % 3 !== 0]);
+    seams(w, list, 'pat6b');
+    for (const [col, , present] of list) under(w, col, col + 1, present ? 'pat-taala' : 'pat-jod');
+    sign(w, c.x + 2, 10.4, 3, 'SPAN 9', 'shop', null, 'joint ahead');
+  },
+};
+
 export const ending: Ending = {
   space: 16,
   advice: 'The old toll booth no longer charges, but its sensor strip still works: step on it and the barrier slams down at the door. Step on it and wait back for the barrier to lift, or jump the strip.',

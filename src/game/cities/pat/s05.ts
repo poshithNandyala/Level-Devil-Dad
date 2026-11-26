@@ -177,6 +177,20 @@ export const act: Act = {
   },
 };
 
+export const act2: Act = {
+  id: 'pat05-sangam',
+  w: 46,
+  advice: 'The last stretch of the pontoon is the longest, and the cart is quicker and goes nearly the whole way along it. Wait on the bank for it to start back towards you, and jump over its section.',
+  cps: [],
+  paint: (g, c) => {
+    g.fill(c.x + 4, c.x + 4 + 29, 15, 17, '.');
+  },
+  build: (w, c) => {
+    pontoon(w, c.x + 4, 12, [{ lo: 1, hi: 9, v: 54, phase: 0.3 }], 'pat5b');
+    sign(w, c.x + 1, 10.4, 3, 'SANGAM', 'shop', null, 'ghat ke paas');
+  },
+};
+
 export const ending: Ending = {
   space: 18,
   advice: 'The last float has been unhooked for the night with the door on it, and it drifts away from the bank and back. Wait on the bank until it comes back in, jump on, and walk to the door while it is aboard.',

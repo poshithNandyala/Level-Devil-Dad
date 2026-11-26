@@ -16,20 +16,21 @@ const FL = 240;
 
 /** n bricks stacked in a pyramid, centred at (cx, base) */
 function bricks(ctx: CanvasRenderingContext2D, cx: number, base: number, n: number) {
-  if (n === 0) {
-    ctx.fillStyle = '#F5E6C0';
-    ctx.font = '800 11px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('0', cx, base - 2);
-    return;
-  }
+  // a pyramid of big bricks with the number beside it, so the count can be read at a glance
+  ctx.font = '800 12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = 'rgba(40,20,10,0.85)';
+  ctx.fillStyle = '#FFF1C9';
+  ctx.strokeText(String(n), cx + 22, base - 2);
+  ctx.fillText(String(n), cx + 22, base - 2);
   let k = 0;
   for (let row = 0; k < n; row++) {
-    const inRow = Math.min(n - k, 4 - row > 0 ? 4 - row : 1);
+    const inRow = Math.min(n - k, Math.max(1, 3 - row));
     for (let i = 0; i < inRow; i++) {
-      const x = cx - (inRow * 7) / 2 + i * 7;
-      box(ctx, x, base - 5 - row * 5, 6, 4, '#B5502F');
-      box(ctx, x, base - 5 - row * 5, 6, 1, '#D97A4E');
+      const x = cx - (inRow * 10) / 2 + i * 10;
+      box(ctx, x, base - 6 - row * 6, 9, 5, '#C0562F');
+      box(ctx, x, base - 6 - row * 6, 9, 1, '#E58A5C');
     }
     k += inRow;
   }

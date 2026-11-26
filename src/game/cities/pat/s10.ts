@@ -93,6 +93,25 @@ export const act1: Act = {
   },
 };
 
+/** the Setu again, with five sacks on the cart: every fifth plate is gone */
+export const actSetu: Act = {
+  id: 'pat10-sau',
+  w: 62,
+  advice: 'Back on the bridge, and the cart at the foot of it carries five sacks: every fifth plate is gone, the five and the ten. Walk the plates, jump the gaps.',
+  cps: [20, 42],
+  paint: (g, c) => {
+    for (let i = 0; i < 10; i++) g.fill(c.x + 6 + i * 5, c.x + 7 + i * 5, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const list: [number, number, boolean][] = [];
+    for (let i = 0; i < 10; i++) list.push([c.x + 6 + i * 5, i + 1, (i + 1) % 5 !== 0]);
+    seams(w, list, 'pat10b');
+    for (const [col, , present] of list) under(w, col, col + 1, present ? 'pat-taala' : 'pat-jod');
+    cart(w, px(c.x + 1), 5);
+    sign(w, c.x + 1.2, 10.4, 3, 'SETU', 'shop', null, 'load: 5 sacks');
+  },
+};
+
 export const act2: Act = {
   id: 'pat10-anaaj',
   w: 20,
