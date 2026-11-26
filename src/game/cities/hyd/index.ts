@@ -9,6 +9,7 @@ import { course } from './course';
 import { music } from './music';
 import { theme } from './theme';
 import { cityLine, grade, tileCaps } from './look';
+import { ambient } from './ambient';
 import { hyderabad } from './backdrop';
 import { things } from './things';
 
@@ -25,6 +26,7 @@ export const HYD: CityModule = {
   theme,
   grade,
   tileCaps,
+  ambient,
   backdrop: hyderabad,
   things,
 };

@@ -9,6 +9,7 @@ import { course } from './course';
 import { music } from './music';
 import { theme } from './theme';
 import { cityLine, grade, tileCaps } from './look';
+import { ambient } from './ambient';
 import { puducherry } from './backdrop';
 import { things } from './things';
 
@@ -25,6 +26,7 @@ export const PDY: CityModule = {
   theme,
   grade,
   tileCaps,
+  ambient,
   backdrop: puducherry,
   things,
 };

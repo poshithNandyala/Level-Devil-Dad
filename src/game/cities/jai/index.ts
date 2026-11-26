@@ -9,6 +9,7 @@ import { course } from './course';
 import { music } from './music';
 import { theme } from './theme';
 import { cityLine, grade, tileCaps } from './look';
+import { ambient } from './ambient';
 import { jaipur } from './backdrop';
 import { things } from './things';
 
@@ -25,6 +26,7 @@ export const JAI: CityModule = {
   theme,
   grade,
   tileCaps,
+  ambient,
   backdrop: jaipur,
   things,
 };

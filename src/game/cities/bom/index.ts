@@ -9,6 +9,7 @@ import { course } from './course';
 import { music } from './music';
 import { theme } from './theme';
 import { cityLine, grade, tileCaps } from './look';
+import { ambient } from './ambient';
 import { mumbai } from './backdrop';
 
 export const BOM: CityModule = {
@@ -24,5 +25,6 @@ export const BOM: CityModule = {
   theme,
   grade,
   tileCaps,
+  ambient,
   backdrop: mumbai,
 };

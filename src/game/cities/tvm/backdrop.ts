@@ -1,6 +1,20 @@
 import type { Theme } from '../../../render/theme';
 import { Ctx, ellipse, hash, withAlpha } from '../../../render/art/common';
-import { glow, palm, ridge, tiledHouse } from '../../../render/backdrops-south';
+import { glow, palm, ridge } from '../../../render/backdrops-south';
+
+function tiledHouse(ctx: Ctx, x: number, base: number, w: number, h: number, wall: string, roof: string) {
+  ctx.fillStyle = wall;
+  ctx.fillRect(x, base - h, w, h);
+  ctx.fillStyle = roof;
+  ctx.beginPath();
+  ctx.moveTo(x - 5, base - h + 2);
+  ctx.lineTo(x + w / 2, base - h - w * 0.42);
+  ctx.lineTo(x + w + 5, base - h + 2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = withAlpha('#000000', 0.18);
+  ctx.fillRect(x + w * 0.4, base - h * 0.7, w * 0.2, h * 0.7);
+}
 
 // --------------------------------------------------------------- Kerala
 export function thiruvananthapuram(ctx: Ctx, th: Theme, x0: number, x1: number) {

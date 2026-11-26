@@ -3,13 +3,15 @@ import type { SceneDef } from '../game/world';
 import { drawScene, sceneSky } from './scenes';
 import { THEMES, Theme } from './theme';
 import { Ctx, circle, ellipse, hash, rr, withAlpha } from './art/common';
-import { ambientSouth } from './backdrops-south';
-import { ambientWest } from './backdrops-west';
 
 /** a city module's skyline, drawn in world units between x0 and x1; `variant` is the stage's index */
 export type Backdrop = (ctx: Ctx, th: Theme, x0: number, x1: number, variant: number) => void;
 /** city modules' backdrops (installed by src/game/cities/install.ts) */
 export const MODULE_BACKDROPS: Partial<Record<CityId, Backdrop>> = {};
+/** a city module's animated layer, drawn every frame over the cached backdrop */
+export type Ambient = (ctx: Ctx, x0: number, x1: number, t: number, reduced: boolean) => void;
+/** city modules' animated layers (installed by src/game/cities/install.ts) */
+export const MODULE_AMBIENT: Partial<Record<CityId, Ambient>> = {};
 
 /**
  * City backdrops, drawn in world units around the room. `x0..x1` is the
@@ -148,151 +150,8 @@ export function charminar(ctx: Ctx, cx: number, base: number, scale: number, col
   ctx.restore();
 }
 
-
-
-
 /** Animated layer drawn every frame on top of the cached backdrop. */
 export function drawAmbient(ctx: Ctx, city: CityId, x0: number, x1: number, t: number, reduced: boolean) {
-  ambientSouth(ctx, city, x0, x1, t, reduced);
-  ambientWest(ctx, city, x0, x1, t, reduced);
-  if (!reduced) ambientVibe(ctx, city, x0, x1, t);
-  if (city === 'BLR') {
-    // metro train on the viaduct
-    const span = x1 - x0 + 200;
-    const mx = x0 - 100 + ((t * 40) % span);
-    ctx.fillStyle = '#8E6CCB';
-    rr(ctx, mx, 156, 64, 9, 2);
-    ctx.fill();
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    for (let i = 0; i < 6; i++) ctx.fillRect(mx + 4 + i * 10, 158, 6, 3);
-  } else if (city === 'HYD') {
-    // pigeons circling the Charminar
-    ctx.strokeStyle = 'rgba(80,50,40,0.55)';
-    ctx.lineWidth = 0.8;
-    for (let i = 0; i < 5; i++) {
-      const a = t * 0.6 + i * 1.25;
-      const bx = 300 + Math.cos(a) * (60 + i * 6),
-        by = 90 + Math.sin(a) * 18 + i * 4;
-      const flap = Math.sin(t * 10 + i) * 1.5;
-      ctx.beginPath();
-      ctx.moveTo(bx - 3, by - flap);
-      ctx.lineTo(bx, by);
-      ctx.lineTo(bx + 3, by - flap);
-      ctx.stroke();
-    }
-  } else if (city === 'BOM' && !reduced) {
-    // monsoon drizzle
-    ctx.strokeStyle = 'rgba(200,215,255,0.28)';
-    ctx.lineWidth = 0.6;
-    ctx.beginPath();
-    for (let i = 0; i < 70; i++) {
-      const rx = x0 + ((hash(i, 1) * (x1 - x0) + t * 30) % (x1 - x0));
-      const ry = (hash(i, 2) * 300 + t * 260) % 300;
-      ctx.moveTo(rx, ry);
-      ctx.lineTo(rx - 2, ry + 7);
-    }
-    ctx.stroke();
-  }
+  MODULE_AMBIENT[city]?.(ctx, x0, x1, t, reduced);
 }
 
-/** A little life in each city's air: petals, sparkles, kites, dust, crows, mist, lightning. */
-function ambientVibe(ctx: Ctx, city: CityId, x0: number, x1: number, t: number) {
-  const span = Math.max(1, x1 - x0);
-  const drift = (n: number, seed: number, fall: number, sway: number, f: (x: number, y: number, i: number) => void) => {
-    for (let i = 0; i < n; i++) {
-      const x = x0 + ((hash(i, seed) * span + t * (12 + hash(i, seed + 1) * 18)) % span);
-      const y = (hash(i, seed + 2) * 300 + t * fall * (0.6 + hash(i, seed + 3) * 0.8)) % 300;
-      f(x + Math.sin(t * 1.3 + i) * sway, y - 10, i);
-    }
-  };
-  if (city === 'PDY' || city === 'BLR') {
-    // bougainvillea (magenta) in the French Quarter, jacaranda (lavender) in the garden city
-    const cols = city === 'PDY' ? ['#E91E8C', '#FF5CA8', '#C2185B'] : ['#B39DDB', '#9575CD', '#CE93D8'];
-    drift(city === 'PDY' ? 22 : 26, city === 'PDY' ? 31 : 37, 22, 9, (x, y, i) => {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(t * (1 + (i % 3)) + i);
-      ctx.fillStyle = cols[i % 3];
-      ctx.globalAlpha = 0.85;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 2.4, 1.3, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    });
-  } else if (city === 'KVT') {
-    // the sun glinting on the lagoon
-    for (let i = 0; i < 26; i++) {
-      const k = (Math.sin(t * 2.2 + i * 1.7) + 1) / 2;
-      if (k < 0.75) continue;
-      const x = x0 + hash(i, 41) * span,
-        y = 176 + hash(i, 42) * 40;
-      ctx.strokeStyle = `rgba(255,255,255,${((k - 0.75) * 3.6).toFixed(2)})`;
-      ctx.lineWidth = 0.8;
-      ctx.beginPath();
-      ctx.moveTo(x - 3, y);
-      ctx.lineTo(x + 3, y);
-      ctx.moveTo(x, y - 2);
-      ctx.lineTo(x, y + 2);
-      ctx.stroke();
-    }
-  } else if (city === 'AMR') {
-    // warm dust hanging in the heat
-    drift(30, 51, 4, 14, (x, y) => {
-      ctx.fillStyle = 'rgba(255,214,150,0.55)';
-      ctx.fillRect(x, y, 1.4, 1.4);
-    });
-  } else if (city === 'HYD') {
-    // Sankranti kites high over the old city
-    const kc = ['#E53935', '#FDD835', '#1E88E5', '#43A047', '#F06292'];
-    for (let i = 0; i < 6; i++) {
-      const kx = x0 + ((hash(i, 61) * span + t * 9) % span),
-        ky = 34 + hash(i, 62) * 50 + Math.sin(t * 1.1 + i) * 6;
-      ctx.strokeStyle = 'rgba(255,230,210,0.35)';
-      ctx.lineWidth = 0.5;
-      ctx.beginPath();
-      ctx.moveTo(kx, ky + 5);
-      ctx.quadraticCurveTo(kx + 10, ky + 60, kx - 20, ky + 140);
-      ctx.stroke();
-      ctx.fillStyle = kc[i % kc.length];
-      ctx.beginPath();
-      ctx.moveTo(kx, ky - 5);
-      ctx.lineTo(kx + 4, ky);
-      ctx.lineTo(kx, ky + 5);
-      ctx.lineTo(kx - 4, ky);
-      ctx.closePath();
-      ctx.fill();
-    }
-  } else if (city === 'CHN') {
-    // crows crossing the hot sky
-    ctx.strokeStyle = 'rgba(40,30,30,0.6)';
-    ctx.lineWidth = 0.9;
-    for (let i = 0; i < 5; i++) {
-      const bx = x0 + ((hash(i, 71) * span + t * (26 + i * 3)) % span),
-        by = 40 + hash(i, 72) * 60 + Math.sin(t * 2 + i) * 4;
-      const flap = Math.sin(t * 9 + i) * 2;
-      ctx.beginPath();
-      ctx.moveTo(bx - 4, by - flap);
-      ctx.lineTo(bx, by);
-      ctx.lineTo(bx + 4, by - flap);
-      ctx.stroke();
-    }
-  } else if (city === 'TVM') {
-    // low monsoon mist drifting across the hills
-    for (let i = 0; i < 4; i++) {
-      const mx = x0 + ((hash(i, 81) * span + t * 6) % span),
-        my = 120 + i * 18;
-      const g = ctx.createRadialGradient(mx, my, 0, mx, my, 70);
-      g.addColorStop(0, 'rgba(235,245,240,0.22)');
-      g.addColorStop(1, 'rgba(235,245,240,0)');
-      ctx.fillStyle = g;
-      ctx.fillRect(mx - 70, my - 30, 140, 60);
-    }
-  } else if (city === 'BOM') {
-    // monsoon lightning, now and then
-    const k = t % 7.3;
-    if (k < 0.16 || (k > 0.24 && k < 0.3)) {
-      ctx.fillStyle = 'rgba(210,225,255,0.22)';
-      ctx.fillRect(x0, 0, span, 240);
-    }
-  }
-}
