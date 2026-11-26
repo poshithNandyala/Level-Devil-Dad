@@ -9,6 +9,8 @@ import { exitTwist } from '../../levels/twists';
 import { tara as taraSays } from '../../levels/endkit';
 import { crumble, dropFloor, fakeFloor, gapAhead, noLanding, onPass, popAt, popOnJump, riseWall, shyLedge } from '../../levels/trolls';
 import { Counterweight, Launch, Puddle, Slab, Tarp } from './entities';
+import { longStage } from '../../levels/chunks';
+import { DHARA_META, KOVALAM_META, dharaRoom, kizhi, kovalamRoom, samudra, vilakku } from './encores';
 
 // Thiruvananthapuram: monsoon puddles, a red express bus, a tea stall,
 // coconut palms and the old fort gate. Lines: Malayalam + English.
@@ -16,11 +18,11 @@ import { Counterweight, Launch, Puddle, Slab, Tarp } from './entities';
 const tara = (n: number, point: 1 | -1 = 1) => ({ intro: L.intro[n % L.intro.length], point, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[n % L.beaten.length] });
 
 /** A coconut hanging in a palm crown at (x, y) px. Falls (hurts), lands, then rolls. */
-function coconut(w: World, x: number, y: number) {
+export function coconut(w: World, x: number, y: number) {
   return w.add(new Thing('coconut', x, y, { solid: false, layer: 3 }));
 }
 
-function drop(w: World, c: Thing, o: { shake?: number; rollVx?: number; v0?: number; land?: boolean } = {}) {
+export function drop(w: World, c: Thing, o: { shake?: number; rollVx?: number; v0?: number; land?: boolean } = {}) {
   if (c.state !== 'rest') return;
   c.setDeadly('coconut');
   w.sfx('creak', c.cx, c.y);
@@ -143,7 +145,7 @@ export const levels = (): LevelDef[] => [
     })(),
     build(w: World) {
       for (const tx of [48]) checkpoint(w, tx);
-      exitTwist(w, door(w), 'knock');
+      exitTwist(w, door(w), 'tvm-knock');
       // the flood: only the bus is dry
       water(w, 14.4, { rate: 0, minTy: 14.4, colors: ['rgba(86,140,150,0.88)', 'rgba(36,80,92,0.96)'], cause: 'splash' });
       const bus = thing(w, 'redbus', 10, 0, { dy: 240 - 40, h: 40, label: 'SUPER FAST' });
@@ -925,4 +927,7 @@ export const levels = (): LevelDef[] => [
       collectible(w, 'chaaya', 22.5, 8.6);
     },
   },
+  // the encores (allocation v2 slots 9 and 10)
+  longStage({ base: kovalamRoom(), acts: [vilakku, samudra], twist: 'tvm-backwash-ride', par: 70, shape: 'long', meta: KOVALAM_META }),
+  longStage({ base: dharaRoom(), acts: [kizhi], twist: 'tvm-oily-feet-coir-mat', par: 60, shape: 'long', meta: DHARA_META }),
 ];
