@@ -4,6 +4,7 @@ import type { World } from '../../src/game/world';
 import type { Door } from '../../src/game/entities/basics';
 import { Step, X, and, done, ground } from '../runner';
 import type { CityTests } from '../city-tests';
+import { LEVEL_BY_ID } from '../../src/game/levels';
 import { STROKE, SWEEP_PERIOD, type Sweep } from '../../src/game/cities/gtk/s01';
 import { VENT, type Steamer } from '../../src/game/cities/gtk/s02';
 import type { Bag } from '../../src/game/cities/gtk/s03';
@@ -446,6 +447,31 @@ const waitClear = (key: string): Step => ({
 });
 const thauRoute = (key: string) => (x: number): Step[] => [{ hold: 'R', until: X(x + 2), max: 300 }, waitClear(key), { policy: gapJumper(), until: X(x + 39.5), max: 1500, note: 'go while it’s clear' }];
 const act07a = thauRoute('gtk7a');
+const chiyaRoute = (key: string) => (x: number): Step[] => [
+  { hold: 'R', until: X(x + 1.5), max: 300 },
+  waitClear(key),
+  { policy: gapJumper(), until: X(x + 30.5), max: 1500, note: 'to the second stall' },
+  waitClear(key),
+  { policy: gapJumper(), until: X(x + 59.5), max: 1500, note: 'and on while it’s clear' },
+];
+/** behind the drifting cloud: walk in the clear air at its back, jumping the holes; never catch it up */
+const drifterRoute = (key: string, w0: number) => (x: number): Step[] => {
+  const j = gapJumper();
+  return [
+    {
+      policy: (w) => {
+        const c = w.flags[key] as Cloud;
+        const p = w.player;
+        if (!p.onGround) return j(w);
+        if (c.t0 >= 0 && p.x + p.w + 40 > (c.front ?? 0) && (c.front ?? 0) < px(x + w0)) return go('');
+        return j(w);
+      },
+      until: X(x + w0 - 0.5),
+      max: 4000,
+      note: 'in the clear air behind the cloud',
+    },
+  ];
+};
 const act07b = (x: number): Step[] => [{ policy: gapJumper(), until: X(x + 31.5), max: 1500, note: 'trust the rope' }];
 const act07c = (x: number): Step[] => [{ policy: gapJumper(), until: X(x + 39.5), max: 1500, note: 'ahead of the cloud bank' }];
 const ropeDoors = new WeakMap<World, (w: World) => Out>();
@@ -657,6 +683,35 @@ const viewPolicy: Policy = (w, _m, d) => {
   return views.get(w)!(w);
 };
 
+/** the route up to the start of an act: the room's route, then every act before it */
+function upTo(id: string, room: Step[], actId: string): { steps: Step[]; x: number } {
+  const def = LEVEL_BY_ID.get(id)!;
+  const out = [...room];
+  for (const p of def.parts ?? []) {
+    if (p.kind === actId) return { steps: out, x: p.x0 };
+    out.push(...actRoutes[p.kind](p.x0));
+  }
+  throw new Error(`${id}: no act ${actId}`);
+}
+/** scripted deaths in an act: reach it by the route, then play `tail` there */
+function actDeath(id: string, room: Step[], actId: string, what: string, tail: (x: number) => Step[], cause: string) {
+  const { steps, x } = upTo(id, room, actId);
+  (mistakes[id] ??= []).push({ what, steps: [...steps, ...tail(x)], cause });
+}
+const blind = (): Step[] => [{ hold: 'R', until: done, max: 3000, note: 'just walk on' }];
+/** the lengthened stages' added acts each get a first-timer death and, where there is one, the obvious fix's */
+function actDeaths() {
+  const r7 = room07();
+  actDeath('GTK-07', r7, 'gtk07-peeche', 'catch the cloud up and walk on blind', (x) => [{ hold: 'R', until: X(x + 2), max: 300 }, ...blind()], 'gtk-badal');
+  actDeath('GTK-07', r7, 'gtk07-dheere', 'catch the cloud up and walk on blind', (x) => [{ hold: 'R', until: X(x + 2), max: 300 }, ...blind()], 'gtk-badal');
+  actDeath('GTK-07', r7, 'gtk07-chiya', 'no stop at the stall: straight on into the cloud', () => blind(), 'gtk-badal');
+  actDeath('GTK-07', r7, 'gtk07-chiya', 'wait once, then walk on blind past the second stall', (x) => [...chiyaRoute('gtk7j')(x).slice(0, 3), ...blind()], 'gtk-badal');
+  actDeath('GTK-07', r7, 'gtk07-thau2', 'no stop at the stall', () => blind(), 'gtk-badal');
+  actDeath('GTK-07', r7, 'gtk07-thau2', 'wait once, then walk on blind past the second stall', (x) => [...chiyaRoute('gtk7m')(x).slice(0, 3), ...blind()], 'gtk-badal');
+  actDeath('GTK-07', r7, 'gtk07-jaldi', 'walk, don’t jump: the holes are right there', () => blind(), 'gtk-badal');
+  actDeath('GTK-07', r7, 'gtk07-saath', 'behind the cloud, the road looks whole: walk it', (x) => [{ hold: 'R', until: X(x + 2), max: 300 }, ...blind()], 'gtk-deewar');
+}
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['GTK-01'] = tourRoute();
   S['GTK-02'] = room02();
@@ -677,6 +732,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('GTK-09', 0, []);
   S['GTK-10'] = room10();
   lengthen('GTK-10', 0, []);
+  actDeaths();
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
@@ -730,6 +786,12 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk07-rang': act07b,
   'gtk07-bhaga': act07c,
   'gtk07-dagar': act07c,
+  'gtk07-chiya': chiyaRoute('gtk7j'),
+  'gtk07-saath': drifterRoute('gtk7k', 44),
+  'gtk07-jaldi': act07c,
+  'gtk07-thau2': chiyaRoute('gtk7m'),
+  'gtk07-peeche': drifterRoute('gtk7h', 44),
+  'gtk07-dheere': drifterRoute('gtk7i', 48),
   'gtk08-tar': act08,
   'gtk08-upar': act08b,
   'gtk09-chamri': act09,

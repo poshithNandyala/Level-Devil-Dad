@@ -21,10 +21,12 @@ export interface Cloud {
   clear: number;
   /** a cloud bank rolling in from the left at this speed (px/s) instead of a clock */
   roll?: number;
+  /** a cloud bank drifting away ahead of you at this speed (px/s): it covers everything beyond its back edge */
+  ahead?: number;
   front?: number;
 }
 export const isClear = (w: W, c: Cloud) => {
-  if (c.roll) return false;
+  if (c.roll || c.ahead) return false;
   if (c.t0 < 0) return false;
   return cyc(w, c.t0, c.thick + c.clear) >= c.thick;
 };
@@ -38,6 +40,7 @@ export function fog(w: World, c0: number, c1: number, cloud: Cloud | null) {
       layer: 2,
       tick: (_r, w2) => {
         if (cloud?.roll && cloud.t0 >= 0) cloud.front = x0 + ((w2.tick - cloud.t0) / 120) * cloud.roll;
+        if (cloud?.ahead) cloud.front = x0 + Math.max(0, (w2.tick - cloud.t0) / 120) * cloud.ahead * (cloud.t0 >= 0 ? 1 : 0);
       },
       paint: (ctx, r, w2) => {
         let a = 1;
@@ -47,6 +50,9 @@ export function fog(w: World, c0: number, c1: number, cloud: Cloud | null) {
           if (u >= cloud.thick) a = Math.max(0, 1 - Math.min(u - cloud.thick, cloud.thick + cloud.clear - u) / 0.3);
         }
         let rx1 = r.x + r.w;
+        let rx0 = r.x;
+        if (cloud?.ahead) rx0 = Math.max(r.x, cloud.front ?? r.x);
+        if (rx0 >= rx1) return;
         if (cloud?.roll) {
           if (cloud.t0 < 0) return;
           rx1 = Math.min(rx1, cloud.front ?? r.x);
@@ -58,10 +64,10 @@ export function fog(w: World, c0: number, c1: number, cloud: Cloud | null) {
         g.addColorStop(0.45, `rgba(236,239,241,${0.93 * a})`);
         g.addColorStop(1, `rgba(236,239,241,${0.98 * a})`);
         ctx.fillStyle = g;
-        ctx.fillRect(r.x, 110, rx1 - r.x, FL + 60 - 110);
+        ctx.fillRect(rx0, 110, rx1 - rx0, FL + 60 - 110);
         // soft puffs along the top so it reads as cloud, not a wall
         ctx.fillStyle = `rgba(245,247,248,${0.6 * a})`;
-        for (let x = r.x + 8; x < rx1; x += 26) {
+        for (let x = rx0 + 8; x < rx1; x += 26) {
           ctx.beginPath();
           ctx.arc(x + ((w2.tick >> 4) % 6), 116 + ((x * 7) % 9), 16, 0, Math.PI * 2);
           ctx.fill();
@@ -279,6 +285,72 @@ export const DAGAR_PITS: [number, number][] = [
   [29, 30],
   [34, 35],
 ];
+/** shelter, the other way round: the cloud is drifting off up the road ahead of you, slower than a walk. Stay in
+ *  the clear air behind it, where you can see the holes; catch it up and you're walking blind */
+export const drifterAct = (id: string, PITS: [number, number][], speed: number, key: string, w = 44, painted = false): Act => ({
+  id,
+  w,
+  advice: painted
+    ? 'The cloud drifts off ahead again, and the clear air behind it shows the painted wall: a road where there are holes. The rope is back: stay behind the cloud, and jump where the rope stops, not where the road looks broken.'
+    : 'The cloud is drifting off up the road ahead of you, slower than you walk, and there’s no rope. Don’t catch it up: stay in the clear air behind it, where you can see the holes, and jump them there.',
+  paint: (g, c) => {
+    for (const [a, b] of PITS) g.pit(c.x + a, c.x + b);
+  },
+  build: (w2, c) => {
+    const cl: Cloud = { t0: -1, thick: 0, clear: 0, ahead: speed };
+    w2.flags[key] = cl;
+    onPass(w2, c.X(1), (w3) => {
+      cl.t0 = w3.tick;
+    });
+    const pits = PITS.map(([a, b]) => [c.x + a, c.x + b] as [number, number]);
+    if (painted) mural(w2, pits);
+    fog(w2, c.x + 3, c.x + w - 1, cl);
+    if (painted) rope(w2, c.x + 1, c.x + w - 1, pits);
+    drops(w2, pits, painted ? 'gtk-deewar' : 'gtk-badal');
+    decor(w2, -2, (ctx) => {
+      box(ctx, c.X(0), FL - 44, px(3), 5, '#2E86AB');
+      box(ctx, c.X(0), FL - 39, 3, 39, '#5E5A50');
+    });
+  },
+});
+export const act8 = drifterAct('gtk07-peeche', [[7, 8], [13, 14], [19, 20], [26, 27], [33, 34], [39, 40]], 52, 'gtk7h');
+export const act9 = drifterAct('gtk07-dheere', [[6, 7], [11, 12], [16, 17], [22, 23], [28, 29], [35, 36], [41, 42]], 46, 'gtk7i', 48);
+/** two tea stalls on one long stretch with the rope down: wait under each for the cloud to lift, look, go */
+export const SHELTERS = [1, 30];
+export const chaiAct = (id: string, PITS: [number, number][], CL: Cloud, key: string): Act => ({
+  id,
+  w: 60,
+  advice: 'A long stretch with the rope down and two tea stalls on it. Wait under the first awning for the cloud to lift, look, go; the cloud comes back before the end, so wait again under the second.',
+  cps: [SHELTERS[1] + 1],
+  paint: (g, c) => {
+    for (const [a, b] of PITS) g.pit(c.x + a, c.x + b);
+  },
+  build: (w, c) => {
+    const cl: Cloud = { ...CL };
+    w.flags[key] = cl;
+    onPass(w, c.X(1), (w2) => {
+      cl.t0 = w2.tick;
+    });
+    fog(w, c.x + 4, c.x + 59, cl);
+    drops(
+      w,
+      PITS.map(([a, b]) => [c.x + a, c.x + b] as [number, number]),
+      'gtk-badal',
+    );
+    decor(w, -2, (ctx) => {
+      for (const s0 of SHELTERS) {
+        box(ctx, c.X(s0 - 1), FL - 44, px(4), 5, '#E07A5F');
+        box(ctx, c.X(s0 - 1), FL - 39, 3, 39, '#5E5A50');
+        box(ctx, c.X(s0 + 3) - 3, FL - 39, 3, 39, '#5E5A50');
+      }
+    });
+    sign(w, c.x + 0.4, 8.6, 3.8, 'CHIYA', 'shop', null, 'wait for clear');
+  },
+});
+export const act10 = chaiAct('gtk07-chiya', [[6, 7], [11, 12], [17, 18], [23, 24], [35, 36], [41, 42], [47, 48], [53, 54]], { t0: -1, thick: 5.2, clear: 1.6 }, 'gtk7j');
+export const act11 = drifterAct('gtk07-saath', [[6, 7], [12, 13], [18, 19], [25, 26], [31, 32], [38, 39]], 50, 'gtk7k', 44, true);
+export const act12 = ghumtiAct('gtk07-jaldi', [[4, 5], [8, 9], [13, 14], [18, 19], [23, 24], [28, 29], [33, 34], [37, 38]], { t0: -1, thick: 0, clear: 0, roll: 110 }, 'gtk7l');
+export const act13 = chaiAct('gtk07-thau2', [[5, 6], [10, 11], [15, 16], [21, 22], [25, 26], [36, 37], [42, 43], [48, 49], [54, 55]], { t0: -1, thick: 5.6, clear: 1.5 }, 'gtk7m');
 /** the second round, harder: a longer wait for a shorter lift, the mural over two holes in a row, a quicker cloud */
 export const act4 = thauAct('gtk07-chhaya', [[5, 6], [9, 10], [15, 16], [22, 23], [28, 29], [34, 35]], { t0: -1, thick: 4.8, clear: 1.4 }, 'gtk7d');
 export const act5 = chitraAct('gtk07-rang', [[6, 7], [11, 12], [20, 21], [27, 28]], { t0: -1, thick: 3.2, clear: 1.8 }, 'gtk7e');
