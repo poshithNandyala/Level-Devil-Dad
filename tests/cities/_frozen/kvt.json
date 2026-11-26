@@ -1,0 +1,189 @@
+{
+ "KVT-01": {
+  "par": 30,
+  "item": [
+   [
+    97,
+    8.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   38.5,
+   51.5,
+   75.5,
+   85.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1934
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 1013,
+   "cause": "hatchling"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 1013,
+   "cause": "hatchling"
+  }
+ },
+ "KVT-02": {
+  "par": 20,
+  "item": [
+   [
+    12,
+    10.5
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   65.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1736
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 146,
+   "cause": "splash"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 1165,
+   "cause": "splash"
+  }
+ },
+ "KVT-03": {
+  "par": 19,
+  "item": [
+   [
+    15,
+    10
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   63.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1250
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 660,
+   "cause": "fake exit"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 953,
+   "cause": "splash"
+  }
+ },
+ "KVT-04": {
+  "par": 15,
+  "item": [
+   [
+    15.5,
+    11.3
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   65.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1588
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 64,
+   "cause": "spikes"
+  }
+ },
+ "KVT-05": {
+  "par": 24,
+  "item": [
+   [
+    6.5,
+    10.1
+   ]
+  ],
+  "checkpoints": [
+   44.5,
+   75.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2279
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 60,
+   "cause": "hit"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 1887,
+   "cause": "spikes"
+  }
+ },
+ "KVT-06": {
+  "par": 48,
+  "item": [
+   [
+    16,
+    14.1
+   ]
+  ],
+  "checkpoints": [
+   40.5,
+   84.5,
+   125.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 4213
+  }
+ },
+ "KVT-07": {
+  "par": 38,
+  "item": [
+   [
+    18,
+    5.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   68.5,
+   97.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 3370
+  }
+ },
+ "KVT-08": {
+  "par": 24,
+  "item": [
+   [
+    20,
+    12.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   66.5,
+   103.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2264
+  }
+ }
+}

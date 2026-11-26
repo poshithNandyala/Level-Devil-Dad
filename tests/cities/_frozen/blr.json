@@ -1,0 +1,202 @@
+{
+ "BLR-01": {
+  "par": 30,
+  "item": [
+   [
+    97,
+    8.9
+   ]
+  ],
+  "checkpoints": [
+   14.5,
+   34.5,
+   43.5,
+   65.5,
+   80.6,
+   89.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2527
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 2245,
+   "cause": "fell"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 2249,
+   "cause": "fell"
+  }
+ },
+ "BLR-02": {
+  "par": 20,
+  "item": [
+   [
+    12.5,
+    6.5
+   ]
+  ],
+  "checkpoints": [
+   40.5,
+   69.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1402
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 188,
+   "cause": "crushed"
+  }
+ },
+ "BLR-03": {
+  "par": 20,
+  "item": [
+   [
+    14.5,
+    10.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   65.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1859
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 573,
+   "cause": "spikes"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 1829,
+   "cause": "spikes"
+  }
+ },
+ "BLR-04": {
+  "par": 22,
+  "item": [
+   [
+    18,
+    10.1
+   ]
+  ],
+  "checkpoints": [
+   40.5,
+   71.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1742
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 651,
+   "cause": "spikes"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 1421,
+   "cause": "spikes"
+  }
+ },
+ "BLR-05": {
+  "par": 15,
+  "item": [
+   [
+    16.5,
+    10.7
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   61.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1081
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 425,
+   "cause": "crushed"
+  }
+ },
+ "BLR-06": {
+  "par": 16,
+  "item": [
+   [
+    20,
+    7.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   63.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1125
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 178,
+   "cause": "fell"
+  }
+ },
+ "BLR-07": {
+  "par": 18,
+  "item": [
+   [
+    19.5,
+    9.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   63.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1524
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 75,
+   "cause": "hit"
+  }
+ },
+ "BLR-08": {
+  "par": 21,
+  "item": [
+   [
+    10.7,
+    8
+   ]
+  ],
+  "checkpoints": [
+   44.5,
+   73.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1574
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 60,
+   "cause": "splash"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 1385,
+   "cause": "fell"
+  }
+ }
+}

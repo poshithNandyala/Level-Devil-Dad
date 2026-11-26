@@ -1,0 +1,145 @@
+{
+ "PNJ-01": {
+  "par": 30,
+  "item": [
+   [
+    97,
+    8.9
+   ]
+  ],
+  "checkpoints": [
+   27.5,
+   32.5,
+   59.5,
+   69.5,
+   91.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2130
+  }
+ },
+ "PNJ-02": {
+  "par": 30,
+  "item": [
+   [
+    16.5,
+    4.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   35,
+   65.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2402
+  }
+ },
+ "PNJ-03": {
+  "par": 24,
+  "item": [
+   [
+    24.5,
+    9.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   65.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1240
+  }
+ },
+ "PNJ-04": {
+  "par": 26,
+  "item": [
+   [
+    18.5,
+    12.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   67.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2175
+  }
+ },
+ "PNJ-05": {
+  "par": 22,
+  "item": [
+   [
+    12.5,
+    7.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   67.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1316
+  }
+ },
+ "PNJ-06": {
+  "par": 30,
+  "item": [
+   [
+    14.5,
+    12
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   42.5,
+   51.5,
+   60.5,
+   67.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2821
+  }
+ },
+ "PNJ-07": {
+  "par": 26,
+  "item": [
+   [
+    18.5,
+    7
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   75.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1836
+  }
+ },
+ "PNJ-08": {
+  "par": 36,
+  "item": [
+   [
+    16.5,
+    9.7
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   75.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2639
+  }
+ }
+}

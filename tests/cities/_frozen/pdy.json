@@ -1,0 +1,206 @@
+{
+ "PDY-01": {
+  "par": 30,
+  "item": [
+   [
+    97,
+    8.9
+   ]
+  ],
+  "checkpoints": [
+   28.5,
+   35.5,
+   47.5,
+   67.5,
+   89.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1956
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 1108,
+   "cause": "hit"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 1108,
+   "cause": "hit"
+  }
+ },
+ "PDY-02": {
+  "par": 15,
+  "item": [
+   [
+    14.5,
+    9.7
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   65.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1494
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 139,
+   "cause": "splash"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 893,
+   "cause": "splash"
+  }
+ },
+ "PDY-03": {
+  "par": 13,
+  "item": [
+   [
+    16.5,
+    8.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   63.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1006
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 618,
+   "cause": "crushed"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 708,
+   "cause": "fell"
+  }
+ },
+ "PDY-04": {
+  "par": 15,
+  "item": [
+   [
+    22.5,
+    7.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   63.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1251
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 167,
+   "cause": "burnt"
+  }
+ },
+ "PDY-05": {
+  "par": 22,
+  "item": [
+   [
+    11.5,
+    11.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   61.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2206
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 215,
+   "cause": "splash"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 1543,
+   "cause": "splash"
+  }
+ },
+ "PDY-06": {
+  "par": 24,
+  "item": [
+   [
+    16.5,
+    11.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   61.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1914
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 69,
+   "cause": "splash"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 1445,
+   "cause": "hit"
+  }
+ },
+ "PDY-07": {
+  "par": 21,
+  "item": [
+   [
+    13,
+    10.9
+   ]
+  ],
+  "checkpoints": [
+   42.5,
+   75.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2353
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 141,
+   "cause": "splash"
+  }
+ },
+ "PDY-08": {
+  "par": 17,
+  "item": [
+   [
+    22,
+    5.7
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   63.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1843
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 109,
+   "cause": "fell"
+  }
+ }
+}

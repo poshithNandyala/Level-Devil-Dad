@@ -1,0 +1,177 @@
+{
+ "HYD-01": {
+  "par": 30,
+  "item": [
+   [
+    97,
+    8.9
+   ]
+  ],
+  "checkpoints": [
+   15.5,
+   26.5,
+   47.5,
+   57.5,
+   78.5,
+   91.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1908
+  }
+ },
+ "HYD-02": {
+  "par": 17,
+  "item": [
+   [
+    6.5,
+    11.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   63.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1396
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 109,
+   "cause": "fell"
+  }
+ },
+ "HYD-03": {
+  "par": 17,
+  "item": [
+   [
+    16.5,
+    6.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   61.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1145
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 274,
+   "cause": "fell"
+  }
+ },
+ "HYD-04": {
+  "par": 15,
+  "item": [
+   [
+    11.5,
+    11.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   63.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1326
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 95,
+   "cause": "fell"
+  }
+ },
+ "HYD-05": {
+  "par": 15,
+  "item": [
+   [
+    23.5,
+    7.3
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   63.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1164
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 246,
+   "cause": "fell"
+  }
+ },
+ "HYD-06": {
+  "par": 20,
+  "item": [
+   [
+    24,
+    4.9
+   ]
+  ],
+  "checkpoints": [
+   42.5,
+   73.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1729
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 265,
+   "cause": "hit"
+  }
+ },
+ "HYD-07": {
+  "par": 14,
+  "item": [
+   [
+    17.7,
+    10.7
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   63.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1202
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 205,
+   "cause": "fell"
+  }
+ },
+ "HYD-08": {
+  "par": 18,
+  "item": [
+   [
+    9.5,
+    11.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   63.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1110
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 95,
+   "cause": "fell"
+  }
+ }
+}

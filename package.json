@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "new-city": "node scripts/dev/new-city.mjs",
     "fair": "bash scripts/dev/fair.sh",
+    "refreeze": "bash scripts/dev/refreeze.sh",
     "cap:sync": "npm run build && npx cap sync",
     "android": "npm run build && npx cap sync android && npx cap open android",
     "ios": "npm run build && npx cap sync ios && npx cap open ios",

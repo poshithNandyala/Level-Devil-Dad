@@ -1,0 +1,213 @@
+{
+ "TVM-01": {
+  "par": 30,
+  "item": [
+   [
+    97,
+    8.9
+   ]
+  ],
+  "checkpoints": [
+   32,
+   67,
+   81
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2467
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 187,
+   "cause": "spikes"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 119,
+   "cause": "spikes"
+  }
+ },
+ "TVM-02": {
+  "par": 23,
+  "item": [
+   [
+    48.5,
+    9.1
+   ]
+  ],
+  "checkpoints": [
+   48
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2048
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 64,
+   "cause": "splash"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 849,
+   "cause": "splash"
+  }
+ },
+ "TVM-03": {
+  "par": 18,
+  "item": [
+   [
+    28.5,
+    9.7
+   ]
+  ],
+  "checkpoints": [
+   47
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1571
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 105,
+   "cause": "spikes"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 243,
+   "cause": "burnt"
+  }
+ },
+ "TVM-04": {
+  "par": 18,
+  "item": [
+   [
+    41.5,
+    11.1
+   ]
+  ],
+  "checkpoints": [
+   46
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1940
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 104,
+   "cause": "coconut"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 214,
+   "cause": "coconut"
+  }
+ },
+ "TVM-05": {
+  "par": 22,
+  "item": [
+   [
+    46,
+    10.7
+   ]
+  ],
+  "checkpoints": [
+   38
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2170
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 368,
+   "cause": "crushed"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 1595,
+   "cause": "crushed"
+  }
+ },
+ "TVM-06": {
+  "par": 14,
+  "item": [
+   [
+    14,
+    10.1
+   ]
+  ],
+  "checkpoints": [
+   31
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1558
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 65,
+   "cause": "splash"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 739,
+   "cause": "splash"
+  }
+ },
+ "TVM-07": {
+  "par": 20,
+  "item": [
+   [
+    61,
+    2.7
+   ]
+  ],
+  "checkpoints": [
+   36,
+   77
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1752
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 78,
+   "cause": "spikes"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 410,
+   "cause": "hit"
+  }
+ },
+ "TVM-08": {
+  "par": 20,
+  "item": [
+   [
+    23,
+    9.1
+   ]
+  ],
+  "checkpoints": [
+   50
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1926
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 152,
+   "cause": "hit"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 1023,
+   "cause": "spikes"
+  }
+ }
+}

@@ -1,0 +1,141 @@
+{
+ "DMN-01": {
+  "par": 30,
+  "item": [
+   [
+    97,
+    8.9
+   ]
+  ],
+  "checkpoints": [
+   22.5,
+   29.5,
+   57.5,
+   67.5,
+   90.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2152
+  }
+ },
+ "DMN-02": {
+  "par": 26,
+  "item": [
+   [
+    15.7,
+    9.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   71.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2547
+  }
+ },
+ "DMN-03": {
+  "par": 24,
+  "item": [
+   [
+    16.5,
+    10.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   67.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1433
+  }
+ },
+ "DMN-04": {
+  "par": 42,
+  "item": [
+   [
+    15.1,
+    5.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   69.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 4402
+  }
+ },
+ "DMN-05": {
+  "par": 30,
+  "item": [
+   [
+    16.5,
+    8.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   77.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2001
+  }
+ },
+ "DMN-06": {
+  "par": 40,
+  "item": [
+   [
+    15.5,
+    5.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   65.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 3642
+  }
+ },
+ "DMN-07": {
+  "par": 22,
+  "item": [
+   [
+    16.5,
+    10.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   67.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1931
+  }
+ },
+ "DMN-08": {
+  "par": 50,
+  "item": [
+   [
+    15.1,
+    11.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   91.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2446
+  }
+ }
+}

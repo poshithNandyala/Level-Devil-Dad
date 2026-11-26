@@ -1,0 +1,165 @@
+{
+ "BOM-01": {
+  "par": 30,
+  "item": [
+   [
+    97,
+    8.9
+   ]
+  ],
+  "checkpoints": [
+   22.5,
+   27.5,
+   37.5,
+   63.5,
+   72.5,
+   89.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1911
+  }
+ },
+ "BOM-02": {
+  "par": 17,
+  "item": [
+   [
+    12.5,
+    11
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   63.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1124
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 562,
+   "cause": "fell"
+  }
+ },
+ "BOM-03": {
+  "par": 19,
+  "item": [
+   [
+    20.5,
+    11.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   61.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1432
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 138,
+   "cause": "fell"
+  }
+ },
+ "BOM-04": {
+  "par": 29,
+  "item": [
+   [
+    11.5,
+    8.5
+   ]
+  ],
+  "checkpoints": [
+   44.5,
+   75.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2162
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 313,
+   "cause": "flood"
+  }
+ },
+ "BOM-05": {
+  "par": 13,
+  "item": [
+   [
+    17,
+    10.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   63.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1186
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 64,
+   "cause": "fell"
+  }
+ },
+ "BOM-06": {
+  "par": 31,
+  "item": [
+   [
+    12.5,
+    7
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   62.5,
+   87.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2104
+  }
+ },
+ "BOM-07": {
+  "par": 61,
+  "item": [
+   [
+    21.5,
+    8.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   62.5,
+   91.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 5395
+  }
+ },
+ "BOM-08": {
+  "par": 25,
+  "item": [
+   [
+    19.5,
+    5.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   60.5,
+   83.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2187
+  }
+ }
+}

@@ -1,0 +1,184 @@
+{
+ "RNC-01": {
+  "par": 30,
+  "item": [
+   [
+    97,
+    8.9
+   ]
+  ],
+  "checkpoints": [
+   15.5,
+   40.5,
+   54.5,
+   65.5,
+   91.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2116
+  }
+ },
+ "RNC-02": {
+  "par": 56,
+  "item": [
+   [
+    15,
+    11.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   53.5,
+   79.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2005
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 108,
+   "cause": "tel"
+  }
+ },
+ "RNC-03": {
+  "par": 60,
+  "item": [
+   [
+    16.5,
+    11.3
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   47.5,
+   81.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2712
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 313,
+   "cause": "teer"
+  }
+ },
+ "RNC-04": {
+  "par": 56,
+  "item": [
+   [
+    7,
+    9.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   33.5,
+   61.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2744
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 181,
+   "cause": "bijli"
+  }
+ },
+ "RNC-05": {
+  "par": 40,
+  "item": [
+   [
+    19.5,
+    8.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   32.5,
+   71.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1773
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 160,
+   "cause": "baagh"
+  }
+ },
+ "RNC-06": {
+  "par": 56,
+  "item": [
+   [
+    16.5,
+    11.5
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   33,
+   65.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2597
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 198,
+   "cause": "mom"
+  }
+ },
+ "RNC-07": {
+  "par": 44,
+  "item": [
+   [
+    21.5,
+    11.3
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   42.5,
+   57.5,
+   69.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1964
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 206,
+   "cause": "pathar"
+  }
+ },
+ "RNC-08": {
+  "par": 48,
+  "item": [
+   [
+    20.5,
+    12.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   59.5,
+   67.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1818
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 241,
+   "cause": "bijli"
+  }
+ }
+}
