@@ -10,6 +10,7 @@ import { CITY_MODULES } from '../src/game/cities/registry';
 import { CHAPTERS } from '../src/game/cities';
 import { LEVELS } from '../src/game/levels';
 import type { StageMeta } from '../src/game/world';
+import { ENDINGS } from '../src/game/levels/endings';
 
 export interface Slot {
   index: number;
@@ -34,11 +35,15 @@ export interface CityAlloc {
   seventhDeathTheme?: string;
   [k: string]: unknown;
 }
-export type Allocation = Record<string, CityAlloc>;
+export type Allocation = Record<string, CityAlloc>; // plus non-city keys such as "rules" (v2), ignored
 
 const PATH = join(__dirname, '..', 'docs', 'allocation.json');
 const SOURCE = '/local/home/saiposh/personal/ldd-inbox/docs/allocation.json';
-const SHAPES = new Set(['tour', 'std', 'long', 'marathon', 'HWIK', 'finale', 'shipped', 'encore-tough', 'encore-finale']);
+const SHAPES = new Set(['tour', 'std', 'long', 'marathon', 'tough', 'HWIK', 'finale', 'shipped', 'encore-tough', 'encore-finale']);
+/** a slot's shape without its note: 'HWIK (long 60-90 s)' -> 'HWIK' */
+export const shapeOf = (s: string) => s.trim().split(/[\s(]/)[0];
+/** top-level keys that are not cities (allocation v2 has a "rules" object) */
+const isCityKey = (k: string) => /^[A-Z]{3}$/.test(k);
 
 /**
  * Every problem with an allocation, as readable lines (empty: it's fine). The same rules as
@@ -53,6 +58,7 @@ export function allocationProblems(a: Allocation): string[] {
   const pairs = new Map<string, number>();
   for (const c of CHAPTERS.map((ch) => ch.id)) if (!a[c]) out.push(`${c}: missing`);
   for (const [city, v] of Object.entries(a)) {
+    if (!isCityKey(city)) continue;
     if (!CHAPTERS.some((ch) => ch.id === city)) out.push(`${city}: not a chapter`);
     if (v.status !== 'new' && v.status !== 'shipped') out.push(`${city}: status '${v.status}'`);
     if (!Array.isArray(v.slots)) {
@@ -62,10 +68,10 @@ export function allocationProblems(a: Allocation): string[] {
     if (v.slots.length !== 10) out.push(`${city}: ${v.slots.length} slots (want 10)`);
     const idx = v.slots.map((s) => s.index).join();
     if (idx !== '1,2,3,4,5,6,7,8,9,10') out.push(`${city}: slot indices ${idx} (want 1..10)`);
-    for (const s of v.slots) if (!SHAPES.has(s.shape)) out.push(`${city}-${s.index}: unknown shape '${s.shape}'`);
+    for (const s of v.slots) if (!SHAPES.has(shapeOf(s.shape))) out.push(`${city}-${s.index}: unknown shape '${s.shape}'`);
     if (v.status === 'new') {
       if ((v.reserves ?? []).length < 2) out.push(`${city}: ${(v.reserves ?? []).length} reserves (want 2)`);
-      const hw = v.slots.filter((s) => s.shape === 'HWIK').map((s) => s.index);
+      const hw = v.slots.filter((s) => shapeOf(s.shape) === 'HWIK').map((s) => s.index);
       if (hw.length > 2 || hw.some((x, i) => i > 0 && x - hw[i - 1] === 1)) out.push(`${city}: HWIK slots ${hw.join(',')}`);
     }
     const items: Pick[] = [...v.slots, ...(v.reserves ?? []), ...(v.tourNew ? [{ ...v.tourNew, concept: `${city}-tour` }] : [])];
@@ -101,6 +107,34 @@ export function metaProblems(a: Allocation, city: string, stages: { id: string; 
       if (l.meta.family !== slot.family) out.push(`${l.id}: family '${l.meta.family}', allocated '${slot.family}'`);
       if ([...l.meta.betrayals].sort().join() !== [...slot.betrayals].sort().join()) out.push(`${l.id}: betrayals ${l.meta.betrayals.join(',')}, allocated ${slot.betrayals.join(',')}`);
     }
+  }
+  return out;
+}
+
+/** squash a key for comparison: lower case, no hyphens or underscores */
+const squash = (k: string) => k.toLowerCase().replace(/[-_]/g, '');
+
+/**
+ * Door-ending keys on module stages: each '<city>-<kebab>' and unique game-wide, and none (prefix stripped)
+ * the same as a shipped door ending or old twist (`shipped`: ENDINGS keys of the shipped cities, OldTwist).
+ * A new module city's stage with meta must declare its ending.
+ */
+export function endingProblems(stages: { id: string; city: string; meta?: StageMeta }[], shipped: string[], needEnding: (city: string) => boolean): string[] {
+  const out: string[] = [];
+  const at = new Map<string, string>();
+  const old = new Map(shipped.map((k) => [squash(k), k]));
+  for (const l of stages) {
+    const e = l.meta?.ending;
+    if (!e) {
+      if (l.meta && needEnding(l.city)) out.push(`${l.id}: meta has no ending`);
+      continue;
+    }
+    const pre = `${l.city.toLowerCase()}-`;
+    if (!e.startsWith(pre) || !/^[a-z0-9]+(-[a-z0-9]+)+$/.test(e)) out.push(`${l.id}: ending '${e}' must be '${pre}<kebab key>'`);
+    if (at.has(e)) out.push(`ending '${e}' on ${at.get(e)} and ${l.id}`);
+    else at.set(e, l.id);
+    const hit = old.get(squash(e.startsWith(pre) ? e.slice(pre.length) : e));
+    if (hit) out.push(`${l.id}: ending '${e}' is the shipped ending '${hit}'`);
   }
   return out;
 }
@@ -146,6 +180,52 @@ describe('allocation checker (on a made-up allocation)', () => {
     ]);
     expect(p).toEqual(["PAT-03: family 'PAT-f9', allocated 'PAT-f3'", 'PAT-04: betrayals b9, allocated b4']);
   });
+});
+
+describe('ending keys checker (made-up stages)', () => {
+  it('reads shapes with notes', () => {
+    expect(shapeOf('HWIK (long 60-90 s)')).toBe('HWIK');
+    expect(shapeOf('tough')).toBe('tough');
+  });
+  it('catches a duplicate, a bad prefix, a shipped ending under a new name and a missing ending', () => {
+    const m = (family: string, ending?: string): StageMeta => ({ family, betrayals: ['x'], ...(ending ? { ending } : {}) });
+    const p = endingProblems(
+      [
+        { id: 'PAT-02', city: 'PAT', meta: m('a', 'pat-ganga-steps') },
+        { id: 'PAT-03', city: 'PAT', meta: m('b', 'pat-ganga-steps') },
+        { id: 'LKO-02', city: 'LKO', meta: m('c', 'pat-kite') },
+        { id: 'LKO-03', city: 'LKO', meta: m('d', 'lko-dahi-handi') },
+        { id: 'LKO-04', city: 'LKO', meta: m('e') },
+        { id: 'RNC-02', city: 'RNC', meta: m('f') },
+      ],
+      ['dahihandi', 'knock'],
+      (c) => c !== 'RNC',
+    );
+    expect(p).toEqual([
+      "ending 'pat-ganga-steps' on PAT-02 and PAT-03",
+      "LKO-02: ending 'pat-kite' must be 'lko-<kebab key>'",
+      "LKO-03: ending 'lko-dahi-handi' is the shipped ending 'dahihandi'",
+      'LKO-04: meta has no ending',
+    ]);
+  });
+});
+
+describe('door endings and act ids on built stages', () => {
+  const shippedCities = new Set(['TVM', 'KVT', 'CHN', 'PDY', 'BLR', 'AMR', 'HYD', 'PNJ', 'BOM', 'DMN', 'GNR', 'JAI', 'BPL', 'RPR', 'RNC']);
+  const newModuleEndings = new Set(CITY_MODULES.filter((m) => !shippedCities.has(m.id)).flatMap((m) => Object.keys(m.endings)));
+  // the old door twists, read from the OldTwist union so the list can't go stale
+  const oldTwists = [...(readFileSync(join(__dirname, '..', 'src/game/levels/twists.ts'), 'utf8').match(/export type OldTwist = ([^;]+);/)?.[1].matchAll(/'([a-z]+)'/g) ?? [])].map((x) => x[1]);
+  const shipped = [...Object.keys(ENDINGS).filter((k) => !newModuleEndings.has(k)), ...oldTwists];
+  it('knows the shipped endings', () => {
+    expect(oldTwists).toContain('crush');
+    expect(shipped).toContain('dahihandi');
+    expect(shipped).toContain('ulta');
+  });
+  it('every meta.ending is <city>-<kebab>, unique, and not a shipped ending renamed; new module stages declare one', () => {
+    expect(endingProblems(LEVELS, shipped, (c) => !shippedCities.has(c))).toEqual([]);
+  });
+  // act ids: unique game-wide and prefixed with the city code is tests/modules.test.ts ('act ids are unique
+  // across the whole game', 'has a route for every act'); not repeated here
 });
 
 describe('docs/allocation.json', () => {

@@ -24,7 +24,10 @@ Paths used below:
    `npm run refreeze -- TVM`. Anything else: stop and ask the integrator.
 3. **Never push. Never bump the version.** Commit on your branch with plain messages (no brackets or braces);
    the integrator takes it from there.
-4. Before you say done: typecheck, the full suite, your city's guard test and the fairness script are green
+4. Every stage's `meta` carries `family`, `betrayals` (from `docs/allocation.json`) and `ending: '<code>-<kebab
+   key>'` (the door-ending idea, unique game-wide, never a shipped ending renamed); act ids start with
+   `<code>0n-`. `tests/allocation.test.ts` and `tests/modules.test.ts` fail on a clash.
+5. Before you say done: typecheck, the full suite, your city's guard test and the fairness script are green
    on your branch (commands below). Write your numbers in `docs/cities/<CODE>.md`.
 
 ## Builder: the commands
