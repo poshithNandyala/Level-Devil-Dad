@@ -5,11 +5,12 @@ import { px } from '../../levels/kit';
 import { pool } from '../../levels/acts';
 import { sign } from '../../levels/kit';
 import type { Ending } from '../../levels/endkit';
-import { Bus } from './entities';
+import { Bus, FLOOR as FLOOR_Y } from './entities';
 import { Customer, Muck, Stack, Stall } from './books';
 import { Paint } from '../../levels/endkit';
+import { Road } from './porters';
 
-export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn';
+export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn' | 'ccu-arch';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<CcuEndingKind, true> {}
@@ -149,6 +150,46 @@ export const endings: Record<CcuEndingKind, Ending> = {
         })(),
       );
       void Paint;
+    },
+  },
+  // ================================================================ CCU-07: the station arch
+  /** At the Howrah end the porters walk straight into the station, under its low arch: a load's rider is
+   *  swept off by the beam. The door is on the platform before the arch: step off on to it. */
+  'ccu-arch': {
+    space: 22,
+    after: 6,
+    advice: 'At the Howrah end the porters walk straight into the station under its low arch, and the beam sweeps anything on a load. The door is on the platform just before it: walk off the load on to the platform.',
+    paint: (g, D) => {
+      g.fill(D - 4, D, 13, 14, '#');
+      g.put(D, 14, '#');
+      g.put(D, 12, 'E');
+    },
+    build(w, d) {
+      const D = Math.round(d.x / 16);
+      w.add(new Road(px(D - 22), px(D - 4), (w2) => (w2.flags.cha ? 'ccu-cha' : 'ccu-gaari')));
+      w.add(new Road(px(D + 1), px(D + 7), () => 'ccu-gaari'));
+      const beam = { x: px(D + 2), y: FLOOR_Y - 92, w: px(3), h: 26 };
+      w.flags.arch = { D, beam };
+      w.flags.twist = 'arch';
+      w.add(
+        new (class extends Entity {
+          hazard = { active: true, cause: 'ccu-arch', hits: (x: number, y: number, ww: number, h: number) => x < beam.x + beam.w && x + ww > beam.x && y < beam.y + beam.h && y + h > beam.y };
+          draw(ctx: CanvasRenderingContext2D) {
+            // the station's red-brick arch, low over the porters' way in
+            ctx.fillStyle = '#8E2C24';
+            ctx.fillRect(beam.x - 6, beam.y - 40, beam.w + 12, 40 + beam.h);
+            ctx.fillStyle = '#6E1F18';
+            ctx.fillRect(beam.x - 6, beam.y + beam.h - 4, beam.w + 12, 4);
+            ctx.fillStyle = '#F4F1E8';
+            ctx.font = '800 7px "Baloo 2", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('HOWRAH STN', beam.x + beam.w / 2, beam.y - 20);
+            ctx.fillStyle = '#5A1812';
+            ctx.fillRect(beam.x - 6, beam.y + beam.h, 6, FLOOR_Y - beam.y - beam.h);
+            ctx.fillRect(beam.x + beam.w, beam.y + beam.h, 6, FLOOR_Y - beam.y - beam.h);
+          }
+        })(),
+      );
     },
   },
 };

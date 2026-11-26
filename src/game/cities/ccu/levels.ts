@@ -13,6 +13,7 @@ import { Bus, Rail, feet } from './entities';
 import { NALA } from './endings';
 import { Customer, Muck, Stack, Stall } from './books';
 import { Junction, Points, Tram } from './tram';
+import { ChaiBoard, Girders, Porter, Road, SHORT, TALL } from './porters';
 import type { Act } from '../../levels/acts';
 
 const tara = (n: number, beaten = 0) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[beaten % L.beaten.length] });
@@ -164,6 +165,75 @@ const points: Act = {
   },
 };
 
+
+// ================================================================== CCU-07: Howrah Bridge (the porters)
+const road = (w: World, x0: number, x1: number) => w.add(new Road(x0, x1, (w2) => (w2.flags.cha ? 'ccu-cha' : 'ccu-gaari')));
+const walking = (p: Porter) => () => p.state !== 'idle';
+function howrahRoom(): LevelDef {
+  return {
+    id: 'CCU-07',
+    city: 'CCU',
+    index: 7,
+    name: 'Howrah Bridge',
+    nameEn: 'The porters’ bridge',
+    tagline: 'A hundred thousand vehicles and more people than that cross Howrah Bridge every day, and the porters carry the city across on their heads.',
+    hint: 'The road is nose-to-tail taxis: ride the head-loads. A porter stops at the CHA board on the girder and sets his load down for tea, and on the road that’s you among the taxis: before his chai stop, hop on to the next load going your way. A load coming the other way knocks you off yours, so never jump at one of those.',
+    par: 16,
+    map: Grid.ground(15).fill(28, 31, 14, 14, '#').put(1, 14, '@').rows(),
+    build(w: World) {
+      w.add(new Girders(0, px(32)));
+      road(w, px(6), px(28));
+      const p1 = w.add(new Porter({ x: px(5), v: 40, h: SHORT, rests: [[px(21), 3]], go: (w2, me) => w2.player.isRiding(me.load) }));
+      w.add(new Porter({ x: px(-2.5), v: 60, h: TALL, rests: [[px(30.5), Infinity]], go: walking(p1) }));
+      w.add(new Porter({ x: px(23), v: -45, h: TALL, go: walking(p1), off: px(6) }));
+      w.add(new ChaiBoard(px(21)));
+      w.add(new ChaiBoard(px(30.5), true));
+      sign(w, 0.4, 10.4, 3.4, 'HOWRAH', 'green', null, '705 m');
+      rival(w, 2, 15, 1, tara(5));
+      onPass(w, px(2.5), (w2) => w2.guide('Howrah, Howrah, Howrah! | Howrah, Howrah, Howrah!'));
+      collectible(w, 'ccu-bhanr', 30, 10.2);
+    },
+  };
+}
+
+/** CCU-07 act 1: a tall porter from the pylon, and a short one overtaking under him before his chai stop */
+const girder: Act = {
+  id: 'ccu07-girder',
+  w: 48,
+  advice: 'From the pylon step, on to the tall porter’s load. His chai stop is ahead on the road: a short porter comes up from behind, faster, and passes under you. Walk off the front of your load on to his as he goes by.',
+  paint: (g, c) => {
+    g.fill(c.x, c.x + 3, 14, 14, '#').fill(c.x + 1, c.x + 3, 13, 13, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(new Girders(c.X(0), c.X(48)));
+    road(w, c.X(4), c.X(48));
+    const p3 = w.add(new Porter({ x: c.X(5), v: 45, h: TALL, rests: [[c.X(30), 3]], go: (w2, me) => w2.player.isRiding(me.load) }));
+    w.add(new Porter({ x: c.X(-2), v: 66, h: SHORT, rests: [[c.X(51.5), Infinity]], go: walking(p3) }));
+    w.add(new ChaiBoard(c.X(30)));
+    sign(w, x + 0.3, 8.6, 3.2, 'PYLON', 'green', null, 'east');
+    w.flags.girder = { x };
+  },
+};
+
+/** CCU-07 act 2: the second pylon, a porter who leaves at once (and stops for tea at once), and the one to wait for */
+const pylon: Act = {
+  id: 'ccu07-pylon',
+  w: 40,
+  advice: 'The second pylon, and a porter about to leave from it: don’t take him, his chai stop is just ahead. Wait on the step for the tall porter coming up behind, and get on his load as he goes by.',
+  paint: (g, c) => {
+    g.fill(c.x, c.x + 7, 14, 14, '#').fill(c.x + 5, c.x + 7, 13, 13, '#');
+  },
+  build: (w, c) => {
+    w.add(new Girders(c.X(0), c.X(40)));
+    road(w, c.X(8), c.X(40));
+    const p5 = w.add(new Porter({ x: c.X(8.8), v: 45, h: SHORT, rests: [[c.X(15), 3]], go: (w2, me) => w2.player.isRiding(me.load) }));
+    w.add(new Porter({ x: c.X(-6), v: 55, h: TALL, kind: 'books', go: (w2) => w2.player.onGround && w2.player.cx > c.X(2) && w2.player.cx < c.X(8), off: Infinity }));
+    w.add(new ChaiBoard(c.X(15)));
+    w.add(new ChaiBoard(c.X(3), true));
+  },
+};
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -216,7 +286,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: boiRoom(), par: 26, twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
   longStage({ base: todoRoom(5), par: 30, shape: 'long' }),
   longStage({ base: poleRoom(), par: 60, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
-  longStage({ base: todoRoom(7), par: 30, shape: 'long' }),
+  longStage({ base: howrahRoom(), par: 90, acts: [girder, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: todoRoom(8), par: 30, shape: 'long' }),
   longStage({ base: todoRoom(9), par: 30, shape: 'long' }),
   longStage({ base: todoRoom(10), par: 30, shape: 'long' }),

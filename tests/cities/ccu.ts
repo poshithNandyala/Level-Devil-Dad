@@ -9,6 +9,7 @@ import type { CityTests } from '../city-tests';
 import { Bus } from '../../src/game/cities/ccu/entities';
 import type { Stack } from '../../src/game/cities/ccu/books';
 import type { Tram } from '../../src/game/cities/ccu/tram';
+import { Porter } from '../../src/game/cities/ccu/porters';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -111,6 +112,61 @@ function hopGaps(): (w: World) => Out {
   };
 }
 
+
+// ------------------------------------------------------------------ CCU-07: the porters
+const porters = (w: World) => w.entities.filter((e) => e instanceof Porter) as Porter[];
+const riding = (w: World) => porters(w).find((p) => p.riding(w));
+/** stand under (or beside) a load and hop straight up on to it as it comes over */
+const hopUp = (pick: (w: World) => Porter | undefined, note: string): Step => {
+  let hold = 0;
+  let W: World | null = null;
+  return {
+    policy: (w) => {
+      if (W !== w) {
+        W = w;
+        hold = 0;
+      }
+      if (hold > 0) {
+        hold--;
+        return { move: '', jump: true };
+      }
+      const p = pick(w);
+      // jump a little before it's overhead: it'll be there by the time Dad is up
+      const on = riding(w);
+      const vel = (q?: Porter) => (q && q.state === 'walk' ? q.o.v : 0);
+      const lead = (vel(p) - vel(on)) * 0.22;
+      if (p && w.player.onGround && Math.abs(w.player.cx - p.x - lead) < 5 && !p.riding(w)) {
+        hold = 12;
+        return { move: '', jump: true };
+      }
+      return go('');
+    },
+    until: (w) => !!pick(w)?.riding(w),
+    max: 1800,
+    note,
+  };
+};
+const ahead = (w: World, v: number, h: number) => porters(w).find((p) => p.o.v === v && p.o.h === h && p.state === 'walk');
+function howrahRoom(): Step[] {
+  return [
+    { hold: 'R', until: (w) => w.player.cx >= px(5) - 1, max: 300 },
+    hopUp((w) => porters(w).find((p) => p.o.v === 40), 'up on the first load'),
+    hopUp((w) => ahead(w, 60, 54), 'up on the tall porter’s load as he comes past, before the CHA board'),
+    { hold: '', until: (w) => w.player.cx > px(29), max: 1800 },
+    { hold: 'R', until: (w) => w.player.onGround && !riding(w), max: 200, note: 'off on to the pylon' },
+  ];
+}
+const girderRoute = (x: number): Step[] => [
+  { hold: 'R', until: X(x - 0.2), max: 300 },
+  ...hopTo(px(x + 2), 10, 'up the pylon step'),
+  walk(x + 2.4),
+  ...hopTo(px(x + 5), 10, 'up on the tall porter by the pylon'),
+  { hold: '', until: (w) => { const a = riding(w), b = porters(w).find((p) => p.o.v === 66); return !!a && !!b && b.x - a.x > 22 && b.x - a.x < 40; }, max: 1800, note: 'till the short porter is just ahead, under you' },
+  { hold: 'R', until: (w) => !!riding(w) && riding(w)!.o.v === 66, max: 200, note: 'walk off the front on to his load' },
+  { hold: '', until: (w) => w.player.cx > px(x + 48.5), max: 1800 },
+  { hold: 'R', until: (w) => w.player.onGround && !riding(w), max: 200, note: 'off on to the second pylon' },
+];
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['CCU-01'] = tourRun('onto');
   S['CCU-02'] = [...ride(px(25), px(28.5), 'past the first “aaste” (over the drain), off on the second'), walk(30)];
@@ -123,6 +179,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { hold: '', until: X(32.5), max: 2400, note: 'ride the step through the junction' },
   ];
   lengthen('CCU-06', 0, []);
+  S['CCU-07'] = howrahRoom();
+  lengthen('CCU-07', 0, []);
   S['CCU-04'] = boiRoute(true);
   lengthen('CCU-04', 0, []);
 }
@@ -146,6 +204,7 @@ function boiRoute(skip: boolean, wait = 0): Step[] {
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-01': { steps: tourRun('long'), cause: 'ccu-rail' },
   'CCU-04': { steps: boiRoute(false), cause: 'ccu-boi' },
+  'CCU-07': { steps: [howrahRoom()[0], howrahRoom()[1], { hold: '', until: done, max: 3000, note: 'ride him all the way' }], cause: 'ccu-cha' },
   'CCU-06': {
     steps: [walk(2.4), ...hopTo(px(4.5), 12, 'up the stop’s step'), ...hopTo(px(5.8), 10, 'up on the platform'), { hold: 'R', until: (w) => tramA(w).riding(w) && w.player.cx > px(8), max: 300, note: 'on to the roof' }, { hold: '', until: done, max: 2400 }],
     cause: 'ccu-dando',
@@ -156,12 +215,14 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-04': { steps: boiRoute(true, 300), cause: 'ccu-boi' },
+  'CCU-07': { steps: [howrahRoom()[0], howrahRoom()[1], hopUp((w) => porters(w).find((p) => p.o.v < 0), 'jump for the first load that comes by'), { hold: '', until: done, max: 900 }], cause: 'ccu-bojha' },
   'CCU-06': { steps: [walk(2.4), ...hopTo(px(5), 12, 'over the stop’s step'), { hold: 'R', until: (w) => w.player.onGround && w.player.y > 222 && w.player.cx > px(6.6), max: 300 }, ...hopTo(px(7) + 12, 8, 'on to the rear step'), { hold: '', until: done, max: 4000, note: 'stay on the step, past the island' }], cause: 'ccu-points' },
   'CCU-02': { steps: [...ride(px(16), px(19.5), 'off on the first “aaste”'), { hold: 'R', until: (w) => w.state !== 'play', max: 300 }], cause: 'ccu-nala' },
 };
 
 /** more scripted first-timer deaths and 'like last time' moves */
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'CCU-07': [{ what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), walk(80 + 3.9), ...hopTo(px(86.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
   'CCU-01': [{ what: 'up on the thela and a hop down off it, on to the rail', steps: tourRun('off'), cause: 'ccu-rail' }],
   'CCU-02': [
     {
@@ -176,6 +237,8 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu07-girder': girderRoute,
+  'ccu07-pylon': (x) => [walk(x + 3.9), ...hopTo(px(x + 6.4), 10, 'up the pylon step'), hopUp((w) => ahead(w, 55, 54), 'wait for the tall porter, and up on his load'), { hold: '', until: X(x + 40.6), max: 1800, note: 'ride him to Howrah' }],
   'ccu06-points': (x) => [
     { hold: '', until: (w) => tramA(w).state === 'stop' && w.player.cx > px(x + 4), max: 1800, note: 'ride to the island stop' },
     { hold: 'R', until: and(ground, X(x + 8.2)), max: 300, note: 'off at the island: the points are set for the other line' },
@@ -189,6 +252,12 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 /** a policy for each door ending, by kind */
 const SETHOP = hopGaps();
 const endingPolicies: Record<string, Policy> = {
+  'ccu-arch'(w, _m, d) {
+    const k = w.flags.arch as { D: number };
+    const p = w.player;
+    if (riding(w)) return go(p.cx > px(k.D - 2.6) ? 'R' : '');
+    return go(p.onGround ? toward(w, d.x + 8, 1) || 'R' : '');
+  },
   'ccu-pole-turn'(w, m, d) {
     const p = w.player;
     if (m.hold > 0) return { move: 'R', jump: true };
@@ -232,5 +301,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['CCU-02', 'CCU-04', 'CCU-06'],
+  fair: ['CCU-02', 'CCU-04', 'CCU-06', 'CCU-07'],
 };
