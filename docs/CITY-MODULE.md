@@ -229,9 +229,14 @@ Every stage you build carries its allocation slot from `docs/allocation.json`:
 
 ```ts
 longStage({ base: golgharRoom(), acts: [ghat], twist: 'pat-setu', par: 60, shape: 'long',
-  meta: { family: 'spiral-stair', betrayals: ['floor-lies', 'count-wrong'] } }),     // slot 3 of PAT
+  meta: { family: 'spiral-stair', betrayals: ['floor-lies', 'count-wrong'], ending: 'pat-setu' } }), // slot 3 of PAT
 { ...tour({ ... }), meta: { family: '...', betrayals: [...] } },                     // stage 01
 ```
+
+**`meta.ending`** names the stage's door-ending idea as `'<code>-<kebab key>'` (`ending: 'pat-ganga-ghat-steps'`).
+Door endings are not in the allocation, so this is how builders stay apart: every key must be unique across all
+modules, and with the prefix stripped it must not match a shipped ending or old twist (`dahi-handi` = `dahihandi`).
+Required on every stage of a new city. Act ids start with the stage code too (`pat02-ghat`), unique game-wide.
 
 `tests/allocation.test.ts` fails if a stage's `meta` (family and betrayals) differs from its slot, so you
 can't drift from the allocation silently. It also checks the allocation itself: no (family, betrayal) pair

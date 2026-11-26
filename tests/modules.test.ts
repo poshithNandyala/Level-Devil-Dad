@@ -103,8 +103,10 @@ describe('city modules', () => {
     for (const l of LEVELS)
       for (const p of l.parts ?? []) {
         if (isChunk(p.kind)) continue;
-        if (seen.has(p.kind)) dup.push(`${p.kind}: ${seen.get(p.kind)} and ${l.id}`);
-        else seen.set(p.kind, l.id);
+        // compared squashed (case, hyphens, underscores), so 'pat02-ghat' and 'pat02_Ghat' collide too
+        const k = p.kind.toLowerCase().replace(/[-_]/g, '');
+        if (seen.has(k)) dup.push(`${p.kind}: ${seen.get(k)} and ${l.id}`);
+        else seen.set(k, l.id);
       }
     expect(dup).toEqual([]);
   });
