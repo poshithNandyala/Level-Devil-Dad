@@ -18,10 +18,10 @@ export const levels = (): LevelDef[] => [
   longStage({ base: room02(), acts: [act02], twist: 'gtk-steam-vent', par: 29, shape: 'long', meta: meta02 }),
   longStage({ base: room03(), acts: [act03, act03b], twist: 'gtk-jhola-entry', par: 23, shape: 'long', meta: meta03 }),
   longStage({ base: room04(), acts: [act04], twist: 'gtk-lift-counts-down', par: 15, shape: 'long', meta: meta04 }),
-  longStage({ base: room05(), acts: [act05a, act05b, act05c], twist: 'gtk-taxi-meter', par: 34, shape: 'wtf', meta: meta05 }),
+  longStage({ base: room05(), acts: [act05a, act05b, act05c], twist: 'gtk-taxi-meter', par: 40, shape: 'wtf', meta: meta05 }),
   longStage({ base: room06(), acts: [act06, act06b], twist: 'gtk-tank-overflow', par: 18, shape: 'long', meta: meta06 }),
   longStage({ base: room07(), acts: [act07a, act07b, act07c, act07d, act07e, act07f], twist: 'gtk-rope-climbs-to-door', par: 53, shape: 'marathon', lives: 'act', meta: meta07 }),
-  longStage({ base: room08(), acts: [act08, act08b], twist: 'gtk-cabin-both-doors', par: 24, shape: 'wtf', meta: meta08 }),
+  longStage({ base: room08(), acts: [act08, act08b], twist: 'gtk-cabin-both-doors', par: 35, shape: 'wtf', meta: meta08 }),
   longStage({ base: room09(), acts: [act09, act09b], twist: 'gtk-gate-yak-snowbank', par: 52, shape: 'long', meta: meta09 }),
   longStage({ base: room10(), acts: [act10a, act10b, act10c, act10d], twist: 'gtk-viewpoint-second-floor', par: 36, shape: 'marathon', lives: 'act', meta: meta10 }),
 ];
