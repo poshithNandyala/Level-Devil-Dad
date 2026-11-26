@@ -26,8 +26,6 @@ export type TourSeg =
 /** Every city walks its own course (tile columns); the door, the deck and the item are where they always were. */
 export const TOUR = { cols: 120, door: 112, deck: [94, 99] as [number, number], item: [96.5, 8.4] as [number, number] };
 export const COURSES = {
-  // the barrage piers across the Krishna
-  AMR: [{ k: 'ditch', x: 12, w: 2 }, { k: 'parked', x: 24 }, { k: 'stones', x: 36, n: 5, wet: true }, { k: 'wall', x: 66, w: 2 }, { k: 'steps', x: 74, n: 3, run: 2, top: 2 }],
   // up the Charminar's steps, and the boat on Hussain Sagar
   HYD: [{ k: 'parked', x: 12 }, { k: 'wall', x: 24 }, { k: 'steps', x: 32, n: 5, run: 1, top: 4 }, { k: 'ditch', x: 54, w: 2 }, { k: 'ferry', x: 66, w: 11, kind: 'odam', wet: true }, { k: 'posts', x: 84, n: 2 }],
   // the laterite steps, a canoe hop, and the car ferry across the Mandovi to Betim

@@ -61,23 +61,6 @@ export interface Chapter {
 }
 
 export const LINES = {
-  AMR: {
-    hello: 'Namaskaram andi! | Hello!',
-    famous: 'A new capital rising by the Krishna, red chillies and evening punugulu.',
-    lang: 'Telugu (coastal Andhra) + English',
-    intro: ['Entandi, shortcut kavala? | What\'s this, want a shortcut?', 'Ee road ready andi, nammandi! | This road is ready, believe me!', 'Mirchi chala mild andi. Nijam! | The chilli is very mild. Really!', 'Barrage meeda nadavandi, easy! | Walk across the barrage, easy!', 'Punugulu tini vellandi! | Have some punugulu before you go!'],
-    taunt: ['Baboi! Padipoyaru! | Whoa! You fell!', 'Ayyo, jagratha andi! | Oh no, be careful!', 'Abba! Malli modalu! | Ugh! Start again!', 'Emitandi, malli? | What\'s this, again?'],
-    beaten: ['Adurs andi! | Superb!', 'Chala bavundi, Dad! | Very nice, Dad!'],
-    death: ['Krishna lo padipoyaru, boat pampala? | You fell in the Krishna, shall I send a boat?', 'Mirchi ghatu! | That chilli is too hot!', 'Enda debba! | Sunstroke!', 'Moye moye, andi.', 'Idi expected ey andi! | Saw that coming!'],
-    near: ['Konchem lo miss andi! | Missed by a little!', 'Ayyo, so close!'],
-    win: ['Adurs andi! | Superb!', 'Keka! | Awesome!', 'Chala bavundi! | Very nice!'],
-    flip: 'Ayyo! Left right maaripoyindi! | Oh no! Left and right swapped!',
-    cleared: 'Amaravati cleared. Adurs! | Amaravati cleared. Superb!',
-    brag: 'Adurs andi! | Superb!',
-    idle: ['Emandi, bhayamaa? | What, scared?', 'Dhairyam ledaa andi? | No courage?', 'Alaa nilabadakandi, padandi! | Don’t just stand there, let’s go!', 'Nidra vachindaa? | Feeling sleepy?'],
-    seven: 'Edu saarlu! Thala for a reason. | Seven deaths! Back to the start.',
-    lastLife: 'Last chance andi, jagratha! | Last chance, be careful!',
-  },
   HYD: {
     hello: 'Baagunnara! Kya haal, miya? | How are you? How\'s it going, buddy?',
     famous: 'Irani chai, Osmania biscuits and autos with a mind of their own.',
@@ -223,7 +206,7 @@ export const CHAPTERS: Chapter[] = [
   { id: 'CHN', name: 'Chennai', state: 'Tamil Nadu', region: 'South', hello: '', famous: '' },
   { id: 'PDY', name: 'Puducherry', state: 'Puducherry', region: 'South', hello: '', famous: '' },
   { id: 'BLR', name: 'Bengaluru', state: 'Karnataka', region: 'South', hello: '', famous: '' },
-  { id: 'AMR', name: 'Amaravati', state: 'Andhra Pradesh', region: 'South', city: 'AMR', hello: LINES.AMR.hello, famous: LINES.AMR.famous },
+  { id: 'AMR', name: 'Amaravati', state: 'Andhra Pradesh', region: 'South', hello: '', famous: '' },
   { id: 'HYD', name: 'Hyderabad', state: 'Telangana', region: 'South', city: 'HYD', hello: LINES.HYD.hello, famous: LINES.HYD.famous },
   { id: 'PNJ', name: 'Panaji', state: 'Goa', region: 'West', city: 'PNJ', hello: LINES.PNJ.hello, famous: LINES.PNJ.famous },
   { id: 'BOM', name: 'Mumbai', state: 'Maharashtra', region: 'West', city: 'BOM', hello: LINES.BOM.hello, famous: LINES.BOM.famous },

@@ -1,6 +1,6 @@
 // Andhra's own life.
-import { Entity, type World } from '../world';
-import { DT, PHYS, TILE, type Phys } from '../constants';
+import { Entity, type World } from '../../world';
+import { DT, PHYS, TILE, type Phys } from '../../constants';
 
 /** Dad after a Telugu welcome: a full stomach, and a jump that won't get him far. */
 export const FULL_PHYS: Phys = { ...PHYS, jumpVel: PHYS.jumpVel * 0.66, maxRun: PHYS.maxRun * 0.9 };

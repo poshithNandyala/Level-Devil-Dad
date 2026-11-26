@@ -1,21 +1,20 @@
-import type { LevelDef, World } from '../world';
-import { LINES } from '../cities';
-import { Cable, Thing } from '../entities/traps';
-import { cloud, collectible, door, group, gust, panel, prop, px, rider, rival, roller, shot, sign, thing, thingOn, water } from './kit';
-import { Act, G, deco, pool } from './acts';
-import { ceilingDrop, onPass } from './trolls';
-import { DT } from '../constants';
-import { tour } from './tour';
-import { longStage } from './chunks';
-import { Grid } from './grid';
-import { exitTwist } from './twists';
-import { Aunty } from '../entities/andhra';
+import type { LevelDef, World } from '../../world';
+import { lines as L } from './lines';
+import { Cable, Thing } from '../../entities/traps';
+import { cloud, collectible, door, group, gust, panel, prop, px, rider, rival, roller, shot, sign, thing, thingOn, water } from '../../levels/kit';
+import { Act, G, deco, pool } from '../../levels/acts';
+import { ceilingDrop, onPass } from '../../levels/trolls';
+import { DT } from '../../constants';
+import { tour } from '../../levels/tour';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
+import { exitTwist } from '../../levels/twists';
+import { Aunty } from './entities';
 
 // Amaravati and Vijayawada: a capital being built by the Krishna, Guntur
 // chillies drying in the sun, the long barrage, the hottest tar in India and
 // Benz Circle. Coastal Telugu with -andi, plus English.
 
-const L = LINES.AMR;
 const tara = (n: number, point: 1 | -1 = 1) => ({ intro: L.intro[n % L.intro.length], point, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[n % L.beaten.length] });
 const CONCRETE = { fill: '#A7A9AC', trim: '#C9CBCE', line: 'rgba(60,60,60,0.25)' };
 const TAR = { fill: '#262626', trim: '#3A3A3A', line: 'rgba(255,255,255,0.08)' };
@@ -294,7 +293,7 @@ const shacks: Act = {
   },
 };
 
-export const AMR: LevelDef[] = [
+export const levels = (): LevelDef[] => [
   tour({
     id: 'AMR-01',
     city: 'AMR',

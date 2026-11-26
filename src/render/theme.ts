@@ -25,29 +25,6 @@ export interface Theme {
 }
 
 export const THEMES = {
-  AMR: {
-    city: 'AMR',
-    name: 'Amaravati',
-    local: 'అమరావతి',
-    sky: ['#DE8C26', '#F6C96C', '#FFF3CF'],
-    sun: '#FFFDE7',
-    far: '#DDAE80',
-    mid: '#BD7C4F',
-    near: '#8A4C2E',
-    accent: '#C62828',
-    accent2: '#0277BD',
-    tileBase: '#8C5A3C',
-    tileTop: '#C98A5C',
-    tileEdge: '#6B412A',
-    tileDark: '#52301E',
-    topper: '#7CB342',
-    pattern: 'concrete',
-    spike: '#FFF8F0',
-    spikeEdge: '#2A1A10',
-    ink: '#2A1A10',
-    rim: null,
-    ui: '#C62828',
-  },
   HYD: {
     city: 'HYD',
     name: 'Hyderabad',
@@ -235,7 +212,7 @@ export const THEMES = {
 } as Record<CityId, Theme>;
 
 /** playable cities in journey order (south to north) */
-export const CITY_ORDER: CityId[] = ['AMR', 'HYD', 'PNJ', 'BOM', 'DMN', 'GNR', 'JAI', 'BPL', 'RPR'];
+export const CITY_ORDER: CityId[] = ['HYD', 'PNJ', 'BOM', 'DMN', 'GNR', 'JAI', 'BPL', 'RPR'];
 
 /** Future chapters, honestly labelled as not built yet. */
 export const COMING_SOON = [

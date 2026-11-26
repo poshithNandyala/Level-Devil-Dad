@@ -2,7 +2,6 @@ import type { CityId } from '../game/constants';
 
 /** one line per city on the postcard (moved out of app.ts so city modules can add theirs without loading the app) */
 export const CITY_LINE = {
-  AMR: 'A capital under construction: cranes, barrage gates and chilli dust.',
   HYD: 'The auto carrying the exit reacts to how you move.',
   PNJ: 'Gossip you can stand on, a siesta you mustn’t break, and a ferry that waits for nobody.',
   BOM: 'The platform moves. The train stays still. Mostly.',
