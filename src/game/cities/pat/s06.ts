@@ -14,7 +14,7 @@ import { lines as L } from './lines';
 const FL = 240;
 
 /** the hazard under a seam: the Ganga far below (y from 256) */
-function under(w: World, c0: number, c1: number, cause: string) {
+export function under(w: World, c0: number, c1: number, cause: string) {
   w.add(
     new Rig(px(c0), 256, px(c1 - c0 + 1), 30, {
       layer: 4,
@@ -70,7 +70,7 @@ function plate(w: World, c: number, n: number, key: string) {
 }
 
 /** the seams of a bridge: [column, number, present] */
-function seams(w: World, list: [number, number, boolean][], key: string) {
+export function seams(w: World, list: [number, number, boolean][], key: string) {
   for (const [c, n, present] of list) {
     if (present) plate(w, c, n, key);
   }

@@ -347,6 +347,60 @@ const gatePolicy: Policy = (w) => {
   return go('R');
 };
 
+// ------------------------------------------------------------------ PAT-10
+/** run right and jump over the obstacles starting at the given x (px), each from `aim` px before its edge */
+function hopOver(xs: (w: World) => number[], aim: number): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  let cool = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+      cool = 0;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const p = w.player;
+    if (!p.onGround) return go('R');
+    const o = xs(w).filter((x) => p.x < x).sort((a, b) => a - b)[0];
+    if (o !== undefined && w.tick > cool && p.x + p.w >= o - aim) {
+      jt = 12;
+      cool = w.tick + 45;
+      return { move: 'R', jump: true };
+    }
+    return go('R');
+  };
+}
+const room10 = (): Step[] => [{ policy: hopOver(() => [13 * 16, 25 * 16], 6), until: and(ground, X(30)), max: 1500, note: 'walk the plates, jump the gaps at 3 and 6' }];
+const act10a = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 3), max: 600 },
+  {
+    policy: hopOver((w) => (w.flags.pat10p.secs as { x: number; s: { awash?: boolean } }[]).filter((s) => s.s.awash).map((s) => s.x), 4),
+    until: and(ground, X(x + 31)),
+    max: 2000,
+    note: 'the fourth section and the eighth are awash: jump them',
+  },
+  { hold: 'R', until: X(x + 45.4), max: 600 },
+];
+const act10b = (x: number): Step[] => [{ hold: 'R', until: X(x + 19.4), max: 600 }];
+/** the granary: hop every pad but the one numbered like the sacks (two) */
+const padPolicy: Policy = (w, m) => {
+  const e = w.flags.pat10e as { pads: { x: number; n: number }[] };
+  const p = w.player;
+  if (m.hold > 0) return { move: 'R', jump: true };
+  if (!p.onGround) return go('R');
+  const h = e.pads.filter((q) => q.n !== 2 && p.x < q.x + 24).sort((a, b) => a.x - b.x)[0];
+  if (h && w.tick > (m.cool ?? 0) && p.x + p.w >= h.x - 19 && p.x < h.x) {
+    m.hold = 11;
+    m.cool = w.tick + 45;
+    return { move: 'R', jump: true };
+  }
+  return go('R');
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['PAT-01'] = tourRoute();
   S['PAT-02'] = room02();
@@ -363,10 +417,13 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('PAT-08', 0, []);
   S['PAT-09'] = room09();
   lengthen('PAT-09', 0, []);
+  S['PAT-10'] = room10();
+  lengthen('PAT-10', 0, []);
 }
 
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-10': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-jod' },
   'PAT-09': { steps: [{ hold: 'R', until: X(9), max: 400 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 20, ticks: 26 }))], cause: 'pat-bheed' },
   'PAT-08': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-kua' },
   'PAT-07': { steps: [{ hold: 'R', until: X(8.6), max: 400 }, { hold: 'R', jump: 12, ticks: 12, note: 'on to the tempo' }, { hold: 'R', until: (w) => w.player.onGround && w.player.cx >= w.flags.pat7.cx - 4, max: 300, note: 'stand in the middle' }, { hold: '', until: done, max: 2400 }], cause: 'pat-torana' },
@@ -377,6 +434,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'PAT-01': { steps: [...upTo(21), { hold: 'R', until: done, max: 2400 }], cause: 'pat-bheed' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-10': { steps: [{ hold: 'R', until: X(3.3), max: 600 }, { hold: 'R', jump: 12, ticks: 12, note: 'a hop on to the first plate, to be safe' }, { hold: 'R', until: done, max: 600 }], cause: 'pat-taala' },
   'PAT-09': { steps: [...room09().slice(0, 1), { hold: 'R', until: X(39.5), max: 400, note: 'the first gondola that comes' }, { hold: 'R', jump: 14, ticks: 14 }, { hold: '', until: done, max: 600 }], cause: 'pat-jhoola' },
   'PAT-08': { steps: [...hop(5.5, 'skip the first hatch'), { hold: 'R', until: done, max: 900 }], cause: 'pat-kua' },
   'PAT-07': { steps: [{ policy: rideBalanced(false, false), until: done, max: 4500, note: 'stand on the road side whatever happens' }], cause: 'pat-dhakka' },
@@ -399,6 +457,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'pat07-adda': act07b,
   'pat08-chowk': act08,
   'pat09-jhoola': act09,
+  'pat10-pipa': act10a,
+  'pat10-anaaj': act10b,
 };
 const endingPolicies: Record<string, Policy> = {
   'pat-musal': pestlePolicy,
@@ -408,6 +468,7 @@ const endingPolicies: Record<string, Policy> = {
   'pat-hauled-basket': basketPolicy,
   'pat-mound': moundPolicy,
   'pat-charkhi': gatePolicy,
+  'pat-ginti-pad': padPolicy,
 };
 
 export const test: CityTests = {
@@ -417,5 +478,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['PAT-02', 'PAT-04', 'PAT-05', 'PAT-06', 'PAT-07', 'PAT-08', 'PAT-09'],
+  fair: ['PAT-02', 'PAT-04', 'PAT-05', 'PAT-06', 'PAT-07', 'PAT-08', 'PAT-09', 'PAT-10'],
 };

@@ -77,7 +77,7 @@ export function pontoon(w: World, c0: number, n: number, carts: { lo: number; hi
         live: (s) => s.y >= 250,
         tick: (s, w2) => {
           // a cart over this section sinks it; Dad's own weight a little
-          let target = FL;
+          let target = s.s.awash ? FL + 26 : FL;
           for (let k = 0; k < carts.length; k++) if (Math.abs(cartAt(k, w2).x - (s.x + SEC / 2)) < SEC / 2) target = FL + 26;
           if (target === FL && w2.standing(s.solid!)) target = FL + 4;
           const cur = s.y;
