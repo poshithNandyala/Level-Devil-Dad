@@ -6,8 +6,9 @@ import { ending as e04 } from './s04';
 import { ending as e05 } from './s05';
 import { ending as e06 } from './s06';
 import { ending as e07 } from './s07';
+import { ending as e08 } from './s08';
 
-export type GtkEndingKind = 'gtk-steam-vent' | 'gtk-jhola-entry' | 'gtk-lift-counts-down' | 'gtk-taxi-meter' | 'gtk-tank-overflow' | 'gtk-rope-climbs-to-door';
+export type GtkEndingKind = 'gtk-steam-vent' | 'gtk-jhola-entry' | 'gtk-lift-counts-down' | 'gtk-taxi-meter' | 'gtk-tank-overflow' | 'gtk-rope-climbs-to-door' | 'gtk-cabin-both-doors';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<GtkEndingKind, true> {}
@@ -20,4 +21,5 @@ export const endings: Record<GtkEndingKind, Ending> = {
   'gtk-taxi-meter': e05,
   'gtk-tank-overflow': e06,
   'gtk-rope-climbs-to-door': e07,
+  'gtk-cabin-both-doors': e08,
 };

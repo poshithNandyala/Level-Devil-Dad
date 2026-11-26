@@ -13,4 +13,5 @@ export const causeLines: Record<string, string[]> = {
   'gtk-chhat': ['Off the doorstep, on to the roof. Too far down.', 'Take the stair down to the roof garden instead.'],
   'gtk-badal': ['Off the edge in the cloud. The road had stopped.', 'Where the kerb rope stops, the road stops: jump there.'],
   'gtk-deewar': ['That was a painting of a road, on the wall behind.', 'Trust the rope, not the view: where it stops, jump.'],
+  'gtk-ropeway': ['Back into the shed with the cabin. Its eave took you off the roof.', 'Each cabin only goes to the middle and back: hop across when they meet.'],
 };

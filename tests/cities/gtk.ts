@@ -11,6 +11,8 @@ import { FLOORS } from '../../src/game/cities/gtk/s04';
 import type { Rule } from '../../src/game/cities/gtk/s05';
 import { TANK } from '../../src/game/cities/gtk/s06';
 import type { Cloud } from '../../src/game/cities/gtk/s07';
+import { DOCK } from '../../src/game/cities/gtk/s08';
+import type { Rig } from '../../src/game/cities/gtk/entities';
 import { XL } from '../runner';
 
 type Move = 'L' | 'R' | '';
@@ -422,6 +424,56 @@ const act07b = (x: number): Step[] => [{ policy: gapJumper(), until: X(x + 31.5)
 const act07c = (x: number): Step[] => [{ policy: gapJumper(), until: X(x + 39.5), max: 1500, note: 'ahead of the cloud bank' }];
 const ropeDoor: Policy = (w) => stepper()(w);
 
+// ------------------------------------------------------------------ GTK-08
+/** board the first cabin when it's docked, ride it to the middle, cross to the second while they're together,
+ *  ride that to its far end and step off. `stay`: never cross (the naive play). `down`: the second is below. */
+function ropeway(key: string, o: { stay?: boolean; down?: boolean } = {}): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  let onB = false;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+      onB = false;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const [a, b] = w.flags[key] as Rig[];
+    const p = w.player;
+    if (b.carries(w)) onB = true;
+    if (!p.onGround) return go(onB || o.down || p.x >= b.x + 6 ? '' : 'R');
+    if (a.carries(w)) {
+      if (o.stay) return go(p.cx < a.x + a.w / 2 ? 'R' : '');
+      if (a.s.ph !== 'mid') return go(p.x + p.w < a.x + a.w - 3 ? 'R' : '');
+      if (o.down) return go('R');
+      jt = 9;
+      return { move: 'R', jump: true };
+    }
+    if (b.carries(w)) {
+      if (b.s.ph === 'end') return go('R');
+      return go(p.cx < b.x + b.w / 2 ? 'R' : p.cx > b.x + b.w / 2 + 6 ? 'L' : '');
+    }
+    // on a deck: before the line, wait at the edge for the first cabin to be in
+    if (p.x < a.x) return go(a.s.ph === 'end' && a.s.k === 0 ? 'R' : p.x + p.w < a.x - 6 ? 'R' : '');
+    return go('R');
+  };
+}
+const room08 = (): Step[] => [{ policy: ropeway('gtk8c'), until: and(ground, X(28)), max: 3000, note: 'ride up, cross at the middle, ride up to the far deck' }, { hold: 'R', until: X(29.5), max: 300 }];
+const act08 = (x: number): Step[] => [{ policy: ropeway('gtk8ac', { down: true }), until: and(ground, X(x + 30)), max: 3000, note: 'ride out, step down on to the lower cabin at the middle' }, { hold: 'R', until: X(x + 33.5), max: 300 }];
+/** the docked cabin: wait till its doors open, then straight through */
+const dockPolicy: Policy = (w, _m, d) => {
+  const st = w.flags.gtk8e as { t0: number };
+  const p = w.player;
+  const x0 = d.x - 96;
+  if (p.x + p.w < x0 - 24 || p.x > x0 + 4) return go('R');
+  if (st.t0 < 0) return go('');
+  const u = cyc(w, st.t0, DOCK.period);
+  return go(u >= 0.02 && u <= 0.9 ? 'R' : '');
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['GTK-01'] = tourRoute();
   S['GTK-02'] = room02();
@@ -436,9 +488,12 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('GTK-06', 0, []);
   S['GTK-07'] = room07();
   lengthen('GTK-07', 0, []);
+  S['GTK-08'] = room08();
+  lengthen('GTK-08', 0, []);
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'GTK-08': { steps: [{ policy: ropeway('gtk8c', { stay: true }), until: done, max: 3000, note: 'ride it all the way, as Tara says' }], cause: 'gtk-ropeway' },
   'GTK-07': { steps: [{ hold: 'R', until: done, max: 900, note: 'just run, as Tara says' }], cause: 'gtk-badal' },
   'GTK-06': { steps: [{ hold: 'R', until: done, max: 900, note: 'the shortcut stairs, down' }], cause: 'gtk-taxi' },
   'GTK-05': { steps: [{ policy: stepper(), until: done, max: 1200, note: 'hop the flowers, as Tara says' }], cause: 'gtk-jurmana' },
@@ -477,6 +532,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk07-thau': act07a,
   'gtk07-chitra': act07b,
   'gtk07-ghumti': act07c,
+  'gtk08-tar': act08,
 };
 const endingPolicies: Record<string, Policy> = {
   'gtk-steam-vent': ventPolicy,
@@ -485,6 +541,7 @@ const endingPolicies: Record<string, Policy> = {
   'gtk-taxi-meter': taxiPolicy,
   'gtk-tank-overflow': tankPolicy,
   'gtk-rope-climbs-to-door': ropeDoor,
+  'gtk-cabin-both-doors': dockPolicy,
 };
 void hop;
 
@@ -495,5 +552,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['GTK-01', 'GTK-02', 'GTK-03', 'GTK-04', 'GTK-05', 'GTK-06', 'GTK-07'],
+  fair: ['GTK-01', 'GTK-02', 'GTK-03', 'GTK-04', 'GTK-05', 'GTK-06', 'GTK-07', 'GTK-08'],
 };
