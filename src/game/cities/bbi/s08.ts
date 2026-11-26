@@ -210,6 +210,24 @@ export const act: Act = {
   },
 };
 
+/** act 2: the big family bowl: four badi, and the current runs harder */
+export const B08B: BowlCfg = { c0: 4, c1: 23, badi: [6, 11, 16, 20], pour1: [0.5, 2.6], pour2: [3.2, 5.6], v1: 40, v2: 45, v3: 50 };
+export const act2: Act = {
+  id: 'bbi08-thali',
+  w: 30,
+  advice: 'The big family bowl with four badi. Same rule, stronger current: on a badi before the pour, never the one by the right rim, ride it back and hop out.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + B08B.c0, c.x + B08B.c1).fill(c.x + B08B.c0 - 1, c.x + B08B.c0 - 1, 13, 14, '#').fill(c.x + B08B.c1 + 1, c.x + B08B.c1 + 1, 13, 14, '#');
+  },
+  build: (w, c) => {
+    const st = { t0: -1 };
+    w.flags.bbi8c = st;
+    onPass(w, c.X(B08B.c0) + 4, (w2) => (st.t0 = w2.tick));
+    bowl(w, { ...B08B, c0: c.x + B08B.c0, c1: c.x + B08B.c1, badi: B08B.badi.map((k) => c.x + k) }, () => st.t0, 'bbi8d');
+  },
+};
+
 /** ending: a trough of pakhala water before the door; a sal-leaf plate floats in it, and turns over when it
  *  reaches the door's side, so step off on to the step before it gets there */
 export const ending: Ending = {

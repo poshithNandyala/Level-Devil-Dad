@@ -38,6 +38,7 @@ export function machine(w: World, x: number, y: number, ww: number, h: number, o
       tick: (r, w2) => {
         if (m.started < 0 && w2.state === 'play' && (o.onTop ? r.rides(w2) : touches(w2, r.x, r.y, r.w, r.h))) {
           m.started = w2.tick;
+          r.s.who = [Math.round(w2.player.x), Math.round(w2.player.y)];
           w2.flags.bbi5started = (w2.flags.bbi5started ?? 0) + 1;
           if (o.blame) w2.flags.bbi5blame = o.blame;
         }
@@ -68,13 +69,13 @@ const restCloth = (ctx: CanvasRenderingContext2D, x: number, y: number, ww: numb
 
 /** the jaanta: a stone hand mill on a post in the paddy channel; started, it spins and flings you back */
 export function jaanta(w: World, c: number) {
-  const x = px(c) - 4;
-  return machine(w, x, FL - 6, 24, 8, {
+  const x = px(c);
+  return machine(w, x, FL - 6, 16, 8, {
     list: 'bbi5m',
     blame: 'bbi-jaanta',
     run: (_m, _r, w2, k) => {
       const p = w2.player;
-      if (k > 0.12 && k < 0.2 && touches(w2, x, FL - 6, 24, 8)) {
+      if (k > 0.12 && k < 0.2 && touches(w2, x, FL - 6, 16, 8)) {
         // the stone spins under you and throws you off, into the channel
         p.vy = -120;
         p.vx = 60;
@@ -86,11 +87,11 @@ export function jaanta(w: World, c: number) {
       if (k > 0.2) _r.setSolid(false);
     },
     art: (ctx, r, k) => {
-      box(ctx, r.x + 9, r.y + 8, 6, 40, '#6E4A2E');
+      box(ctx, r.x + 5, r.y + 8, 6, 40, '#6E4A2E');
       box(ctx, r.x, r.y, r.w, r.h, '#9E9E9E');
       box(ctx, r.x + 2, r.y + 1, r.w - 4, 2, '#BDBDBD');
       const a = k < 0 ? 0 : k * 14;
-      const hx = r.x + 12 + Math.cos(a) * 8;
+      const hx = r.x + 8 + Math.cos(a) * 5;
       box(ctx, hx - 1, r.y - 7, 3, 7, '#6E4A2E');
       if (k < 0) restCloth(ctx, r.x, r.y, r.w);
     },
@@ -166,7 +167,7 @@ export function sila(w: World, c: number) {
  *  low hayloft beam, with you on it */
 export function cart(w: World, c: number, beam: number) {
   const x = px(c);
-  return machine(w, x, FL - 18, 44, 18, {
+  return machine(w, x, FL - 12, 24, 12, {
     list: 'bbi5m',
     run: (_m, r, w2, k) => {
       if (k > 0.3) {
@@ -179,8 +180,8 @@ export function cart(w: World, c: number, beam: number) {
       box(ctx, r.x + 2, r.y - 2, r.w - 4, 4, '#A0703C');
       ctx.fillStyle = '#5D3A1E';
       ctx.beginPath();
-      ctx.arc(r.x + 12, r.y + 12, 6, 0, Math.PI * 2);
-      ctx.arc(r.x + 32, r.y + 12, 6, 0, Math.PI * 2);
+      ctx.arc(r.x + 6, r.y + 8, 4, 0, Math.PI * 2);
+      ctx.arc(r.x + 18, r.y + 8, 4, 0, Math.PI * 2);
       ctx.fill();
       // the bullocks: lying in front while it rests, up and pulling once started
       const up = k >= 0.3;
@@ -222,7 +223,7 @@ function village(w: World, c0: number, c1: number) {
   );
 }
 
-export const R05 = { ch: [12, 14] as [number, number], jaanta: 13.25 };
+export const R05 = { ch: [12, 14] as [number, number], jaanta: 13 };
 
 export function room(): LevelDef {
   return {
@@ -243,13 +244,13 @@ export function room(): LevelDef {
       sign(w, 4.5, 10.4, 3, 'RAJA', 'shop', null, 'fields rest');
       rival(w, 2, 15, 1, taraScript(5));
       onPass(w, px(4), (w2) => w2.guide('Chala bajar jiba! | Let’s go to the market!', (w3) => w3.player.cx < px(12)));
-      collectible(w, 'bbi-podapitha', 13.6, 10.2);
+      collectible(w, 'bbi-podapitha', 13, 10.2);
     },
   };
 }
 
 /** act 1: the husk pit with the rice pounder lying across it, and the grinding stone at the step */
-export const A05 = { bales: [2, 3] as [number, number], pit: [5, 8] as [number, number], step: [18, 21] as [number, number], sila: 15 };
+export const A05 = { bales: [2, 3] as [number, number], pit: [5, 6] as [number, number], step: [18, 21] as [number, number], sila: 15 };
 export const act1: Act = {
   id: 'bbi05-dhenki',
   w: 26,
@@ -263,7 +264,7 @@ export const act1: Act = {
   build: (w, c) => {
     village(w, c.x, c.x + 26);
     pitBlame(w, c.x + A05.pit[0], c.x + A05.pit[1], 'bbi-dhenki', 'spikes');
-    dhenki(w, c.x + A05.pit[0] - 1, c.x + A05.pit[1]);
+    dhenki(w, c.x + A05.pit[0], c.x + A05.pit[1]);
     sila(w, c.x + A05.sila + 1.75);
     w.add(
       new Rig(0, 0, 0, 0, {
@@ -282,7 +283,7 @@ export const act1: Act = {
 };
 
 /** act 2: the cart left in the lane under the hayloft beam */
-export const A05b = { cart: 6, beam: [14, 18] as [number, number] };
+export const A05b = { cart: 8, beam: [15, 19] as [number, number] };
 export const act2: Act = {
   id: 'bbi05-gadi',
   w: 24,
@@ -307,6 +308,38 @@ export const act2: Act = {
           for (let i = 0; i < 6; i++) box(ctx, x0 + 3 + i * 12, FL - 76 + (i % 2) * 10, 8, 2, '#B8963F');
           box(ctx, x0, FL - 32, ww, 16, '#6E4A2E');
           box(ctx, x0 + 4, FL - 80, 4, 64, '#5D3A1E');
+        },
+      }),
+    );
+  },
+};
+
+/** act 3: the threshing yard: a hand mill in a channel, a cart, and a pounder over a pit, close together */
+export const act3: Act = {
+  id: 'bbi05-khala',
+  w: 34,
+  advice: 'The threshing yard, everything close together: jump the channel over its hand mill, hop the cart without touching it, then up on the straw and over the pounder’s pit.',
+  cps: [9.5, 19.5],
+  paint: (g, c) => {
+    g.pit(c.x + 4, c.x + 6);
+    g.fill(c.x + 22, c.x + 23, 13, 14, '#');
+    g.pit(c.x + 25, c.x + 26);
+  },
+  build: (w, c) => {
+    village(w, c.x, c.x + 34);
+    pitBlame(w, c.x + 4, c.x + 6, 'bbi-dhan', 'water');
+    jaanta(w, c.x + 5);
+    cart(w, c.x + 14, c.x + 21);
+    pitBlame(w, c.x + 25, c.x + 26, 'bbi-dhenki', 'spikes');
+    dhenki(w, c.x + 25, c.x + 26);
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: 2,
+        paint: (ctx) => {
+          for (let i = 0; i < 2; i++) {
+            box(ctx, c.X(22) + i * 16, FL - 32, 16, 32, '#E3C16F');
+            box(ctx, c.X(22) + i * 16, FL - 22, 16, 2, '#B8963F');
+          }
         },
       }),
     );

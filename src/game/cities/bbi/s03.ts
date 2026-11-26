@@ -242,6 +242,32 @@ export const act: Act = {
   },
 };
 
+/** act 2: the fair end of the street: four parasols, and this time the last shopkeeper sells his cut-out */
+export const OPENS03B: { c: number; y: number; cut: -1 | 0 | 1; open: [number, number][]; peel?: number }[] = [
+  { c: 5, y: FL - 40, cut: -1, open: [[0.6, 3.4]] },
+  { c: 9, y: FL - 48, cut: 1, open: [[2.6, 5.2]] },
+  { c: 13, y: FL - 40, cut: 0, open: [[4.4, 7.4]] },
+  { c: 17, y: FL - 34, cut: -1, open: [[6.2, 9.6]], peel: 7.4 },
+];
+export const act2: Act = {
+  id: 'bbi03-mela',
+  w: 24,
+  advice: 'The far end of the street, four more parasols. This time it is the last shopkeeper who sells his cut-out: land on it and hop straight off to the bank.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + 2, c.x + 20);
+  },
+  build: (w, c) => {
+    const st = { t0: -1 };
+    w.flags.bbi3b = st;
+    onPass(w, c.X(0.5), (w2) => (st.t0 = w2.tick));
+    shops(w, c.x + 1, c.x + 22);
+    gutter(w, c.x + 2, c.x + 20);
+    w.flags.bbi3bp = OPENS03B.map((p, i) => parasol(w, c.x + p.c, p.y, p.cut, p.open, () => st.t0, { peelAt: p.peel, k: (i + 2) % 3, colour: i + 3 }));
+    customer(w, OPENS03B.map((p) => [c.x + p.c, p.open[0][0], p.open[0][1] - 0.6] as [number, number, number]), () => st.t0, '#8E44AD');
+  },
+};
+
 /** ending: an appliqué lantern hangs over the door step; the shopkeeper lets it down to show you, then hoists it */
 export const LANTERN = { at: 6, delay: 0.35, drop: 0.2, down: 1.2, up: 0.6 };
 export const ending: Ending = {
