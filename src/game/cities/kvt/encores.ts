@@ -43,7 +43,11 @@ export class RubbleBank extends Entity {
   private was = true;
   avalanche = false;
   private dust: { x: number; y: number; t: number }[] = [];
-  constructor(readonly rects: RubbleRect[]) {
+  constructor(
+    readonly rects: RubbleRect[],
+    /** which way the lagoon is: -1 left (climbing a face), 1 right (coming down the other side) */
+    readonly dir: -1 | 1 = -1,
+  ) {
     super();
     this.layer = 3;
   }
@@ -56,7 +60,7 @@ export class RubbleBank extends Entity {
     const p = w.player;
     if (this.slide > 0) {
       this.slide--;
-      p.moveX(w, this.avalanche ? -3 : -2);
+      p.moveX(w, (this.avalanche ? 3 : 2) * this.dir);
       p.vx = 0;
       p.stun = Math.max(p.stun, 2);
       if (this.slide % 3 === 0) this.dust.push({ x: p.cx, y: p.y + p.h, t: w.tick });
@@ -105,7 +109,7 @@ export class RubbleBank extends Entity {
     for (const d of this.dust) {
       const k = (w.tick - d.t) / 36;
       ctx.fillStyle = `rgba(240,228,205,${0.9 - k * 0.8})`;
-      for (let i = 0; i < 3; i++) ctx.fillRect(d.x - 6 - k * 22 - i * 3, d.y - 2 + k * 10 + i, 2, 2);
+      for (let i = 0; i < 3; i++) ctx.fillRect(d.x + this.dir * (6 + k * 22 + i * 3), d.y - 2 + k * 10 + i, 2, 2);
     }
   }
 }
@@ -191,7 +195,7 @@ const breaches: Act = {
   advice: 'The storm cut the crest in two places. The rubble past each cut slides you back towards it when you land: jump well past the cut, never just over it.',
   paint: (g, c) => {
     const x = c.x;
-    g.fill(x, x + 1, 14, 17, '#').fill(x + 2, x + 27, 13, 17, '#').fill(x + 28, x + 29, 14, 17, '#');
+    g.fill(x + 1, x + 27, 13, 17, '#').fill(x + 28, x + 29, 14, 17, '#');
     g.pit(x + 6, x + 7, 13).pit(x + 16, x + 17, 13);
   },
   build: (w, c) => {
@@ -307,22 +311,28 @@ function bankWidths(c: number, widths: number[], top: number): RubbleRect[] {
   });
 }
 const SUMMIT = [3, 3, 3, 2, 2, 2];
+/** the far side of the summit: rubble steps going down to the right, three tiles each, from row 9 to row 14 */
+const DOWN = (x: number): RubbleRect[] => Array.from({ length: 6 }, (_, i) => ({ c0: x + 26 + i * 3, c1: x + 28 + i * 3, top: 9 + i }));
 /** KVT-09 act 3: the highest part of the bank, where the steps narrow to two tiles. The slide still takes a tile. */
 const summit: Act = {
   id: 'kvt09-kodumudi',
-  w: 30,
-  advice: 'Near the top the steps narrow to two tiles, and the slide still takes one: land on the far tile of each, or you go all the way down.',
+  w: 48,
+  advice: 'Near the top the steps narrow to two tiles, and the slide still takes one: land on the far tile of each. Over the top the lagoon is on the other side, so the slide goes the other way: walk off each step, never hop down.',
   paint: (g, c) => {
     const x = c.x;
     g.pit(x + 3, x + 4);
     for (const r of bankWidths(x + 5, SUMMIT, 14)) g.fill(r.c0, r.c1, r.top, 17, '#');
     g.fill(x + 20, x + 25, 8, 17, '#');
-    for (let i = 0; i < 3; i++) g.fill(x + 26 + i, x + 26 + i, 9 + 2 * i, 17, '#');
+    for (const r of DOWN(x)) g.fill(r.c0, r.c1, r.top, 17, '#');
+    g.pit(x + 44, x + 45);
   },
   build: (w, c) => {
     const { X } = c;
     pool(w, c.x + 3, c.x + 5, 15.3, { colors: LAGOON });
+    pool(w, c.x + 44, c.x + 46, 15.3, { colors: LAGOON });
     w.add(new RubbleBank(bankWidths(c.x + 5, SUMMIT, 14)));
+    w.add(new RubbleBank(DOWN(c.x), 1));
+    onPass(w, X(24), (w2) => taraSays(w2, 'Chaadi irangu, Dad! Vegam! | Hop down, Dad! Quick!', 2.4));
     sign(w, c.x + 0.4, G - 4.4, 3.4, 'KODUMUDI', 'wood', null, 'the top');
     onPass(w, X(1), (w2) => w2.guide('Mukalil padikal cheruthaanu. | The steps are small at the top.'));
   },

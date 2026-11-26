@@ -227,12 +227,12 @@
   "checkpoints": [
    34.5,
    68.5,
-   98.5,
-   127.5
+   116.5,
+   145.5
   ],
   "route": {
    "state": "won",
-   "tick": 2741
+   "tick": 3006
   },
   "naive": {
    "state": "dead",

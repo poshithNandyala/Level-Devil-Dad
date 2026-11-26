@@ -222,10 +222,19 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...stepUp(x + 15),
     ...stepUp(x + 17),
     ...stepUp(x + 19),
-    { hold: 'R', until: and(ground, X(x + 29)), max: 600, note: 'over the top and down' },
+    { hold: 'R', until: X(x + 25.2), max: 300, note: 'along the top' },
+    // down the far side: walk off each step (you land at its back, the slide puts you in the middle)
+    ...Array.from({ length: 6 }, (_, i): Step[] => [
+      { hold: 'R', until: (w) => w.player.x >= px(x + 26 + i * 3 - 0.2) || w.state !== 'play', max: 200, ...(i === 0 ? { note: 'walk off each step, never hop down' } : {}) },
+      { hold: '', until: (w) => (w.player.onGround && !w.flags.kvtSlide && w.player.x >= px(x + 26 + i * 3)) || w.state !== 'play', max: 200 },
+    ]).flat(),
+    { hold: 'R', until: X(x + 42.6), max: 200 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'over the water at the bottom' },
+    { hold: 'R', until: and(ground, X(x + 47)), max: 300 },
   ],
   'kvt09-murivu': (x) => [
-    { hold: 'R', jump: 14, ticks: 14, note: 'up on to the breached crest' },
+    { hold: 'R', until: X(x - 0.2), max: 200 },
+    { hold: 'R', jump: 16, ticks: 16, long: true, note: 'up on to the breached crest' },
     { hold: 'R', until: ground, max: 200 },
     { hold: 'R', until: and(ground, X(x + 4.6)), max: 400 },
     { hold: 'R', jump: 30, ticks: 30, long: true, note: 'well past the first cut' },
@@ -619,6 +628,11 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   // hop the rock and keep running flat out: the seaweed beds after the beach slow you down, and down you go
   fix['KVT-08'] = { steps: [...upTo(S['KVT-08'], 'flat out, hopping every seaweed bed'), { hold: 'R', until: done, max: 900 }], cause: 'splash' };
 
+  // ---------------------------------------------------------------- more first-timer mistakes, 03 to 07
+  mistakes['KVT-03'] = [{ what: 'hop on to the first step of light before the beam reaches it', steps: [{ hold: 'R', until: X(6.1), max: 300 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 600 }], cause: 'splash' }];
+  mistakes['KVT-04'] = [{ what: 'walk on into the propellers without waiting for them to pause', steps: [...upTo(S['KVT-04'], 'wait for the propellers to pause'), { hold: 'R', until: done, max: 600 }], cause: 'spikes' }];
+  mistakes['KVT-05'] = [{ what: 'wait for the boat at the very end of the pier, in the tuna’s way', steps: [{ hold: 'R', until: X(7.0), max: 300 }, { hold: '', until: (w) => thingOf(w, 'odam').x >= px(15), max: 900 }, { hold: 'R', until: X(9.2), max: 200 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 400 }], cause: 'hit' }];
+
   // ---------------------------------------------------------------- KVT-10
   S['KVT-10'] = kvt10Room;
   lengthen('KVT-10', 0, []);
@@ -651,7 +665,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     cause: 'spikes',
   };
   mistakes['KVT-09'] = [
-    { what: 'a little hop over the storm cut, as Tara says', steps: [...upTo(S['KVT-09'], 'well past the first cut').slice(0, -1), { hold: 'R', until: X(98 + 5.2), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 400 }], cause: 'splash' },
+    { what: 'hop down the far side of the summit, as Tara says', steps: [...upTo(S['KVT-09'], 'walk off each step, never hop down'), ...Array.from({ length: 5 }, (): Step[] => [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, { hold: '', until: (w) => !w.flags.kvtSlide || w.state !== 'play', max: 200 }]).flat(), dies], cause: 'splash' },
+    { what: 'a little hop over the storm cut, as Tara says', steps: [...upTo(S['KVT-09'], 'well past the first cut').slice(0, -1), { hold: 'R', until: X(116 + 5.2), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 400 }], cause: 'splash' },
   ];
   // hop straight up the steps from wherever you land
   naive['KVT-09'] = {
