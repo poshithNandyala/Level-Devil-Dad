@@ -6,6 +6,7 @@ import { Step, X, and, ground } from '../runner';
 import type { CityTests } from '../city-tests';
 import type { SawHall } from '../../src/game/cities/svp/s02';
 import type { Creek } from '../../src/game/cities/svp/s03';
+import type { Herd, LateBoat } from '../../src/game/cities/svp/s04';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -46,6 +47,20 @@ function hopEdges(note = ''): Step {
 /** hopEdges until `done` */
 const hopUntil = (done: (w: World) => boolean, note: string, max = 1500): Step => ({ ...hopEdges(note), until: done, max });
 
+// ------------------------------------------------------------------ SVP-04: the deer
+/** put the food down where Dad stands (stand still till it is down) */
+const putDown = (get: (w: World) => Herd, note: string): Step => ({ hold: '', until: (w) => !get(w).carrying && get(w).food !== null, max: 400, note });
+/** wait back from the edge until the boat is in, then ride it across and step off */
+const boatRide = (get: (w: World) => Herd, getBoat: (w: World) => LateBoat, edgeX: number, farX: number): Step[] => [
+  { policy: (w) => (getBoat(w).docked ? go('R') : go(toward(w, edgeX - 22, 3))), until: (w) => getBoat(w).docked && w.standing(getBoat(w).boat.solid), max: 1800, note: 'wait back from the edge for the boat, then step on' },
+  { hold: '', until: (w) => getBoat(w).boat.x >= getBoat(w).R0 - 1, max: 900, note: 'ride it across' },
+  { hold: 'R', until: and(ground, (w) => w.player.x > farX), max: 400, note: 'off on to the far bank' },
+];
+const herd0 = (w: World) => w.flags.herd as Herd;
+const boat0 = (w: World) => w.flags.boat as LateBoat;
+const herdA = (w: World) => (w.flags.herds as Herd[])[0];
+const boatA = (w: World) => (w.flags.boats as LateBoat[])[0];
+
 // ------------------------------------------------------------------ SVP-02: the saw mill
 const hall = (w: World, i = 0) => (i < 0 ? (w.flags.saw as SawHall) : ((w.flags.halls ?? []) as SawHall[])[i]);
 /** stay at `off` px from the log's own left end (the log moves, so follow it) until the carriage has docked */
@@ -74,10 +89,19 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     hopUntil((w) => w.player.x > 31 * 16 && w.player.onGround, 'the logs are only logs now: hop them'),
   ];
   lengthen('SVP-03', 0, []);
+  S['SVP-04'] = [
+    { hold: 'R', until: (w) => herd0(w).carrying, max: 600, note: 'past the stall: the fritter is yours, and the herd is up' },
+    { hold: 'R', until: X(12.5), max: 300, note: 'well back from the edge' },
+    putDown(herd0, 'stand still: Dad puts it down, and the herd goes to it'),
+    ...boatRide(herd0, boat0, 20 * 16, 26 * 16 + 4),
+    { hold: 'R', until: and(ground, X(31)), max: 400 },
+  ];
+  lengthen('SVP-04', 0, []);
 }
 
 /** the obvious play per stage, and the cause it must die of */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'SVP-04': { steps: [{ hold: 'R', until: X(19.2), max: 600 }, ...Array.from({ length: 40 }, (): Step => ({ hold: '', jump: 8, ticks: 40, note: 'waiting for the boat, hopping to keep warm' }))], cause: 'svp-hiran' },
   'SVP-03': { steps: [hopUntil((w) => w.state !== 'play', 'hop the logs')], cause: 'svp-magar' },
   'SVP-02': {
     steps: [
@@ -90,6 +114,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'SVP-04': { steps: [{ hold: 'R', until: X(19.2), max: 600 }, { hold: '', until: (w) => w.state !== 'play', max: 1500, note: 'put it down right here at the edge, and wait for the boat' }], cause: 'svp-hiran' },
   'SVP-03': { steps: [{ hold: 'R', until: (w) => w.state !== 'play', max: 1500, note: 'wade the creek instead' }], cause: 'svp-magar' },
   'SVP-02': {
     steps: [
@@ -149,6 +174,12 @@ function crossGaps(): Step {
   };
 }
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp04-ghat': (x) => [
+    { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },
+    putDown(herdA, 'put it down at the stall: the herd gathers there'),
+    ...boatRide(herdA, boatA, px(x + 17), px(x + 23) + 4),
+    { hold: 'R', until: and(ground, X(x + 33.5)), max: 400 },
+  ],
   'svp03-nala': (x) => [{ ...crossGaps(), until: (w) => w.player.x > px(x + 34.5) && w.player.onGround, max: 3600, note: 'along the logs, a gap at a time, when the arrow points away' }, { hold: 'R', until: and(ground, X(x + 35.5)), max: 300 }],
   'svp02-chirai': (x) => [
     { hold: 'R', until: (w) => w.player.x >= px(x + 4) + 6 && w.player.onGround, max: 900, note: 'on to the boarding end' },
@@ -164,6 +195,10 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 
 /** a policy for each door ending, by kind */
 const endingPolicies: Record<string, Policy> = {
+  'svp-jetty-guard'(w) {
+    const h = w.flags.guard as Herd;
+    return h.carrying ? go('') : go('R');
+  },
   'svp-board-bridge'(w, _m, d) {
     const b = w.flags.bridge as { state: string; x0: number };
     if (b.state === 'down') return go(toward(w, d.x + 8, 1) || 'R');
@@ -183,5 +218,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['SVP-02', 'SVP-03'],
+  fair: ['SVP-02', 'SVP-03', 'SVP-04'],
 };

@@ -9,6 +9,7 @@ import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
 import { aariRoom, chirai } from './s02';
 import { magarRoom, nala } from './s03';
+import { hiranRoom, ghat } from './s04';
 
 const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
 
@@ -49,7 +50,7 @@ export const levels = (): LevelDef[] => [
   }),
   longStage({ base: aariRoom(), acts: [chirai], twist: 'svp-timber-stack', par: 40, shape: 'short', meta: { family: 'cut-floor-saw-carriage', betrayals: ['cut-floor'], ending: 'svp-timber-stack' } }), // SVP-02
   longStage({ base: magarRoom(), acts: [nala], twist: 'svp-board-bridge', par: 44, shape: 'short', meta: { family: 'warning-board-arrow-turns', betrayals: ['honest-moving-sign'], ending: 'svp-board-bridge' } }), // SVP-03
-  longStage({ base: todoRoom(4), par: 30, shape: 'long' }), // SVP-04 TODO: acts, twist (a svp-... ending), par
+  longStage({ base: hiranRoom(), acts: [ghat], twist: 'svp-jetty-guard', par: 50, shape: 'short', meta: { family: 'food-holder-followed-by-deer', betrayals: ['carry-attracts'], ending: 'svp-jetty-guard' } }), // SVP-04
   longStage({ base: todoRoom(5), par: 30, shape: 'long' }), // SVP-05 TODO: acts, twist (a svp-... ending), par
   longStage({ base: todoRoom(6), par: 30, shape: 'long' }), // SVP-06 TODO: acts, twist (a svp-... ending), par
   longStage({ base: todoRoom(7), par: 30, shape: 'long' }), // SVP-07 TODO: acts, twist (a svp-... ending), par
