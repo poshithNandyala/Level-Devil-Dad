@@ -140,23 +140,23 @@ export const THAU_PITS = [
   [33, 34],
 ];
 export const THAU: Cloud = { t0: -1, thick: 4.2, clear: 1.8 };
-export const act1: Act = {
-  id: 'gtk07-thau',
+export const thauAct = (id: string, PITS: number[][], CL: Cloud, key: string): Act => ({
+  id,
   w: 40,
   advice: 'The rope is down for repairs. Wait under the tea-stall awning: every few seconds the cloud lifts for a moment. Look then, and go while you can see the holes, jumping each one.',
   paint: (g, c) => {
-    for (const [a, b] of THAU_PITS) g.pit(c.x + a, c.x + b);
+    for (const [a, b] of PITS) g.pit(c.x + a, c.x + b);
   },
   build: (w, c) => {
-    const cl: Cloud = { ...THAU };
-    w.flags.gtk7a = cl;
+    const cl: Cloud = { ...CL };
+    w.flags[key] = cl;
     onPass(w, c.X(1), (w2) => {
       cl.t0 = w2.tick;
     });
     fog(w, c.x + 4, c.x + 39, cl);
     drops(
       w,
-      THAU_PITS.map(([a, b]) => [c.x + a, c.x + b]),
+      PITS.map(([a, b]) => [c.x + a, c.x + b]),
       'gtk-badal',
     );
     decor(w, -2, (ctx) => {
@@ -167,7 +167,7 @@ export const act1: Act = {
     });
     sign(w, c.x + 0.4, 8.6, 4.4, 'ROPE REPAIR', 'warn', null, 'wait for clear');
   },
-};
+});
 
 /** act 2: the rope again, and the cloud lifting on a road that looks whole: the wall behind is painted */
 export const CHITRA_PITS = [
@@ -176,20 +176,20 @@ export const CHITRA_PITS = [
   [26, 27],
 ];
 export const CHITRA: Cloud = { t0: -1, thick: 3.6, clear: 1.6 };
-export const act2: Act = {
-  id: 'gtk07-chitra',
+export const chitraAct = (id: string, PITS: number[][], CL: Cloud, key: string): Act => ({
+  id,
   w: 32,
   advice: 'Now the cloud lifts on a road that looks whole: the retaining wall behind it is painted with the road going on. The rope is back, and it doesn’t lie: where the rope stops, jump, however solid it looks.',
   paint: (g, c) => {
-    for (const [a, b] of CHITRA_PITS) g.pit(c.x + a, c.x + b);
+    for (const [a, b] of PITS) g.pit(c.x + a, c.x + b);
   },
   build: (w, c) => {
-    const cl: Cloud = { ...CHITRA };
-    w.flags.gtk7b = cl;
+    const cl: Cloud = { ...CL };
+    w.flags[key] = cl;
     onPass(w, c.X(1), (w2) => {
       cl.t0 = w2.tick;
     });
-    const pits = CHITRA_PITS.map(([a, b]) => [c.x + a, c.x + b] as [number, number]);
+    const pits = PITS.map(([a, b]) => [c.x + a, c.x + b] as [number, number]);
     // the mural: drawn road over the holes, only to be seen when the cloud is up (it's on the wall behind)
     decor(w, -3, (ctx) => {
       for (const [a, b] of pits) {
@@ -207,7 +207,7 @@ export const act2: Act = {
     drops(w, pits, 'gtk-deewar');
     sign(w, c.x + 13, 8.4, 4.4, 'MURAL', 'shop', null, 'clean Gangtok');
   },
-};
+});
 
 /** act 3 (momentum): clear air, and a cloud bank rolling up the road behind you. Keep going */
 export const GHUMTI_PITS = [
@@ -218,29 +218,36 @@ export const GHUMTI_PITS = [
   [32, 33],
 ];
 export const GHUMTI: Cloud = { t0: -1, thick: 0, clear: 0, roll: 92 };
-export const act3: Act = {
-  id: 'gtk07-ghumti',
+export const ghumtiAct = (id: string, PITS: number[][], CL: Cloud, key: string): Act => ({
+  id,
   w: 40,
   advice: 'Clear air at last, and no rope: the holes are there to see. But a cloud bank is rolling up the road behind you, quicker than a walk. Keep moving and jump the holes before it swallows them.',
   paint: (g, c) => {
-    for (const [a, b] of GHUMTI_PITS) g.pit(c.x + a, c.x + b);
+    for (const [a, b] of PITS) g.pit(c.x + a, c.x + b);
   },
   build: (w, c) => {
-    const cl: Cloud = { ...GHUMTI };
-    w.flags.gtk7c = cl;
+    const cl: Cloud = { ...CL };
+    w.flags[key] = cl;
     onPass(w, c.X(1.5), (w2) => {
       cl.t0 = w2.tick;
     });
     fog(w, c.x - 2, c.x + 39, cl);
     drops(
       w,
-      GHUMTI_PITS.map(([a, b]) => [c.x + a, c.x + b]),
+      PITS.map(([a, b]) => [c.x + a, c.x + b]),
       'gtk-badal',
     );
     sign(w, c.x + 37, 9.4, 3.6, 'HAIRPIN', 'warn', null, 'gangtok 2 km');
   },
-};
+});
 
+export const act1 = thauAct('gtk07-thau', THAU_PITS, THAU, 'gtk7a');
+export const act2 = chitraAct('gtk07-chitra', CHITRA_PITS, CHITRA, 'gtk7b');
+export const act3 = ghumtiAct('gtk07-ghumti', GHUMTI_PITS, GHUMTI, 'gtk7c');
+/** the second round, harder: a longer wait for a shorter lift, the mural over two holes in a row, a quicker cloud */
+export const act4 = thauAct('gtk07-chhaya', [[5, 6], [9, 10], [15, 16], [22, 23], [28, 29], [34, 35]], { t0: -1, thick: 4.8, clear: 1.4 }, 'gtk7d');
+export const act5 = chitraAct('gtk07-rang', [[6, 7], [11, 12], [20, 21], [27, 28]], { t0: -1, thick: 3.2, clear: 1.8 }, 'gtk7e');
+export const act6 = ghumtiAct('gtk07-bhaga', [[4, 5], [9, 10], [14, 15], [20, 21], [26, 27], [31, 32], [36, 37]], { t0: -1, thick: 0, clear: 0, roll: 104 }, 'gtk7f');
 /** door: up the hillside in thick cloud; the rope's posts climb with the hidden steps, the only guide to them */
 export const ending: Ending = {
   space: 12,

@@ -147,28 +147,28 @@ export function room(): LevelDef {
 
 /** act: the inspector comes down the rail behind you; thin bags he takes for good, a bag with you on it he lifts */
 export const INSPECTOR = { speed: 46, lift: 1.0, startBehind: 2.5 };
-export const act: Act = {
-  id: 'gtk03-jaanch',
+export const inspectorAct = (id: string, key: string, pattern: string, dir: 1 | -1, speed: number, advice: string): Act => ({
+  id,
   w: 36,
-  advice: 'The inspector comes along the rail behind you. Thin bags he takes for good; any bag with you on it he lifts to check the stitches, and down you go. Keep hopping, cloth to cloth, and stay ahead of him.',
+  advice,
   paint: (g, c) => {
     g.pit(c.x + 4, c.x + 26);
   },
   build: (w, c) => {
-    const key = 'gtk3a';
     jhora(w, c.x + 4, c.x + 26, key);
-    const row = bags(w, c.x + 5, 'cctcctcct', key);
-    const st = { t0: -1, x: c.X(1) };
-    w.flags.gtk3i = st;
+    const row = bags(w, c.x + 5, pattern, key);
+    const from = dir > 0 ? c.X(1) : c.X(28);
+    const st = { t0: -1, x: from, dir };
+    w.flags[key + 'i'] = st;
     onPass(w, c.X(3), (w2) => {
       st.t0 = w2.tick;
     });
     w.add(
-      new Rig(c.X(1), BAG.top - 76, 12, 28, {
+      new Rig(from, BAG.top - 76, 12, 28, {
         layer: 3,
         tick: (r, w2) => {
           if (st.t0 < 0) return;
-          r.x = c.X(1) + ((w2.tick - st.t0) / 120) * INSPECTOR.speed;
+          r.x = from + dir * ((w2.tick - st.t0) / 120) * speed;
           st.x = r.x + 6;
           for (const b of row) {
             const s = b.s;
@@ -202,7 +202,24 @@ export const act: Act = {
     w.add(new Rig(c.X(4), FL + 8, px(23), 40, { cause: 'gtk-jaanch', inset: 0, live: (_r, w2) => !!w2.flags[key + 'lifted'] }));
     sign(w, c.x + 0.6, 9.6, 4.6, 'NO PLASTIC', 'warn', null, 'inspection');
   },
-};
+});
+export const act = inspectorAct(
+  'gtk03-jaanch',
+  'gtk3a',
+  'cctcctcct',
+  1,
+  INSPECTOR.speed,
+  'The inspector comes along the rail behind you. Thin bags he takes for good; any bag with you on it he lifts to check the stitches, and down you go. Keep hopping, cloth to cloth, and stay ahead of him.',
+);
+/** act 2: the next row, and the inspector is working it from the far end, towards you: hop over his head */
+export const act2 = inspectorAct(
+  'gtk03-ulto',
+  'gtk3b',
+  'ctcctcctc',
+  -1,
+  40,
+  'The next row he works from the far end, coming towards you, so staying ahead is no use. Wait on a cloth bag; the moment he has walked past the next cloth bag, hop on to it, over him, before he reaches yours.',
+);
 
 /** door: the cloth-bag stall. Nobody goes in empty-handed: take a jhola off the hook over the door first */
 export const ending: Ending = {

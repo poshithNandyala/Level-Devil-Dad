@@ -180,7 +180,7 @@ const ventPolicy: Policy = (w, _m, d) => {
 
 // ------------------------------------------------------------------ GTK-03
 /** across the bags: cloth to cloth (or every bag, for the naive play), jumping off each one's far edge */
-function bagHop(key: string, o: { every?: boolean; dwell?: number } = {}): (w: World) => Out {
+function bagHop(key: string, o: { every?: boolean; dwell?: number; over?: boolean } = {}): (w: World) => Out {
   let W: World | null = null;
   let jt = 0;
   let wait = 0;
@@ -201,7 +201,7 @@ function bagHop(key: string, o: { every?: boolean; dwell?: number } = {}): (w: W
     const p = w.player;
     const all = (w.flags[key + 'bags'] as Bag[]).filter((b) => !b.s.gone);
     const on = all.find((b) => b.carries(w)) ?? null;
-    const ahead = all.filter((b) => b.x > p.x + 4 && (o.every || !b.s.thin));
+    const ahead = all.filter((b) => b !== on && b.x > p.x + 4 && (o.every || !b.s.thin));
     const first = (w.flags[key + 'bags'] as Bag[])[0];
     const lastBag = (w.flags[key + 'bags'] as Bag[]).slice(-1)[0];
     const target = ahead[0];
@@ -220,14 +220,22 @@ function bagHop(key: string, o: { every?: boolean; dwell?: number } = {}): (w: W
       return go('');
     }
     const far = target ? target.x - (on ? on.x + on.w : first.x - 16) > 20 : true;
-    const edge = on ? on.x + on.w - (far && !o.dwell ? 14 : 3) : first.x - 26;
+    if (o.over && target) {
+      // he's coming the other way: go for the next bag only when he's well short of it, or already past it
+      const ix = (w.flags[key + 'i'] as { x: number; t0: number }).x;
+      const ok = ix < target.x + 2 || ix - target.x > 110;
+      if (!ok) return go('');
+    }
+    const slow = o.dwell || o.over;
+    const edge = on ? on.x + on.w - (far && !slow ? 14 : 3) : first.x - 26;
     if (p.x + p.w < edge) return go('R');
-    jt = far ? (o.dwell ? 17 : 15) : 8;
+    jt = far ? (slow ? 17 : 15) : 8;
     aim = target ?? null;
     return { move: 'R', jump: true };
   };
 }
 const room03 = (): Step[] => [{ policy: bagHop('gtk3'), until: and(ground, X(24)), max: 2400, note: 'cloth to cloth' }, { hold: 'R', until: X(29), max: 300 }];
+const act03b = (x: number): Step[] => [{ policy: bagHop('gtk3b', { over: true }), until: and(ground, X(x + 26)), max: 3000, note: 'over his head, bag to bag' }, { hold: 'R', until: X(x + 30), max: 300 }];
 const act03 = (x: number): Step[] => [{ policy: bagHop('gtk3a'), until: and(ground, X(x + 26)), max: 2400, note: 'cloth to cloth, ahead of the inspector' }, { hold: 'R', until: X(x + 30), max: 300 }];
 /** the jhola stall: jump up for the bag on the hook, then in */
 const jholaPolicy: Policy = (w, _m, d) => {
@@ -420,7 +428,8 @@ const waitClear = (key: string): Step => ({
   max: 1500,
   note: 'wait for the cloud to lift, and look',
 });
-const act07a = (x: number): Step[] => [{ hold: 'R', until: X(x + 2), max: 300 }, waitClear('gtk7a'), { policy: gapJumper(), until: X(x + 39.5), max: 1500, note: 'go while it’s clear' }];
+const thauRoute = (key: string) => (x: number): Step[] => [{ hold: 'R', until: X(x + 2), max: 300 }, waitClear(key), { policy: gapJumper(), until: X(x + 39.5), max: 1500, note: 'go while it’s clear' }];
+const act07a = thauRoute('gtk7a');
 const act07b = (x: number): Step[] => [{ policy: gapJumper(), until: X(x + 31.5), max: 1500, note: 'trust the rope' }];
 const act07c = (x: number): Step[] => [{ policy: gapJumper(), until: X(x + 39.5), max: 1500, note: 'ahead of the cloud bank' }];
 const ropeDoors = new WeakMap<World, (w: World) => Out>();
@@ -637,6 +646,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk02-bhatti': act02,
   'gtk03-jaanch': act03,
+  'gtk03-ulto': act03b,
   'gtk04-ghar': act04,
   'gtk05-shaam': act05,
   'gtk05-kachra': act05b,
@@ -644,6 +654,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk07-thau': act07a,
   'gtk07-chitra': act07b,
   'gtk07-ghumti': act07c,
+  'gtk07-chhaya': thauRoute('gtk7d'),
+  'gtk07-rang': act07b,
+  'gtk07-bhaga': act07c,
   'gtk08-tar': act08,
   'gtk09-chamri': act09,
   'gtk10-thela': act10a,
