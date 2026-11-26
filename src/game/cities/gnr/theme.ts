@@ -1,0 +1,25 @@
+import type { Theme } from '../../../render/theme';
+
+export const theme: Theme = {
+  city: 'GNR',
+  name: 'Gandhinagar',
+  local: 'ગાંધીનગર',
+  sky: ['#3A7BD5', '#8EC5F0', '#FDF1C7'],
+  sun: '#FFF4CC',
+  far: '#9FB7CC',
+  mid: '#6A9A64',
+  near: '#3E6E3A',
+  accent: '#E53935',
+  accent2: '#FFB300',
+  tileBase: '#B08B5B',
+  tileTop: '#D4B07A',
+  tileEdge: '#8A6A40',
+  tileDark: '#5E4628',
+  topper: '#7CB342',
+  pattern: 'brick',
+  spike: '#F7F3EA',
+  spikeEdge: '#2A1E10',
+  ink: '#2A1E10',
+  rim: null,
+  ui: '#E53935',
+};

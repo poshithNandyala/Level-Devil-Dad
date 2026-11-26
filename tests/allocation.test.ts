@@ -218,8 +218,10 @@ describe('door endings and act ids on built stages', () => {
   const shipped = [...Object.keys(ENDINGS).filter((k) => !newModuleEndings.has(k)), ...oldTwists];
   it('knows the shipped endings', () => {
     expect(oldTwists).toContain('crush');
-    expect(shipped).toContain('dahihandi');
-    expect(shipped).toContain('ulta');
+    // every ending of every shipped city's module (read from the registry, so no city's key is named here)
+    const shippedModuleEndings = CITY_MODULES.filter((m) => shippedCities.has(m.id)).flatMap((m) => Object.keys(m.endings));
+    expect(shippedModuleEndings.length).toBeGreaterThan(0);
+    expect(shippedModuleEndings.filter((k) => !shipped.includes(k))).toEqual([]);
   });
   it('every meta.ending is <city>-<kebab>, unique, and not a shipped ending renamed; new module stages declare one', () => {
     expect(endingProblems(LEVELS, shipped, (c) => !shippedCities.has(c))).toEqual([]);

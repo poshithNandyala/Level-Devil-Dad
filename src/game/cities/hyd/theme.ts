@@ -1,0 +1,25 @@
+import type { Theme } from '../../../render/theme';
+
+export const theme: Theme = {
+  city: 'HYD',
+  name: 'Hyderabad',
+  local: 'హైదరాబాద్',
+  sky: ['#272257', '#8B3D7E', '#F59A5C'],
+  sun: '#FFE0A8',
+  far: '#6E4474',
+  mid: '#50305E',
+  near: '#3A244C',
+  accent: '#F28C28',
+  accent2: '#1F7A5C',
+  tileBase: '#5E3826',
+  tileTop: '#A3693F',
+  tileEdge: '#4A2B1D',
+  tileDark: '#3B2216',
+  topper: '#C88A55',
+  pattern: 'brick',
+  spike: '#FFF6E8',
+  spikeEdge: '#2A1710',
+  ink: '#2A1710',
+  rim: null,
+  ui: '#F28C28',
+};

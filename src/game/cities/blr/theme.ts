@@ -1,0 +1,25 @@
+import type { Theme } from '../../../render/theme';
+
+export const theme: Theme = {
+  city: 'BLR',
+  name: 'Bengaluru',
+  local: 'ಬೆಂಗಳೂರು',
+  sky: ['#57499A', '#B488C6', '#FFD8C2'],
+  sun: '#FFF1E0',
+  far: '#A496CF',
+  mid: '#6E9A80',
+  near: '#3F6F55',
+  accent: '#8E6CCB',
+  accent2: '#F2C14E',
+  tileBase: '#36423F',
+  tileTop: '#5A6B66',
+  tileEdge: '#28322F',
+  tileDark: '#1E2725',
+  topper: '#61B45A',
+  pattern: 'granite',
+  spike: '#F3F6F4',
+  spikeEdge: '#141B1A',
+  ink: '#141B1A',
+  rim: null,
+  ui: '#8E6CCB',
+};

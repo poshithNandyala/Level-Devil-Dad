@@ -1,0 +1,25 @@
+import type { Theme } from '../../../render/theme';
+
+export const theme: Theme = {
+  city: 'CHN',
+  name: 'Chennai',
+  local: 'சென்னை',
+  sky: ['#2B7FCC', '#86CBEC', '#FFE6B0'],
+  sun: '#FFFDF2',
+  far: '#E9C29A',
+  mid: '#D49162',
+  near: '#A65E3B',
+  accent: '#FFB300',
+  accent2: '#0288D1',
+  tileBase: '#7B2C2C',
+  tileTop: '#B4483F',
+  tileEdge: '#5A1E1E',
+  tileDark: '#431515',
+  topper: '#E8C27A',
+  pattern: 'brick',
+  spike: '#FFF6E8',
+  spikeEdge: '#2A1414',
+  ink: '#2A1414',
+  rim: null,
+  ui: '#FFB300',
+};

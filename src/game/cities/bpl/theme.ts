@@ -1,0 +1,25 @@
+import type { Theme } from '../../../render/theme';
+
+export const theme: Theme = {
+  city: 'BPL',
+  name: 'Bhopal',
+  local: 'भोपाल',
+  sky: ['#3F8FB5', '#9FD0DC', '#F6E7C6'],
+  sun: '#FFF3D0',
+  far: '#8FB0A8',
+  mid: '#5E8C84',
+  near: '#3C5F5A',
+  accent: '#00897B',
+  accent2: '#FFB300',
+  tileBase: '#7A8F74',
+  tileTop: '#A9BC98',
+  tileEdge: '#566A52',
+  tileDark: '#3A4A38',
+  topper: '#D9C27A',
+  pattern: 'brick',
+  spike: '#F2F4EC',
+  spikeEdge: '#22302A',
+  ink: '#22302A',
+  rim: null,
+  ui: '#00897B',
+};
