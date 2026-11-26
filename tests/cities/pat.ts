@@ -97,18 +97,49 @@ function pestles(w: World): Out {
 }
 const pestlePolicy: Policy = (w) => pestles(w);
 
+// ------------------------------------------------------------------ PAT-04
+const t4 = (w: World) => (w.tick - w.flags.pat4.t0) / 120;
+const climb4 = (): Step[] => [
+  { hold: '', until: (w) => w.flags.pat4.t0 >= 0 && t4(w) >= 6.0, max: 1200, note: 'wait at the foot: both porters have been and gone' },
+  ...hop(1.7, 'the first step'),
+  ...hop(3.7, 'the second step'),
+  ...hop(5.7, 'the third step'),
+  ...hop(7.7, 'the fourth step'),
+  { hold: 'R', until: and(ground, X(27)), max: 900, note: 'over the landing and down the far stair' },
+];
+const room04 = (): Step[] => [...climb4(), { hold: 'R', until: X(29), max: 300 }];
+const act04 = (x: number): Step[] => [
+  { hold: 'R', until: (w) => w.player.y > 235, max: 600, note: 'down into the dome' },
+  { hold: '', until: (w) => w.flags.pat4g.y <= 166, max: 1500, note: 'let the grain lift you to the ledge' },
+  { hold: 'R', until: and(ground, X(x + 20.5), (w) => w.player.y <= 150), max: 300, note: 'step off on to the ledge' },
+  { hold: 'R', until: X(x + 29.4), max: 600 },
+];
+/** the door of Golghar: stay back while it swings, walk in once it has swung */
+const leafPolicy: Policy = (w, _m, d) => {
+  const t = (w.tick / 120) % 5;
+  const p = w.player;
+  if (t >= 2.2 && t < 3.0) return go('R');
+  if (p.cx < d.x - 80) return go('R');
+  if (p.cx > d.x - 70 && t < 2.2 && p.cx < d.x - 62) return go('');
+  return go(t >= 3.0 && p.cx > d.x - 62 ? 'R' : '');
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['PAT-01'] = tourRoute();
   S['PAT-02'] = room02();
   lengthen('PAT-02', 0, []);
+  S['PAT-04'] = room04();
+  lengthen('PAT-04', 0, []);
 }
 
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-04': { steps: [{ hold: 'R', until: X(2), max: 300 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 20, ticks: 26 }))], cause: 'pat-bojh' },
   'PAT-02': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-angara' },
   'PAT-01': { steps: [...upTo(21), { hold: 'R', until: done, max: 2400 }], cause: 'pat-bheed' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-04': { steps: [{ hold: '', until: (w) => w.flags.pat4.t0 >= 0 && t4(w) >= 3.7, max: 800 }, ...climb4().slice(1)], cause: 'pat-bojh' },
   'PAT-02': { steps: [...room02().slice(0, 4), { hold: '', until: done, max: 1500 }], cause: 'pat-chimta' },
   'PAT-01': { steps: [...upTo(24), { hold: '', until: done, max: 1500 }], cause: 'pat-tempo' },
 };
@@ -117,9 +148,11 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'pat02-chokha': act02,
+  'pat04-anaaj': act04,
 };
 const endingPolicies: Record<string, Policy> = {
   'pat-musal': pestlePolicy,
+  'pat-bhitar': leafPolicy,
 };
 
 export const test: CityTests = {
@@ -129,5 +162,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['PAT-02'],
+  fair: ['PAT-02', 'PAT-04'],
 };

@@ -5,6 +5,7 @@ import { type LevelDef, type World } from '../../world';
 import { lines as L } from './lines';
 import { door, rival } from '../../levels/kit';
 import { tourLevel, meta01 } from './s01';
+import { room as room04, act as act04, meta04 } from './s04';
 import { room as room02, act as act02, meta02 } from './s02';
 import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
@@ -35,7 +36,7 @@ export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: { family: meta01.family, betrayals: meta01.betrayals } },
   longStage({ base: room02(), acts: [act02], twist: 'pat-musal', par: 40, shape: 'long', meta: meta02 }), // PAT-02 TODO: acts, twist (a pat-... ending), par
   longStage({ base: todoRoom(3), par: 30, shape: 'long' }), // PAT-03 TODO: acts, twist (a pat-... ending), par
-  longStage({ base: todoRoom(4), par: 30, shape: 'long' }), // PAT-04 TODO: acts, twist (a pat-... ending), par
+  longStage({ base: room04(), acts: [act04], twist: 'pat-bhitar', par: 50, shape: 'long', meta: meta04 }), // PAT-04 TODO: acts, twist (a pat-... ending), par
   longStage({ base: todoRoom(5), par: 30, shape: 'long' }), // PAT-05 TODO: acts, twist (a pat-... ending), par
   longStage({ base: todoRoom(6), par: 30, shape: 'long' }), // PAT-06 TODO: acts, twist (a pat-... ending), par
   longStage({ base: todoRoom(7), par: 30, shape: 'long' }), // PAT-07 TODO: acts, twist (a pat-... ending), par
