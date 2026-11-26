@@ -1318,10 +1318,10 @@ input[type='range'] {
   letter-spacing: 0.08em;
   pointer-events: none;
 }
-.mapview svg.india.far .pin.locked:not(.sel) .plabel,
-.mapview svg.india.far .pin.soon:not(.sel) .plabel,
-.mapview svg.india.far .pin.soon:not(.sel) text,
-.mapview svg.india.far .pin.locked:not(.sel) text {
+.mapview svg.india.far .pin.locked:not(.sel):not(.home) .plabel,
+.mapview svg.india.far .pin.soon:not(.sel):not(.home) .plabel,
+.mapview svg.india.far .pin.soon:not(.sel):not(.home) text,
+.mapview svg.india.far .pin.locked:not(.sel):not(.home) text {
   display: none;
 }
 .mapview svg.india .here {
@@ -1611,4 +1611,347 @@ input[type='range'] {
   100% {
     transform: rotate(-4deg);
   }
+}
+
+/* ------------------------------------------------ hint strip (never over the play) */
+.hintsheet {
+  position: absolute;
+  left: 50%;
+  top: calc(max(8px, var(--sat)) + 52px);
+  transform: translate(-50%, 0);
+  width: min(600px, calc(100vw - 2 * max(14px, var(--sal), var(--sar)) - 120px));
+  max-height: 30vh;
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  align-items: center;
+  column-gap: 8px;
+  padding: 6px 6px 6px 10px;
+  background: rgba(16, 13, 28, 0.8);
+  border: 1.5px solid rgba(255, 209, 102, 0.55);
+  border-left: 5px solid #ffd166;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+  touch-action: none;
+  cursor: pointer;
+  animation: hsIn 0.28s cubic-bezier(0.2, 1.3, 0.4, 1) both;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 5;
+}
+.hintsheet.see {
+  opacity: 0.16;
+}
+.hintsheet.out {
+  opacity: 0;
+  transform: translate(-50%, -16px);
+}
+@keyframes hsIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -14px);
+  }
+}
+.hs-tag {
+  font-weight: 800;
+  font-size: 15px;
+  color: #ffd166;
+  white-space: nowrap;
+  align-self: start;
+  padding-top: 2px;
+}
+.hs-text {
+  font-weight: 700;
+  font-size: clamp(14px, 4.1vh, 16px);
+  line-height: 1.22;
+  color: #fff3d6;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+.hintsheet.more .hs-text::after {
+  content: '  ▸';
+  color: #ffd166;
+}
+.hs-x {
+  font: inherit;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff3d6;
+  cursor: pointer;
+  align-self: start;
+}
+/* long stages: the part for the stretch Dad is in */
+.hs-here {
+  display: none;
+  margin-top: 3px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #ffd166;
+  color: #3a2a00;
+  font-size: 10.5px;
+  letter-spacing: 0.02em;
+}
+.hintsheet.here .hs-here {
+  display: block;
+}
+.hintsheet.here .hs-count {
+  color: #fff3d6;
+}
+.hs-b {
+  grid-column: 2;
+  font: inherit;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 1;
+  width: 30px;
+  height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffd166;
+  cursor: pointer;
+  align-self: start;
+}
+.hs-b.off {
+  display: none;
+}
+.hs-text {
+  grid-column: 3;
+}
+.hs-x {
+  grid-column: 4;
+}
+@media (max-height: 300px) {
+  .hintsheet {
+    top: calc(max(6px, var(--sat)) + 48px);
+  }
+  .hs-text {
+    -webkit-line-clamp: 2;
+  }
+}
+
+/* ------------------------------------------------ home city */
+.homepick {
+  width: min(760px, 96vw);
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+}
+.hp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.hp-head .h1 {
+  margin: 0;
+  font-size: clamp(22px, 7vh, 30px);
+}
+.hp-head .sub {
+  margin: 0;
+}
+.hp-scroll {
+  min-height: 0;
+  flex: 1;
+  border-radius: 12px;
+}
+.hp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 6px;
+  padding-bottom: 4px;
+}
+.hp-region {
+  grid-column: 1 / -1;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 4px 2px 0;
+}
+.hp-city {
+  font: inherit;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-height: 48px;
+  padding: 6px 10px 5px;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--paper);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.14);
+  cursor: pointer;
+}
+.hp-city:active {
+  transform: translateY(2px);
+}
+.hp-city.on {
+  background: #ffd166;
+  color: #3a2a00;
+}
+.hp-name {
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hp-local {
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  margin-left: 6px;
+}
+.hp-state {
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.15;
+  opacity: 0.75;
+}
+/* built cities carry their colour and a "Ready to play" tag; the rest are quieter and say "Coming soon" */
+.hp-city.built {
+  box-shadow: inset 4px 0 0 var(--cc, #ffd166), inset 0 0 0 1.5px rgba(255, 255, 255, 0.18);
+  padding-left: 13px;
+}
+.hp-city.soon {
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.08);
+}
+.hp-city.soon .hp-name,
+.hp-city.soon .hp-state {
+  opacity: 0.6;
+}
+.hp-tag {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  background: rgba(255, 209, 102, 0.18);
+  color: #ffd166;
+}
+.hp-city.soon .hp-tag {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 243, 214, 0.7);
+}
+.hp-city.on .hp-tag {
+  background: rgba(58, 42, 0, 0.15);
+  color: #3a2a00;
+}
+.hp-city.on .hp-name,
+.hp-city.on .hp-state {
+  opacity: 1;
+}
+.mapview .pin .homeglow {
+  opacity: 0.55;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: homeGlow 1.8s ease-in-out infinite;
+  filter: blur(3px);
+}
+@keyframes homeGlow {
+  50% {
+    opacity: 0.2;
+    transform: scale(1.2);
+  }
+}
+.mapview .hometag {
+  pointer-events: none;
+}
+.homebadge {
+  align-self: flex-start;
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1;
+  color: #3a2a00;
+  background: #ffd166;
+  border-radius: 999px;
+  padding: 5px 10px 3px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* ------------------------------------------------ home preview (round 2) */
+.cc-peek {
+  position: static;
+  box-shadow: none;
+  background: #ffd166 !important;
+  color: #3a2a00 !important;
+}
+.cc-peek-note {
+  font-size: 12px;
+  line-height: 1.25;
+  opacity: 0.7;
+}
+.hud .pill.previewbadge {
+  /* under the stage name, clear of the lives in the middle */
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  padding: 3px 10px 1px;
+  background: #ffd166;
+  color: #3a2a00;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+/* your city is not built yet: a postcard from it */
+.homepost {
+  margin-top: 8px;
+  padding: 10px 12px 10px;
+  background: #fffdf6;
+  border: 2px dashed #e0a92e;
+  border-radius: 10px;
+  transform: rotate(-1deg);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.hpo-stamp {
+  align-self: flex-end;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b2771a;
+  border: 2px solid #e0a92e;
+  border-radius: 6px;
+  padding: 2px 6px 0;
+  transform: rotate(3deg);
+}
+.hpo-line {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.25;
+}
+.hpo-teaser {
+  font-weight: 800;
+  font-size: 15px;
+  color: #8a4b10;
+}
+.hpo-teaser::before {
+  content: '✦ ';
+  color: #e0a92e;
+}
+.hpo-foot {
+  margin-top: 2px;
+  font-size: 12px;
+  opacity: 0.7;
 }

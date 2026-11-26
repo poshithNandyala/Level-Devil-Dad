@@ -60,6 +60,8 @@ export interface MapOpts {
   /** chapters cleared just now: their route segment draws itself */
   fresh?: string;
   onSelect: (c: Chapter) => void;
+  /** the player's home city: a glow and a "Your city" tag with how far it is */
+  home?: { id: string; line: string };
 }
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -224,6 +226,11 @@ export class IndiaMap {
     const acc = this.opts.accent(c);
     const g = s('g', { class: `pin ${st}${c.id === this.opts.selected ? ' sel' : ''}`, transform: `translate(${x} ${y})` });
     const r = c.bonus || c.preview ? 12 : 15;
+    const home = this.opts.home?.id === c.id;
+    if (home) {
+      g.classList.add('home');
+      g.append(s('circle', { r: r + 20, fill: '#FFD166', class: 'homeglow' }));
+    }
     if (st === 'open') g.append(s('circle', { r: r + 9, fill: acc, opacity: 0.25, class: 'pulse' }));
     const fill = st === 'cleared' ? acc : st === 'open' ? '#FFFFFF' : st === 'locked' ? '#E9E4DA' : '#CFC6B5';
     const stroke = st === 'soon' ? '#9C8E78' : st === 'locked' ? '#8C8576' : acc;
@@ -256,6 +263,13 @@ export class IndiaMap {
         label + (c.preview ? ' (preview)' : ''),
       ),
     );
+    if (home) {
+      // above the pin, clear of the "next city" marker
+      const tag = { 'text-anchor': 'middle', 'font-weight': 800, stroke: '#FFF8EA', 'stroke-width': 4, 'paint-order': 'stroke' };
+      g.append(
+        s('g', { class: 'hometag' }, s('text', { ...tag, y: -(r + 46), 'font-size': 20, fill: '#B5470F' }, '\u{1F3E0} Your city'), s('text', { ...tag, y: -(r + 27), 'font-size': 15, fill: '#3A2614' }, this.opts.home!.line)),
+      );
+    }
     // generous touch target
     g.append(s('circle', { r: 30, fill: 'transparent' }));
     g.addEventListener('click', (e) => {
@@ -372,7 +386,7 @@ export class IndiaMap {
     for (const [id, g] of this.pins) {
       const [x, y] = MAP_CITY_XY[id];
       // far away, cities you can't play yet shrink to dots so the open ones stand out
-      const quiet = far && (g.classList.contains('soon') || g.classList.contains('locked')) && !g.classList.contains('sel');
+      const quiet = far && (g.classList.contains('soon') || g.classList.contains('locked')) && !g.classList.contains('sel') && !g.classList.contains('home');
       g.setAttribute('transform', `translate(${x} ${y}) scale(${(quiet ? k * 0.55 : k).toFixed(3)})`);
     }
     if (this.here) this.here.setAttribute('transform', `translate(${this.hereAt[0]} ${this.hereAt[1]}) scale(${k.toFixed(3)})`);
