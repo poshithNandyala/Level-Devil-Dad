@@ -6,6 +6,7 @@ import { Step, X, and, done, ground } from '../runner';
 import type { CityTests } from '../city-tests';
 import { STROKE, SWEEP_PERIOD, type Sweep } from '../../src/game/cities/gtk/s01';
 import { VENT, type Steamer } from '../../src/game/cities/gtk/s02';
+import type { Bag } from '../../src/game/cities/gtk/s03';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -15,6 +16,8 @@ interface Mem {
 }
 type Policy = (w: World, m: Mem, d: Door) => Out;
 const px = (t: number) => t * 16;
+/** the first column of stage 03's act (room is 32 wide) */
+const x3 = (t: number) => 32 + t;
 const go = (move: Move): Out => ({ move, jump: false });
 const secs = (w: World, t0: number) => (w.tick - t0) / 120;
 const cyc = (w: World, t0: number, P: number) => ((secs(w, t0) % P) + P) % P;
@@ -167,13 +170,78 @@ const ventPolicy: Policy = (w, _m, d) => {
   return go(u >= VENT.on + 0.02 && u <= VENT.on + 0.7 ? 'R' : '');
 };
 
+// ------------------------------------------------------------------ GTK-03
+/** across the bags: cloth to cloth (or every bag, for the naive play), jumping off each one's far edge */
+function bagHop(key: string, o: { every?: boolean; dwell?: number } = {}): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  let wait = 0;
+  let last: Bag | null = null;
+  let aim: { x: number } | null = null;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+      wait = 0;
+      last = null;
+      aim = null;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const p = w.player;
+    const all = (w.flags[key + 'bags'] as Bag[]).filter((b) => !b.s.gone);
+    const on = all.find((b) => b.carries(w)) ?? null;
+    const ahead = all.filter((b) => b.x > p.x + 4 && (o.every || !b.s.thin));
+    const first = (w.flags[key + 'bags'] as Bag[])[0];
+    const lastBag = (w.flags[key + 'bags'] as Bag[]).slice(-1)[0];
+    const target = ahead[0];
+    if (!p.onGround) {
+      if (aim && p.x > aim.x + 6) return go('');
+      return go('R');
+    }
+    aim = null;
+    if (!on && p.x > lastBag.x + lastBag.w) return go('R');
+    if (on && o.dwell && on !== last) {
+      last = on;
+      wait = Math.round(o.dwell * 120);
+    }
+    if (wait > 0) {
+      wait--;
+      return go('');
+    }
+    const far = target ? target.x - (on ? on.x + on.w : first.x - 16) > 20 : true;
+    const edge = on ? on.x + on.w - (far && !o.dwell ? 14 : 3) : first.x - 26;
+    if (p.x + p.w < edge) return go('R');
+    jt = far ? (o.dwell ? 17 : 15) : 8;
+    aim = target ?? null;
+    return { move: 'R', jump: true };
+  };
+}
+const room03 = (): Step[] => [{ policy: bagHop('gtk3'), until: and(ground, X(24)), max: 2400, note: 'cloth to cloth' }, { hold: 'R', until: X(29), max: 300 }];
+const act03 = (x: number): Step[] => [{ policy: bagHop('gtk3a'), until: and(ground, X(x + 26)), max: 2400, note: 'cloth to cloth, ahead of the inspector' }, { hold: 'R', until: X(x + 30), max: 300 }];
+/** the jhola stall: jump up for the bag on the hook, then in */
+const jholaPolicy: Policy = (w, _m, d) => {
+  const st = w.flags.gtk3e as { got: boolean };
+  const p = w.player;
+  if (st.got) return go('R');
+  const hx = d.x - 40;
+  if (p.cx < hx + 4) return go('R');
+  if (p.cx > hx + 14) return go('L');
+  return { move: '', jump: p.onGround && w.tick % 40 < 20 };
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['GTK-01'] = tourRoute();
   S['GTK-02'] = room02();
   lengthen('GTK-02', 0, []);
+  S['GTK-03'] = room03();
+  lengthen('GTK-03', 0, []);
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'GTK-03': { steps: [{ policy: bagHop('gtk3', { every: true, dwell: 0.3 }), until: done, max: 2400, note: 'on to every bag' }], cause: 'gtk-polythene' },
   'GTK-01': { steps: [{ policy: stepper(), until: done, max: 2400 }], cause: 'gtk-jhadu' },
   'GTK-02': {
     steps: [{ policy: rideTier('gtk2', false, 'stay'), until: done, max: 2400, note: 'on top, and wait as Tara says' }],
@@ -181,6 +249,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'GTK-03': { steps: [{ policy: bagHop('gtk3', { dwell: 1.4 }), until: and(ground, X(24)), max: 2400 }, { hold: 'R', until: X(x3(0)), max: 300 }, { policy: bagHop('gtk3a', { dwell: 1.4 }), until: done, max: 3000, note: 'stop on each cloth bag to check the stitches' }], cause: 'gtk-jaanch' },
   'GTK-02': {
     steps: [{ policy: rideTier('gtk2', false, 'second'), until: done, max: 2400, note: 'let the top tier go, get on the second' }],
     cause: 'gtk-dhakkan',
@@ -191,9 +260,11 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk02-bhatti': act02,
+  'gtk03-jaanch': act03,
 };
 const endingPolicies: Record<string, Policy> = {
   'gtk-steam-vent': ventPolicy,
+  'gtk-jhola-entry': jholaPolicy,
 };
 void hop;
 
@@ -204,5 +275,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['GTK-01', 'GTK-02'],
+  fair: ['GTK-01', 'GTK-02', 'GTK-03'],
 };
