@@ -26,20 +26,6 @@ export function mix(a: string, b: string, k: number) {
 
 export type GroundCaps = { cap: string; capHi: string; blades?: string; flowers?: string[]; pebbles?: string };
 export const CAP: Record<string, GroundCaps> = {
-  TVM: { cap: '#4E9A3C', capHi: '#7CC255', blades: '#3E8530', flowers: ['#F4D35E', '#FFFFFF'] },
-  KVT: { cap: '#F1E7CF', capHi: '#FFF9EA', pebbles: '#D9CBAA' },
-  CHN: { cap: '#E2B86C', capHi: '#F3D597', pebbles: '#B98E4E' },
-  PDY: { cap: '#F4E6C2', capHi: '#FFF6DF', pebbles: '#D8C397' },
-  BLR: { cap: '#5E9E45', capHi: '#8CC765', blades: '#4E8A38', flowers: ['#B983D9', '#F7F7F7'] },
-  AMR: { cap: '#C47A4A', capHi: '#E09A66', pebbles: '#8D4E2C' },
-  HYD: { cap: '#59A452', capHi: '#83C46F', blades: '#478A41' },
-  PNJ: { cap: '#5E9E36', capHi: '#8CC152', blades: '#4C8A2C', flowers: ['#E91E63', '#FFEB3B'] },
-  DMN: { cap: '#D9C79E', capHi: '#EFE2C0', pebbles: '#A8946C' },
-  GNR: { cap: '#8BBF5A', capHi: '#AED581', blades: '#689F38', flowers: ['#FFB300', '#E53935'] },
-  JAI: { cap: '#E8B989', capHi: '#F6D4AE', pebbles: '#C2885E' },
-  RPR: { cap: '#9CCC65', capHi: '#C5E1A5', pebbles: '#8D5A3B' },
-  BPL: { cap: '#B9C7A6', capHi: '#D9E3C8', pebbles: '#7E8F6E' },
-  BOM: { cap: '#4A4858', capHi: '#6B6980', pebbles: '#2E2D3A' },
 };
 
 /** One ground tile in the city's style. Edges depend on neighbours so groups of tiles read as one mass. */
