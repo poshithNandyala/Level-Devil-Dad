@@ -38,7 +38,7 @@ How to use this file:
 | 16 | PAT | Patna | Bihar | Central | Magahi / Bhojpuri + Hindi + English | to do |
 | 17 | LKO | Lucknow | Uttar Pradesh | Central | Lakhnavi Hindustani (Urdu-rich) + Awadhi + English | to do |
 | 18 | BBI | Bhubaneswar | Odisha | East | Odia + Hindi + English | to do |
-| 19 | CCU | Kolkata | West Bengal | East | Bengali + Hindi + English | to do |
+| 19 | CCU | Kolkata | West Bengal | East | Bengali + Hindi + English | built on city/ccu (10 stages, docs/cities/CCU.md) |
 | 20 | SVP | Sri Vijaya Puram (bonus) | Andaman & Nicobar Islands | East | Andaman Hindi + Bengali/Tamil/Telugu + English | to do |
 | 21 | GTK | Gangtok | Sikkim | East | Nepali + Hindi + English | to do |
 | 22 | DIS | Dispur (Guwahati) | Assam | Northeast | Assamese + Hindi + English | to do |

@@ -1,0 +1,39 @@
+# CCU · Kolkata, West Bengal (city module, 10 stages)
+
+Built on `city/ccu` from the CCU bible (ldd-inbox/docs/cities/CCU.md) and allocation v2 (docs/allocation.json).
+Code: `src/game/cities/ccu/` (levels, endings, causes, entities + books, tram, porters, adda, pandal, muri,
+kumartuli). Routes and the plays that must die: `tests/cities/ccu.ts`.
+
+Language: only the bible's VERIFIED lines (Nomoshkar, Ki khobor, Ki holo, Abar, Bujhte parle na, Darun,
+Khub bhalo, Bãchao, Thamun, Aaste, Howrah Howrah Howrah, Ei jinishtar dam koto, Ei je shunun, Maf korben,
+Ashi, Bhalo theko, Jatra shubho hok, Saat baar), some with ", Dad" added.
+
+| # | Stage | Allocation family / betrayals | The room | Acts | Door ending (meta.ending) | NAIVE / FIX |
+|---|---|---|---|---|---|---|
+| 01 | Nomoshkar Kolkata (tour) | rail-groove-sticks-foot / groove-catch | Land on the tram rail from a jump and the groove locks your foot: it steers you along its line, no turning or jumping, into the rail-works trench. Walk on to the rail instead (up on the thela, walk off). | (tour) | the Esplanade tram shuttle (ccu-esplanade-tram-shuttle) | long jump over the thela / hop up and hop off: both ccu-rail |
+| 02 | Aaste! | exit-moving-vehicle-on-shout / exit-facing-forward | You ride the bus's footboard; it never stops. Off at speed: ccu-gir. Off backwards: ccu-ulto. The first "aaste" crawl is over the open drain; step off forward on the second. | - | ccu-stop: the bus crawls only for someone standing still at the stop; ride it across the drain (ccu-bus-crawls-for-whoever-waits) | off at the BUS STOP sign: ccu-gir / off on the first aaste: ccu-nala |
+| 03 | Jhalmuri | shake-tin-sorts-big-pieces-up / shake-sorts-up, B35 | The seller's tin is the floor; each shake sinks the muri and lifts the peanuts. From the second shake a green chilli comes up where you last landed: hop to the next peanut. | ccu03-dokan (wider tin, quicker hand) | ccu-thonga: a tin with no peanuts, cross between shakes (ccu-tin-with-no-peanuts) | walk on the muri: ccu-muri / stay on a peanut: ccu-lonka |
+| 04 | Boi Para | stack-pulled-from-bottom / stack-drops-one-height | The customer points at a book; the seller pulls it and that stack drops by one (at once if you land on it). A stack of one goes from under you; a pointed stack of two holds you. | ccu04-thak (a too-tall pile bought down; wait on the pavement, not the short stack) | ccu-set: the customer wants the whole set; wait for the re-shelve (ccu-customer-buys-the-whole-set) | hop every stack: ccu-boi / wait on a stack: ccu-boi |
+| 05 | Kumartuli | painted-figure-carried-out / paint-done-departs, dry-cracks-from-height | The paint line climbing each clay figure is the clock: at the crown it's carried out with you. Pale dry figures crack under a landing from height: walk down on to them. | ccu05-uthon (two steps down cracks even a walk), ccu05-lane, ccu05-ghat (finishing in order) | ccu-murti: ride the finished big figure out over the mud to the landing (ccu-ride-the-finished-figure-out) | jump down on the dry one: ccu-phata / rest on the horse: ccu-murti |
+| 06 | Trolley Pole | pole-swings-at-junction / pole-sweep, points-switch | At the junction the pole jumps the wire and sweeps the roof: ride the rear step. | ccu06-points (the pointsman's lever: the tram turns off, step and all; off at the island, take the next) | ccu-pole-turn: the pole walked round over the terminus platform (ccu-pole-turned-over-the-terminus) | ride the roof: ccu-dando / stay on the step: ccu-points |
+| 07 | Howrah Bridge (marathon, lives: act) | head-load-platforms / carry-platform, porter-rests | Ride the porters' head-loads over the taxis; each sets his load down at a marked CHA board (the schedule); switch before it. Oncoming loads knock you off. | ccu07-girder (hop down to a short porter overtaking), ccu07-dui (two streams, tall oncoming overhead), ccu07-pylon (shelter: don't take the one who leaves at once) | ccu-arch: the station arch sweeps the loads, step off on to the platform (ccu-station-arch-sweeps-the-loads) | stay on the first porter: ccu-cha / jump for the first load by: ccu-bojha |
+| 08 | Adda (HWIK) | stand-still-held-by-chat / held-until-event | Stand still among the old men on the rok and you've joined their adda until the tea seller passes; the maid's bucket washes the rok meanwhile. | ccu08-rok (washes on a beat), ccu08-tokta (the broken rok: sit down so the tea seller comes over his plank) | ccu-dorja: the old men on the doorstep only rise for the tea seller (ccu-old-men-on-the-doorstep-rise-for-tea) | stop to listen: ccu-dhowa / never stop, jump the broken rok: ccu-khod |
+| 09 | Pandal (tough) | cloth-panel-covers-foothold / build-order-wall | The decorators tie a cloth panel exactly where your next foothold was: a wall; full-jump on to its top. Under the roof frame they tie the next panel above it: off at once. | ccu09-sinri (cloth staircase), ccu09-toran (two panels at once), ccu09-chala (no frame: ride the raise up) | ccu-dwar-kapor: land in front of the door and he ties the last panel over it; jump straight in (ccu-last-panel-tied-over-the-door) | jump at the next bamboo: ccu-bansh / rest on the cloth: crushed |
+| 10 | Kolkata Kolkata (finale, lives: act) | finale-book-bundle-loads / customers-ask-mid-crossing | Book porters cross the road; customers point at the bundle they want and the pile drops one. | ccu10-bus (crawls for you, one aaste before the depot), ccu10-tram (step, junction, off before the points), ccu10-rok, ccu10-kumor | ccu-stup: the door stands on a pile being bought down; step in at two (ccu-door-on-a-pile-being-bought-down) | ride the single bundle: ccu-boi |
+
+Hidden items: mishti doi (01, 10), jhalmuri (02, 03), kathi roll (04, 05), sandesh (06, 09), bhanr (07, 08).
+Death causes (all in causes.ts): ccu-rail, ccu-gir, ccu-ulto, ccu-nala, ccu-boi, ccu-kada, ccu-muri, ccu-lonka,
+ccu-murti, ccu-phata, ccu-ganga, ccu-dando, ccu-khod, ccu-points, ccu-cha, ccu-gaari, ccu-bojha, ccu-arch,
+ccu-dhowa, ccu-bansh (plus the shared `crushed`).
+
+## Fairness (npm run fair -- CCU, 40 runs a lag; bar 90% stage, 95% each stretch at 0-12t)
+
+See ldd-inbox/reports/cities/ccu/BUILD.md for the final numbers.
+
+## Notes for MECHANICS / WAVE1 (integrator)
+
+- New kit inside the module: Rail (groove lock), Bus (footboard rules), Stack/Customer/Muck, Tram (pole sweep,
+  points, stops), Porter/BookPorter/ChaiBoard/Road, Adda/TeaSeller/Wash/House, ClothPanel/Decorator/Stakes,
+  Tin (muri shake), Figure/BigFigure/Ghat.
+- Closest shipped ideas: 01 vs GNR-06 mud (this one steers you); 06 ending vs `cctv` (wait while something
+  sweeps): different object and you wait on the step, but close in feel.
