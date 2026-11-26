@@ -12,21 +12,21 @@
    38.5,
    51.5,
    75.5,
-   85.5
+   89.5
   ],
   "route": {
    "state": "won",
-   "tick": 1934
+   "tick": 2063
   },
   "naive": {
    "state": "dead",
-   "tick": 1013,
-   "cause": "hatchling"
+   "tick": 1557,
+   "cause": "splash"
   },
   "fix": {
    "state": "dead",
    "tick": 1013,
-   "cause": "hatchling"
+   "cause": "kvt-hatchling"
   }
  },
  "KVT-02": {
@@ -184,6 +184,63 @@
   "route": {
    "state": "won",
    "tick": 2264
+  }
+ },
+ "KVT-09": {
+  "par": 32,
+  "item": [
+   [
+    16,
+    9.7
+   ]
+  ],
+  "checkpoints": [
+   34.5,
+   68.5,
+   98.5,
+   127.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2741
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 222,
+   "cause": "splash"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 799,
+   "cause": "spikes"
+  }
+ },
+ "KVT-10": {
+  "par": 22,
+  "item": [
+   [
+    13.5,
+    11.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   66.5,
+   89.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 1761
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 179,
+   "cause": "kvt-octopus"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 564,
+   "cause": "splash"
   }
  }
 }

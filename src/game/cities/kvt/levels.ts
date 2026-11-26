@@ -13,6 +13,9 @@ import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
 import { exitTwist } from '../../levels/twists';
 import { Nest } from './entities';
+import { kvt09, kvt10 } from './encores';
+import { CoralStep } from './tide';
+import { tara as taraSays } from '../../levels/endkit';
 
 // Kavaratti (bonus): the lagoon, the tide and the boat all keep their own
 // timetable. Jeseri words (billam = lagoon, phar = reef, odam = boat,
@@ -71,7 +74,7 @@ const glassJetty: Act = {
     const shell = deco(w, 'shell', X(23) + 2, G, { layer: 2 });
     onPass(w, X(19.5), (w2) => {
       shell.hide();
-      roller(w2, 'crab', X(23), px(G) - 10, -95, { cause: 'pinched' });
+      roller(w2, 'crab', X(23), px(G) - 10, -95, { cause: 'kvt-pinched' });
       say(w2, 'Njandu! | Crab!', X(23), G - 2.5, 1);
     });
   },
@@ -181,7 +184,7 @@ export class Jelly extends Entity {
     this.layer = 4;
     this.y = bottom;
     const self = this;
-    this.hazard = { active: true, cause: 'stung', hits: (x, y, w, h) => x < self.x + 6 && x + w > self.x - 6 && y < self.y + 12 && y + h > self.y - 4 };
+    this.hazard = { active: true, cause: 'kvt-stung', hits: (x, y, w, h) => x < self.x + 6 && x + w > self.x - 6 && y < self.y + 12 && y + h > self.y - 4 };
   }
   update(w: World) {
     const k = (((w.tick * DT + this.phase) % this.period) + this.period) % this.period / this.period;
@@ -209,7 +212,7 @@ export class Jelly extends Entity {
 }
 
 /** A moray eel in a hole in the reef: it lunges out when you swim close, then slides back in. */
-class Eel extends Entity {
+export class Eel extends Entity {
   out = 0;
   state: 'in' | 'lunge' | 'out' | 'back' | 'rest' = 'in';
   private t0 = 0;
@@ -226,7 +229,7 @@ class Eel extends Entity {
     const self = this;
     this.hazard = {
       active: true,
-      cause: 'bitten',
+      cause: 'kvt-bitten',
       hits(x, y, w, h) {
         if (self.out < 0.15) return false;
         const tip = self.base + self.dir * self.len * self.out;
@@ -495,7 +498,7 @@ function reefRoom(): LevelDef {
       thing(w, 'coral', 8, 16, { solid: false, layer: -3 });
       thing(w, 'coral', 25, 16, { solid: false, layer: -3 });
       sign(w, 1, 4.6, 3.4, 'DIVE', 'wood', 'right', 'Kavaratti');
-      rival(w, 3, 8, 1, { intro: 'Vellathil chaadu, Dad! Neenthan ariyamallo? | Jump in, Dad! You can swim, right?', point: 1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
+      rival(w, 3, 8, 1, { intro: L.intro[4], point: 1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
       onPass(w, px(13), (w2) => say(w2, 'Thazhe kode neenthu! | Swim under it!', px(13.5), 6.5, 1.3));
       onPass(w, px(17), (w2) => say(w2, 'Jelly meen! Thodalle! | Jellyfish! Don’t touch!', px(21), 8.5, 1.3));
       collectible(w, 'shell', 15.5, 13.6);
@@ -531,7 +534,7 @@ export class PalmCrab extends Entity {
     const self = this;
     this.hazard = {
       active: true,
-      cause: 'pinched',
+      cause: 'kvt-pinched',
       hits(x, y, w, h) {
         const p = self.palm.point(self.s);
         return x < p.x + 6 && x + w > p.x - 6 && y < p.y + 5 && y + h > p.y - 5;
@@ -658,7 +661,7 @@ function palmRoom(): LevelDef {
       palm(w, 15, px(16), 175, { crown: false });
       palm(w, 20, px(16), 165);
       sign(w, 2.5, 10.6, 3.2, 'SEA WALL', 'wood', 'right', 'no ladder');
-      rival(w, 4, 15, 1, { intro: 'Thengil kayari po, Dad! Islander-maar ellam cheyyum! | Climb the palm, Dad! Every islander does it!', point: 1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
+      rival(w, 4, 15, 1, { intro: L.intro[5], point: 1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
       collectible(w, 'shell', 17.5, 4.6);
     },
   };
@@ -836,7 +839,7 @@ function lagoonRoom(): LevelDef {
       thing(w, 'coral', 22, 13.5, { solid: false, layer: 2, dx: -8 });
       sign(w, 3.5, 10.6, 3.2, 'ODU!', 'wood', 'right', 'run, don’t stop');
       prop(w, 'palm', 1, 15, { h: 70, lean: 6 });
-      rival(w, 4, 15, 1, { intro: 'Billam aazham illa, Dad! Pathukke nadannu po! | The lagoon’s shallow, Dad! Just walk across slowly!', point: 1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
+      rival(w, 4, 15, 1, { intro: L.intro[6], point: 1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
       collectible(w, 'shell', 19.5, 11.6);
     },
   };
@@ -872,8 +875,19 @@ export const levels = (): LevelDef[] => [
       ["palm", 104, { h: 90, lean: -6 }],
     ],
     things: [["crab", 33], ["coral", 61], ["crab", 91]],
-    hint: 'Coming along the jetty, a turtle nest on the beach below hatches. Never step on a baby turtle, and they spread wider than any jump: stop on the jetty and let every one of them reach the water.',
+    hint: 'Coming along the jetty, a turtle nest on the beach below hatches. Never step on a baby turtle, and they spread wider than any jump: stop on the jetty and let every one of them reach the water. Then the coral step out to the boat: the tide is dropping, and it shrinks from three tiles to its one-tile top as you come. Wait at the water’s edge till it has, then hop on to the top and off to the beach.',
+    // the lagoon inlet at the end of the beach is real water now, with the coral step in the middle of it
+    paint: (g) => void g.pit(82, 87),
+    cps: [32.5, 38.5, 51.5, 75.5, 89.5],
     extra: (w) => {
+      pool(w, 82, 88, 15.3, { colors: LAGOON });
+      const step = w.add(new CoralStep(84, 15));
+      // the tide turns as you come down the beach to it
+      onPass(w, px(78.5), (w2) => step.turn(w2));
+      w.onTick((w2) => {
+        w2.flags.coral = step.t < 0 ? 'wide' : step.settled ? 'top' : 'shrinking';
+      });
+      onPass(w, px(77.5), (w2) => taraSays(w2, 'Padi valuthaanu! Odi chaadu! | The step’s big! Run and jump!', 2.4));
       // the nest below the jetty steps hatches as you cross the jetty
       const nest = Nest.place(w, { tx: 77, groundTy: 15, waterTx: 82 });
       onPass(w, px(64), (w2) => nest.hatch(w2));
@@ -960,14 +974,14 @@ export const levels = (): LevelDef[] => [
         },
       );
       prop(w, 'palm', 2, 15, { h: 64, lean: 8 });
-      rival(w, 4, 15, 1, tara(1, 1));
+      rival(w, 4, 15, 1, tara(0, 1));
       collectible(w, 'shell', 11.5, 10);
       void Door;
     },
   },
     par: 20,
     acts: [glassJetty],
-    twist: 'loading',
+    twist: 'kvt-loading',
   }),
   longStage({
     base: {
@@ -995,12 +1009,12 @@ export const levels = (): LevelDef[] => [
       thing(w, 'lighthouse', 25, 9, { solid: false, layer: -3, dx: -4 });
       prop(w, 'palm', 2, 15, { h: 66, lean: 6 });
       sign(w, 4, 10.6, 3.2, 'SUPARI', 'wood', 'right', 'follow the light');
-      rival(w, 26, 15, 1, tara(2, 1));
+      rival(w, 26, 15, 1, tara(1, 1));
       collectible(w, 'shell', 14.5, 9.5);
     },
   },
     par: 19,
-    twist: 'reflection',
+    twist: 'kvt-reflection',
     acts: [faithStones],
   }),
   longStage({
@@ -1028,13 +1042,13 @@ export const levels = (): LevelDef[] => [
       const wash = gust(w, 22, 10, 7, 5, -230, { period: 2.2, on: 0.8, phase: 0.3 });
       void wash;
       sign(w, 24, 10.4, 3.2, 'AGATTI', 'green', 'right', 'arrivals');
-      rival(w, 27, 15, -1, { intro: 'Agatti-yil flight landing aanu, odu! | A flight is landing at Agatti, run!', point: -1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
+      rival(w, 27, 15, -1, { intro: L.intro[2], point: -1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
       collectible(w, 'shell', 15, 10.8);
     },
   },
     par: 15,
     acts: [tailwind],
-    twist: 'glider',
+    twist: 'kvt-glider',
   }),
   longStage({
     base: {
@@ -1055,7 +1069,7 @@ export const levels = (): LevelDef[] => [
       const fling = () => {
         if (w.state !== 'play') return;
         // (flat and at head height, the length of the pier: a fish to hop, not a guess)
-        if (w.player.x < px(10)) shot(w, 'tuna', px(10), 197, -170, 0, 0, 'hit');
+        if (w.player.x < px(10)) shot(w, 'kvt-tuna', px(10), 197, -170, 0, 0, 'hit');
         w.after(1.3, fling);
       };
       w.when(
@@ -1084,7 +1098,7 @@ export const levels = (): LevelDef[] => [
           w2.after(0.1, () => shot(w2, 'crow', px(33), px(5) - 12, -150, 0, 0, 'hit'));
         }
       });
-      rival(w, 25, 7, 1, { intro: 'Minicoy-il choora meen parakkum! | In Minicoy, the tuna fly!', point: 1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
+      rival(w, 25, 7, 1, { intro: L.intro[3], point: 1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
       collectible(w, 'shell', 6, 9.6);
     },
   },
@@ -1093,7 +1107,7 @@ export const levels = (): LevelDef[] => [
     joinW: 12,
     par: 24,
     acts: [fishLift],
-    twist: 'trapdoor',
+    twist: 'kvt-trapdoor',
   }),
   longStage({
     base: reefRoom(),
@@ -1102,18 +1116,39 @@ export const levels = (): LevelDef[] => [
     joinW: 8,
     par: 48,
     acts: [reefTunnel, eelAlley],
-    twist: 'safetystop',
+    twist: 'kvt-safetystop',
   }),
   longStage({
     base: palmRoom(),
     par: 38,
     acts: [crabPalms, bendPalms],
-    twist: 'pushoff',
+    twist: 'kvt-pushoff',
   }),
   longStage({
     base: lagoonRoom(),
     par: 24,
     acts: [weedBeds, dolphinRide],
-    twist: 'footsteps',
+    twist: 'kvt-footsteps',
+  }),
+  longStage({
+    base: kvt09.room(),
+    // down off the crest to the shore road
+    join: (g) => g.fill(32, 33, 15, 17, '#'),
+    joinW: 2,
+    par: 32,
+    acts: kvt09.acts,
+    twist: 'kvt-buried-door',
+    shape: 'long',
+    lives: 'act',
+    meta: { family: 'storm-bank-rubble-slides', betrayals: ['rubble-slide'], ending: 'kvt-buried-door' },
+  }),
+  longStage({
+    base: kvt10.room(),
+    par: 22,
+    acts: kvt10.acts,
+    twist: 'kvt-sand-arm',
+    shape: 'long',
+    lives: 'act',
+    meta: { family: 'camouflage-twin-creature', betrayals: ['camouflage-twin'], ending: 'kvt-sand-arm' },
   }),
 ];
