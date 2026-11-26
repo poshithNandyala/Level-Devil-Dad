@@ -16,6 +16,7 @@ import { nala } from './s03';
 import { Herd, ghat } from './s04';
 import { pul } from './s09';
 import { doosra } from './s07';
+import { rassi } from './rassi';
 import { FLOOR } from '../../levels/endkit';
 
 // ================================================================== the room: the mill, with the deer's food
@@ -51,6 +52,8 @@ export function dweepRoom(): LevelDef {
 export const nadi: Act = { ...nala, id: 'svp10-nadi', advice: 'The crocodile’s creek: the board’s arrow shows where it is under the logs. Cross a gap when the arrow is pointing at another one.' };
 export const jadFin: Act = { ...pul, id: 'svp10-jad', advice: 'The ruined cellar: green roots hold, grey roots and brick do not, and the middle green root swings.' };
 export const samanFin: Act = { ...doosra, id: 'svp10-saman', advice: 'The luggage hall: the luggage is the floor until the real call, the crowd comes from the quay end, and the trench is the place to be.' };
+
+export const rassiFin: Act = { ...rassi, id: 'svp10-rassi', advice: 'The quay, with the boats tied up on the far banks: the rope answers to hops by its bollard, and every hop brings the boat in a little. When it is alongside, step on.' };
 
 export const ghatFin: Act = { ...ghat, id: 'svp10-ghat', advice: 'The last landing: the stall is by the edge, the herd follows the food, and the boat is late. Put the food down where you are and wait for the boat.' };
 

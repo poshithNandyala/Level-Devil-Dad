@@ -6,6 +6,7 @@ import { Step, X, and, ground } from '../runner';
 import type { CityTests } from '../city-tests';
 import { LEVELS } from '../../src/game/levels';
 import type { Rope } from '../../src/game/cities/svp/rassi';
+import type { Formation } from '../../src/game/cities/svp/choona';
 import type { SawHall } from '../../src/game/cities/svp/s02';
 import type { Creek } from '../../src/game/cities/svp/s03';
 import type { Herd, LateBoat } from '../../src/game/cities/svp/s04';
@@ -423,8 +424,22 @@ const ropeCross = (i: number, bollardTx: number, farTx: number): Step[] => [
   { hold: '', until: (w) => rope(i)(w).state === 'docked', max: 3000, note: 'the boat poles across' },
   { hold: 'R', until: and(ground, X(farTx)), max: 900, note: 'off on to the far bank' },
 ];
+// ------------------------------------------------------------------ SVP-05 act 3: the caves
+const form = (i: number) => (w: World) => (w.flags.forms as Formation[])[i];
+/** hop to the thing under formation `i`, wait on the dry side until it has stopped dripping, then on over the drain to `farTx` */
+const caveBeat = (i: number, hopTx: number, jump: number, waitTx: number, drainTx: number, farTx: number): Step[] => [
+  { hold: 'R', until: X(hopTx), max: 900 },
+  { hold: 'R', jump, ticks: jump, note: 'hop it: that raps the formation' },
+  { hold: 'R', until: and(ground, X(waitTx)), max: 400, note: 'on to the dry side' },
+  { hold: '', until: (w) => form(i)(w).knocks > 0 && !form(i)(w).dripping, max: 1500, note: 'wait for the dripping to stop' },
+  { hold: 'R', until: X(drainTx), max: 400 },
+  { hold: 'R', jump: 14, ticks: 14, note: 'over the drain' },
+  { hold: 'R', until: and(ground, X(farTx)), max: 900, note: 'across the dry floor' },
+];
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp05-choona': (x) => [...caveBeat(0, x + 10.6, 12, x + 14.2, x + 16.8, x + 32), ...caveBeat(1, x + 39.4, 20, x + 45.2, x + 46.8, x + 61)],
   'svp05-rassi': (x) => [...ropeCross(0, x + 4, x + 29), ...ropeCross(1, x + 27, x + 57)],
+  'svp10-rassi': (x) => actRoutes['svp05-rassi'](x),
   'svp07-teesra': (x) => [
     hopUntil(and(ground, X(x + 12.5)), 'across the luggage, no stopping'),
     { hold: 'R', until: inTrench, max: 600, note: 'into the trench' },
@@ -573,11 +588,30 @@ const endingPolicies: Record<string, Policy> = {
 };
 
 // ------------------------------------------------------------------ the plays that must die in an added act
+actDeath('SVP-05', 'svp05-choona', 'hop everything in the cave', 'svp-chuna', () => [hopUntil((w) => w.state !== 'play', 'hop the rock, the drain, on')]);
+actDeath('SVP-05', 'svp05-choona', 'hop the rock, wait a little, then go', 'svp-chuna', (x) => [
+  { hold: 'R', until: X(x + 10.6), max: 900 },
+  { hold: 'R', jump: 12, ticks: 12, note: 'hop it' },
+  { hold: 'R', until: and(ground, X(x + 14.2)), max: 400 },
+  { hold: '', ticks: 360, note: 'wait a few seconds' },
+  hopUntil((w) => w.state !== 'play', 'then on, hopping'),
+]);
 actDeath('SVP-05', 'svp05-rassi', 'run to the edge and jump for the tied-up boat', 'svp-rassi', (x) => [
   { hold: 'R', until: X(x + 9.4), max: 600 },
   { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'jump for the boat from the edge' },
 ]);
 actDeath('SVP-05', 'svp05-rassi', 'two hops at the bollard, then jump for the boat from the edge', 'svp-rassi', (x) => [
+  { policy: (w) => go(toward(w, px(x + 4) + 8, 3)), until: (w) => Math.abs(w.player.cx - (px(x + 4) + 8)) < 6 && w.player.onGround, max: 900 },
+  { policy: (w) => ({ move: '', jump: w.player.onGround }), until: (w) => rope(0)(w).hauls >= 2, max: 900, note: 'a couple of hops' },
+  { hold: 'R', until: X(x + 9.4), max: 600 },
+  { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'and jump for it' },
+]);
+
+actDeath('SVP-10', 'svp10-rassi', 'run to the edge and jump for the tied-up boat', 'svp-rassi', (x) => [
+  { hold: 'R', until: X(x + 9.4), max: 600 },
+  { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'jump for the boat from the edge' },
+]);
+actDeath('SVP-10', 'svp10-rassi', 'two hops at the bollard, then jump for the boat from the edge', 'svp-rassi', (x) => [
   { policy: (w) => go(toward(w, px(x + 4) + 8, 3)), until: (w) => Math.abs(w.player.cx - (px(x + 4) + 8)) < 6 && w.player.onGround, max: 900 },
   { policy: (w) => ({ move: '', jump: w.player.onGround }), until: (w) => rope(0)(w).hauls >= 2, max: 900, note: 'a couple of hops' },
   { hold: 'R', until: X(x + 9.4), max: 600 },

@@ -14,4 +14,5 @@ export const causeLines: Record<string, string[]> = {
   'svp-eent': ['Eent! The brick gave way under you.', 'Brick crumbles a moment after you land on it. Roots hold, and a dead grey root is no better than brick.'],
   'svp-baha': ['Baha! The sheet of rain water carried you back into the drain.', 'Wait under the awning until the sun is out: the cloud has two lobes, and the lull between them is not the end.'],
   'svp-rassi': ['Rassi! You jumped for a boat that was still tied up on the far bank.', 'The rope answers hops by the bollard. Hop there until the boat is alongside, then step on.'],
+  'svp-chuna': ['Chuna! The wet limestone slid you back into the drain.', 'Hop, then wait on the dry side: the formation drips for seven seconds, and the floor is only slippery while it does.'],
 };
