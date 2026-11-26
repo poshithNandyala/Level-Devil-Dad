@@ -1,6 +1,5 @@
 import type { LevelDef } from '../world';
 import type { CityId } from '../constants';
-import { KVT } from './kvt';
 import { CHN } from './chn';
 import { PDY } from './pdy';
 import { AMR } from './amr';
@@ -14,7 +13,7 @@ import { JAI } from './jai';
 import { BPL } from './bpl';
 import { RPR } from './rpr';
 
-export const LEVELS: LevelDef[] = [...KVT, ...CHN, ...PDY, ...BLR, ...AMR, ...HYD, ...PNJ, ...BOM, ...DMN, ...GNR, ...JAI, ...BPL, ...RPR];
+export const LEVELS: LevelDef[] = [...CHN, ...PDY, ...BLR, ...AMR, ...HYD, ...PNJ, ...BOM, ...DMN, ...GNR, ...JAI, ...BPL, ...RPR];
 // city modules (src/game/cities/registry.ts) are appended by src/game/cities/install.ts
 
 export const LEVEL_BY_ID = new Map(LEVELS.map((l) => [l.id, l]));

@@ -25,29 +25,6 @@ export interface Theme {
 }
 
 export const THEMES = {
-  KVT: {
-    city: 'KVT',
-    name: 'Kavaratti',
-    local: 'കവരത്തി',
-    sky: ['#0866BC', '#36C2EC', '#E8FCF6'],
-    sun: '#FFFFF2',
-    far: '#7ADFD6',
-    mid: '#14AEC0',
-    near: '#087B8D',
-    accent: '#00ACC1',
-    accent2: '#D84315',
-    tileBase: '#B9A584',
-    tileTop: '#F2E7CF',
-    tileEdge: '#958060',
-    tileDark: '#7A6648',
-    topper: '#FAF8F5',
-    pattern: 'concrete',
-    spike: '#FFFFFF',
-    spikeEdge: '#3A2E22',
-    ink: '#2B2B2B',
-    rim: null,
-    ui: '#00ACC1',
-  },
   CHN: {
     city: 'CHN',
     name: 'Chennai',
@@ -327,7 +304,7 @@ export const THEMES = {
 } as Record<CityId, Theme>;
 
 /** playable cities in journey order (south to north) */
-export const CITY_ORDER: CityId[] = ['KVT', 'CHN', 'PDY', 'BLR', 'AMR', 'HYD', 'PNJ', 'BOM', 'DMN', 'GNR', 'JAI', 'BPL', 'RPR'];
+export const CITY_ORDER: CityId[] = ['CHN', 'PDY', 'BLR', 'AMR', 'HYD', 'PNJ', 'BOM', 'DMN', 'GNR', 'JAI', 'BPL', 'RPR'];
 
 /** Future chapters, honestly labelled as not built yet. */
 export const COMING_SOON = [

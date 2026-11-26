@@ -8,7 +8,7 @@ import { LEVEL_BY_ID } from '../../src/game/levels';
 import { exitPolicy, longRun, solveChunk } from '../chunks';
 import { DT } from '../../src/game/constants';
 import { swim, skimmer, kicker } from '../moves';
-import { Jelly } from '../../src/game/levels/kvt';
+import { Jelly } from '../../src/game/cities/kvt/levels';
 import { westSolutions } from '../west';
 import { test as rnc } from '../cities/rnc';
 const eastSolutions = rnc.solutions;

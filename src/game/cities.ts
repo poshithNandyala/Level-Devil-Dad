@@ -61,23 +61,6 @@ export interface Chapter {
 }
 
 export const LINES = {
-  KVT: {
-    hello: 'Hello from the billam! | Hello from the lagoon!',
-    famous: 'A tiny coral island, a calm lagoon and boats on a timetable.',
-    lang: 'Jeseri words + Malayalam + English',
-    intro: ['Dad, billam side ready? | Dad, ready for the lagoon side?', 'Odam ippo pokum! Jump cheyyu! | The boat is leaving now! Jump!', 'Supari light nokku, Dad. | Watch the light, Dad.'],
-    taunt: ['Bellam vannu, bye Dad! | The water came in, bye Dad!', 'Phar kandille? | Didn\'t you see the reef?', 'Kaattu timing miss aayi! | You missed the wind\'s timing!', 'Sand moved. You didn’t.'],
-    beaten: ['Sheri, island brain undu! | Okay, you\'ve got an island brain!'],
-    death: ['Billam one, Dad zero. | Lagoon one, Dad zero.', 'Missed the odam! Swim to Kochi? | Missed the boat! Swim to Kochi?', 'Dad became beach luggage.', 'Moye moye. Even the fish laughed.', 'Lagoon review: one star, Dad sank.'],
-    near: ['Odam almost! | Almost made the boat!', 'So close to the jetty!'],
-    win: ['Billam cleared! | Lagoon cleared!', 'Odam caught, nice timing! | Caught the boat, nice timing!'],
-    flip: 'Kaattu! Left right maari! | Wind! Left and right swapped!',
-    cleared: 'Lakshadweep cleared. Island brain! | Lakshadweep cleared. Island brain!',
-    brag: 'Billam cleared! | Lagoon cleared!',
-    idle: ['Odam pokum, Dad! Vegam! | The boat’s leaving, Dad! Quick!', 'Pediyaano, Dad? | Scared, Dad?', 'Billam kandu nilkkuvaano? | Just standing there staring at the lagoon?', 'Meenukal polum neenthunnu! | Even the fish are moving!'],
-    seven: 'Ezhu thavana! Thala for a reason. | Seven deaths! Back to the jetty.',
-    lastLife: 'Last odam, Dad! | Last boat, Dad!',
-  },
   CHN: {
     hello: 'Vanakkam! | Hello!',
     famous: 'Filter kaapi, share autos and a very long beach.',
@@ -287,7 +270,7 @@ export const LINES = {
 /** South to north. Bonus chapters are optional side trips; previews are early peeks. */
 export const CHAPTERS: Chapter[] = [
   { id: 'TVM', name: 'Thiruvananthapuram', state: 'Kerala', region: 'South', hello: '', famous: '' },
-  { id: 'KVT', name: 'Kavaratti', state: 'Lakshadweep', region: 'South', city: 'KVT', bonus: true, hello: LINES.KVT.hello, famous: LINES.KVT.famous },
+  { id: 'KVT', name: 'Kavaratti', state: 'Lakshadweep', region: 'South', bonus: true, hello: '', famous: '' },
   { id: 'CHN', name: 'Chennai', state: 'Tamil Nadu', region: 'South', city: 'CHN', hello: LINES.CHN.hello, famous: LINES.CHN.famous },
   { id: 'PDY', name: 'Puducherry', state: 'Puducherry', region: 'South', city: 'PDY', hello: LINES.PDY.hello, famous: LINES.PDY.famous },
   { id: 'BLR', name: 'Bengaluru', state: 'Karnataka', region: 'South', city: 'BLR', hello: LINES.BLR.hello, famous: LINES.BLR.famous },

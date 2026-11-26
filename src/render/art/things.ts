@@ -59,7 +59,6 @@ export type BaseThingKind =
   | 'crow'
   | 'jeep'
   | 'frond'
-  | 'tuna'
   | 'garland'
   | 'traincar'
   | 'loco'
@@ -187,7 +186,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   crow: [14, 10],
   jeep: [40, 22],
   frond: [24, 10],
-  tuna: [14, 8],
   garland: [32, 6],
   traincar: [48, 26],
   loco: [56, 32],
@@ -1185,21 +1183,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
         ctx.lineTo(x + i - 2, y + h + 3);
         ctx.stroke();
       }
-      break;
-    }
-    case 'tuna': {
-      ctx.fillStyle = '#4F6D8A';
-      ctx.beginPath();
-      ctx.ellipse(x + 6, y + 4, 6, 3.4, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(x + 11, y + 4);
-      ctx.lineTo(x + 14, y);
-      ctx.lineTo(x + 14, y + 8);
-      ctx.fill();
-      ctx.fillStyle = '#CFD8DC';
-      ctx.fillRect(x + 2, y + 4.5, 8, 1.4);
-      circle(ctx, x + 2.5, y + 3, 0.8, '#FFFFFF');
       break;
     }
     case 'garland': {

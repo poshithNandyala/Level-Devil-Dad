@@ -1,6 +1,6 @@
 // Lakshadweep's own life.
-import { Entity, type Hazard, type World } from '../world';
-import { DT, TILE, overlapXYWH } from '../constants';
+import { Entity, type Hazard, type World } from '../../world';
+import { DT, TILE, overlapXYWH } from '../../constants';
 
 type Baby = { x: number; start: number; speed: number; in: boolean; inAt: number };
 

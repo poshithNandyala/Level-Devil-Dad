@@ -1,24 +1,23 @@
-import { Entity, type Hazard, type LevelDef, type World } from '../world';
-import { LINES } from '../cities';
-import { Door } from '../entities/basics';
-import { Blinker, Thing } from '../entities/traps';
-import { Palm, Sea, Skim, Vent, type PalmOpts } from '../entities/abilities';
-import { Solid } from '../body';
-import { collectible, door, gust, panel, prop, px, rider, rival, roller, shot, sign, thing, water } from './kit';
-import { Act, G, deco, hiddenGroup, pool } from './acts';
-import { crumble, onPass } from './trolls';
-import { DT, ease } from '../constants';
-import { tour } from './tour';
-import { longStage } from './chunks';
-import { Grid } from './grid';
-import { exitTwist } from './twists';
-import { Nest } from '../entities/lakshadweep';
+import { Entity, type Hazard, type LevelDef, type World } from '../../world';
+import { lines as L } from './lines';
+import { Door } from '../../entities/basics';
+import { Blinker, Thing } from '../../entities/traps';
+import { Palm, Sea, Skim, Vent, type PalmOpts } from '../../entities/abilities';
+import { Solid } from '../../body';
+import { collectible, door, gust, panel, prop, px, rider, rival, roller, shot, sign, thing, water } from '../../levels/kit';
+import { Act, G, deco, hiddenGroup, pool } from '../../levels/acts';
+import { crumble, onPass } from '../../levels/trolls';
+import { DT, ease } from '../../constants';
+import { tour } from '../../levels/tour';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
+import { exitTwist } from '../../levels/twists';
+import { Nest } from './entities';
 
 // Kavaratti (bonus): the lagoon, the tide and the boat all keep their own
 // timetable. Jeseri words (billam = lagoon, phar = reef, odam = boat,
 // supari = lighthouse) in Malayalam/English sentences.
 
-const L = LINES.KVT;
 const tara = (n: number, point: 1 | -1 = 1) => ({ intro: L.intro[n % L.intro.length], point, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
 const LAGOON: [string, string] = ['rgba(38,190,210,0.78)', 'rgba(13,95,140,0.95)'];
 
@@ -843,7 +842,7 @@ function lagoonRoom(): LevelDef {
   };
 }
 
-export const KVT: LevelDef[] = [
+export const levels = (): LevelDef[] => [
   tour({
     id: 'KVT-01',
     city: 'KVT',
