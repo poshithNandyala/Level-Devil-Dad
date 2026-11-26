@@ -82,7 +82,6 @@ export type BaseThingKind =
   | 'football'
   // Daman
   // Gandhinagar
-  | 'dhokla'
   | 'ghevar'
   | 'poha'
   | 'chila';
@@ -160,7 +159,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   plank: [16, 5],
   ferry: [48, 10],
   football: [10, 10],
-  dhokla: [12, 10],
   ghevar: [12, 10],
   poha: [12, 10],
   chila: [12, 10],
@@ -1159,20 +1157,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
         circle(ctx, x + w / 2 + Math.cos(a) * 2.6, y + h / 2 + Math.sin(a) * 2.6, 1.4, '#263238');
       }
       circle(ctx, x + w / 2, y + h / 2, 1.3, '#263238');
-      break;
-    }
-    case 'dhokla': {
-      // a square of khaman dhokla: spongy yellow, mustard seeds and a green chilli on top
-      ctx.fillStyle = '#F9D84A';
-      ctx.fillRect(x + 1, y + 2, w - 2, h - 3);
-      ctx.fillStyle = '#E8C02E';
-      ctx.fillRect(x + 1, y + h - 3, w - 2, 2);
-      ctx.fillStyle = 'rgba(255,255,255,0.35)';
-      for (let i = 0; i < 4; i++) ctx.fillRect(x + 2 + i * 2.5, y + 4 + (i % 2) * 2, 1, 1);
-      ctx.fillStyle = '#3E2723';
-      for (let i = 0; i < 5; i++) ctx.fillRect(x + 2 + ((i * 7) % 8), y + 2 + ((i * 3) % 3), 0.9, 0.9);
-      ctx.fillStyle = '#43A047';
-      ctx.fillRect(x + 5, y + 1, 5, 1.2);
       break;
     }
     case 'chila': {

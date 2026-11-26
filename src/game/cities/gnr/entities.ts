@@ -1,8 +1,8 @@
 // Gandhinagar's moving parts: the kite looters' bamboo (a pole vault), kite strings, sunbeams in the
 // stepwell, Indroda's dinosaur, the lions of Gir, peacock feathers, the garba ring and GIFT City's ticker.
-import { Entity, type Hazard, type World } from '../world';
-import { Solid } from '../body';
-import { DT } from '../constants';
+import { Entity, type Hazard, type World } from '../../world';
+import { Solid } from '../../body';
+import { DT } from '../../constants';
 
 const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
 

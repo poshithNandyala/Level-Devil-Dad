@@ -20,13 +20,10 @@ import { NEW_ENDINGS, type NewEndingKind } from './endings2';
 import { WEST_ENDINGS, type WestEndingKind } from './endings3';
 
 export type EndingKind =
-   | 'loading'   
-      
-  | 'shuffle' | 'mirror' | 'lamp'  | 'mime' 
-     | 'invisible' 
-   | 'swing' | 'mirchi'  | 'monkey'  
-        
-     
+  | 'loading'
+  | 'shuffle' | 'mirror' | 'lamp' | 'mime'
+  | 'invisible'
+  | 'swing' | 'mirchi' | 'monkey'
   | NewEndingKind
   | WestEndingKind
   // each city module's own endings (declared in its endings.ts, see docs/CITY-MODULE.md)

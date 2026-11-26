@@ -7,7 +7,7 @@ import { DT, secs } from '../constants';
 import { pool } from './acts';
 import { type Ending, LAGOON, text } from './endkit';
 
-export type NewEndingKind =  never;
+export type NewEndingKind = never;
 
 /** A beached kayak: walk into it to push it down the sand. In the water it floats off by itself. */
 export class Kayak extends Entity {

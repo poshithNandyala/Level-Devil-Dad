@@ -1,19 +1,19 @@
 // Gandhinagar (and its Gujarat): the kite looters' bamboo at Uttarayan, sunbeams in the Adalaj
 // stepwell, Indroda's dinosaur, the lions of Gir, peacock feathers, a garba ring and GIFT City.
-import { type LevelDef, type World } from '../world';
-import { LINES } from '../cities';
-import { collectible, door, prop, px, rival, sign } from './kit';
-import type { Act } from './acts';
-import { onPass } from './trolls';
-import { tour } from './tour';
-import { longStage } from './chunks';
-import { Grid } from './grid';
-import { Paint } from './endkit';
-import { polHouse } from './westkit';
-import { Bamboo, Dino, FeatherPickup, Feathers, GarbaRing, Lion, Manja, Naka, Peacock, Sandstone, Sunbeam, Thorns, Ticker, prices, type Ring } from '../entities/gujarat';
-import { pool } from './acts';
+import { type LevelDef, type World } from '../../world';
+import { lines as L } from './lines';
+import { collectible, door, prop, px, rival, sign } from '../../levels/kit';
+import type { Act } from '../../levels/acts';
+import { onPass } from '../../levels/trolls';
+import { tour } from '../../levels/tour';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
+import { Paint } from '../../levels/endkit';
+import { polHouse } from '../../levels/westkit';
+import { Bamboo, Dino, FeatherPickup, Feathers, GarbaRing, Lion, Manja, Naka, Peacock, Sandstone, Sunbeam, Thorns, Ticker, prices, type Ring } from './entities';
+import { pool } from '../../levels/acts';
 
-const TAUNTS = LINES.GNR.taunt;
+const TAUNTS = L.taunt;
 const G = 15;
 
 /** pol houses drawn over hidden-tile blocks: [first col, last col, top row, wall colour] */
@@ -48,7 +48,7 @@ function vaultRoom(): LevelDef {
       sign(w, 4.5, 10.4, 3.6, 'POL', 'shop', null, 'Khadia');
       sign(w, 23, 1.4, 4.2, 'UTTARAYAN', 'shop', null, '14 Jan');
       prop(w, 'bulbs', 24.5, 5);
-      rival(w, 5, 15, -1, { intro: LINES.GNR.intro[0], point: -1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.GNR.beaten[1] });
+      rival(w, 5, 15, -1, { intro: L.intro[0], point: -1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       w.after(2.4, () => w.guide('Pachhal vaans padyo chhe, Dad! | There’s a bamboo behind you, Dad!'));
       w.when(
         (w2) => !!w2.flags.bamboo,
@@ -109,7 +109,7 @@ function vavRoom(): LevelDef {
       sign(w, 4.4, 10.4, 4.4, 'ADALAJ NI VAV', 'wood', null, '1499');
       sign(w, 26, 10.4, 3.6, 'BANDH', 'warn', null, 'stairs closed');
       prop(w, 'pigeons', 18, 9);
-      rival(w, 5, 15, 1, { intro: LINES.GNR.intro[1], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.GNR.beaten[0] });
+      rival(w, 5, 15, 1, { intro: L.intro[1], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       w.after(2.6, () => w.guide('Prakash par chalo, Dad! | Walk on the light, Dad!'));
       collectible(w, 'dhokla', 19, 7.4);
     },
@@ -184,7 +184,7 @@ function dinoRoom(): LevelDef {
       w.flags.dino = w.add(new Dino(px(18), px(G), { period: 2.6, phase: 1.2, reach: 300, x0: px(2) + 4, x1: px(32), face: -1 }));
       w.add(new Thorns(px(3), px(8), px(9) + 4, px(2) + 8, px(G)));
       sign(w, 25.5, 10.4, 4.6, 'INDRODA PARK', 'green', null, 'dinosaur & fossil park');
-      rival(w, 4, 15, 1, { intro: LINES.GNR.intro[2], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.GNR.beaten[0] });
+      rival(w, 4, 15, 1, { intro: L.intro[2], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       onPass(w, px(9), (w2) => w2.guide('Ahiya ubha raho, Dad! | Stand right here, Dad!'));
       collectible(w, 'dhokla', 28, 7.4);
     },
@@ -258,7 +258,7 @@ function girRoom(): LevelDef {
       w.flags.lions = [w.add(new Lion(px(8) + 8, px(G), { asleep: true, x0: px(1), x1: px(30) }))];
       w.flags.naka = w.add(new Naka(px(16), px(G), { every: 4.6, dur: 1.6, phase: 2.2 }));
       sign(w, 3.6, 10.4, 4.2, 'SASAN GIR', 'green', null, 'lion sanctuary');
-      rival(w, 4, 15, 1, { intro: LINES.GNR.intro[3], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.GNR.beaten[1] });
+      rival(w, 4, 15, 1, { intro: L.intro[3], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       onPass(w, px(10), (w2) => w2.guide('Pachhal jo, Dad! | Look behind you, Dad!'));
       collectible(w, 'dhokla', 29.5, 11.2);
     },
@@ -334,7 +334,7 @@ function morRoom(): LevelDef {
       w.flags.spots = [feather(w, bag, 5, G, { at: 3, period: 5, phase: 2.5 }), feather(w, bag, 17, G, { at: 18.6, period: 5, phase: 0.4, face: -1 })];
       sign(w, 4.2, 10.4, 4.6, 'SARITA UDYAN', 'green', null, 'Sector 9');
       prop(w, 'flowers', 26, 15);
-      rival(w, 2, 15, 1, { intro: LINES.GNR.intro[4], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.GNR.beaten[0] });
+      rival(w, 2, 15, 1, { intro: L.intro[4], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       w.when(
         (w2) => (w2.flags.feathers ?? 0) > 0,
         (w2) => w2.guide('Hava ma pachhu kudo, pichhu udaadse! | Jump again in the air, the feather flaps you up!'),
@@ -402,7 +402,7 @@ function garbaRoom(): LevelDef {
         ]),
       ];
       sign(w, 3.6, 10.4, 4.6, 'NAVRATRI', 'shop', null, 'garba raas');
-      rival(w, 4, 15, 1, { intro: LINES.GNR.intro[5], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.GNR.beaten[1] });
+      rival(w, 4, 15, 1, { intro: L.intro[5], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       onPass(w, px(8), (w2) => w2.guide('Chheda par j bhatkay chhe! | They only bump into you at the ends!'));
       collectible(w, 'dhokla', 16.5, 10.2);
     },
@@ -478,7 +478,7 @@ function giftRoom(): LevelDef {
       w.flags.chart = w.add(new Ticker(px(4), px(28), px(G), market(7, 160, 11)));
       sign(w, 0.4, 10.4, 3.6, 'IFSC', 'metro', null, 'GIFT City');
       sign(w, 28.4, 10.4, 3.6, 'EXIT', 'metro', null, 'to the towers');
-      rival(w, 2, 15, 1, { intro: LINES.GNR.intro[6], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.GNR.beaten[1] });
+      rival(w, 2, 15, 1, { intro: L.intro[6], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       w.after(2.2, () => w.guide('Laal ma vecho, leela ma lo! | Sell on red, buy on green!'));
       collectible(w, 'dhokla', 16, 6.4);
     },
@@ -509,7 +509,7 @@ const towers: Act = {
   },
 };
 
-export const GNR: LevelDef[] = [
+export const levels = (): LevelDef[] => [
   tour({
     id: 'GNR-01',
     city: 'GNR',

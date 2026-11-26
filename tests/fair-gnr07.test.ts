@@ -4,7 +4,7 @@ import { SOLUTIONS } from './solutions';
 import { ENDING_POLICIES } from './endings';
 import { play } from './runner';
 import type { World } from '../src/game/world';
-import type { GarbaRing } from '../src/game/entities/gujarat';
+import type { GarbaRing } from '../src/game/cities/gnr/entities';
 
 // A worked example of the human-timing check (docs/HANDOFF.md, section 6), for GNR-07's door (`pravesh`).
 // A person who has read the hint, but stops at a sloppy spot, arrives at a random moment, reacts 0-6 / 0-12 /
