@@ -8,4 +8,7 @@ export const causeLines: Record<string, string[]> = {
   'bbi-silk': ['The silk is slippery: you slid off the edge.', 'Stand on the cut-out sewn on top, and nowhere else.'],
   'bbi-peeled': ['He sold the cut-out you were standing on!', 'On the third parasol, don’t wait: go on as soon as the next one opens.'],
   'bbi-lantern': ['The lantern came down on the step, on you.', 'Stop short as it comes down, then walk under once it goes back up.'],
+  'bbi-agni': ['The blowtorch, Dad! Right on you.', 'Pass under a torch between its bursts.'],
+  'bbi-jhala': ['Fresh solder! That curl was still glowing.', 'He solders a curl ahead wherever you stand still: keep moving, and wait for a glow to fade.'],
+  'bbi-kunda': ['Into the quench trough, Dad.', 'Don’t jump it: stop at the edge and let him build the bridge.'],
 };

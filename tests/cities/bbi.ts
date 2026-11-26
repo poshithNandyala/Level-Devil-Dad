@@ -15,6 +15,7 @@ interface Mem {
 type Policy = (w: World, m: Mem, d: Door) => Out;
 const go = (move: Move): Out => ({ move, jump: false });
 const px = (t: number) => t * 16;
+const FLOOR_PX = 240;
 const hop = (at: number, note: string, ticks = 12): Step[] => [
   { hold: 'R', until: X(at), max: 900 },
   { hold: 'R', jump: ticks, ticks, note },
@@ -154,31 +155,104 @@ const lanternPolicy: Policy = (w, m) => {
   return go('');
 };
 
+// ------------------------------------------------------------------ BBI-04
+type SmithSt = { still: number; curls: { c: number; bridge: boolean; born: number; rig: { on: boolean } }[] };
+const t0of = (w: World, k: string) => (w.flags[k] as { t0: number }).t0;
+const torchOn = (k: string, period: number, on: number, phase: number) => (w: World, ahead: number) => {
+  const t0 = t0of(w, k);
+  if (t0 < 0) return false;
+  const t = ((((w.tick - t0) / 120 + ahead + phase) % period) + period) % period;
+  return t < on;
+};
+/** keep moving under a torch at column c: pace back and forth until it will be off all the way under, then go */
+const passTorch = (c: number, on: (w: World, ahead: number) => boolean, note: string): Step => ({
+  note,
+  max: 1500,
+  policy: (w) => {
+    const p = w.player;
+    const lead = (px(c) - (p.x + p.w)) / 140;
+    const clear = [0, 0.1, 0.2, 0.3].every((dt) => !on(w, Math.max(0, lead) + dt));
+    if (p.x > px(c) + 16) return go('R');
+    if (p.cx < px(c) - 44) return go('R');
+    if (clear) return go('R');
+    // pace: a step back, a step on, never standing still
+    return go((w.tick >> 4) % 2 ? 'L' : 'R');
+  },
+  until: (w) => w.player.x > px(c) + 18,
+});
+const bridged = (k: string, c0: number, c1: number) => (w: World) => {
+  const st = w.flags[k] as SmithSt;
+  const bs = st.curls.filter((q) => q.bridge && q.c >= c0 && q.c <= c1);
+  return bs.length === c1 - c0 + 1 && bs.every((q) => (w.tick - q.born) / 120 >= 0.65);
+};
+/** stop at a trough's edge and stand still until he has bridged it and the last piece has stopped glowing */
+const buildBridge = (k: string, c0: number, c1: number): Step[] => [
+  { hold: 'R', until: (w) => w.player.x + w.player.w >= px(c0) - 3, max: 600, note: 'to the edge of the trough' },
+  { hold: '', until: bridged(k, c0, c1), max: 1200, note: 'stand still: he bridges it' },
+  { hold: 'R', until: and(ground, X(c1 + 1.2)), max: 400, note: 'across' },
+];
+const r4on = torchOn('bbi4r', 2.2, 0.7, 1.8);
+const room04 = (): Step[] => [passTorch(9, r4on, 'keep moving under the torch'), ...buildBridge('bbi4', 17, 23), { hold: 'R', until: X(31.5), max: 400 }];
+const act04 = (x: number): Step[] => [
+  passTorch(x + 5, torchOn('bbi4a', 2.0, 0.6, 0.2), 'the first torch'),
+  ...buildBridge('bbi4b', x + 10, x + 15),
+  passTorch(x + 21, torchOn('bbi4a', 2.0, 0.6, 1.0), 'the second torch'),
+  { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 25) - 3, max: 600 },
+  { hold: '', until: bridged('bbi4b', x + 25, x + 30), max: 1200, note: 'he bridges the second trough' },
+  passTorch(x + 28, torchOn('bbi4a', 2.4, 0.6, 0), 'across between the bursts of the torch over it'),
+  { hold: 'R', until: X(x + 35), max: 400 },
+];
+/** the filigree box on the shelf: stand still for a wall, let it cool, climb it, up to the door */
+const curlStair: Policy = (w, m) => {
+  const st = w.flags.bbi4e as SmithSt;
+  const d = w.entities.find((e: any) => e.constructor?.name === 'Door' && !e.fake) as any;
+  const D = Math.round(d.x / 16);
+  const p = w.player;
+  if (m.hold > 0) return { move: 'R', jump: true };
+  const wall = st.curls.find((q) => !q.bridge && q.rig.on);
+  if (p.y + p.h <= px(11) + 1) return go('R');
+  if (p.onGround && p.y + p.h <= FLOOR_PX - 47) {
+    m.hold = 14;
+    return { move: 'R', jump: true };
+  }
+  if (wall && (w.tick - wall.born) / 120 >= 0.7 && p.onGround) {
+    m.hold = 15;
+    return { move: 'R', jump: true };
+  }
+  if (!wall && p.x + p.w < px(D - 3) - 4) return go('R');
+  return go('');
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['BBI-01'] = [...pastG1(), ...tourTail()];
   S['BBI-02'] = room02();
   lengthen('BBI-02', 0, []);
   S['BBI-03'] = room03();
   lengthen('BBI-03', 0, []);
+  S['BBI-04'] = room04();
+  lengthen('BBI-04', 0, []);
   void lengthen;
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'BBI-04': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'bbi-agni' },
   'BBI-03': { steps: [...hop(3.6, 'jump for the first parasol'), { hold: 'R', until: done, max: 600 }], cause: 'bbi-rangapani' },
   'BBI-02': { steps: [...board02(), onPad(36, 44), { hold: '', until: done, max: 900, note: 'wait at the front, nearest the far side' }], cause: 'bbi-ball' },
   'BBI-01': { steps: [...tourHead(), ...hop(28.6, 'just walk on and hop the drain'), { hold: 'R', until: done, max: 900 }], cause: 'bbi-nala' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'BBI-04': { steps: [passTorch(9, r4on, 'keep moving, as learnt'), { hold: 'R', until: X(15.6), max: 400 }, { hold: 'R', jump: 15, ticks: 15, note: 'and jump the trough' }, { hold: 'R', until: done, max: 600 }], cause: 'bbi-kunda' },
   'BBI-03': { steps: [{ hold: 'R', until: X(3.4), max: 600 }, waitFor((w) => p3(w, 0).open(w), 'wait for the customer'), leap((w) => (w.flags.bbi3p as { rig: { x: number } }[])[0].rig.x + 9, 'land on the near side of the silk'), { hold: '', until: done, max: 900, note: 'stand where you landed' }], cause: 'bbi-silk' },
   'BBI-02': { steps: [...board02(), onPad(4, 12), { hold: '', until: (w) => k2(w).ball === 'rebound', max: 900 }, { hold: 'R', until: done, max: 900, note: 'off the moment he lands, and on' }], cause: 'bbi-rebound' },
   'BBI-01': { steps: [...pastG1(), ...tourTail().slice(0, 15), ...hop(72.2, 'jump the drain at its lip, as before'), { hold: 'R', until: done, max: 900 }], cause: 'bbi-nala' },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'BBI-04': [{ what: 'stop and wait for the torch, then go', steps: [{ hold: 'R', until: X(6.4), max: 300 }, { hold: '', until: (w) => !r4on(w, 0) && (w.tick - t0of(w, 'bbi4r')) / 120 > 1.0, max: 600 }, { hold: 'R', until: done, max: 600 }], cause: 'bbi-jhala' }],
   'BBI-03': [{ what: 'wait on the third parasol’s cut-out', steps: [...room03().slice(0, 7), stayOn(cut3(2), done, 'wait for the next customer', 1500)], cause: 'bbi-peeled' }],
   'BBI-01': [{ what: 'stop and wait for the gardener, as Tara says', steps: [...hop(8.6, 'the ditch'), { hold: 'R', until: X(21), max: 600 }, { hold: '', until: done, max: 900 }], cause: 'bbi-nala' }],
 };
-const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02, 'bbi03-gali': act03 };
-const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy };
+const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04 };
+const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair };
 void and;
 
 export const test: CityTests = {
@@ -188,5 +262,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['BBI-01', 'BBI-02', 'BBI-03'],
+  fair: ['BBI-01', 'BBI-02', 'BBI-03', 'BBI-04'],
 };
