@@ -9,10 +9,11 @@ import { Host, gam } from './gamosa';
 import { TeaBoy } from './bank';
 import { husori } from './husori';
 import { charge } from './gorh';
+import { roof } from './rangghar';
 import { Slab } from './entities';
 import type { Ending } from '../../levels/endkit';
 
-export type DisEndingKind = 'dis-hut-shut' | 'dis-tea-chest' | 'dis-laru-plate' | 'dis-gamosa-latch' | 'dis-tea-ladder' | 'dis-gamosa-door' | 'dis-watch-tower' | 'dis-post-bank';
+export type DisEndingKind = 'dis-hut-shut' | 'dis-tea-chest' | 'dis-laru-plate' | 'dis-gamosa-latch' | 'dis-tea-ladder' | 'dis-gamosa-door' | 'dis-watch-tower' | 'dis-post-bank' | 'dis-royal-seat';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<DisEndingKind, true> {}
@@ -275,6 +276,33 @@ export const endings: Record<DisEndingKind, Ending> = {
       pb.setup(w);
       levelPost(w, { level: 2, e: -1 } as never, D - 1.8, 3);
       w.flags.twist = 'post';
+    },
+  },
+  // ================================================================ DIS-09: the royal seat
+  /** The door is the royal seat at the top of the roof. Two last stretches of oil, and a ball rolls in each. */
+  'dis-royal-seat': {
+    space: 26,
+    after: 5,
+    advice: 'The door is the royal seat, up two steps at the end of the roof. Two more oiled stretches with a ball in each: the same way, from pad to pad. The seat’s steps are bare wood, safe to stand on.',
+    paint: (g, D) => {
+      g.put(D - 16, 14, '#');
+      g.put(D - 9, 14, '#');
+      g.fill(D - 2, D - 2, 14, 14, '#');
+      g.fill(D - 1, D + 3, 13, 14, '#');
+      g.put(D, 14, '.');
+      g.put(D + 1, 12, 'E');
+    },
+    build(w: World, d) {
+      const D = Math.round(d.x / 16) - 1;
+      roof(
+        w,
+        [
+          { slick: D - 15, slickW: 3, push: 180, chute: D - 14, every: 230 },
+          { slick: D - 8, slickW: 3, push: 180, chute: D - 7, every: 230 },
+        ],
+        D - 23,
+      );
+      w.flags.twist = 'seat';
     },
   },
 };

@@ -11,4 +11,5 @@ export const causeLines: Record<string, string[]> = {
   'dis-gate': ['Gate! The bamboo stakes got you.', 'The gate opens only while the husori group is stopped at it and you are inside its ring. Walk with them, and stay in the ring till the gate is open.'],
   'dis-beel': ['Beel! There is no floor under the tall grass.', 'Don’t step into grass that has not been flattened. A rhino flattens a strip when it charges at the jeep’s dust: wait, then walk its strip.'],
   'dis-gorh': ['Gorh! You were in the rhino’s way.', 'It charges straight at the dust, along the grass and the bank. Stay clear of the line between where it starts and the dust, or climb up out of its way.'],
+  'dis-roof': ['Gola! A ball rolled down the oiled roof into you.', 'Don’t stand or land on the oil. Stop on the grip pad before a rib, take a run, and jump the rib and the oil together on to the next pad.'],
 };

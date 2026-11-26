@@ -161,6 +161,37 @@ function atTheGate(k: number): (w: World) => { move: 'L' | 'R' | ''; jump: boole
 // ------------------------------------------------------------------ DIS-08: the rhino
 const charges = (w: World) => (w.flags.charges ?? []) as Charge[];
 const chargeGone = (i: number) => (w: World) => charges(w)[i]?.phase === 'gone';
+// ------------------------------------------------------------------ DIS-09: the roof
+/** the first-timer: run, and hop each rib with a little hop the moment you bump into it */
+function ribHop(ticks: number): (w: World) => { move: 'L' | 'R' | ''; jump: boolean } {
+  let W: World | null = null;
+  let hold = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      hold = 0;
+    }
+    const p = w.player;
+    if (hold > 0) {
+      hold--;
+      return { move: 'R', jump: true };
+    }
+    if (p.onGround && w.solidAt(p.x + p.w + 1, p.y + 2, 1, p.h - 4)) {
+      hold = ticks;
+      return { move: 'R', jump: true };
+    }
+    return { move: 'R', jump: false };
+  };
+}
+/** stop on the pad (its left end), a run along it, and one long leap over the rib and the oil */
+const roofLeap = (padX: number, note: string): Step[] => [
+  { hold: '', until: ground, max: 200 },
+  { hold: 'L', until: (w) => w.player.x <= px(padX) + 1, max: 60 },
+  { hold: '', ticks: 10 },
+  { hold: 'R', until: X(padX + 1.3), max: 200, note: 'a run along the pad' },
+  { hold: 'R', jump: 40, ticks: 40, long: true, note },
+  { hold: 'R', until: ground, max: 300 },
+];
 const tourEnd = (): Step[] => [...hop(94 - 1.6, 'up on the deck'), { hold: 'R', until: done, max: 900 }];
 
 /** S['DIS-0n'] = room route; lengthen(id, drop, extra) appends each act's route and the door's policy */
@@ -204,6 +235,14 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { hold: 'R', until: and(ground, X(29.5)), max: 900, note: 'along the flattened strip' },
   ];
   lengthen('DIS-08', 0, []);
+  S['DIS-09'] = [
+    { hold: 'R', until: X(5.2), max: 1200, note: 'across the first oil to the grip pad' },
+    ...roofLeap(5.2, 'over the rib and the oil, on to the next pad'),
+    ...roofLeap(12.2, 'and the next'),
+    ...roofLeap(19.2, 'and the last'),
+    { hold: 'R', until: and(ground, X(31)), max: 900 },
+  ];
+  lengthen('DIS-09', 0, []);
   S['DIS-10'] = [
     { hold: 'R', until: X(6.3), max: 400 },
     { hold: 'R', jump: 14, ticks: 14, note: 'on to the first bar' },
@@ -223,8 +262,10 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('DIS-10', 0, []);
 }
 
-/** the obvious play per stage, and the cause it must die of (every stage, 01-10). TODO */
+/** the obvious play per stage, and the cause it must die of (every stage, 01-10). */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  // hop each rib as you reach it, never stopping on the pads: you land on the oil, and the ball finds you
+  'DIS-09': { steps: [{ policy: ribHop(7), until: done, max: 3000 }], cause: 'dis-roof' },
   // the sandbars again: run on, the next one is not there yet
   'DIS-10': { steps: [{ hold: 'R', until: X(6.3), max: 400 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 14, ticks: 22 }))], cause: 'dis-luit' },
   // straight into the tall grass
@@ -245,7 +286,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'DIS-01': { steps: [...tourStart(), { hold: 'R', until: inGhat, max: 700 }, { hold: 'R', until: (w) => w.player.x >= px(79) - 2, max: 200 }, { hold: 'R', jump: 14, ticks: 14, note: 'out at once' }, { hold: 'R', until: done, max: 900 }], cause: 'dis-spill' },
 };
 
-/** the obvious correction after the first death, which dies too (at least 5 of 10). TODO */
+/** the obvious correction after the first death, which dies too (at least 5 of 10). */
 const dis02Start: Step[] = [
   { hold: 'R', until: X(6.3), max: 400 },
   { hold: 'R', jump: 14, ticks: 14, note: 'on to the first bar' },
@@ -270,7 +311,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'DIS-01': { steps: [...tourStart(), { hold: 'R', until: (w) => w.player.x >= px(66), max: 600 }, { hold: 'R', until: (w) => boy(w).x - w.player.x < 38, max: 900 }, { hold: 'R', jump: 30, ticks: 30, long: true, note: 'over him' }, { hold: 'R', until: done, max: 900 }], cause: 'dis-spill' },
 };
 
-/** more scripted first-timer deaths and 'like last time' moves. TODO */
+/** more scripted first-timer deaths and 'like last time' moves. */
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
   'DIS-03': [
     { what: 'follows her too close on the wet path and slides into her basket', steps: [{ policy: follow(0), until: and(ground, X(31.4)), max: 4000 }, { policy: follow(1, 34), until: done, max: 4000 }], cause: 'dis-basket' },
@@ -280,11 +321,19 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   ],
 };
 
-/** a route for each act, by act id ('dis02-...'). TODO */
+/** a route for each act, by act id ('dis02-...'). */
 const hopR0 = 0;
 void hopR0;
 const hopR = (at: number, note: string, ticks = 14): Step[] => [{ hold: 'R', until: X(at), max: 900 }, { hold: 'R', jump: ticks, ticks, note }, { hold: 'R', until: ground, max: 300 }];
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'dis09-chaal': (x) => [
+    { hold: 'R', until: X(x + 5.2), max: 1200, note: 'across the first oil to the pad' },
+    ...roofLeap(x + 5.2, 'over the rib and the oil'),
+    ...roofLeap(x + 12.2, 'and the next'),
+    ...roofLeap(x + 19.2, 'and the next'),
+    ...roofLeap(x + 26.2, 'and the last'),
+    { hold: 'R', until: and(ground, X(x + 38)), max: 900 },
+  ],
   'dis10-tawa': (x) => [{ policy: crossPan(0, 60), until: and(ground, X(x + 29)), max: 4000, note: 'the pan over the water' }],
   'dis10-gate': (x) => [{ policy: atTheGate(0), until: and(ground, X(x + 39)), max: 6000, note: 'the husori gate and the host’s ritual' }],
   'dis10-bank': (x) => [
@@ -345,8 +394,27 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   ],
 };
 
-/** a policy for each door ending, by kind ('dis-...'). TODO */
+/** a policy for each door ending, by kind ('dis-...'). */
 const endingPolicies: Record<string, Policy> = {
+  'dis-royal-seat'(w, m, d) {
+    const D = Math.round(d.x / 16) - 1;
+    const p = w.player;
+    if (m.hold > 0) return { move: 'R', jump: true };
+    if (!p.onGround) return go('R');
+    // across the oil to the pad, then pad to pad
+    const rib1 = px(D - 16);
+    const rib2 = px(D - 9);
+    const jumpAt = (rib: number) => p.cx >= rib - 14 && p.cx < rib - 4;
+    if (jumpAt(rib1) || jumpAt(rib2)) {
+      m.hold = 40;
+      return { move: 'R', jump: true };
+    }
+    if (p.cx > px(D - 3) && w.solidAt(p.x + p.w + 2, p.y + 2, 1, p.h - 4)) {
+      m.hold = 9;
+      return { move: 'R', jump: true };
+    }
+    return go('R');
+  },
   'dis-post-bank'(w, m, d) {
     const pl = pluckers(w)[pluckers(w).length - 1];
     const p = w.player;
@@ -472,6 +540,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  // TODO: at least every long, marathon and wtf stage
-  fair: [],
+  fair: ['DIS-01', 'DIS-02', 'DIS-03', 'DIS-04', 'DIS-05', 'DIS-06', 'DIS-07', 'DIS-08', 'DIS-09', 'DIS-10'],
 };

@@ -1,4 +1,4 @@
-// Dispur (Assam) as a city module. Scaffolded by scripts/dev/new-city.mjs: replace every TODO.
+// Dispur (Assam) as a city module: ten stages on the Luit, in the tea gardens, at Bihu and in Kaziranga.
 // Recipe: docs/CITY-MODULE.md. Found by src/game/cities/registry.ts; nothing to register.
 import type { CityModule } from '../module';
 import { lines } from './lines';

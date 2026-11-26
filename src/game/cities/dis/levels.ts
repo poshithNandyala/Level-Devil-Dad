@@ -14,32 +14,13 @@ import type { Door } from '../../entities/basics';
 import { Pan } from './pitha';
 import { husori } from './husori';
 import { charge } from './gorh';
+import { roof, type RoofSection } from './rangghar';
 import { Bank, type BankDef } from './bank';
 import { Cloth, Host, gam, pitDanger } from './gamosa';
 import { Hedge, Plucker, Sprinkler } from './pluck';
 import { Carrier, Decor, River, SandField, levelPost, river, sand, type Span } from './entities';
 
 const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
-void px; void sign; void rival; void door; void collectible; void onPass; void taraSays; void longStage; void Decor; void tara; void L;
-
-/** the placeholder rooms of the stages that are not built yet */
-function todoRoom(n: number): LevelDef {
-  return {
-    id: `DIS-${String(n).padStart(2, '0')}`,
-    city: 'DIS',
-    index: n,
-    name: `Stage ${n}`,
-    nameEn: 'unbuilt',
-    tagline: 'not built yet',
-    hint: 'not built yet.',
-    par: 30,
-    map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').rows(),
-    build(w: World) {
-      door(w);
-      rival(w, 3, 15, 1, tara(n - 2));
-    },
-  };
-}
 
 // ================================================================== DIS-01: Nomoskar Guwahati (the tour)
 const ghat = { x0: 74, x1: 79 };
@@ -571,6 +552,64 @@ const luitBank: Act = {
   },
 };
 
+// ================================================================== DIS-09: Rang Ghar (the boat roof)
+const ROOF_ROOM: RoofSection[] = [
+  { slick: 3, slickW: 2, push: 100, chute: -1, every: 0 },
+  { slick: 9, slickW: 3, push: 180, chute: 10, every: 250 },
+  { slick: 16, slickW: 3, push: 180, chute: 17, every: 250 },
+  { slick: 23, slickW: 3, push: 180, chute: 24, every: 250 },
+];
+function rangGharRoom(): LevelDef {
+  const g = Grid.ground(15).put(1, 14, '@').put(30, 14, 'E');
+  for (const c of [8, 15, 22]) g.put(c, 14, '#');
+  return {
+    id: 'DIS-09',
+    city: 'DIS',
+    index: 9,
+    name: 'Rang Ghar',
+    nameEn: 'The Ahom pavilion',
+    tagline: 'The royal pavilion at Sivasagar, with its boat-shaped roof. The roof is oiled, and the royal games roll their balls down it.',
+    hint: 'The roof is oiled: where it shines it pushes you back down the slope, almost as fast as you can run, and wooden balls roll down it from the gutters. They smash against the wooden ribs. Stand on the red-and-white grip pads in front of a rib, where nothing pushes you and no ball can reach, take a run along the pad and jump the rib and the oiled stretch beyond it in one leap, on to the next pad. Never stand or land on the oil.',
+    par: 36,
+    map: g.rows(),
+    build(w: World) {
+      door(w);
+      roof(w, ROOF_ROOM, 4);
+      sign(w, 6.2, 10.4, 3.6, 'RANG GHAR', 'shop', null, 'grip pad');
+      rival(w, 5, 15, 1, tara(7));
+      onPass(w, px(6), (w2) => taraSays(w2, 'Xubho zatra, Dad! | Good journey, Dad!', 2.4));
+      collectible(w, 'dis-paat', 14.5, 9.6);
+    },
+  };
+}
+
+/** DIS-09 act: a longer roof, and the slope pushes harder (you can no longer walk the oil at all). */
+const ROOF_ACT: RoofSection[] = [
+  { slick: 3, slickW: 2, push: 100, chute: -1, every: 0 },
+  { slick: 9, slickW: 3, push: 180, chute: 10, every: 230 },
+  { slick: 16, slickW: 3, push: 180, chute: 17, every: 230 },
+  { slick: 23, slickW: 3, push: 180, chute: 24, every: 230 },
+  { slick: 30, slickW: 3, push: 180, chute: 31, every: 230 },
+];
+const kaidhara: Act = {
+  id: 'dis09-chaal',
+  w: 40,
+  advice: 'The roof goes on, and the oil pushes harder than you can run. Same way: stop on each grip pad, run along it, and clear the rib and the oil in one jump. A ball is rolling in every stretch.',
+  cps: [6.5, 20.5],
+  paint: (g, c) => {
+    for (let i = 0; i < 4; i++) g.put(c.x + 8 + i * 7, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    roof(
+      w,
+      ROOF_ACT.map((s) => ({ ...s, slick: s.slick + x, chute: s.chute + x })),
+      x + 2,
+    );
+    sign(w, x + 0.6, 10.4, 3.4, 'CHAAL', 'shop', null, 'the roof');
+  },
+};
+
 // the hut door: the farmer shuts it while the river is moving
 const hutDoor = (w: World, d: Door, field: SandField) => {
   const L = lock(w, d, 'Roba! Chah khaba. | Wait! Have some tea.');
@@ -591,6 +630,6 @@ export const levels = (): LevelDef[] => [
   longStage({ base: majuliRoom(), acts: [majuli], twist: 'dis-tea-ladder', par: 50, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
   longStage({ base: husoriRoom(), acts: [ghar, chowk], twist: 'dis-gamosa-door', par: 150, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-gamosa-door' } }),
   longStage({ base: gorhRoom(), acts: [kaziranga], twist: 'dis-watch-tower', par: 70, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
-  longStage({ base: todoRoom(9), par: 30, shape: 'long' }), // DIS-09 TODO: acts, twist (a dis-... ending), par
+  longStage({ base: rangGharRoom(), acts: [kaidhara], twist: 'dis-royal-seat', par: 80, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
   longStage({ base: luitRoom(), acts: [luitTawa, luitGate, luitBank], twist: 'dis-post-bank', par: 120, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
 ];
