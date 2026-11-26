@@ -27,6 +27,11 @@ export interface AttemptInfo {
 export interface StageMeta {
   family: string;
   betrayals: string[];
+  /**
+   * The door-ending idea, '<city>-<kebab key>' (eg. 'pat-ganga-ghat-steps'). Required on every stage of a new
+   * module city; optional for RNC and shipped stages for now. Unique game-wide (tests/allocation.test.ts).
+   */
+  ending?: string;
 }
 
 export interface LevelDef {
