@@ -510,6 +510,36 @@ function kumartuliRoom(): LevelDef {
   };
 }
 
+
+/** CCU-05 act: the drying yard: unpainted figures drying in the sun, at every height. Walk off a dry one on
+ *  to one a tile lower and it holds; two tiles lower and it cracks even under a walk */
+const uthon: Act = {
+  id: 'ccu05-uthon',
+  w: 26,
+  advice: 'The drying yard: most of these are dry. A walk off on to a dry figure one step lower is fine; two steps lower and it cracks even under a walk. From the high dry one, hop across to the half-painted one instead, and quickly on.',
+  paint: (g, c) => {
+    g.pit(c.x, c.x + 21);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(new Ghat(c.X(0), c.X(22)));
+    figures(
+      w,
+      [
+        [x + 1, 2, 0.2, 0.06, 'horse'],
+        [x + 3, 3, 0.1, 0.06, 'man'],
+        [x + 5, 4, 0.3, 0.06, 'woman'],
+        [x + 7, 3, 0, 0, 'man'],
+        [x + 9, 1, 0, 0, 'horse'],
+        [x + 12, 2, 0.5, 0.12, 'woman'],
+        [x + 14, 1, 0, 0, 'man'],
+        [x + 17, 2, 0.1, 0.06, 'horse'],
+      ],
+      c.X(0),
+    );
+  },
+};
+
 /** CCU-05 act: the lane where they're finishing in order, one after another behind you */
 const ghat: Act = {
   id: 'ccu05-ghat',
@@ -587,7 +617,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: aasteRoom(), par: 30, twist: 'ccu-stop', shape: 'short', meta: meta('exit-moving-vehicle-on-shout', ['exit-facing-forward'], 'ccu-bus-crawls-for-whoever-waits') }),
   longStage({ base: muriRoom(), par: 30, twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
   longStage({ base: boiRoom(), par: 26, twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
-  longStage({ base: kumartuliRoom(), par: 50, acts: [ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-finished-figure-carried-over-the-lane') }),
+  longStage({ base: kumartuliRoom(), par: 50, acts: [uthon, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-finished-figure-carried-over-the-lane') }),
   longStage({ base: poleRoom(), par: 60, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 90, acts: [girder, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 40, acts: [rok], twist: 'ccu-bhanr', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-door-opens-for-a-cup-of-tea') }),

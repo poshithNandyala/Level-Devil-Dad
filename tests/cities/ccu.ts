@@ -430,6 +430,13 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** more scripted first-timer deaths and 'like last time' moves */
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'CCU-05': [
+    {
+      what: 'walking off the high dry figure on to the one two steps lower',
+      steps: [...kumartuliRoute(), walk(32), steerHop(px(33.8), 12, 'up'), steerHop(px(35.8), 10, 'up'), steerHop(px(37.8), 10, 'up'), walkOnto(39, 'down one'), { hold: 'R', until: done, max: 300, note: 'and walk off again, two down' }],
+      cause: 'ccu-phata',
+    },
+  ],
   'CCU-08': [{ what: 'waiting by the second adda for the water to stop', steps: [...addaRoute(), walk(32 + 24.5), { hold: '', until: done, max: 1500 }], cause: 'ccu-dhowa' }],
   'CCU-07': [{ what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), walk(80 + 3.9), ...hopTo(px(86.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
   'CCU-01': [{ what: 'up on the thela and a hop down off it, on to the rail', steps: tourRun('off'), cause: 'ccu-rail' }],
@@ -446,6 +453,19 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu05-uthon': (x) => [
+    steerHop(px(x + 1.8), 12, 'up on the first'),
+    steerHop(px(x + 3.8), 10, 'up a step'),
+    steerHop(px(x + 5.8), 10, 'and up again'),
+    walkOnto(x + 7, 'walk off on to the dry one, one step down'),
+    { hold: 'R', until: X(x + 8.2), max: 120 },
+    steerHop(px(x + 12.8), 14, 'over the low dry one, across to the half-painted one'),
+    walkOnto(x + 14, 'walk off on to the low dry one'),
+    steerHop(px(x + 17.8), 12, 'up on the last'),
+    { hold: 'R', until: X(x + 18.4), max: 120 },
+    steerHop(px(x + 22.6), 10, 'down on to the lane'),
+    walk(x + 25.5),
+  ],
   'ccu05-ghat': (x) => [
     steerHop(px(x + 1.8), 12, 'up on the first'),
     steerHop(px(x + 4.8), 12, 'the next, up'),
