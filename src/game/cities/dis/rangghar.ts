@@ -85,8 +85,8 @@ export class Roof extends Entity {
         // the gutter above the slick part where the balls come from
         ctx.fillStyle = '#6A4B1C';
         ctx.fillRect(px(s.chute) - 6, GROUND - 92, 16, 3);
-        ctx.fillRect(px(s.chute) - 6, GROUND - 92, 2, 10);
-        ctx.fillRect(px(s.chute) + 8, GROUND - 92, 2, 10);
+        ctx.fillRect(px(s.chute) - 6, GROUND - 94, 2, 10);
+        ctx.fillRect(px(s.chute) + 8, GROUND - 94, 2, 10);
       }
     }
   }
@@ -96,7 +96,50 @@ export class Roof extends Entity {
 export function ribCols(secs: RoofSection[]): number[] {
   return secs.map((s) => s.slick + s.slickW + 3);
 }
+/** the pavilion itself: the roof's brick-red tiles over the ground you walk on, its arches under it and the upper eave */
+class Pavilion extends Entity {
+  constructor(
+    readonly x0: number,
+    readonly x1: number,
+  ) {
+    super();
+    this.layer = -3;
+  }
+  draw(ctx: CanvasRenderingContext2D) {
+    const { x0, x1 } = this;
+    // roof tiles over the walking surface
+    ctx.fillStyle = '#8C3B2A';
+    ctx.fillRect(x0, GROUND, x1 - x0, 48);
+    ctx.fillStyle = '#A9503A';
+    for (let x = x0; x < x1; x += 8) ctx.fillRect(x, GROUND, 6, 4);
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    for (let y = GROUND + 8; y < GROUND + 48; y += 8) ctx.fillRect(x0, y, x1 - x0, 1);
+    // brick arches of the storey below, dark openings
+    ctx.fillStyle = '#5A2A1E';
+    for (let x = x0 + 10; x < x1 - 20; x += 40) {
+      ctx.beginPath();
+      ctx.moveTo(x, GROUND + 48);
+      ctx.lineTo(x, GROUND + 30);
+      ctx.quadraticCurveTo(x + 10, GROUND + 18, x + 20, GROUND + 30);
+      ctx.lineTo(x + 20, GROUND + 48);
+      ctx.fill();
+    }
+    // the upper eave the gutters hang from
+    ctx.fillStyle = '#6A4B1C';
+    ctx.fillRect(x0, GROUND - 98, x1 - x0, 4);
+    ctx.fillStyle = '#8C3B2A';
+    ctx.beginPath();
+    ctx.moveTo(x0 - 10, GROUND - 94);
+    ctx.quadraticCurveTo((x0 + x1) / 2, GROUND - 116, x1 + 10, GROUND - 94);
+    ctx.lineTo(x1 + 10, GROUND - 98);
+    ctx.quadraticCurveTo((x0 + x1) / 2, GROUND - 124, x0 - 10, GROUND - 98);
+    ctx.fill();
+  }
+}
 export function roof(w: World, secs: RoofSection[], from: number) {
+  const a = Math.min(...secs.map((s) => s.slick)) - 3;
+  const b = Math.max(...secs.map((s) => s.slick + s.slickW)) + 4;
+  w.add(new Pavilion(px(a), px(b)));
   const r = w.add(new Roof(secs, px(from)));
   (w.flags.roofs ??= []).push(r);
   return r;

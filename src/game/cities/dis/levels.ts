@@ -80,6 +80,8 @@ const tourLevel = () =>
         }, -3),
       );
       sign(w, 71.2, 10.6, 3.4, 'GHAT', 'green', null, 'river side');
+      // Tara urges you on as the boy comes (a lie: stepping out now meets the tray)
+      onPass(w, px(66), (w2) => taraSays(w2, 'Bhal, Dad! | Good, Dad!', 2));
       onPass(w, px(58), (w2) => w2.guide('Lahe lahe, Dad? | Slowly slowly, Dad?', (w3) => w3.info.deaths > 0));
     },
   });
@@ -113,6 +115,7 @@ function charRoom(): LevelDef {
       sign(w, 4.6, 10.4, 3.4, 'CHAR', 'shop', null, 'the island moves');
       rival(w, 5, 15, 1, tara(0));
       onPass(w, px(6), (w2) => w2.guide('Lahe lahe, Dad? | Slowly slowly, Dad?', (w3) => w3.info.deaths > 0 && w3.player.cx < px(10)));
+      onPass(w, px(9), (w2) => taraSays(w2, 'Bhal, Dad! | Good, Dad!', 2));
       collectible(w, 'dis-japi', 20.4, 11);
     },
   };
@@ -202,6 +205,7 @@ function teaRoom(): LevelDef {
       sign(w, 8.4, 10.4, 3.4, 'CHA BAGAN', 'shop', null, 'tea garden');
       rival(w, 3, 15, 1, tara(1));
       onPass(w, px(4), (w2) => w2.guide('Roba! | Stop!', (w3) => w3.info.deaths > 0 && w3.player.cx < px(9)));
+      onPass(w, px(7), (w2) => taraSays(w2, 'Bhal, Dad! | Good, Dad!', 2));
       collectible(w, 'dis-paat', 18, 11.5);
     },
   };
@@ -258,6 +262,7 @@ function pithaRoom(): LevelDef {
       sign(w, 3.2, 10.4, 3.4, 'PITHA', 'shop', null, 'shiny = safe');
       rival(w, 4, 15, 1, tara(2));
       onPass(w, px(5), (w2) => w2.guide('Roba! | Stop!', (w3) => w3.info.deaths > 0 && w3.player.cx < px(8)));
+      onPass(w, px(9), (w2) => taraSays(w2, 'Bhal, Dad! | Good, Dad!', 2));
       collectible(w, 'dis-pitha', 16, 11);
     },
   };
@@ -345,6 +350,7 @@ function gamosaRoom(): LevelDef {
       sign(w, 14.6, 10.2, 3.2, 'ADORANI', 'shop', null, 'welcome');
       rival(w, 2, 15, 1, tara(3));
       onPass(w, px(3), (w2) => taraSays(w2, 'Xubhessa! | Best wishes!', 2.2));
+      onPass(w, px(16), (w2) => taraSays(w2, 'Bhal, Dad! | Good, Dad!', 2));
       collectible(w, 'dis-gamosa', 18, 9.6);
     },
   };
@@ -510,7 +516,8 @@ function husoriRoom(): LevelDef {
       husori(w, 6, 2, [{ x: 22, ritual: 0, stay: 200 }]);
       sign(w, 9.6, 10.4, 3.4, 'HUSORI', 'shop', null, 'bohag bihu');
       rival(w, 3, 15, 1, tara(5));
-      onPass(w, px(3), (w2) => taraSays(w2, 'Bhal, Dad! | Good, Dad!', 2.2));
+      // the one time in Guwahati Tara tells the truth
+      onPass(w, px(3), (w2) => taraSays(w2, 'Lahe lahe, Dad? | Slowly slowly, Dad?', 2.4));
       collectible(w, 'dis-pepa', 16.4, 10.2);
     },
   };
@@ -560,6 +567,7 @@ function gorhRoom(): LevelDef {
       sign(w, 3.4, 10.4, 3.4, 'KAZIRANGA', 'shop', null, 'tall grass');
       rival(w, 2, 15, 1, tara(6));
       onPass(w, px(2), (w2) => taraSays(w2, 'Xubhessa! | Best wishes!', 2.2));
+      onPass(w, px(5), (w2) => taraSays(w2, 'Bhal, Dad! | Good, Dad!', 2));
       collectible(w, 'dis-laru', 14.5, 10.4);
     },
   };
@@ -708,6 +716,7 @@ function rangGharRoom(): LevelDef {
       sign(w, 6.2, 10.4, 3.6, 'RANG GHAR', 'shop', null, 'grip pad');
       rival(w, 5, 15, 1, tara(7));
       onPass(w, px(6), (w2) => taraSays(w2, 'Xubho zatra, Dad! | Good journey, Dad!', 2.4));
+      onPass(w, px(7.5), (w2) => taraSays(w2, 'Bhal, Dad! | Good, Dad!', 2));
       collectible(w, 'dis-paat', 14.5, 9.6);
     },
   };

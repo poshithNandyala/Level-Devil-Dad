@@ -25,6 +25,6 @@ export const lines: CityLines = {
   cleared: 'Guwahati cleared. Xubho Bihu! | Guwahati cleared. Happy Bihu!',
   brag: 'Bhal! | Good!',
   idle: ['Lahe lahe, Dad? | Slowly slowly, Dad?', 'Bohudin dekha nai! | Long time no see!', 'Lahe lahe kowa. | Speak slowly.'],
-  seven: 'Luit one, Dad zero! Back to the start. | Seven times! Back to the start.',
-  lastLife: 'Xohay! Last chance, Dad. | Help! Last chance, Dad.',
+  seven: 'Akou ebar! | Once again, from the start!',
+  lastLife: 'Xohay! | Help! Last life, Dad.',
 };
