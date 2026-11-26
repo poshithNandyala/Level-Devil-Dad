@@ -2,7 +2,7 @@
 // Merged into SOLUTIONS, ACT_ROUTES and ENDING_POLICIES by solutions.ts, acts.ts and endings.ts.
 import type { World } from '../src/game/world';
 import type { Door } from '../src/game/entities/basics';
-import { Step, X, and, ground } from './runner';
+import { Step, X, and, ground, sameKind } from './runner';
 import { Gossip } from '../src/game/cities/pnj/levels';
 import type { Brush, IceBlock, PedalBoat, PlankChain, RopeFerry, Scale } from '../src/game/cities/dmn/entities';
 import type { Football, Parade, Parasail, Rope, Roulette } from '../src/game/cities/pnj/entities';
@@ -253,7 +253,7 @@ function boatRun(get: (w: World) => PedalBoat, lines: (w: World) => number[], to
       const on = w.standing(b.solid);
       if (on) {
         for (const x of lines(w)) {
-          const hz = w.hazards.find((h: any) => h.cause === 'moored' && h.hits(x + 1, 200, 2, 30));
+          const hz = w.hazards.find((h: any) => sameKind(h.cause, 'moored') && h.hits(x + 1, 200, 2, 30));
           const dx = x - (p.x + p.w);
           if (hz && dx >= 2 && dx <= 12 && !w.input.jump) {
             hold = 11;
