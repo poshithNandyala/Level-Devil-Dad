@@ -4,7 +4,8 @@
 import { CITY_MODULES } from './registry';
 import type { CityModule } from './module';
 import { CHAPTERS, LINES } from '../cities';
-import { ENDINGS, type EndingKind } from '../levels/endings';
+import { ENDINGS } from '../levels/endings';
+import type { Ending } from '../levels/endkit';
 import { CAUSE_LINES } from '../entities/props';
 import { SKINS } from '../levels/chunks';
 import { COURSES } from '../levels/tour';
@@ -17,9 +18,17 @@ import { GRADES } from '../../render/renderer';
 import { CAP } from '../../render/art/tiles';
 import { MODULE_BACKDROPS } from '../../render/backgrounds';
 import { MODULE_SCENE_FEATURES } from '../../render/scenes';
-import { MODULE_THING_DRAW, MODULE_THING_SIZE, type ThingKind } from '../../render/art/things';
+import { BASE_THING_SIZE, MODULE_THING_DRAW, MODULE_THING_SIZE, type ThingKind } from '../../render/art/things';
 
 const installed = new Set<string>();
+
+/** add a module's keys to a shared table; a key that is already there is a collision between cities */
+function addAll<T>(id: string, what: string, into: Record<string, T>, from: Record<string, T> | undefined) {
+  for (const [k, v] of Object.entries(from ?? {})) {
+    if (k in into) throw new Error(`city module ${id}: ${what} '${k}' is already used (start new keys with '${id.toLowerCase()}')`);
+    into[k] = v;
+  }
+}
 
 function install(m: CityModule) {
   if (installed.has(m.id)) return;
@@ -33,11 +42,8 @@ function install(m: CityModule) {
   ch.hello = m.chapter?.hello ?? m.lines.hello;
   ch.famous = m.chapter?.famous ?? m.lines.famous;
   delete ch.teasers;
-  for (const [k, e] of Object.entries(m.endings)) {
-    if (k in ENDINGS) throw new Error(`city module ${id}: ending kind '${k}' is already used`);
-    ENDINGS[k as EndingKind] = e;
-  }
-  Object.assign(CAUSE_LINES, m.causeLines);
+  addAll(id, 'ending kind', ENDINGS as Record<string, Ending>, m.endings);
+  addAll(id, 'death cause', CAUSE_LINES, m.causeLines);
   SKINS[id] = m.skin;
   COURSES[id] = m.course;
   CITY_LINE[id] = m.cityLine;
@@ -47,8 +53,9 @@ function install(m: CityModule) {
   GRADES[id] = m.grade;
   CAP[id] = m.tileCaps;
   MODULE_BACKDROPS[id] = m.backdrop;
-  Object.assign(MODULE_SCENE_FEATURES, m.sceneFeatures ?? {});
+  addAll(id, 'scene feature', MODULE_SCENE_FEATURES, m.sceneFeatures);
   for (const [k, t] of Object.entries(m.things ?? {})) {
+    if (k in MODULE_THING_SIZE || k in BASE_THING_SIZE) throw new Error(`city module ${id}: thing kind '${k}' is already used (start new keys with '${id.toLowerCase()}')`);
     MODULE_THING_SIZE[k as ThingKind] = t.size;
     MODULE_THING_DRAW[k as ThingKind] = t.draw;
   }

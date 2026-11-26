@@ -1642,3 +1642,4 @@ export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
   },
 };
 for (const t of CITY_TESTS) Object.assign(FIX, t.fix ?? {});
+for (const t of CITY_TESTS) for (const [id, ms] of Object.entries(t.mistakes ?? {})) MISTAKES[id] = [...(MISTAKES[id] ?? []), ...ms];

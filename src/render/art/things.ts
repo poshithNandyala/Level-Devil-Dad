@@ -224,6 +224,9 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   chila: [12, 10],
 };
 
+/** the built-in kinds' sizes (install checks a module's new kinds against these) */
+export const BASE_THING_SIZE: Readonly<Record<string, [number, number]>> = SIZE;
+
 export function thingSize(k: ThingKind): [number, number] {
   return (SIZE as Partial<Record<ThingKind, [number, number]>>)[k] ?? MODULE_THING_SIZE[k]!;
 }

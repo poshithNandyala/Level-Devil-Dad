@@ -66,8 +66,10 @@ export interface CityTestsShape<Step, Policy, ActRoute> {
   solutions: (S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) => void;
   /** the obvious play per stage, and the cause it must die of */
   naive: Record<string, { steps: Step[]; cause?: string }>;
-  /** the obvious correction after the first death, which dies too */
+  /** the obvious correction after the first death, which dies too (at least 5 of the 10 stages) */
   fix?: Record<string, { steps: Step[]; cause?: string }>;
+  /** more scripted first-timer deaths and 'like last time' moves per stage (as MISTAKES in tests/solutions.ts) */
+  mistakes?: Record<string, { what: string; steps: Step[]; cause?: string }[]>;
   /** a route for each act, by act id */
   actRoutes: Record<string, ActRoute>;
   /** a policy for each door ending, by ending kind */
