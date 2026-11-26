@@ -112,9 +112,9 @@ export const ending: Ending = {
   advice: 'At the viewpoint the door is two floors up the house front, in the cloud, with a door on every floor. Climb the steps (the rope goes with them) past the ground floor and the first, to the second.',
   paint: (g, D) => {
     g.put(D, 14, '.');
-    g.fill(D - 13, D - 11, 13, 13, '=');
-    g.fill(D - 10, D - 8, 11, 11, '=');
-    g.fill(D - 7, D - 5, 9, 9, '=');
+    g.fill(D - 14, D - 11, 13, 13, '=');
+    g.fill(D - 11, D - 8, 11, 11, '=');
+    g.fill(D - 8, D - 5, 9, 9, '=');
     g.fill(D - 4, D + 2, 7, 14, '#');
     g.put(D, 6, 'E');
   },
