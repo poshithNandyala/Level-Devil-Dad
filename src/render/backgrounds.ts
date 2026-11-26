@@ -4,7 +4,7 @@ import { drawScene, sceneSky } from './scenes';
 import { THEMES, Theme } from './theme';
 import { Ctx, circle, ellipse, hash, rr, withAlpha } from './art/common';
 import { ambientSouth } from './backdrops-south';
-import { ambientWest, bhopal, raipur } from './backdrops-west';
+import { ambientWest, raipur } from './backdrops-west';
 
 /** a city module's skyline, drawn in world units between x0 and x1; `variant` is the stage's index */
 export type Backdrop = (ctx: Ctx, th: Theme, x0: number, x1: number, variant: number) => void;
@@ -33,8 +33,7 @@ export function drawBackdrop(ctx: Ctx, city: CityId, x0: number, x1: number, y0:
     ctx.fillRect(x0, 170, x1 - x0, 120);
     return;
   }
-  if (city === 'BPL') bhopal(ctx, th, x0, x1);
-  else if (city === 'RPR') raipur(ctx, th, x0, x1);
+  if (city === 'RPR') raipur(ctx, th, x0, x1);
   else if (MODULE_BACKDROPS[city]) MODULE_BACKDROPS[city]!(ctx, th, x0, x1, variant);
   // haze near the ground line so the playfield pops
   const hz = ctx.createLinearGradient(0, 170, 0, 260);

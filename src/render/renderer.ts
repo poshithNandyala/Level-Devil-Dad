@@ -992,7 +992,6 @@ export const ROOM = { W: ROOM_W, H: ROOM_H };
 export type Grade = { gx: number; gy: number; glow: string; tint: string; vig: string };
 export const GRADES: Record<string, Grade> = {
   RPR: { gx: 0.7, gy: 0.2, glow: 'rgba(255,240,190,0.26)', tint: 'rgba(120,170,60,0.07)', vig: 'rgba(20,35,10,0.2)' },
-  BPL: { gx: 0.3, gy: 0.24, glow: 'rgba(255,236,200,0.24)', tint: 'rgba(60,150,160,0.07)', vig: 'rgba(10,30,40,0.2)' },
 };
 /** tile cache slice width (world px) */
 const CHUNK = 512;

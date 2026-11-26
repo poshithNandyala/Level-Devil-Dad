@@ -1,19 +1,19 @@
 // Bhopal: the city of lakes. Skip like a stone across the Upper Lake, step in to Bhimbetka's rock
 // paintings, trail a zardozi thread you mustn't cross, bounce on jal tarang bowls, survive Surma
 // Bhopali's tall tales, and dodge BHEL's crane magnets.
-import { type LevelDef, type World } from '../world';
-import { LINES } from '../cities';
-import { collectible, door, prop, px, rival, sign } from './kit';
-import type { Act } from './acts';
-import { onPass } from './trolls';
-import { tour } from './tour';
-import { longStage } from './chunks';
-import { Grid } from './grid';
-import { Bison, Chumbak, Gate, Katori, Lake, Ledge, Morph, Sailboat, Shelter, Sher, Sitara, Surma, Tawa, Thread } from '../entities/bhopal';
+import { type LevelDef, type World } from '../../world';
+import { lines as L } from './lines';
+import { collectible, door, prop, px, rival, sign } from '../../levels/kit';
+import type { Act } from '../../levels/acts';
+import { onPass } from '../../levels/trolls';
+import { tour } from '../../levels/tour';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
+import { Bison, Chumbak, Gate, Katori, Lake, Ledge, Morph, Sailboat, Shelter, Sher, Sitara, Surma, Tawa, Thread } from './entities';
 
-const TAUNTS = LINES.BPL.taunt;
+const TAUNTS = L.taunt;
 const G = 15;
-const tara = (n: number, beaten = 0) => ({ intro: LINES.BPL.intro[n % LINES.BPL.intro.length], point: 1 as const, introAt: 0.5, taunts: TAUNTS, beaten: LINES.BPL.beaten[beaten % LINES.BPL.beaten.length] });
+const tara = (n: number, beaten = 0) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[beaten % L.beaten.length] });
 
 // ================================================================== BPL-02: Bada Talab (skip like a stone)
 /** the lake over tile columns c0..c1 (which the map leaves as a pit) */
@@ -435,7 +435,7 @@ const bhojtal: Act = {
   },
 };
 
-export const BPL: LevelDef[] = [
+export const levels = (): LevelDef[] => [
   tour({
     id: 'BPL-01',
     city: 'BPL',

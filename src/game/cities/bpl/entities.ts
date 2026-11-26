@@ -1,9 +1,9 @@
 // Bhopal's moving parts: skipping like a stone across the Upper Lake, stepping in to Bhimbetka's rock
 // paintings, a zardozi thread you mustn't cross, jal tarang bowls, Surma Bhopali's tall tales, and
 // BHEL's crane magnets.
-import { Entity, type Hazard, type World } from '../world';
-import { Solid } from '../body';
-import { DT, ROOM_H } from '../constants';
+import { Entity, type Hazard, type World } from '../../world';
+import { Solid } from '../../body';
+import { DT, ROOM_H } from '../../constants';
 
 /** A stretch of the lake. Stand in it and you sink. Hit it at a run and you skip like a flat stone:
  *  three skips, each a little slower, and then you're in. Tap jump just as you touch and that skip

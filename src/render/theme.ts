@@ -25,29 +25,6 @@ export interface Theme {
 }
 
 export const THEMES = {
-  BPL: {
-    city: 'BPL',
-    name: 'Bhopal',
-    local: 'भोपाल',
-    sky: ['#3F8FB5', '#9FD0DC', '#F6E7C6'],
-    sun: '#FFF3D0',
-    far: '#8FB0A8',
-    mid: '#5E8C84',
-    near: '#3C5F5A',
-    accent: '#00897B',
-    accent2: '#FFB300',
-    tileBase: '#7A8F74',
-    tileTop: '#A9BC98',
-    tileEdge: '#566A52',
-    tileDark: '#3A4A38',
-    topper: '#D9C27A',
-    pattern: 'brick',
-    spike: '#F2F4EC',
-    spikeEdge: '#22302A',
-    ink: '#22302A',
-    rim: null,
-    ui: '#00897B',
-  },
   RPR: {
     city: 'RPR',
     name: 'Raipur',
@@ -74,7 +51,7 @@ export const THEMES = {
 } as Record<CityId, Theme>;
 
 /** playable cities in journey order (south to north) */
-export const CITY_ORDER: CityId[] = ['BPL', 'RPR'];
+export const CITY_ORDER: CityId[] = ['RPR'];
 
 /** Future chapters, honestly labelled as not built yet. */
 export const COMING_SOON = [

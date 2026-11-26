@@ -27,7 +27,6 @@ export function mix(a: string, b: string, k: number) {
 export type GroundCaps = { cap: string; capHi: string; blades?: string; flowers?: string[]; pebbles?: string };
 export const CAP: Record<string, GroundCaps> = {
   RPR: { cap: '#9CCC65', capHi: '#C5E1A5', pebbles: '#8D5A3B' },
-  BPL: { cap: '#B9C7A6', capHi: '#D9E3C8', pebbles: '#7E8F6E' },
 };
 
 /** One ground tile in the city's style. Edges depend on neighbours so groups of tiles read as one mass. */
