@@ -196,7 +196,7 @@ export const act1: Act = {
     st.beats.stops.push({ at: X(46), d: -1 });
     st.beats.scrapes.push({ x: X(60), cause: 'pat-torana', kind: 'arch' });
     obstacle(w, X(60), 'arch');
-    sign(w, c.x + 44, 10.4, 3, 'HALT', 'shop', null, 'utarna hai');
+    sign(w, c.x + 44, 10.4, 3, 'HALT', 'shop', null, 'get off here');
   },
 };
 

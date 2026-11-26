@@ -124,7 +124,7 @@ export function room(): LevelDef {
         }),
       );
       rake.on = false;
-      sign(w, 12.5, 10.2, 3.4, 'LITTI', 'shop', null, 'garam ba');
+      sign(w, 12.5, 10.2, 3.4, 'LITTI', 'shop', null, 'fresh from the fire');
       rival(w, 29, 15, -1, taraScript(2));
       collectible(w, 'pat-chokha', 16, 11.9);
     },
@@ -174,7 +174,7 @@ export const act: Act = {
       return r;
     };
     mk(0);
-    sign(w, c.x + 31, 10.4, 3, 'CHOKHA', 'shop', null, 'ek bowl');
+    sign(w, c.x + 31, 10.4, 3, 'CHOKHA', 'shop', null, 'a bowl of it');
   },
 };
 

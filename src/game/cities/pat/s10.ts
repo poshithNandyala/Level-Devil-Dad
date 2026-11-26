@@ -122,7 +122,7 @@ export const actStair: Act = {
   paint: (g, c) => stairPaint(g, c.x + 2),
   build: (w, c) => {
     stairBuild(w, c.x + 2, 'pat10g', false);
-    sign(w, c.x + 22, 6.4, 4.4, 'GOLGHAR', 'shop', null, 'anaaj ghar');
+    sign(w, c.x + 22, 6.4, 4.4, 'GOLGHAR', 'shop', null, 'the granary');
   },
 };
 
@@ -133,7 +133,7 @@ export const act2: Act = {
   cps: [],
   paint: () => {},
   build: (w, c) => {
-    sign(w, c.x + 6, 10.4, 3.4, 'GOLGHAR', 'shop', null, 'anaaj ghar');
+    sign(w, c.x + 6, 10.4, 3.4, 'GOLGHAR', 'shop', null, 'the granary');
   },
 };
 

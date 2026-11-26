@@ -187,7 +187,7 @@ export const act2: Act = {
   },
   build: (w, c) => {
     pontoon(w, c.x + 4, 12, [{ lo: 1, hi: 9, v: 54, phase: 0.3 }], 'pat5b');
-    sign(w, c.x + 1, 10.4, 3, 'SANGAM', 'shop', null, 'ghat ke paas');
+    sign(w, c.x + 1, 10.4, 3, 'SANGAM', 'shop', null, 'by the ghat');
   },
 };
 

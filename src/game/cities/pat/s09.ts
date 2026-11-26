@@ -150,7 +150,7 @@ export function room(): LevelDef {
           },
         }),
       );
-      sign(w, 4, 10.4, 3.4, 'SONEPUR', 'shop', null, 'Harihar mela');
+      sign(w, 4, 10.4, 3.4, 'SONEPUR', 'shop', null, 'the Harihar fair');
       rival(w, 29, 15, -1, taraScript(9));
       collectible(w, 'pat-sattu', 19, 6.4);
     },
@@ -287,7 +287,7 @@ export const act2: Act = {
       }),
     );
     gapRun(w, px(c.x + 24), px(c.x + 54), 80, 'pat9c', { at: px(c.x + 40), secs: 1.0 });
-    sign(w, c.x + 3, 10.4, 3.4, 'JHOOLA 2', 'shop', null, 'bada jhoola');
+    sign(w, c.x + 3, 10.4, 3.4, 'JHOOLA 2', 'shop', null, 'the bigger wheel');
   },
 };
 
