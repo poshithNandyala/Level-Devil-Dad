@@ -49,6 +49,19 @@ export interface LevelDef {
   ending?: string;
   /** a one-screen room of the new game: room physics, and Dad dies the moment he drops out of the frame */
   room?: boolean;
+  /** what the stage is in the city's shape (docs/CITY-MODULE.md); long, marathon and wtf stages must be in `fair` */
+  shape?: 'tour' | 'short' | 'long' | 'marathon' | 'wtf';
+  /**
+   * Where the 7th death sends Dad: 'stage' (default) back to the start, 'act' back to the start of the act he
+   * is in (the last act-start checkpoint he passed). For long and marathon stages.
+   */
+  lives?: 'stage' | 'act';
+  /** long stages: tile x of each act-start checkpoint (what `lives: 'act'` returns to) */
+  actStarts?: number[];
+  /** long stages: the hint split by stretch: [room, each troll section, each act, door]; `hint` is them joined */
+  hintParts?: string[];
+  /** long stages: tile x where each of `hintParts` starts (same length); see hintPartAt() in levels/chunks.ts */
+  hintAt?: number[];
 }
 
 /**

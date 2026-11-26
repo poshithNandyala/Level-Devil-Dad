@@ -287,6 +287,18 @@ export interface LongSpec {
   /** extra hidden checkpoints (tile x); each section's start gets one anyway */
   cps?: number[];
   par?: number;
+  /** where the 7th death sends Dad (LevelDef.lives); default: the stage start */
+  lives?: 'stage' | 'act';
+  /** the stage's place in the city's shape (LevelDef.shape) */
+  shape?: LevelDef['shape'];
+}
+
+/** which of a long stage's `hintParts` Dad is in at world x `x` (px): the last part that starts at or before it */
+export function hintPartAt(def: LevelDef, x: number): number {
+  const at = def.hintAt ?? [];
+  let i = 0;
+  while (i + 1 < at.length && x >= px(at[i + 1])) i++;
+  return i;
 }
 
 /** A long stage: the original room + troll sections + the door (with the room's own exit twist). */
@@ -326,9 +338,17 @@ export function longStage(o: LongSpec): LevelDef {
   g.put(doorX, G - 1, 'E');
   end?.paint?.(g, doorX);
   const city = base.city;
+  const doorCp = doorX - (end?.space ?? 9) - 0.5;
+  const hintParts = [base.hint, ...(o.parts ?? []).map((k) => ADVICE[k]), ...acts.map(({ a }) => a.advice), ...(end ? [end.advice] : [])];
+  const hintAt = [0, ...parts.map((p) => p.x0), ...acts.map(({ c }) => c.x), ...(end ? [doorCp] : [])];
   return {
     ...base,
-    hint: [base.hint, ...(o.parts ?? []).map((k) => ADVICE[k]), ...acts.map(({ a }) => a.advice), ...(end ? [end.advice] : [])].join(' '),
+    hint: hintParts.join(' '),
+    hintParts,
+    hintAt,
+    actStarts: acts.filter(({ a }) => a.cp0 !== false).map(({ c }) => c.x + 0.5),
+    ...(o.lives ? { lives: o.lives } : {}),
+    ...(o.shape ? { shape: o.shape } : {}),
     map: g.rows(),
     par: o.par ?? base.par,
     parts: [
@@ -358,7 +378,7 @@ export function longStage(o: LongSpec): LevelDef {
       }
       for (const tx of o.cps ?? []) checkpoint(w, tx);
       // and one just before the door's surprise: dying to it never sends you back through the whole act
-      checkpoint(w, doorX - (end?.space ?? 9) - 0.5);
+      checkpoint(w, doorCp);
     },
   };
 }

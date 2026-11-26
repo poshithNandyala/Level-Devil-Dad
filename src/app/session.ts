@@ -1,4 +1,4 @@
-import { DT, secs } from '../game/constants';
+import { DT, secs, TILE } from '../game/constants';
 import { AttemptInfo, InputState, LevelDef, NO_INPUT, World } from '../game/world';
 import { CheckpointSave, encodeInput, probeSafe, replay } from '../game/replay';
 import { Rival } from '../game/entities/props';
@@ -11,7 +11,8 @@ export interface Challenge {
 }
 
 const RESPAWN_TICKS = secs(0.36);
-/** lives per run: the 7th death wipes the hidden checkpoints and sends Dad back to the start */
+/** lives per run: the 7th death wipes the hidden checkpoints and sends Dad back to the start (or, on a stage
+ * with `lives: 'act'`, to the start of the act he is in) */
 export const LIVES = 7;
 const WIN_TICKS = secs(0.75);
 
@@ -79,14 +80,19 @@ export class Session {
     if (justDied && this.lives <= 0) {
       wiped = true;
       this.wipes++;
-      this.saves = [];
+      // lives: 'act' keeps the checkpoints up to the last act start passed; everything after it goes
+      const starts = this.def.lives === 'act' ? (this.def.actStarts ?? []).map((t) => t * TILE) : [];
+      const cps = this.world.checkpoints;
+      let keep = -1;
+      for (let i = this.saves.length - 1; i >= 0 && keep < 0; i--) if (starts.includes(cps[this.saves[i].cp])) keep = i;
+      this.saves = this.saves.slice(0, keep + 1);
       this.backAt = null;
-      this.app.store.log('wipe', this.def.id, { attempt: this.attempt, deaths: this.deaths });
+      this.app.store.log('wipe', this.def.id, { attempt: this.attempt, deaths: this.deaths, ...(keep >= 0 ? { to: this.saves[keep].cp } : {}) });
     }
     if (!justDied || wiped) this.lives = LIVES;
     // the latest checkpoint that's actually safe to stand at (never a respawn straight into a death)
     let save: CheckpointSave | null = null;
-    if (justDied && !wiped) for (let i = this.saves.length - 1; i >= 0 && !save; i--) if (probeSafe(this.def, this.saves[i])) save = this.saves[i];
+    if (justDied) for (let i = this.saves.length - 1; i >= 0 && !save; i--) if (probeSafe(this.def, this.saves[i])) save = this.saves[i];
     this.backAt = save;
     if (save) {
       // back at the last hidden checkpoint: rebuild the moment Dad passed it, then carry on
