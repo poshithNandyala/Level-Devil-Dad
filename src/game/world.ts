@@ -23,6 +23,12 @@ export interface AttemptInfo {
   character: CharacterId;
 }
 
+/** which allocation slot a stage implements (docs/allocation.json); tests/allocation.test.ts checks they match */
+export interface StageMeta {
+  family: string;
+  betrayals: string[];
+}
+
 export interface LevelDef {
   id: string;
   city: CityId;
@@ -51,6 +57,8 @@ export interface LevelDef {
   room?: boolean;
   /** what the stage is in the city's shape (docs/CITY-MODULE.md); long, marathon and wtf stages must be in `fair` */
   shape?: 'tour' | 'short' | 'long' | 'marathon' | 'wtf';
+  /** the stage's allocation slot: mechanic family and betrayal types (module cities; docs/CITY-MODULE.md) */
+  meta?: StageMeta;
   /**
    * Where the 7th death sends Dad: 'stage' (default) back to the start, 'act' back to the start of the act he
    * is in (the last act-start checkpoint he passed). For long and marathon stages.

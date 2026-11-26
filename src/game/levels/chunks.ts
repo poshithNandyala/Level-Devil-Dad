@@ -291,6 +291,8 @@ export interface LongSpec {
   lives?: 'stage' | 'act';
   /** the stage's place in the city's shape (LevelDef.shape) */
   shape?: LevelDef['shape'];
+  /** the stage's allocation slot (LevelDef.meta) */
+  meta?: LevelDef['meta'];
 }
 
 /** which of a long stage's `hintParts` Dad is in at world x `x` (px): the last part that starts at or before it */
@@ -349,6 +351,7 @@ export function longStage(o: LongSpec): LevelDef {
     actStarts: acts.filter(({ a }) => a.cp0 !== false).map(({ c }) => c.x + 0.5),
     ...(o.lives ? { lives: o.lives } : {}),
     ...(o.shape ? { shape: o.shape } : {}),
+    ...(o.meta ? { meta: o.meta } : {}),
     map: g.rows(),
     par: o.par ?? base.par,
     parts: [

@@ -223,6 +223,21 @@ stage list and map cards (built from `levelsOf(city)`), stars (`3 × stages`), u
 `index`), the next stage, the share card and the store (keyed by stage id). The 15 cities before the module
 system keep their 8 stages. `tests/ten-stages.test.ts` proves a 10-stage module registers and routes.
 
+### Stage meta: stay on your allocation
+
+Every stage you build carries its allocation slot from `docs/allocation.json`:
+
+```ts
+longStage({ base: golgharRoom(), acts: [ghat], twist: 'pat-setu', par: 60, shape: 'long',
+  meta: { family: 'spiral-stair', betrayals: ['floor-lies', 'count-wrong'] } }),     // slot 3 of PAT
+{ ...tour({ ... }), meta: { family: '...', betrayals: [...] } },                     // stage 01
+```
+
+`tests/allocation.test.ts` fails if a stage's `meta` (family and betrayals) differs from its slot, so you
+can't drift from the allocation silently. It also checks the allocation itself: no (family, betrayal) pair
+twice anywhere, no family in two cities, no betrayal type twice in one city, 10 slots per new city. Until
+`docs/allocation.json` is in the repo, that part is skipped (the skip message names where to copy it from).
+
 ## Engine facts (HANDOFF section 3, unchanged)
 
 1. Fixed step: 120 ticks a second (`DT = 1/120`). No `Math.random`, `Date` or real time in the game: every
@@ -238,6 +253,18 @@ system keep their 8 stages. `tests/ten-stages.test.ts` proves a 10-stage module 
 7. Three voices: `w.guide(line, stillTrue?)` is honest and never spoils an unseen trap; Tara (`rival`, `tara`)
    lies; `npc` locals are honest flavour. Every line is `"Local | English"`, max 8 words a side.
 8. Every death cause (`w.die('cause')`) gets a `causeLines` entry: `[what happened, how to beat it]`.
+
+## Shipped cities: frozen behaviour
+
+`tests/frozen-behaviour.test.ts` compares every shipped stage with its snapshot in
+`tests/cities/_frozen/<code>.json`: the route's win tick, the NAIVE and FIX death cause and tick, the hidden
+item's tile, the checkpoint columns and par. A hardness-pass change makes it fail, as it should. After you
+change a city on purpose, re-freeze it and check the diff only shows what you meant:
+
+```bash
+npm run refreeze -- TVM          # or TVM,KVT, or all
+git diff tests/cities/_frozen/tvm.json
+```
 
 ## Checklist before you hand the city over
 
