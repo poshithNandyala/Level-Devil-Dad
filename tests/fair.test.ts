@@ -6,10 +6,14 @@ import { World, type InputState } from '../src/game/world';
 import { incoming, windOn, type Step } from './runner';
 import { INFO } from './helpers';
 
-// Human timing for Ranchi (docs/HANDOFF.md, section 6), the whole stage at once: the proven route, played by
+// Human timing (docs/HANDOFF.md, section 6), the whole stage at once: the proven route, played by
 // someone who turns up at a random moment (0-3 s late) and is a steady 0-6 / 0-12 / 0-18 ticks slow to start
 // anything the route starts (a step off, a jump). Letting go is on time: people ease up as they get close.
-//   LDD_FAIR=1 npx vitest run tests/fair-rnc.test.ts --silent=false
+// Per stage it prints the win rate at quick (0-6), average (0-12) and relaxed (0-18) lag, and per stretch
+// (spawn -> checkpoint 1 -> ... -> door) the share of runs that got through it once they reached it.
+//   bash scripts/dev/fair.sh PAT                      (every stage of one city)
+//   LDD_FAIR=1 LDD_IDS=PAT-02,PAT-05 npx vitest run tests/fair.test.ts --silent=false
+//   LDD_N=80 for more runs per lag (default 40)
 function rng(seed: number) {
   let s = seed >>> 0;
   return () => {
@@ -90,24 +94,36 @@ function lagged(id: string, steps: Step[], lag: number, idle: number) {
       t++;
       if (s.ticks !== undefined && t >= s.ticks) break;
       if (s.until && s.until(w)) break;
-      if (t >= max) return { won: false, why: `stuck: ${s.note ?? ''}` };
+      if (t >= max) return { won: false, cp: w.cp, cps: w.checkpoints.length, why: `stuck: ${s.note ?? ''}` };
     }
     if (w.state !== 'play') break;
   }
   let guard = 0;
   while (w.state === 'play' && guard++ < 30) push(none);
-  return { won: w.state === "won", why: w.state === "dead" ? `died: ${w.deathCause} @${Math.floor(w.player.x / 16)}` : w.state };
+  return { won: w.state === "won", cp: w.cp, cps: w.checkpoints.length, why: w.state === "dead" ? `died: ${w.deathCause} @${Math.floor(w.player.x / 16)}` : w.state };
 }
 
-it.runIf(!!process.env.LDD_FAIR)('Ranchi, human timing', () => {
-  const ids = (process.env.LDD_IDS ?? CITY_TESTS.flatMap((t) => t.fair ?? []).join(',')).split(',');
+/** stage ids to run: LDD_IDS, else every stage of LDD_CITY, else every module city's `fair` list */
+function fairIds(): string[] {
+  if (process.env.LDD_IDS) return process.env.LDD_IDS.split(',');
+  const city = process.env.LDD_CITY?.toUpperCase();
+  if (city) return LEVELS.filter((l) => l.city === city && SOLUTIONS[l.id]).map((l) => l.id);
+  return CITY_TESTS.flatMap((t) => t.fair ?? []);
+}
+
+it.runIf(!!process.env.LDD_FAIR)('human timing', () => {
+  const ids = fairIds();
   const N = +(process.env.LDD_N ?? 40);
   const out: string[] = [];
   for (const id of ids) {
     const row: string[] = [];
     const why = new Map<string, number>();
+    const stretches: string[] = [];
     for (const D of [6, 12, 18]) {
       let ok = 0;
+      // reached[i]: runs that got to the start of stretch i (i = 0 is the spawn); passed[i]: and got past it
+      const reached: number[] = [];
+      const passed: number[] = [];
       for (let k = 0; k < N; k++) {
         const r = rng(k * 7919 + D);
         const lag = Math.floor(r() * (D + 1));
@@ -118,10 +134,17 @@ it.runIf(!!process.env.LDD_FAIR)('Ranchi, human timing', () => {
           why.set(res.why, (why.get(res.why) ?? 0) + 1);
           if (process.env.LDD_WHO) console.log(id, 'lag', lag, 'idle', idle, res.why);
         }
+        const last = res.won ? res.cps : res.cp + 1; // the stretch it ended in (cps = the door stretch)
+        for (let i = 0; i <= Math.min(last, res.cps); i++) {
+          reached[i] = (reached[i] ?? 0) + 1;
+          if (i < last || res.won) passed[i] = (passed[i] ?? 0) + 1;
+        }
       }
       row.push(`${D}t ${Math.round((ok / N) * 100)}%`);
+      if (D === 12) for (let i = 0; i < reached.length; i++) stretches.push(`${i === reached.length - 1 ? 'door' : `s${i}`} ${Math.round(((passed[i] ?? 0) / reached[i]) * 100)}%`);
     }
     out.push(`${id}: ${row.join('  ')}   ${[...why].map(([k, v]) => `${k} x${v}`).join(', ')}`);
+    out.push(`  stretches at 0-12t (bar 95% each): ${stretches.join('  ')}`);
   }
   console.log(out.join('\n'));
-}, 900000);
+}, 1800000);

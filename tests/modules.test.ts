@@ -84,6 +84,11 @@ describe('city modules', () => {
         expect(m.lines.intro.length).toBeGreaterThanOrEqual(9);
         expect(m.lines.beaten.length).toBeGreaterThan(0);
       });
+      it('has no TODO left from the scaffold', () => {
+        const text = JSON.stringify([m.lines, m.cityLine, m.theme.local, m.course, m.skin, stages.map((l) => [l.name, l.nameEn, l.tagline, l.hint])]);
+        expect(text.includes('TODO'), 'a TODO from scripts/dev/new-city.mjs is still in the module').toBe(false);
+        expect(Object.keys(m.things ?? {}).filter((k) => k.endsWith('-item'))).toEqual([]);
+      });
       it('prefixes its new keys with its code', () => {
         if (exempt(m, 'prefix')) return;
         const keys = [...Object.keys(m.endings), ...Object.keys(m.causeLines), ...Object.keys(m.things ?? {}), ...Object.keys(m.sceneFeatures ?? {})];

@@ -154,7 +154,7 @@ The stage suites name each test after the stage id, so filter by your code:
 ```bash
 source /local/home/saiposh/personal/games/_template/scripts/env.sh   # on the cloud desktop: Node 22
 npx vitest run tests/levels.test.ts tests/checkpoints.test.ts tests/cpsafe.test.ts tests/items.test.ts tests/jumpaudit.test.ts -t 'PAT-'
-LDD_FAIR=1 LDD_IDS=PAT-02,PAT-03 npx vitest run tests/fair-rnc.test.ts --silent=false   # human timing
+LDD_FAIR=1 LDD_IDS=PAT-02,PAT-03 npx vitest run tests/fair.test.ts --silent=false   # human timing
 npm run typecheck && npm test        # before you hand the city over: everything, all green
 ```
 

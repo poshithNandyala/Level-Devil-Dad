@@ -219,7 +219,7 @@ npm run build:single && bash scripts/dev/shots.sh RPR-05                        
 node scripts/dev/clip.mjs RPR-05 1200 1800 4                                      # frames of ticks 1200-1800 for a how-to clip
 LDD_LEVEL=TVM-08 LDD_FIX=1 LDD_REC=/tmp/r.json npx vitest run tests/debug.test.ts   # trace/record the FIX play
 LDD_AUDIT=1 LDD_IDS=TVM-01,TVM-02 npx vitest run tests/hazard-audit.test.ts --silent=false   # spikes nobody comes near
-LDD_FAIR=1 LDD_IDS=TVM-01,TVM-02 npx vitest run tests/fair-rnc.test.ts --silent=false        # human timing, any stages
+LDD_FAIR=1 LDD_IDS=TVM-01,TVM-02 npx vitest run tests/fair.test.ts --silent=false        # human timing, any stages
 node scripts/solshot.mjs TVM-01 /tmp/r.json 700,900                                       # screenshots of a recording
 ```
 
