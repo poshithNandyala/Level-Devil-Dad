@@ -493,6 +493,7 @@ function ropeway(key: string, o: { stay?: boolean; down?: boolean } = {}): (w: W
 }
 const room08 = (): Step[] => [{ policy: ropeway('gtk8c'), until: and(ground, X(28)), max: 3000, note: 'ride up, cross at the middle, ride up to the far deck' }, { hold: 'R', until: X(29.5), max: 300 }];
 const act08 = (x: number): Step[] => [{ policy: ropeway('gtk8ac', { down: true }), until: and(ground, X(x + 30)), max: 3000, note: 'ride out, step down on to the lower cabin at the middle' }, { hold: 'R', until: X(x + 33.5), max: 300 }];
+const act08b = (x: number): Step[] => [{ policy: ropeway('gtk8bc'), until: and(ground, X(x + 30)), max: 3000, note: 'ride out, jump up on to the higher cabin at the middle' }, { hold: 'R', until: X(x + 33.5), max: 300 }];
 /** the docked cabin: wait till its doors open, then straight through */
 const dockPolicy: Policy = (w, _m, d) => {
   const st = w.flags.gtk8e as { t0: number };
@@ -724,6 +725,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk07-rang': act07b,
   'gtk07-bhaga': act07c,
   'gtk08-tar': act08,
+  'gtk08-upar': act08b,
   'gtk09-chamri': act09,
   'gtk09-chattan': act09b,
   'gtk10-thela': act10a,

@@ -147,35 +147,60 @@ export const ACT_LINES: { a: Line; b: Line } = {
   a: { t0: -1, dwellEnd: 1.0, travel: 2.4, dwellMid: 1.2 },
   b: { t0: -1, dwellEnd: 1.0, travel: 2.4, dwellMid: 1.2 },
 };
-export const act: Act = {
-  id: 'gtk08-tar',
-  w: 34,
-  advice: 'The second span: the cabins meet at the middle again, but the far cabin stops below yours. Ride the first one out, and step off its roof on to the lower one while they’re together. It takes you down to the far deck.',
-  paint: (g, c) => {
-    const x = c.x;
-    g.pit(x, x + 33);
-    g.fill(x, x + 4, 6, 17, '#');
-    g.fill(x + 29, x + 33, 12, 17, '#');
-  },
-  build: (w, c) => {
-    const x = c.x;
-    const L = { a: { ...ACT_LINES.a }, b: { ...ACT_LINES.b } };
-    w.flags.gtk8a = L;
-    onPass(w, c.X(1.5), (w2) => {
-      L.a.t0 = L.b.t0 = w2.tick - 0.1 * 120;
-    });
-    const start: [number, number] = [c.X(5), px(6)],
-      mid: [number, number] = [c.X(17) - CAB.w, px(7)],
-      midB: [number, number] = [c.X(17) - 6, px(10)],
-      end: [number, number] = [c.X(29) - CAB.w, px(12)];
-    stations(w, start, [c.X(17), px(8)], [c.X(29), px(12)], c.X(17));
-    cabin(w, L.a, start[0], start[1], mid[0], mid[1], '#3E8E41', 'gtk8ac');
-    cabin(w, L.b, end[0], end[1], midB[0], midB[1], '#8E6C8A', 'gtk8ac');
-    gullyBack(w, c.X(5), c.X(29), px(5));
-    w.add(new Rig(c.X(0), FL + 20, px(34), 40, { cause: 'gtk-khaai', inset: 0 }));
-    sign(w, x + 0.4, 1.4, 3.6, 'TASHI', 'station', null, 'second span');
-  },
-};
+export function spanAct(id: string, key: string, start: number, end: number, midA: number, midB: number, colours: [string, string], advice: string, sub: string): Act {
+  return {
+    id,
+    w: 34,
+    advice,
+    paint: (g, c) => {
+      const x = c.x;
+      g.pit(x, x + 33);
+      g.fill(x, x + 4, start, 17, '#');
+      g.fill(x + 29, x + 33, end, 17, '#');
+    },
+    build: (w, c) => {
+      const x = c.x;
+      const L = { a: { ...ACT_LINES.a }, b: { ...ACT_LINES.b } };
+      w.flags[key + 'l'] = L;
+      onPass(w, c.X(1.5), (w2) => {
+        L.a.t0 = L.b.t0 = w2.tick - 0.1 * 120;
+      });
+      const a0: [number, number] = [c.X(5), px(start)],
+        am: [number, number] = [c.X(17) - CAB.w, midA],
+        bm: [number, number] = [midB < midA ? c.X(17) + 4 : c.X(17) - 6, midB],
+        b0: [number, number] = [c.X(29) - CAB.w, px(end)];
+      stations(w, a0, [c.X(17), Math.min(midA, midB) + 16], [c.X(29), px(end)], c.X(17));
+      cabin(w, L.a, a0[0], a0[1], am[0], am[1], colours[0], key);
+      cabin(w, L.b, b0[0], b0[1], bm[0], bm[1], colours[1], key);
+      gullyBack(w, c.X(5), c.X(29), px(Math.min(start, end) - 1));
+      w.add(new Rig(c.X(0), FL + 20, px(34), 40, { cause: 'gtk-khaai', inset: 0 }));
+      sign(w, x + 0.4, start - 4.6, 3.6, 'TASHI', 'station', null, sub);
+    },
+  };
+}
+export const act = spanAct(
+  'gtk08-tar',
+  'gtk8ac',
+  6,
+  12,
+  px(7),
+  px(10),
+  ['#3E8E41', '#8E6C8A'],
+  'The second span: the cabins meet at the middle again, but the far cabin stops below yours. Ride the first one out, and step off its roof on to the lower one while they’re together. It takes you down to the far deck.',
+  'second span',
+);
+/** the third span climbs again: the other cabin stops above yours, so it's a jump up while they're together */
+export const act2 = spanAct(
+  'gtk08-upar',
+  'gtk8bc',
+  12,
+  6,
+  px(9),
+  px(9) - 26,
+  ['#D4A017', '#2E86AB'],
+  'The last span climbs back up, and the far cabin stops above yours: ride out and jump up on to its roof while they’re together at the middle.',
+  'last span',
+);
 
 /** door: the far station. The exit is through a docked cabin: its doors open both sides at once, for a moment */
 export const DOCK = { period: 4.2, open: 2.0 };
