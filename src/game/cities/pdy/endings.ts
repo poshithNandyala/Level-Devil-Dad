@@ -1,11 +1,13 @@
 // Puducherry's door endings.
-import { FLOOR, lock, npc, Paint, tara } from '../../levels/endkit';
+import { Door } from '../../entities/basics';
+import type { World } from '../../world';
+import { FLOOR, lock, npc, Paint, tara, hits, Mover, person, text } from '../../levels/endkit';
 import { Thing } from '../../entities/traps';
-import { secs } from '../../constants';
+import { secs, DT } from '../../constants';
 import { px } from '../../levels/kit';
 import type { Ending } from '../../levels/endkit';
 
-export type PdyEndingKind = 'bells' | 'fakewin';
+export type PdyEndingKind = 'bells' | 'fakewin' | 'shuffle' | 'mirror' | 'mime';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<PdyEndingKind, true> {}
@@ -151,6 +153,176 @@ export const endings: Record<PdyEndingKind, Ending> = {
           ctx.fill();
         }, -1),
       );
+    },
+  },
+  // ================================================================ Puducherry
+  /** Three blue doors of the French quarter. The real one glows, then they shuffle like a shell game.
+   *  Pick wrong and you're bounced out, and they shuffle again. Jump over the wrong ones. */
+  shuffle: {
+    space: 12,
+    advice: 'Watch the glowing door while the three shuffle, then go to it. Jump over the others: walk into a wrong one and it bounces you out.',
+    build(w, d) {
+      const xs = [d.x - px(6), d.x - px(3), d.x];
+      const doors = [d, w.add(new Door(0, 14)), w.add(new Door(0, 14))];
+      const slot = [2, 0, 1];
+      doors.forEach((o, i) => (o.x = xs[slot[i]]));
+      let state: 'idle' | 'show' | 'shuffle' | 'pick' = 'idle',
+        t0 = 0,
+        round = 0;
+      const ROUNDS: [number, number][][] = [
+        [[1, 2], [0, 1], [0, 2], [1, 2], [0, 1], [0, 2]],
+        [[0, 2], [1, 2], [0, 1], [1, 2], [0, 2], [0, 1], [1, 2]],
+        [[0, 1], [1, 2], [0, 2], [0, 1], [1, 2], [0, 2], [0, 1], [1, 2]],
+      ];
+      const SW = 38;
+      // the real one glows gold while you watch
+      w.add(
+        new Paint((ctx, w2) => {
+          if (state !== 'show') return;
+          const k = 0.5 + Math.sin(w2.tick * 0.3) * 0.5;
+          ctx.fillStyle = `rgba(255,215,64,${0.25 + k * 0.35})`;
+          ctx.beginPath();
+          ctx.ellipse(d.x + 8, d.y + 16, 16, 22, 0, 0, Math.PI * 2);
+          ctx.fill();
+          text(ctx, '★', d.x + 8, d.y - 10, 9, '#FFD740');
+        }, -3),
+      );
+      const bounce = (w2: World) => {
+        if (state !== 'pick') return;
+        const p = w2.player;
+        p.vx = -230;
+        p.stun = 18;
+        w2.sfx('shove', p.cx, p.y);
+        npc(w2, 'Non non non! Mauvaise porte! | No no no! Wrong door!', p.cx, p.y - 14, 1.3);
+        state = 'show';
+        t0 = w2.tick;
+        round++;
+      };
+      doors.forEach((o) => (o.onReach = o === d ? (w2) => (state === 'pick' ? w2.win('door') : undefined) : bounce));
+      w.flags.twist = 'idle';
+      w.onTick((w2) => {
+        const p = w2.player;
+        if (state === 'idle' && p.x > d.x - px(11)) {
+          state = 'show';
+          t0 = w2.tick;
+          tara(w2, 'Bonjour! Watch the golden door, Dad... | Watch the golden door, Dad...', 2.2);
+        } else if (state === 'show' && w2.tick - t0 > secs(1.1)) {
+          state = 'shuffle';
+          t0 = w2.tick;
+        } else if (state === 'shuffle') {
+          const seq = ROUNDS[round % ROUNDS.length];
+          const k = w2.tick - t0;
+          const i = Math.floor(k / SW);
+          if (i >= seq.length) {
+            state = 'pick';
+            doors.forEach((o, j) => {
+              o.x = xs[slot[j]];
+              o.y = d.y;
+            });
+          } else {
+            const [a, b] = seq[i];
+            const f = (k % SW) / SW;
+            if (k % SW === 0) w2.sfx('slide', xs[1] + 8, d.y);
+            doors.forEach((o, j) => {
+              const s = slot[j];
+              if (s === a || s === b) {
+                const to = s === a ? b : a;
+                const e = f * f * (3 - 2 * f);
+                o.x = xs[s] + (xs[to] - xs[s]) * e;
+                o.y = 208 - Math.sin(Math.PI * f) * (s === a ? 26 : 9);
+                if (k % SW === SW - 1) slot[j] = to;
+              } else {
+                o.x = xs[s];
+                o.y = 208;
+              }
+            });
+          }
+        }
+        w2.flags.twist = state;
+        w2.flags.realX = d.x;
+        w2.flags.fakeXs = doors.slice(1).map((o) => o.x);
+      });
+    },
+  },
+
+  /** Miroir: near the door the whole picture turns into its mirror image. Your buttons don't. */
+  mirror: {
+    space: 11,
+    advice: 'Near the door the screen turns into its mirror image, but right is still right: trust your thumbs, not your eyes, and jump both spike rows.',
+    build(w, d) {
+      for (const k of [7, 3]) w.add(new Thing('spikerow', d.x - px(k), FLOOR - 10, { solid: false, deadly: 'spikes', layer: -1, w: 32 }));
+      w.flags.twist = 'mirror';
+      w.flags.spikes = [d.x - px(7), d.x - px(3)];
+      let said = false;
+      w.onTick((w2) => {
+        const on = w2.player.x > d.x - px(10) && w2.state === 'play';
+        if (on && !said) {
+          said = true;
+          w2.sfx('blink', w2.player.cx, w2.player.y);
+          tara(w2, 'Miroir! Right is still right, Dad! | Mirror! Right is still right, Dad!', 2.4);
+        }
+        w2.flags.view = on ? 'mirror' : 0;
+      });
+    },
+  },
+
+  /** A street mime stands in front of the door and copies you, mirror-wise. Whatever you do, he does.
+   *  Except that he's stuck in his invisible box, so he can't jump high. */
+  mime: {
+    space: 10,
+    advice: 'The mime mirrors you and pushes you back if you touch him, but his invisible box stops his jumps: jump high and long, and go over him.',
+    build(w, d) {
+      const cl = d.x - px(5);
+      let mx = d.x - 12,
+        my = 0,
+        vy = 0,
+        told = -999;
+      const mime = w.add(
+        new Mover(mx - 6, FLOOR - 16, 12, 16, 'none', (ctx, m, w2) => {
+          const x = m.x + 6,
+            y = m.y;
+          // the box he's stuck in
+          ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+          ctx.lineWidth = 0.8;
+          ctx.strokeRect(x - 9, FLOOR - 40, 18, 40);
+          person(ctx, x, y, 16, '#212121', '#FAFAFA', { face: '#FAFAFA', arms: Math.abs(Math.sin(w2.tick * 0.12)) * 5 + 2 });
+          ctx.fillStyle = '#FFFFFF';
+          for (let i = 0; i < 3; i++) ctx.fillRect(x - 4, y + 6 + i * 2, 8, 1);
+          ctx.fillStyle = '#D32F2F';
+          ctx.fillRect(x - 1, y + 4, 2, 1);
+        }),
+      );
+      mime.hazard.active = false;
+      w.flags.twist = 'mime';
+      w.onTick((w2) => {
+        const p = w2.player;
+        mx = Math.max(cl, Math.min(d.x - 12, 2 * cl - p.cx));
+        if (w2.tick - p.jumpTick === 1 && Math.abs(p.cx - mx) < 96 && my === 0) vy = -260;
+        vy += 1500 * DT;
+        my = Math.min(0, Math.max(-22, my + vy * DT));
+        if (my === -22 && vy < 0) vy = 0;
+        if (my === 0 && vy > 0) vy = 0;
+        mime.x = mx - 6;
+        mime.y = FLOOR - 16 + my;
+        if (hits(p, mime.x + 1, mime.y + 1, 10, 15) && w2.state === 'play') {
+          p.vx = p.cx < mx ? -220 : 220;
+          if (p.vy < 0) p.vy = 0;
+          p.stun = 16;
+          if (w2.tick - told > 90) {
+            told = w2.tick;
+            w2.sfx('shove', p.cx, p.y);
+            npc(w2, 'Non non non! | No no no!', mx, FLOOR - 40, 1);
+          }
+        }
+        w2.flags.mimeX = mx;
+        w2.flags.line = cl;
+      });
+      let said = false;
+      w.onTick((w2) => {
+        if (said || w2.player.x < d.x - px(10)) return;
+        said = true;
+        tara(w2, 'A mime! He copies you, Dad... but look at his box. | He copies you... but look at his box.', 2.8);
+      });
     },
   },
 };

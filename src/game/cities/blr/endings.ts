@@ -7,7 +7,7 @@ import { px } from '../../levels/kit';
 import { rr } from '../../../render/art/common';
 import type { Ending } from '../../levels/endkit';
 
-export type BlrEndingKind = 'revolve' | 'pull' | 'wrap' | 'cctv';
+export type BlrEndingKind = 'revolve' | 'pull' | 'wrap' | 'cctv' | 'invisible';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<BlrEndingKind, true> {}
@@ -265,6 +265,53 @@ export const endings: Record<BlrEndingKind, Ending> = {
           w2.die('spotted');
         }
       });
+    },
+  },
+  /** After the power cut the door is invisible. Three doormats: the friendly ones are bait. */
+  invisible: {
+    space: 11,
+    advice: 'The door is invisible. Don’t trust the friendly doormats, flower pots drop on them: jump those and stop at the rude one.',
+    build(w, d) {
+      d.draw = () => undefined;
+      const mats: [number, string, boolean][] = [
+        [d.x - px(8) - 6, 'WELCOME', false],
+        [d.x - px(4) - 6, 'SWAGATHA', false],
+        [d.x - 6, 'GO AWAY', true],
+      ];
+      w.flags.mats = mats.filter((m) => !m[2]).map((m) => m[0]);
+      for (const [mx, label, real] of mats) {
+        w.add(
+          new Paint((ctx) => {
+            ctx.fillStyle = real ? '#455A64' : '#8D6E63';
+            rr(ctx, mx, FLOOR - 3, 28, 3, 1);
+            ctx.fill();
+            text(ctx, label, mx + 14, FLOOR - 7, 4.5, real ? '#CFD8DC' : '#FFE0B2');
+            if (!real) {
+              // the balcony above, with a pot on it
+              ctx.fillStyle = '#5D4037';
+              ctx.fillRect(mx - 4, FLOOR - 66, 36, 3);
+            }
+          }, -1),
+        );
+        if (real) continue;
+        const pot = w.add(new Thing('flowers', mx - 2, FLOOR - 82, { solid: false, layer: 3 }));
+        let used = false;
+        w.onTick((w2) => {
+          const p = w2.player;
+          if (used || !(p.onGround && p.cx > mx && p.cx < mx + 28)) return;
+          used = true;
+          pot.setDeadly('hit');
+          pot.fall(w2, { g: 3400, land: false });
+          npc(w2, 'Swagatha! Hahaha! | Welcome! Hahaha!', mx + 14, FLOOR - 90, 1);
+        });
+      }
+      let said = false;
+      w.onTick((w2) => {
+        if (said || w2.player.x < d.x - px(10)) return;
+        said = true;
+        tara(w2, 'Power’s back... but the door isn’t? Read the mats, Dad. | Read the mats, Dad.', 2.8);
+      });
+      w.flags.twist = 'invisible';
     },
   },
 };
