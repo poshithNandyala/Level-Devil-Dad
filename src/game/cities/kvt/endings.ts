@@ -8,7 +8,7 @@ import { Sea } from '../../entities/abilities';
 import { Kayak } from '../../levels/endings2';
 import type { Ending } from '../../levels/endkit';
 
-export type KvtEndingKind = 'reflection' | 'glider' | 'trapdoor' | 'footsteps' | 'pushoff' | 'safetystop';
+export type KvtEndingKind = 'reflection' | 'glider' | 'trapdoor' | 'footsteps' | 'pushoff' | 'safetystop' | 'loading';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<KvtEndingKind, true> {}
@@ -400,6 +400,95 @@ export const endings: Record<KvtEndingKind, Ending> = {
         (w2) => tara(w2, 'Boat avide! Straight mukalilekku po! | There’s the boat! Straight up!', 2.4),
       );
       void FLOOR;
+    },
+  },
+  // ================================================================ Kavaratti
+  /** Island internet: the bridge to the door is a progress bar. It loads slower than you walk,
+   *  sticks at 99%, and then the connection drops. */
+  loading: {
+    space: 12,
+    advice: 'The bridge is still loading: walk behind the bar, never past its end, and jump the last bit at 99% before the connection drops.',
+    paint: (g, D) => void g.pit(D - 7, D - 1),
+    build(w, d) {
+      const x0 = d.x - px(7),
+        full = px(7),
+        stop = full - 22;
+      pool(w, x0 / TILE, d.x / TILE, 15.35, { colors: LAGOON });
+      const bar = w.add(new Thing('plank', x0, FLOOR, { w: 1, h: 6, layer: 1 }));
+      bar.visible = false;
+      bar.solid.collidable = false;
+      let L = 0,
+        state: 'idle' | 'loading' | 'stalled' | 'lost' = 'idle',
+        t0 = 0,
+        rest = 0;
+      w.add(
+        new Paint((ctx, w2) => {
+          // the empty frame across the gap, the loaded part, and the percentage
+          ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([3, 2]);
+          ctx.strokeRect(x0 + 0.5, FLOOR + 0.5, full - 1, 5);
+          ctx.setLineDash([]);
+          if (L >= 1) {
+            const g = ctx.createLinearGradient(x0, 0, x0 + L, 0);
+            g.addColorStop(0, '#2E7D32');
+            g.addColorStop(1, state === 'lost' ? '#E53935' : '#76FF03');
+            ctx.fillStyle = g;
+            ctx.fillRect(x0, FLOOR, L, 6);
+            ctx.fillStyle = 'rgba(255,255,255,0.35)';
+            for (let i = (w2.tick * 0.6) % 10; i < L; i += 10) ctx.fillRect(x0 + i, FLOOR + 1, 3, 1);
+          }
+          if (state !== 'idle') {
+            const pct = state === 'stalled' ? 99 : Math.min(99, Math.floor((L / stop) * 99));
+            const tag = state === 'lost' ? 'NO SIGNAL' : `${pct}%`;
+            text(ctx, tag, x0 + Math.max(L, 12), FLOOR - 9, 7, state === 'lost' ? '#FF8A80' : '#E8F5E9');
+            // a signal icon that never fills
+            const sx = x0 + full / 2,
+              sy = FLOOR - 40;
+            for (let i = 0; i < 4; i++) {
+              ctx.fillStyle = i < (state === 'lost' ? 0 : 1 + ((w2.tick >> 5) % 2)) ? '#FFFFFF' : 'rgba(255,255,255,0.25)';
+              ctx.fillRect(sx - 8 + i * 4, sy - i * 3, 3, 3 + i * 3);
+            }
+            text(ctx, state === 'lost' ? '✕' : '2G', sx + 12, sy - 4, 6, '#FFFFFF');
+          }
+        }, 1),
+      );
+      w.flags.twist = 'idle';
+      w.flags.barTip = x0;
+      w.onTick((w2) => {
+        const p = w2.player;
+        if (state === 'idle') {
+          if (rest > 0) rest--;
+          else if (p.onGround && p.x + p.w > x0 - px(2.5) && p.x < x0) {
+            state = 'loading';
+            t0 = w2.tick;
+            tara(w2, 'Island net, Dad. The bridge is still loading! | Island internet. The bridge is still loading!', 2.6);
+          }
+        } else if (state === 'loading') {
+          L = Math.min(stop, L + 40 * DT);
+          if (L >= stop) {
+            state = 'stalled';
+            t0 = w2.tick;
+            npc(w2, '99%... 99%... 99%...', x0 + L, FLOOR - 22, 1.4);
+          }
+        } else if (state === 'stalled') {
+          if (w2.tick - t0 > secs(1.5)) {
+            state = 'lost';
+            w2.sfx('crack', x0 + L, FLOOR);
+            npc(w2, 'Connection lost! | Connection lost!', x0 + L, FLOOR - 22, 1.2);
+          }
+        } else {
+          L = Math.max(0, L - 150 * DT);
+          if (L <= 0) {
+            state = 'idle';
+            rest = 80;
+          }
+        }
+        bar.solid.w = Math.max(1, Math.round(L));
+        bar.solid.collidable = L >= 1;
+        w2.flags.twist = state;
+        w2.flags.barTip = x0 + L;
+      });
     },
   },
 };
