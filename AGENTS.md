@@ -17,8 +17,8 @@ Read before you touch anything:
    to do (language, what locals live with, clashes to avoid).
 3. `docs/MECHANICS.md`: every idea already used. Nothing in it may be used again.
 4. `docs/WAVE1.md`: the changelog, with the lessons and gotchas at each version. Read the last three cities.
-5. The last city end to end as a template: `src/game/levels/rpr.ts`, `src/game/entities/raipur.ts`, its
-   endings at the end of `src/game/levels/endings3.ts`, its routes in `tests/west.ts`.
+5. A city end to end as a template: its module folder `src/game/cities/rpr/` (stages in `levels.ts`, entities,
+   endings, backdrop and the rest; `docs/CITY-MODULE.md`), and its routes in `tests/west.ts`.
 
 ## The bar (not negotiable)
 

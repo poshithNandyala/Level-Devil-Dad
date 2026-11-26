@@ -2,15 +2,15 @@
 // Merged into SOLUTIONS, ACT_ROUTES and ENDING_POLICIES by solutions.ts, acts.ts and endings.ts.
 import type { World } from '../src/game/world';
 import type { Door } from '../src/game/entities/basics';
-import { Step, X, and, ground } from './runner';
-import { Gossip } from '../src/game/levels/pnj';
-import type { Brush, IceBlock, PedalBoat, PlankChain, RopeFerry, Scale } from '../src/game/entities/daman';
-import type { Football, Parade, Parasail, Rope, Roulette } from '../src/game/entities/goa';
-import type { Sunbeam } from '../src/game/entities/gujarat';
-import { Dino, Feathers, GarbaRing, Lion, Naka, type FeatherPickup } from '../src/game/entities/gujarat';
-import { Balloon, Bangle, Bowl, Elephant, Ghodi, Pots, Rocket, Talwar, type Strings } from '../src/game/entities/rajasthan';
-import { Lake, Sailboat, Shelter, Bison, Thread, Katori, Morph, Sher, Chumbak, Surma, Tawa } from '../src/game/entities/bhopal';
-import { Baaj, Chapda, Gedi, Ghadi, Hand, Heap, Kosa, Sack, Swarm, Top } from '../src/game/entities/raipur';
+import { Step, X, and, ground, sameKind } from './runner';
+import { Gossip } from '../src/game/cities/pnj/levels';
+import type { Brush, IceBlock, PedalBoat, PlankChain, RopeFerry, Scale } from '../src/game/cities/dmn/entities';
+import type { Football, Parade, Parasail, Rope, Roulette } from '../src/game/cities/pnj/entities';
+import type { Sunbeam } from '../src/game/cities/gnr/entities';
+import { Dino, Feathers, GarbaRing, Lion, Naka, type FeatherPickup } from '../src/game/cities/gnr/entities';
+import { Balloon, Bangle, Bowl, Elephant, Ghodi, Pots, Rocket, Talwar, type Strings } from '../src/game/cities/jai/entities';
+import { Lake, Sailboat, Shelter, Bison, Thread, Katori, Morph, Sher, Chumbak, Surma, Tawa } from '../src/game/cities/bpl/entities';
+import { Baaj, Chapda, Gedi, Ghadi, Hand, Heap, Kosa, Sack, Swarm, Top } from '../src/game/cities/rpr/entities';
 import type { Player } from '../src/game/player';
 
 type Move = 'L' | 'R' | '';
@@ -253,7 +253,7 @@ function boatRun(get: (w: World) => PedalBoat, lines: (w: World) => number[], to
       const on = w.standing(b.solid);
       if (on) {
         for (const x of lines(w)) {
-          const hz = w.hazards.find((h: any) => h.cause === 'moored' && h.hits(x + 1, 200, 2, 30));
+          const hz = w.hazards.find((h: any) => sameKind(h.cause, 'moored') && h.hits(x + 1, 200, 2, 30));
           const dx = x - (p.x + p.w);
           if (hz && dx >= 2 && dx <= 12 && !w.input.jump) {
             hold = 11;

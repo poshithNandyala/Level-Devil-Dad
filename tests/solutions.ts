@@ -1,4 +1,4 @@
-import { gustNOn, gustNLeft, cascadeN, dry, windOn, Step, X, XL, ground, and, done, onVeh, vehAt, veh, plat, floodLevel, float, thingOf, rollerNear, gustOn, gustLeft, arcOn, arcLeft, blinkers, blinkerLeft, arcNOn, arcNLeft, shotAhead, or, floaterOf, riderNear, quiet, shotNear, geyserN } from './runner';
+import { gustNOn, gustNLeft, cascadeN, dry, windOn, Step, X, XL, ground, and, done, onVeh, vehAt, veh, plat, floodLevel, float, thingOf, sameKind, rollerNear, gustOn, gustLeft, arcOn, arcLeft, blinkers, blinkerLeft, arcNOn, arcNLeft, shotAhead, or, floaterOf, riderNear, quiet, shotNear, geyserN } from './runner';
 import type { World } from '../src/game/world';
 import { COURSES, TOUR } from '../src/game/levels/tour';
 import type { CityId } from '../src/game/constants';
@@ -7,7 +7,7 @@ import { LEVEL_BY_ID } from '../src/game/levels';
 import { exitPolicy, longRun, solveChunk } from './chunks';
 import { DT } from '../src/game/constants';
 import { swim, skimmer, kicker } from './moves';
-import { Jelly } from '../src/game/levels/kvt';
+import { Jelly } from '../src/game/cities/kvt/levels';
 import { westSolutions } from './west';
 import { CITY_TESTS } from './city-tests';
 const px16 = (t: number) => t * 16;
@@ -25,7 +25,7 @@ const jellyLow = (i: number) => (w: World) => {
 /** a platform starting `x` px is a comfortable tap-jump ahead */
 /** no cannonball ahead at or above Dad's level (HYD-06): safe to jump up a step */
 const ballClear = (ahead: number, dueWithin = 0) => (w: World) =>
-  !w.entities.some((e: any) => e.kind === 'cannonball' && e.alive && e.x + 12 > w.player.x - 6 && e.x < w.player.x + ahead && e.y < w.player.y + w.player.h + 2) &&
+  !w.entities.some((e: any) => sameKind(e.kind, 'cannonball') && e.alive && e.x + 12 > w.player.x - 6 && e.x < w.player.x + ahead && e.y < w.player.y + w.player.h + 2) &&
   !((w.flags.balls ?? []) as number[]).some((at) => at - w.tick * DT < dueWithin);
 /** no bat in the way of a jump (AMR-07): none from just behind Dad to `ahead` px in front */
 const batClear = (ahead: number) => (w: World) => !w.entities.some((e: any) => e.kind === 'bat' && e.alive && e.x + 14 > w.player.x - 20 && e.x < w.player.x + ahead);
@@ -148,7 +148,7 @@ function stairHop(tx: number, dir: 'L' | 'R', note: string): Step[] {
 /** TVM-05's portcullis at tile column `tx` (found by place: the hidden one sorts first, being drawn behind the walls) */
 const gateNear = (w: World, tx: number): any => w.entities.find((e: any) => e.kind === 'gate' && Math.abs(e.x - (tx * 16 + 8)) < 6);
 /** TVM-06's fishing nets, in order along the promenade */
-const netNo = (i: number) => (w: World): any => w.entities.filter((e: any) => e.kind === 'net')[i];
+const netNo = (i: number) => (w: World): any => w.entities.filter((e: any) => sameKind(e.kind, 'net'))[i];
 /** a dad who hops anything with wings the moment it's close (the crow lesson), however high it flies */
 function hopAnyBird(): (w: World) => { move: 'L' | 'R' | ''; jump: boolean } {
   let hold = 0,
@@ -163,7 +163,7 @@ function hopAnyBird(): (w: World) => { move: 'L' | 'R' | ''; jump: boolean } {
     const p = w.player;
     const gs: any = p.onGround ? p.groundSolid : null;
     const pv = p.vx + (gs ? (gs.velX ?? 0) : 0);
-    const bird = w.entities.some((e: any) => e.alive && (e.kind === 'crow' || e.kind === 'parunthu') && e.vx < 0 && e.x - (p.x + p.w) > -4 && (e.x - (p.x + p.w)) / (-e.vx + Math.max(0, pv)) <= 0.13);
+    const bird = w.entities.some((e: any) => e.alive && (e.kind === 'crow' || sameKind(e.kind, 'parunthu')) && e.vx < 0 && e.x - (p.x + p.w) > -4 && (e.x - (p.x + p.w)) / (-e.vx + Math.max(0, pv)) <= 0.13);
     if (bird && p.onGround) {
       hold = 11;
       return { move: '', jump: true };
@@ -535,7 +535,7 @@ export const SOLUTIONS: Record<string, Step[]> = {
   ],
   'KVT-05': [
     { hold: 'R', until: X(7.0), max: 300, dodge: 40 },
-    { hold: '', until: (w) => thingOf(w, 'odam').x <= px16(10) + 3 && !w.entities.some((e: any) => e.kind === 'tuna' && e.alive && e.x > w.player.x - 30), max: 900, dodge: 40, note: 'wait for the boat, back from the end of the pier' },
+    { hold: '', until: (w) => thingOf(w, 'odam').x <= px16(10) + 3 && !w.entities.some((e: any) => sameKind(e.kind, 'tuna') && e.alive && e.x > w.player.x - 30), max: 900, dodge: 40, note: 'wait for the boat, back from the end of the pier' },
     { hold: 'R', jump: 14, ticks: 14, note: 'on to the boat' },
     { hold: 'R', until: ground, max: 200 },
     { hold: '', ticks: 4 },
@@ -1578,7 +1578,7 @@ export const FIX: Record<string, { steps: Step[]; cause?: string }> = {
   // Tara says jump every ball: jump the bouncer too (it flies at jump height)
   'CHN-04': {
     steps: swapAt('CHN-04', 'hop the balls on the ground, stay down for the bouncer', 1, [
-      { policy: (w) => ({ move: 'R', jump: w.player.onGround && w.entities.some((e: any) => e.kind === 'ball' && e.alive && e.x > w.player.x && e.x - w.player.x < 44) }), until: (w) => w.state !== 'play', max: 1500 },
+      { policy: (w) => ({ move: 'R', jump: w.player.onGround && w.entities.some((e: any) => sameKind(e.kind, 'ball') && e.alive && e.x > w.player.x && e.x - w.player.x < 44) }), until: (w) => w.state !== 'play', max: 1500 },
     ]),
     cause: 'hit',
   },

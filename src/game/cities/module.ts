@@ -12,7 +12,7 @@ import type { MusicCfg } from '../../audio/audio';
 import type { Theme } from '../../render/theme';
 import type { Grade } from '../../render/renderer';
 import type { GroundCaps } from '../../render/art/tiles';
-import type { Backdrop } from '../../render/backgrounds';
+import type { Ambient, Backdrop } from '../../render/backgrounds';
 import type { SceneFeature } from '../../render/scenes';
 import type { ThingDraw } from '../../render/art/things';
 
@@ -54,6 +54,8 @@ export interface CityModule {
   tileCaps: GroundCaps;
   /** the skyline behind the stages */
   backdrop: Backdrop;
+  /** the animated layer over the skyline every frame: rain, birds, kites, mist (optional) */
+  ambient?: Ambient;
   /** extra features for stages with a `scene` (`scene.with: ['<name>']`) */
   sceneFeatures?: Record<string, SceneFeature>;
   /** the city's own thing kinds (hidden item, props), declared with `declare module` in its things.ts */
