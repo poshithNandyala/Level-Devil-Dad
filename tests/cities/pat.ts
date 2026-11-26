@@ -282,15 +282,18 @@ function wheelRide(): (w: World) => Out {
   let W: World | null = null;
   let jt = 0;
   let cool = 0;
+  let tgt: unknown = null;
   return (w) => {
     if (W !== w) {
       W = w;
       jt = 0;
       cool = 0;
+      tgt = null;
     }
     if (jt > 0) {
       jt--;
-      return { move: 'R', jump: true };
+      const t0 = tgt as unknown as { x: number } | null;
+      return { move: t0 && w.player.cx >= t0.x + 8 ? '' : 'R', jump: true };
     }
     const st = w.flags.pat9w as { cx: number; gond: { s: { th: number }; solid: any }[] };
     const p = w.player;
@@ -299,6 +302,7 @@ function wheelRide(): (w: World) => Out {
     if (p.cx > st.cx + 74) return go('R');
     const on = st.gond.find((g) => w.standing(g.solid));
     if (on) {
+      tgt = null;
       const d = deg(on.s.th);
       const gx = (on as unknown as { x: number }).x;
       if (d >= 14 && p.x + p.w < gx + 29) return go('R');
@@ -310,11 +314,15 @@ function wheelRide(): (w: World) => Out {
       return go('');
     }
     if (p.cx < edgeL - 8) return go('R');
-    if (!p.onGround) return go('R');
+    if (!p.onGround) {
+      const t = tgt as unknown as { x: number } | null;
+      return go(!t || p.cx < t.x + 8 ? 'R' : '');
+    }
     if (p.onGround && w.tick > cool) {
       const occ = [true, false, false, false, true, false];
-      const k = st.gond.findIndex((g, i) => !occ[i] && deg(g.s.th) >= -62 && deg(g.s.th) <= -48);
+      const k = st.gond.findIndex((g, i) => !occ[i] && deg(g.s.th) >= -50 && deg(g.s.th) <= -38);
       if (k >= 0) {
+        tgt = st.gond[k];
         jt = 12;
         cool = w.tick + 60;
         return { move: 'R', jump: true };
