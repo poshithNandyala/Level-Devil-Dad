@@ -11,11 +11,39 @@ Ranchi (`src/game/cities/rnc/`, `tests/cities/rnc.ts`) is the worked example. Co
 
 ## The rule
 
-**A city worker never edits any file outside `src/game/cities/<code>/`, `tests/cities/<code>.ts` and
-`docs/cities/<CODE>*.md`.** (`<code>` is the city code in lower case,
-`<CODE>` in upper case: `rnc`, `RNC`.) If you think you need a change to a shared file, you don't: stop and
-ask. The version bump, WAVE1.md, MECHANICS.md and CITIES.md are merged later by whoever integrates the
-cities, from your `docs/cities/<CODE>*.md` notes.
+**A city worker never edits any file outside `src/game/cities/<code>/`, `tests/cities/<code>.ts`,
+`docs/cities/<CODE>*.md` and the city's own row in `docs/CITIES.md`.** (`<code>` is the city code in lower
+case, `<CODE>` in upper case: `rnc`, `RNC`.) If you think you need a change to a shared file, you don't: stop
+and ask. The version bump, WAVE1.md and MECHANICS.md are written later by the integrator, from your
+`docs/cities/<CODE>*.md` notes. How branches, worktrees and merges work: `docs/INTEGRATION.md`.
+
+## Start a city: the scaffold
+
+```bash
+source /local/home/saiposh/personal/games/_template/scripts/env.sh   # Node 22 on the cloud desktop
+npm run new-city -- PAT "Patna" "Bihar"
+```
+
+`scripts/dev/new-city.mjs` creates `src/game/cities/pat/` in Ranchi's shape (index, lines, levels with ten
+stage slots, entities, endings, causes, skin, course, music, theme, look, backdrop, things) and
+`tests/cities/pat.ts` with every table stubbed (solutions, naive, fix, mistakes, actRoutes,
+endingPolicies, fair). Every placeholder says TODO. The game builds and typechecks with the scaffold in
+place, and `npx vitest run tests/modules.test.ts -t PAT` fails until the city is real: no TODO left, no
+`pat-item` placeholder, a NAIVE for every stage, five FIX plays, a hidden item in every stage, a fair list.
+It registers nothing: the folder is found by itself.
+
+## The fairness script
+
+```bash
+npm run fair -- PAT              # every PAT stage that has a route
+npm run fair -- PAT-02,PAT-05    # just these
+LDD_N=80 npm run fair -- PAT     # more runs per lag (default 40)
+```
+
+`scripts/dev/fair.sh` runs the human-timing model (`tests/fair.test.ts`, HANDOFF section 6) and prints, per
+stage, the win rate at quick (0-6 ticks), average (0-12) and relaxed (0-18) lag, and per stretch (spawn to
+checkpoint 1, ... last checkpoint to door) the share of average-lag runs that got through once they reached
+it. The bar: 90% average for the stage, 95% for every stretch. Builders and QA run the same command.
 
 Everything in AGENTS.md (the bar, the hardness pass) and HANDOFF.md sections 3, 4 and 6 still applies.
 
