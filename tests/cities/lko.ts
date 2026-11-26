@@ -167,6 +167,13 @@ const behindLamp = (key: string, passTo: number): Step => ({
   note: 'hang back while the ladder swings, go under while he is up',
 });
 
+// ================================================================ LKO-08
+const room08: Step[] = [
+  runTo(18, 500, 'walk through the first arch, over the drain, no hop'),
+  hop(21.6, 23, 'through the second arch at a jump, up to the ledge past the well', 30),
+  runTo(31.5, 300),
+];
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['LKO-02'] = room02;
   lengthen('LKO-02', 0, []);
@@ -180,6 +187,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('LKO-06', 0, []);
   S['LKO-07'] = room07;
   lengthen('LKO-07', 0, []);
+  S['LKO-08'] = room08;
+  lengthen('LKO-08', 0, []);
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
@@ -189,10 +198,12 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-05': { steps: [runTo(3.5, 200), hops([6, 9, 12], 'hop along the heaps'), until(done, 300)], cause: 'lko-seekh' },
   'LKO-06': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk across the stage' }], cause: 'lko-chakkar' },
   'LKO-07': { steps: [runTo(7, 200), hop(9, 11.3), { hold: 'R', until: done, max: 900, note: 'on along the arcade at a run' }], cause: 'lko-ganj' },
+  'LKO-08': { steps: [runTo(5, 200), hop(7, 9, 'hop the little drain into the arch'), { hold: 'R', until: done, max: 600 }], cause: 'lko-bhool' },
 };
 
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-02': { steps: [runTo(8.2), until(done, 900, 'bow, and keep bowing')], cause: 'lko-dhakka' },
+  'LKO-08': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk, as learned, through every arch' }], cause: 'lko-kuan' },
   'LKO-07': { steps: [...room07.slice(0, 3), runTo(32 + 8, 400), pause('stroll on, as learned'), runTo(32 + 14, 300), pause(), until(done, 300)], cause: 'lko-shamiyana' },
   'LKO-06': { steps: [walkTo(5.9, 200), hops([8.5, 10.6, 13.3, 15.6, 18.3], 'plain boards only'), { hold: 'R', until: done, max: 600 }], cause: 'lko-tatkar' },
   'LKO-05': { steps: [runTo(3.5, 200), hops([6]), until(done, 600, 'wait on it, to be sure')], cause: 'lko-tawa' },
@@ -275,7 +286,13 @@ actRoutes['lko07-shaam'] = (x) => [runTo(x + 29, 600, 'run the row, no pause')];
 actRoutes['lko07-batti'] = (x) => [behindLamp('lko07-batti:ll1', x + 13), behindLamp('lko07-batti:ll2', x + 37), runTo(x + 39, 300)];
 actRoutes['lko07-chauraha'] = (x) => [walkTo(x + 3, 300), hop(x + 5, x + 7.3, 'over the nala'), pause('pause before the strollers'), runTo(x + 31, 600, 'stroll up, then run through')];
 
+actRoutes['lko08-mehrab'] = (x) => [runTo(x + 12, 400, 'on foot through the vault arch'), hop(x + 14.6, x + 17, 'at a jump through the next, up past the well', 30), runTo(x + 29.5, 300)];
+
 const endingPolicies: Record<string, Policy> = {
+  'lko-489'(w, _m, d) {
+    // walk: over the crack, through the last arch on foot, off the end of the gallery, down to the door
+    return go(toward(w, d.x + 8, 1));
+  },
   'lko-darban'(w, m, d) {
     const D = Math.round(d.x / 16);
     const p = w.player;
@@ -366,6 +383,10 @@ mistakes['LKO-07'] = [
     cause: 'lko-darban',
   },
 ];
+mistakes['LKO-08'] = [
+  { what: 'in the vault, hopping the drain into the arch', steps: [...room08, runTo(actX('LKO-08') + 1, 300), hop(actX('LKO-08') + 3, actX('LKO-08') + 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-mehrab' },
+  { what: 'hopping the crack into the last arch', steps: [...room08, ...actRoutes0('lko08-mehrab', actX('LKO-08')), runTo(doorX('LKO-08') - 8.5, 300), hop(doorX('LKO-08') - 6, doorX('LKO-08') - 2), { hold: 'R', until: done, max: 400 }], cause: 'lko-bhool' },
+];
 
 export const test: CityTests = {
   solutions,
@@ -374,7 +395,7 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['LKO-02', 'LKO-03', 'LKO-04', 'LKO-05', 'LKO-06', 'LKO-07'],
+  fair: ['LKO-02', 'LKO-03', 'LKO-04', 'LKO-05', 'LKO-06', 'LKO-07', 'LKO-08'],
 };
 void flag;
 void actFlag;

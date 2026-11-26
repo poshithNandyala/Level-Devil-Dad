@@ -7,9 +7,10 @@ import { kulhad } from './s04';
 import { sheermal } from './s05';
 import { sam } from './s06';
 import { darban } from './s07';
+import { doorway489 } from './s08';
 import { Art, FLOOR, Zone, gent, px } from './kit';
 
-export type LkoEndingKind = 'lko-kiwad' | 'lko-bakhiya' | 'lko-kulhad' | 'lko-sheermal' | 'lko-sam' | 'lko-darban';
+export type LkoEndingKind = 'lko-kiwad' | 'lko-bakhiya' | 'lko-kulhad' | 'lko-sheermal' | 'lko-sam' | 'lko-darban' | 'lko-489';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<LkoEndingKind, true> {}
@@ -90,4 +91,4 @@ const kiwad: Ending = {
   },
 };
 
-export const endings: Record<LkoEndingKind, Ending> = { 'lko-kiwad': kiwad, 'lko-bakhiya': bakhiya, 'lko-kulhad': kulhad, 'lko-sheermal': sheermal, 'lko-sam': sam, 'lko-darban': darban };
+export const endings: Record<LkoEndingKind, Ending> = { 'lko-kiwad': kiwad, 'lko-bakhiya': bakhiya, 'lko-kulhad': kulhad, 'lko-sheermal': sheermal, 'lko-sam': sam, 'lko-darban': darban, 'lko-489': doorway489 };

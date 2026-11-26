@@ -13,6 +13,7 @@ import { s04, meta04 } from './s04';
 import { s05, meta05 } from './s05';
 import { s06, meta06 } from './s06';
 import { s07, meta07 } from './s07';
+import { s08, meta08 } from './s08';
 
 const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
 
@@ -57,7 +58,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: s05.room(), acts: s05.acts, twist: 'lko-sheermal', par: 60, shape: 'long', meta: meta05 }),
   longStage({ base: s06.room(), acts: s06.acts, twist: 'lko-sam', par: 50, shape: 'long', meta: meta06 }),
   longStage({ base: s07.room(), acts: s07.acts, twist: 'lko-darban', par: 100, shape: 'marathon', lives: 'act', meta: meta07 }),
-  longStage({ base: todoRoom(8), par: 30, shape: 'long' }), // LKO-08 TODO: acts, twist (a lko-... ending), par
+  longStage({ base: s08.room(), acts: s08.acts, twist: 'lko-489', par: 40, shape: 'wtf', meta: meta08 }),
   longStage({ base: todoRoom(9), par: 30, shape: 'long' }), // LKO-09 TODO: acts, twist (a lko-... ending), par
   longStage({ base: todoRoom(10), par: 30, shape: 'long' }), // LKO-10 TODO: acts, twist (a lko-... ending), par
 ];
