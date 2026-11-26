@@ -37,8 +37,15 @@ function ember(ctx: CanvasRenderingContext2D, x: number, glow: number, on: numbe
 function ashBed(w: World, c0: number, c1: number) {
   w.add(
     new Paint((ctx, w2) => {
-      box(ctx, px(c0), FL - 3, px(c1 - c0 + 1), 3, '#8A8478');
-      for (let x = px(c0); x < px(c1 + 1); x += 7) box(ctx, x + ((x * 3) % 5), FL - 2 - (x % 3), 3, 2, (x >> 3) % 3 ? '#5C554A' : '#E06A2A');
+      // a long bed of grey ash with live embers glowing through it
+      const x0 = px(c0),
+        wd = px(c1 - c0 + 1);
+      box(ctx, x0, FL - 7, wd, 7, '#7E786C');
+      box(ctx, x0, FL - 7, wd, 2, '#A39D90');
+      for (let x = x0; x < x0 + wd; x += 6) {
+        const k = (x * 7) % 11;
+        box(ctx, x + (k % 3), FL - 5 + (k % 3), 3, 2, k % 3 === 0 ? '#E8642A' : k % 3 === 1 ? '#5C554A' : '#FFB347');
+      }
       void w2;
     }, 1),
   );

@@ -54,7 +54,7 @@ export function room(): LevelDef {
       w.flags.pat4 = st;
       onPass(w, px(1), (w2) => {
         st.t0 = w2.tick;
-        tara(w2, L.win[1], 2.4);
+        tara(w2, L.intro[2 + 2], 2.4); // 'Rook! | Stop!': the one time in the city Tara tells the truth
       });
       // porters: A walks down from the top of the landing, B from a door at the mid landing, every `period` seconds
       const mk = (emerge: number, fromCol: number, key: string) =>
