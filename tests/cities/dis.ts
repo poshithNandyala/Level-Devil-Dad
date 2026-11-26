@@ -127,6 +127,17 @@ function crossPan(k: number, margin = 90, onto: 'bank' | 'ground' = 'bank'): (w:
     return { move: 'R', jump: true };
   };
 }
+// ------------------------------------------------------------------ DIS-05: the gamosas
+const gamN = (w: World) => ((w.flags.gam ?? { n: 0 }) as { n: number }).n;
+/** G G G, up on the platform to the taker, over the pit: from column x */
+const gamosaSet = (x: number, pit = 18): Step[] => [
+  { hold: 'R', until: X(x + 10.2), max: 900, note: 'let the three hosts put their gamosas on' },
+  { hold: 'R', jump: 10, ticks: 10, note: 'up on the platform' },
+  { hold: 'R', until: and(ground, (w) => w.player.y < 215), max: 200 },
+  { hold: 'R', until: (w) => gamN(w) === 2, max: 200, note: 'walk into the host in the red sash' },
+  { hold: 'R', until: and(ground, (w) => w.player.y > 220 && w.player.x > px(x + 15.2)), max: 400, note: 'down again' },
+  ...hopR(x + pit - 1.8, 'over the pit', 14),
+];
 const tourEnd = (): Step[] => [...hop(94 - 1.6, 'up on the deck'), { hold: 'R', until: done, max: 900 }];
 
 /** S['DIS-0n'] = room route; lengthen(id, drop, extra) appends each act's route and the door's policy */
@@ -154,10 +165,14 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('DIS-03', 0, []);
   S['DIS-04'] = [{ policy: crossPan(0), until: and(ground, X(27.5)), max: 3000, note: 'crepe to crepe, only ever on a shiny one' }];
   lengthen('DIS-04', 0, []);
+  S['DIS-05'] = gamosaSet(0, 18);
+  lengthen('DIS-05', 0, []);
 }
 
 /** the obvious play per stage, and the cause it must die of (every stage, 01-10). TODO */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  // straight through every host, under the platform: three gamosas, and the pit is under the cloth
+  'DIS-05': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'dis-gamosa' },
   // run at it: the next crepe isn't poured yet
   'DIS-04': { steps: [{ hold: 'R', until: X(6.3), max: 400 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 12, ticks: 20 }))], cause: 'dis-tawa' },
   // run at the plucker and the hedge
@@ -204,6 +219,15 @@ const hopR0 = 0;
 void hopR0;
 const hopR = (at: number, note: string, ticks = 14): Step[] => [{ hold: 'R', until: X(at), max: 900 }, { hold: 'R', jump: ticks, ticks, note }, { hold: 'R', until: ground, max: 300 }];
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'dis05-atithi': (x) => [
+    ...gamosaSet(x, 19),
+    { hold: 'R', until: X(x + 22.2), max: 300 },
+    { hold: 'R', jump: 10, ticks: 10, note: 'hop over the host who is holding out a gamosa' },
+    { hold: 'R', until: ground, max: 200 },
+    ...hopR(x + 29.5, 'over the second pit', 14),
+    ...hopR(x + 40.0, 'over the third pit', 14),
+    { hold: 'R', until: and(ground, X(x + 48)), max: 400 },
+  ],
   'dis04-tawa': (x) => [
     { policy: crossPan(1, 60), until: and(ground, X(x + 37)), max: 4000, note: 'four crepes, one after the other' },
   ],
@@ -223,6 +247,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 
 /** a policy for each door ending, by kind ('dis-...'). TODO */
 const endingPolicies: Record<string, Policy> = {
+  'dis-gamosa-latch'(w, _m, d) {
+    return go(toward(w, d.x + 8, 1) || 'R');
+  },
   'dis-laru-plate'(w, m, d) {
     const p = w.player;
     const pan = pans(w)[pans(w).length - 1];

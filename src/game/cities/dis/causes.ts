@@ -6,4 +6,5 @@ export const causeLines: Record<string, string[]> = {
   'dis-tawa': ['Zui! You fell on the hot pan.', 'Hop only when the next crepe is poured and shiny.'],
   'dis-roll': ['Pitha! The cook rolled you up in a set crepe.', 'Matte means set. Stand only on shiny, and leave before yours dulls.'],
   'dis-laru': ['Laru! A rolling laru ball got you.', 'Hop each ball as it rolls at you.'],
+  'dis-gamosa': ['Gamosa! Three gamosas on you and you could not see the pit.', 'Every host who touches you adds one. At three the cloth hides your feet: hop over the next giver, or walk into a host in a red sash to give one away.'],
 };

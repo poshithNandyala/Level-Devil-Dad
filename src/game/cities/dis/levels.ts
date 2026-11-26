@@ -12,6 +12,7 @@ import { Grid } from '../../levels/grid';
 import { lock, tara as taraSays } from '../../levels/endkit';
 import type { Door } from '../../entities/basics';
 import { Pan } from './pitha';
+import { Cloth, Host, gam, pitDanger } from './gamosa';
 import { Hedge, Plucker, Sprinkler } from './pluck';
 import { Carrier, Decor, River, SandField, levelPost, river, sand, type Span } from './entities';
 
@@ -280,6 +281,71 @@ const tawa: Act = {
   },
 };
 
+// ================================================================== DIS-05: Gamosa (HWIK)
+/** a host standing on ground column tx (feet on row `row`'s top) */
+const host = (w: World, kind: 'give' | 'take', tx: number, row = 15) => w.add(new Host(px(tx) + 8, px(row), kind));
+
+function gamosaRoom(): LevelDef {
+  return {
+    id: 'DIS-05',
+    city: 'DIS',
+    index: 5,
+    name: 'Gamosa',
+    nameEn: 'The welcome',
+    tagline: 'In Assam a guest is welcomed with a gamosa round the neck. Everybody wants to welcome you.',
+    hint: 'Each host who touches you puts a gamosa round you, and you can see them pile up on Dad. With three on, you cannot see your feet or the floor round them, and the pit is under the cloth. To give one away, walk into a host in a red sash: the next one is up on the platform. Or hop over a host who is holding out a gamosa: you don’t have to take it.',
+    par: 30,
+    map: Grid.ground(15).pit(18, 19).fill(12, 15, 13, 13, '=').put(1, 14, '@').put(30, 14, 'E').rows(),
+    build(w: World) {
+      door(w);
+      w.add(new Cloth());
+      host(w, 'give', 4);
+      host(w, 'give', 7);
+      host(w, 'give', 10);
+      host(w, 'take', 14, 13);
+      pitDanger(w, 18, 19);
+      sign(w, 14.6, 10.2, 3.2, 'ADORANI', 'shop', null, 'welcome');
+      rival(w, 2, 15, 1, tara(3));
+      onPass(w, px(3), (w2) => taraSays(w2, 'Xubhessa! | Best wishes!', 2.2));
+      collectible(w, 'dis-gamosa', 18, 9.6);
+    },
+  };
+}
+
+/** DIS-05 act: two more pits, and a host holding out a gamosa right before one of them. */
+const atithi: Act = {
+  id: 'dis05-atithi',
+  w: 58,
+  advice: 'Three hosts, a platform with a red sash, and a pit: the same again. Then one more giver right before a pit: don’t let him touch you, hop over him. The last pit is easy again. You only need one gamosa left for the door, so don’t give them all away.',
+  cps: [15.5, 33.5],
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 11, x + 14, 13, 13, '=');
+    g.pit(x + 19, x + 20);
+    g.pit(x + 30, x + 31);
+    g.fill(x + 35, x + 37, 13, 13, '=');
+    g.pit(x + 41, x + 42);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    // the stall at the start takes back every gamosa you are wearing
+    onPass(w, px(x + 1.2), (w2) => {
+      if (gam(w2).n > 0) w2.say('Dhonyobad! | Thank you!', px(x + 1.2), px(12.4), 1.6, 'npc');
+      gam(w2).n = 0;
+    });
+    host(w, 'give', x + 3);
+    host(w, 'give', x + 6);
+    host(w, 'give', x + 9);
+    host(w, 'take', x + 13, 13);
+    pitDanger(w, x + 19, x + 20);
+    host(w, 'give', x + 24);
+    pitDanger(w, x + 30, x + 31);
+    host(w, 'take', x + 36, 13);
+    pitDanger(w, x + 41, x + 42);
+    sign(w, x + 0.4, 10.2, 3.2, 'ATITHI', 'shop', null, 'leave yours here');
+  },
+};
+
 // the hut door: the farmer shuts it while the river is moving
 const hutDoor = (w: World, d: Door, field: SandField) => {
   const L = lock(w, d, 'Roba! Chah khaba. | Wait! Have some tea.');
@@ -296,7 +362,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: charRoom(), acts: [chapori], twist: 'dis-hut-shut', par: 24, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
   longStage({ base: teaRoom(), acts: [bagan], twist: 'dis-tea-chest', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-tea-chest' } }),
   longStage({ base: pithaRoom(), acts: [tawa], twist: 'dis-laru-plate', par: 40, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
-  longStage({ base: todoRoom(5), par: 30, shape: 'long' }), // DIS-05 TODO: acts, twist (a dis-... ending), par
+  longStage({ base: gamosaRoom(), acts: [atithi], twist: 'dis-gamosa-latch', par: 60, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
   longStage({ base: todoRoom(6), par: 30, shape: 'long' }), // DIS-06 TODO: acts, twist (a dis-... ending), par
   longStage({ base: todoRoom(7), par: 30, shape: 'long' }), // DIS-07 TODO: acts, twist (a dis-... ending), par
   longStage({ base: todoRoom(8), par: 30, shape: 'long' }), // DIS-08 TODO: acts, twist (a dis-... ending), par

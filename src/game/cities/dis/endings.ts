@@ -5,9 +5,10 @@ import { px, sand, river, Decor, GROUND } from './entities';
 import { Hedge, Plucker } from './pluck';
 import { Pan } from './pitha';
 import { roller } from '../../levels/kit';
+import { Host, gam } from './gamosa';
 import type { Ending } from '../../levels/endkit';
 
-export type DisEndingKind = 'dis-hut-shut' | 'dis-tea-chest' | 'dis-laru-plate';
+export type DisEndingKind = 'dis-hut-shut' | 'dis-tea-chest' | 'dis-laru-plate' | 'dis-gamosa-latch';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<DisEndingKind, true> {}
@@ -126,6 +127,42 @@ export const endings: Record<DisEndingKind, Ending> = {
             }
           },
         ),
+      );
+    },
+  },
+  // ================================================================ DIS-05: the gamosa latch
+  /** The door's latch is a rope of gamosa: it opens only if you hand it one. Arrive with none and the last giver is up on his platform. */
+  'dis-gamosa-latch': {
+    space: 20,
+    after: 5,
+    advice: 'The door’s latch is a rope of gamosa, and it only opens if you hand it a gamosa. Keep at least one on you. If you have none, the last host is up on the platform before the door, holding one out.',
+    paint: (g, D) => {
+      g.fill(D - 10, D - 6, 13, 13, '=');
+    },
+    build(w: World, d) {
+      const D = Math.round(d.x / 16);
+      w.add(new Host(px(D - 8) + 8, px(13), 'give'));
+      const L = lock(w, d, 'Roba! Gamosa! | Stop! The gamosa!');
+      w.flags.twist = 'latched';
+      const open = d.onReach;
+      d.onReach = (w2) => {
+        if (gam(w2).n >= 1) {
+          gam(w2).n--;
+          L.unlock();
+          w2.flags.twist = 'open';
+          open?.(w2);
+          w2.win('door');
+        } else open?.(w2);
+      };
+      w.add(
+        new Decor((ctx) => {
+          // the latch rope: a gamosa hung over the door
+          ctx.fillStyle = '#FDF0D5';
+          ctx.fillRect(d.x + 1, d.y - 4, 14, 4);
+          ctx.fillStyle = '#C1121F';
+          ctx.fillRect(d.x + 1, d.y - 4, 14, 1.2);
+          ctx.fillRect(d.x + 1, d.y - 1.4, 14, 1.2);
+        }, 3),
       );
     },
   },
