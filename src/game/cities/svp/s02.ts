@@ -22,7 +22,7 @@ export interface Cut {
 
 const STRIP = 24;
 const LOG = 96;
-const SPEED = 52;
+const SPEED = 32;
 const SPAN = 224;
 const SAW_AT = 176;
 

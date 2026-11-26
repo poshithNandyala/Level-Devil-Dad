@@ -8,7 +8,7 @@ import type { Grid } from '../../levels/grid';
 import { Fx, Hurt, awning, px, TAU, type Ctx } from './kit';
 
 const COME = 70,
-  LOBE = 264,
+  LOBE = 620,
   GAP = 108,
   OUT = 90;
 export const LANE_TOTAL = COME + LOBE + GAP + LOBE + OUT;

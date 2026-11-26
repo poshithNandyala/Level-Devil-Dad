@@ -298,7 +298,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
-  'SVP-01': { steps: [...tourToAwning(), { hold: '', until: (w) => lane(w).t > 70 + 264 + 40, max: 1200, note: 'under the awning till the rain stops' }, hopUntil((w) => w.state !== 'play', 'and up the lane at once')], cause: 'svp-baha' },
+  'SVP-01': { steps: [...tourToAwning(), { hold: '', until: (w) => lane(w).t > 70 + 620 + 40, max: 1200, note: 'under the awning till the rain stops' }, hopUntil((w) => w.state !== 'play', 'and up the lane at once')], cause: 'svp-baha' },
   'SVP-09': {
     steps: [
       { hold: 'R', until: X(7.6), max: 400 },

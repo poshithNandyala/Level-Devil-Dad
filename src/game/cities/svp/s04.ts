@@ -283,7 +283,7 @@ export function hiranRoom(): LevelDef {
     build(w: World) {
       door(w);
       const herd = new Herd([px(1) + 6, px(2) + 6, px(3) + 6], [{ x: px(10) + 8, used: false }], PIT, PIT[0] - 8).install(w);
-      const boat = new LateBoat(herd, PIT[0], PIT[1] - 40, 2.6, 2.0).install(w);
+      const boat = new LateBoat(herd, PIT[0], PIT[1] - 40, 5.2, 2.0).install(w);
       w.flags.herd = herd;
       w.flags.boat = boat;
       w.add(new Fx(null, (ctx, w2) => pitWater(ctx, PIT[0], PIT[1], w2), 5));
@@ -307,7 +307,7 @@ export const ghat: Act = {
     const x0 = px(c.x + 17),
       x1 = px(c.x + 23);
     const herd = new Herd([px(c.x + 1) + 6, px(c.x + 2) + 6, px(c.x + 3) + 6], [{ x: px(c.x + 13) + 8, used: false }], [x0, x1], x0 - 8).install(w);
-    const boat = new LateBoat(herd, x0, x1 - 40, 2.0, 1.8).install(w);
+    const boat = new LateBoat(herd, x0, x1 - 40, 3.6, 1.8).install(w);
     (w.flags.herds ??= []).push(herd);
     (w.flags.boats ??= []).push(boat);
     w.add(new Fx(null, (ctx, w2) => pitWater(ctx, x0, x1, w2), 5));

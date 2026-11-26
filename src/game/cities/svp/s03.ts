@@ -178,7 +178,7 @@ export class Creek extends Entity {
         w.sfx('splash', this.cx, FLOOR);
       }
     } else if (this.state === 'slide') {
-      const k = Math.min(1, (w.tick - this.t0) / 42);
+      const k = Math.min(1, (w.tick - this.t0) / 100);
       this.cx = this.from + 26 * k;
       this.cy = FLOOR - 4 + 24 * k;
       this.hurt.on = false;
@@ -291,7 +291,7 @@ class Patrol extends Entity {
       }
     } else {
       const t = this.gaps[this.idx];
-      const step = 40 * DT;
+      const step = 34 * DT;
       if (Math.abs(t - this.cx) <= step) {
         this.cx = t;
         this.rest = 150;
