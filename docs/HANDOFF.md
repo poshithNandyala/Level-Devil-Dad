@@ -20,7 +20,7 @@ Status: v0.16.14 on `develop`, 15 capitals, 120 stages, all proven beatable by s
 ```bash
 npm ci
 npm run dev            # http://localhost:5173 ; ?c=RPR-05 (or #RPR-05) opens that stage
-npm test               # every suite: 1309 tests (13 skipped: tool files and the allocation file until it lands), under a minute
+npm test               # every suite: 1312 tests (12 tool files skipped), under a minute
 npm run typecheck      # tsc --noEmit
 npm run build:single   # dist-single/index.html: the whole game in one file (what the APK wraps)
 node scripts/flows.mjs # after build:single: menus, pause, hints, passport, share, in headless Chrome
