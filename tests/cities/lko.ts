@@ -328,6 +328,12 @@ const R_lko05_tawa = (id: string) => (x: number): Step[] => {
   return [runTo(x + 0.5, 300), hops([x + 3, ...cols.map((c, i) => [x + c, kflat(k, i)] as [number, (w: World) => boolean])], 'thin ones at once, thick ones once squashed'), runTo(x + 53.5, 300)];
 };
 actRoutes['lko05-tawa'] = R_lko05_tawa('lko05-tawa');
+const DUM = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36];
+actRoutes['lko05-dum'] = (x) => {
+  const k = 'lko05-dum:kebabs';
+  const cols = [...DUM.slice(1).map((d) => d + 0.1), 39.5];
+  return [runTo(x + 0.5, 300), hops([x + 3, ...cols.map((c, i) => [x + c, kflat(k, i)] as [number, (w: World) => boolean])], 'wait for both squashes, then hop'), runTo(x + 41, 300)];
+};
 const R_lko05_lane = (id: string) => (x: number): Step[] => [
   runTo(x + 1.2, 300),
   hops([x + 3], 'on to the end of the slab'),
@@ -703,6 +709,11 @@ fix['LKO-09'] = {
 mistakes['LKO-09'] = [
   { what: 'walking up to the white dome', steps: [...room09, { hold: 'R', until: done, max: 900 }], cause: 'lko-gumbad' },
   { what: 'jumping for the dome from far back, where it looked big', steps: [...room09, walkTo(actX('LKO-09', 0) + 2.2, 300), { hold: 'R', jump: 14, ticks: 60 }, until(done, 300)], cause: 'lko-gumbad' },
+];
+const DK = (i: number) => (w: World) => (w.flags['lko05-dum:kebabs'] ?? [])[i]?.stage === 1;
+mistakes['LKO-05'] = [
+  { what: 'on the double heaps, hopping on after one squash, as learned', steps: [...through('LKO-05', room05, 2), runTo(actX('LKO-05', 2) + 0.5, 300), hops([actX('LKO-05', 2) + 3, [actX('LKO-05', 2) + 6.1, kflat('lko05-dum:kebabs', 0)], [actX('LKO-05', 2) + 9.1, DK(1)]]), until(done, 300)], cause: 'lko-seekh' },
+  { what: 'on the double heaps, hopping straight on', steps: [...through('LKO-05', room05, 2), runTo(actX('LKO-05', 2) + 0.5, 300), hops([actX('LKO-05', 2) + 3, actX('LKO-05', 2) + 6.1, actX('LKO-05', 2) + 9.1]), until(done, 300)], cause: 'lko-seekh' },
 ];
 mistakes['LKO-06'] = [
   { what: 'in the mehfil, crossing her floor', steps: [...through('LKO-06', room06, 1), walkTo(actX('LKO-06', 1) + 3.6, 300), hops([actX('LKO-06', 1) + 6.5, actX('LKO-06', 1) + 9.3, actX('LKO-06', 1) + 11.6]), until(done, 1200)], cause: 'lko-mehfil' },

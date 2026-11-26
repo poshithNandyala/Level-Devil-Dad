@@ -283,5 +283,48 @@ export const sheermal: Ending = {
   },
 };
 
-export const s05 = { room: galoutiRoom, acts: [tawa2, lane] };
+// ================================================================ act 3: dum, the double heaps
+/** At the end of the stall the heaps are piled two high. One squash takes the top kebab off: now it's a
+ *  full heap, and a hop off it still finds the skewers. Wait for the second squash. */
+export class DoubleGalouti extends Galouti {
+  stage = 0;
+  constructor(x: number) {
+    super(x, false, 40, 120, 2);
+    const dy = 10;
+    this.solid.y -= dy;
+    this.solid.h += dy;
+  }
+  update(w: World) {
+    if (this.stage === 0) {
+      const here = on(w, this.solid);
+      this.stand = here ? this.stand + 1 : 0;
+      if (this.stand > this.squash) {
+        // the top kebab squashes into the one below: a full heap again
+        this.stage = 1;
+        this.stand = 0;
+        this.solid.h -= 10;
+        this.move(w, 0, 10);
+        w.sfx('thud', this.x + 8, this.y);
+      }
+      return;
+    }
+    super.update(w);
+  }
+}
+const DUM = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36];
+export const dum: Act = {
+  id: 'lko05-dum',
+  w: 42,
+  advice: 'At the end of the stall the heaps are piled two high. One squash only takes the top kebab off, and a hop off a full heap still finds the skewers: wait for the second squash, then hop at once.',
+  cps: [0.5],
+  build: (w, c) => {
+    const x = c.x;
+    tawa(w, x + 2, x + 38);
+    seekhRack(w, x + 2, x + 38, 70);
+    w.flags[c.f("kebabs")] = DUM.map((d, i) => w.add(i === 0 ? new Galouti(px(x + d)) : new DoubleGalouti(px(x + d))));
+    sign(w, x + 0.2, 10.4, 3.2, 'DUM', 'shop', null, 'galouti');
+  },
+};
+
+export const s05 = { room: galoutiRoom, acts: [tawa2, lane, dum] };
 export const meta05 = { family: 'flatten-platforms-build-low-lane', betrayals: ['flatten-lane'], ending: 'lko-sheermal' } as StageMeta;
