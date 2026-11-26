@@ -9,6 +9,7 @@ import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
 import { s02, meta02 } from './s02';
 import { s03, meta03 } from './s03';
+import { s04, meta04 } from './s04';
 
 const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
 
@@ -49,7 +50,7 @@ export const levels = (): LevelDef[] => [
   }),
   longStage({ base: s02.room(), acts: s02.acts, twist: 'lko-kiwad', par: 40, shape: 'short', meta: meta02 }),
   longStage({ base: s03.room(), acts: s03.acts, twist: 'lko-bakhiya', par: 40, shape: 'short', meta: meta03 }),
-  longStage({ base: todoRoom(4), par: 30, shape: 'long' }), // LKO-04 TODO: acts, twist (a lko-... ending), par
+  longStage({ base: s04.room(), acts: s04.acts, twist: 'lko-kulhad', par: 44, shape: 'short', meta: meta04 }),
   longStage({ base: todoRoom(5), par: 30, shape: 'long' }), // LKO-05 TODO: acts, twist (a lko-... ending), par
   longStage({ base: todoRoom(6), par: 30, shape: 'long' }), // LKO-06 TODO: acts, twist (a lko-... ending), par
   longStage({ base: todoRoom(7), par: 30, shape: 'long' }), // LKO-07 TODO: acts, twist (a lko-... ending), par

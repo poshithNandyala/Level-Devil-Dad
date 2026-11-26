@@ -83,7 +83,9 @@ const hops = (targets: (number | [number, (w: World) => boolean])[], note = '', 
         return { move: toward(w, n.c, 1), jump: true };
       }
       if (t.wait && !t.wait(w)) return go('');
-      if (Math.abs(t.c - p.cx) <= reach) {
+      if (Math.abs(t.c - p.cx) <= reach + Math.abs(p.vx) * 0.13) {
+        // a careful player stops at the edge, then jumps
+        if (Math.abs(p.vx) > 30) return go('');
         jt = hold - 1;
         return { move: toward(w, t.c, 1), jump: true };
       }
@@ -113,20 +115,36 @@ const room03: Step[] = [
   runTo(31, 400),
 ];
 
+// ================================================================ LKO-04
+const lid = (w: World) => w.flags.malai?.lid ?? 0;
+const room04: Step[] = [
+  runTo(4, 200),
+  hops([6, 9, 12], 'on the shady (left) tile of each heap: the sun is on the right'),
+  until((w) => lid(w) > 0, 600, 'the halwai starts to lift his lid'),
+  { policy: (w) => go(toward(w, px(13), 1)), until: (w) => lid(w) >= 1, max: 300, note: 'straddle the middle of the heap while it goes up' },
+  hops([13, 16, 19, 22, 25], 'now the light comes from the left: the right tiles'),
+  hop(26, 27.5),
+  runTo(31, 300),
+];
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['LKO-02'] = room02;
   lengthen('LKO-02', 0, []);
   S['LKO-03'] = room03;
   lengthen('LKO-03', 0, []);
+  S['LKO-04'] = room04;
+  lengthen('LKO-04', 0, []);
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-02': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk straight in' }], cause: 'lko-pehle' },
   'LKO-03': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk out along the printed vine' }], cause: 'lko-chhapa' },
+  'LKO-04': { steps: [runTo(4, 200), hops([7], 'line up on the far edge of the first heap'), until(done, 400)], cause: 'lko-malai' },
 };
 
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-02': { steps: [runTo(8.2), until(done, 900, 'bow, and keep bowing')], cause: 'lko-dhakka' },
+  'LKO-04': { steps: [runTo(4, 200), hops([6, 9, 12], 'the shady left tiles, as learned'), until(done, 900, 'wait on it')], cause: 'lko-malai' },
   'LKO-03': { steps: [runTo(3.5, 200), hops([6, 7, 9, 12, 13, 15, 17, 18, 21, 22, 24], 'every white tile in turn, jali too', 12, 30), until(done, 600)], cause: 'lko-jali' },
 };
 
@@ -145,11 +163,6 @@ const actX = (id: string, i = 0) => {
   return d.parts!.filter((p) => !p.kind.startsWith('_'))[i].x0;
 };
 const doorX = (id: string) => LEVEL_BY_ID.get(id)!.doorX!;
-mistakes['LKO-03'] = [
-  { what: 'stopping on the jali in the middle of the second vat', steps: [...room03, runTo(actX('LKO-03') + 1.5), runTo(actX('LKO-03') + 18.2), until(done, 400)], cause: 'lko-jali' },
-  { what: 'walking to the bright blue printed door', steps: [...room03, runTo(actX('LKO-03') + 1.5), runTo(actX('LKO-03') + 39), { hold: 'R', until: done, max: 900 }], cause: 'lko-chhapa' },
-];
-
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'lko02-gali': (x) => [
     runTo(x + 4.2, 300, 'the man behind offers the way'),
@@ -161,7 +174,23 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 
 actRoutes['lko03-kunda'] = (x) => [runTo(x + 1.5, 300), { hold: 'R', until: and(ground, X(x + 39)), max: 900, note: 'run each print without stopping' }];
 
+actRoutes['lko04-chowk'] = (x) => [
+  runTo(x + 1.5, 300),
+  hops([x + 4, x + 6, x + 9, x + 12, x + 14], 'cups in the long shadow, quickly: the shadows are shrinking'),
+  runTo(x + 18.5, 300),
+  hops([x + 20, x + 22, x + 25, x + 28, x + 31]),
+  runTo(x + 35, 300),
+];
+
 const endingPolicies: Record<string, Policy> = {
+  'lko-kulhad'(w, m, d) {
+    const D = Math.round(d.x / 16);
+    const p = w.player;
+    if (p.onGround && p.y + p.h <= px(11)) return go(toward(w, d.x + 8, 1));
+    if (p.cx < px(D - 8) - 4 && p.onGround) return go('R');
+    if (!m.h) m.h = hops([D - 5, D - 2, D + 1], 'the right tiles of the steps, then the counter').policy!;
+    return m.h(w);
+  },
   'lko-bakhiya'(w, m, d) {
     const p = w.player;
     if (m.hold > 0) return { move: toward(w, d.x + 8, 1), jump: true };
@@ -178,6 +207,29 @@ const endingPolicies: Record<string, Policy> = {
   },
 };
 
+function actRoutes0(id: string, x: number) {
+  return actRoutes[id](x);
+}
+
+mistakes['LKO-03'] = [
+  { what: 'stopping on the jali in the middle of the second vat', steps: [...room03, runTo(actX('LKO-03') + 1.5), runTo(actX('LKO-03') + 18.2), until(done, 400)], cause: 'lko-jali' },
+  { what: 'walking to the bright blue printed door', steps: [...room03, runTo(actX('LKO-03') + 1.5), runTo(actX('LKO-03') + 39), { hold: 'R', until: done, max: 900 }], cause: 'lko-chhapa' },
+];
+
+mistakes['LKO-04'] = [
+  {
+    what: 'waiting at the start of the lane while the shadows shrink',
+    steps: [...room04, runTo(actX('LKO-04') + 1.5), runTo(actX('LKO-04') + 2.3), { hold: '', ticks: 700 }, hops([actX('LKO-04') + 4, actX('LKO-04') + 6]), until(done, 300)],
+    cause: 'lko-malai',
+  },
+  {
+    what: 'at the counter, landing on the left tile of the step (the fire is behind you)',
+    steps: [...room04, ...actRoutes0('lko04-chowk', actX('LKO-04')), runTo(doorX('LKO-04') - 9), hops([doorX('LKO-04') - 6]), until(done, 300)],
+    cause: 'lko-malai',
+  },
+];
+
+
 export const test: CityTests = {
   solutions,
   naive,
@@ -185,7 +237,7 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['LKO-02', 'LKO-03'],
+  fair: ['LKO-02', 'LKO-03', 'LKO-04'],
 };
 void flag;
 void actFlag;
