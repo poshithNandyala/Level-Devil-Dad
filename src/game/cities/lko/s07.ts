@@ -499,5 +499,77 @@ export const julus: Act = {
 };
 const JULUS_NALAS = [12, 24, 36, 48, 60];
 
-export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, chowk] };
+// ================================================================ act 5: saamne, the procession coming the other way
+/** Groups of strollers coming towards you down the arcade, a banner on a pole held high over them. They
+ *  don't part for anyone coming the other way: they walk you back into the nala you crossed. Hopping over
+ *  them puts you into the banner. Step up into the alcove in the arcade wall and let them pass under you. */
+const SAAMNE = [10, 26, 42, 58, 74, 90];
+export const saamne: Act = {
+  id: 'lko07-saamne',
+  w: 100,
+  advice: 'Now the strollers come the other way, a banner on a pole held high over them, and they don’t part: they walk you back into the nala behind you. Hopping over them puts you in the banner. After each nala, step up into the alcove in the arcade wall and let them pass under you.',
+  cps: [33.5, 65.5],
+  paint: (g, c) => {
+    for (const a of SAAMNE) {
+      g.pit(c.x + a - 6, c.x + a - 5);
+      g.fill(c.x + a, c.x + a + 1, 13, 13, '=');
+    }
+  },
+  build: (w, c) => {
+    const x = c.x;
+    arcade(w, x, x + 99);
+    SAAMNE.forEach((a, k) => {
+      nala(w, x + a - 6, x + a - 5, 'lko-saamne');
+      w.add(
+        new Art((ctx) => {
+          // the alcove: a niche in the colonnade with a stone sill
+          ctx.fillStyle = 'rgba(70,50,35,0.55)';
+          ctx.fillRect(c.X(a) - 2, px(13) - 34, 36, 34);
+          ctx.fillStyle = '#D8C6A2';
+          ctx.fillRect(c.X(a) - 3, px(13), 38, 4);
+        }, -1),
+      );
+      const G = { x: c.X(a + 14), on: false, done: false };
+      w.flags[c.f('g' + k)] = G;
+      const body = w.add(new Block(G.x, FLOOR - 25, 44, 25, () => {}, 0));
+      body.set(false);
+      const banner = w.add(new Zone(G.x, px(11) + 2, 44, 10, 'lko-jhanda'));
+      banner.on = false;
+      w.add(
+        new Art((ctx) => {
+          if (!G.on) return;
+          for (let i = 0; i < 3; i++) gent(ctx, G.x + 8 + i * 14, FLOOR, 25, KURTA[(i + k) % KURTA.length], { face: -1, topi: i % 2 ? '#F5F0E6' : undefined, arms: i === 1 ? 1 : 0 });
+          ctx.fillStyle = '#C8A96B';
+          ctx.fillRect(G.x + 21, px(11) + 2, 2, FLOOR - 25 - px(11));
+          ctx.fillStyle = k % 2 ? '#5A8F7B' : '#C2485B';
+          ctx.fillRect(G.x + 2, px(11) + 2, 40, 10);
+          ctx.fillStyle = '#F5F1E8';
+          ctx.fillRect(G.x + 6, px(11) + 6, 32, 2);
+        }, 3),
+      );
+      w.onTick((w2) => {
+        if (G.done) return;
+        if (!G.on && w2.player.cx > c.X(a - 4)) {
+          G.on = true;
+          body.set(true);
+          banner.on = true;
+        }
+        if (!G.on) return;
+        body.move(w2, -0.42, 0);
+        G.x = body.solid.x + body.solid.xr;
+        banner.x = G.x;
+        // they turn off into the lane before the nala
+        if (G.x < c.X(a - 9)) {
+          G.done = true;
+          G.on = false;
+          body.set(false);
+          banner.on = false;
+        }
+      });
+    });
+    sign(w, x + 0.4, 10.4, 3.4, 'SAAMNE', 'shop', null, 'ganj');
+  },
+};
+
+export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, saamne, chowk] };
 export const meta07 = { family: 'pace-sets-crowd-shape', betrayals: ['pace-crowd', 'ladder-block'], ending: 'lko-darban' } as StageMeta;

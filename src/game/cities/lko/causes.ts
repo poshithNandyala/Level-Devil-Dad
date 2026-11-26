@@ -25,4 +25,6 @@ export const causeLines: Record<string, string[]> = {
   'lko-parda': ['A long bolt unrolled down across the road, and its roller came down on you.', 'Run under it at once, before the roller reaches the ground. Or wait for it to roll up.'],
   'lko-julus': ['You bumped the slow procession, so the last one stepped back and tutted you into the nala.', 'Walk behind them at their pace; at a nala, wait till they’re well across.'],
   'lko-goti': ['You landed on the courtier’s square, and he knocked you off the board.', 'Stop short of his square: wait on yours for a throw after he has moved.'],
+  'lko-saamne': ['The group coming the other way didn’t part: they walked you back into the nala.', 'Step up into the alcove in the arcade wall and let them pass under you.'],
+  'lko-jhanda': ['You hopped over the group, into their banner.', 'Don’t hop them: up into the alcove, and let them pass.'],
 };

@@ -412,6 +412,16 @@ const R_lko07_julus = (id: string) => (x: number): Step[] => {
   ];
 };
 actRoutes['lko07-julus'] = R_lko07_julus('lko07-julus');
+const SAAMNE = [10, 26, 42, 58, 74, 90];
+const R_lko07_saamne = (id: string) => (x: number): Step[] =>
+  SAAMNE.flatMap((a, k) => [
+    hop(x + a - 6, x + a - 3.5, 'over the nala'),
+    walkTo(x + a - 1.6, 300),
+    hops([x + a + 0.5], 'up into the alcove'),
+    until((w) => { const G = w.flags[`${id}:g${k}`] as { done: boolean; x: number }; return G.done || G.x + 46 < w.player.x; }, 1200, 'let them pass under'),
+    runTo(x + a + 6, 300),
+  ]).concat([runTo(x + 99, 300)]);
+actRoutes['lko07-saamne'] = R_lko07_saamne('lko07-saamne');
 const R_lko07_chauraha = (id: string) => (x: number): Step[] => [walkTo(x + 3, 300), hop(x + 5, x + 7.3, 'over the nala'), pause('pause before the strollers'), runTo(x + 31, 600, 'stroll up, then run through')];
 actRoutes['lko07-chauraha'] = R_lko07_chauraha('lko07-chauraha');
 
@@ -588,6 +598,12 @@ mistakes['LKO-04'] = [
 
 const pre07 = () => [...room07, ...actRoutes0('lko07-shaam', actX('LKO-07', 0)), ...actRoutes0('lko07-batti', actX('LKO-07', 1))];
 mistakes['LKO-07'] = [
+  { what: 'walking on into the group coming the other way', steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), hop(actX('LKO-07', 3) + 4, actX('LKO-07', 3) + 6.5), { hold: 'R', until: done, max: 1500 }], cause: 'lko-saamne' },
+  {
+    what: 'hopping over the group coming the other way',
+    steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), hop(actX('LKO-07', 3) + 4, actX('LKO-07', 3) + 6.5), { policy: (w) => { const G = w.flags['lko07-saamne:g0']; const p = w.player; if (!p.onGround) return go('R'); if (G.on && G.x - (p.x + p.w) < 30) return { move: 'R', jump: !w.input.jump }; return go(G.on ? '' : 'R'); }, until: done, max: 1500 }],
+    cause: 'lko-jhanda',
+  },
   { what: 'rushing up behind the slow procession', steps: [...pre07(), hop(actX('LKO-07', 2) + 12, actX('LKO-07', 2) + 14.5), { hold: 'R', until: done, max: 1200 }], cause: 'lko-julus' },
   {
     what: 'hopping the nala straight on to the procession’s heels',
@@ -601,7 +617,7 @@ mistakes['LKO-07'] = [
   },
   {
     what: 'hopping the café nala and going straight in',
-    steps: [...room07, ...actRoutes0('lko07-shaam', actX('LKO-07', 0)), ...actRoutes0('lko07-batti', actX('LKO-07', 1)), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), ...actRoutes0('lko07-chauraha', actX('LKO-07', 3)), runTo(doorX('LKO-07') - 10), hop(doorX('LKO-07') - 8, doorX('LKO-07') - 3), { hold: 'R', until: done, max: 600 }],
+    steps: [...room07, ...actRoutes0('lko07-shaam', actX('LKO-07', 0)), ...actRoutes0('lko07-batti', actX('LKO-07', 1)), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), ...actRoutes0('lko07-saamne', actX('LKO-07', 3)), ...actRoutes0('lko07-chauraha', actX('LKO-07', 4)), runTo(doorX('LKO-07') - 10), hop(doorX('LKO-07') - 8, doorX('LKO-07') - 3), { hold: 'R', until: done, max: 600 }],
     cause: 'lko-darban',
   },
 ];
