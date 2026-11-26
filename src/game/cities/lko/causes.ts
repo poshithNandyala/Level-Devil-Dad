@@ -20,4 +20,5 @@ export const causeLines: Record<string, string[]> = {
   'lko-mehrab': ['You hopped through, and the floor above is a low vault full of hooks.', 'Through that arch on foot: walk over the drain, don’t hop.'],
   'lko-kabootar': ['White flag: the flock came down on the roof you were landing on, and knocked you off.', 'Cross only on red, and early in the red. Read the face the birds can see.'],
   'lko-chhat': ['Off the rooftops, down into the lane.', 'Jump from the roof’s edge; tap, no need to hold.'],
+  'lko-tehzeeb': ['You bowed on the chikan cover, and the bells under it rang for the dancer.', 'A step on the covers is silent: bow only on plain boards.'],
 };

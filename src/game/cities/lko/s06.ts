@@ -24,9 +24,10 @@ export class Dancer {
     readonly home: number,
     readonly speed = 210,
     cause = 'lko-chakkar',
+    readonly floor = FLOOR,
   ) {
     this.x = home;
-    this.z = w.add(new Zone(home - 9, FLOOR - 28, 18, 28, cause));
+    this.z = w.add(new Zone(home - 9, floor - 28, 18, 28, cause));
     this.z.on = false;
     w.add(new Art((ctx, w2) => drawDancer(ctx, this, w2), 3));
     w.onTick((w2) => this.tick(w2));
@@ -62,7 +63,7 @@ export class Dancer {
 }
 function drawDancer(ctx: Ctx, d: Dancer, w: World) {
   const x = d.x,
-    f = FLOOR;
+    f = d.floor;
   const spin = d.s === 'out' || d.s === 'turn';
   const t = w.tick * 0.35;
   // the angarkha flares into a bell when she spins

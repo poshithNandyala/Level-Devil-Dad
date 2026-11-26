@@ -190,6 +190,14 @@ const room09: Step[] = [
   runTo(31.5, 300),
 ];
 
+// ================================================================ LKO-10
+const room10: Step[] = [
+  walkTo(10.6, 400, 'up to the plain board (the gentlemen step into the doorway)'),
+  until((w) => w.flags.pehle?.s === 'offer', 900, 'bow on the plain board: one goes first'),
+  hop(19, 21.6, 'walk over the covers, take his offer, hop the hole'),
+  runTo(31, 400),
+];
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['LKO-02'] = room02;
   lengthen('LKO-02', 0, []);
@@ -207,6 +215,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('LKO-08', 0, []);
   S['LKO-09'] = room09;
   lengthen('LKO-09', 0, []);
+  S['LKO-10'] = room10;
+  lengthen('LKO-10', 0, []);
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
@@ -218,10 +228,12 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-07': { steps: [runTo(7, 200), hop(9, 11.3), { hold: 'R', until: done, max: 900, note: 'on along the arcade at a run' }], cause: 'lko-ganj' },
   'LKO-08': { steps: [runTo(5, 200), hop(7, 9, 'hop the little drain into the arch'), { hold: 'R', until: done, max: 600 }], cause: 'lko-bhool' },
   'LKO-09': { steps: [walkTo(6.1, 300), hops([8.6, 11.1, 14.1, 16.6, 20.1, 22.6, 26.1, 28], 'roof to roof, never mind the flag'), until(done, 300)], cause: 'lko-kabootar' },
+  'LKO-10': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk straight in' }], cause: 'lko-pehle' },
 };
 
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-02': { steps: [runTo(8.2), until(done, 900, 'bow, and keep bowing')], cause: 'lko-dhakka' },
+  'LKO-10': { steps: [walkTo(13.5, 400, 'up to the gentlemen'), until(done, 600, 'and bow, as learned')], cause: 'lko-tehzeeb' },
   'LKO-09': {
     steps: [
       ...room09,
@@ -324,7 +336,25 @@ actRoutes['lko09-hawa'] = (x) => {
   ];
 };
 
+actRoutes['lko10-dhulai'] = (x) => {
+  const k = 'lko10-dhulai:wash';
+  return [
+    runTo(x + 3.4, 300, 'on to the first flower'),
+    until((w) => w.flags[k] >= 2, 600, 'wait out both whistles'),
+    hops([x + 3.4, x + 6, x + 9, x + 12, x + 15.5], 'flower to flower'),
+    runTo(x + 21, 300),
+    walkTo(x + 21.2, 200),
+    hops([x + 23, x + 26, x + 29, x + 32.6], 'the shady left tiles'),
+    runTo(x + 35.5, 300),
+  ];
+};
+actRoutes['lko10-galiyara'] = (x) => [runTo(x + 12, 400, 'walk over the drain, through the first arch'), hop(x + 14.6, x + 17, 'at a jump through the second', 30), runTo(x + 34.5, 600, 'along the gallery without stopping')];
+
 const endingPolicies: Record<string, Policy> = {
+  'lko-tehzeeb'(w, _m, d) {
+    if (w.flags.twist === 'open') return go(toward(w, d.x + 8, 1));
+    return go(toward(w, d.x + 8 - px(4.8), 1));
+  },
   'lko-chhatri'(w, m, d) {
     const D = Math.round(d.x / 16);
     if (!m.h) m.h = hops([D - 11, D - 7.2, [D - 3.6, redNow('chhatri', 1.4)], D - 1.5], 'wait on the roof, cross early in the red').policy!;
@@ -430,6 +460,10 @@ mistakes['LKO-08'] = [
   { what: 'in the vault, hopping the drain into the arch', steps: [...room08, runTo(actX('LKO-08') + 1, 300), hop(actX('LKO-08') + 3, actX('LKO-08') + 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-mehrab' },
   { what: 'hopping the crack into the last arch', steps: [...room08, ...actRoutes0('lko08-mehrab', actX('LKO-08')), runTo(doorX('LKO-08') - 8.5, 300), hop(doorX('LKO-08') - 6, doorX('LKO-08') - 2), { hold: 'R', until: done, max: 400 }], cause: 'lko-bhool' },
 ];
+mistakes['LKO-10'] = [
+  { what: 'stopping on the gallery’s covered bells', steps: [...room10, ...actRoutes0('lko10-dhulai', actX('LKO-10', 0)), runTo(actX('LKO-10', 1) + 12, 400), hop(actX('LKO-10', 1) + 14.6, actX('LKO-10', 1) + 17, '', 30), runTo(actX('LKO-10', 1) + 22, 300), until(done, 500)], cause: 'lko-tehzeeb' },
+  { what: 'bowing to the last door from right in front of it', steps: [...room10, ...actRoutes0('lko10-dhulai', actX('LKO-10', 0)), ...actRoutes0('lko10-galiyara', actX('LKO-10', 1)), walkTo(doorX('LKO-10') - 1.5, 600), until(done, 600)], cause: 'lko-tehzeeb' },
+];
 
 export const test: CityTests = {
   solutions,
@@ -438,7 +472,7 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['LKO-02', 'LKO-03', 'LKO-04', 'LKO-05', 'LKO-06', 'LKO-07', 'LKO-08', 'LKO-09'],
+  fair: ['LKO-02', 'LKO-03', 'LKO-04', 'LKO-05', 'LKO-06', 'LKO-07', 'LKO-08', 'LKO-09', 'LKO-10'],
 };
 void flag;
 void actFlag;
