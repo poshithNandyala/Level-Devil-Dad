@@ -190,7 +190,7 @@ const girderRoute = (x: number): Step[] => [
   { hold: '', until: (w) => { const a = riding(w), b = porters(w).find((p) => p.o.v === 66); return !!a && !!b && b.x - a.x > 22 && b.x - a.x < 40; }, max: 1800, note: 'till the short porter is just ahead, under you' },
   { hold: 'R', until: (w) => !!riding(w) && riding(w)!.o.v === 66, max: 200, note: 'walk off the front on to his load' },
   { hold: '', until: (w) => w.player.cx > px(x + 48.5), max: 1800 },
-  { hold: 'R', until: (w) => w.player.onGround && !riding(w), max: 200, note: 'off on to the second pylon' },
+  { hold: 'R', until: (w) => w.player.onGround && !riding(w), max: 200, note: 'off on to the pylon' },
 ];
 
 
@@ -357,6 +357,17 @@ function kumartuliRoute(jumpDry = false, waitOnHorse = 0): Step[] {
   ];
 }
 
+
+/** CCU-07 act 2: off the short porter on to the overtaking tall one, never while an oncoming load is overhead */
+const clearOverhead = (w: World) => !porters(w).some((p) => p.o.v < 0 && p.state === 'walk' && p.x - w.player.cx < 80 && p.x - w.player.cx > -30);
+const duiRoute = (x: number): Step[] => [
+  ...hopTo(px(x + 2), 10, 'up the pylon step'),
+  { hold: 'R', until: (w) => !!riding(w) && riding(w)!.o.v === 45, max: 300, note: 'walk off on to the short porter' },
+  { ...hopUp((w) => (clearOverhead(w) ? ahead(w, 78, 54) : undefined), 'up on the tall porter as he overtakes, with nothing coming over'), until: (w) => !!porters(w).find((p) => p.o.v === 78)?.riding(w), max: 2400 },
+  { hold: '', until: (w) => w.player.cx > px(x + 44.5), max: 2400, note: 'ride him to the next pylon' },
+  { hold: 'R', until: (w) => w.player.onGround && !riding(w), max: 200, note: 'off on to the pylon' },
+];
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['CCU-01'] = tourRun('onto');
   S['CCU-02'] = [...ride(px(25), px(28.5), 'past the first “aaste” (over the drain), off on the second'), walk(30)];
@@ -430,6 +441,10 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** more scripted first-timer deaths and 'like last time' moves */
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'CCU-08': [
+    { what: 'waiting by the second adda for the water to stop', steps: [...addaRoute(), walk(32 + 24.5), { hold: '', until: done, max: 1500 }], cause: 'ccu-dhowa' },
+    { what: 'trying to jump the broken rok', steps: [...addaRoute(), { policy: hopWater(), until: and(ground, X(32 + 38)), max: 1800 }, walk(76 - 1.8), steerHop(px(76.8), 12, 'up'), walk(76 + 12.2), { hold: 'R', jump: 30, ticks: 30, long: true }, { hold: 'R', until: done, max: 300 }], cause: 'ccu-khod' },
+  ],
   'CCU-05': [
     {
       what: 'walking off the high dry figure on to the one two steps lower',
@@ -437,8 +452,8 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
       cause: 'ccu-phata',
     },
   ],
-  'CCU-08': [{ what: 'waiting by the second adda for the water to stop', steps: [...addaRoute(), walk(32 + 24.5), { hold: '', until: done, max: 1500 }], cause: 'ccu-dhowa' }],
-  'CCU-07': [{ what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), walk(80 + 3.9), ...hopTo(px(86.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
+
+  'CCU-07': [{ what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), walk(124 + 3.9), ...hopTo(px(130.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
   'CCU-01': [{ what: 'up on the thela and a hop down off it, on to the rail', steps: tourRun('off'), cause: 'ccu-rail' }],
   'CCU-02': [
     {
@@ -453,6 +468,14 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu07-dui': (x) => duiRoute(x),
+  'ccu08-tokta': (x) => [
+    walk(x - 1.8),
+    steerHop(px(x + 0.8), 12, 'up on the broken rok'),
+    walk(x + 8.6),
+    { hold: '', until: (w) => w.flags.tokta.a.releasedAt > 0 && w.flags.plank === 1, max: 2400, note: 'stand still in the adda: the tea seller comes, on his plank' },
+    { hold: 'R', until: and(ground, X(x + 33.5)), max: 600, note: 'across the plank behind him' },
+  ],
   'ccu05-uthon': (x) => [
     steerHop(px(x + 1.8), 12, 'up on the first'),
     steerHop(px(x + 3.8), 10, 'up a step'),

@@ -2,6 +2,7 @@
 // Bridge's porters, adda on the rok, the pandal's bamboo skeleton. 01 the welcome tour, 02-10 long stages
 // (room + act + door ending), harder each time, 10 the finale. Slots: docs/allocation.json (CCU).
 import { Entity, type LevelDef, type StageMeta, type World } from '../../world';
+import { Solid } from '../../body';
 import { lines as L } from './lines';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
@@ -169,7 +170,7 @@ function howrahRoom(): LevelDef {
       road(w, px(6), px(28));
       const p1 = w.add(new Porter({ x: px(5), v: 40, h: SHORT, rests: [[px(21), 3]], go: (w2, me) => w2.player.isRiding(me.load) }));
       w.add(new Porter({ x: px(-2.5), v: 60, h: TALL, rests: [[px(30.5), Infinity]], go: walking(p1) }));
-      w.add(new Porter({ x: px(23), v: -45, h: TALL, go: walking(p1), off: px(6) }));
+      w.add(new Porter({ x: px(23), v: -45, h: TALL - 1, go: walking(p1), off: px(6) }));
       w.add(new ChaiBoard(px(21)));
       w.add(new ChaiBoard(px(30.5), true));
       sign(w, 0.4, 10.4, 3.4, 'HOWRAH', 'green', null, '705 m');
@@ -200,7 +201,29 @@ const girder: Act = {
   },
 };
 
-/** CCU-07 act 2: the second pylon, a porter who leaves at once (and stops for tea at once), and the one to wait for */
+
+/** CCU-07 act 2: two streams. Tall loads come the other way over your head while you ride a short one; the
+ *  tall porter going your way overtakes. Hop up to him, but never while an oncoming load is over you */
+const dui: Act = {
+  id: 'ccu07-dui',
+  w: 44,
+  advice: 'Two streams now. You ride a short porter, and tall loads come the other way, over your head: harmless, unless you jump into them. A tall porter going your way overtakes before the CHA board: hop up on to his load, but only when no oncoming load is over you.',
+  paint: (g, c) => {
+    g.fill(c.x, c.x + 3, 14, 14, '#').fill(c.x + 1, c.x + 3, 13, 13, '#');
+  },
+  build: (w, c) => {
+    w.add(new Girders(c.X(0), c.X(44)));
+    road(w, c.X(4), c.X(44));
+    const q1 = w.add(new Porter({ x: c.X(4.9), v: 45, h: SHORT, rests: [[c.X(25), 3]], go: (w2, me) => w2.player.isRiding(me.load) }));
+    w.add(new Porter({ x: c.X(-1), v: 78, h: TALL, rests: [[c.X(47.5), Infinity]], go: walking(q1) }));
+    w.add(new Porter({ x: c.X(30), v: -50, h: TALL - 1, go: walking(q1), off: c.X(4) }));
+    w.add(new Porter({ x: c.X(46), v: -50, h: TALL - 1, go: walking(q1), off: c.X(4) }));
+    w.add(new ChaiBoard(c.X(25)));
+    w.add(new ChaiBoard(c.X(2), true));
+  },
+};
+
+/** CCU-07 act 3: the second pylon, a porter who leaves at once (and stops for tea at once), and the one to wait for */
 const pylon: Act = {
   id: 'ccu07-pylon',
   w: 40,
@@ -252,6 +275,58 @@ function addaRoom(): LevelDef {
     },
   };
 }
+
+
+/** CCU-08 act: the broken rok. A gap too wide to jump, and on the far side the tea seller, who only comes
+ *  when someone's sitting in the adda: the workers lay a plank across for him. So this time, sit down. */
+const tokta: Act = {
+  id: 'ccu08-tokta',
+  w: 34,
+  cp0: false,
+  cps: [3.5],
+  advice: 'The rok is broken off ahead, too wide a gap to jump, and nobody crosses it but the tea seller. He only comes when someone is sitting in the adda: so this time, stand still among the old men. The workers lay a plank across for him; when he lets you go, cross on it behind him.',
+  paint: (g, c) => {
+    g.pit(c.x, c.x + 33).fill(c.x, c.x + 12, 13, 14, '#').fill(c.x + 20, c.x + 33, 13, 14, '#');
+  },
+  build: (w, c) => {
+    w.add(new House(c.X(0), c.X(34)));
+    khod(w, c.x, c.x + 34);
+    const a = w.add(new Adda(c.X(6), c.X(12), 3));
+    const t = teaRound(w, [a], c.X(30));
+    const plank = new Solid(c.X(13), px(13), px(7), 4);
+    plank.oneWay = true;
+    plank.collidable = false;
+    plank.velX = 0;
+    let laid = -1;
+    w.add(
+      new (class extends Entity {
+        solid = plank;
+        update(w2: World) {
+          // laid as he comes up to the gap; taken up again three seconds after he's crossed back
+          if (t.active && t.x < c.X(22) && laid < 0) {
+            laid = w2.tick;
+            plank.collidable = true;
+            w2.flags.plank = 1;
+          }
+          if (laid >= 0 && !t.active && w2.tick - laid > 600 && !w2.player.isRiding(plank)) {
+            plank.collidable = false;
+            laid = -1;
+            w2.flags.plank = 0;
+          }
+        }
+        draw(ctx: CanvasRenderingContext2D) {
+          if (!plank.collidable) return;
+          ctx.fillStyle = '#8B6B3E';
+          ctx.fillRect(plank.x, plank.y, plank.w, 4);
+          ctx.fillStyle = '#6B4A2E';
+          for (let x = plank.x + 10; x < plank.x + plank.w; x += 22) ctx.fillRect(x, plank.y, 1, 4);
+        }
+      })(),
+    );
+    w.flags.tokta = { a, t, plank };
+    w.flags.addas = [...(w.flags.addas ?? []), a];
+  },
+};
 
 /** CCU-08 act: more of the rok, two more addas, and a door that washes the rok on a beat */
 const rok: Act = {
@@ -619,8 +694,8 @@ export const levels = (): LevelDef[] => [
   longStage({ base: boiRoom(), par: 26, twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
   longStage({ base: kumartuliRoom(), par: 50, acts: [uthon, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-finished-figure-carried-over-the-lane') }),
   longStage({ base: poleRoom(), par: 60, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
-  longStage({ base: howrahRoom(), par: 90, acts: [girder, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
-  longStage({ base: addaRoom(), par: 40, acts: [rok], twist: 'ccu-bhanr', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-door-opens-for-a-cup-of-tea') }),
+  longStage({ base: howrahRoom(), par: 90, acts: [girder, dui, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
+  longStage({ base: addaRoom(), par: 40, acts: [rok, tokta], twist: 'ccu-bhanr', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-door-opens-for-a-cup-of-tea') }),
   longStage({ base: pandalRoom(), par: 40, acts: [chala], twist: 'ccu-dhak', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-dhak-beat-lifts-the-gate-curtain') }),
   longStage({ base: finaleRoom(), par: 80, acts: [bus10, tram10], twist: 'ccu-wall', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-customers-buy-the-wall-down') }),
 ];
