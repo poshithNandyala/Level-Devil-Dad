@@ -1,22 +1,21 @@
-import type { LevelDef, World } from '../world';
-import { Door } from '../entities/basics';
-import { LINES } from '../cities';
-import { auto, collapseOnStand, door, geyser, group, panel, pot, prop, px, rival, roller, sign, spring, collectible, thing } from './kit';
-import { Thing as ThingC } from '../entities/traps';
-import { Entity, type Hazard } from '../world';
-import { Act, G, deco } from './acts';
-import { onPass } from './trolls';
-import { tour } from './tour';
-import { longStage } from './chunks';
-import { Grid } from './grid';
-import { DT } from '../constants';
-import type { Thing } from '../entities/traps';
-import { exitTwist } from './twists';
+import type { LevelDef, World } from '../../world';
+import { Door } from '../../entities/basics';
+import { lines as L } from './lines';
+import { auto, collapseOnStand, door, geyser, group, panel, pot, prop, px, rival, roller, sign, spring, collectible, thing } from '../../levels/kit';
+import { Thing as ThingC } from '../../entities/traps';
+import { Entity, type Hazard } from '../../world';
+import { Act, G, deco } from '../../levels/acts';
+import { onPass } from '../../levels/trolls';
+import { tour } from '../../levels/tour';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
+import { DT } from '../../constants';
+import type { Thing } from '../../entities/traps';
+import { exitTwist } from '../../levels/twists';
 
 // Hyderabad: an auto-rickshaw carrying the exit responds to your movement.
 // Telugu + Dakhni (Hyderabadi Hindi) + English, all mixed up, like the city.
 
-const L = LINES.HYD;
 const TAUNTS = L.taunt;
 
 
@@ -307,7 +306,7 @@ const retake: Act = {
   },
 };
 
-export const HYD: LevelDef[] = [
+export const levels = (): LevelDef[] => [
   tour({
     id: 'HYD-01',
     city: 'HYD',

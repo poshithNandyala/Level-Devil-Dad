@@ -56,7 +56,6 @@ export type BaseThingKind =
   | 'bulbs'
   | 'log'
   | 'bat'
-  | 'cannonball'
   | 'setwall'
   | 'spark'
   | 'plank'
@@ -71,7 +70,6 @@ export type BaseThingKind =
   | 'biscuit'
   | 'chaicup'
   | 'divider'
-  | 'bangle'
   | 'clock'
   // Bengaluru / Mumbai
   | 'paver'
@@ -142,7 +140,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   biscuit: [32, 8],
   chaicup: [12, 12],
   divider: [16, 16],
-  bangle: [8, 8],
   clock: [32, 20],
   paver: [16, 6],
   blossom: [32, 6],
@@ -160,7 +157,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   bulbs: [32, 6],
   log: [32, 10],
   bat: [14, 8],
-  cannonball: [12, 12],
   setwall: [16, 64],
   spark: [5, 5],
   plank: [16, 5],
@@ -877,14 +873,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.fillRect(x, y, w, 2);
       break;
     }
-    case 'bangle': {
-      ctx.strokeStyle = ['#8E24AA', '#43A047', '#E53935', '#FDD835'][Math.floor(o.anim * 3 + 4) & 3];
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.ellipse(x + w / 2, y + h / 2, w / 2 - 1, h / 2 - 1, o.anim, 0, Math.PI * 2);
-      ctx.stroke();
-      break;
-    }
     case 'clock': {
       if (o.look === 'pole') {
         fillRR(ctx, x + w / 2 - 2, y + h - 1, 4, 240 - (y + h) + 1, 1, '#3E3E42');
@@ -1098,11 +1086,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       circle(ctx, x + 7, y + 4, 2.2, '#2B2230');
       circle(ctx, x + 6.2, y + 3.6, 0.5, '#FF5252');
       circle(ctx, x + 7.8, y + 3.6, 0.5, '#FF5252');
-      break;
-    }
-    case 'cannonball': {
-      circle(ctx, x + w / 2, y + h / 2, w / 2, '#37474F', '#1C262B', 1);
-      circle(ctx, x + w / 2 - 2, y + h / 2 - 2, 1.6, 'rgba(255,255,255,0.35)');
       break;
     }
     case 'setwall': {
