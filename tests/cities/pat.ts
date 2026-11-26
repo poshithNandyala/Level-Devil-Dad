@@ -410,7 +410,7 @@ const room03 = (): Step[] => [
   { hold: 'R', jump: 12, ticks: 12, note: 'across to the narrowed one' },
   { hold: 'R', until: ground, max: 200 },
   { hold: '', until: (w) => t3('pat3')(w) >= 3.85, max: 600, note: 'the second bell: stay on the one that is not changing' },
-  { hold: 'R', until: X(20.9), max: 300, note: 'to its right end' },
+  { hold: 'R', until: X(20.1), max: 300, note: 'to its right end' },
   { hold: 'R', jump: 12, ticks: 12, note: 'across to the last hoarding' },
   { hold: 'R', until: ground, max: 200 },
   { hold: 'R', until: X(27), max: 400 },
@@ -433,7 +433,7 @@ const act03 = (x: number): Step[] => [
   { hold: 'R', until: ground, max: 200 },
   { hold: 'R', until: X(x + 33.4), max: 600 },
 ];
-const BELLC = { T: 3.0, A: 0.6, L: 160, piv: 240 - 172, phase: [0, 1.5] };
+const BELLC = { T: 3.4, A: 0.7, L: 160, piv: 240 - 183, phase: [0, 1.7] };
 /** the bell rope: cross under a bell only while it is out at the far end of its swing */
 function bellsPolicy(w: World): Out {
   const e = w.flags.pat3e as { xs: number[] };
@@ -442,14 +442,17 @@ function bellsPolicy(w: World): Out {
     const th = BELLC.A * Math.sin((((w.tick + tau * 120) / 120 + BELLC.phase[i]) * 2 * Math.PI) / BELLC.T);
     return { x: e.xs[i] + BELLC.L * Math.sin(th) - 9, y: BELLC.piv + BELLC.L * Math.cos(th) - 4 };
   };
-  const hit = (px0: number, tau: number) =>
-    e.xs.some((_, i) => {
-      const b = bobAt(i, tau);
-      return b.y + 19 > 226 && px0 + 10 > b.x + 1 && px0 < b.x + 17;
-    });
-  // would walking on from here over the next 1.6 s hit a bell?
+  const hitOne = (i: number, px0: number, tau: number) => {
+    const b = bobAt(i, tau);
+    return b.y + 19 > 223 && px0 + 13 > b.x + 1 && px0 - 3 < b.x + 17;
+  };
+  // the nearest bell ahead: would walking on past it hit it (with some slack for a slow start)?
+  const i = e.xs.findIndex((x) => x + 62 > p.x + 10);
+  if (i < 0) return go('R');
+  if (p.cx > e.xs[i] - 64) return go('R');
+  const dur = Math.max(0.3, (e.xs[i] + 62 - p.x) / 140) + 0.2;
   let goOk = true;
-  for (let tau = 0; tau <= 1.6; tau += 0.04) if (hit(p.x + 140 * tau, tau)) goOk = false;
+  for (const lag of [0.04, 0.12, 0.22]) for (let tau = 0; tau <= dur; tau += 0.01) if (hitOne(i, p.x + 140 * Math.max(0, tau - lag), tau)) goOk = false;
   return go(goOk ? 'R' : '');
 }
 

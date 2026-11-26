@@ -183,10 +183,10 @@ export const act: Act = {
   },
 };
 
-export const BELL = { T: 3.0, A: 0.6, L: 160, piv: FL - 172, phase: [0, 1.5], off: [16, 7] };
+export const BELL = { T: 3.4, A: 0.7, L: 160, piv: FL - 183, phase: [0, 1.7], off: [20, 8] };
 
 export const ending: Ending = {
-  space: 22,
+  space: 26,
   advice: 'The last stretch is the bell rope: two iron bells swing low over the road. A bell is only in your way near the bottom of its swing. Cross under one while it is out at the far end of its swing, and not while it is coming back; and do not jump.',
   build(w, d) {
     const D = Math.round(d.x / 16);
