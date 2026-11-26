@@ -423,7 +423,11 @@ const waitClear = (key: string): Step => ({
 const act07a = (x: number): Step[] => [{ hold: 'R', until: X(x + 2), max: 300 }, waitClear('gtk7a'), { policy: gapJumper(), until: X(x + 39.5), max: 1500, note: 'go while it’s clear' }];
 const act07b = (x: number): Step[] => [{ policy: gapJumper(), until: X(x + 31.5), max: 1500, note: 'trust the rope' }];
 const act07c = (x: number): Step[] => [{ policy: gapJumper(), until: X(x + 39.5), max: 1500, note: 'ahead of the cloud bank' }];
-const ropeDoor: Policy = (w) => stepper()(w);
+const ropeDoors = new WeakMap<World, (w: World) => Out>();
+const ropeDoor: Policy = (w) => {
+  if (!ropeDoors.has(w)) ropeDoors.set(w, stepper());
+  return ropeDoors.get(w)!(w);
+};
 
 // ------------------------------------------------------------------ GTK-08
 /** board the first cabin when it's docked, ride it to the middle, cross to the second while they're together,
@@ -546,6 +550,34 @@ const gateYak: Policy = (w, _m, d) => {
   return gateRides.get(w)!(w);
 };
 
+// ------------------------------------------------------------------ GTK-10
+/** walk right, hopping up any step ahead: a tile wall or a one-way ledge just above */
+function climbAll(): (w: World) => Out {
+  const a = stairUp();
+  const b = stepper();
+  return (w) => {
+    const p = w.player;
+    if (p.onGround) {
+      const ty = Math.floor((p.y + p.h - 2) / 16);
+      if (w.isSolidTile(w.tileAt(Math.floor((p.x + p.w + 4) / 16), ty))) return b(w);
+    }
+    return a(w);
+  };
+}
+const room10 = (): Step[] => [{ policy: houseRoute(10, 3), until: and(ground, X(27)), max: 2400, note: 'in the cloud: count three flights, out of the third floor down' }, { hold: 'R', until: X(30), max: 300 }];
+const act10a = (x: number): Step[] => [
+  { policy: stepper(), until: X(x + 8.3), max: 900, note: 'down to the stall, pick up the wrapper, the bin is full' },
+  { hold: 'L', until: XL(x + 3.4), max: 400, note: 'back to the empty bin by the steps' },
+  { policy: rideTier('gtk10s', true), until: and(ground, X(x + 15), (w) => w.player.y < 100), max: 2400, note: 'on to the stool, ride the top tier, jump to the shelf' },
+  { hold: 'R', until: and(ground, X(x + 31)), max: 600 },
+];
+const act10b = (x: number): Step[] => [{ policy: gapJumper(), until: X(x + 29.5), max: 1500, note: 'jump where the rope stops' }];
+const views = new WeakMap<World, (w: World) => Out>();
+const viewPolicy: Policy = (w) => {
+  if (!views.has(w)) views.set(w, climbAll());
+  return views.get(w)!(w);
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['GTK-01'] = tourRoute();
   S['GTK-02'] = room02();
@@ -564,9 +596,12 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('GTK-08', 0, []);
   S['GTK-09'] = room09();
   lengthen('GTK-09', 0, []);
+  S['GTK-10'] = room10();
+  lengthen('GTK-10', 0, []);
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'GTK-10': { steps: [{ policy: stepper(), until: done, max: 2400, note: 'out of the first door, as Tara says' }], cause: 'gtk-galat-tala' },
   'GTK-09': { steps: [{ hold: 'R', until: done, max: 900, note: 'the ice holds, surely: walk across' }], cause: 'gtk-hiun' },
   'GTK-08': { steps: [{ policy: ropeway('gtk8c', { stay: true }), until: done, max: 3000, note: 'ride it all the way, as Tara says' }], cause: 'gtk-ropeway' },
   'GTK-07': { steps: [{ hold: 'R', until: done, max: 900, note: 'just run, as Tara says' }], cause: 'gtk-badal' },
@@ -581,6 +616,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'GTK-10': { steps: [...room10(), { policy: stepper(), until: X(32 + 8.3), max: 900 }, { policy: rideTier('gtk10s', true), until: done, max: 2400, note: 'straight on to the steamer with the wrapper in hand' }], cause: 'gtk-jurmana' },
   'GTK-09': { steps: [{ policy: yakRide('gtk9', { offAtStop: true }), until: done, max: 3000, note: 'ride the yak, off when it stops, as Tara says' }], cause: 'gtk-hiun' },
   'GTK-07': { steps: [...room07(), ...act07a(32), { hold: 'R', until: X(74), max: 300 }, waitClear('gtk7b'), { hold: 'R', until: done, max: 900, note: 'the cloud has lifted and the road looks whole: walk it' }], cause: 'gtk-deewar' },
   'GTK-06': {
@@ -610,6 +646,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk07-ghumti': act07c,
   'gtk08-tar': act08,
   'gtk09-chamri': act09,
+  'gtk10-thela': act10a,
+  'gtk10-rassi': act10b,
 };
 const endingPolicies: Record<string, Policy> = {
   'gtk-steam-vent': ventPolicy,
@@ -620,6 +658,7 @@ const endingPolicies: Record<string, Policy> = {
   'gtk-rope-climbs-to-door': ropeDoor,
   'gtk-cabin-both-doors': dockPolicy,
   'gtk-gate-yak-snowbank': gateYak,
+  'gtk-viewpoint-second-floor': viewPolicy,
 };
 void hop;
 
@@ -630,5 +669,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['GTK-01', 'GTK-02', 'GTK-03', 'GTK-04', 'GTK-05', 'GTK-06', 'GTK-07', 'GTK-08', 'GTK-09'],
+  fair: ['GTK-01', 'GTK-02', 'GTK-03', 'GTK-04', 'GTK-05', 'GTK-06', 'GTK-07', 'GTK-08', 'GTK-09', 'GTK-10'],
 };

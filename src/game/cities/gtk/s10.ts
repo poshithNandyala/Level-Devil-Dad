@@ -1,0 +1,159 @@
+// GTK-10 Kanchenjunga (the finale). Only Gangtok's own ideas, in a new order: the hillside house again, but in
+// the cloud, so you can't see the floors or the road you came in from: count the flights as you go down them.
+// Then the momo stall with a wrapper in your hand (bin it before the jump on to the steamer), then the cloud on
+// the road with the kerb rope, and its stair up to the viewpoint, where the door is two floors up in the cloud.
+import type { LevelDef, World } from '../../world';
+import type { Act } from '../../levels/acts';
+import type { Ending } from '../../levels/endkit';
+import { npc, tara } from '../../levels/endkit';
+import { Grid } from '../../levels/grid';
+import { collectible, door, rival, sign } from '../../levels/kit';
+import { onPass } from '../../levels/trolls';
+import { FL, Rig, box, decor, px } from './entities';
+import { taraScript } from './common';
+import { FLOORS, house, houseDecor } from './s04';
+import { fog, rope } from './s07';
+import { ACT_CFG, steamer } from './s02';
+import { bin, litter, mgRule } from './s05';
+
+const DOORS: ('none' | 'exit' | 'drop' | 'water')[] = ['none', 'drop', 'none', 'exit', 'water'];
+
+/** handrail posts along each floor of the house in the cloud, with a gap over each stairwell (drawn over the fog) */
+function stairRails(w: World, c: number) {
+  decor(w, 3, (ctx) => {
+    for (let i = 0; i < FLOORS.length; i++) {
+      const y = px(FLOORS[i]);
+      const hole = i === FLOORS.length - 1 ? null : i % 2 === 0 ? [c + 8, c + 10] : [c + 1, c + 3];
+      for (let k = c; k <= c + 11; k++) {
+        if (hole && k >= hole[0] - 1 && k <= hole[1]) continue;
+        box(ctx, px(k) + 7, y - 12, 2, 12, '#F4F1EA');
+        if (!(hole && k + 1 >= hole[0] - 1 && k + 1 <= hole[1]) && k < c + 11) box(ctx, px(k) + 8, y - 11, 16, 1.4, '#F4D35E');
+      }
+    }
+  });
+}
+
+export function room(): LevelDef {
+  const g = Grid.ground(15);
+  g.fill(0, 9, 4, 17, '#');
+  house(g, 10, DOORS, 6);
+  return {
+    id: 'GTK-10',
+    city: 'GTK',
+    index: 10,
+    name: 'Kanchenjunga',
+    nameEn: 'The mountain, in the cloud',
+    tagline: 'On a clear morning Kanchenjunga fills the sky over Gangtok. This isn’t a clear morning.',
+    hint: 'The house is in the cloud: you can’t see the floors, or the road you came in by. Count the flights of stairs as you go down them (the rail stops at each stairwell): the lower road is three floors down, so out of the door at the bottom of the third flight. The first door opens over the jhora; the bottom is the basement.',
+    par: 18,
+    map: g.put(1, 3, '@').rows(),
+    build(w: World) {
+      door(w);
+      houseDecor(w, 10, DOORS, 'gtk10');
+      fog(w, 10, 31, null);
+      stairRails(w, 10);
+      sign(w, 3.4, 0.6, 5.2, 'LOWER ROAD', 'green', 'down', '3 floors down');
+      sign(w, 8.2, 1.4, 1.6, 'G', 'shop', null, '', false);
+      rival(w, 2, 4, 1, taraScript(10));
+      onPass(w, px(6), (w2) => tara(w2, 'Hajur! Out the first door, Dad! | Yes! Out the first door, Dad!', 2.2));
+      collectible(w, 'gtk-churpi', 15, 8.4);
+    },
+  };
+}
+
+/** act 1: the momo stall again, with a wrapper on the paving. The jump on to the steamer is a jump: bin it first */
+export const act1: Act = {
+  id: 'gtk10-thela',
+  w: 32,
+  advice: 'Down at the momo stall there’s a wrapper on the paving, and you pick it up. The next bin is full; the one by the steps is empty. Bin it there, because getting on the steamer is a jump. Then ride the top tier and jump off to the shelf on the way up.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x, x + 1, 13, 14, '#');
+    g.fill(x + 10, x + 10, 13, 14, '#');
+    g.fill(x + 14, x + 28, 6, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    mgRule(w, false);
+    bin(w, x + 3, false);
+    litter(w, x + 5);
+    bin(w, x + 8, true);
+    steamer(w, x + 11, ACT_CFG, c.X(9), 'gtk10s');
+    sign(w, x + 17, 3.2, 4, 'MOMO', 'shop', null, 'last stop');
+  },
+};
+
+/** act 2: the cloud on the road again; the rope shows the holes, then climbs with the stair to the viewpoint */
+const ROAD_PITS: [number, number][] = [
+  [5, 6],
+  [12, 13],
+  [20, 21],
+];
+export const act2: Act = {
+  id: 'gtk10-rassi',
+  w: 30,
+  advice: 'The road to the viewpoint is in the cloud: jump wherever the kerb rope stops.',
+  paint: (g, c) => {
+    for (const [a, b] of ROAD_PITS) g.pit(c.x + a, c.x + b);
+  },
+  build: (w, c) => {
+    const pits = ROAD_PITS.map(([a, b]) => [c.x + a, c.x + b] as [number, number]);
+    fog(w, c.x, c.x + 29, null);
+    rope(w, c.x + 1, c.x + 29, pits);
+    // the drops get the cloud's cause
+    for (const [a, b] of pits) w.add(new Rig(px(a), FL + 20, px(b - a + 1), 40, { cause: 'gtk-badal', inset: 0 }));
+    sign(w, c.x + 0.5, 9.4, 4.2, 'VIEWPOINT', 'wood', 'right', 'tashi');
+  },
+};
+
+/** door: the viewpoint house in the cloud. Its doors are stacked up the front, G, 1, 2: the exit is two floors up */
+export const ending: Ending = {
+  space: 18,
+  advice: 'At the viewpoint the door is two floors up the house front, in the cloud, with a door on every floor. Climb the steps (the rope goes with them) past the ground floor and the first, to the second.',
+  paint: (g, D) => {
+    g.put(D, 14, '.');
+    g.fill(D - 13, D - 11, 13, 13, '=');
+    g.fill(D - 10, D - 8, 11, 11, '=');
+    g.fill(D - 7, D - 5, 9, 9, '=');
+    g.fill(D - 4, D + 2, 7, 14, '#');
+    g.put(D, 6, 'E');
+  },
+  build(w, d) {
+    const D = Math.round(d.x / 16);
+    w.flags.twist = 'counted';
+    fog(w, D - 15, D + 3, null);
+    // the doors that aren't the way out: the ground floor's and the first floor's, shut
+    const fakes: [number, number][] = [
+      [D - 15, 13],
+      [D - 9, 9],
+    ];
+    decor(w, 1, (ctx) => {
+      for (const [c, r] of fakes) {
+        box(ctx, px(c), px(r), px(1), px(2), '#8E6C8A');
+        box(ctx, px(c) + 3, px(r) + 3, 10, 26, '#5B4458');
+      }
+    });
+    decor(w, 3, (ctx) => {
+      for (const [c, r] of [
+        [D - 12, 13],
+        [D - 9, 11],
+        [D - 6, 9],
+        [D - 3, 7],
+      ]) {
+        box(ctx, px(c) + 7, px(r) - 12, 2, 12, '#F4F1EA');
+        box(ctx, px(c) + 7, px(r) - 12, 2, 3, '#E07A5F');
+      }
+    });
+    const told = { t: -999 };
+    for (const [c, r] of fakes)
+      onPass(w, px(c) - 2, (w2) => {
+        if (w2.tick - told.t > 60 && w2.player.y > px(r) - 20 && w2.player.y < px(r + 2)) {
+          told.t = w2.tick;
+          npc(w2, 'Hoina. | No.', px(c) + 8, px(r) - 8, 1.0);
+        }
+      });
+    sign(w, D - 17.5, 9.4, 4.4, 'VIEWPOINT', 'wood', null, '2 floors up');
+  },
+};
+
+export const meta10 = { family: 'finale-two-roads-count-in-fog', betrayals: ['count-in-fog'], ending: 'gtk-viewpoint-second-floor' };
