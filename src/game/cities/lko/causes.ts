@@ -11,4 +11,8 @@ export const causeLines: Record<string, string[]> = {
   'lko-tandoor': ['The tandoor was too wide to jump, and very hot inside.', 'Wait at the rim for the sheermal, drop on to it, hop out before it bakes.'],
   'lko-chakkar': ['You made the bells ring, so the dancer spun across the floor to the sound, through you.', 'Hop over the red ghungroo strips, land on plain boards.'],
   'lko-tatkar': ['She was tapping that board: step on it and it rings with her feet.', 'Go where she isn’t tapping: over her patch, or up on the takht.'],
+  'lko-ganj': ['You came rushing, so the strollers closed ranks and tutted you back into the nala.', 'Pause a moment before you reach them: stroll up, and they part.'],
+  'lko-shamiyana': ['Dusk: the awnings come down one after another, and you stopped under one.', 'Where the awnings are coming down, don’t pause: run the row.'],
+  'lko-seedhi': ['The lamplighter swung his ladder up, and you were right behind him.', 'Hang back while it swings; go under while he’s up the ladder.'],
+  'lko-darban': ['You came straight off the hop, rushing: the darban shoved you back.', 'Hop the nala early, pause, then stroll up to the door.'],
 };
