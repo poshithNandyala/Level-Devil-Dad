@@ -190,6 +190,46 @@ export const act: Act = {
   },
 };
 
+/** the second courtyard: the same rule, a different count, and a wall that only the hatches get you past */
+export const act2: Act = {
+  id: 'pat08-vihara',
+  w: 46,
+  advice: 'A second courtyard, and a second wall. This time the cell that stands on solid ground is the one with two bricks. Jump the hatches with three and one, step on the one with two, and hop the well in the last cell.',
+  cps: [],
+  paint: (g, c) => {
+    g.fill(c.x + 18, c.x + 19, 0, 14, '#');
+    for (const x of [24, 35]) g.fill(c.x + x, c.x + x + 1, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const lands: Landing[] = [
+      { n: 1, cx: c.X(24) + 16, safe: false },
+      { n: 2, cx: c.X(30) + 8, safe: true },
+      { n: 3, cx: c.X(35) + 16, safe: false },
+    ];
+    for (const l of lands) {
+      cellArt(w, l.cx, l.n);
+      if (!l.safe) well(w, l.cx - 16, l.cx + 16);
+    }
+    for (const [col, n] of [
+      [4, 3],
+      [9, 1],
+      [14, 2],
+    ] as [number, number][])
+      hatch(
+        w,
+        px(c.x + col),
+        n,
+        () => {
+          const l = lands.find((q) => q.n === n);
+          return l ? { x: l.cx, y: FL - 14 } : null;
+        },
+        'pat8b',
+      );
+    w.add(new Paint((ctx) => box(ctx, px(c.x + 18), 0, 32, FL, '#8A4A30'), -3));
+    sign(w, c.x + 1, 10.4, 3.2, 'VIHARA', 'shop', null, 'second courtyard');
+  },
+};
+
 export const ending: Ending = {
   space: 18,
   advice: 'The library mound: three more hatches, with bricks, are decoys and send you back to the start of the courtyard. The door is the cell with no bricks at all: jump the hatches and walk in.',

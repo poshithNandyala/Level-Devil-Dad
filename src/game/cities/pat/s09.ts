@@ -167,8 +167,8 @@ const wrap = (a: number) => {
   return t;
 };
 
-function wheel(w: World, cx: number, key: string, triggerX: number) {
-  const st = { t0: -1, gond: [] as Rig[], cx };
+function wheel(w: World, cx: number, key: string, triggerX: number, occupied: boolean[] = WHEEL.occupied) {
+  const st = { t0: -1, gond: [] as Rig[], cx, occ: occupied };
   const theta0 = (k: number) => ((-100 + k * 60) * Math.PI) / 180;
   const theta = (k: number, w2: World) => wrap(theta0(k) + (st.t0 < 0 ? 0 : since(w2, st.t0)) * WHEEL.omega);
   const cy = FL - WHEEL.R;
@@ -194,7 +194,7 @@ function wheel(w: World, cx: number, key: string, triggerX: number) {
     }, -2),
   );
   for (let k = 0; k < WHEEL.n; k++) {
-    const occ = WHEEL.occupied[k];
+    const occ = occupied[k];
     const g = w.add(
       new Rig(cx - 16, FL, 32, 10, {
         solid: true,
@@ -261,6 +261,33 @@ export const act: Act = {
     );
     gapRun(w, px(c.x + 24), px(c.x + 54), 68, 'pat9b', { at: px(c.x + 38), secs: 1.2 });
     sign(w, c.x + 3, 10.4, 3.4, 'JHOOLA', 'shop', null, 'giant wheel');
+  },
+};
+
+export const act2: Act = {
+  id: 'pat09-ghoda',
+  w: 60,
+  advice: 'A second wheel, with two fairgoers in the first two gondolas this time: let them both go by and ride the first empty one. Then the last crowd: the horse is quicker still, and stops once.',
+  cps: [20, 57],
+  paint: (g, c) => {
+    g.fill(c.x + 8, c.x + 16, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const cxw = px(c.x + 8) + 72;
+    wheel(w, cxw, 'pat9x', px(c.x + 5), [true, true, false, false, false, false]);
+    w.add(
+      new Rig(px(c.x + 8), 256, px(9), 30, {
+        layer: 4,
+        cause: 'pat-jhoola',
+        inset: 0,
+        paint: (ctx, r) => {
+          ctx.fillStyle = 'rgba(40,30,20,0.92)';
+          ctx.fillRect(r.x, r.y, r.w, 30);
+        },
+      }),
+    );
+    gapRun(w, px(c.x + 24), px(c.x + 54), 80, 'pat9c', { at: px(c.x + 40), secs: 1.0 });
+    sign(w, c.x + 3, 10.4, 3.4, 'JHOOLA 2', 'shop', null, 'bada jhoola');
   },
 };
 

@@ -215,7 +215,7 @@ function rideBalanced(withTruck: boolean, wide: boolean): (w: World) => Out {
       }
       return go('R');
     }
-    const g = w.flags.pat7g as { lane0: number; P: number } | undefined;
+    const g = wide ? undefined : (w.flags.pat7g as { lane0: number; P: number } | undefined);
     if (riding && st.cx >= st.stopAt - 1) return go('R');
     if (riding) {
       const base = withTruck ? st.base : st.P;
@@ -228,7 +228,6 @@ function rideBalanced(withTruck: boolean, wide: boolean): (w: World) => Out {
       if (p.cx < g.lane0 - 20 && !(t < 1.4)) return go('');
       return go('R');
     }
-    void wide;
     return go('R');
   };
 }
@@ -278,7 +277,7 @@ function followHorse(key: string): (w: World) => Out {
 }
 const room09 = (): Step[] => [{ policy: followHorse('pat9'), until: and(ground, X(28.5)), max: 3000, note: 'right behind the horse through the crowd' }, { hold: 'R', until: X(31.5), max: 300 }];
 /** the wheel: an empty gondola on the way down, off at the far bank on its way up */
-function wheelRide(): (w: World) => Out {
+function wheelRide(key = 'pat9w'): (w: World) => Out {
   let W: World | null = null;
   let jt = 0;
   let cool = 0;
@@ -295,7 +294,7 @@ function wheelRide(): (w: World) => Out {
       const t0 = tgt as unknown as { x: number } | null;
       return { move: t0 && w.player.cx >= t0.x + 8 ? '' : 'R', jump: true };
     }
-    const st = w.flags.pat9w as { cx: number; gond: { s: { th: number }; solid: any }[] };
+    const st = w.flags[key] as { cx: number; occ: boolean[]; gond: { s: { th: number }; solid: any }[] };
     const p = w.player;
     const deg = (r: number) => (r * 180) / Math.PI;
     const edgeL = st.cx - 72;
@@ -319,7 +318,7 @@ function wheelRide(): (w: World) => Out {
       return go(!t || p.cx < t.x + 8 ? 'R' : '');
     }
     if (p.onGround && w.tick > cool) {
-      const occ = [true, false, false, false, true, false];
+      const occ = st.occ;
       const k = st.gond.findIndex((g, i) => !occ[i] && deg(g.s.th) >= -50 && deg(g.s.th) <= -38);
       if (k >= 0) {
         tgt = st.gond[k];
@@ -504,6 +503,8 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'PAT-01': { steps: [...upTo(24), { hold: '', until: done, max: 1500 }], cause: 'pat-tempo' },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'PAT-02': [{ what: 'run on into the second bed, where the litti is', steps: [...room02(), { hold: 'R', until: X(34.3), max: 400 }, { hold: '', ticks: 235 }, { hold: 'R', until: done, max: 2400 }], cause: 'pat-angara' }],
+  'PAT-07': [{ what: 'walk straight through the lane at the stand', steps: [{ policy: rideBalanced(true, true), until: done, max: 6000 }], cause: 'pat-bhid' }],
   'PAT-08': [{ what: 'the hatch with 1 brick', steps: [...hop(5.5, ''), ...hop(10.5, ''), { hold: 'R', until: done, max: 900 }], cause: 'pat-kua' }],
   'PAT-01': [{ what: 'run on at the hoarding', steps: [...upTo(32), { hold: 'R', until: done, max: 900 }], cause: 'pat-hoarding' }],
 };
@@ -519,7 +520,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'pat07-sadak': act07a,
   'pat07-adda': act07b,
   'pat08-chowk': act08,
+  'pat08-vihara': (x) => [...hop(x + 2.5, 'jump the hatch with 3 bricks'), ...hop(x + 7.5, 'and the one with 1'), { hold: 'R', until: X(x + 22), max: 400, note: 'step on the hatch with 2 bricks' }, ...hop(x + 33.1, 'hop the last cell’s well'), { hold: 'R', until: X(x + 45.4), max: 600 }],
   'pat09-jhoola': act09,
+  'pat09-ghoda': (x) => [{ policy: wheelRide('pat9x'), until: and(ground, X(x + 18.5)), max: 4000, note: 'across on the first empty gondola' }, { policy: followHorse('pat9c'), until: and(ground, X(x + 56)), max: 3000, note: 'behind the quickest horse' }, { hold: 'R', until: X(x + 59.4), max: 300 }],
   'pat10-pipa': act10a,
   'pat10-anaaj': act10b,
 };

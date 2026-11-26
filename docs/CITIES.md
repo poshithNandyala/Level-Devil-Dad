@@ -35,7 +35,7 @@ How to use this file:
 | 13 | BPL | Bhopal | Madhya Pradesh | Central | Bhopali Hindi + English | done |
 | 14 | RPR | Raipur | Chhattisgarh | Central | Chhattisgarhi + English | done |
 | 15 | RNC | Ranchi | Jharkhand | Central | Nagpuri (Sadri) + Hindi + English | done |
-| 16 | PAT | Patna | Bihar | Central | Magahi / Bhojpuri + Hindi + English | to do |
+| 16 | PAT | Patna | Bihar | Central | Magahi / Bhojpuri + Hindi + English | built (city/pat) |
 | 17 | LKO | Lucknow | Uttar Pradesh | Central | Lakhnavi Hindustani (Urdu-rich) + Awadhi + English | to do |
 | 18 | BBI | Bhubaneswar | Odisha | East | Odia + Hindi + English | to do |
 | 19 | CCU | Kolkata | West Bengal | East | Bengali + Hindi + English | to do |
