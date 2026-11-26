@@ -10,7 +10,7 @@ import { onPass } from '../../levels/trolls';
 import { Grid } from '../../levels/grid';
 import type { Act } from '../../levels/acts';
 import { Art, FLOOR, px, stillness, bowIcon, TAU } from './kit';
-import { archway, looseStone, pehleDoorway, tara } from './s02';
+import { archway, looseStone, pehleDoorway, tara, gali } from './s02';
 import { washLine, kunda } from './s03';
 import { Heap, karahi, shadows, type Light } from './s04';
 import { Dancer } from './s06';
@@ -212,5 +212,6 @@ const julus10 = again(julus, 'lko10-julus', 'The slow procession again: walk beh
 const hawa10 = again(hawa, 'lko10-hawa', 'Up on the roofs with the flyer behind you and his two-faced flag: cross while you see white, the birds see red.');
 const chausar10 = again(chaupar, 'lko10-chausar', 'The pachisi court once more: one lit square at a time, never the courtier’s.');
 const kunda10 = again(kunda, 'lko10-kunda', 'The rinsing vats again: each washer whistles a beat after you step on his print. Run each without stopping.');
-export const s10 = { room: tehzeebRoom, acts: [dhulai, tawa10, tatkar10, julus10, hawa10, chausar10, kunda10, galiyara] };
+const gali10 = again(gali, 'lko10-gali', 'The gali again: the man behind you offers the way before the stone has gone. Let him go first.');
+export const s10 = { room: tehzeebRoom, acts: [dhulai, tawa10, tatkar10, julus10, gali10, hawa10, chausar10, kunda10, galiyara] };
 export const meta10 = { family: 'finale-bow-meets-bells', betrayals: ['bow-vs-bells'], ending: 'lko-tehzeeb' } as StageMeta;
