@@ -396,7 +396,7 @@ const R_lko07_shaam = (id: string) => (x: number): Step[] => [runTo(x + 45, 800,
 actRoutes['lko07-shaam'] = R_lko07_shaam('lko07-shaam');
 const R_lko07_batti = (id: string) => (x: number): Step[] => [behindLamp(`${id}:ll1`, x + 13), behindLamp(`${id}:ll2`, x + 34), behindLamp(`${id}:ll3`, x + 56), runTo(x + 57, 300)];
 actRoutes['lko07-batti'] = R_lko07_batti('lko07-batti');
-const JN = [12, 24, 36, 48, 60];
+const JN = [12, 24, 36, 48, 60, 72, 84, 96, 108];
 const R_lko07_julus = (id: string) => (x: number): Step[] => {
   let jt = 0;
   let W: World | null = null;
@@ -425,14 +425,14 @@ const R_lko07_julus = (id: string) => (x: number): Step[] => {
         }
         return go(gap < 30 ? '' : 'R');
       },
-      until: and(ground, X(x + 73)),
-      max: 4000,
+      until: and(ground, X(x + 121)),
+      max: 6000,
       note: 'behind the procession at its pace, waiting at each nala till they are clear',
     },
   ];
 };
 actRoutes['lko07-julus'] = R_lko07_julus('lko07-julus');
-const SAAMNE = [10, 26, 42, 58, 74, 90];
+const SAAMNE = [10, 26, 42, 58, 74, 90, 106, 122];
 const R_lko07_saamne = (id: string) => (x: number): Step[] =>
   SAAMNE.flatMap((a, k) => [
     hop(x + a - 6, x + a - 3.5, 'over the nala'),
@@ -440,7 +440,7 @@ const R_lko07_saamne = (id: string) => (x: number): Step[] =>
     hops([x + a + 0.5], 'up into the alcove'),
     until((w) => { const G = w.flags[`${id}:g${k}`] as { done: boolean; x: number }; return G.done || G.x + 46 < w.player.x; }, 1200, 'let them pass under'),
     runTo(x + a + 6, 300),
-  ]).concat([runTo(x + 99, 300)]);
+  ]).concat([runTo(x + 131, 300)]);
 actRoutes['lko07-saamne'] = R_lko07_saamne('lko07-saamne');
 const R_lko07_chauraha = (id: string) => (x: number): Step[] => [walkTo(x + 3, 300), hop(x + 5, x + 7.3, 'over the nala'), pause('pause before the strollers'), runTo(x + 31, 600, 'stroll up, then run through')];
 actRoutes['lko07-chauraha'] = R_lko07_chauraha('lko07-chauraha');

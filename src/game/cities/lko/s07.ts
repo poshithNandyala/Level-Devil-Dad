@@ -445,15 +445,15 @@ export const darban: Ending = {
  *  last one steps back and tuts you into the nala you just crossed. */
 export const julus: Act = {
   id: 'lko07-julus',
-  w: 74,
+  w: 122,
   advice: 'A slow group of strollers going your way, all down the arcade, stepping over the open nalas. Walk behind them at their pace, pausing as they do. Rush up and bump them, or hop a nala straight on to their heels, and the last one steps back and tuts you into the nala you just crossed. Wait at each nala till they’re well clear of it.',
-  cps: [24.5, 48.5],
+  cps: [24.5, 48.5, 74.5, 98.5],
   paint: (g, c) => {
     for (const n of JULUS_NALAS) g.pit(c.x + n, c.x + n + 1);
   },
   build: (w, c) => {
     const x = c.x;
-    arcade(w, x, x + 73);
+    arcade(w, x, x + 121);
     const strolling = pace(w);
     for (const n of JULUS_NALAS) nala(w, x + n, x + n + 1, 'lko-julus');
     const G = { x: c.X(6), go: false, hop: 0, shoved: -999 };
@@ -461,7 +461,7 @@ export const julus: Act = {
     const body = w.add(new Block(G.x, FLOOR - 28, 52, 28, () => {}, 0));
     w.add(
       new Art((ctx) => {
-        if (G.x > c.X(66)) return;
+        if (G.x > c.X(114)) return;
         for (let i = 0; i < 4; i++) {
           const xx = G.x + 6 + i * 13;
           const over = JULUS_NALAS.some((n) => xx > c.X(n) - 4 && xx < c.X(n + 2) + 4);
@@ -473,10 +473,10 @@ export const julus: Act = {
       const p = w2.player;
       if (!G.go && p.cx > c.X(2)) G.go = true;
       // they stroll at a steady 45 px/s; across a nala they don't hurry
-      if (G.go && G.x < c.X(80)) G.x += 0.375;
+      if (G.go && G.x < c.X(128)) G.x += 0.375;
       body.solid.x = Math.round(G.x);
       // at the end of the arcade they turn off into a lane
-      const gone = G.x > c.X(66);
+      const gone = G.x > c.X(114);
       body.set(!gone);
       if (gone) return;
       // rush into them, or come down on their heels from a hop: the last one steps back and tuts
@@ -497,18 +497,18 @@ export const julus: Act = {
     sign(w, x + 0.4, 10.4, 3.4, 'JULUS', 'shop', null, 'ganj');
   },
 };
-const JULUS_NALAS = [12, 24, 36, 48, 60];
+const JULUS_NALAS = [12, 24, 36, 48, 60, 72, 84, 96, 108];
 
 // ================================================================ act 5: saamne, the procession coming the other way
 /** Groups of strollers coming towards you down the arcade, a banner on a pole held high over them. They
  *  don't part for anyone coming the other way: they walk you back into the nala you crossed. Hopping over
  *  them puts you into the banner. Step up into the alcove in the arcade wall and let them pass under you. */
-const SAAMNE = [10, 26, 42, 58, 74, 90];
+const SAAMNE = [10, 26, 42, 58, 74, 90, 106, 122];
 export const saamne: Act = {
   id: 'lko07-saamne',
-  w: 100,
+  w: 132,
   advice: 'Now the strollers come the other way, a banner on a pole held high over them, and they don’t part: they walk you back into the nala behind you. Hopping over them puts you in the banner. After each nala, step up into the alcove in the arcade wall and let them pass under you.',
-  cps: [33.5, 65.5],
+  cps: [33.5, 65.5, 97.5],
   paint: (g, c) => {
     for (const a of SAAMNE) {
       g.pit(c.x + a - 6, c.x + a - 5);
@@ -517,7 +517,7 @@ export const saamne: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    arcade(w, x, x + 99);
+    arcade(w, x, x + 131);
     SAAMNE.forEach((a, k) => {
       nala(w, x + a - 6, x + a - 5, 'lko-saamne');
       w.add(
