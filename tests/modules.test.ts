@@ -131,11 +131,21 @@ describe('city modules', () => {
   });
 
   it('install refuses a key another city already uses', () => {
-    const base: CityModule = { ...CITY_MODULES[0], id: 'SXR', levels: () => [], endings: {}, causeLines: {}, things: {}, sceneFeatures: {} };
+    // throwaway modules under chapter ids no city module has yet (a built city's id would be skipped as installed)
+    const [a, b, c, d, e] = CHAPTERS.map((ch) => ch.id).filter((id) => !CITY_MODULES.some((m) => m.id === id));
+    expect(e, 'needs five unbuilt chapters for throwaway modules').toBeDefined();
+    const base: CityModule = { ...CITY_MODULES[0], id: a as CityModule['id'], levels: () => [], endings: {}, causeLines: {}, things: {}, sceneFeatures: {} };
+    // 'spikes' and 'crate' are shared keys (entities/props.ts CAUSE_LINES, render/art/things.ts SIZE), no city's
     expect(() => installCityModules([{ ...base, causeLines: { spikes: ['a', 'b'] } }])).toThrow(/death cause 'spikes'/);
-    expect(() => installCityModules([{ ...base, id: 'JMU', things: { crate: { size: [1, 1], draw: () => {} } } }])).toThrow(/thing kind 'crate'/);
-    expect(() => installCityModules([{ ...base, id: 'DDN', endings: { knock: Object.values(CITY_MODULES[0].endings)[0] } }])).toThrow(/ending kind 'knock'/);
-    installCityModules([{ ...base, id: 'SML', sceneFeatures: { 'sml-ridge': () => {} } }]);
-    expect(() => installCityModules([{ ...base, id: 'CHP', sceneFeatures: { 'sml-ridge': () => {} } }])).toThrow(/scene feature 'sml-ridge'/);
+    expect(() => installCityModules([{ ...base, id: b as CityModule['id'], things: { crate: { size: [1, 1], draw: () => {} } } }])).toThrow(/thing kind 'crate'/);
+    // an ending kind some city already owns, read from the registry (no city's key is named here)
+    const owner = CITY_MODULES.find((m) => Object.keys(m.endings).length > 0)!;
+    const [usedEnding] = Object.keys(owner.endings);
+    const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    expect(() => installCityModules([{ ...base, id: c as CityModule['id'], endings: { [usedEnding]: owner.endings[usedEnding] } }])).toThrow(new RegExp(`ending kind '${esc(usedEnding)}'`));
+    const feature = `${d.toLowerCase()}-test-feature`;
+    installCityModules([{ ...base, id: d as CityModule['id'], sceneFeatures: { [feature]: () => {} } }]);
+    expect(() => installCityModules([{ ...base, id: e as CityModule['id'], sceneFeatures: { [feature]: () => {} } }])).toThrow(new RegExp(`scene feature '${esc(feature)}'`));
   });
+
 });
