@@ -290,6 +290,10 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   // TVM-05, a person's timing (stage unchanged): on the hop to the last moat stone let go of right earlier, so a
   // late hop (held a little longer) still lands on the stone and not past it in the bank's mud
   {
+    // the FIX (run on under the second gate after the long jump) stays the shipped play, from the unchanged route
+    const was = S['TVM-05'];
+    fix['TVM-05'] = { steps: [...was.slice(0, was.findIndex((st) => st.note === 'off the last stone, long: past the mud on the bank') + 1), { hold: 'R', until: (w) => w.state !== 'play', max: 600 }], cause: 'crushed' };
+    S['TVM-05'] = [...was];
     const r = S['TVM-05'];
     const i = r.findIndex((st) => st.note === 'off the last stone, long: past the mud on the bank') - 3;
     r[i] = { ...r[i], until: (w: World) => w.player.onGround || w.player.x + 5 >= 47 * 16 + 16 - 12 };
