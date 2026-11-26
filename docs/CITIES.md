@@ -37,7 +37,7 @@ How to use this file:
 | 15 | RNC | Ranchi | Jharkhand | Central | Nagpuri (Sadri) + Hindi + English | done |
 | 16 | PAT | Patna | Bihar | Central | Magahi / Bhojpuri + Hindi + English | to do |
 | 17 | LKO | Lucknow | Uttar Pradesh | Central | Lakhnavi Hindustani (Urdu-rich) + Awadhi + English | to do |
-| 18 | BBI | Bhubaneswar | Odisha | East | Odia + Hindi + English | to do |
+| 18 | BBI | Bhubaneswar | Odisha | East | Odia + Hindi + English | built (city/bbi) |
 | 19 | CCU | Kolkata | West Bengal | East | Bengali + Hindi + English | to do |
 | 20 | SVP | Sri Vijaya Puram (bonus) | Andaman & Nicobar Islands | East | Andaman Hindi + Bengali/Tamil/Telugu + English | to do |
 | 21 | GTK | Gangtok | Sikkim | East | Nepali + Hindi + English | to do |
