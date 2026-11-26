@@ -174,6 +174,22 @@ const room08: Step[] = [
   runTo(31.5, 300),
 ];
 
+// ================================================================ LKO-09
+type Fl = { order: (w: World) => { c: string; left: number } };
+const redNow = (key: string, need = 1.0) => (w: World) => {
+  const o = (w.flags[key]?.f as Fl | undefined)?.order(w);
+  return !!o && o.c === 'red' && o.left > need;
+};
+const redSeen = (key: string) => (w: World) => {
+  const f = w.flags[key]?.f as (Fl & { seen: (w: World) => string }) | undefined;
+  return !!f && f.seen(w) === 'red' && f.order(w).left > 0.6;
+};
+const room09: Step[] = [
+  walkTo(6.1, 300),
+  hops([[8.6, redNow('kabootar')], 11.1, [14.1, redNow('kabootar')], 16.6, [20.1, redNow('kabootar')], 22.6, [26.1, redNow('kabootar')], 28], 'roof to roof, only early in the red'),
+  runTo(31.5, 300),
+];
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['LKO-02'] = room02;
   lengthen('LKO-02', 0, []);
@@ -189,6 +205,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('LKO-07', 0, []);
   S['LKO-08'] = room08;
   lengthen('LKO-08', 0, []);
+  S['LKO-09'] = room09;
+  lengthen('LKO-09', 0, []);
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
@@ -199,10 +217,20 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-06': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk across the stage' }], cause: 'lko-chakkar' },
   'LKO-07': { steps: [runTo(7, 200), hop(9, 11.3), { hold: 'R', until: done, max: 900, note: 'on along the arcade at a run' }], cause: 'lko-ganj' },
   'LKO-08': { steps: [runTo(5, 200), hop(7, 9, 'hop the little drain into the arch'), { hold: 'R', until: done, max: 600 }], cause: 'lko-bhool' },
+  'LKO-09': { steps: [walkTo(6.1, 300), hops([8.6, 11.1, 14.1, 16.6, 20.1, 22.6, 26.1, 28], 'roof to roof, never mind the flag'), until(done, 300)], cause: 'lko-kabootar' },
 };
 
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-02': { steps: [runTo(8.2), until(done, 900, 'bow, and keep bowing')], cause: 'lko-dhakka' },
+  'LKO-09': {
+    steps: [
+      ...room09,
+      walkTo(32 + 4.9, 300),
+      hops([[32 + 7.6, redSeen('lko09-hawa:k')], 32 + 10.1, [32 + 13.6, redSeen('lko09-hawa:k')], 32 + 16.1, [32 + 19.6, redSeen('lko09-hawa:k')], 32 + 22.1], 'watch the flag, as learned: go on the red you see'),
+      until(done, 600),
+    ],
+    cause: 'lko-kabootar',
+  },
   'LKO-08': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk, as learned, through every arch' }], cause: 'lko-kuan' },
   'LKO-07': { steps: [...room07.slice(0, 3), runTo(32 + 8, 400), pause('stroll on, as learned'), runTo(32 + 14, 300), pause(), until(done, 300)], cause: 'lko-shamiyana' },
   'LKO-06': { steps: [walkTo(5.9, 200), hops([8.5, 10.6, 13.3, 15.6, 18.3], 'plain boards only'), { hold: 'R', until: done, max: 600 }], cause: 'lko-tatkar' },
@@ -288,7 +316,22 @@ actRoutes['lko07-chauraha'] = (x) => [walkTo(x + 3, 300), hop(x + 5, x + 7.3, 'o
 
 actRoutes['lko08-mehrab'] = (x) => [runTo(x + 12, 400, 'on foot through the vault arch'), hop(x + 14.6, x + 17, 'at a jump through the next, up past the well', 30), runTo(x + 29.5, 300)];
 
+actRoutes['lko09-hawa'] = (x) => {
+  const ok = redNow('lko09-hawa:k');
+  return [
+    walkTo(x + 4.9, 300),
+    hops([[x + 7.6, ok], x + 10.1, [x + 13.6, ok], x + 16.1, [x + 19.6, ok], x + 22.1, [x + 25.6, ok], x + 28.1, [x + 31.6, ok], x + 33], 'cross while you see white: the birds see red'),
+  ];
+};
+
 const endingPolicies: Record<string, Policy> = {
+  'lko-chhatri'(w, m, d) {
+    const D = Math.round(d.x / 16);
+    if (!m.h) m.h = hops([D - 11, D - 7.2, [D - 3.6, redNow('chhatri', 1.4)], D - 1.5], 'wait on the roof, cross early in the red').policy!;
+    const p = w.player;
+    if (p.onGround && p.cx > px(D - 2)) return go(toward(w, d.x + 8, 1));
+    return m.h(w);
+  },
   'lko-489'(w, _m, d) {
     // walk: over the crack, through the last arch on foot, off the end of the gallery, down to the door
     return go(toward(w, d.x + 8, 1));
@@ -395,7 +438,7 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['LKO-02', 'LKO-03', 'LKO-04', 'LKO-05', 'LKO-06', 'LKO-07', 'LKO-08'],
+  fair: ['LKO-02', 'LKO-03', 'LKO-04', 'LKO-05', 'LKO-06', 'LKO-07', 'LKO-08', 'LKO-09'],
 };
 void flag;
 void actFlag;
