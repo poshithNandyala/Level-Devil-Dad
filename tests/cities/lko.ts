@@ -198,7 +198,49 @@ const room10: Step[] = [
   runTo(31, 400),
 ];
 
+// ================================================================ LKO-01
+/** walk right, hopping whatever is in the way (a step up, a post, a ditch), up to tile tx */
+const stroll = (tx: number, note = ''): Step => {
+  let jt = 0;
+  let W: World | null = null;
+  return {
+    policy: (w) => {
+      if (W !== w) {
+        W = w;
+        jt = 0;
+      }
+      const p = w.player;
+      if (jt > 0) {
+        jt--;
+        return { move: 'R', jump: true };
+      }
+      if (!p.onGround) return go('R');
+      const feet = p.y + p.h;
+      const ahead = Math.floor((p.x + p.w + 6) / 16);
+      const wall = w.isSolidTile(w.tileAt(ahead, Math.floor((feet - 2) / 16))) || !!w.solidAt(p.x + p.w + 4, p.y + 2, 3, p.h - 4);
+      const hole = !w.isSolidTile(w.tileAt(ahead, Math.floor((feet + 2) / 16))) && !w.isSolidTile(w.tileAt(Math.floor((p.x + p.w) / 16), Math.floor((feet + 2) / 16)));
+      if (wall || hole) {
+        jt = 13;
+        return { move: 'R', jump: true };
+      }
+      return go('R');
+    },
+    until: and(ground, X(tx)),
+    max: 1500,
+    note,
+  };
+};
+const room01: Step[] = [
+  stroll(37, 'past the Rumi Darwaza, over the ditch and up and down the steps'),
+  walkTo(37.3, 200),
+  hops([40, 41.4, 44.6, 45.4, 48.6, 49.4, 51.8], 'bolt to bolt, off each before the hook gets its grip'),
+  runTo(59, 300, 'straight under the unrolling bolt, before its roller comes down'),
+  stroll(111, 'Hazratganj, the bollards, the thela, the wall and the deck'),
+  { hold: 'R', until: done, max: 600 },
+];
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
+  S['LKO-01'] = room01;
   S['LKO-02'] = room02;
   lengthen('LKO-02', 0, []);
   S['LKO-03'] = room03;
@@ -220,6 +262,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'LKO-01': { steps: [stroll(37), walkTo(37.3, 200), hops([40], 'on to the first bolt, and look around'), until(done, 400)], cause: 'lko-than' },
   'LKO-02': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk straight in' }], cause: 'lko-pehle' },
   'LKO-03': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk out along the printed vine' }], cause: 'lko-chhapa' },
   'LKO-04': { steps: [runTo(4, 200), hops([7], 'line up on the far edge of the first heap'), { policy: (w) => go(toward(w, px(7) + 9, 1)), until: done, max: 400 }], cause: 'lko-malai' },
@@ -232,6 +275,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 };
 
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'LKO-01': { steps: [...room01.slice(0, 3), { hold: '', ticks: 40, note: 'catch your breath after the bolts' }, { hold: 'R', until: done, max: 400 }], cause: 'lko-parda' },
   'LKO-02': { steps: [runTo(8.2), until(done, 900, 'bow, and keep bowing')], cause: 'lko-dhakka' },
   'LKO-10': { steps: [walkTo(13.5, 400, 'up to the gentlemen'), until(done, 600, 'and bow, as learned')], cause: 'lko-tehzeeb' },
   'LKO-09': {
@@ -472,7 +516,7 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['LKO-02', 'LKO-03', 'LKO-04', 'LKO-05', 'LKO-06', 'LKO-07', 'LKO-08', 'LKO-09', 'LKO-10'],
+  fair: ['LKO-01', 'LKO-02', 'LKO-03', 'LKO-04', 'LKO-05', 'LKO-06', 'LKO-07', 'LKO-08', 'LKO-09', 'LKO-10'],
 };
 void flag;
 void actFlag;

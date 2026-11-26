@@ -21,4 +21,6 @@ export const causeLines: Record<string, string[]> = {
   'lko-kabootar': ['White flag: the flock came down on the roof you were landing on, and knocked you off.', 'Cross only on red, and early in the red. Read the face the birds can see.'],
   'lko-chhat': ['Off the rooftops, down into the lane.', 'Jump from the roof’s edge; tap, no need to hold.'],
   'lko-tehzeeb': ['You bowed on the chikan cover, and the bells under it rang for the dancer.', 'A step on the covers is silent: bow only on plain boards.'],
+  'lko-than': ['The bolt was sold: the hook slid it out sideways from under you.', 'Off each bolt and on to the next before the hook gets its grip.'],
+  'lko-parda': ['A long bolt unrolled down across the road, and its roller came down on you.', 'Run under it at once, before the roller reaches the ground. Or wait for it to roll up.'],
 };
