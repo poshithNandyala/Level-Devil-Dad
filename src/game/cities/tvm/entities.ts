@@ -1,8 +1,8 @@
 // Thiruvananthapuram's own machinery.
-import { Entity, type Hazard, type World } from '../world';
-import { Solid } from '../body';
-import { DT, TILE } from '../constants';
-import { overlapXYWH } from '../constants';
+import { Entity, type Hazard, type World } from '../../world';
+import { Solid } from '../../body';
+import { DT, TILE } from '../../constants';
+import { overlapXYWH } from '../../constants';
 
 /**
  * Thumba: a sounding rocket on its launch rail. When it goes, the exhaust floods the

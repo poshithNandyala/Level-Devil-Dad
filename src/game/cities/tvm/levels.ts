@@ -1,19 +1,18 @@
-import type { LevelDef, World } from '../world';
-import { LINES } from '../cities';
-import { Rider, Roller, Thing } from '../entities/traps';
-import { arc, checkpoint, cloud, collapseOnStand, collectible, door, geyser, group, gust, panel, prop, px, rider, rival, roller, shot, sign, spikes, spring, thing, thingOn, water } from './kit';
-import { DT } from '../constants';
-import { tour } from './tour';
-import { Grid } from './grid';
-import { exitTwist } from './twists';
-import { tara as taraSays } from './endkit';
-import { crumble, dropFloor, fakeFloor, gapAhead, noLanding, onPass, popAt, popOnJump, riseWall, shyLedge } from './trolls';
-import { Counterweight, Launch, Puddle, Slab, Tarp } from '../entities/kerala';
+import type { LevelDef, World } from '../../world';
+import { lines as L } from './lines';
+import { Rider, Roller, Thing } from '../../entities/traps';
+import { arc, checkpoint, cloud, collapseOnStand, collectible, door, geyser, group, gust, panel, prop, px, rider, rival, roller, shot, sign, spikes, spring, thing, thingOn, water } from '../../levels/kit';
+import { DT } from '../../constants';
+import { tour } from '../../levels/tour';
+import { Grid } from '../../levels/grid';
+import { exitTwist } from '../../levels/twists';
+import { tara as taraSays } from '../../levels/endkit';
+import { crumble, dropFloor, fakeFloor, gapAhead, noLanding, onPass, popAt, popOnJump, riseWall, shyLedge } from '../../levels/trolls';
+import { Counterweight, Launch, Puddle, Slab, Tarp } from './entities';
 
 // Thiruvananthapuram: monsoon puddles, a red express bus, a tea stall,
 // coconut palms and the old fort gate. Lines: Malayalam + English.
 
-const L = LINES.TVM;
 const tara = (n: number, point: 1 | -1 = 1) => ({ intro: L.intro[n % L.intro.length], point, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[n % L.beaten.length] });
 
 /** A coconut hanging in a palm crown at (x, y) px. Falls (hurts), lands, then rolls. */
@@ -41,7 +40,7 @@ export function rollerOf(w: World): Roller | undefined {
   return w.entities.find((e) => e instanceof Roller && (e as Roller).alive) as Roller | undefined;
 }
 
-export const TVM: LevelDef[] = [
+export const levels = (): LevelDef[] => [
   tour({
     id: 'TVM-01',
     city: 'TVM',

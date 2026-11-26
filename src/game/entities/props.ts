@@ -139,7 +139,6 @@ export const CAUSE_LINES: Record<string, string[]> = {
   crushed: ['Flat Dad! Hahaha!', 'Squished like a dosa!'],
   coconut: ['Coconut 1, Dad 0!', 'Look up sometimes, Dad!'],
   splash: ['Swim much, Dad?', 'Glug glug glug!'],
-  drenched: ['Mazha vellam! A full tarp always empties, Dad.', 'Monsoon 1, Dad 0. Let it splash first!'],
   flood: ['Too much water, Dad!', 'Should have brought a boat!'],
   burnt: ['Too hot to handle!', 'Careful, it\u2019s fresh!'],
   'fake exit': ['That door? Really?', 'Not every door is a door!'],

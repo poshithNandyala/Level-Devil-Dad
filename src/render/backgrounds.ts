@@ -3,7 +3,7 @@ import type { SceneDef } from '../game/world';
 import { drawScene, sceneSky } from './scenes';
 import { THEMES, Theme } from './theme';
 import { Ctx, circle, ellipse, hash, rr, withAlpha } from './art/common';
-import { amaravati, ambientSouth, chennai, kavaratti, puducherry, thiruvananthapuram } from './backdrops-south';
+import { amaravati, ambientSouth, chennai, kavaratti, puducherry } from './backdrops-south';
 import { ambientWest, daman, gandhinagar, bhopal, jaipur, raipur, panaji } from './backdrops-west';
 
 /** a city module's skyline, drawn in world units between x0 and x1 */
@@ -36,7 +36,6 @@ export function drawBackdrop(ctx: Ctx, city: CityId, x0: number, x1: number, y0:
   if (city === 'HYD') hyderabad(ctx, th, x0, x1, variant);
   else if (city === 'BLR') bengaluru(ctx, th, x0, x1, variant);
   else if (city === 'BOM') mumbai(ctx, th, x0, x1, variant);
-  else if (city === 'TVM') thiruvananthapuram(ctx, th, x0, x1);
   else if (city === 'KVT') kavaratti(ctx, th, x0, x1);
   else if (city === 'CHN') chennai(ctx, th, x0, x1);
   else if (city === 'PDY') puducherry(ctx, th, x0, x1);

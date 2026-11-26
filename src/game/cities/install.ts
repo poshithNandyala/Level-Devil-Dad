@@ -71,6 +71,11 @@ function install(m: CityModule) {
 /** install every module in the registry (idempotent); tests call it with extra throwaway modules */
 export function installCityModules(mods: CityModule[] = CITY_MODULES) {
   for (const m of mods) install(m);
+  // shortcut: while some cities are still in the shared LEVELS / CITY_ORDER literals, keep both in journey
+  // order (stable sort); a no-op once every city is a module, remove it then
+  const at = (city: string) => CHAPTERS.findIndex((c) => c.id === city);
+  LEVELS.sort((a, b) => at(a.city) - at(b.city));
+  CITY_ORDER.sort((a, b) => at(a) - at(b));
 }
 
 installCityModules();
