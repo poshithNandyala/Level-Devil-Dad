@@ -1,8 +1,8 @@
 // Goa's moving parts that both its stages and its door endings use.
-import { Entity, type Hazard, type World } from '../world';
-import type { Climbable } from '../player';
-import { Solid } from '../body';
-import { DT, TILE } from '../constants';
+import { Entity, type Hazard, type World } from '../../world';
+import type { Climbable } from '../../player';
+import { Solid } from '../../body';
+import { DT, TILE } from '../../constants';
 
 const approach = (v: number, t: number, d: number) => (v < t ? Math.min(t, v + d) : Math.max(t, v - d));
 

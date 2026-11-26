@@ -4,7 +4,7 @@ import { drawScene, sceneSky } from './scenes';
 import { THEMES, Theme } from './theme';
 import { Ctx, circle, ellipse, hash, rr, withAlpha } from './art/common';
 import { ambientSouth } from './backdrops-south';
-import { ambientWest, daman, gandhinagar, bhopal, jaipur, raipur, panaji } from './backdrops-west';
+import { ambientWest, daman, gandhinagar, bhopal, jaipur, raipur } from './backdrops-west';
 
 /** a city module's skyline, drawn in world units between x0 and x1; `variant` is the stage's index */
 export type Backdrop = (ctx: Ctx, th: Theme, x0: number, x1: number, variant: number) => void;
@@ -34,7 +34,6 @@ export function drawBackdrop(ctx: Ctx, city: CityId, x0: number, x1: number, y0:
     return;
   }
   if (city === 'BOM') mumbai(ctx, th, x0, x1, variant);
-  else if (city === 'PNJ') panaji(ctx, th, x0, x1);
   else if (city === 'DMN') daman(ctx, th, x0, x1);
   else if (city === 'GNR') gandhinagar(ctx, th, x0, x1);
   else if (city === 'JAI') jaipur(ctx, th, x0, x1);

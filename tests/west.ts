@@ -3,9 +3,9 @@
 import type { World } from '../src/game/world';
 import type { Door } from '../src/game/entities/basics';
 import { Step, X, and, ground } from './runner';
-import { Gossip } from '../src/game/levels/pnj';
+import { Gossip } from '../src/game/cities/pnj/levels';
 import type { Brush, IceBlock, PedalBoat, PlankChain, RopeFerry, Scale } from '../src/game/entities/daman';
-import type { Football, Parade, Parasail, Rope, Roulette } from '../src/game/entities/goa';
+import type { Football, Parade, Parasail, Rope, Roulette } from '../src/game/cities/pnj/entities';
 import type { Sunbeam } from '../src/game/entities/gujarat';
 import { Dino, Feathers, GarbaRing, Lion, Naka, type FeatherPickup } from '../src/game/entities/gujarat';
 import { Balloon, Bangle, Bowl, Elephant, Ghodi, Pots, Rocket, Talwar, type Strings } from '../src/game/entities/rajasthan';

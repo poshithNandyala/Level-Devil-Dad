@@ -1,23 +1,23 @@
 // Goa (Panaji): gossip you can stand on, a football, a siesta you mustn't break, the toddy tapper's
 // ropes, the casino boat's roulette, parasailing off Miramar and King Momo's carnival.
-import { Entity, type Hazard, type LevelDef, type World } from '../world';
-import { Solid } from '../body';
-import { LINES } from '../cities';
-import { collectible, door, prop, px, rival, sign } from './kit';
-import { DT } from '../constants';
-import type { Act } from './acts';
-import { aunty, bubbleArt } from './westkit';
-import { text } from './endkit';
-import { Football, Parade, Parasail, Rope, Roulette, Sleeper, Snag, footballer, goalArt, palmArt, type Bet } from '../entities/goa';
-import { pool } from './acts';
-import { RIVER } from './endkit';
-import { group } from './kit';
-import { onPass } from './trolls';
-import { tour } from './tour';
-import { longStage } from './chunks';
-import { Grid } from './grid';
+import { Entity, type Hazard, type LevelDef, type World } from '../../world';
+import { Solid } from '../../body';
+import { lines as L } from './lines';
+import { collectible, door, prop, px, rival, sign } from '../../levels/kit';
+import { DT } from '../../constants';
+import type { Act } from '../../levels/acts';
+import { aunty, bubbleArt } from '../../levels/westkit';
+import { text } from '../../levels/endkit';
+import { Football, Parade, Parasail, Rope, Roulette, Sleeper, Snag, footballer, goalArt, palmArt, type Bet } from './entities';
+import { pool } from '../../levels/acts';
+import { RIVER } from '../../levels/endkit';
+import { group } from '../../levels/kit';
+import { onPass } from '../../levels/trolls';
+import { tour } from '../../levels/tour';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
 
-const TAUNTS = LINES.PNJ.taunt;
+const TAUNTS = L.taunt;
 const G = 15;
 
 // ================================================================== PNJ-02: Fontainhas gossip
@@ -159,7 +159,7 @@ function gossipRoom(): LevelDef {
       w.add(new Gossip(px(5) + 4, px(13), 1, '#7E57C2', { sx: px(7), sy: 200, vx: 10, vy: -22, every: 1.8, life: 5, lines: GOSSIP_A }));
       sign(w, 8, 10.4, 4.2, 'RUA 31 DE JANEIRO', 'azulejo', null, 'Fontainhas');
       prop(w, 'lamp', 21, 15);
-      rival(w, 10, 15, -1, { intro: LINES.PNJ.intro[0], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.PNJ.beaten[0] });
+      rival(w, 10, 15, -1, { intro: L.intro[0], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       onPass(w, px(6), (w2) => w2.guide('Aunty bolta, tum chodd! | Aunty talks, you climb!'));
       collectible(w, 'poi', 16, 4.4);
     },
@@ -258,7 +258,7 @@ function goalRoom(): LevelDef {
       goalGate(w, ball, px(22), px(26), 'a');
       sign(w, 4, 10.4, 4, 'CAMPAL', 'azulejo', null, 'football ground');
       prop(w, 'lamp', 14, 15);
-      rival(w, 12, 15, -1, { intro: 'Bol mar, Dad! Goal kor! | Kick the ball, Dad! Score!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.PNJ.beaten[1] });
+      rival(w, 12, 15, -1, { intro: 'Bol mar, Dad! Goal kor! | Kick the ball, Dad! Score!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       collectible(w, 'poi', 24, 8.6);
     },
   };
@@ -305,7 +305,7 @@ function siestaRoom(): LevelDef {
       sleeper(w, px(27) + 8, px(G), 28, 'cat');
       sign(w, 4, 10.4, 4.6, 'SILENCIO', 'azulejo', null, '1 to 4 pm');
       prop(w, 'lamp', 20, 15);
-      rival(w, 7, 15, -1, { intro: LINES.PNJ.intro[1], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.PNJ.beaten[0] });
+      rival(w, 7, 15, -1, { intro: L.intro[1], point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       onPass(w, px(8), (w2) => w2.guide('Hoch, Dad! Uddi marun denvlo zalear sunno uttta! | Shh, Dad! Land with a thud and the dog wakes up!'));
       collectible(w, 'poi', 18, 11.6);
     },
@@ -423,7 +423,7 @@ function ropeRoom(): LevelDef {
       door(w);
       w.flags.ropes = [rope(w, px(7), px(17), px(11)), rope(w, px(20), px(28), px(11))];
       sign(w, 1, 10.4, 4, 'MADDACHEM', 'azulejo', null, 'toddy palms');
-      rival(w, 3, 13, 1, { intro: 'Dorar chol, Dad! Rendeiro chalta! | Walk the rope, Dad! The tapper does!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.PNJ.beaten[1] });
+      rival(w, 3, 13, 1, { intro: 'Dorar chol, Dad! Rendeiro chalta! | Walk the rope, Dad! The tapper does!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       onPass(w, px(18), (w2) => w2.guide('Modhem rav, dor denvota, mag uddi mar! | Wait in the middle, let it sag, then jump!'));
       collectible(w, 'poi', 12, 7.4);
     },
@@ -498,7 +498,7 @@ function casinoRoom(): LevelDef {
       w.flags.table = r;
       casinoDressing(w, 0, px(32));
       sign(w, 1, 10.4, 4.4, 'CASINO', 'warn', null, 'Mandovi');
-      rival(w, 4, 15, 1, { intro: 'Lal-ar ubho rav, Dad! Nashib! | Stand on red, Dad! Luck!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.PNJ.beaten[0] });
+      rival(w, 4, 15, 1, { intro: 'Lal-ar ubho rav, Dad! Nashib! | Stand on red, Dad! Luck!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[0] });
       onPass(w, px(5), (w2) => w2.guide('Chakr ghunvta toxem sogllem ghott! | While the wheel spins, everything holds!'));
       collectible(w, 'poi', 14, 11.5);
     },
@@ -573,7 +573,7 @@ function sailRoom(): LevelDef {
       w.flags.sails = [sail(w, px(7), px(12.5), px(31), 70)];
       w.flags.gates = [gate(w, 15, 128, 999), gate(w, 21, -1, 152)];
       sign(w, 2, 10.4, 4.4, 'MIRAMAR', 'azulejo', null, 'parasailing');
-      rival(w, 4, 15, 1, { intro: 'Dhor, Dad! Udd! | Grab it, Dad! Fly!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.PNJ.beaten[1] });
+      rival(w, 4, 15, 1, { intro: 'Dhor, Dad! Udd! | Grab it, Dad! Fly!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       onPass(w, px(5), (w2) => w2.guide('Uzvem dhor zalear voir, davem zalear sokol! | Hold right to go up, left to come down!'));
       collectible(w, 'poi', 18, 6.5);
     },
@@ -635,7 +635,7 @@ function carnivalRoom(): LevelDef {
       w.flags.parade = w.add(new Parade(px(3), px(28), [{ w: 64, h: 30, v: 34, col: '#8E24AA', at: px(5) }], { play: [3.4, 2.6], stop: 1.6 }));
       carnivalDressing(w, 0, px(32));
       sign(w, 0.2, 10.4, 4.6, 'CARNAVAL', 'warn', null, 'Viva!');
-      rival(w, 2, 15, 1, { intro: 'Nach, Dad! Viva Carnaval! | Dance, Dad! Long live Carnival!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: LINES.PNJ.beaten[1] });
+      rival(w, 2, 15, 1, { intro: 'Nach, Dad! Viva Carnaval! | Dance, Dad! Long live Carnival!', point: 1, introAt: 0.5, taunts: TAUNTS, beaten: L.beaten[1] });
       onPass(w, px(3), (w2) => w2.guide('Sangit thamblem zalear gaddyer chodd! | When the music stops, get on a float!'));
       collectible(w, 'poi', 16, 9.2);
     },
@@ -669,7 +669,7 @@ const parade: Act = {
   },
 };
 
-export const PNJ: LevelDef[] = [
+export const levels = (): LevelDef[] => [
   tour({
     id: 'PNJ-01',
     city: 'PNJ',

@@ -61,23 +61,6 @@ export interface Chapter {
 }
 
 export const LINES = {
-  PNJ: {
-    hello: "Kitem khobor? | What's new?",
-    famous: 'Ferries on the Mandovi, lanes painted every colour, and nobody in a hurry.',
-    lang: 'Konkani + English',
-    intro: ['Arre baba, shortcut hanga asa! | Oh man, the shortcut is right here!', 'Susegad, Dad! Kiteak dhanvta? | Relax, Dad! Why are you running?', 'Ferry ravta, ye! | The ferry is waiting, come!', 'Hem sopem asa, vishvas kor! | This is easy, trust me!', 'Poi ghe, mag voch! | Grab some bread, then go!'],
-    taunt: ['Arre deva! Porot? | Oh god! Again?', 'Kitem korta re tum? | What are you doing?', 'Poddlo re! | He fell!', 'Susegad, Dad, susegad! | Relax, Dad, relax!', 'Ai ai ai! | Oh no no!'],
-    beaten: ['Bhov bore, Dad! | Very good, Dad!', 'Tum zikhlo! Viva! | You won! Hooray!'],
-    death: ['Mandovint poddlo! | Fell in the Mandovi!', 'Ai, tuji ferry chuklee! | Oh, you missed your ferry!', 'Moye moye, baba.', 'Poi bi ghetlo na! | Didn’t even get the bread!', 'Hem kitem? Porot! | What was that? Again!'],
-    near: ['Thoddem urlem! | Just a little left!', 'Arre, itlem lagim! | Oh, so close!'],
-    win: ['Bhov bore! | Very good!', 'Viva! | Hooray!', 'Sobit! | Beautiful!'],
-    flip: 'Arre! Davo-uzvo bodollo! | Hey! Left and right swapped!',
-    cleared: 'Goa cleared. Viva! | Goa cleared. Hooray!',
-    brag: 'Bhov bore! | Very good!',
-    idle: ['Kitem, bhilo? | What, scared?', 'Susegad zalo kai? Chol! | Gone all relaxed? Move!', 'Nidd ailee? | Sleepy?', 'Rav naka, dhanv! | Don’t stop, run!'],
-    seven: 'Sat pavtt! Thala for a reason. | Seven times! Back to the start.',
-    lastLife: 'Nimano chance, baba! | Last chance, man!',
-  },
   BOM: {
     hello: 'Namaskar! Kay mhanta? | Hello! What\'s up?',
     famous: 'Local trains, vada pav and a city that never waits.',
@@ -191,7 +174,7 @@ export const CHAPTERS: Chapter[] = [
   { id: 'BLR', name: 'Bengaluru', state: 'Karnataka', region: 'South', hello: '', famous: '' },
   { id: 'AMR', name: 'Amaravati', state: 'Andhra Pradesh', region: 'South', hello: '', famous: '' },
   { id: 'HYD', name: 'Hyderabad', state: 'Telangana', region: 'South', hello: '', famous: '' },
-  { id: 'PNJ', name: 'Panaji', state: 'Goa', region: 'West', city: 'PNJ', hello: LINES.PNJ.hello, famous: LINES.PNJ.famous },
+  { id: 'PNJ', name: 'Panaji', state: 'Goa', region: 'West', hello: '', famous: '' },
   { id: 'BOM', name: 'Mumbai', state: 'Maharashtra', region: 'West', city: 'BOM', hello: LINES.BOM.hello, famous: LINES.BOM.famous },
   { id: 'DMN', name: 'Daman', state: 'Dadra & Nagar Haveli and Daman & Diu', region: 'West', bonus: true, city: 'DMN', hello: LINES.DMN.hello, famous: LINES.DMN.famous },
   { id: 'GNR', name: 'Gandhinagar', state: 'Gujarat', region: 'West', city: 'GNR', hello: LINES.GNR.hello, famous: LINES.GNR.famous },

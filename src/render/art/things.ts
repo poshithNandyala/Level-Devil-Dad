@@ -79,7 +79,6 @@ export type BaseThingKind =
   | 'vada'
   // Goa
   | 'ferry'
-  | 'poi'
   | 'football'
   // Daman
   | 'bombil'
@@ -161,7 +160,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   spark: [5, 5],
   plank: [16, 5],
   ferry: [48, 10],
-  poi: [12, 10],
   football: [10, 10],
   bombil: [14, 8],
   dhokla: [12, 10],
@@ -1153,20 +1151,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
         ctx.fillStyle = '#FFFFFF';
         ctx.fillText(o.label, x + w / 2, y + h * 0.88);
       }
-      break;
-    }
-    case 'poi': {
-      // Goan poi: a puffy round bread, bran-dusted
-      ctx.fillStyle = '#C98A4B';
-      ctx.beginPath();
-      ctx.ellipse(x + w / 2, y + h * 0.58, w / 2, h * 0.42, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#E3B47A';
-      ctx.beginPath();
-      ctx.ellipse(x + w / 2 - 1, y + h * 0.45, w * 0.32, h * 0.22, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = 'rgba(90,50,20,0.55)';
-      for (let i = 0; i < 6; i++) ctx.fillRect(x + 2 + ((i * 7) % 9), y + 3 + ((i * 5) % 5), 0.8, 0.8);
       break;
     }
     case 'football': {

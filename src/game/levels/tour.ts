@@ -26,8 +26,6 @@ export type TourSeg =
 /** Every city walks its own course (tile columns); the door, the deck and the item are where they always were. */
 export const TOUR = { cols: 120, door: 112, deck: [94, 99] as [number, number], item: [96.5, 8.4] as [number, number] };
 export const COURSES = {
-  // the laterite steps, a canoe hop, and the car ferry across the Mandovi to Betim
-  PNJ: [{ k: 'stones', x: 12, n: 3, wet: true }, { k: 'wall', x: 30 }, { k: 'ferry', x: 40, w: 18, kind: 'ferry', wet: true, label: 'BETIM' }, { k: 'parked', x: 66 }, { k: 'steps', x: 76, n: 3, run: 2, top: 2 }],
   // the jetty bollards, the ferry from Nani to Moti Daman, and the fort steps
   DMN: [{ k: 'posts', x: 12, n: 3 }, { k: 'ditch', x: 26, w: 2, wet: true }, { k: 'ferry', x: 38, w: 18, kind: 'ferry', wet: true, label: 'MOTI DAMAN' }, { k: 'wall', x: 64, w: 2 }, { k: 'steps', x: 74, n: 3, run: 2, top: 3 }],
   // the sector circle's kerbs, the riverfront steps, a BRTS shuttle over the Sabarmati

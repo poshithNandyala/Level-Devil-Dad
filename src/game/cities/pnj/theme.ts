@@ -1,0 +1,25 @@
+import type { Theme } from '../../../render/theme';
+
+export const theme: Theme = {
+  city: 'PNJ',
+  name: 'Panaji',
+  local: 'पणजी',
+  sky: ['#3D2E6E', '#D9735B', '#FFD3A0'],
+  sun: '#FFE7B8',
+  far: '#7A5C8E',
+  mid: '#5E7D52',
+  near: '#2F5A3A',
+  accent: '#29B6F6',
+  accent2: '#FFCA28',
+  tileBase: '#8A3A22',
+  tileTop: '#B65A38',
+  tileEdge: '#652816',
+  tileDark: '#4A1C10',
+  topper: '#6DB33F',
+  pattern: 'brick',
+  spike: '#F7F2E6',
+  spikeEdge: '#24120C',
+  ink: '#24120C',
+  rim: null,
+  ui: '#29B6F6',
+};
