@@ -247,6 +247,22 @@ const basketPolicy: Policy = (w, _m, d) => {
   return go(t < 1.8 ? 'R' : '');
 };
 
+// ------------------------------------------------------------------ PAT-08
+const room08 = (): Step[] => [...hop(6.1, 'jump the hatch with 2 bricks'), ...hop(11.1, 'and the one with 4'), ...hop(16.1, 'and the one with 1'), { hold: 'R', until: X(34), max: 400, note: 'step on the hatch with 3 bricks' }];
+const act08 = (x: number): Step[] => [...hop(x + 23.1, 'hop the last cell’s well'), { hold: 'R', until: X(x + 33.4), max: 600 }];
+/** the library mound: jump the three decoy hatches, walk into the cell with no bricks */
+const moundPolicy: Policy = (w, m) => {
+  const hs = (w.flags.pat8e as { x: number }[]).slice().sort((a, b) => a.x - b.x);
+  const p = w.player;
+  if (m.hold > 0) return { move: 'R', jump: true };
+  const h = hs.find((q) => q.x + 32 > p.x);
+  if (h && p.onGround && p.x + p.w >= h.x - 6 && p.x < h.x) {
+    m.hold = 11;
+    return { move: 'R', jump: true };
+  }
+  return go('R');
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['PAT-01'] = tourRoute();
   S['PAT-02'] = room02();
@@ -259,10 +275,13 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('PAT-06', 0, []);
   S['PAT-07'] = room07();
   lengthen('PAT-07', 0, []);
+  S['PAT-08'] = room08();
+  lengthen('PAT-08', 0, []);
 }
 
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-08': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-kua' },
   'PAT-07': { steps: [{ hold: 'R', until: X(8.6), max: 400 }, { hold: 'R', jump: 12, ticks: 12, note: 'on to the tempo' }, { hold: 'R', until: (w) => w.player.onGround && w.player.cx >= w.flags.pat7.cx - 4, max: 300, note: 'stand in the middle' }, { hold: '', until: done, max: 2400 }], cause: 'pat-torana' },
   'PAT-06': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-jod' },
   'PAT-05': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'pat-ganga' },
@@ -271,6 +290,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'PAT-01': { steps: [...upTo(21), { hold: 'R', until: done, max: 2400 }], cause: 'pat-bheed' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'PAT-08': { steps: [...hop(6.1, 'skip the first hatch'), { hold: 'R', until: done, max: 900 }], cause: 'pat-kua' },
   'PAT-07': { steps: [{ policy: rideBalanced(false, false), until: done, max: 4500, note: 'stand on the road side whatever happens' }], cause: 'pat-dhakka' },
   'PAT-06': { steps: [{ hold: 'R', until: X(4.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12, note: 'jump every seam, to be safe' }, { hold: 'R', until: done, max: 600 }], cause: 'pat-taala' },
   'PAT-05': { steps: [{ hold: 'R', until: X(7.2), max: 600 }, { hold: '', until: (w) => w.flags.pat5.carts[0].s.cx > 236 && w.flags.pat5.carts[0].s.dir > 0, max: 900, note: 'let the cart go by down the deck' }, { hold: 'R', until: X(9.5), max: 300, note: 'step on to the high section behind it' }, { hold: '', until: done, max: 1800, note: 'and wait there' }], cause: 'pat-pipa' },
@@ -279,6 +299,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'PAT-01': { steps: [...upTo(24), { hold: '', until: done, max: 1500 }], cause: 'pat-tempo' },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'PAT-08': [{ what: 'the hatch with 1 brick', steps: [...hop(6.1, ''), ...hop(11.1, ''), { hold: 'R', until: done, max: 900 }], cause: 'pat-kua' }],
   'PAT-01': [{ what: 'run on at the hoarding', steps: [...upTo(32), { hold: 'R', until: done, max: 900 }], cause: 'pat-hoarding' }],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
@@ -288,6 +309,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'pat06-sau': act06,
   'pat07-sadak': act07a,
   'pat07-adda': act07b,
+  'pat08-chowk': act08,
 };
 const endingPolicies: Record<string, Policy> = {
   'pat-musal': pestlePolicy,
@@ -295,6 +317,7 @@ const endingPolicies: Record<string, Policy> = {
   'pat-nawka': floatPolicy,
   'pat-toll': tollPolicy,
   'pat-hauled-basket': basketPolicy,
+  'pat-mound': moundPolicy,
 };
 
 export const test: CityTests = {
@@ -304,5 +327,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['PAT-02', 'PAT-04', 'PAT-05', 'PAT-06', 'PAT-07'],
+  fair: ['PAT-02', 'PAT-04', 'PAT-05', 'PAT-06', 'PAT-07', 'PAT-08'],
 };

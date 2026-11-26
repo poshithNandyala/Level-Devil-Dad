@@ -5,8 +5,9 @@ import { ending as e04 } from './s04';
 import { ending as e05 } from './s05';
 import { ending as e06 } from './s06';
 import { ending as e07 } from './s07';
+import { ending as e08 } from './s08';
 
-export type PatEndingKind = 'pat-musal' | 'pat-bhitar' | 'pat-nawka' | 'pat-toll' | 'pat-hauled-basket';
+export type PatEndingKind = 'pat-musal' | 'pat-bhitar' | 'pat-nawka' | 'pat-toll' | 'pat-hauled-basket' | 'pat-mound';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<PatEndingKind, true> {}
@@ -18,4 +19,5 @@ export const endings: Record<PatEndingKind, Ending> = {
   'pat-nawka': e05,
   'pat-toll': e06,
   'pat-hauled-basket': e07,
+  'pat-mound': e08,
 };
