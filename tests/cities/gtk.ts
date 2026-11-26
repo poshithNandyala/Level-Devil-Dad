@@ -557,6 +557,38 @@ function yakRide(key: string, o: { at?: number; jumpAt?: boolean; jumpAtPhoto?: 
 }
 const room09 = (): Step[] => [{ policy: yakRide('gtk9', { at: px(26) }), until: and(ground, X(28.5)), max: 4000, note: 'ride across, stay on for the photo, off on the far bank' }, { hold: 'R', until: X(30), max: 300 }];
 const act09 = (x: number): Step[] => [{ policy: yakRide('gtk9a', { jumpAtPhoto: true }), until: and(ground, X(x + 25.5)), max: 4000, note: 'ride out, jump for the bank at the photo stop' }, { hold: 'R', until: X(x + 33), max: 300 }];
+/** the last yak: on, and as it passes under the first step, jump up on to it; then the stair and the snow road */
+function stepOff(x: number): (w: World) => Out {
+  const ride = yakRide('gtk9b', {});
+  let W: World | null = null;
+  let jt = 0;
+  let off = false;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+      off = false;
+    }
+    const y = (w.flags.gtk9b as Yak[])[0];
+    const p = w.player;
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    if (off) return go(p.onGround ? '' : 'R');
+    if (y.carries(w) && p.x >= px(x + 11.2) && p.x <= px(x + 13)) {
+      off = true;
+      jt = 10;
+      return { move: 'R', jump: true };
+    }
+    return ride(w);
+  };
+}
+const act09b = (x: number): Step[] => [
+  { policy: stepOff(x), until: (w) => w.player.onGround && w.player.y + w.player.h <= 193 && w.player.x > px(x + 12), max: 3000, note: 'off the yak on the move, up on to the first step' },
+  { policy: climbAll(), until: and(ground, X(x + 20), (w) => w.player.y + w.player.h <= 129), max: 1200, note: 'up the stair' },
+  { hold: 'R', until: X(x + 35.5), max: 600, note: 'along the snow road and down' },
+];
 const gateRides = new WeakMap<World, (w: World) => Out>();
 const gateYak: Policy = (w, _m, d) => {
   const D = Math.round(d.x / 16);
@@ -681,6 +713,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk07-bhaga': act07c,
   'gtk08-tar': act08,
   'gtk09-chamri': act09,
+  'gtk09-chattan': act09b,
   'gtk10-thela': act10a,
   'gtk10-rassi': act10b,
   'gtk10-chadhai': act10c,

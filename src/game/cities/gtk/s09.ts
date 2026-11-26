@@ -176,6 +176,26 @@ export const act: Act = {
   },
 };
 
+/** act 2: a yak that doesn't stop till the far end, and the far end is thin ice too. Its loop passes under the
+ *  stair up to the snow road: get off on the move, up on to the stair */
+export const act2: Act = {
+  id: 'gtk09-chattan',
+  w: 36,
+  advice: 'The last yak doesn’t stop till the far end, and the far end is thin ice too. Its loop passes under the stair up to the snow road: as you go under the first step, jump off its back on to it, and climb.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 12, x + 15, 12, 12, '=');
+    g.fill(x + 15, x + 18, 10, 10, '=');
+    g.fill(x + 18, x + 33, 8, 9, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    thinShore(w, x + 3, x + 32);
+    yak(w, c.X(0.5), [{ wait: 0.6 }, { to: c.X(28) }, { wait: 0.8 }, { to: c.X(0.5) }, { wait: 1.0 }], 'mount', 'gtk9b');
+    sign(w, x + 30, 4.4, 3.8, 'SNOW POINT', 'wood', null, 'this way');
+  },
+};
+
 /** door: up on the snowbank. The gate yak walks to and fro below it; ride it to the high end and hop up */
 export const ending: Ending = {
   space: 13,
