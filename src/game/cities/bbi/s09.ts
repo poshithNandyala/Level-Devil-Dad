@@ -297,6 +297,27 @@ export const act3: Act = {
   },
 };
 
+/** a chariot act: plinth from column 3, `len` long, front stops at the wall at column 3 + len + slide */
+export function chariotAct(id: string, len: number, slide: number, hubAt: number, key: string, advice: string): Act {
+  const stop = 3 + len + slide;
+  return {
+    id,
+    w: stop + 6,
+    advice,
+    cps: [],
+    paint: (g, c) => {
+      g.pit(c.x + 3, c.x + stop - 1).fill(c.x + stop, c.x + stop + 3, 11, 14, '#');
+    },
+    build: (w, c) => {
+      channel(w, c.x + 3, c.x + stop - 1, 'bbi-khai', 'water');
+      chariot(w, { c0: c.x + 3, len, stopAt: c.x + stop, hub: c.x + hubAt, hubY: FL - 58, wait: 0.4 }, key);
+      templeWall(w, c.x + stop, px(11));
+    },
+  };
+}
+export const act4 = chariotAct('bbi09-ghoda', 8, 7, 14, 'bbi9g', 'A short chariot and a short slide: the hub comes over almost at once. Be ready on the horses.');
+export const act5 = chariotAct('bbi09-surya', 12, 9, 21, 'bbi9h', 'The sun-temple’s great chariot: a long plinth and a long slide, the hub far along. Ride the horses until it comes over.');
+
 /** ending: the door between two stone horses on little plinths; step on a horse and the plinths slide together */
 export const ending: Ending = {
   space: 16,

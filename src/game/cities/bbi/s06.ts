@@ -228,6 +228,29 @@ export const act3: Act = {
   },
 };
 
+/** a loom act: one loom over a pit at cfg.c0 (act columns) */
+export function loomAct(id: string, w0: number, cfg: LoomCfg, key: string, advice: string): Act {
+  return {
+    id,
+    w: w0,
+    advice,
+    cps: [],
+    paint: (g, c) => {
+      g.pit(c.x + cfg.c0, c.x + cfg.c0 + cfg.n - 1);
+    },
+    build: (w, c) => {
+      const st = { t0: -1 };
+      onPass(w, c.X(0.5), (w2) => (st.t0 = w2.tick));
+      channel(w, c.x + cfg.c0, c.x + cfg.c0 + cfg.n - 1, 'bbi-ranga', 'water');
+      loom(w, { ...cfg, c0: c.x + cfg.c0 }, () => st.t0, key);
+    },
+  };
+}
+export const L06D: LoomCfg = { c0: 3, n: 6, speeds: [2, 3, 1, 4, 3, 2], beat: 0.6, hold: 1.7, shuttle: [[0, -1]] };
+export const act4 = loomAct('bbi06-jala', 14, L06D, 'bbi6g', 'A small loom on a quick beat: the motif comes round faster, and the shuttle still crosses first.');
+export const L06E2: LoomCfg = { c0: 3, n: 9, speeds: [3, 2, 4, 1, 2, 3, 1, 4, 2], beat: 0.9, hold: 3.0, shuttle: [[0, 1], [0.45, 1]] };
+export const act5 = loomAct('bbi06-pata', 17, L06E2, 'bbi6h', 'A loom whose shuttle crosses twice the same way, one close behind the other. Let both by, then cross.');
+
 /** ending: a curtain of warp threads in front of the door; only on the motif beat do they part into its shape */
 export const L06E: LoomCfg = { c0: 0, n: 3, speeds: [1, 2, 3], beat: 0.8, hold: 1.6, shuttle: [] };
 export const ending: Ending = {

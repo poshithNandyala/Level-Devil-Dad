@@ -13,9 +13,9 @@ import { Rig, box, folk } from './entities';
 import { FL, channel, cyc, since, taraScript } from './common';
 import { keeperOn } from './s02';
 import { parasol } from './s03';
-import { loom, type LoomCfg } from './s06';
+import { loom, loomAct, type LoomCfg } from './s06';
 import { troupe, troupeAct, type TroupeCfg } from './s07';
-import { chariot, templeWall, type ChariotCfg } from './s09';
+import { chariot, chariotAct, templeWall, type ChariotCfg } from './s09';
 
 export const C10: ChariotCfg = { c0: 18, len: 10, stopAt: 36, hub: 30, hubY: FL - 58, wait: 0.35, any: true, bare: true };
 export const K10 = { x0: 5, travel: 9, gap: [9, 35] as [number, number] };
@@ -144,6 +144,20 @@ export const T10b: TroupeCfg[] = [
   { c0: 12, n: 8, drum: 1.0, hold: 1.4, poses: ['wheel', 'bridge'], form: 0.3, phase: 0.4 },
 ];
 export const act5 = troupeAct('bbi10-nacha', 23, T10b, 'bbi10n', 'Two last troupes: the first only makes a tower (on to its top and off), the second a wheel and then the bridge.', [10.5]);
+
+export const act6 = loomAct('bbi10-bunakar', 16, { c0: 3, n: 8, speeds: [2, 4, 1, 3, 3, 1, 4, 2], beat: 0.7, hold: 2.8, shuttle: [[0, 1], [0.5, -1]] }, 'bbi10b', 'The weaver again: count to the motif, let the shuttle go across and back, then cross.');
+export const act7 = chariotAct('bbi10-konark', 10, 8, 17, 'bbi10c3', 'The last chariot: horses, hub, wall.');
+export const act8 = troupeAct(
+  'bbi10-mela',
+  24,
+  [
+    { c0: 3, n: 6, drum: 1.2, hold: 1.4, poses: ['bridge', 'tower'], form: 0.3 },
+    { c0: 13, n: 7, drum: 1.4, hold: 1.7, poses: ['wheel'], form: 0.3, phase: 0.5 },
+  ],
+  'bbi10m',
+  'Two troupes before the gate: the first lies down for a bridge, the second only ever makes a wheel.',
+  [10.5],
+);
 
 /** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */
 export const RIB = { period: 2.2, shut: 0.5, at: 9 };

@@ -228,6 +228,22 @@ export const act2: Act = {
   },
 };
 
+export const B08C: BowlCfg = { c0: 4, c1: 19, badi: [6, 11, 15], pour1: [0.4, 2.2], pour2: [2.8, 4.6], v1: 50, v2: 50, v3: 55 };
+export const act3: Act = {
+  id: 'bbi08-handi',
+  w: 26,
+  advice: 'One more bowl, poured in a hurry: get on the middle badi quickly, before the grains float apart, and ride it back.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + B08C.c0, c.x + B08C.c1).fill(c.x + B08C.c0 - 1, c.x + B08C.c0 - 1, 13, 14, '#').fill(c.x + B08C.c1 + 1, c.x + B08C.c1 + 1, 13, 14, '#');
+  },
+  build: (w, c) => {
+    const st = { t0: -1 };
+    onPass(w, c.X(B08C.c0) + 4, (w2) => (st.t0 = w2.tick));
+    bowl(w, { ...B08C, c0: c.x + B08C.c0, c1: c.x + B08C.c1, badi: B08C.badi.map((k) => c.x + k) }, () => st.t0, 'bbi8f');
+  },
+};
+
 /** ending: a trough of pakhala water before the door; a sal-leaf plate floats in it, and turns over when it
  *  reaches the door's side, so step off on to the step before it gets there */
 export const ending: Ending = {

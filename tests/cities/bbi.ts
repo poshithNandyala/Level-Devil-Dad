@@ -577,6 +577,19 @@ const act10d = (x: number): Step[] => [
 ];
 const act10e = (x: number): Step[] => [...crossTroupe('bbi10n0', x, 3, 5, 'tower'), ...crossTroupe('bbi10n1', x, 12, 8, 'bridge'), { hold: 'R', until: X(x + 22.5), max: 300 }];
 
+/** a loom act's route: wait clear of the shuttle, cross after its last pass */
+const loomRun = (k: string, n: number, after: number) => (x: number): Step[] => [
+  { hold: 'R', until: X(x + 0.2), max: 300 },
+  waitFor((w) => lm(w, k).bridge && lm(w, k).into > after, 'the motif beat, the shuttle by'),
+  { hold: 'R', until: and(ground, X(x + 3 + n + 0.4)), max: 400, note: 'across' },
+  { hold: 'R', until: X(x + 3 + n + 3.5), max: 300 },
+];
+const chAct = (k: string, len: number, slide: number) => (x: number): Step[] => chariotRun(k, x, x + 3 + len - 3, x + 3 + len + slide + 1.5, x + 3 + len + slide + 5.5);
+const bowlRun = (k: string, c0: number, c1: number, i: number, t: number) => (x: number): Step[] => [
+  ...rideBowl(k, x + c0 - 1, x + c1 + 1.5, i, (w) => bw(w, k).t > t && bw(w, k).badis[i].x >= px(x + c1 + 1) - 26 - 4 - 34 * (bw(w, k).badis.length - 1 - i) - 0.5),
+  { hold: 'R', until: X(x + c1 + 6.5), max: 400 },
+];
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['BBI-01'] = [...pastG1(), ...tourTail()];
   S['BBI-02'] = room02();
@@ -597,7 +610,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('BBI-09', 0, []);
   S['BBI-10'] = room10();
   lengthen('BBI-10', 0, []);
-  fix['BBI-09'].steps = [...room09(), ...act09b(32), { hold: 'R', until: X(61.3), max: 300 }, leap(() => px(63) + 14, 'spoke 1'), { hold: '', ticks: 70, note: 'make sure of it' }, leap(() => px(65.5) + 14, 'spoke 2'), { hold: '', ticks: 70 }, leap(() => px(68) + 14, 'spoke 3'), { hold: '', until: done, max: 400 }];
+  { const X0 = 144; fix['BBI-09'].steps = [...room09(), ...chAct('bbi9g', 8, 7)(32), ...act09b(56), ...chAct('bbi9h', 12, 9)(84), ...act09c(114), { hold: 'R', until: X(X0 + 1.3), max: 300 }, leap(() => px(X0 + 3) + 14, 'spoke 1'), { hold: '', ticks: 70, note: 'make sure of it' }, leap(() => px(X0 + 5.5) + 14, 'spoke 2'), { hold: '', ticks: 70 }, leap(() => px(X0 + 8) + 14, 'spoke 3'), { hold: '', until: done, max: 400 }]; }
   fix['BBI-05'].steps = [...S['BBI-05'].slice(0, -1), { policy: (w) => verandahPolicy(w, fixMem(w), null as unknown as Door), until: done, max: 1500, note: 'up to the front door on the verandah' }];
   void lengthen;
 }
@@ -638,7 +651,18 @@ const fixMem = (w: World) => {
   if (fm.m.hold > 0) fm.m.hold--;
   return fm.m;
 };
-const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi10-ratha': act10c, 'bbi02-dive': act02b, 'bbi06-buni': act06b, 'bbi07-sahi': act07c, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b, 'bbi08-thali': act08b, 'bbi07-stambha': act07d, 'bbi07-raati': act07e, 'bbi06-tani': act06c, 'bbi09-chakra': act09c, 'bbi10-khela': act10d, 'bbi10-nacha': act10e };
+const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi10-ratha': act10c, 'bbi02-dive': act02b, 'bbi06-buni': act06b, 'bbi07-sahi': act07c, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b, 'bbi08-thali': act08b, 'bbi07-stambha': act07d, 'bbi07-raati': act07e, 'bbi06-tani': act06c, 'bbi09-chakra': act09c, 'bbi10-khela': act10d, 'bbi10-nacha': act10e,
+  'bbi06-jala': loomRun('bbi6g', 6, 0.5),
+  'bbi06-pata': loomRun('bbi6h', 9, 0.45 + 0.52 + 0.1),
+  'bbi09-ghoda': chAct('bbi9g', 8, 7),
+  'bbi09-surya': chAct('bbi9h', 12, 9),
+  'bbi07-mancha': (x) => [...crossTroupe('bbi7g0', x, 3, 6, 'bridge'), ...crossTroupe('bbi7g1', x, 13, 9, 'bridge'), { hold: 'R', until: X(x + 25.5), max: 300 }],
+  'bbi07-dhol': (x) => [...crossTroupe('bbi7h0', x, 3, 5, 'tower'), ...crossTroupe('bbi7h1', x, 13, 7, 'bridge'), { hold: 'R', until: X(x + 23.5), max: 300 }],
+  'bbi08-handi': bowlRun('bbi8f', 4, 19, 1, 4.6),
+  'bbi10-bunakar': loomRun('bbi10b', 8, 1.1),
+  'bbi10-konark': chAct('bbi10c3', 10, 8),
+  'bbi10-mela': (x) => [...crossTroupe('bbi10m0', x, 3, 6, 'bridge'), ...crossTroupe('bbi10m1', x, 13, 7, 'wheel'), { hold: 'R', until: X(x + 23.5), max: 300 }],
+};
 const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy, 'bbi-pose-gate': gatePolicy, 'bbi-leaf-plate': platePolicy, 'bbi-horse-gap': horseGap, 'bbi-ribbon-snip': ribbonPolicy };
 void and;
 

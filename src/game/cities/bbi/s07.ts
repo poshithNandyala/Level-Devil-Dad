@@ -223,7 +223,7 @@ export const act1: Act = {
   id: 'bbi07-mardala',
   w: 26,
   advice: 'Two troupes with a little bank between them, each to its own drummer. Cross the first on its bridge, then stand on the bank and wait: the second troupe’s bridge comes in its own time.',
-  cps: [11.5],
+  cps: [],
   paint: (g, c) => {
     g.pit(c.x + T07a1.c0, c.x + T07a1.c0 + T07a1.n - 1).pit(c.x + T07a2.c0, c.x + T07a2.c0 + T07a2.n - 1);
   },
@@ -245,7 +245,7 @@ export const act2: Act = {
   id: 'bbi07-bandha',
   w: 34,
   advice: 'A long pit: its bridge only just lasts the walk, so be at the edge when the drum stops and go straight over. Then a high bank: only the wheel pose is tall enough. Jump on to its top when it forms and up to the bank before the drum.',
-  cps: [16.5],
+  cps: [],
   paint: (g, c) => {
     g.pit(c.x + T07b1.c0, c.x + T07b1.c0 + T07b1.n - 1).pit(c.x + T07b2.c0, c.x + T07b2.c0 + T07b2.n - 1);
     g.fill(c.x + T07b2.c0 + T07b2.n, c.x + 33, 11, 14, '#');
@@ -273,7 +273,7 @@ export const act3: Act = {
   id: 'bbi07-sahi',
   w: 32,
   advice: 'Three troupes in a row. The middle one never lies down for a bridge: it only makes a tower and a wheel. Jump on to the wheel’s top when it forms and off to the far bank before the drum. The last drummer plays fast: be at the edge for its bridge.',
-  cps: [10.5, 21.5],
+  cps: [],
   paint: (g, c) => {
     for (const t of [T07c1, T07c2, T07c3]) g.pit(c.x + t.c0, c.x + t.c0 + t.n - 1);
   },
@@ -315,7 +315,7 @@ export const T07d: TroupeCfg[] = [
   { c0: 3, n: 5, drum: 1.3, hold: 1.8, poses: ['tower'], form: 0.3 },
   { c0: 13, n: 6, drum: 1.1, hold: 1.8, poses: ['wheel', 'tower'], form: 0.3, phase: 0.3 },
 ];
-export const act4 = troupeAct('bbi07-stambha', 23, T07d, 'bbi7d', 'Two troupes that never lie down. The first only ever makes a tower: jump on to its top and off to the far bank before the drum starts. The second makes a wheel, then a tower: either will do, if you go at once.', [11.5]);
+export const act4 = troupeAct('bbi07-stambha', 23, T07d, 'bbi7d', 'Two troupes that never lie down. The first only ever makes a tower: jump on to its top and off to the far bank before the drum starts. The second makes a wheel, then a tower: either will do, if you go at once.');
 
 /** act 5: the long night: three bridges back to back, quicker drummers each time */
 export const T07e2: TroupeCfg[] = [
@@ -323,7 +323,30 @@ export const T07e2: TroupeCfg[] = [
   { c0: 13, n: 8, drum: 1.2, hold: 1.4, poses: ['tower', 'bridge'], form: 0.3, phase: 0.6 },
   { c0: 24, n: 9, drum: 1.0, hold: 1.4, poses: ['bridge', 'tower', 'wheel'], form: 0.3, phase: 0.2 },
 ];
-export const act5 = troupeAct('bbi07-raati', 36, T07e2, 'bbi7f', 'The last three troupes, each drummer quicker than the one before. Be at each edge as its drum stops for the bridge, and rest on the banks between.', [11.5, 22.5]);
+export const act5 = troupeAct('bbi07-raati', 36, T07e2, 'bbi7f', 'The last three troupes, each drummer quicker than the one before. Be at each edge as its drum stops for the bridge, and rest on the banks between.');
+
+export const act6 = troupeAct(
+  'bbi07-mancha',
+  26,
+  [
+    { c0: 3, n: 6, drum: 1.6, hold: 1.5, poses: ['wheel', 'tower', 'bridge'], form: 0.3 },
+    { c0: 13, n: 9, drum: 1.3, hold: 1.5, poses: ['bridge', 'wheel'], form: 0.3, phase: 0.9 },
+  ],
+  'bbi7g',
+  'The main stage: a slow drummer, then a long pit whose bridge only just lasts the walk. Rest on the bank between them.',
+  [],
+);
+export const act7 = troupeAct(
+  'bbi07-dhol',
+  24,
+  [
+    { c0: 3, n: 5, drum: 1.0, hold: 1.8, poses: ['tower', 'wheel'], form: 0.3 },
+    { c0: 13, n: 7, drum: 1.4, hold: 1.4, poses: ['tower', 'tower', 'bridge'], form: 0.3, phase: 0.2 },
+  ],
+  'bbi7h',
+  'The drummers trade places: the first troupe only towers and wheels (on to its top and off), the second makes two towers before its bridge.',
+  [],
+);
 
 /** ending: the last pose is a gate over the door; between poses the troupe whirls across the doorway */
 export const T07e: TroupeCfg = { c0: 0, n: 4, drum: 1.6, hold: 1.6, poses: ['gate'], form: 0.3, ground: true };
