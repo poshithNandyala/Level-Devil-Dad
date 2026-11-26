@@ -18,7 +18,7 @@ import { BookPorter, ChaiBoard, Girders, Pointer, Porter, Road, SHORT, TALL } fr
 import { Adda, House, TeaSeller, Wash } from './adda';
 import { ClothPanel, Decorator, Skeleton, Stakes } from './pandal';
 import { Tin } from './muri';
-import { Figure, Ghat } from './kumartuli';
+import { BigFigure, Figure, Ghat } from './kumartuli';
 import type { Act } from '../../levels/acts';
 
 const tara = (n: number, beaten = 0) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[beaten % L.beaten.length] });
@@ -902,6 +902,40 @@ const toran: Act = {
   },
 };
 
+
+/** CCU-05 carry acts: each stretch of the ghat has a mud gap too wide to jump and a big figure nearly
+ *  painted beside it. Stand on its head: when the paint reaches the crown they carry it across, with you. */
+function carryAct(id: string, n: number, rate: number, advice: string): Act {
+  return {
+    id,
+    w: 22 * n,
+    advice,
+    paint: (g, c) => {
+      for (let k = 0; k < n; k++) {
+        const s0 = c.x + 22 * k;
+        g.fill(s0 + 2, s0 + 2, 13, 14, '#').pit(s0 + 6, s0 + 15).fill(s0 + 16, s0 + 21, 12, 14, '#');
+      }
+    },
+    build: (w, c) => {
+      for (let k = 0; k < n; k++) {
+        const s0 = c.x + 22 * k;
+        w.add(new Ghat(px(s0 + 6), px(s0 + 16)));
+        const big = w.add(new BigFigure(px(s0 + 3), rate));
+        big.stopX = px(s0 + 14.5);
+        w.when(
+          () => big.riding(w),
+          () => {
+            if (big.state === 'wait') big.state = 'paint';
+          },
+        );
+        (w.flags.bigs ??= []).push(big);
+      }
+    },
+  };
+}
+const pratima = carryAct('ccu05-pratima', 2, 0.15, 'Down at the ghat the mud is too wide to jump. Each big figure beside it is nearly painted: climb on to its head and stay there. When the paint reaches the crown, they carry it across, with you; step off on to the landing.');
+const ghatpar = carryAct('ccu05-ghatpar', 2, 0.1, 'Two more crossings, the painters slower: climb up, wait on the head, ride it over, and never step off while it’s moving.');
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -952,7 +986,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: aasteRoom(), par: 24, twist: 'ccu-stop', shape: 'short', meta: meta('exit-moving-vehicle-on-shout', ['exit-facing-forward'], 'ccu-bus-crawls-for-whoever-waits') }),
   longStage({ base: muriRoom(), par: 38, acts: [dui3], twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
   longStage({ base: boiRoom(), par: 24, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
-  longStage({ base: kumartuliRoom(), par: 32, acts: [uthon, lane, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
+  longStage({ base: kumartuliRoom(), par: 80, acts: [uthon, lane, pratima, ghat, ghatpar], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
   longStage({ base: poleRoom(), par: 84, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 160, acts: [girder, dui, sandhya, ulto, bhor, dupur, raat, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 32, acts: [rok, tokta], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),

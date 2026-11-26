@@ -434,6 +434,23 @@ const ACT06 = (x: number): Step[] => [
   { hold: '', until: (w) => w.player.cx > px(x + 44.5), max: 3000, note: 'through the second junction' },
 ];
 
+
+// ------------------------------------------------------------------ CCU-05 carry acts
+const bigAt = (w: World, s0: number) => (w.flags.bigs as BigFigure[]).find((b) => Math.abs(b.solid.x - px(s0 + 3)) < 4 || (b.state !== 'wait' && b.stopX === px(s0 + 14.5)))!;
+function carrySeg(s0: number, early = false): Step[] {
+  return [
+    walk(s0 + 0.4),
+    steerHop(px(s0 + 2.5), 12, 'up on the step'),
+    steerHop(px(s0 + 4.2), 12, 'on to the figure’s head'),
+    early
+      ? { hold: 'R', until: (w) => bigAt(w, s0).state === 'carry' && w.player.cx > px(s0 + 7), max: 1200, note: 'and off as soon as it moves' }
+      : { hold: '', until: (w) => bigAt(w, s0).state === 'down', max: 1800, note: 'wait for the paint to reach the crown, and ride it across' },
+    { hold: 'R', until: and(ground, X(s0 + 21.4)), max: 400, note: 'off on to the landing' },
+    { hold: 'R', until: (w) => w.player.onGround && w.player.y + w.player.h > px(12), max: 200, note: 'down off the landing' },
+  ];
+}
+const carryRoute = (x: number, n: number, lastDown = true): Step[] => Array.from({ length: n }, (_, k) => carrySeg(x + 22 * k).slice(0, k === n - 1 && !lastDown ? 5 : 6)).flat();
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['CCU-01'] = tourRun('onto');
   S['CCU-02'] = [...ride(px(25), px(28.5), 'past the first “aaste” (over the drain), off on the second'), walk(30)];
@@ -539,6 +556,8 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu05-pratima': (x) => carryRoute(x, 2, false),
+  'ccu05-ghatpar': (x) => carryRoute(x, 2),
   'ccu07-sandhya': (x) => relayRoute(x, [42, 60, 80], true),
   'ccu07-ulto': (x) => relayRoute(x, [41, 59, 79], false),
   'ccu07-bhor': (x) => relayRoute(x, [43, 61, 81], true),
@@ -675,6 +694,16 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: '', until: (w) => tramB(w)!.state === 'end', max: 3000, note: 'to the end of the line' },
   ],
 };
+
+
+// CCU-05's carry acts: the obvious plays there (scripted after the act routes they build on)
+{
+  const to92 = (): Step[] => [...kumartuliRoute(), ...actRoutes['ccu05-uthon'](32), ...actRoutes['ccu05-lane'](58)];
+  mistakes['CCU-05'].push(
+    { what: 'jumping the ghat mud from the step', steps: [...to92(), walk(92.4), steerHop(px(94.5), 12, 'up'), { hold: 'R', jump: 30, ticks: 40, long: true, note: 'a long jump at the mud' }, { hold: 'R', until: done, max: 300 }], cause: 'ccu-ganga' },
+    { what: 'stepping off the carried figure as soon as it moves', steps: [...to92(), ...carrySeg(92, true), { hold: 'R', until: done, max: 300 }], cause: 'ccu-ganga' },
+  );
+}
 
 /** a policy for each door ending, by kind */
 const SETHOP = hopGaps();
