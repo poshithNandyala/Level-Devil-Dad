@@ -10,6 +10,7 @@ import { Bus } from '../../src/game/cities/ccu/entities';
 import type { Stack } from '../../src/game/cities/ccu/books';
 import type { Tram } from '../../src/game/cities/ccu/tram';
 import { Porter } from '../../src/game/cities/ccu/porters';
+import type { Wash } from '../../src/game/cities/ccu/adda';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -167,6 +168,33 @@ const girderRoute = (x: number): Step[] => [
   { hold: 'R', until: (w) => w.player.onGround && !riding(w), max: 200, note: 'off on to the second pylon' },
 ];
 
+
+// ------------------------------------------------------------------ CCU-08: the rok
+/** walk on along the rok, never stopping, and hop each sheet of water as it comes */
+function hopWater(): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const p = w.player;
+    const wash = w.flags.rokWash as Wash | undefined;
+    const near = wash?.waves.some((v) => v.x - 12 - (p.x + p.w) < 44 && v.x + 12 > p.x);
+    if (p.onGround && near) {
+      jt = 12;
+      return { move: 'R', jump: true };
+    }
+    return go('R');
+  };
+}
+const addaRoute = (): Step[] => [walk(2.6), ...hopTo(px(5), 12, 'up on the rok'), { hold: 'R', until: X(32.2), max: 600, note: 'straight through the adda, never stopping' }];
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['CCU-01'] = tourRun('onto');
   S['CCU-02'] = [...ride(px(25), px(28.5), 'past the first “aaste” (over the drain), off on the second'), walk(30)];
@@ -181,6 +209,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('CCU-06', 0, []);
   S['CCU-07'] = howrahRoom();
   lengthen('CCU-07', 0, []);
+  S['CCU-08'] = addaRoute();
+  lengthen('CCU-08', 0, []);
   S['CCU-04'] = boiRoute(true);
   lengthen('CCU-04', 0, []);
 }
@@ -204,6 +234,7 @@ function boiRoute(skip: boolean, wait = 0): Step[] {
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-01': { steps: tourRun('long'), cause: 'ccu-rail' },
   'CCU-04': { steps: boiRoute(false), cause: 'ccu-boi' },
+  'CCU-08': { steps: [walk(2.6), ...hopTo(px(5), 12, 'up on the rok'), walk(14.2), { hold: '', until: done, max: 1200, note: 'stop to listen to the old men' }], cause: 'ccu-dhowa' },
   'CCU-07': { steps: [howrahRoom()[0], howrahRoom()[1], { hold: '', until: done, max: 3000, note: 'ride him all the way' }], cause: 'ccu-cha' },
   'CCU-06': {
     steps: [walk(2.4), ...hopTo(px(4.5), 12, 'up the stop’s step'), ...hopTo(px(5.8), 10, 'up on the platform'), { hold: 'R', until: (w) => tramA(w).riding(w) && w.player.cx > px(8), max: 300, note: 'on to the roof' }, { hold: '', until: done, max: 2400 }],
@@ -222,6 +253,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** more scripted first-timer deaths and 'like last time' moves */
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'CCU-08': [{ what: 'waiting by the second adda for the water to stop', steps: [...addaRoute(), walk(32 + 24.5), { hold: '', until: done, max: 1500 }], cause: 'ccu-dhowa' }],
   'CCU-07': [{ what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), walk(80 + 3.9), ...hopTo(px(86.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
   'CCU-01': [{ what: 'up on the thela and a hop down off it, on to the rail', steps: tourRun('off'), cause: 'ccu-rail' }],
   'CCU-02': [
@@ -237,6 +269,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu08-rok': (x) => [{ policy: hopWater(), until: and(ground, X(x + 38)), max: 1800, note: 'through both addas, hopping the water' }],
   'ccu07-girder': girderRoute,
   'ccu07-pylon': (x) => [walk(x + 3.9), ...hopTo(px(x + 6.4), 10, 'up the pylon step'), hopUp((w) => ahead(w, 55, 54), 'wait for the tall porter, and up on his load'), { hold: '', until: X(x + 40.6), max: 1800, note: 'ride him to Howrah' }],
   'ccu06-points': (x) => [
@@ -252,6 +285,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 /** a policy for each door ending, by kind */
 const SETHOP = hopGaps();
 const endingPolicies: Record<string, Policy> = {
+  'ccu-bhanr'(w, _m, d) {
+    const k = w.flags.bhanr as { x: number };
+    if (w.flags.twist === 'open') return go(toward(w, d.x + 8, 1) || 'R');
+    return go(toward(w, k.x, 3));
+  },
   'ccu-arch'(w, _m, d) {
     const k = w.flags.arch as { D: number };
     const p = w.player;
@@ -301,5 +339,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['CCU-02', 'CCU-04', 'CCU-06', 'CCU-07'],
+  fair: ['CCU-02', 'CCU-04', 'CCU-06', 'CCU-07', 'CCU-08'],
 };

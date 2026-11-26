@@ -1,7 +1,7 @@
 // Kolkata: trams that still crawl, buses that never stop, College Street's books by the kilo, Howrah
 // Bridge's porters, adda on the rok, the pandal's bamboo skeleton. 01 the welcome tour, 02-10 long stages
 // (room + act + door ending), harder each time, 10 the finale. Slots: docs/allocation.json (CCU).
-import { type LevelDef, type StageMeta, type World } from '../../world';
+import { Entity, type LevelDef, type StageMeta, type World } from '../../world';
 import { lines as L } from './lines';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
@@ -14,6 +14,7 @@ import { NALA } from './endings';
 import { Customer, Muck, Stack, Stall } from './books';
 import { Junction, Points, Tram } from './tram';
 import { ChaiBoard, Girders, Porter, Road, SHORT, TALL } from './porters';
+import { Adda, House, TeaSeller, Wash } from './adda';
 import type { Act } from '../../levels/acts';
 
 const tara = (n: number, beaten = 0) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[beaten % L.beaten.length] });
@@ -234,6 +235,72 @@ const pylon: Act = {
   },
 };
 
+
+// ================================================================== CCU-08: Adda (the rok)
+/** the tea seller for a stretch of rok: sent along from `from` whenever someone's been taken into an adda */
+function teaRound(w: World, addas: Adda[], from: number) {
+  const t = w.add(new TeaSeller(from, -70, addas));
+  for (const a of addas) w.when(() => a.held, () => w.after(0.3, () => { if (!t.active) t.send(from); }), false);
+  return t;
+}
+function addaRoom(): LevelDef {
+  return {
+    id: 'CCU-08',
+    city: 'CCU',
+    index: 8,
+    name: 'Adda',
+    nameEn: 'The endless chat',
+    tagline: 'Outside the old houses of north Kolkata, the rok: a raised brick step where the neighbourhood sits and argues, for hours, over tea. The lane below has been dug up for weeks.',
+    hint: 'The lane is dug up: keep to the rok. The old men sitting on it are an adda, and if you stand still among them you’ve joined it: you can’t get up again until the tea seller comes by with his clay cups. Meanwhile the maid sloshes her bucket of water along the rok from the door. So never stop beside the old men: walk straight through them, and hop the water.',
+    par: 12,
+    map: Grid.ground(15).pit(4, 31).fill(4, 31, 13, 14, '#').put(1, 14, '@').rows(),
+    build(w: World) {
+      w.add(new House(px(3), px(32)));
+      khod(w, 4, 32);
+      const a = w.add(new Adda(px(11), px(18), 3));
+      const wash = w.add(new Wash(px(28), px(4)));
+      teaRound(w, [a], px(31));
+      // the first time they hold you, the maid comes out with her bucket
+      w.when(() => a.held, (w2) => w2.after(0.3, () => wash.throw(w2)));
+      w.flags.addas = [a];
+      sign(w, 0.3, 10.4, 3.4, 'SHOVABAZAR', 'green', null, 'north');
+      rival(w, 2, 15, 1, tara(6));
+      collectible(w, 'ccu-bhanr', 21.5, 10.8);
+    },
+  };
+}
+
+/** CCU-08 act: more of the rok, two more addas, and a door that washes the rok on a beat */
+const rok: Act = {
+  id: 'ccu08-rok',
+  w: 44,
+  cp0: false,
+  cps: [17.5],
+  advice: 'Two more addas on the rok, and a door ahead whose maid throws her water every few seconds: you see the door open first. Walk through the old men without stopping, hop each sheet of water, and if you need to wait, wait on the bare rok between them.',
+  paint: (g, c) => {
+    g.pit(c.x, c.x + 35).fill(c.x, c.x + 35, 13, 14, '#');
+  },
+  build: (w, c) => {
+    w.add(new House(c.X(0), c.X(36)));
+    khod(w, c.x, c.x + 36);
+    const a1 = w.add(new Adda(c.X(7), c.X(13), 3));
+    const a2 = w.add(new Adda(c.X(22), c.X(28), 3));
+    const wash = w.add(new Wash(c.X(33), c.X(20)));
+    teaRound(w, [a1, a2], c.X(37));
+    let beat = -1;
+    w.add(
+      new (class extends Entity {
+        update(w2: World) {
+          if (beat < 0 && w2.player.cx > c.X(1)) beat = w2.tick;
+          if (beat >= 0 && (w2.tick - beat) % 384 === 0) wash.throw(w2);
+        }
+      })(),
+    );
+    w.flags.addas = [...(w.flags.addas ?? []), a1, a2];
+    w.flags.rokWash = wash;
+  },
+};
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -287,7 +354,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: todoRoom(5), par: 30, shape: 'long' }),
   longStage({ base: poleRoom(), par: 60, acts: [points], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 90, acts: [girder, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
-  longStage({ base: todoRoom(8), par: 30, shape: 'long' }),
+  longStage({ base: addaRoom(), par: 40, acts: [rok], twist: 'ccu-bhanr', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-door-opens-for-a-cup-of-tea') }),
   longStage({ base: todoRoom(9), par: 30, shape: 'long' }),
   longStage({ base: todoRoom(10), par: 30, shape: 'long' }),
 ];

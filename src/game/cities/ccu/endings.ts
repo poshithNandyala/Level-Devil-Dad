@@ -10,7 +10,7 @@ import { Customer, Muck, Stack, Stall } from './books';
 import { Paint } from '../../levels/endkit';
 import { Road } from './porters';
 
-export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn' | 'ccu-arch';
+export type CcuEndingKind = 'ccu-stop' | 'ccu-set' | 'ccu-pole-turn' | 'ccu-arch' | 'ccu-bhanr';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<CcuEndingKind, true> {}
@@ -187,6 +187,59 @@ export const endings: Record<CcuEndingKind, Ending> = {
             ctx.fillStyle = '#5A1812';
             ctx.fillRect(beam.x - 6, beam.y + beam.h, 6, FLOOR_Y - beam.y - beam.h);
             ctx.fillRect(beam.x + beam.w, beam.y + beam.h, 6, FLOOR_Y - beam.y - beam.h);
+          }
+        })(),
+      );
+    },
+  },
+  // ================================================================ CCU-08: a cup of tea
+  /** The door is locked, and the tea seller stands beside it. This time standing still is the answer: stop
+   *  beside him and he hands you a clay cup, and the door opens. */
+  'ccu-bhanr': {
+    space: 12,
+    advice: 'The door is locked, and the tea seller stands beside it with his clay cups. This time, stop: stand still beside him till he hands you a cup, and the door opens.',
+    build(w, d) {
+      const D = Math.round(d.x / 16);
+      const L = lock(w, d, 'Thamun! | Stop!');
+      const x = px(D - 2) + 8;
+      let still = 0;
+      w.flags.bhanr = { x };
+      w.flags.twist = 'locked';
+      w.add(
+        new (class extends Entity {
+          got = false;
+          update(w2: World) {
+            const p = w2.player;
+            if (this.got) return;
+            if (p.onGround && Math.abs(p.cx - x) < 14 && Math.abs(p.vx) < 5) still += 1 / 120;
+            else still = 0;
+            if (still >= 0.8) {
+              this.got = true;
+              w2.flags.cup = 1;
+              w2.sfx('collect', p.cx, p.y);
+              L.unlock();
+            }
+          }
+          draw(ctx: CanvasRenderingContext2D, w2: World) {
+            const y = FLOOR_Y - 24;
+            ctx.fillStyle = '#8D6E63';
+            ctx.fillRect(x - 3, y + 8, 6, 9);
+            ctx.fillStyle = '#C68B59';
+            ctx.beginPath();
+            ctx.arc(x, y + 4, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#8E9399';
+            ctx.fillRect(x - 12, y + 11, 7, 7);
+            ctx.fillStyle = '#B5562B';
+            for (let i = 0; i < 4; i++) ctx.fillRect(x + 5, y + 8 + i * 2.5, 5, 2);
+            if (this.got) {
+              const p = w2.player;
+              ctx.fillStyle = '#B5562B';
+              ctx.fillRect(p.cx + 4, p.y + 4, 4, 5);
+            } else if (still > 0) {
+              ctx.fillStyle = 'rgba(255,255,255,0.8)';
+              ctx.fillRect(x - 8, y - 6, 16 * Math.min(1, still / 0.8), 2);
+            }
           }
         })(),
       );
