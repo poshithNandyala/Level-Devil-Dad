@@ -10,11 +10,13 @@ import type { Herd, LateBoat } from '../../src/game/cities/svp/s04';
 import type { Viewpoint } from '../../src/game/cities/svp/s05';
 import type { Bough, Flock } from '../../src/game/cities/svp/s06';
 import type { Crowd, Hall, Ship } from '../../src/game/cities/svp/s07';
+import type { Weather } from '../../src/game/cities/svp/s08';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
 const px = (t: number) => t * 16;
+const FLOOR_Y = 240;
 const go = (move: Move): Out => ({ move, jump: false });
 const toward = (w: World, x: number, slack = 2): Move => {
   const c = w.player.cx;
@@ -93,6 +95,32 @@ const inTrench = (w: World) => w.player.onGround && w.player.y + w.player.h > 25
 const climbRight = (note: string, farX: number): Step => ({ hold: 'R', jump: 14, until: (w) => w.player.onGround && w.player.y + w.player.h <= 241 && w.player.x >= farX, max: 300, note });
 const ships = (w: World) => w.flags.ships as Ship[];
 
+// ------------------------------------------------------------------ SVP-08: the two monsoons
+const wx = (w: World) => w.flags.weather as Weather;
+/** along the street: in the lee of an awning for the rain that is coming, and over to the next one in the lull */
+function streetPolicy(w: World): Out {
+  const k = wx(w);
+  const p = w.player;
+  const cx = p.cx;
+  if (k.t < 0) return go('R');
+  const aws = k.awnings.slice().sort((a, b) => a.x0 - b.x0);
+  const inside = aws.find((a) => cx >= a.x0 - 6 && cx <= a.x1 + 6);
+  const nextAw = aws.find((a) => a.x0 > cx + 4);
+  const dirNow = k.raining ? k.dir : k.next;
+  const spot = (a: (typeof aws)[0]) => {
+    const [z0, z1] = a.lee(dirNow);
+    return (z0 + z1) / 2;
+  };
+  const porch = k.porches.find(([a, b]) => cx >= a && cx <= b);
+  if (k.raining && porch) return go('');
+  if (k.raining) return go(toward(w, spot(inside ?? nextAw ?? aws[aws.length - 1]), 2));
+  const tgt = nextAw ?? inside ?? aws[aws.length - 1];
+  const dist = Math.abs(spot(tgt) - cx);
+  if (inside && nextAw && k.left < dist / 2.3 + 45) return go(toward(w, spot(inside), 2));
+  return go(toward(w, spot(tgt), 2));
+}
+const streetUntil = (idx: number, note: string): Step => ({ policy: streetPolicy, until: (w) => !!wx(w).awnings[idx] && Math.abs(w.player.cx - (wx(w).awnings[idx].lee(wx(w).raining ? wx(w).dir : wx(w).next)[0] + 19)) < 4 && w.player.onGround, max: 6000, note });
+
 // ------------------------------------------------------------------ SVP-02: the saw mill
 const hall = (w: World, i = 0) => (i < 0 ? (w.flags.saw as SawHall) : ((w.flags.halls ?? []) as SawHall[])[i]);
 /** stay at `off` px from the log's own left end (the log moves, so follow it) until the carriage has docked */
@@ -141,10 +169,13 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { hold: 'R', until: and(ground, X(31)), max: 300 },
   ];
   lengthen('SVP-07', 0, []);
+  S['SVP-08'] = [streetUntil(2, 'awning to awning, in the lee of the rain that is coming')];
+  lengthen('SVP-08', 0, []);
 }
 
 /** the obvious play per stage, and the cause it must die of */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'SVP-08': { steps: [{ hold: 'R', until: (w) => w.state !== 'play', max: 1500, note: 'run for it' }], cause: 'svp-baarish' },
   'SVP-07': { steps: [hopUntil(and(ground, X(11.5)), 'on to the luggage'), { hold: '', until: (w) => w.state !== 'play', max: 1500, note: 'ship late hai: sit on the luggage like everyone' }], cause: 'svp-saman' },
   'SVP-06': { steps: [{ hold: 'R', until: X(11.2), max: 400 }, { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'run at the creek and jump for the cliff' }], cause: 'svp-kichad' },
   'SVP-05': { steps: [hopUntil((w) => w.state !== 'play', 'at the gap, run and hop the dashes')], cause: 'svp-nazar' },
@@ -161,6 +192,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'SVP-08': { steps: [{ policy: (w) => go(toward(w, 6 * 16 + 80 - 19, 2)), until: (w) => w.state !== 'play', max: 3000, note: 'shelter at the right end of the first awning, and stay put' }], cause: 'svp-baarish' },
   'SVP-07': { steps: [hopUntil(and(ground, X(37)), 'over the luggage and the trench, to the jetty edge'), { hold: '', until: (w) => w.state !== 'play', max: 1800, note: 'wait there for the ship to be called' }], cause: 'svp-bheed' },
   'SVP-06': {
     steps: [
@@ -232,6 +264,7 @@ function crossGaps(): Step {
   };
 }
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp08-gali': () => [streetUntil(6, 'the longer street, awning to awning')],
   'svp07-ghat': (x) => [
     { hold: 'R', until: and(ground, (w) => w.player.x >= px(x + 4)), max: 600, note: 'on along the pier to the quay' },
     { policy: (w) => go(toward(w, px(x + 6) - 12, 3)), until: (w) => ships(w)[1].docked, max: 3600, note: 'wait at the quay edge: the first ship is the crowd’s' },
@@ -282,6 +315,28 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 
 /** a policy for each door ending, by kind */
 const endingPolicies: Record<string, Policy> = {
+  'svp-gutter-river'(w, m, d) {
+    const D = Math.round(d.x / 16);
+    const gx0 = px(D - 8),
+      gx1 = px(D - 3);
+    const k = wx(w);
+    const g = w.flags.gutter as { flood: number };
+    const p = w.player;
+    if (m.hold > 0) return { move: 'R', jump: true };
+    if (p.cx > gx1 + 6) return go(toward(w, d.x + 8, 1) || 'R');
+    if (p.y + p.h > FLOOR_Y + 8) {
+      // in the gutter: across, and up the far wall
+      if (p.onGround && p.x >= gx1 - 16) {
+        m.hold = 14;
+        return { move: 'R', jump: true };
+      }
+      return go('R');
+    }
+    if (p.cx >= gx0 - 4 && !p.onGround) return go('R');
+    const clear = !k.raining && g.flood === 0 && k.left > 150;
+    if (clear) return go('R');
+    return streetPolicy(w);
+  },
   'svp-ticket-window'(w, _m, d) {
     const k = w.flags.window as { lk: { open: boolean } };
     if (k.lk.open) return go(toward(w, d.x + 8, 1) || 'R');
@@ -327,5 +382,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['SVP-02', 'SVP-03', 'SVP-04', 'SVP-05', 'SVP-06', 'SVP-07'],
+  fair: ['SVP-02', 'SVP-03', 'SVP-04', 'SVP-05', 'SVP-06', 'SVP-07', 'SVP-08'],
 };
