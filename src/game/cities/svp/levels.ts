@@ -12,6 +12,7 @@ import { magarRoom, nala } from './s03';
 import { hiranRoom, ghat } from './s04';
 import { tasveerRoom, dekho } from './s05';
 import { toteRoom, sanjh } from './s06';
+import { jettyRoom, ghatSte, doosra } from './s07';
 
 const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
 
@@ -55,7 +56,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: hiranRoom(), acts: [ghat], twist: 'svp-jetty-guard', par: 50, shape: 'short', meta: { family: 'food-holder-followed-by-deer', betrayals: ['carry-attracts'], ending: 'svp-jetty-guard' } }), // SVP-04
   longStage({ base: tasveerRoom(), acts: [dekho], twist: 'svp-note-door', par: 58, shape: 'wtf', meta: { family: 'picture-aligns-ledge-from-spot', betrayals: ['viewpoint-align'], ending: 'svp-note-door' } }), // SVP-05
   longStage({ base: toteRoom(), acts: [sanjh], twist: 'svp-bough-door', par: 62, shape: 'long', meta: { family: 'bird-weight-bends-tree', betrayals: ['crowd-weight-bends'], ending: 'svp-bough-door' } }), // SVP-06
-  longStage({ base: todoRoom(7), par: 30, shape: 'long' }), // SVP-07 TODO: acts, twist (a svp-... ending), par
+  longStage({ base: jettyRoom(), acts: [ghatSte, doosra], twist: 'svp-ticket-window', par: 100, shape: 'marathon', lives: 'act', cps: [23.4], meta: { family: 'luggage-stacks-as-floor', betrayals: ['crowd-belongings-floor'], ending: 'svp-ticket-window' } }), // SVP-07
   longStage({ base: todoRoom(8), par: 30, shape: 'long' }), // SVP-08 TODO: acts, twist (a svp-... ending), par
   longStage({ base: todoRoom(9), par: 30, shape: 'long' }), // SVP-09 TODO: acts, twist (a svp-... ending), par
   longStage({ base: todoRoom(10), par: 30, shape: 'long' }), // SVP-10 TODO: acts, twist (a svp-... ending), par

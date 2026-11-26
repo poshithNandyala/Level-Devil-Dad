@@ -9,6 +9,7 @@ import type { Creek } from '../../src/game/cities/svp/s03';
 import type { Herd, LateBoat } from '../../src/game/cities/svp/s04';
 import type { Viewpoint } from '../../src/game/cities/svp/s05';
 import type { Bough, Flock } from '../../src/game/cities/svp/s06';
+import type { Crowd, Hall, Ship } from '../../src/game/cities/svp/s07';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -35,7 +36,7 @@ function hopEdges(note = ''): Step {
         jt--;
         return { move: 'R', jump: true };
       }
-      if (p.onGround && !w.solidAt(p.x + p.w + 6, p.y + p.h + 2, 2, 2)) {
+      if (p.onGround && (!w.solidAt(p.x + p.w + 6, p.y + p.h + 2, 2, 2) || w.solidAt(p.x + p.w + 4, p.y + 3, 2, p.h - 8))) {
         jt = 11;
         return { move: 'R', jump: true };
       }
@@ -83,6 +84,15 @@ const boughCross = (fl: (w: World) => Flock, bg: (w: World) => Bough, waitX: num
   { hold: 'R', until: and(ground, (w) => w.player.x >= farX), max: 300, note: 'off on to the cliff' },
 ];
 
+// ------------------------------------------------------------------ SVP-07: the jetty
+const hall0 = (w: World) => w.flags.hall as Hall;
+const crowd0 = (w: World) => w.flags.crowd as Crowd;
+const hallN = (w: World) => (w.flags.halls as Hall[])[0];
+const inTrench = (w: World) => w.player.onGround && w.player.y + w.player.h > 255;
+/** out of the trench by its right wall */
+const climbRight = (note: string, farX: number): Step => ({ hold: 'R', jump: 14, until: (w) => w.player.onGround && w.player.y + w.player.h <= 241 && w.player.x >= farX, max: 300, note });
+const ships = (w: World) => w.flags.ships as Ship[];
+
 // ------------------------------------------------------------------ SVP-02: the saw mill
 const hall = (w: World, i = 0) => (i < 0 ? (w.flags.saw as SawHall) : ((w.flags.halls ?? []) as SawHall[])[i]);
 /** stay at `off` px from the log's own left end (the log moves, so follow it) until the carriage has docked */
@@ -123,10 +133,19 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('SVP-05', 0, []);
   S['SVP-06'] = [...boughCross(fl0, bg0, 172, 144, 24 * 16), { hold: 'R', until: and(ground, X(31)), max: 300 }];
   lengthen('SVP-06', 0, []);
+  S['SVP-07'] = [
+    hopUntil(and(ground, X(14.5)), 'across the luggage, no stopping'),
+    { hold: 'R', until: inTrench, max: 600, note: 'down into the luggage trench' },
+    { hold: '', until: (w) => crowd0(w).x > 27 * 16 && crowd0(w).on, max: 2400, note: 'in the trench while the ship is called and the crowd goes over' },
+    climbRight('out behind the crowd', 25 * 16),
+    { hold: 'R', until: and(ground, X(31)), max: 300 },
+  ];
+  lengthen('SVP-07', 0, []);
 }
 
 /** the obvious play per stage, and the cause it must die of */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  'SVP-07': { steps: [hopUntil(and(ground, X(11.5)), 'on to the luggage'), { hold: '', until: (w) => w.state !== 'play', max: 1500, note: 'ship late hai: sit on the luggage like everyone' }], cause: 'svp-saman' },
   'SVP-06': { steps: [{ hold: 'R', until: X(11.2), max: 400 }, { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'run at the creek and jump for the cliff' }], cause: 'svp-kichad' },
   'SVP-05': { steps: [hopUntil((w) => w.state !== 'play', 'at the gap, run and hop the dashes')], cause: 'svp-nazar' },
   'SVP-04': { steps: [{ hold: 'R', until: X(19.2), max: 600 }, ...Array.from({ length: 40 }, (): Step => ({ hold: '', jump: 8, ticks: 40, note: 'waiting for the boat, hopping to keep warm' }))], cause: 'svp-hiran' },
@@ -142,6 +161,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'SVP-07': { steps: [hopUntil(and(ground, X(37)), 'over the luggage and the trench, to the jetty edge'), { hold: '', until: (w) => w.state !== 'play', max: 1800, note: 'wait there for the ship to be called' }], cause: 'svp-bheed' },
   'SVP-06': {
     steps: [
       { policy: (w) => go(toward(w, 172, 3)), until: (w) => fl0(w).weight >= 0.95 && Math.abs(w.player.cx - 172) < 6, max: 2400, note: 'wait for the parrots' },
@@ -212,6 +232,20 @@ function crossGaps(): Step {
   };
 }
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp07-ghat': (x) => [
+    { hold: 'R', until: and(ground, (w) => w.player.x >= px(x + 4)), max: 600, note: 'on along the pier to the quay' },
+    { policy: (w) => go(toward(w, px(x + 6) - 12, 3)), until: (w) => ships(w)[1].docked, max: 3600, note: 'wait at the quay edge: the first ship is the crowd’s' },
+    { hold: 'R', jump: 14, until: (w) => w.standing(ships(w)[1].deck.solid), max: 200, note: 'step over to the second ship’s deck' },
+    { hold: 'R', until: and(ground, X(x + 16.5)), max: 400, note: 'off on to the far quay' },
+    { hold: 'R', until: and(ground, X(x + 33.5)), max: 600 },
+  ],
+  'svp07-doosra': (x) => [
+    hopUntil(and(ground, X(x + 12.5)), 'across the luggage, no stopping'),
+    { hold: 'R', until: inTrench, max: 600, note: 'into the trench' },
+    { hold: '', until: (w) => hallN(w).called && hallN(w).crowd.x < px(x + 23), max: 3600, note: 'in the trench through the false alarm, the real call and the crowd' },
+    climbRight('out behind the crowd', px(x + 26)),
+    { hold: 'R', until: and(ground, X(x + 45)), max: 600 },
+  ],
   'svp06-sanjh': (x) => [
     hopUntil(and(ground, X(x + 12.5)), 'the branch is up, level with the cliff: across before the flock comes'),
     { hold: 'R', until: and(ground, X(x + 21)), max: 600, note: 'down off the cliff' },
@@ -248,6 +282,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 
 /** a policy for each door ending, by kind */
 const endingPolicies: Record<string, Policy> = {
+  'svp-ticket-window'(w, _m, d) {
+    const k = w.flags.window as { lk: { open: boolean } };
+    if (k.lk.open) return go(toward(w, d.x + 8, 1) || 'R');
+    return go(toward(w, d.x - 70, 3));
+  },
   'svp-bough-door'(w, m, d) {
     const { flock, b } = w.flags.boughdoor as { flock: Flock; b: Bough };
     const p = w.player;
@@ -288,5 +327,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['SVP-02', 'SVP-03', 'SVP-04', 'SVP-05', 'SVP-06'],
+  fair: ['SVP-02', 'SVP-03', 'SVP-04', 'SVP-05', 'SVP-06', 'SVP-07'],
 };

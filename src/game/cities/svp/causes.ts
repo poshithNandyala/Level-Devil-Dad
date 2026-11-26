@@ -6,4 +6,7 @@ export const causeLines: Record<string, string[]> = {
   'svp-magar': ['Magarmachh! The board’s arrow was pointing right at it.', 'The arrow always points at the crocodile: if it points at the log you’re landing on, don’t land.'],
   'svp-hiran': ['Hiran! The herd nudged you off the edge.', 'The deer follow the food. Put it down well back from the pit, then wait for the boat.'],
   'svp-nazar': ['Nazar! The ledge was only a picture from the bench.', 'Stand on the footprints without moving, and the view lines up. Then run, it only holds a few seconds.'],
+  'svp-saman': ['Saman! They all stood up and took the floor with them.', 'Don’t wait on the luggage: when the ship is called it goes. Cross, and get into the trench.'],
+  'svp-bheed': ['Bheed! The whole hall ran for the ship, and you were in the way.', 'Down in the trench while they run for the ship, and out again behind them.'],
+  'svp-jahaz': ['Jahaz! You got on the first ship, and it sailed.', 'The first ship is the crowd’s. Wait for the second, and step over to it when it docks.'],
 };

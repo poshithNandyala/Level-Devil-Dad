@@ -5,8 +5,9 @@ import { boardBridge } from './s03';
 import { jettyGuard } from './s04';
 import { noteDoor } from './s05';
 import { boughDoor } from './s06';
+import { ticketWindow } from './s07';
 
-export type SvpEndingKind = 'svp-timber-stack' | 'svp-board-bridge' | 'svp-jetty-guard' | 'svp-note-door' | 'svp-bough-door';
+export type SvpEndingKind = 'svp-timber-stack' | 'svp-board-bridge' | 'svp-jetty-guard' | 'svp-note-door' | 'svp-bough-door' | 'svp-ticket-window';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<SvpEndingKind, true> {}
@@ -18,4 +19,5 @@ export const endings: Record<SvpEndingKind, Ending> = {
   'svp-jetty-guard': jettyGuard,
   'svp-note-door': noteDoor,
   'svp-bough-door': boughDoor,
+  'svp-ticket-window': ticketWindow,
 };
