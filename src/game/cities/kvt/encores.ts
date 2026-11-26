@@ -173,7 +173,7 @@ const overhang: Act = {
     for (let i = 1; i <= 3; i++) {
       const c0 = x + 6 + i * 3,
         top = 14 - i;
-      g.fill(c0, c0 + 1, 1, top - 5, '#');
+      g.fill(c0, c0 + 2, top - 6, top - 5, '#');
       g.fill(c0, c0 + 1, top - 4, top - 4, 'v');
     }
     g.fill(x + 21, x + 27, 10, 17, '#');
