@@ -16,4 +16,7 @@ export const causeLines: Record<string, string[]> = {
   'bbi-dhenki': ['You stepped on the rice pounder, and it tipped you in.', 'Touch nothing: jump the husk pit from the top of the straw.'],
   'bbi-sila': ['You set the grinding roller rolling, Dad.', 'Don’t use the stone as a stair: jump straight up the step. On the verandah, it’s waiting too.'],
   'bbi-gadi': ['You woke the bullocks: they pulled you into the beam.', 'Don’t climb on the cart: jump over it and walk under the beam.'],
+  'bbi-ranga': ['Into the dye, Dad: the beat moved your patch.', 'Count the beats: one in five, the patches line up into a bridge.'],
+  'bbi-shuttle': ['The shuttle! It flies across on the bridge beat.', 'When the motif lines up, let the shuttle pass first, then walk over.'],
+  'bbi-tana': ['The threads closed on you, Dad.', 'Walk through the curtain only on the motif beat, and straight through.'],
 };
