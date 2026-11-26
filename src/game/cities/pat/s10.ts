@@ -10,8 +10,8 @@ import { Grid } from '../../levels/grid';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
 import { Rig, box } from './entities';
 import { taraScript } from './common';
-import { pontoon } from './s05';
-import { seams, under } from './s06';
+import { pontoon, sackDeck } from './s05';
+import { seams, under, liftSeams, type Lift } from './s06';
 import { stairBuild, stairPaint } from './s04';
 import { lines as L } from './lines';
 
@@ -123,6 +123,42 @@ export const actStair: Act = {
   build: (w, c) => {
     stairBuild(w, c.x + 2, 'pat10g', false);
     sign(w, c.x + 22, 6.4, 4.4, 'GOLGHAR', 'shop', null, 'the granary');
+  },
+};
+
+/** the pontoon with the porters at work: the cart's three sacks say every third section gets loaded, one after another */
+export const actBori: Act = {
+  id: 'pat10-bori',
+  w: 92,
+  advice: 'The cart at the foot of the pontoon carries three sacks: every third section is about to be loaded by the porters, one after another, each staying awash while its sack lies there. Wait at the end of the section before a loaded one, and never on the loaded one.',
+  cps: [44],
+  paint: (g, c) => {
+    g.fill(c.x + 5, c.x + 5 + 75 - 1, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const plan = [2, 5, 8, 11, 14, 17, 20, 23, 26].map((k, i) => ({ k, at: 1.0 + i * 3.8, dur: 4.2 }));
+    sackDeck(w, c.x + 5, 30, 'pat10s', plan);
+    cart(w, px(c.x + 1), 3);
+    sign(w, c.x + 1.2, 10.4, 3, 'PIPA PUL', 'shop', null, 'load: 3 sacks');
+  },
+};
+
+/** the Setu in traffic: the cart's two sacks say every second plate is the one the trucks lift */
+export const actGaadi: Act = {
+  id: 'pat10-gaadi',
+  w: 112,
+  advice: 'The cart at the foot of this stretch carries two sacks: every second plate is the one a truck lifts out of its seat, in turn, for three seconds, shaking a second before. Wait on the deck before a numbered even seam until its plate is back in and still, and cross the odd ones at once.',
+  cps: [40.5, 76.5],
+  paint: (g, c) => {
+    for (let i = 0; i < 16; i++) g.fill(c.x + 6 + i * 6, c.x + 7 + i * 6, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const cols = Array.from({ length: 16 }, (_, i) => c.x + 6 + i * 6);
+    const lifts: Lift[] = [];
+    for (let i = 1; i < 16; i += 2) for (let rep = 0; rep < 4; rep++) lifts.push({ k: i, at: 0.8 + ((i - 1) / 2) * 2.3 + rep * 19, dur: 3.0 });
+    liftSeams(w, c.x, cols, 'pat10c', Array.from({ length: 16 }, (_, i) => i + 1), lifts, px(c.x + 2));
+    cart(w, px(c.x + 1), 2);
+    sign(w, c.x + 1.2, 10.4, 3, 'SETU', 'shop', null, 'load: 2 sacks');
   },
 };
 

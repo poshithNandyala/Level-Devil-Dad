@@ -191,6 +191,66 @@ export const act2: Act = {
   },
 };
 
+export interface Drop {
+  /** section index, seconds after Dad reaches the bank, and how long the sack keeps it awash */
+  k: number;
+  at: number;
+  dur: number;
+}
+
+/** a deck where porters drop sacks on sections: a sack hangs above a section for a second, drops, and the section
+ *  stays awash while it lies there. The plan is the same every time. */
+export function sackDeck(w: World, c0: number, n: number, key: string, plan: Drop[]) {
+  const pt = pontoon(w, c0, n, [], key);
+  const st = { t0: -1, plan };
+  w.flags[key + 't'] = st;
+  w.when(
+    (w2) => w2.player.cx >= px(c0) - 40,
+    (w2) => {
+      st.t0 = w2.tick;
+    },
+  );
+  w.onTick((w2) => {
+    const t = st.t0 < 0 ? -99 : since(w2, st.t0);
+    pt.secs.forEach((sec, i) => {
+      sec.s.awash = plan.some((q) => q.k === i && t >= q.at && t < q.at + q.dur);
+    });
+  });
+  w.add(
+    new Paint((ctx, w2) => {
+      const t = st.t0 < 0 ? -99 : since(w2, st.t0);
+      for (const q of plan) {
+        const sx = px(c0) + q.k * SEC + SEC / 2;
+        if (t >= q.at - 1.2 && t < q.at) {
+          // the porter's sack swinging on its rope above the section
+          const sw = Math.sin(w2.tick / 5) * 2;
+          box(ctx, sx - 8 + sw, FL - 62, 16, 14, '#C9A56B');
+          box(ctx, sx - 8 + sw, FL - 62, 16, 3, '#E3C58A');
+          box(ctx, sx + sw, FL - 78, 1, 16, '#8A6A3A');
+        } else if (t >= q.at && t < q.at + q.dur) {
+          box(ctx, sx - 8, FL + 14 + 6, 16, 8, '#C9A56B');
+        }
+      }
+    }, 3),
+  );
+  return pt;
+}
+
+/** the porters' deck: sacks land on sections one after another, so the deck is only crossable in the gaps */
+export const actBori: Act = {
+  id: 'pat05-bori',
+  w: 74,
+  advice: 'Porters are loading the pontoon: a sack hangs over a section for a second and then lands, and while it lies there the section is awash. Wait at the end of the section before one until the sack has gone, and never wait on the section that is about to be loaded.',
+  cps: [37.5],
+  paint: (g, c) => {
+    g.fill(c.x + 4, c.x + 4 + 60 - 1, 15, 17, '.');
+  },
+  build: (w, c) => {
+    sackDeck(w, c.x + 4, 24, 'pat5s', [5, 8, 11, 14, 17, 20].map((k, i) => ({ k, at: 1.2 + i * 3.7, dur: 4.3 })));
+    sign(w, c.x + 1, 10.4, 3, 'LOADING', 'shop', null, 'sacks going on');
+  },
+};
+
 export const ending: Ending = {
   space: 18,
   advice: 'The last float has been unhooked for the night with the door on it, and it drifts away from the bank and back. Wait on the bank until it comes back in, jump on, and walk to the door while it is aboard.',

@@ -165,6 +165,155 @@ export const act2: Act = {
   },
 };
 
+export interface Lift {
+  /** seam index (0-based), seconds after Dad reaches the span, how long the plate stays out of its seat */
+  k: number;
+  at: number;
+  dur: number;
+}
+
+/** plates a truck lifts out of their seats for a while: a seam is open only in its window, and the plate shakes in its
+ *  seat for the second before. Same every time. */
+export function liftSeams(w: World, c0: number, cols: number[], key: string, nums: number[], lifts: Lift[], trigger: number) {
+  const st = { t0: -1, lifts, cols };
+  w.flags[key] = st;
+  w.when(
+    (w2) => w2.player.cx >= trigger,
+    (w2) => {
+      st.t0 = w2.tick;
+    },
+  );
+  const open = (k: number, w2: World, ahead = 0) => {
+    if (st.t0 < 0) return false;
+    const t = since(w2, st.t0) + ahead;
+    return lifts.some((q) => q.k === k && t >= q.at && t < q.at + q.dur);
+  };
+  cols.forEach((c, k) => {
+    const r = w.add(
+      new Rig(px(c), FL, 32, 8, {
+        solid: true,
+        layer: 2,
+        tick: (pl, w2) => {
+          const out = open(k, w2);
+          pl.solid!.collidable = !out;
+          pl.s.shake = !out && open(k, w2, 1.0);
+          pl.s.out = out;
+        },
+        paint: (ctx, pl, w2) => {
+          if (pl.s.out) return;
+          const sh = pl.s.shake ? Math.sin(w2.tick / 2) * 1.5 : 0;
+          box(ctx, pl.x + sh, pl.y, pl.w, 8, '#8A8F96');
+          box(ctx, pl.x + sh, pl.y, pl.w, 2, '#B8BDC4');
+          ctx.fillStyle = '#2A2A2E';
+          ctx.font = '700 8px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(String(nums[k]), pl.x + 16 + sh, pl.y + 7);
+        },
+      }),
+    );
+    r.s.k = k;
+    (w.flags[key + 'p'] ??= []).push(r);
+  });
+  w.add(
+    new Rig(px(c0), 256, px(cols[cols.length - 1] + 2 - c0), 30, {
+      layer: 4,
+      cause: 'pat-jod',
+      inset: 0,
+      paint: (ctx, r) => {
+        ctx.fillStyle = 'rgba(70,56,36,0.92)';
+        ctx.fillRect(r.x, r.y, r.w, 30);
+      },
+    }),
+  );
+  // a truck crossing over the lifted seam: drawn in passing
+  w.add(
+    new Paint((ctx, w2) => {
+      for (const q of lifts) {
+        if (!st.t0 || st.t0 < 0) break;
+        const t = since(w2, st.t0);
+        if (t >= q.at - 0.2 && t < q.at + q.dur) {
+          const x = px(cols[q.k]) - 40 + ((t - q.at + 0.2) / (q.dur + 0.2)) * 112;
+          box(ctx, x, FL - 36, 40, 22, '#3B6EA5');
+          box(ctx, x + 28, FL - 42, 14, 14, '#F2B705');
+          box(ctx, x, FL - 14, 40, 3, '#222');
+        }
+      }
+    }, 3),
+  );
+  return st;
+}
+
+/** a long run of spans where a truck lifts each plate out of its seat in turn */
+export const actGaadi: Act = {
+  id: 'pat06-gaadi',
+  w: 118,
+  advice: 'The traffic is heavy on this stretch: a truck lifts each plate out of its seat for a couple of seconds, in turn, with the plate shaking a second before. Wait on the deck, never on a plate, and cross a seam only while its plate is in and not shaking.',
+  cps: [52.5, 88.5],
+  paint: (g, c) => {
+    for (let i = 0; i < 18; i++) g.fill(c.x + 6 + i * 6, c.x + 7 + i * 6, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const cols = Array.from({ length: 18 }, (_, i) => c.x + 6 + i * 6);
+    const lifts: Lift[] = [];
+    // seams open in a ripple: 2.2 s each, 1.6 s apart, repeating every 9 s
+    for (let i = 0; i < 18; i++) for (let rep = 0; rep < 3; rep++) lifts.push({ k: i, at: 0.4 + i * 1.6 + rep * 29, dur: 2.2 });
+    liftSeams(w, c.x, cols, 'pat6c', Array.from({ length: 18 }, (_, i) => i + 1), lifts, px(c.x + 2));
+    sign(w, c.x + 2, 10.4, 3.2, 'TRAFFIC', 'shop', null, 'plates lifting');
+  },
+};
+
+/** Kumhrar's polished pillar stumps (Mauryan polished sandstone, 80-pillar hall, Kumhrar, Patna): rough ones hold a
+ *  walker, polished ones are slick. Source: https://en.wikipedia.org/wiki/Kumhrar */
+export const actKumhrar: Act = {
+  id: 'pat06-kumhrar',
+  w: 80,
+  advice: 'Kumhrar’s pillar hall: a row of stone stumps over the pit. The rough, grey ones are fine to stand on. The ones polished to a shine are slick: you slide right across them, so run on and jump from the far edge, and never stop on one.',
+  cps: [],
+  paint: (g, c) => {
+    g.fill(c.x + 4, c.x + 73, 15, 17, '.');
+  },
+  build: (w, c) => {
+    // 12 stumps, each 3 tiles wide with a 2 tile gap; stumps 3, 6, 9 and 11 are polished
+    const polished = new Set([2, 5, 8, 10]);
+    const stumps: Rig[] = [];
+    for (let i = 0; i < 12; i++) {
+      const x = px(c.x + 4 + i * 6);
+      const slick = polished.has(i);
+      const r = w.add(
+        new Rig(x, FL, 64, 48, {
+          solid: true,
+          layer: 2,
+          paint: (ctx, st) => {
+            box(ctx, st.x, st.y, st.w, 48, slick ? '#C9B79A' : '#7A6E5E');
+            box(ctx, st.x, st.y, st.w, 3, slick ? '#F4EAD2' : '#9A8E7C');
+            if (slick) {
+              box(ctx, st.x + 6, st.y + 1, 14, 1, '#FFFFFF');
+              box(ctx, st.x + 36, st.y + 6, 12, 1, '#FFFFFF');
+              box(ctx, st.x + 10, st.y + 20, 8, 1, '#FFFFFF');
+            } else for (let k = 0; k < 7; k++) box(ctx, st.x + 4 + k * 9, st.y + 4 + (k % 2) * 8, 4, 2, '#5C5246');
+          },
+        }),
+      );
+      r.solid!.slippery = slick;
+      r.s.slick = slick;
+      stumps.push(r);
+    }
+    w.flags.pat6k = { stumps };
+    w.add(
+      new Rig(px(c.x + 4), 256, px(70), 30, {
+        layer: 4,
+        cause: 'pat-jod',
+        inset: 0,
+        paint: (ctx, r) => {
+          ctx.fillStyle = 'rgba(70,56,36,0.92)';
+          ctx.fillRect(r.x, r.y, r.w, 30);
+        },
+      }),
+    );
+    sign(w, c.x + 1, 10.4, 3.2, 'KUMHRAR', 'shop', null, '80 pillars');
+  },
+};
+
 export const ending: Ending = {
   space: 16,
   advice: 'The old toll booth no longer charges, but its sensor strip still works: step on it and the barrier slams down at the door. Step on it and wait back for the barrier to lift, or jump the strip.',

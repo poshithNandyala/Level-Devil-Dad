@@ -164,7 +164,8 @@ bpl02-jheel bpl03-shelters bpl04-karchob bpl05-mehfil bpl06-chowk bpl07-karkhana
 rpr02-khet rpr03-chowk rpr04-kothi rpr05-mela rpr06-jungle rpr07-saal rpr08-dussehra
 rnc02-galli rnc03-maidan rnc04-seedhi rnc05-kharkai rnc06-ghariya rnc07-chattan rnc08-ghagh
 pat02-chokha pat03-batch pat04-anaaj pat05-ghat pat05-sangam pat06-sau pat06-nau pat07-sadak pat07-adda
-pat08-chowk pat08-vihara pat09-jhoola pat09-ghoda pat10-pipa pat10-sau pat10-anaaj
+pat08-chowk pat08-vihara pat09-jhoola pat09-ghoda pat09-wapsi pat10-pipa pat10-sau pat10-sidhi pat10-anaaj
+pat05-bori pat06-gaadi pat06-kumhrar pat07-pul pat07-haat pat07-mandi pat10-bori pat10-gaadi
 
 ## Door endings (ENDINGS: one stage each)
 Check the advice lines in endings*.ts too: an idea counts as used even under a new name (e.g. catching
@@ -206,3 +207,9 @@ pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound p
   door: a four-armed turnstile (`pat-charkhi`).
 - **10 Setu se Golghar** the sacks on a parked handcart are the rule for the part: every n-th plate gone on the
   bridge, every n-th pontoon section awash, the pad numbered n opens the granary door (`pat-ginti-pad`).
+- **Length pass (PAT):** 05 porters load sacks on pontoon sections in turn (`pat05-bori`); 06 trucks lift plates out of
+  their seats in turn (`pat06-gaadi`) and Kumhrar's polished stone stumps are slick (`pat06-kumhrar`, source:
+  Wikipedia "Kumhrar", the 80-pillar hall of polished sandstone); 07 riders on the road side, riders on both sides, a
+  halt right before a hump, three scrapes in a row (`pat07-pul`, `-haat`, `-mandi`); 09 the horse turns back
+  (`pat09-wapsi`); 10 the cart's sack count sets which sections the porters load and which plates the trucks lift
+  (`pat10-bori`, `pat10-gaadi`).

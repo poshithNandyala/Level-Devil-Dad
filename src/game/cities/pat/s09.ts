@@ -27,7 +27,7 @@ export interface GapRun {
 }
 
 /** a stretch of fair crowd between x0 and x1 (px) that parts behind a horse rider, who starts when Dad is near */
-export function gapRun(w: World, x0: number, x1: number, v: number, key: string, pause?: { at: number; secs: number }): GapRun {
+export function gapRun(w: World, x0: number, x1: number, v: number, key: string, pause?: { at: number; secs: number }, path?: (t: number) => number): GapRun {
   const g = { t0: -1 } as GapRun;
   g.x0 = x0;
   g.x1 = x1;
@@ -36,7 +36,8 @@ export function gapRun(w: World, x0: number, x1: number, v: number, key: string,
     if (g.t0 < 0) return x0 + 6;
     const t = since(w2, g.t0);
     let d = t * v;
-    if (pause) {
+    if (path) d = path(t);
+    else if (pause) {
       const td = (pause.at - x0) / v;
       d = t <= td ? t * v : t < td + pause.secs ? td * v : (t - pause.secs) * v;
     }
@@ -288,6 +289,27 @@ export const act2: Act = {
     );
     gapRun(w, px(c.x + 24), px(c.x + 54), 80, 'pat9c', { at: px(c.x + 40), secs: 1.0 });
     sign(w, c.x + 3, 10.4, 3.4, 'JHOOLA 2', 'shop', null, 'the bigger wheel');
+  },
+};
+
+/** a horse that turns back: forward 60% of the lane, a halt, back to a fifth of it, a halt, then all the way through */
+export const actWapsi: Act = {
+  id: 'pat09-wapsi',
+  w: 74,
+  advice: 'The last crowd is the thickest, and the horse does not go straight: he goes on a little way, stops, and turns back, and then turns again and goes through. Stay right behind him, and walk backwards with him when he comes back: the crowd closes where he has been.',
+  cps: [],
+  build: (w, c) => {
+    const x0 = px(c.x + 10),
+      x1 = px(c.x + 62),
+      S = x1 - x0,
+      v = 56;
+    const f = (0.6 * S) / v,
+      t1 = f + 1.0,
+      bk = (0.4 * S) / v,
+      t2 = t1 + bk,
+      t3 = t2 + 0.8;
+    gapRun(w, x0, x1, v, 'pat9d', undefined, (t) => (t <= f ? t * v : t <= t1 ? 0.6 * S : t <= t2 ? 0.6 * S - (t - t1) * v : t <= t3 ? 0.2 * S : 0.2 * S + (t - t3) * v));
+    sign(w, c.x + 5, 10.4, 3.4, 'BHEED', 'shop', null, 'the thickest crowd');
   },
 };
 

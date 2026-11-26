@@ -40,7 +40,7 @@ export interface TempoState {
 
 /** build the tempo in the room; acts add beats to it through w.flags.pat7 */
 function tempo(w: World, x0: number): TempoState {
-  const st = { P: 0, truck: false, lean: 0, cx: 0, halted: true, beats: { stops: [] as { at: number; d: number; done?: boolean; t?: number }[], trucks: [] as { a: number; b: number; side?: 'R' }[], scrapes: [] as { x: number; cause: string; kind: 'arch' | 'hump'; done?: boolean }[] }, rig: null as unknown as Rig, go: -1, v: 0, boarded: false, stopAt: Infinity, base: 0 };
+  const st = { P: 0, PL: 0, truck: false, lean: 0, cx: 0, halted: true, beats: { stops: [] as { at: number; d: number; side?: 'L'; done?: boolean; t?: number }[], trucks: [] as { a: number; b: number; side?: 'R' }[], scrapes: [] as { x: number; cause: string; kind: 'arch' | 'hump'; done?: boolean }[] }, rig: null as unknown as Rig, go: -1, v: 0, boarded: false, stopAt: Infinity, base: 0 };
   const rig = w.add(
     new Rig(x0, DECK_Y, DECK_W, 12, {
       solid: true,
@@ -61,7 +61,8 @@ function tempo(w: World, x0: number): TempoState {
           if (!s.done && cx >= s.at) {
             s.done = true;
             s.t = w2.tick;
-            st.P = Math.max(0, st.P + s.d);
+            if (s.side === 'L') st.PL = Math.max(0, st.PL + s.d);
+            else st.P = Math.max(0, st.P + s.d);
             w2.sfx('honk', cx, FL - 30);
           }
           if (s.t !== undefined && w2.tick - s.t < 300) hold = true;
@@ -78,9 +79,9 @@ function tempo(w: World, x0: number): TempoState {
         const rel = p.cx - cx;
         const dadR = onDeck && rel > 12 ? 1 : 0;
         const dadL = onDeck && rel < -12 ? 1 : 0;
-        const net = st.P + (kerbTruck ? 1 : 0) + dadR - ((st.truck ? 1 : 0) + dadL);
+        const net = st.P - st.PL + (kerbTruck ? 1 : 0) + dadR - ((st.truck ? 1 : 0) + dadL);
         st.lean = Math.max(-1, Math.min(1, net));
-        st.base = st.P + (kerbTruck ? 1 : 0) - (st.truck ? 1 : 0);
+        st.base = st.P - st.PL + (kerbTruck ? 1 : 0) - (st.truck ? 1 : 0);
         // scraping: pass an arch or a hump with the deck out of true
         for (const sc of st.beats.scrapes) {
           if (!sc.done && Math.abs(cx - sc.x) < 34 && st.lean !== 0 && onDeck) {
@@ -96,6 +97,7 @@ function tempo(w: World, x0: number): TempoState {
         tempoArt(ctx, -DECK_W / 2, -50, DECK_W, 50);
         // the riders on the kerb side
         for (let i = 0; i < st.P; i++) folk(ctx, DECK_W / 2 - 14 - i * 9, -44, 20, ['#D7262E', '#2F6BB0'][i % 2]);
+        for (let i = 0; i < st.PL; i++) folk(ctx, -DECK_W / 2 + 14 + i * 9, -44, 20, ['#8A4A8F', '#6F8F3A'][i % 2]);
         ctx.restore();
       },
     }),
@@ -198,6 +200,49 @@ export const act1: Act = {
     obstacle(w, X(60), 'arch');
     sign(w, c.x + 44, 10.4, 3, 'HALT', 'shop', null, 'get off here');
   },
+};
+
+type Beats = { stopAt: number; beats: { trucks: { a: number; b: number; side?: 'R' }[]; scrapes: { x: number; cause: string; kind: 'arch' | 'hump' }[]; stops: { at: number; d: number; side?: 'L' }[] } };
+/** an act of the road made only of beats (stops, trucks, scrapes), given as [kind, column, ...] in act columns */
+function road(w: World, c: { X: (t: number) => number; x: number }, b: { stops?: [number, number, 'L'?][]; trucks?: [number, number, 'R'?][]; scrapes?: [number, 'arch' | 'hump'][] }, signs: [number, string, string][]) {
+  const st = w.flags.pat7 as Beats;
+  for (const [at, d, side] of b.stops ?? []) st.beats.stops.push({ at: c.X(at), d, side });
+  for (const [a, e, side] of b.trucks ?? []) {
+    st.beats.trucks.push({ a: c.X(a), b: c.X(e), side });
+    truckArt(w, c.X(a), c.X(e));
+  }
+  for (const [x, kind] of b.scrapes ?? []) {
+    st.beats.scrapes.push({ x: c.X(x), cause: kind === 'arch' ? 'pat-torana' : 'pat-dhakka', kind });
+    obstacle(w, c.X(x), kind);
+  }
+  for (const [t, label, sub] of signs) sign(w, c.x + t, 10.4, 3.2, label, 'shop', null, sub);
+}
+
+/** the bridge: a rider gets on on the ROAD side, so the deck leans the other way from before */
+export const actPul: Act = {
+  id: 'pat07-pul',
+  w: 92,
+  advice: 'Over the bridge: this time the rider who gets on sits on the road side, so the lean is the other way round: stand on the kerb side for the first hump and the arch. When he gets off, level again. Then a truck on the road side with a hump in it, and nobody else aboard: the kerb side again. Then a last arch.',
+  cps: [47.5],
+  build: (w, c) => road(w, c, { stops: [[10, 1, 'L'], [46, -1, 'L']], trucks: [[54, 70]], scrapes: [[24, 'hump'], [34, 'arch'], [62, 'hump'], [82, 'arch']] }, [[4, 'PUL', 'the bridge']]),
+};
+
+/** the haat: riders on both sides, so they cancel, then one leaves */
+export const actHaat: Act = {
+  id: 'pat07-haat',
+  w: 92,
+  advice: 'The haat: a rider on the kerb side, then one on the road side: they cancel, so stand in the middle for the hump. When the kerb rider gets off, the road side is heavy: kerb side for the arch. Then a kerb-side truck evens it up again, with a hump in it, and the last rider gets off.',
+  cps: [40],
+  build: (w, c) => road(w, c, { stops: [[8, 1], [20, 1, 'L'], [46, -1], [84, -1, 'L']], trucks: [[64, 80, 'R']], scrapes: [[34, 'hump'], [56, 'arch'], [72, 'hump']] }, [[4, 'HAAT', 'weekly market']]),
+};
+
+/** the mandi: the shelter beat (a halt right before a hump: balance during it) and the momentum beat (no stops, three in a row) */
+export const actMandi: Act = {
+  id: 'pat07-mandi',
+  w: 92,
+  advice: 'The mandi: a rider gets on, a road-side truck comes alongside and evens it, a hump in the middle of it. A second rider gets on at the halt: a heavy kerb side with the truck still pulling the other way, so the road side for the next hump. Then no halts at all: an arch, a hump and an arch, one after another.',
+  cps: [62],
+  build: (w, c) => road(w, c, { stops: [[8, 1], [40, 1], [56, -1], [82, -1]], trucks: [[20, 34], [44, 60]], scrapes: [[27, 'hump'], [52, 'hump'], [72, 'arch'], [78, 'hump'], [86, 'arch']] }, [[4, 'MANDI', 'grain market']]),
 };
 
 export const act2: Act = {
