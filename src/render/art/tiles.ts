@@ -26,7 +26,6 @@ export function mix(a: string, b: string, k: number) {
 
 export type GroundCaps = { cap: string; capHi: string; blades?: string; flowers?: string[]; pebbles?: string };
 export const CAP: Record<string, GroundCaps> = {
-  BLR: { cap: '#5E9E45', capHi: '#8CC765', blades: '#4E8A38', flowers: ['#B983D9', '#F7F7F7'] },
   AMR: { cap: '#C47A4A', capHi: '#E09A66', pebbles: '#8D4E2C' },
   HYD: { cap: '#59A452', capHi: '#83C46F', blades: '#478A41' },
   PNJ: { cap: '#5E9E36', capHi: '#8CC152', blades: '#4C8A2C', flowers: ['#E91E63', '#FFEB3B'] },

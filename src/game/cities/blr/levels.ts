@@ -1,25 +1,24 @@
-import { secs } from '../constants';
-import type { LevelDef, World } from '../world';
-import { LINES } from '../cities';
-import { blinker, cascade, panel, collapseOnStand, door, group, pedButton, prop, px, rival, roller, sign, signal, thing, vehicle, collectible, water } from './kit';
-import { exitTwist } from './twists';
-import { tour } from './tour';
-import { longStage } from './chunks';
-import { Grid } from './grid';
-import { DT, ROOM_W } from '../constants';
-import type { Blinker, Roller } from '../entities/traps';
-import { Thing } from '../entities/traps';
-import { Vehicle } from '../entities/traffic';
-import type { ThingKind } from '../../render/art/things';
-import { Act, G, deco, pool } from './acts';
-import { onPass } from './trolls';
-import { LoadingBridge } from '../entities/karnataka';
-import { checkpoint } from './kit';
+import { secs } from '../../constants';
+import type { LevelDef, World } from '../../world';
+import { lines as L } from './lines';
+import { blinker, cascade, panel, collapseOnStand, door, group, pedButton, prop, px, rival, roller, sign, signal, thing, vehicle, collectible, water } from '../../levels/kit';
+import { exitTwist } from '../../levels/twists';
+import { tour } from '../../levels/tour';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
+import { DT, ROOM_W } from '../../constants';
+import type { Blinker, Roller } from '../../entities/traps';
+import { Thing } from '../../entities/traps';
+import { Vehicle } from '../../entities/traffic';
+import type { ThingKind } from '../../../render/art/things';
+import { Act, G, deco, pool } from '../../levels/acts';
+import { onPass } from '../../levels/trolls';
+import { LoadingBridge } from './entities';
+import { checkpoint } from '../../levels/kit';
 
 // Bengaluru: traffic signals stop and rearrange the vehicles you stand on.
 // Kannada + English.
 
-const L = LINES.BLR;
 const TAUNTS = L.taunt;
 
 
@@ -253,7 +252,7 @@ const curtain: Act = {
   },
 };
 
-export const BLR: LevelDef[] = [
+export const levels = (): LevelDef[] => [
   tour({
     id: 'BLR-01',
     city: 'BLR',

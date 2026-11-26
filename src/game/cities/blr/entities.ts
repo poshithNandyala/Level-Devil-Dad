@@ -1,7 +1,7 @@
 // Bengaluru's own life.
-import { Entity, type World } from '../world';
-import { Solid } from '../body';
-import { DT, TILE } from '../constants';
+import { Entity, type World } from '../../world';
+import { Solid } from '../../body';
+import { DT, TILE } from '../../constants';
 
 /**
  * India's Silicon Valley builds a smart walkway over the dug-up road, and it behaves like every progress

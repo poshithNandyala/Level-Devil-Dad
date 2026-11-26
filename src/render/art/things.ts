@@ -25,7 +25,6 @@ export type BaseThingKind =
   | 'puttu'
   | 'scooter'
   | 'dog'
-  | 'leaf'
   // Lakshadweep
   | 'odam'
   | 'crab'
@@ -56,7 +55,6 @@ export type BaseThingKind =
   | 'traincar'
   | 'lantern'
   | 'bulbs'
-  | 'coracle'
   | 'log'
   | 'stalactite'
   | 'bat'
@@ -125,7 +123,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   puttu: [16, 12],
   scooter: [24, 16],
   dog: [24, 12],
-  leaf: [32, 4],
   odam: [64, 16],
   crab: [16, 10],
   coral: [32, 8],
@@ -172,7 +169,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   traincar: [48, 26],
   lantern: [12, 16],
   bulbs: [32, 6],
-  coracle: [32, 12],
   log: [32, 10],
   stalactite: [10, 22],
   bat: [14, 8],
@@ -453,19 +449,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.quadraticCurveTo(x - 1, y + h - (sleeping ? 6 : 10) + Math.sin(t * 0.3) * (sleeping ? 0 : 2), x + 1, y + h - 9);
       ctx.stroke();
       if (sleeping) text(ctx, 'z', x + 23, y + 1 + Math.sin(t * 0.05) * 1.5, 6, '#5D6D7E', { weight: 800 });
-      break;
-    }
-    case 'leaf': {
-      ctx.fillStyle = '#4CAF50';
-      ctx.beginPath();
-      ctx.moveTo(x, y + h);
-      ctx.quadraticCurveTo(x + w / 2, y - 3, x + w, y + h);
-      ctx.fill();
-      ctx.strokeStyle = '#2E7D32';
-      ctx.beginPath();
-      ctx.moveTo(x + 2, y + h - 1);
-      ctx.lineTo(x + w - 2, y + h - 1);
-      ctx.stroke();
       break;
     }
     // ------------------------------------------------------------ Lakshadweep
@@ -1131,30 +1114,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       }
       fillRR(ctx, x, y + 2, w, 2, 1, on ? '#B8860B' : '#7A6A66');
       for (let i = 0; i < Math.floor(w / 4); i++) circle(ctx, x + 2 + i * 4, y + 3, 1.6, on && o.look !== 'warn' ? '#FFE7A0' : o.look === 'warn' ? '#C8A27A' : '#8C7C78');
-      break;
-    }
-    case 'coracle': {
-      // a round bamboo coracle, slowly turning
-      ctx.fillStyle = '#6D4C41';
-      ctx.beginPath();
-      ctx.ellipse(x + w / 2, y + 4, w / 2, 5, 0, 0, Math.PI);
-      ctx.fill();
-      ctx.strokeStyle = '#A1887F';
-      ctx.lineWidth = 0.8;
-      const turn = (o.anim * 0.05) % 1;
-      for (let i = 0; i < 6; i++) {
-        const k = ((i / 6 + turn) % 1) * Math.PI;
-        const xx = x + w / 2 - Math.cos(k) * (w / 2 - 2);
-        ctx.beginPath();
-        ctx.moveTo(xx, y + 3);
-        ctx.lineTo(xx, y + 8);
-        ctx.stroke();
-      }
-      ctx.strokeStyle = '#3E2723';
-      ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      ctx.ellipse(x + w / 2, y + 3, w / 2, 2.4, 0, 0, Math.PI * 2);
-      ctx.stroke();
       break;
     }
     case 'log': {

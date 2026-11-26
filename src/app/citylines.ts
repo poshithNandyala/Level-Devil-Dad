@@ -4,7 +4,6 @@ import type { CityId } from '../game/constants';
 export const CITY_LINE = {
   AMR: 'A capital under construction: cranes, barrage gates and chilli dust.',
   HYD: 'The auto carrying the exit reacts to how you move.',
-  BLR: 'Signals stop and rearrange the vehicles you stand on.',
   PNJ: 'Gossip you can stand on, a siesta you mustn’t break, and a ferry that waits for nobody.',
   BOM: 'The platform moves. The train stays still. Mostly.',
   GNR: 'A bamboo to vault on, a dinosaur that stomps, and a garba ring to slip through.',
