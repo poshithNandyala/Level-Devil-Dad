@@ -12,8 +12,8 @@
     "betrayals": [
      "sidestep-surge"
     ],
-    "chain": "A2 kerb when horn sounds; A3 wait behind the tempo",
-    "closest": "BOM-03 shove-out -- crowd moves along the street and you sidestep"
+    "chain": "A2 kerb when horn sounds; A3 wait behind the tempo; the surge carries you at most under one screen back",
+    "closest": "BOM-03 shove-out -- crowd moves along the street and you sidestep; carry capped under one screen (v2, review 10)"
    },
    {
     "index": 2,
@@ -30,15 +30,15 @@
    {
     "index": 3,
     "shape": "std",
-    "concept": "PAT-06",
-    "name": "Madhubani",
-    "family": "double-outline-band-is-air",
+    "concept": "PAT-F2",
+    "name": "Ashok Rajpath (coaching hoardings)",
+    "family": "hoarding-swap-at-class-bell",
     "betrayals": [
-     "inner-line-solid",
-     "painter-fills-gap"
+     "B8",
+     "banner-swap-width"
     ],
-    "chain": "A2 land on inner line; A3 leave before the painter fills the gap",
-    "closest": "BPL-03/DMN-07/paintwall -- outline geometry, no switch or trail"
+    "chain": "A2 at the class bell stand on the hoarding whose rolled-up replacement above it is wider; A3 the new batch banner is narrower than the old (B8), step off to the next before it is pulled taut",
+    "closest": "B8 shrinking supports (FREE) / PDY-03 signs act -- floor width is the banner printed above, swapped on a bell that never moves Dad (not TVM-02)"
    },
    {
     "index": 4,
@@ -69,12 +69,12 @@
     "shape": "long",
     "concept": "PAT-03",
     "name": "Setu ka Jod",
-    "family": "joint-seesaw-by-traffic-weight",
+    "family": "setu-joint-missing-plate",
     "betrayals": [
-     "joint-bob"
+     "missing-plate"
     ],
-    "chain": "A2 wait for the truck to pass; A3 one joint has no plate, count them",
-    "closest": "CHN-08 lifting bridge -- no lift, a coupling driven by traffic (no fog)"
+    "chain": "A2 count the expansion plates, the joint with no plate drops you; A3 the missing plate is the one after the truck (the bob is flavour only)",
+    "closest": "CHN-08 lifting bridge -- a counted gap, not a tilt by weight (v2, review 6)"
    },
    {
     "index": 7,
@@ -84,26 +84,26 @@
     "family": "vehicle-leans-to-rider-side",
     "betrayals": [
      "lean-balance",
-     "slap-signal"
+     "parked-gap-closes"
     ],
-    "chain": "A2 stand road side; A3 mirror of passing truck, ease back; hidden checkpoints",
-    "closest": "TVM-02 bus bells -- tilt follows where riders stand, slaps are visible"
+    "chain": "A2 stand road side; A3 the gap between two parked tempos closes when a third backs in, cross before its reverse light; hidden checkpoints",
+    "closest": "TVM-02 bus bells -- no conductor signal; tilt follows where riders stand, parked tempos close the gap (v2, review 4)"
    },
    {
     "index": 8,
     "shape": "HWIK",
-    "concept": "PAT-08",
-    "name": "Sattu",
-    "family": "drink-swaps-which-hazard-kills",
+    "concept": "PAT-11",
+    "name": "Nalanda",
+    "family": "count-bricks-routes-cells",
     "betrayals": [
-     "state-swap"
+     "count-routing"
     ],
-    "chain": "A2 drink at second stall; A3 leave the pot alone; tell: stall sign shows cup",
-    "closest": "AMR-01 being fed -- two states change two rules"
+    "chain": "A2 count the bricks over each cell door, N bricks puts you out N cells along; A3 zero bricks is the door; tell: brick count drawn over every door, one rule, one death",
+    "closest": "`invisible`/`fakewin` -- counting rule, no pick-the-door (was PAT R1; v2 replaces Sattu, review 3/7)"
    },
    {
     "index": 9,
-    "shape": "marathon",
+    "shape": "tough",
     "concept": "PAT-10",
     "name": "Sonepur Mela",
     "family": "moving-gap-behind-rider",
@@ -111,7 +111,7 @@
      "moving-gap",
      "gondola-swing"
     ],
-    "chain": "A2 follow the horse; A3 skip an occupied gondola",
+    "chain": "A2 follow the horse; A3 skip an occupied gondola; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
     "closest": "GNR-07 garba, JAI-06 horse -- you ride nothing, you move in a gap"
    },
    {
@@ -119,24 +119,24 @@
     "shape": "finale",
     "concept": "PAT-12",
     "name": "Setu se Golghar",
-    "family": "finale-truck-lights-tell",
+    "family": "finale-setu-plate-count",
     "betrayals": [
-     "truck-lights-tell"
+     "plate-count-under-cart"
     ],
-    "chain": "callbacks only: setu joints, pontoon cart, Golghar stairs; twist: read truck lights at night",
-    "closest": "(own callbacks) -- new twist reads lights not fog"
+    "chain": "callbacks only: setu joints (plate count), pontoon cart, Golghar stairs, tempo; twist: the plate count from slot 06 is read while riding the pontoon cart",
+    "closest": "(own callbacks) -- twist combines PAT slot 06 plate count + slot 05 pontoon (v2, review 9)"
    }
   ],
   "reserves": [
    {
-    "concept": "PAT-11",
-    "name": "Nalanda",
-    "family": "count-bricks-routes-cells",
+    "concept": "PAT-F3",
+    "name": "Agam Kuan (the well)",
+    "family": "well-returns-what-falls",
     "betrayals": [
-     "count-routing"
+     "returns-later"
     ],
-    "chain": "A2 count the bricks over each door; A3 zero bricks is the door",
-    "closest": "`invisible`/`fakewin` -- counting rule, no pick-the-door"
+    "chain": "A2 what drops into the well comes back up later as a step; A3 the bucket you dropped comes up under the ledge you jump from (FRESH, Agam Kuan lore unverified)",
+    "closest": "RNC-02 dhuska come up -- delayed return of what you dropped"
    },
    {
     "concept": "PAT-F1",
@@ -157,14 +157,15 @@
    {
     "index": 1,
     "shape": "tour",
-    "concept": "LKO-01",
-    "name": "Aadaab Lucknow",
-    "family": "bow-to-let-stranger-pass",
+    "concept": "LKO-F1",
+    "name": "Aadaab Lucknow (Chowk cloth bolts)",
+    "family": "sold-bolt-hooked-out-sideways",
     "betrayals": [
-     "social-turn"
+     "B3",
+     "bolt-unrolls-curtain"
     ],
-    "chain": "A2 stop and let him finish; A3 bow only to the one facing you",
-    "closest": "HYD-04 shy auto -- social turn, not a freeze"
+    "chain": "A2 the shopkeeper's bamboo hook rises to the bolt before it is pulled, hop off when the hook touches; A3 the pulled bolt unrolls down across the lane, pass under it before its end reaches the floor",
+    "closest": "CCU slot 04 stack-pulled-from-bottom -- here the bolt slides out sideways on a visible hook (B3), no customer choice, no height drop; never needs standing still"
    },
    {
     "index": 2,
@@ -187,7 +188,7 @@
     "betrayals": [
      "wash-remains"
     ],
-    "chain": "A2 cross on white; FIX second wash takes jali; A3 cross on solid stitch",
+    "chain": "A2 cross on white; FIX second wash takes jali; A3 cross on solid stitch (v2: no stitcher-ahead act)",
     "closest": "BPL-04/DMN-07 -- pattern state, you never sew"
    },
    {
@@ -199,8 +200,8 @@
     "betrayals": [
      "light-sinks"
     ],
-    "chain": "A2 shady side first; FIX tray lid lets sun in; A3 follow the shadow line",
-    "closest": "DMN-03 melting ice -- driven by light direction not time"
+    "chain": "A2 shady side first; FIX tray lid lets sun in; A3 follow the shadow line: the rule is the DIRECTION the light comes from, not melt over time",
+    "closest": "DMN-03 melting ice -- driven by light direction not time (LKO is the only sun-direction owner)"
    },
    {
     "index": 5,
@@ -330,14 +331,15 @@
    {
     "index": 3,
     "shape": "std",
-    "concept": "CCU-06",
-    "name": "Phuchka",
-    "family": "vendor-forces-one-second-pause",
+    "concept": "CCU-F2",
+    "name": "Jhalmuri (the shaken tin)",
+    "family": "shake-tin-sorts-big-pieces-up",
     "betrayals": [
-     "forced-pause"
+     "shake-sorts-up",
+     "B35"
     ],
-    "chain": "A2 never stop in front; A3 crowd ring forms, stop once and eat",
-    "closest": "AMR-01 being fed -- forced pause, not shorter jump"
+    "chain": "A2 stand on the peanuts: each shake of the tin lifts big pieces and sinks the puffed rice; A3 a green chilli (big, spiky) rises where you landed after the second shake, step to the next peanut (B35); Dad never eats",
+    "closest": "GNR-08 platforms that rise when you jump -- here the vendor's shake (tin tilts first) sorts by size; no feeding, no pause"
    },
    {
     "index": 4,
@@ -356,12 +358,13 @@
     "shape": "long",
     "concept": "CCU-05",
     "name": "Kumartuli",
-    "family": "wet-dry-clay-layers",
+    "family": "painted-figure-carried-out",
     "betrayals": [
-     "layer-wet-dry"
+     "paint-done-departs",
+     "dry-cracks-from-height"
     ],
-    "chain": "A2 walk wet grey clay; A3 dry pale layer cracks from height",
-    "closest": "RNC-06 lost wax -- build-up layers, wet vs dry"
+    "chain": "A2 stand on figures the paint line has not passed the waist of; when the paint reaches the crown the figure is carried out of the lane; A3 a dry pale layer cracks if you land on it from a height, hop down short",
+    "closest": "B6 scaffold with a deadline / `lamp` -- the visible paint line on the figure itself is the timer; no straw-is-air, nobody builds ahead (generic figures, no deities)"
    },
    {
     "index": 6,
@@ -403,14 +406,14 @@
    },
    {
     "index": 9,
-    "shape": "marathon",
+    "shape": "tough",
     "concept": "CCU-09",
     "name": "Pandal",
     "family": "cloth-panel-covers-foothold",
     "betrayals": [
      "build-order-wall"
     ],
-    "chain": "A2 climb where cloth is tied; A3 opening-night queue shifts holds; hidden checkpoints",
+    "chain": "A2 climb where cloth is tied; A3 opening-night queue shifts holds; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
     "closest": "CHN-08 -- cover goes up where your foothold was (OWNS family; DIS-07 retired)"
    },
    {
@@ -503,7 +506,7 @@
    },
    {
     "index": 5,
-    "shape": "HWIK",
+    "shape": "HWIK (long 60-90 s)",
     "concept": "BBI-09",
     "name": "Raja",
     "family": "idle-world-you-start-it",
@@ -540,14 +543,14 @@
    {
     "index": 8,
     "shape": "HWIK",
-    "concept": "BBI-04",
-    "name": "Talapatra",
-    "family": "invisible-cuts-revealed-after",
+    "concept": "BBI-F3",
+    "name": "Pakhala",
+    "family": "pakhala-pour-floats-grains",
     "betrayals": [
-     "reveal-after"
+     "pour-floats"
     ],
-    "chain": "A2 watch soot pass once; A3 follow behind stylus, not ahead; tell: soot hand",
-    "closest": "BPL-03/`invisible` -- permanent reveal that moves"
+    "chain": "A2 the settled rice in the bowl is floor until the water is poured, then the grains float apart; stand on the badi (fried lump) before the jug tips; A3 the second pour comes from the other rim, the badi drifts, hop to the next one; tell: the jug at the rim, tilting, from the first frame",
+    "closest": "floods (TVM-02), RPR-04 rice hills -- one visible pour floats the floor apart; no moving reveal (BBI.md street food: pakhala)"
    },
    {
     "index": 9,
@@ -566,12 +569,12 @@
     "shape": "finale",
     "concept": "BBI-12",
     "name": "Kalinga",
-    "family": "finale-soot-reveals-ikat",
+    "family": "finale-pads-onto-plinth",
     "betrayals": [
-     "soot-ikat"
+     "pads-to-plinth"
     ],
-    "chain": "callbacks only: pads, parasols, soot lines, ikat, plinth; twist: soot reveals ikat motifs",
-    "closest": "(own callbacks) -- soot hand reveals motifs"
+    "chain": "callbacks only: pads, parasols, ikat, plinth hub, troupe; twist = BBI slot 02 keeper pads + slot 09 hub: the keeper's pads carry you on to the sliding plinth, step to the hub",
+    "closest": "(own callbacks) -- no soot reveal (BBI slot 08 recast)"
    }
   ],
   "reserves": [
@@ -584,6 +587,16 @@
     ],
     "chain": "A2 tag back at the line; A3 (FRESH, from bible games list)",
     "closest": "chasers -- 'it' is passed to you"
+   },
+   {
+    "concept": "BBI-04",
+    "name": "Talapatra",
+    "family": "stylus-cut-lines-soot",
+    "betrayals": [
+     "soot-after"
+    ],
+    "chain": "A2 follow behind the stylus (reserve only; DDN slot 05 owns reveal-by-weather)",
+    "closest": "`invisible` -- reveal after you pass"
    },
    {
     "concept": "BBI-F2",
@@ -651,7 +664,7 @@
    },
    {
     "index": 5,
-    "shape": "HWIK",
+    "shape": "HWIK (long 60-90 s)",
     "concept": "GTK-04",
     "name": "MG Marg ka Niyam",
     "family": "dropped-litter-warden-pause",
@@ -688,14 +701,14 @@
    {
     "index": 8,
     "shape": "HWIK",
-    "concept": "GTK-06",
-    "name": "Churpi",
-    "family": "dull-block-never-breaks",
+    "concept": "GTK-F2",
+    "name": "Ropeway",
+    "family": "cabins-cross-at-midpoint",
     "betrayals": [
-     "dull-safe"
+     "cabin-cross"
     ],
-    "chain": "A2 walk only on churpi; A3 vendor chips a block; tell: dull grey",
-    "closest": "crumbling floors -- the dull one is safe"
+    "chain": "A2 ride the cabin; it is a shuttle that turns back at the middle station; A3 hop to the other cabin only as they pass at mid; tell: two cabins and the middle station visible from the start",
+    "closest": "BOM trains -- cabins swap at mid; no decoy twin (FRESH: Gangtok ropeway)"
    },
    {
     "index": 9,
@@ -734,14 +747,14 @@
     "closest": "RNC-02 -- sheet stiffens by drying"
    },
    {
-    "concept": "GTK-F2",
-    "name": "Ropeway",
-    "family": "cabins-cross-at-midpoint",
+    "concept": "GTK-F3",
+    "name": "MG Marg benches",
+    "family": "bench-row-reserved-by-sign",
     "betrayals": [
-     "cabin-cross"
+     "bench-reserved"
     ],
-    "chain": "A2 hop cabin at mid; A3 sway (FRESH, Gangtok ropeway)",
-    "closest": "BOM trains -- cabins swap sides"
+    "chain": "A2 stand only on benches without the reserved card (FRESH, weak)",
+    "closest": "PDY-03 signs -- an honest sign"
    }
   ]
  },
@@ -799,7 +812,7 @@
    },
    {
     "index": 5,
-    "shape": "HWIK",
+    "shape": "HWIK (long 60-90 s)",
     "concept": "DIS-11",
     "name": "Gamosa",
     "family": "gamosas-hide-feet-camera",
@@ -842,8 +855,8 @@
     "betrayals": [
      "follow-flattened"
     ],
-    "chain": "A2 follow the flattened strip; A3 second strip other way; tell: engine noise backdrop",
-    "closest": "GNR-05 lions -- animal charges at something else"
+    "chain": "A2 follow the flattened strip; A3 second strip other way; tell: engine noise backdrop AND a dust plume rising where the noise is (visual twin)",
+    "closest": "GNR-05 lions -- animal charges at something else; readable muted"
    },
    {
     "index": 9,
@@ -947,7 +960,7 @@
    },
    {
     "index": 5,
-    "shape": "HWIK",
+    "shape": "HWIK (long 60-90 s)",
     "concept": "SVP-11",
     "name": "Note Ki Tasveer",
     "family": "picture-aligns-ledge-from-spot",
@@ -990,8 +1003,8 @@
     "betrayals": [
      "second-season"
     ],
-    "chain": "A2 shelter under the other awnings; A3 first-pass road is a river; tell: the stage plays twice",
-    "closest": "--- rain direction as rule"
+    "chain": "A2 shelter under the other awnings; A3 first-pass road is a river; tell: before the second monsoon the cloud bank and slanting rain lines show on the opposite horizon, and every awning tilts to the new side",
+    "closest": "--- rain direction as rule; the visual tell is the rain slant and awning tilt, not the replay"
    },
    {
     "index": 9,
@@ -1095,15 +1108,15 @@
    },
    {
     "index": 5,
-    "shape": "HWIK",
+    "shape": "HWIK (long 60-90 s)",
     "concept": "SHL-10",
     "name": "Seven Sisters",
-    "family": "hidden-schedule-seven-streams",
+    "family": "one-stream-schedule-mark",
     "betrayals": [
      "hidden-schedule"
     ],
-    "chain": "A2 pick the stream that ran dry first; A3 a stream dries to lure you; tell: water level marks",
-    "closest": "RNC-07/`khoh` -- choice among seven with schedule, no fall rule"
+    "chain": "A2 cross the one stream when its bank mark is dry (a white line on the rock shows the dry level); A3 the stream refills two beats after the mark is uncovered, cross on the mark, not after; tell: the mark is drawn from the first frame",
+    "closest": "RNC-07/`khoh` -- one stream, one visible mark; no choice among seven (SHL-10 Seven Sisters)"
    },
    {
     "index": 6,
@@ -1143,14 +1156,14 @@
    },
    {
     "index": 9,
-    "shape": "marathon",
+    "shape": "tough",
     "concept": "SHL-06",
     "name": "Eight-Day Market",
     "family": "day-cycle-rearranged-stalls",
     "betrayals": [
      "day-cycle"
     ],
-    "chain": "A2 read today's colour; A3 sign changed at last row; hidden checkpoints",
+    "chain": "A2 read today's colour; A3 sign changed at last row; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
     "closest": "PNJ-06/HYD-07 -- fixed day cycle by your progress"
    },
    {
@@ -1158,12 +1171,12 @@
     "shape": "finale",
     "concept": "SHL-12",
     "name": "Down Seven Hundred",
-    "family": "finale-landing-tilts-rest-stall",
+    "family": "finale-cadence-bridge-day-stalls",
     "betrayals": [
-     "landing-tilt"
+     "stalls-on-swaying-span"
     ],
-    "chain": "callbacks only: knup, root, drip, market; twist: rest-stall landing tilts",
-    "closest": "RNC-07 -- no fall rule, combined mechanics"
+    "chain": "callbacks only: knup, root, drip, market, Dawki bridge; twist = SHL slot 03 cadence sway + slot 09 day-cycle stalls: the rest stalls rearrange at each checkpoint on a span that sways to your step",
+    "closest": "(own callbacks) -- RNC-07 no fall rule"
    }
   ],
   "reserves": [
@@ -1280,14 +1293,14 @@
    {
     "index": 8,
     "shape": "HWIK",
-    "concept": "ITA-01",
-    "name": "Teen Baje",
-    "family": "torch-circle-reveals-floors",
+    "concept": "ITA-10",
+    "name": "Siang raft",
+    "family": "raft-poles-spread-under-weight",
     "betrayals": [
-     "light-radius"
+     "poles-spread"
     ],
-    "chain": "A2 stand still to widen the circle; A3 stillness lets decoy drop; tell: red decoys at dawn",
-    "closest": "`lamp`/BLR-06 -- light radius reveals real floors"
+    "chain": "A2 stand across the poles, never along one: along one the lashing gives and the poles spread apart; A3 the last raft has one loose lashing, cross it in one hop; tell: lashings drawn on every raft, the loose one frayed",
+    "closest": "PAT slot 05 pontoon sinks under load -- here the floor splits sideways, nothing sinks or tilts (ITA.md concept 10, the bible's own HWIK)"
    },
    {
     "index": 9,
@@ -1306,12 +1319,12 @@
     "shape": "finale",
     "concept": "ITA-12",
     "name": "Subah",
-    "family": "finale-sun-line-reveals-door",
+    "family": "finale-bricks-on-one-lane-bridge",
     "betrayals": [
-     "sun-line-door"
+     "brick-bridge-oncoming"
     ],
-    "chain": "callbacks only: torch, one-lane bridge, bricks, sluice; twist: sun-line reveals door",
-    "closest": "(own callbacks) -- door visible only on the sun line"
+    "chain": "callbacks only: one-lane bridge, bricks, sluice, fruit baskets; twist = ITA slot 02 one-lane bridge + slot 09 pull-brick slump: the oncoming porter carries bricks and the pile slumps into the passing bay",
+    "closest": "(own callbacks) -- no sun line"
    }
   ],
   "reserves": [
@@ -1334,6 +1347,16 @@
     ],
     "chain": "A2 hear which hole (FRESH)",
     "closest": "`bells` -- holes covered change platforms"
+   },
+   {
+    "concept": "ITA-11",
+    "name": "Convoy gate",
+    "family": "convoy-gate-direction-alternates",
+    "betrayals": [
+     "direction-gate"
+    ],
+    "chain": "A2 go with your direction's convoy; A3 the gate turns mid-convoy",
+    "closest": "BLR signals -- direction, not stop/go"
    }
   ]
  },
@@ -1422,8 +1445,8 @@
     "betrayals": [
      "cart-steer"
     ],
-    "chain": "A2 brake before the bump; A3 slick hairpin spins you; hidden checkpoints",
-    "closest": "JAI-05/TVM-02 -- lean-steer and brake, no jump"
+    "chain": "A2 lean into each bend early, there is no brake; A3 slick hairpin spins you, lean out of it; hidden checkpoints",
+    "closest": "JAI-05/TVM-02, SXR slot 09 -- lean-steer only, no brake (SXR owns brake-only)"
    },
    {
     "index": 8,
@@ -1439,14 +1462,14 @@
    },
    {
     "index": 9,
-    "shape": "marathon",
+    "shape": "tough",
     "concept": "KOH-11",
     "name": "Kisama Din",
     "family": "five-houses-opposite-rules",
     "betrayals": [
      "rule-flip-per-room"
     ],
-    "chain": "A2 rule of house N opposite of N-1; A3 house 5 uses both; hidden checkpoints",
+    "chain": "A2 rule of house N opposite of N-1; A3 house 5 uses both; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
     "closest": "PNJ-06 -- five rule sets in one yard"
    },
    {
@@ -1587,14 +1610,14 @@
    },
    {
     "index": 9,
-    "shape": "marathon",
+    "shape": "tough",
     "concept": "IMP-08",
     "name": "Chukker",
     "family": "steed-stamina-gallop-walk",
     "betrayals": [
      "stamina"
     ],
-    "chain": "A2 walk soft ground; A3 last chukker no trough; hidden checkpoints",
+    "chain": "A2 walk soft ground; A3 last chukker no trough; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
     "closest": "JAI-06 -- stamina and rest"
    },
    {
@@ -1687,7 +1710,7 @@
    },
    {
     "index": 5,
-    "shape": "HWIK",
+    "shape": "HWIK (long 60-90 s)",
     "concept": "AIZ-05",
     "name": "Shanti Road",
     "family": "far-ridge-headlight-tell",
@@ -1812,14 +1835,14 @@
    {
     "index": 3,
     "shape": "std",
-    "concept": "AGT-03",
-    "name": "Chatai",
-    "family": "mat-unrolled-ahead-rolled-behind",
+    "concept": "AGT-F4",
+    "name": "Kosh (latex cups)",
+    "family": "latex-cup-tips-when-full",
     "betrayals": [
-     "unroll-roll"
+     "fill-tips"
     ],
-    "chain": "A2 do not jump over the roll edge; A3 second vendor from the other end",
-    "closest": "DMN-07 painted path -- floor made ahead by a person"
+    "chain": "A2 stand on the emptiest cup (fill level visible on every cup); A3 your weight makes the drip run faster, so hop on, never rest",
+    "closest": "`lamp`/B39 -- the fill level is an honest clock on each foothold; nobody walks ahead of you (AGT.md seed 5, rubber plantations)"
    },
    {
     "index": 4,
@@ -1835,7 +1858,7 @@
    },
    {
     "index": 5,
-    "shape": "HWIK",
+    "shape": "HWIK (long 60-90 s)",
     "concept": "AGT-01",
     "name": "Latex Round",
     "family": "sticky-now-solid-later",
@@ -1878,8 +1901,8 @@
     "betrayals": [
      "duck-pace"
     ],
-    "chain": "A2 march at duck pace (FRESH; fish farming in bible)",
-    "closest": "PNJ-08 -- group pace on a bund"
+    "chain": "A2 march in the ducks' footprints at duck pace (the column walks round the soft patches of the bund); A3 the last duck steps off at the sluice and its prints end, jump the sluice; tell: footprints on the bund, visible from the start",
+    "closest": "PNJ-08 -- the column's own prints are the safe floor; one unknown (soft bund), one move after one death (FRESH: fish farming is in AGT.md; ducks on bunds need a source)"
    },
    {
     "index": 9,
@@ -1961,13 +1984,13 @@
     "index": 3,
     "shape": "std",
     "concept": "DEL-04",
-    "name": "Gali Sankri",
-    "family": "lane-narrows-when-you-stand",
+    "name": "Gali Sankri (shutters)",
+    "family": "gali-stalls-out-in-shutter-order",
     "betrayals": [
-     "space-by-standing"
+     "shutter-stall-out"
     ],
-    "chain": "A2 walk at lane beat; A3 exit lane stalls pulled in",
-    "closest": "kit rising walls/TVM-04 -- shrinks by standing"
+    "chain": "A2 pass each shop before its shutter is up (shutters rise in a visible order down the lane); A3 the last shop opens from inside, its stall comes out first",
+    "closest": "kit rising walls -- the lane narrows by shop opening order, never because you stand"
    },
    {
     "index": 4,
@@ -1983,7 +2006,7 @@
    },
    {
     "index": 5,
-    "shape": "HWIK",
+    "shape": "HWIK (long 60-90 s)",
     "concept": "DEL-06",
     "name": "Taar Jaal",
     "family": "hang-traverse-live-hum",
@@ -2026,19 +2049,19 @@
     "betrayals": [
      "code-reading"
     ],
-    "chain": "A2 listen to rhythm not loudness; A3 two vehicles same code; tell: guide teaches once; NO fog (GTK owns)",
-    "closest": "BLR-04/TVM-07 -- all hazards telegraphed by horn only"
+    "chain": "A2 read the rhythm, not the loudness: each vehicle's indicator blinks in its horn rhythm (visual twin); A3 two vehicles share a code; no guide line (guide never describes an unmet trap); NO fog (GTK owns)",
+    "closest": "BLR-04/TVM-07 -- hazards telegraphed by horn + blink code"
    },
    {
     "index": 9,
-    "shape": "marathon",
+    "shape": "tough",
     "concept": "DEL-05",
     "name": "Saat Dilli",
     "family": "old-plan-is-safe-route",
     "betrayals": [
      "old-plan-route"
     ],
-    "chain": "A2 remember last section; A3 seventh mirrors first at new scale; hidden checkpoints",
+    "chain": "A2 remember last section; A3 seventh mirrors first at new scale; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
     "closest": "BPL-03/`dejavu` -- built on ruins, old layout is answer"
    },
    {
@@ -2120,18 +2143,18 @@
    {
     "index": 4,
     "shape": "std",
-    "concept": "CHP-05",
-    "name": "Paise Vaarna",
-    "family": "summon-by-touch-kid-tide",
+    "concept": "CHP-07",
+    "name": "Sarson",
+    "family": "crop-band-hides-furrows",
     "betrayals": [
-     "summon-by-touch"
+     "crop-cover"
     ],
-    "chain": "A2 do not touch notes over gaps; A3 caught note makes kids chase, drop it",
-    "closest": "chasers/BOM-03 -- you choose where the crowd goes"
+    "chain": "A2 watch the stalks bend where a furrow is; A3 a band of taller stalks hides a second furrow behind the first, hop long; no scarecrow lie",
+    "closest": "TVM-07/kit mist -- cover is a crop band at fixed height (SVP slot 04 owns carry-attracts)"
    },
    {
     "index": 5,
-    "shape": "HWIK",
+    "shape": "HWIK (long 60-90 s)",
     "concept": "CHP-10",
     "name": "Phulkari",
     "family": "solid-only-from-shining-side",
@@ -2198,21 +2221,11 @@
     "betrayals": [
      "veil-and-shoes"
     ],
-    "chain": "callbacks only: veil, notes, logs, phulkari, churn; twist: walk blind barefoot",
-    "closest": "(own callbacks) -- no horse/groom door"
+    "chain": "callbacks only: veil, notes, logs, phulkari, churn, barefoot; twist = CHP slot 09 veil (floor hidden when still) + slot 02 barefoot (running hurts): walk, never stop, never run",
+    "closest": "(own callbacks) -- two own ideas combined, no horse/groom door"
    }
   ],
   "reserves": [
-   {
-    "concept": "CHP-07",
-    "name": "Sarson",
-    "family": "crop-band-hides-furrows",
-    "betrayals": [
-     "crop-cover"
-    ],
-    "chain": "A2 watch stalks bend; A3 scarecrow Tara calls you",
-    "closest": "TVM-07/kit mist -- cover is a crop band at fixed height"
-   },
    {
     "concept": "CHP-11",
     "name": "Kikli",
@@ -2222,6 +2235,16 @@
     ],
     "chain": "A2 pass on edge-on beat; A3 crowd surges to rail",
     "closest": "GNR-07 -- pair arm span sweeps"
+   },
+   {
+    "concept": "CHP-F1",
+    "name": "Sukhna boat club rails",
+    "family": "lake-rail-gap-by-boat-count",
+    "betrayals": [
+     "rail-count"
+    ],
+    "chain": "A2 count the boats out (FRESH)",
+    "closest": "KVT boats -- counted, never ridden"
    }
   ]
  },
@@ -2279,15 +2302,15 @@
    },
    {
     "index": 5,
-    "shape": "HWIK",
+    "shape": "HWIK (long 60-90 s)",
     "concept": "CHH-09",
     "name": "Tau Ki Salah",
-    "family": "guide-true-words-wrong-unit",
+    "family": "tara-strides-wrong-unit",
     "betrayals": [
      "unit-trap"
     ],
-    "chain": "A2 pace his steps; A3 stick steps shorter; tell: foot marks",
-    "closest": "BPL-06 -- words are true, the unit is the trap"
+    "chain": "A2 Tara says \"ten of Tau's steps\" and you pace your own; A3 Tau's stick steps are shorter, pace the foot marks; tell: Tau's foot marks in the dust; the guide stays true",
+    "closest": "BPL-06 -- the lie is Tara's (only Tara lies); the unit is the trap"
    },
    {
     "index": 6,
@@ -2306,12 +2329,12 @@
     "shape": "marathon",
     "concept": "CHH-02",
     "name": "Johad",
-    "family": "buffalo-platforms-sink-on-sun-cue",
+    "family": "buffalo-platforms-sink-on-herder-call",
     "betrayals": [
-     "animal-platform-weather"
+     "animal-platform-call"
     ],
-    "chain": "A2 cross while cloud covers the sun; A3 calf sinks; hidden checkpoints",
-    "closest": "KVT-08 dolphins -- platforms choose own spot on a weather cue"
+    "chain": "A2 cross while the herder boy on the bank is silent; A3 at his two-finger whistle the calf sinks first; hidden checkpoints",
+    "closest": "KVT-08 dolphins -- platforms dip on a visible herder call, not a sun cue"
    },
    {
     "index": 8,
@@ -2327,14 +2350,14 @@
    },
    {
     "index": 9,
-    "shape": "marathon",
+    "shape": "tough",
     "concept": "CHH-10",
     "name": "Jaman",
     "family": "carried-starter-sets-floor",
     "betrayals": [
      "starter-sets"
     ],
-    "chain": "A2 touch wait step; A3 churned pot behind, keep last jaman; hidden checkpoints",
+    "chain": "A2 touch wait step; A3 churned pot behind, keep last jaman; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
     "closest": "DMN-07/DMN-03 -- set by carried starter after delay"
    },
    {
@@ -2427,7 +2450,7 @@
    },
    {
     "index": 5,
-    "shape": "HWIK",
+    "shape": "HWIK (long 60-90 s)",
     "concept": "DDN-06",
     "name": "Kaanch Ka Pul",
     "family": "rain-splash-reveals-glass",
@@ -2575,7 +2598,7 @@
    },
    {
     "index": 5,
-    "shape": "HWIK",
+    "shape": "HWIK (long 60-90 s)",
     "concept": "SML-11",
     "name": "Kath-Kuni",
     "family": "beam-holds-where-stone-above",
@@ -2606,8 +2629,8 @@
     "betrayals": [
      "pack-by-stepping"
     ],
-    "chain": "A2 step step back step further; A3 sun melts packed path; hidden checkpoints",
-    "closest": "DMN-07 -- your steps build the floor ahead"
+    "chain": "A2 step, step back, step further: snow stepped twice holds, once is soft; A3 the porter's track ahead looks packed but was stepped once, pack it again; no sun beat (see conflict 12); hidden checkpoints",
+    "closest": "DMN-07 painted path -- here only YOUR double step makes floor; nothing fades behind you and nobody builds ahead"
    },
    {
     "index": 8,
@@ -2623,14 +2646,14 @@
    },
    {
     "index": 9,
-    "shape": "marathon",
+    "shape": "tough",
     "concept": "SML-10",
     "name": "Gaddi",
     "family": "flowing-flock-floor",
     "betrayals": [
      "flock-carries"
     ],
-    "chain": "A2 jump off at the gap; A3 whistle reverses flock; hidden checkpoints",
+    "chain": "A2 jump off at the gap; A3 whistle reverses flock; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
     "closest": "`herd`/CHN-06 -- flock carries you (OWNS flock floor)"
    },
    {
@@ -2642,8 +2665,8 @@
     "betrayals": [
      "winter-run"
     ],
-    "chain": "callbacks only: packed snow, flock, snowball, sheets, sun patch? no: lift corridor",
-    "closest": "(own callbacks) -- porter on the snowball steps"
+    "chain": "callbacks only: lift door behind (01), roof sheet drip (02), snowball (03), porter niches (04), flock (09); twist: the Gaddi flock (09) comes down the stair-lane the porter fills (04), use his niches",
+    "closest": "(own callbacks) -- twist = SML slot 04 + slot 09"
    }
   ],
   "reserves": [
@@ -2723,7 +2746,7 @@
    },
    {
     "index": 5,
-    "shape": "HWIK",
+    "shape": "HWIK (long 60-90 s)",
     "concept": "JMU-05",
     "name": "Patisa",
     "family": "layer-peel-per-landing",
@@ -2771,14 +2794,14 @@
    },
    {
     "index": 9,
-    "shape": "marathon",
+    "shape": "tough",
     "concept": "JMU-03",
     "name": "Surang",
     "family": "lights-ahead-signal-oncoming",
     "betrayals": [
      "light-ahead"
     ],
-    "chain": "A2 wait in a dark lay-by; A3 lights fail; hidden checkpoints",
+    "chain": "A2 wait in a dark lay-by; A3 lights fail; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
     "closest": "BLR-06 -- light is information that runs ahead"
    },
    {
@@ -2871,15 +2894,15 @@
    },
    {
     "index": 5,
-    "shape": "HWIK",
-    "concept": "SXR-07",
-    "name": "Kaagaz",
-    "family": "paper-box-skids-wood-holds",
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "SXR-F1",
+    "name": "Nadru (lotus stems)",
+    "family": "cut-stem-sinks-leaf",
     "betrayals": [
-     "skid-weightless"
+     "cut-stem-sinks"
     ],
-    "chain": "A2 push-test the box first; A3 workshop repaints wood while you watch; tell: shine",
-    "closest": "fake floors -- weightless crate slides away (decoy-twin B37 avoided)"
+    "chain": "A2 hop leaf to leaf ahead of the harvester's boat; A3 a cut leaf floats one beat then sinks, never wait on it; tell: the harvester and his cut stems are on screen from the start",
+    "closest": "IMP slot 09 -- harvest sinks leaves; no decoy twin (FRESH: nadru harvest on the Dal)"
    },
    {
     "index": 6,
@@ -2914,19 +2937,19 @@
     "betrayals": [
      "spoken-rule"
     ],
-    "chain": "A2 count the chant; A3 next row mid-step; tell: chant in local numerals",
-    "closest": "PNJ-06/CHP-08 -- rule spoken in the city's numbers"
+    "chain": "A2 count the chant; A3 next row mid-step; tell: the chant AND the talim (the weaver's written colour code) hung over each row, readable without sound or Kashmiri",
+    "closest": "PNJ-06/CHP slot 08 -- the rule is the talim the weaver reads"
    },
    {
     "index": 9,
-    "shape": "marathon",
+    "shape": "tough",
     "concept": "SXR-05",
     "name": "Sledge",
     "family": "brake-only-downhill",
     "betrayals": [
      "brake-only"
     ],
-    "chain": "A2 brake into bumps; A3 puller swings you to lower run; hidden checkpoints",
+    "chain": "A2 brake into bumps; A3 puller swings you to lower run; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
     "closest": "JAI-06/DMN-03 -- only control is a brake (OWNS ski slope)"
    },
    {
@@ -2954,14 +2977,14 @@
     "closest": "TVM-03 -- seller's visible action lands predictably"
    },
    {
-    "concept": "SXR-F1",
-    "name": "Nadru lotus stems",
-    "family": "cut-stem-sinks-leaf",
+    "concept": "SXR-F2",
+    "name": "Hanji houseboat ladder",
+    "family": "houseboat-plank-lifts-on-wake",
     "betrayals": [
-     "cut-stem-sinks"
+     "plank-wake"
     ],
-    "chain": "A2 hop leaf to leaf before harvest (FRESH)",
-    "closest": "IMP-09 -- harvest sinks leaves"
+    "chain": "A2 cross the plank between wakes (FRESH)",
+    "closest": "KVT-02 jetty planks -- lifted, not broken"
    }
   ]
  },
@@ -2972,14 +2995,15 @@
    {
     "index": 1,
     "shape": "tour",
-    "concept": "LEH-01",
-    "name": "Julley, Leh!",
-    "family": "greeting-moves-people",
+    "concept": "LEH-F2",
+    "name": "Julley, Leh! (water turn)",
+    "family": "water-turn-switches-channel",
     "betrayals": [
-     "greet-moves"
+     "water-turn",
+     "B4"
     ],
-    "chain": "A2 stop and greet; A3 channel gate shuts behind you",
-    "closest": "HYD-04/PNJ-04 -- your own action moves people"
+    "chain": "A2 walk the dry field channel; A3 the wooden gate twitches, then turns two beats later and the water comes to your channel (B4), step up on to the bund",
+    "closest": "TVM-02/BOM-04 floods, LEH slot 06 nala -- the level never rises; which channel carries water switches at a visible gate (LEH.md seed 13)"
    },
    {
     "index": 2,
@@ -3019,7 +3043,7 @@
    },
    {
     "index": 5,
-    "shape": "HWIK",
+    "shape": "HWIK (long 60-90 s)",
     "concept": "LEH-05",
     "name": "Magnetic Hill",
     "family": "drawing-lies-about-slope",
@@ -3067,14 +3091,14 @@
    },
    {
     "index": 9,
-    "shape": "marathon",
+    "shape": "tough",
     "concept": "LEH-03",
     "name": "Chadar",
     "family": "ice-colour-grades-thickness",
     "betrayals": [
      "ice-colour"
     ],
-    "chain": "A2 read colour; A3 sledge cracks floes, no way back; hidden checkpoints",
+    "chain": "A2 read colour; A3 sledge cracks floes, no way back; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
     "closest": "DMN-03/TVM-01 -- three grades by colour plus a current line (OWNS river ice)"
    },
    {
@@ -3302,13 +3326,13 @@
     "index": 9,
     "shape": "encore-tough",
     "concept": "KVT-09",
-    "name": "Coir Ropewalk",
-    "family": "rope-laid-behind",
+    "name": "Kalpeni Storm Bank",
+    "family": "storm-bank-rubble-slides",
     "betrayals": [
-     "laid-behind"
+     "rubble-slide"
     ],
-    "idea": "the rope is twisted behind the spinner as he walks; ahead is loose strand, behind is firm",
-    "source": "WV Lakshadweep (handicrafts; coir not on page, WP check pending)"
+    "idea": "the coral-rubble storm bank slides one tile toward the lagoon with every step; climb it on the diagonal, never straight up",
+    "source": "WP Kalpeni (storm bank of coral debris; source check needed)"
    },
    {
     "index": 10,
@@ -3852,13 +3876,13 @@
     "index": 9,
     "shape": "encore-tough",
     "concept": "HYD-09",
-    "name": "Pearl Row",
-    "family": "clam-gate-pearl-step",
+    "name": "Irani Chai",
+    "family": "dunked-biscuit-softens-on-count",
     "betrayals": [
-     "clam-gate"
+     "dunk-soft"
     ],
-    "idea": "a clam opens on a beat; the pearl inside is the step; shut = spikes",
-    "source": "WV Hyderabad (pearl found)"
+    "idea": "Osmania biscuits dunked in the chai are footholds that go soft three beats after they go in; the waiter dunks in a visible order",
+    "source": "WP Hyderabadi cuisine (Irani chai, Osmania biscuit; source check needed)"
    },
    {
     "index": 10,
@@ -4292,13 +4316,13 @@
     "index": 9,
     "shape": "encore-tough",
     "concept": "GNR-09",
-    "name": "Bandhani",
-    "family": "tie-dye-reveals-on-untie",
+    "name": "GIFT City Chutes",
+    "family": "full-bin-chute-pulls-down",
     "betrayals": [
-     "untie-reveal"
+     "chute-when-full"
     ],
-    "idea": "tied dots are solid; untied they open into the pattern",
-    "source": "WP Gandhinagar (page found, craft not listed)"
+    "idea": "bin lids are footholds; when a bin's fill gauge reaches full the vacuum chute pulls the lid and whatever stands on it down the pipe",
+    "source": "WP GIFT City (automated waste collection; source check needed)"
    },
    {
     "index": 10,
@@ -4512,13 +4536,13 @@
     "index": 9,
     "shape": "encore-tough",
     "concept": "BPL-09",
-    "name": "Gond Dots",
-    "family": "dots-only-stepping-stones",
+    "name": "Bhimbetka Shelters",
+    "family": "rock-shelter-refuge-wave",
     "betrayals": [
-     "dot-path"
+     "B13"
     ],
-    "idea": "only the dots of a Gond painting are solid; the lines are gaps",
-    "source": "WP Bhopal (Gond, Tribal found)"
+    "idea": "a rockfall wave runs along the cliff; the rock-shelter overhangs are refuges, and running past the last shelter sends a second wave back the other way (B13)",
+    "source": "WP Bhopal / Bhimbetka rock shelters (UNESCO, 45 km from Bhopal; source check needed; no paintings used as floor)"
    },
    {
     "index": 10,
@@ -4634,13 +4658,13 @@
     "index": 10,
     "shape": "encore-finale",
     "concept": "RPR-10",
-    "name": "Cart Wheel",
-    "family": "wheel-spoke-steps",
+    "name": "Raut Nacha",
+    "family": "raut-sticks-clash-high-low",
     "betrayals": [
-     "spoke-steps"
+     "stick-clash"
     ],
-    "idea": "spokes of a rolling cart wheel are steps; hop spoke to spoke",
-    "source": "everyday life (unverified)"
+    "idea": "cowherd dancers clash sticks high on one beat and low on the next; the crossed pair is a bar you stand on only on the high beat",
+    "source": "WP Raut Nacha (source check needed)"
    }
   ],
   "tourNew": {
@@ -4732,13 +4756,13 @@
     "index": 9,
     "shape": "encore-tough",
     "concept": "RNC-09",
-    "name": "Forging Hammer",
-    "family": "press-hammer-beat",
+    "name": "Lac (Namkum)",
+    "family": "lac-sheet-softens-near-fire",
     "betrayals": [
-     "hammer-beat"
+     "lac-soft"
     ],
-    "idea": "a hammer drops on a beat; the anvil lifts you (check vs crusher act blr07)",
-    "source": "WP Ranchi (Heavy Engineering found)"
+    "idea": "lac sticks laid as a bridge bend under you near the brazier and hold hard away from it; the brazier is carried along the bridge",
+    "source": "WP Ranchi (lac research institute at Namkum; source check needed)"
    },
    {
     "index": 10,
@@ -4762,5 +4786,13 @@
   },
   "seventhDeathTheme": "the seventh rock on the waterfall path is counted",
   "reserves": []
+ },
+ "rules": {
+  "version": 2,
+  "ending": "Every stage declares meta.ending: a kebab-case key for its door-ending idea, prefixed with the city code (e.g. 'pat-plate-gap'). The idea must be new against MECHANICS.md's 'Door endings' list and the advice lines in src/game/levels/endings*.ts (an idea counts as used under a new name) and against every other city's endings. The allocation does not assign endings; the builder picks one and greps first.",
+  "act": "Every act id is '<city><slot>-<word>' (e.g. 'pat07-tempos'), new against MECHANICS.md's Acts list and every other city; one per id, never reused.",
+  "slot09": "Slot 09 shape 'tough': 60-90 s, 4-5 beats, 3-4 checkpoints, A2 and A3 in every beat, knowable (TROLL-BIBLE E).",
+  "hwik05": "A HWIK at slot 05 is also the long stage: 60-90 s, 3-4 checkpoints; shape reads 'HWIK (long 60-90 s)'.",
+  "ids": "'CITY slot NN (concept)' names a stage; the concept id is the bible id and differs from the slot number in most cities."
  }
 }
