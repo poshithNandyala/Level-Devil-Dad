@@ -96,7 +96,7 @@ export const act2: Act = {
   id: 'bbi10-tana',
   w: 28,
   advice: 'The weaver is away: no shuttle today, cross on the motif. Then this drummer plays while his troupe holds the pose: go when the bridge forms, never at his stop.',
-  cps: [12.5],
+  cps: [],
   paint: (g, c) => {
     g.pit(c.x + L10.c0, c.x + L10.c0 + L10.n - 1).pit(c.x + T10.c0, c.x + T10.c0 + T10.n - 1);
   },

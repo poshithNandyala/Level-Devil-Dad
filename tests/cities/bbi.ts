@@ -5,6 +5,7 @@ import type { Door } from '../../src/game/entities/basics';
 import { Step, X, and, ground, done } from '../runner';
 import type { CityTests } from '../city-tests';
 import { LEVELS } from '../../src/game/levels';
+import { LEAD } from '../../src/game/cities/bbi/levels';
 import { g1Road } from '../../src/game/cities/bbi/s01';
 
 type Move = 'L' | 'R' | '';
@@ -786,7 +787,7 @@ function actDeaths() {
     if (!def?.parts) continue;
     const pre: Step[] = [...room()];
     for (const p of def.parts) {
-      for (const d of DEATHS[p.kind] ?? []) (mistakes[id] ??= []).push({ what: `${p.kind}: ${d.what}`, steps: [...pre, ...d.steps(p.x0)], cause: d.cause });
+      for (const d of DEATHS[p.kind] ?? []) (mistakes[id] ??= []).push({ what: `${p.kind}: ${d.what}`, steps: [...pre, ...d.steps(p.x0 + (LEAD[p.kind] ?? 0))], cause: d.cause });
       pre.push(...actRoutes[p.kind](p.x0));
     }
   }
@@ -823,13 +824,14 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('BBI-10', 0, []);
   {
     // the full route up to the sinking spokes, then the careful climber who checks each spoke
-    const order: [string, number][] = [['bbi09-ghoda', 24], ['bbi09-udaya', 28], ['bbi09-ratha', 28], ['bbi09-ulta', 26], ['bbi09-asta', 28]];
+    const order: [string, number][] = [['bbi09-ghoda', 24], ['bbi09-udaya', 32], ['bbi09-ratha', 28], ['bbi09-ulta', 26], ['bbi09-asta', 32]];
     let X0 = 32;
     const pre: Step[] = [...room09()];
     for (const [id, wd] of order) {
       pre.push(...actRoutes[id](X0));
       X0 += wd;
     }
+    X0 += LEAD['bbi09-ara'] ?? 0;
     fix['BBI-09'].steps = [...pre, { hold: 'R', until: X(X0 + 1.3), max: 300 }, leap(() => px(X0 + 3) + 14, 'spoke 1'), { hold: '', ticks: 70, note: 'make sure of it' }, leap(() => px(X0 + 5.5) + 14, 'spoke 2'), { hold: '', ticks: 70 }, leap(() => px(X0 + 8) + 14, 'spoke 3'), { hold: '', until: done, max: 400 }];
   }
   fix['BBI-05'].steps = [...S['BBI-05'].slice(0, -1), { policy: (w) => verandahPolicy(w, fixMem(w), null as unknown as Door), until: done, max: 1500, note: 'up to the front door on the verandah' }];
@@ -1018,6 +1020,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi10-pada': (x) => 
     ];
   },
 };
+// acts that start with plain ground (LEAD in levels.ts): the same route, from their shifted first column
+for (const [k, L] of Object.entries(LEAD)) {
+  const r = actRoutes[k];
+  if (r) actRoutes[k] = (x) => r(x + L);
+}
 const endingPolicies: Record<string, Policy> = { 'bbi-turf-roll': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy, 'bbi-pose-gate': gatePolicy, 'bbi-leaf-plate': platePolicy, 'bbi-horse-gap': horseGap, 'bbi-ribbon-snip': ribbonPolicy };
 void and;
 

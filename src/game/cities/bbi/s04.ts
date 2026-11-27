@@ -182,7 +182,7 @@ export const act: Act = {
   id: 'bbi04-karkhana',
   w: 36,
   advice: 'The rest of the workshop: a torch, a trough, another torch and a trough with a torch hanging over its middle. Keep moving under the torches, stop at each trough’s edge to build the bridge, and wait between bursts before you build past the torch over the second one.',
-  cps: [8.5, 23.5],
+  cps: [16.5, 31.5],
   paint: (g, c) => {
     g.fill(c.x + 2, c.x + 8, 12, 12, '#').fill(c.x + 18, c.x + 23, 12, 12, '#');
     g.pit(c.x + A04.tr1[0], c.x + A04.tr1[1]).pit(c.x + A04.tr2[0], c.x + A04.tr2[1]);
