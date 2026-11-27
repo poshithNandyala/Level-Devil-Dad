@@ -20,7 +20,7 @@ import { ClothPanel, Decorator, DhakFrame, Lowered, Queue, Skeleton, Stakes } fr
 import { Tin } from './muri';
 import { Kumir } from './kumir';
 import { Bore, Ebb, Front } from './baan';
-import { BigFigure, Figure, Ghat, Potter, Straw } from './kumartuli';
+import { BigFigure, Figure, Ghat, Potter, Scraper, Straw } from './kumartuli';
 import type { Act } from '../../levels/acts';
 
 const tara = (n: number, beaten = 0) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[beaten % L.beaten.length] });
@@ -946,6 +946,31 @@ const rok10: Act = {
   },
 };
 
+/** CCU-10 act: the straw yard again (CCU-05's khor), and its rule broken. 05 taught: wait for the clay. Now
+ *  the potter is scraping it off, figure after figure from the near end: whoever waits is on straw. Go */
+const chhanta: Act = {
+  id: 'ccu10-chhanta',
+  w: 24,
+  advice: 'The straw yard again, but the potter is scraping the clay off now, for next year’s figures, one after another from your end. Don’t wait for anything: hop figure to figure and stay ahead of him.',
+  paint: (g, c) => {
+    g.pit(c.x + 1, c.x + 18);
+  },
+  build: (w, c) => {
+    w.add(new Ghat(c.X(1), c.X(19)));
+    const figs = ([[2, 2], [5, 3], [8, 2], [11, 3], [14, 2]] as const).map(([k, h]) => {
+      const s = w.add(new Straw(c.X(k), h));
+      s.clay = true;
+      s.solid.collidable = true;
+      return s;
+    });
+    const scraper = w.add(new Scraper(figs, 1.6, 0.75));
+    onPass(w, c.X(0.2), (w2) => {
+      if (scraper.t0 < 0) scraper.t0 = w2.tick;
+    });
+    w.flags.chhanta = figs;
+  },
+};
+
 /** CCU-10 act: the bore's front again (CCU-07's causeway), and its rule broken. 07 taught: keep running ahead
  *  of it. Here it comes back down the river at you, faster than anyone runs: get up on the refuge and let it
  *  go by under you */
@@ -1365,5 +1390,5 @@ export const levels = (): LevelDef[] => [
   longStage({ base: howrahRoom(), par: 120, acts: [girder, dui, sandhya, ulto, jowar, baan, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 46, acts: [rok, tokta, gali, phuchka], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
   longStage({ base: pandalRoom(), par: 56, acts: [sinri, toran, chala, dhak, uthan, uthan2, line], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
-  longStage({ base: finaleRoom(), par: 94, acts: [bus10, tram10, chhad, phire, rok10, kumor10, khola, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
+  longStage({ base: finaleRoom(), par: 94, acts: [bus10, tram10, chhad, phire, rok10, kumor10, chhanta, khola, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];

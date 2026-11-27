@@ -264,6 +264,13 @@ export class Straw extends Entity {
     this.solid.velX = 0;
     this.solid.collidable = false;
   }
+  /** scraped back to straw (the finale: the clay is taken off for the next year's figures) */
+  scrape(w: World) {
+    if (!this.clay) return;
+    this.clay = false;
+    this.solid.collidable = false;
+    w.sfx('slide', this.x + 16, this.solid.y);
+  }
   daub(w: World) {
     if (this.clay) return;
     this.clay = true;
@@ -312,5 +319,28 @@ export class Potter extends Entity {
     const s = this.straws[Math.min(this.done, this.straws.length - 1)];
     const busy = this.t0 >= 0 && this.done < this.straws.length;
     person(ctx, s.x + 34, s.solid.y - 20, 20, '#6D4C41', '#8C7A6B', { arms: busy && w.tick % 40 < 20 ? 6 : 2 });
+  }
+}
+
+/** CCU-10: the potter scraping the clay off again, one figure after another from the near end, quicker than
+ *  anyone waits: keep ahead of him */
+export class Scraper extends Entity {
+  t0 = -1;
+  done = 0;
+  constructor(
+    readonly figs: Straw[],
+    readonly first: number,
+    readonly every: number,
+  ) {
+    super();
+    this.layer = 2;
+  }
+  update(w: World) {
+    if (this.t0 < 0 || this.done >= this.figs.length) return;
+    if ((w.tick - this.t0) / 120 >= this.first + this.done * this.every) this.figs[this.done++].scrape(w);
+  }
+  draw(ctx: CanvasRenderingContext2D, w: World) {
+    const f = this.figs[Math.min(this.done, this.figs.length - 1)];
+    person(ctx, f.x - 6, f.solid.y - 20, 20, '#6D4C41', '#8C7A6B', { arms: this.t0 >= 0 && w.tick % 30 < 15 ? 6 : 2 });
   }
 }
