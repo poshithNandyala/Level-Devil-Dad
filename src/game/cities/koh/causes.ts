@@ -26,5 +26,7 @@ export const causeLines: Record<string, string[]> = {
   'koh-aag': ['You walked into the hearth.', 'The hearth house is the opposite: jump the coals.'],
   'koh-phatak': ['The gate bar came down.', 'The gate house counts from your first step in: keep moving and be out before the notches run out.'],
   'koh-jhukav': ['The plank tipped under your walk.', 'The plank house is the opposite of the gate: walk a little, stand still until the creak stops, walk again.'],
+  'koh-sadi': ['The rotten thatch gave under you.', 'This house is empty for the festival: its thatch is rotten and its tin is the floor. The dark windows say so.'],
+  'koh-takkar': ['The cart rolled back into the wall with you on it.', 'This lane climbs: a boarded cart rolls backwards. The lane is paved here. Walk it.'],
   'koh-dhol': ['The log rolled over you.', 'After a double shout the log climbs the bank. Step off at the first top and keep going; at the hut hop the drum as it rolls away.'],
 };

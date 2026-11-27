@@ -28,7 +28,7 @@ export const gully = (w: World, c0: number, c1: number) => ditch(w, px(c0), px(c
  * a roof: x px, width px, top y. Thatch is silent. Tin rings under a step; `bang` seconds later the household bangs the
  * attic hatch open (deadly over the whole roof for 0.35 s); it is quiet again 2.5 s after Dad leaves.
  */
-export function roof(w: World, x: number, wd: number, y: number, kind: RoofKind, key: string, o: { bang?: number; eave?: number } = {}): Roof {
+export function roof(w: World, x: number, wd: number, y: number, kind: RoofKind, key: string, o: { bang?: number; eave?: number; empty?: boolean } = {}): Roof {
   const st: Roof = { rig: null as any, kind, ringT: -1 };
   const bang = o.bang ?? 0.3;
   const rig = w.add(
@@ -63,7 +63,7 @@ export function roof(w: World, x: number, wd: number, y: number, kind: RoofKind,
         for (let k = 4; k < r.w - 2; k += 8) ctx.fillRect(r.x + k + shake, r.y + 2, 1, r.h - 2);
         box(ctx, r.x + 2, r.y + r.h, r.w - 4, FL + 10 - (r.y + r.h), '#7A6A5A');
         // the hatch: a dark square on the roof, flung open while the household bangs it
-        const open = t >= bang && t < bang + 0.35;
+        const open = !o.empty && t >= bang && t < bang + 0.35;
         box(ctx, r.x + r.w / 2 - 6, r.y - (open ? 14 : 1), 12, open ? 14 : 2, '#3A2A1E');
         if (t < 0.3) {
           ctx.strokeStyle = 'rgba(255,255,255,0.7)';
@@ -76,7 +76,7 @@ export function roof(w: World, x: number, wd: number, y: number, kind: RoofKind,
     }),
   );
   st.rig = rig;
-  if (kind === 'tin') {
+  if (kind === 'tin' && !o.empty) {
     w.add(
       new Rig(x, y - 14, wd, 16, {
         layer: 3,
@@ -86,6 +86,8 @@ export function roof(w: World, x: number, wd: number, y: number, kind: RoofKind,
         paint: () => {},
       }),
     );
+  }
+  if (kind === 'tin') {
     // the storey above overhangs the tin: its eave hangs `eave` px over the roof, so hop the tin low
     const eave = o.eave ?? 60;
     w.add(
