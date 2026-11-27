@@ -12,7 +12,10 @@ import { onPass } from '../../levels/trolls';
 import { FL, Rig, box, decor, px } from './entities';
 import { taraScript } from './common';
 import { FLOORS, house, houseDecor } from './s04';
-import { fog, rope, type Cloud } from './s07';
+import { fog, rope, drifterAct, type Cloud } from './s07';
+import { inspectorAct } from './s03';
+import { spanAct } from './s08';
+import { thinShore, yak } from './s09';
 import { ACT_CFG, steamer } from './s02';
 import { bin, litter, mgRule } from './s05';
 
@@ -195,6 +198,80 @@ export const act5: Act = {
     for (const [a, b] of pits) w.add(new Rig(px(a), FL + 20, px(b - a + 1), 40, { cause: 'gtk-badal', inset: 0 }));
   },
 };
+
+/** the rest of the finale: Gangtok's own ideas once more, each in a new place */
+// the cloud drifts off ahead of you over a road whose wall is painted; the rope is the truth
+export const act6 = drifterAct('gtk10-baadal', [[7, 8], [13, 14], [20, 21], [27, 28], [34, 35]], 50, 'gtk10d', 40, true);
+// the bag rail over the jhora on the way to the ropeway, the inspector working it towards you
+export const act7 = inspectorAct(
+  'gtk10-jhola',
+  'gtk10j',
+  'cctcctcc',
+  -1,
+  42,
+  'Over the jhora on the bag rail once more, and the inspector is working it from the far end towards you: cloth bags only, and hop over him the moment he has passed the next one.',
+);
+// the ropeway up to the viewpoint: the far cabin stops above yours at the middle
+export const act8 = spanAct(
+  'gtk10-tar',
+  'gtk10t',
+  15,
+  9,
+  px(12),
+  px(12) - 26,
+  ['#C0392B', '#2E86AB'],
+  'The ropeway up to the viewpoint road: the two cabins meet at the middle, the far one a little higher. Jump up on to it while they’re together; stay on yours and it takes you back.',
+  'viewpoint',
+);
+/** the yak by the viewpoint lake: it stops for a photo on the thin shore; stay on, off at the far bank */
+export const act9: Act = {
+  id: 'gtk10-chauri',
+  w: 32,
+  advice: 'A yak by the little lake below the viewpoint: it stops for a photo on the thin ice. Stay on, and get off on the far bank before it turns back.',
+  build: (w, c) => {
+    thinShore(w, c.x + 4, c.x + 25);
+    yak(w, c.X(1), [{ wait: 0.8 }, { to: c.X(13) }, { wait: 2.2, photo: true }, { to: c.X(26) }, { wait: 0.9 }, { to: c.X(1) }, { wait: 1.0 }], 'mount', 'gtk10y');
+  },
+};
+/** the last house in the cloud: three floors down again, the shop floor and all */
+const DOORS3: ('none' | 'exit' | 'drop' | 'water')[] = ['none', 'drop', 'none', 'exit', 'water'];
+export const act10: Act = {
+  id: 'gtk10-antim',
+  w: 31,
+  advice: 'The last house in the cloud says three floors down: count the flights, past the first door and the shop floor, out at the bottom of the third.',
+  paint: (g, c) => {
+    for (let k = 0; k <= 10; k++) g.fill(c.x + k, c.x + k, 14 - k, 17, '#');
+    house(g, c.x + 11, DOORS3, 4);
+  },
+  build: (w, c) => {
+    houseDecor(w, c.x + 11, DOORS3, 'gtk10h');
+    fog(w, c.x + 11, c.x + 30, null);
+    stairRails(w, c.x + 11);
+    sign(w, c.x + 6.4, 1.4, 3.4, 'LOWER RD', 'green', 'down', '3 floors down');
+  },
+};
+
+/** the last momo stall: someone has left a wrapper on the cook's stool, the only step up to the steamer. Stand
+ *  on it and it's in your hand: step down to the bin beside it, climb back, then on to the tier */
+export const act11: Act = {
+  id: 'gtk10-stool',
+  w: 30,
+  advice: 'The last stall: a wrapper lies on the stool you need to get on to the steamer. Stand on the stool and it’s in your hand; step down to the bin beside it, hop back up, and then ride the top tier and jump off to the shelf on the way up.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 6, x + 7, 13, 14, '#');
+    g.fill(x + 11, x + 26, 6, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    bin(w, x + 3, false);
+    litter(w, x + 6, FL - 32);
+    steamer(w, x + 8, ACT_CFG, c.X(6), 'gtk10s2');
+    sign(w, x + 14, 3.2, 4, 'MOMO', 'shop', null, 'one more plate');
+  },
+};
+// and the cloud once more, drifting ahead, no rope
+export const act12 = drifterAct('gtk10-dhuaan', [[6, 7], [12, 13], [18, 19], [25, 26], [31, 32], [37, 38]], 48, 'gtk10e', 42);
 
 /** door: the viewpoint house in the cloud. Its doors are stacked up the front, G, 1, 2: the exit is two floors up */
 export const ending: Ending = {

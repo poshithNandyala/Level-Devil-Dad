@@ -116,9 +116,11 @@ function rideTier(key: string, jumpOff: boolean, mode: 'route' | 'stay' | 'secon
     const stoolX = s.x - 16;
     if (stage === 0) {
       // to the stool
-      if (p.x < stoolX - 20) return go('R');
+      const wall0 = p.onGround && p.y > 200 && w.isSolidTile(w.tileAt(Math.floor((p.x + p.w + 4) / 16), Math.floor((p.y + p.h - 2) / 16)));
+      if (p.x < stoolX - 20 && !wall0) return go('R');
       if (!p.onGround || p.y > 200) {
-        if (p.onGround && p.x + p.w >= stoolX - 6) {
+        const wall = w.isSolidTile(w.tileAt(Math.floor((p.x + p.w + 4) / 16), Math.floor((p.y + p.h - 2) / 16)));
+        if (p.onGround && (wall || p.x + p.w >= stoolX - 6)) {
           jt = 10;
           return { move: 'R', jump: true };
         }
@@ -667,6 +669,20 @@ const act10e = (x: number): Step[] => [
   { hold: 'L', until: XL(x + 1.4), max: 600, note: 'back into the cloud to the empty bin' },
   { policy: gapJumper(), until: X(x + 33.5), max: 1500, note: 'run, jumping where the rope stops' },
 ];
+const act10g = (x: number): Step[] => [{ policy: bagHop('gtk10j', { over: true }), until: and(ground, X(x + 26)), max: 3000, note: 'over his head, bag to bag' }, { hold: 'R', until: X(x + 30), max: 300 }];
+const act10j = (x: number): Step[] => [
+  { policy: stepper(), until: (w) => w.player.onGround && w.player.y + w.player.h <= 64 && w.player.x > px(x + 10.5), max: 1500, note: 'up the steps to the top road' },
+  { policy: houseRoute(x + 11, 3), until: and(ground, X(x + 28)), max: 2400, note: 'three flights down in the cloud, out' },
+  { hold: 'R', until: X(x + 30.5), max: 300 },
+];
+const act10h = (x: number): Step[] => [{ policy: ropeway('gtk10t'), until: and(ground, X(x + 30)), max: 3000, note: 'up the ropeway, jump across at the middle' }, { hold: 'R', until: X(x + 33.5), max: 300 }];
+const act10i = (x: number): Step[] => [{ policy: yakRide('gtk10y', { at: px(x + 26) }), until: and(ground, X(x + 28.5)), max: 4000, note: 'stay on for the photo, off on the far bank' }, { hold: 'R', until: X(x + 31.5), max: 300 }];
+const act10k = (x: number): Step[] => [
+  { policy: stepper(), until: (w) => w.player.onGround && held(w), max: 900, note: 'up on the stool: the wrapper is in your hand' },
+  { hold: 'L', until: (w) => !held(w), max: 600, note: 'down to the bin beside it' },
+  { policy: rideTier('gtk10s2', true), until: and(ground, X(x + 12), (w) => w.player.y < 100), max: 2400, note: 'back on the stool, ride the top tier, jump off on the way up' },
+  { hold: 'R', until: and(ground, X(x + 29)), max: 600 },
+];
 const views = new WeakMap<World, (w: World) => Out>();
 const viewBack = new WeakMap<World, boolean>();
 const viewPolicy: Policy = (w, _m, d) => {
@@ -709,6 +725,29 @@ function actDeaths() {
   actDeath('GTK-07', r7, 'gtk07-thau2', 'no stop at the stall', () => blind(), 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-thau2', 'wait once, then walk on blind past the second stall', (x) => [...chiyaRoute('gtk7m')(x).slice(0, 3), ...blind()], 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-jaldi', 'walk, don’t jump: the holes are right there', () => blind(), 'gtk-badal');
+  const r10 = room10();
+  actDeath('GTK-10', r10, 'gtk10-peechha', 'the bin ahead is full: jump the holes anyway', (x) => [{ policy: stepper(), until: X(x + 7.3), max: 900 }, { policy: gapJumper(), until: done, max: 2400 }], 'gtk-jurmana');
+  actDeath('GTK-10', r10, 'gtk10-jhola', 'on to every bag', () => [{ policy: bagHop('gtk10j', { every: true, dwell: 0.3 }), until: done, max: 3000 }], 'gtk-polythene');
+  actDeath('GTK-10', r10, 'gtk10-jhola', 'cloth only, straight at him as in Lal Market', () => [{ policy: bagHop('gtk10j', { dwell: 1.5 }), until: done, max: 3000 }], 'gtk-jaanch');
+  actDeath('GTK-10', r10, 'gtk10-baadal', 'behind the cloud the road looks whole: walk it', (x) => [{ hold: 'R', until: X(x + 2), max: 300 }, ...blind()], 'gtk-deewar');
+  actDeath('GTK-10', r10, 'gtk10-antim', 'straight on, out of the first door', () => [{ policy: stepper(), until: done, max: 2400 }], 'gtk-galat-tala');
+  actDeath('GTK-10', r10, 'gtk10-antim', 'count the doors: the basement', (x) => [{ policy: stepper(), until: (w) => w.player.onGround && w.player.y + w.player.h <= 64 && w.player.x > px(x + 10.5), max: 1500 }, { policy: houseRoute(x + 11, 4), until: done, max: 2400 }], 'gtk-jhora');
+  actDeath(
+    'GTK-10',
+    r10,
+    'gtk10-tar',
+    'jump for the other cabin before they meet',
+    () => [
+      { policy: ropeway('gtk10t', { stay: true }), until: (w) => { const [a] = w.flags.gtk10t as Rig[]; return a.carries(w) && a.s.ph === 'up' && a.s.k > 0.55; }, max: 3000 },
+      { hold: 'R', jump: 14, ticks: 14 },
+      { hold: 'R', until: done, max: 900 },
+    ],
+    'gtk-khaai',
+  );
+  actDeath('GTK-10', r10, 'gtk10-chauri', 'walk across the shore', () => blind(), 'gtk-hiun');
+  actDeath('GTK-10', r10, 'gtk10-chauri', 'off the yak when it stops', () => [{ policy: yakRide('gtk10y', { offAtStop: true }), until: done, max: 3000 }], 'gtk-hiun');
+  actDeath('GTK-10', r10, 'gtk10-stool', 'up on the stool and straight on to the steamer', () => [{ policy: rideTier('gtk10s2', true), until: done, max: 2400 }], 'gtk-jurmana');
+  actDeath('GTK-10', r10, 'gtk10-dhuaan', 'catch the cloud up and walk on blind', (x) => [{ hold: 'R', until: X(x + 2), max: 300 }, ...blind()], 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-saath', 'behind the cloud, the road looks whole: walk it', (x) => [{ hold: 'R', until: X(x + 2), max: 300 }, ...blind()], 'gtk-deewar');
 }
 
@@ -801,6 +840,13 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk10-chadhai': act10c,
   'gtk10-ghar': act10d,
   'gtk10-peechha': act10e,
+  'gtk10-jhola': act10g,
+  'gtk10-baadal': drifterRoute('gtk10d', 40),
+  'gtk10-antim': act10j,
+  'gtk10-tar': act10h,
+  'gtk10-chauri': act10i,
+  'gtk10-stool': act10k,
+  'gtk10-dhuaan': drifterRoute('gtk10e', 42),
 };
 const endingPolicies: Record<string, Policy> = {
   'gtk-steam-vent': ventPolicy,
