@@ -22,6 +22,7 @@ import type { Bull } from '../../src/game/cities/dis/goru';
 import type { Sluice } from '../../src/game/cities/dis/sluice';
 import type { Tekeli } from '../../src/game/cities/dis/tekeli';
 import type { RopeWalk } from '../../src/game/cities/dis/rope';
+import { GrassRhino } from '../../src/game/cities/dis/egret';
 
 type Out = { move: 'L' | 'R' | ''; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
@@ -461,6 +462,7 @@ act('dis05-sanko', 'DIS-05', [(x) => [...hopR(x + 4.2, 'over the ditch', 12), { 
 act('dis05-feast', 'DIS-05', [(x) => [{ hold: 'R', until: X(x + 6.6), max: 600 }, { hold: '', jump: 8, ticks: 8, note: 'up for the pitha on its stand' }, { hold: '', until: done, max: 600 }], 'dis-kol-paat', 'jumps up for a pitha: the leaf tips under the landing'], [(x) => [{ hold: 'R', until: X(x + 5.2), max: 600 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 600 }], 'dis-pit', 'jumps the whole feast at a run and lands at the ditch’s lip, running on into it']);
 act('dis05-kaath', 'DIS-05', [(x) => [...hopR(x + 9.2, 'an ordinary hop over the split', 8), { hold: 'R', until: done, max: 300 }], 'dis-kaath', 'hops the first split the ordinary way: it slides ahead under his landing'], [(x) => [{ hold: 'R', until: X(x + 8.5), max: 600 }, { hold: '', jump: 8, ticks: 8, note: 'a hop on the spot to set it sliding' }, { hold: '', until: ground, max: 200 }, { hold: '', ticks: 240, note: 'wait for it to settle' }, ...hopR(x + 11.8, 'over the first split where it stopped', 8), ...hopR(x + 16.4, 'over the second', 8), { hold: 'R', until: done, max: 600 }], 'dis-gamosa', 'stops to let the split settle: the wife catches him with the third gamosa and, blind, he walks into the ditch']);
 act('dis06-flag', 'DIS-06', [(x) => [...hopR(x + 13.3, 'down on the gangplank', 8), ...hopR(x + 17.3, 'over the ghat man', 12), { hold: 'R', until: X(x + 21.6), max: 300 }, { hold: 'R', jump: 8, until: X(x + 23.4), max: 100, note: 'a hop to the flag' }, { hold: '', until: done, max: 300 }], 'dis-luit', 'hops to the flag over the water: the river'], [(x) => [...hopR(x + 13.3, 'down on the gangplank', 8), { hold: 'R', until: done, max: 600, note: 'along the plank to where the flag was' }], 'dis-gamosa', 'goes to where the flag was: the ghat man’s third gamosa, and blind he walks off the plank’s end']);
+act('dis08-bogoli', 'DIS-08', [() => [{ hold: 'R', until: done, max: 900 }], 'dis-bogoli', 'walks into the grass with the egrets up: the rhino is charging'], [(x) => [{ hold: 'R', until: X(x + 4.8), max: 600 }, { hold: '', until: (w) => rhinoOf(w).t > (2 * rhinoOf(w).up + rhinoOf(w).sit) * 120, max: 1200, note: 'waits for the egrets to go up once more and settle before trusting them' }, { hold: 'R', until: done, max: 900 }], 'dis-jui', 'waits a whole round of the egrets: the rangers’ burn has come back through the grass']);
 act('dis05-machan', 'DIS-05', [(x) => [{ policy: (w) => ({ move: floorAhead(w, 3) ? 'R' : '', jump: false }), until: and(ground, X(x + 16)), max: 1500 }, { hold: '', until: done, max: 900 }], 'dis-machan', 'waits on the last plank for one more: the drum rolls'], [() => [{ hold: 'R', until: done, max: 900 }], 'dis-luit', 'runs on ahead of the carpenter: the far end is not built']);
 act('dis06-wake', 'DIS-06', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-dhal', 'runs to outrun the wake'], [(x) => [{ hold: 'R', until: X(x + 6.3), max: 600 }, { hold: '', until: (w) => wakes(w)[0].running && w.player.cx - wakes(w)[0].x < 50, max: 600 }, { hold: '', jump: 14, ticks: 14, note: 'hops the wave' }, { hold: '', until: done, max: 600 }], 'dis-bank', 'waits for the wake on the undercut bank and hops it: the landing breaks the slab off']);
 act('dis06-traps', 'DIS-06', [(x) => [...onTrap(x, 0), { hold: '', until: done, max: 900 }], 'dis-dirru', 'stands on the first trap as on a floor: it rings and is hoisted'], [(x) => [...onTrap(x, 0), { hold: '', until: (w) => traps(w)[0].state(w) === 'ring', max: 900 }, ...onTrap(x, 1), { hold: '', until: done, max: 600 }], 'dis-tip', 'hops on at the ring to the next trap: it is still slack and tips']);
@@ -756,6 +758,7 @@ const ghatWait = (g0: number, g1: number): Step[] => [
   { hold: 'R', jump: 14, ticks: 14, note: 'climb out of the ghat' },
   { hold: 'R', until: ground, max: 200 },
 ];
+const rhinoOf = (w: World) => w.entities.find((e) => e instanceof GrassRhino) as GrassRhino;
 const changsOf = (w: World) => (w.flags.changs ?? []) as { boy: { down: boolean }; rung: { solid: any } }[];
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'dis05-char': mark('dis05-char', (x) => [{ policy: crossSand(), until: and(ground, X(x + 41)), max: 4000, note: 'givers, the taker on the bar, the bars at the siren' }]),
@@ -910,6 +913,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...hopR(x + 17.3, 'over the ghat man and his gamosa', 12),
     ...hopR(x + 21.9, 'run-jump from the plank’s end across to the bank, past the flag', 18),
     { hold: 'R', until: and(ground, X(x + 30.5)), max: 600, note: 'give the two gamosas away' },
+  ]),
+  'dis08-bogoli': mark('dis08-bogoli', (x) => [
+    { hold: 'R', until: X(x + 4.8), max: 600, note: 'to the edge of the grass: the egrets are up' },
+    { hold: '', until: (w) => rhinoOf(w).t > 0 && !rhinoOf(w).flying, max: 600, note: 'wait for them to settle on its back' },
+    { hold: 'R', until: and(ground, X(x + 25)), max: 600, note: 'through the grass at once, while they sit' },
   ]),
   'dis06-wake': mark('dis06-wake', (x) => [
     ...hopR(x + 8.9, 'over the spur into its lee', 12),
