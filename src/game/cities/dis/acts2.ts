@@ -300,7 +300,7 @@ export const gorhBagori: Act = {
   id: 'dis08-bagori',
   w: 44,
   advice: 'The jeep is at the far end and the rhino starts behind you on the bank: up on the haystack platform. It stops halfway across, and then a jeep near the far end revs: it charges on. Off the hay only when it has gone the whole way.',
-  cps: [1.5],
+  cps: [1.5, 18, 31], // on the flattened strips, once both charges have gone by
   paint: (g, c) => {
     const x = c.x;
     g.fill(x + 3, x + 6, 13, 13, '=');
@@ -308,8 +308,8 @@ export const gorhBagori: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    const a = charge(w, { trig: px(x + 2), c0: x + 11, c1: x + 24, start: x - 4, plume: x + 24, delay: 170, rest: 90 });
-    const b = charge(w, { trig: Infinity, c0: x + 25, c1: x + 38, start: x + 24, plume: x + 39, delay: 160, rest: 90 });
+    const a = charge(w, { trig: px(x + 2), c0: x + 11, c1: x + 24, start: x - 4, plume: x + 24, delay: 170, rest: 40 });
+    const b = charge(w, { trig: Infinity, c0: x + 25, c1: x + 38, start: x + 24, plume: x + 39, delay: 70, rest: 90 });
     w.onTick(() => {
       if (a.phase === 'gone' && b.phase === 'wait') {
         b.phase = 'noise';

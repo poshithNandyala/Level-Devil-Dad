@@ -264,7 +264,7 @@ export const endings: Record<DisEndingKind, Ending> = {
     build(w: World, d) {
       const D = Math.round(d.x / 16);
       river(w, D - 33, D - 3);
-      const p = w.add(new Plucker(px(D - 26), px(D - 37), [], px(D - 3), 42));
+      const p = w.add(new Plucker(px(D - 26), px(D - 37), [], px(D - 3), 56));
       (w.flags.pluckers ??= []).push(p);
       const starts = [D - 32, D - 28, D - 24, D - 20, D - 16, D - 12, D - 8];
       const pb = w.add(new PathBars(starts, 4, p, 640));

@@ -86,17 +86,17 @@ export class DholPlanks extends Entity {
 /** DIS-07 act: the Bihu dhol on the pond's bamboo planks (bible: the dhol beat as a timer). Its lie: the beat you learn. */
 export const husDhol: Act = {
   id: 'dis07-dhol',
-  w: 38,
+  w: 35,
   advice: 'A dhol player at the village pond: bamboo planks across it rise on his beat, and the one behind you sinks a moment later. Hop one plank on every beat. Bihu drumming quickens: when his arms go faster, so must you.',
-  cps: [1.5, 34.5],
+  cps: [1.5, 31.5],
   paint: (g, c) => {
-    g.pit(c.x + 4, c.x + 33);
+    g.pit(c.x + 4, c.x + 30);
   },
   build: (w, c) => {
     const x = c.x;
-    river(w, x + 4, x + 34, 'dis-pukhuri');
+    river(w, x + 4, x + 31, 'dis-pukhuri');
     const xs: number[] = [];
-    for (let i = 0; i < 10; i++) xs.push(px(x + 4.5 + i * 3));
+    for (let i = 0; i < 9; i++) xs.push(px(x + 4.5 + i * 3));
     const d = w.add(new DholPlanks(xs, 32, px(x + 3), 120, 84, 5, 30, px(x + 1.5)));
     w.solids.push(...d.planks);
     (w.flags.dhol ??= []).push(d);
