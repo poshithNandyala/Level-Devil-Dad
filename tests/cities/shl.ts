@@ -255,7 +255,7 @@ const act06 = (x: number): Step[] => [
   { hold: 'R', until: and(ground, X(x + 21)), max: 900 },
   { hold: 'R', until: X(x + 28), max: 400 },
 ];
-const act06b = (x: number): Step[] => [...hop(x + 10.6, 'hop the guide in the path', 12), { hold: 'R', until: X(x + 27), max: 900 }];
+const act06b = (x: number): Step[] => [...hop(x + 9.9, 'hop the guide in the path', 14), { hold: 'R', until: X(x + 27), max: 900 }];
 const rootdoorPolicy: Policy = (w, m, d) => {
   const D = Math.round(d.x / 16);
   const set = w.flags.shl6e as RootSet;
