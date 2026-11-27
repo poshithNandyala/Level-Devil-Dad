@@ -302,7 +302,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { hold: 'R', until: (w) => herd0(w).carrying, max: 600, note: 'past the stall: the fritter is yours' },
     putDown(herd0, 'put it down here, well back from the mill'),
     board((w) => hall(w, -1), 'on to the log'),
-    stayOnLog((w) => hall(w, -1), 12, 'stay on the end that stays'),
+    stayOnLog((w) => hall(w, -1), 80, 'along to the far end: tonight it is the end that stays'),
     { hold: 'R', until: and(ground, X(31)), max: 600, note: 'off on to the far bank' },
   ];
   ROOM['SVP-10'] = S['SVP-10'];
@@ -312,7 +312,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
 /** the obvious play per stage, and the cause it must die of */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'SVP-01': { steps: [hopUntil((w) => w.state !== 'play', 'up the lane in the rain')], cause: 'svp-baha' },
-  'SVP-10': { steps: [{ hold: 'R', until: (w) => herd0(w).carrying, max: 600 }, board((w) => hall(w, -1), 'on to the log with the food'), stayOnLog((w) => hall(w, -1), 12, 'and stay on the end that stays, with the herd behind you')], cause: 'svp-aari' },
+  'SVP-10': { steps: [{ hold: 'R', until: (w) => herd0(w).carrying, max: 600 }, board((w) => hall(w, -1), 'on to the log with the food'), { hold: '', until: (w) => w.state !== 'play', max: 2400, note: 'and stand on the boarding end, as the 02 mill taught, with the herd on your heels' }], cause: 'svp-hiran4' },
   'SVP-09': { steps: [{ hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'across the brick floor' }], cause: 'svp-eent' },
   'SVP-08': { steps: [{ hold: 'R', until: (w) => w.state !== 'play', max: 1500, note: 'run for it' }], cause: 'svp-baarish' },
   'SVP-07': { steps: [hopUntil(and(ground, X(11.5)), 'on to the luggage'), { hold: '', until: (w) => w.state !== 'play', max: 1500, note: 'ship late hai: sit on the luggage like everyone' }], cause: 'svp-saman' },
@@ -734,9 +734,11 @@ const greyJump = (a: number, b: number): Step[] => [
 const doorGaps = crossGaps((w) => w.flags.doorPatrol as { cx: number }, 56);
 /** a policy for each door ending, by kind */
 const endingPolicies: Record<string, Policy> = {
-  'svp-dweep-gate'(w) {
+  'svp-dweep-gate'(w, _m, d) {
     const h = w.flags.guard as Herd;
-    return h.carrying ? go('') : go('R');
+    const counter = w.flags.counter as number;
+    if (h.carrying) return go(toward(w, counter, 3));
+    return go('R');
   },
   'svp-frame-door'(w, _m, d) {
     const D = Math.round(d.x / 16);
@@ -877,9 +879,9 @@ fix['SVP-10'] = {
   },
 };
 (mistakes['SVP-10'] ??= []).push({
-  what: 'food put down, then ride the middle of the log',
-  cause: 'svp-aari',
-  steps: [{ hold: 'R', until: (w) => herd0(w).carrying, max: 600 }, putDown(herd0, 'put it down'), board((w) => hall(w, -1), 'on to the log'), { policy: (w) => go(toward(w, hall(w, -1).L + 48, 2)), until: (w) => w.state !== 'play', max: 2400, note: 'the middle of the log' }],
+  what: 'food put down, then ride the boarding end of the log, as the mill always taught',
+  cause: 'svp-kichad',
+  steps: [{ hold: 'R', until: (w) => herd0(w).carrying, max: 600 }, putDown(herd0, 'put it down'), board((w) => hall(w, -1), 'on to the log'), { policy: (w) => go(toward(w, hall(w, -1).L + 12, 2)), until: (w) => w.state !== 'play', max: 2400, note: 'the boarding end, as the mill always taught' }],
 });
 actDeath('SVP-10', 'svp10-saman', 'sit down on the luggage over the water, trusting the lashings', 'svp-saman2', (x) => [hopUntil(and(ground, X(x + 9.5)), 'on to the luggage over the water'), { hold: '', until: (w) => w.state !== 'play', max: 2400, note: 'wait for the call' }]);
 

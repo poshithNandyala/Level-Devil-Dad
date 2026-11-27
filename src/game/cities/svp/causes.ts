@@ -4,6 +4,7 @@ export const causeLines: Record<string, string[]> = {
   'svp-magar3': ['Magarmachh! The board was never turned: its arrow pointed away from a crocodile that was right under you.', 'Nobody has turned the board since the crocodile moved. The ripples on the water are where it is: cross a gap when they are somewhere else.'],
   'svp-magar4': ['Magarmachh! You read the ripples at the first gaps and then went back to the board.', 'The board is still stuck. Keep reading the ripples, all the way along the logs.'],
   'svp-magar2': ['Magarmachh! It was under the log the arrow pointed away from.', 'The arrow follows the crocodile under the logs: cross a gap only while the arrow points somewhere else.'],
+  'svp-hiran4': ['Hiran! You went on to the log with the fritter in hand, and the herd leaned on you from behind.', 'The herd follows whoever holds food and leans on them. Put the fritter down well back from the mill, stand still till it is down, and then board.'],
   'svp-hiran3': ['Hiran! The boatman’s deck was not there for a hand with no fritter in it.', 'The deer are tied tonight, so there is nothing to put the fritter down for: the boatman wants it for the fare. Carry it aboard.'],
   'svp-hiran2': ['Hiran! At the second landing the herd was on you too.', 'The stall is three tiles from the edge here: put the fritter down at the stall, not at the edge.'],
   'svp-kichad': ['Kichad! The piece you stood on was the piece they cut.', 'Stand on the end that stays: the boarding end of the first log, the middle of the second.'],
