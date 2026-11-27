@@ -10,7 +10,7 @@ import { tara as taraNow } from '../../levels/endkit';
 import { Art, Block, FLOOR, Zone, gent, on, px, type Ctx } from './kit';
 import { tara } from './s02';
 
-export type Weave = 'p' | 's' | 'j' | 'b';
+export type Weave = 'p' | 's' | 'j';
 /** one tile of muslin: printed (blue line), stitched (white, solid work) or jali (white open-work) */
 export class Cloth extends Block {
   constructor(
@@ -65,14 +65,6 @@ function drawCloth(ctx: Ctx, c: Cloth, w: World) {
     ctx.beginPath();
     ctx.arc(x + 8, y + 3, 2.6, 0, Math.PI * 2);
     ctx.fill();
-  } else if (c.kind === 'b') {
-    // blue thread, worked solid: raised satin stitches in blue (stitch ticks across it), not print
-    ctx.fillStyle = '#3F6FB5';
-    ctx.fillRect(x + 1, y, 14, 6);
-    ctx.fillStyle = '#244A80';
-    for (let k = 0; k < 7; k++) ctx.fillRect(x + 2 + k * 2, y + 0.5, 1, 5);
-    ctx.fillStyle = 'rgba(255,255,255,0.35)';
-    ctx.fillRect(x + 1, y, 14, 1);
   } else {
     // jali: threads pulled apart, a net of little holes (white, but open)
     ctx.fillStyle = '#FFFFFF';
