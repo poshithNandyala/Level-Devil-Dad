@@ -307,9 +307,9 @@ export const mehfil: Act = {
   id: 'lko06-mehfil',
   w: 48,
   advice: 'The full performance: she spins the length of the stage and back, end to end, and the floor is hers. Wait up on a takht till she has spun past beneath you, going away, then cross to the next takht, over the red strip. Ring a strip and she turns straight back towards you.',
-  cps: [1, 14.6, 22.6, 30.6],
+  cps: [1, 6.6, 14.6, 22.6, 30.6],
   paint: (g, c) => {
-    for (const t of MEHFIL) g.fill(c.x + t, c.x + t + 1, 13, 13, '=');
+    for (const t of MEHFIL) g.fill(c.x + t, c.x + t + 3, 13, 13, '=');
   },
   build: (w, c) => {
     const x = c.x;
@@ -321,7 +321,7 @@ export const mehfil: Act = {
     w.add(new Art((ctx, w2) => drawDancer(ctx, look, w2), 3));
     strips(
       w,
-      MEHFIL.slice(0, -1).map((t) => [x + t + 4, x + t + 4] as [number, number]),
+      MEHFIL.slice(0, -1).map((t) => [x + t + 5, x + t + 5] as [number, number]),
       (w2, sx) => {
         D.v = (sx > D.x ? 1 : -1) * Math.abs(D.v);
         w2.sfx('bells', sx, FLOOR - 4);
@@ -343,11 +343,11 @@ export const mehfil: Act = {
       new Art((ctx) => {
         for (const t of MEHFIL) {
           ctx.fillStyle = '#F5F1E8';
-          ctx.fillRect(c.X(t), px(13), px(2), 4);
+          ctx.fillRect(c.X(t), px(13), px(4), 4);
           ctx.fillStyle = '#6D4C33';
-          ctx.fillRect(c.X(t), px(13) + 4, px(2), 3);
+          ctx.fillRect(c.X(t), px(13) + 4, px(4), 3);
           ctx.fillRect(c.X(t) + 2, px(13) + 7, 3, FLOOR - px(13) - 7);
-          ctx.fillRect(c.X(t) + 27, px(13) + 7, 3, FLOOR - px(13) - 7);
+          ctx.fillRect(c.X(t) + 59, px(13) + 7, 3, FLOOR - px(13) - 7);
         }
       }, 1),
     );

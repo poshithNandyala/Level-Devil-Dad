@@ -508,14 +508,14 @@ const JULUS_NALAS = [12, 24, 36, 46];
  *  But when his flash goes they are dazzled for a moment: that is the moment to run through them. The
  *  second photographer fires a short test flash first: wait for the real one. */
 const PHOTO = [
-  { nala: 6, wall: 10, cam: 17, period: 420, flashes: [[230, 130]] as [number, number][] },
-  { nala: 20, wall: 24, cam: 31, period: 460, flashes: [[200, 14], [262, 130]] as [number, number][] },
+  { nala: 6, wall: 12, cam: 19, period: 420, flashes: [[230, 130]] as [number, number][] },
+  { nala: 20, wall: 25, cam: 31, period: 460, flashes: [[200, 14], [262, 130]] as [number, number][] },
 ];
 export const photo: Act = {
   id: 'lko07-photo',
   w: 34,
   advice: 'Outside the studio a photographer is taking the crowd’s picture, and a posing group won’t part for a stroller, or for a rusher. When his flash goes they are dazzled for a moment: run through them then. The second photographer fires a short test flash first: wait for the real one.',
-  cps: [15.5],
+  cps: [16.5],
   paint: (g, c) => {
     for (const p of PHOTO) g.pit(c.x + p.nala, c.x + p.nala + 1);
   },

@@ -234,7 +234,7 @@ export const hawa: Act = {
   id: 'lko09-hawa',
   w: 58,
   advice: 'Now the flyer is behind you, and his flag has two faces, red and white. The birds ahead go by the face turned towards them, the one you can’t see: the flag you see is the opposite of their order. Read the tip where the cloth curls over: that’s their colour. Cross while you see white.',
-  cps: [7.5, 19.5, 31.5, 43.5],
+  cps: [7.2, 13.2, 19.2, 25.2, 31.2, 37.2, 43.2, 49.2],
   paint: (g, c) => {
     const x = c.x;
     g.pit(x + 0, x + 57, 15);
@@ -283,7 +283,7 @@ export const jhande: Act = {
   id: 'lko09-jhande',
   w: 46,
   advice: 'Two flyers now, one behind you and one far ahead, and one flock. It obeys the flag nearer to you (watch where it circles): the one behind you for the first half of the way, the one ahead once you’re over the middle of the middle roof. Cross on the nearer flag’s red.',
-  cps: [18.5, 30.5],
+  cps: [6.2, 12.2, 18.2, 24.2, 30.2],
   paint: (g, c) => {
     const x = c.x;
     g.pit(x, x + 45, 15);

@@ -210,15 +210,15 @@ const darbar: Act = {
   advice: 'The pachisi court again, in two halves with a chabutra between, and the courtier is a Lakhnavi too: when he bows you on to the square between you and him ("pehle aap"), it is lit and empty, and it is the loose stone. Wait on yours for the next throw.',
   cps: [20.5],
   paint: (g, c) => {
-    g.pit(c.x + 4, c.x + 38, 15);
+    g.pit(c.x + 4, c.x + 34, 15);
     g.fill(c.x + 19, c.x + 22, 13, 17, '#');
   },
   build: (w, c) => {
     const x = c.x;
     const wz = well(w, x + 4, x + 18);
-    const wz2 = well(w, x + 23, x + 38);
+    const wz2 = well(w, x + 23, x + 34);
     chausar(w, x + 5, 5, c.f('court'), 200, { bow: true, well: wz });
-    chausar(w, x + 24, 5, c.f('court2'), 200, { bow: true, well: wz2, off: 2 });
+    chausar(w, x + 24, 4, c.f('court2'), 200, { bow: true, well: wz2, off: 2 });
     sign(w, x + 0.4, 10.4, 3.4, 'DARBAR', 'shop', null, 'pehle aap');
   },
 };
@@ -228,7 +228,7 @@ const JULUS10 = [12, 24, 36, 46];
 const julusBells: Act = {
   ...julus,
   id: 'lko10-julus',
-  cps: [19.5, 41.5],
+  cps: [19.5, 31.5, 41.5],
   advice: 'The slow procession again, but between the nalas the floor is bells under chikan covers. Behind them on the covers pause only for a blink (a pause long enough to be a bow rings the bells and the dancer spins to you); do your waiting on the plain boards in front of each nala.',
   build: (w, c) => {
     julus.build!(w, c);

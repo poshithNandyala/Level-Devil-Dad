@@ -331,27 +331,33 @@ export const kulhad: Ending = {
 /** A winter cloud drifts across the low sun, and its shadow slides along the lane. Single cups have no
  *  shady side: inside the cloud's shadow every cup holds, outside it every cup is in the sun. Go with the
  *  shadow, cup to cup: not ahead of it, not behind it. */
-const BADAL = [4, 6.5, 9, 11.5, 14, 16.5, 19, 21.5, 24, 26.5];
+const BADAL = [4, 6.5, 9, 11.5, 18.5, 21, 23.5, 26, 28.5];
 export const badal: Act = {
   id: 'lko04-badal',
-  w: 32,
-  advice: 'A winter cloud drifts over the sun and its shadow slides along the lane. These single cups have no shady side: inside the cloud’s shadow every cup holds, outside it every cup is in the sun and sinks under you. Wait for the shadow to reach you, then go cup to cup with it, never ahead of it, never left behind.',
-  cps: [1.5, 9.5, 19.5],
+  w: 35,
+  advice: 'A winter cloud drifts over the sun and its shadow slides along the lane. These single cups have no shady side: inside the cloud’s shadow every cup holds, outside it every cup is in the sun and sinks under you. Wait for the shadow to reach you, then go cup to cup with it, never ahead of it, never left behind. Halfway there is a stone chabutra: if the shadow leaves you, wait there for the next cloud.',
+  cp0: false,
+  cps: [-2, 13.6, 31.3],
   paint: (g, c) => {
-    g.pit(c.x + 3, c.x + 28);
+    g.pit(c.x + 3, c.x + 12);
+    g.fill(c.x + 13, c.x + 17, 13, 17, '#');
+    g.pit(c.x + 18, c.x + 30);
   },
   build: (w, c) => {
     const x = c.x;
-    const B = { x: c.X(-3), go: false, w: 88 };
+    const B = { x: c.X(1), go: false, w: 88 };
     w.flags[c.f('cloud')] = B;
     const inShade = (cx: number) => cx > B.x - B.w / 2 && cx < B.x + B.w / 2;
-    const kz = karahi(w, x + 3, x + 28);
+    const kz = karahi(w, x + 3, x + 12);
+    const kz2 = karahi(w, x + 18, x + 30);
     BADAL.forEach((d) => new Heap(w, Math.round(c.X(d)), px(13), () => (inShade(c.X(d) + 8) ? null : 'R'), 1));
     w.onTick((w2) => {
       if (!B.go && w2.player.cx > c.X(1.5)) B.go = true;
       if (B.go && B.x < c.X(40)) B.x += 0.3;
+      // left far behind (waiting on the chabutra): the next cloud drifts in from behind you
+      if (B.go && B.x - B.w / 2 > w2.player.cx + 140) B.x = w2.player.cx - B.w / 2 - 50;
       // ahead of the shadow, or left behind by it: two ways to sink, two lessons
-      kz.hazard.cause = w2.player.cx > B.x ? 'lko-badal' : 'lko-badal-peeche';
+      kz.hazard.cause = kz2.hazard.cause = w2.player.cx > B.x ? 'lko-badal' : 'lko-badal-peeche';
     });
     w.add(
       new Art((ctx) => {

@@ -268,20 +268,20 @@ export const ulta: Act = {
  *  stand in pairs. He hoists the rack now and then to turn the seekh: that's when you hop. Till then keep
  *  your heap full: step from one heap of the pair to the other, so neither squashes. A flat one drops you
  *  on to the thin patty, out of reach of the next. */
-const BHARA = [3, 7, 11];
+const BHARA = [3, 7];
 export const bhara: Act = {
   id: 'lko05-bhara',
   cp0: false,
   cps: [-2],
-  w: 18,
+  w: 14,
   advice: 'The cook keeps this rack low: you can stand under it on a full heap but not hop. Hop only when he hoists it to turn the seekh. Till then keep your heap full: step from one heap of the pair to the other so neither squashes. The last time he only half-hoists it: let that heap squash flat first, and hop from flat.',
   build: (w, c) => {
     const x = c.x;
-    tawa(w, x + 2, x + 13);
+    tawa(w, x + 2, x + 9);
     const R = { t0: -1, period: 230, up: 70, tip: 42 };
     w.flags[c.f('rack')] = R;
     const x0 = px(x + 1.5),
-      x1 = px(x + 14.5);
+      x1 = px(x + 10.5);
     const z = w.add(new Zone(x0, FLOOR - R.tip - 22, x1 - x0, 22, 'lko-seekh'));
     const ph = (w2: World) => (R.t0 < 0 ? 0 : (w2.tick - R.t0) % R.period);
     w.flags[c.f('toLift')] = (w2: World) => (R.t0 < 0 ? 999 : R.period - R.up - ph(w2));
@@ -318,14 +318,14 @@ export const bhara: Act = {
     );
     const heaps = BHARA.flatMap((d) => [w.add(new Galouti(px(x + d), false, 75, 80)), w.add(new Galouti(px(x + d + 1), false, 75, 80))]);
     w.flags[c.f('kebabs')] = heaps;
-    w.add(new Art((ctx, w2) => gent(ctx, px(x + 15) + 8, FLOOR, 26, '#EDE6D8', { face: -1, topi: '#F5F0E6', skin: '#A06B45', arms: (w2.flags[c.f('upNow')] as (w: World) => number)(w2) > 0 ? 1 : 0 }), 3));
+    w.add(new Art((ctx, w2) => gent(ctx, px(x + 11) + 8, FLOOR, 26, '#EDE6D8', { face: -1, topi: '#F5F0E6', skin: '#A06B45', arms: (w2.flags[c.f('upNow')] as (w: World) => number)(w2) > 0 ? 1 : 0 }), 3));
     w.onTick((w2) => {
       if (R.t0 < 0 && w2.player.cx > px(x)) R.t0 = w2.tick;
       const up = (w2.flags[c.f('upNow')] as (w: World) => number)(w2) > 0;
       // the rack eases up and down (a few ticks), the deadly tips with it
       // the last time he only half-hoists it (his arm is tired): a hop off a full heap finds the skewers
       // again, and from a flat one it passes under, as at the start of the stall
-      const half = w2.player.cx >= c.X(BHARA[2]);
+      const half = w2.player.cx >= c.X(BHARA[BHARA.length - 1]);
       const want = FLOOR - (up ? (half ? 70 : 112) : R.tip) - 22;
       z.y += Math.sign(want - z.y) * Math.min(Math.abs(want - z.y), 9);
     });

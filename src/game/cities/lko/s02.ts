@@ -378,6 +378,8 @@ function shove(w: World, p: World['player'], body: Block, G: Who, dx: number) {
 const AADAAB = [6, 16];
 export const aadaab: Act = {
   id: 'lko02-aadaab',
+  cp0: false,
+  cps: [-2],
   w: 24,
   advice: 'Along the lane the gentlemen on their chabutras greet you as you come up: “Aadaab”. Return it with a short bow: stop a moment, then go on and hop the nala. Walk past without bowing and he shoves you in; bow on and on, as at the stand-off, and he insists you go first, into it.',
   paint: (g, c) => {
