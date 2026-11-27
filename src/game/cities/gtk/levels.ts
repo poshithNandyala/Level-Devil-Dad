@@ -4,7 +4,7 @@ import type { LevelDef } from '../../world';
 import { longStage } from '../../levels/chunks';
 import { tourLevel, meta01 } from './s01';
 import { room as room02, act as act02, meta02 } from './s02';
-import { room as room03, act as act03, act2 as act03b, meta03 } from './s03';
+import { room as room03, act as act03, act2 as act03b, act3 as act03c, act4 as act03d, meta03 } from './s03';
 import { room as room04, act as act04, act2 as act04b, act3 as act04c, meta04 } from './s04';
 import { room as room05, act1 as act05a, act2 as act05b, act3 as act05c, act4 as act05d, act5 as act05e, act6 as act05f, act7 as act05g, act8 as act05h, meta05 } from './s05';
 import { room as room06, act as act06, act2 as act06b, act3 as act06c, act4 as act06d, act5 as act06e, act6 as act06f, act7 as act06g, act8 as act06h, act9 as act06i, act10 as act06j, meta06 } from './s06';
@@ -16,7 +16,7 @@ import { room as room10, act1 as act10a, act2 as act10b, act3 as act10c, act4 as
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: meta01 },
   longStage({ base: room02(), acts: [act02], twist: 'gtk-steam-vent', par: 29, shape: 'long', meta: meta02 }),
-  longStage({ base: room03(), acts: [act03, act03b], twist: 'gtk-jhola-entry', par: 23, shape: 'long', meta: meta03 }),
+  longStage({ base: room03(), acts: [act03, act03c, act03b, act03d], twist: 'gtk-jhola-entry', par: 23, shape: 'long', meta: meta03 }),
   longStage({ base: room04(), acts: [act04, act04b, act04c], twist: 'gtk-lift-counts-down', par: 15, shape: 'long', meta: meta04 }),
   longStage({ base: room05(), acts: [act05a, act05b, act05e, act05c, act05f, act05g, act05d, act05h], twist: 'gtk-taxi-meter', par: 40, shape: 'wtf', meta: meta05 }),
   longStage({ base: room06(), acts: [act06, act06b, act06c, act06d, act06e, act06f, act06i, act06g, act06h, act06j], twist: 'gtk-tank-overflow', par: 18, shape: 'long', meta: meta06 }),

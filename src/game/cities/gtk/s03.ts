@@ -26,7 +26,7 @@ function jhora(w: World, c0: number, c1: number, key: string) {
       layer: 3,
       cause: 'gtk-jhora',
       inset: 0,
-      live: (_r, w2) => !w2.flags[key + 'torn'] && !w2.flags[key + 'lifted'],
+      live: (_r, w2) => !w2.flags[key + 'torn'] && !w2.flags[key + 'lifted'] && !w2.flags[key + 'cracked'],
       paint: (ctx, r, w2) => {
         box(ctx, r.x, FL + 6, r.w, 30, '#5B6B5A');
         for (let i = 0; i < r.w; i += 12) box(ctx, r.x + i + ((w2.tick >> 2) % 12), FL + 9, 5, 1, 'rgba(230,240,230,0.5)');
@@ -221,6 +221,81 @@ export const act2 = inspectorAct(
   40,
   'The next row he works from the far end, coming towards you, so staying ahead is no use. Wait on a cloth bag; the moment he has walked past the next cloth bag, hop on to it, over him, before he reaches yours.',
 );
+
+/** act 4: market's closing time, and the inspector hurries down the last row behind you, quicker than before */
+export const act4 = inspectorAct(
+  'gtk03-jaldi',
+  'gtk3c',
+  'ctcctcctc',
+  1,
+  62,
+  'Closing time: the inspector hurries down the last row behind you, quicker than before. No stopping at all: cloth to cloth, and over the thin ones, all the way.',
+);
+/** act 3 (GTK reserve F1, handmade paper): the paper-makers' frames over the jhora. A sheet of pulp, still wet,
+ *  is soft but holds; once it has dried stiff it cracks under you. The frames dry from the near end on, one after
+ *  another: keep going while the sheets ahead are still dark and wet */
+export const PAPER = { step: 40, first: 2.4, each: 0.75 };
+export const act3: Act = {
+  id: 'gtk03-kagaz',
+  w: 30,
+  advice: 'The paper-makers’ frames over the jhora: a sheet still wet (dark, shining) holds you; a dry one (pale) cracks. They dry one after another from this end, so don’t wait: cross while the ones ahead are still wet.',
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 18);
+  },
+  build: (w, c) => {
+    const key = 'gtk3k';
+    jhora(w, c.x + 3, c.x + 18, key);
+    const st = { t0: -1 };
+    w.flags[key] = st;
+    onPass(w, c.X(1.5), (w2) => {
+      st.t0 = w2.tick;
+    });
+    const n = 6;
+    const sheets: Rig[] = [];
+    for (let i = 0; i < n; i++) {
+      const x0 = c.X(4) + i * PAPER.step;
+      const r = w.add(
+        new Rig(x0, BAG.top + 4, 32, 8, {
+          solid: true,
+          oneWay: true,
+          layer: 2,
+          tick: (rr, w2) => {
+            if (rr.s.gone || st.t0 < 0) return;
+            const dry = (w2.tick - st.t0) / 120 >= PAPER.first + i * PAPER.each;
+            rr.s.dry = dry;
+            if (dry && rr.carries(w2)) {
+              rr.s.on = (rr.s.on ?? 0) + 1;
+              if (rr.s.on > 6) {
+                rr.s.gone = true;
+                rr.setSolid(false);
+                w2.flags[key + 'cracked'] = true;
+              }
+            }
+          },
+          paint: (ctx, rr) => {
+            // the wooden frame on its posts, and the sheet in it: dark and wet, or pale and dry
+            box(ctx, rr.x - 2, rr.y + 8, 2, 40, '#6B4420');
+            box(ctx, rr.x + rr.w, rr.y + 8, 2, 40, '#6B4420');
+            box(ctx, rr.x - 2, rr.y + 6, rr.w + 4, 3, '#8A5A2B');
+            if (rr.s.gone) {
+              box(ctx, rr.x + 2, rr.y + 2, 6, 4, '#F1E9D2');
+              box(ctx, rr.x + rr.w - 8, rr.y + 2, 6, 4, '#F1E9D2');
+              return;
+            }
+            box(ctx, rr.x, rr.y, rr.w, 6, rr.s.dry ? '#F1E9D2' : '#B9A27A');
+            if (!rr.s.dry) box(ctx, rr.x + 3, rr.y + 1, 10, 1, 'rgba(255,255,255,0.6)');
+            else for (let k = 0; k < 4; k++) box(ctx, rr.x + 4 + k * 7, rr.y + 2, 1, 2, '#D8CBA8');
+          },
+        }),
+      );
+      r.s = { dry: false };
+      sheets.push(r);
+    }
+    w.flags[key + 'bags'] = sheets;
+    w.add(new Rig(c.X(3), FL + 8, px(16), 40, { cause: 'gtk-kagaz', inset: 0, live: (_r, w2) => !!w2.flags[key + 'cracked'] }));
+    sign(w, c.x + 0.5, 9.6, 4.4, 'HANDMADE PAPER', 'shop', null, 'drying');
+  },
+};
 
 /** door: the cloth-bag stall. Nobody goes in empty-handed: take a jhola off the hook over the door first */
 export const ending: Ending = {

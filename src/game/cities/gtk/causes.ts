@@ -15,4 +15,5 @@ export const causeLines: Record<string, string[]> = {
   'gtk-deewar': ['That was a painting of a road, on the wall behind.', 'Trust the rope, not the view: where it stops, jump.'],
   'gtk-ropeway': ['Back into the shed with the cabin. Its eave took you off the roof.', 'Each cabin only goes to the middle and back: hop across when they meet.'],
   'gtk-hiun': ['Through the thin ice by the shore.', 'Stay on the yak over the shore, even when it stops for the photo.'],
+  'gtk-kagaz': ['The paper had dried stiff, and cracked.', 'Cross the frames while the sheets ahead are still dark and wet.'],
 };

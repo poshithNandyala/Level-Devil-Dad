@@ -936,6 +936,10 @@ function actDeaths() {
     { policy: stepper(), until: done, max: 900 },
   ], 'gtk-taxi');
   actDeath('GTK-06', r6, 'gtk06-chhatein', 'walk off the roof without a hop', straight, 'gtk-khaai');
+  const r3 = room03();
+  actDeath('GTK-03', r3, 'gtk03-kagaz', 'stop on a frame to look', () => [{ policy: bagHop('gtk3k', { dwell: 2.5 }), until: done, max: 3000 }], 'gtk-kagaz');
+  actDeath('GTK-03', r3, 'gtk03-ulto', 'on to every bag', () => [{ policy: bagHop('gtk3b', { every: true, dwell: 0.3 }), until: done, max: 3000 }], 'gtk-polythene');
+  actDeath('GTK-03', r3, 'gtk03-jaldi', 'a look at the stitches on each bag', () => [{ policy: bagHop('gtk3c', { dwell: 1.2 }), until: done, max: 3000 }], 'gtk-jaanch');
   const r4 = room04();
   actDeath('GTK-04', r4, 'gtk04-upar', 'out of the first door you meet', () => [{ policy: stepper(), until: done, max: 2400 }], 'gtk-jhora');
   actDeath('GTK-04', r4, 'gtk04-upar', 'three flights up, as in the first house', (x) => [{ policy: upHouseRoute(x + 3, 3), until: done, max: 3000 }], 'gtk-galat-tala');
@@ -1062,6 +1066,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk02-bhatti': act02,
   'gtk03-jaanch': act03,
   'gtk03-ulto': act03b,
+  'gtk03-jaldi': (x: number): Step[] => [{ policy: bagHop('gtk3c'), until: and(ground, X(x + 26)), max: 2400, note: 'no stopping, ahead of him' }, { hold: 'R', until: X(x + 30), max: 300 }],
+  'gtk03-kagaz': (x: number): Step[] => [{ policy: bagHop('gtk3k'), until: and(ground, X(x + 19.5)), max: 2400, note: 'frame to frame while the sheets are wet' }, { hold: 'R', until: X(x + 29.5), max: 300 }],
   'gtk04-ghar': act04,
   'gtk04-upar': act04b,
   'gtk04-beech': (x: number): Step[] => [{ policy: upHouseRoute(x + 3, 2), until: and(ground, X(x + 20)), max: 3000, note: 'two flights up, out' }, { hold: 'R', until: X(x + 26.5), max: 300 }],
