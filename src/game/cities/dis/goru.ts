@@ -20,7 +20,7 @@ export class Bull extends Entity {
     readonly a: number,
     readonly b: number,
     readonly trig: number,
-    readonly walkTicks = 260,
+    readonly walkTicks = 480,
     readonly pauseTicks = 80,
     readonly walkSpeed = 40,
     readonly chargeSpeed = 240,
