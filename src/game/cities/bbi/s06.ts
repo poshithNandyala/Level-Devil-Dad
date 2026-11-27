@@ -295,23 +295,30 @@ export const act11: Act = {
  *  panel on the bank before each. A panel paints the NEXT pit, not the one beside it. The first pit holds all
  *  over (the plain beat) and its panel shows the second; the second's panel shows what comes after. */
 export const PATTA = { a: 3, b: 13, n: 3, rotten: [1], panelB: [1] };
-export const act9: Act = {
-  id: 'bbi06-patta',
+/** `honest` (the finale's turn, law 7): this painter paints the pit beside him, and the first pit has a rotten
+ *  plank too: read each panel for its own pit */
+export function pattaAct(id: string, key: string, honest = false): Act {
+  const rotA = honest ? [1] : [];
+  const rotB = honest ? [0, 2] : PATTA.rotten;
+  return {
+  id,
   w: 22,
-  advice: 'Painted panels by the pits. Each one shows the NEXT pit, not the one beside it: the first pit holds all over, and its panel shows the second. Remember it. The panel at the second pit is showing what comes after.',
+  advice: honest
+    ? 'Another painter tonight: he paints the pit beside him, not the next one, and the first pit has a rotten plank of its own. Read each panel for its own pit.'
+    : 'Painted panels by the pits. Each one shows the NEXT pit, not the one beside it: the first pit holds all over, and its panel shows the second. Remember it. The panel at the second pit is showing what comes after.',
   cps: [],
   paint: (g, c) => {
     g.pit(c.x + PATTA.a, c.x + PATTA.a + PATTA.n * 2 - 1);
     g.pit(c.x + PATTA.b, c.x + PATTA.b + PATTA.n * 2 - 1);
   },
   build: (w, c) => {
-    channel(w, c.x + PATTA.a, c.x + PATTA.a + PATTA.n * 2 - 1, 'bbi-ranga', 'water');
+    channel(w, c.x + PATTA.a, c.x + PATTA.a + PATTA.n * 2 - 1, honest ? 'bbi-sadha' : 'bbi-ranga', 'water');
     const pitB = channel(w, c.x + PATTA.b, c.x + PATTA.b + PATTA.n * 2 - 1, 'bbi-sadha', 'water');
     // the cause: walked on to the rotten plank, or jumped to it because the panel beside the pit painted it
     const st = { touched0: false, fell: false };
-    w.flags.bbi6pc = st;
+    w.flags[key] = st;
     pitB.o.tick = (r) => {
-      r.hazard!.cause = st.touched0 ? 'bbi-sadha' : 'bbi-chitra';
+      r.hazard!.cause = honest ? 'bbi-chitra' : st.touched0 ? 'bbi-sadha' : 'bbi-chitra';
     };
     const planks = (c0: number, rotten: number[], first?: (on: boolean) => void) => {
       for (let i = 0; i < PATTA.n; i++) {
@@ -336,8 +343,8 @@ export const act9: Act = {
         );
       }
     };
-    planks(PATTA.a, []);
-    planks(PATTA.b, PATTA.rotten, () => (st.touched0 = true));
+    planks(PATTA.a, rotA);
+    planks(PATTA.b, rotB, () => (st.touched0 = true));
     // the panels: a framed painting of three planks, the ones it shows holding in colour, the rest torn
     const panel = (cx: number, good: number[]) =>
       w.add(
@@ -355,10 +362,12 @@ export const act9: Act = {
         }),
       );
     panel(PATTA.a - 2, [0, 2]);
-    panel(PATTA.b - 2, PATTA.panelB);
+    panel(PATTA.b - 2, honest ? [1] : PATTA.panelB);
     sign(w, c.x + 20, 10.4, 3.6, 'PATTACHITRA', 'shop', null, 'D');
   },
 };
+}
+export const act9 = pattaAct('bbi06-patta', 'bbi6pc');
 
 /** ending: a curtain of warp threads in front of the door; only on the motif beat do they part into its shape */
 export const L06E: LoomCfg = { c0: 0, n: 3, speeds: [1, 2, 3], beat: 0.8, hold: 1.6, shuttle: [] };

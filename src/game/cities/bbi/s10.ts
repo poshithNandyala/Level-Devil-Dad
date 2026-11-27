@@ -14,7 +14,7 @@ import { FL, channel, cyc, since, taraScript } from './common';
 import { keeperOn } from './s02';
 import { parasol } from './s03';
 import { chheliAct, patraAct } from './s05';
-import { loom, type LoomCfg } from './s06';
+import { loom, pattaAct, type LoomCfg } from './s06';
 import { bagudiAct, deepaAct, padaAct, stagePit, troupe, troupeAct, type TroupeCfg } from './s07';
 import { chariot, risingSpokes, templeWall, type ChariotCfg } from './s09';
 
@@ -143,6 +143,10 @@ export const act8 = risingSpokes('bbi10-udaya', 1, 'bbi10u', true);
 /** act 9, the goat turned round (law 7): Raja taught you to jump once the goat was back on your side; this one
  *  charges the straw when it comes back, so jump while it is away */
 export const act9 = chheliAct('bbi10-chheli', 'bbi10ch', true);
+
+/** act 10, the painted panels turned round (law 7): Raghurajpur taught you that a panel paints the NEXT pit;
+ *  tonight's painter paints the pit beside him, and the first pit has a rotten plank of its own */
+export const act10 = pattaAct('bbi10-patta', 'bbi10pc', true);
 
 /** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */
 export const RIB = { period: 2.2, shut: 0.5, at: 9 };

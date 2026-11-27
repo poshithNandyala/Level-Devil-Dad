@@ -804,6 +804,10 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'wait on the straw for the goat to come back to your side', cause: 'bbi-sinha', steps: (x) => [{ hold: '', until: ground, max: 300 }, ...hop(x + 4.1, 'up on the straw', 15), { hold: 'R', until: X(x + 6.6), max: 300 }, { hold: '', until: done, max: 2400 }] },
     { what: 'jump while the goat is on the pounder', cause: 'bbi-chheli', steps: (x) => [{ hold: '', until: ground, max: 300 }, ...hop(x + 4.1, 'up on the straw', 15), { hold: 'R', until: X(x + 6.9), max: 300 }, { hold: '', until: (w) => goat(w, 'bbi10ch').up, max: 2400 }, { hold: 'R', jump: 15, ticks: 15 }, { hold: 'R', until: done, max: 600 }] },
   ],
+  'bbi10-patta': [
+    { what: 'walk over the first pit, as before', cause: 'bbi-sadha', steps: () => [{ hold: 'R', until: done, max: 900 }] },
+    { what: 'cross the second by the panel you passed', cause: 'bbi-chitra', steps: (x) => [...patta10Run(x).slice(0, 4), leap(() => px(x + 14), 'plank 1, as the first panel painted'), { hold: '', until: done, max: 300 }] },
+  ],
   'bbi10-chhata': [
     { what: 'wait on the first cut-out for a customer', cause: 'bbi-rangapani', steps: (x) => [{ hold: 'R', until: X(x + 0.4), max: 300 }, leap6(cut10(0), 'on to it'), stayOn(cut10(0), done, 'and wait', 1500)] },
     pFix('bbi10ps'),
@@ -1034,7 +1038,17 @@ const chheli10Run = (x: number): Step[] => [
   { hold: 'R', until: ground, max: 300 },
   { hold: 'R', until: X(x + 25), max: 600 },
 ];
-const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi10-chheli': chheli10Run, 'bbi10-udaya': udaya10Run, 'bbi05-mama': mamaRun, 'bbi05-ganna': gannaRun, 'bbi10-bagudi': (x) => [{ hold: 'R', until: (w) => bg(w, 'bbi10bg').it, max: 1200, note: 'let him tag you' }, { hold: 'R', until: X(x + 23.5), max: 900, note: 'straight through' }], 'bbi10-pada': (x) => [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 7) - 3, max: 400 }, { hold: '', until: (w) => pd(w, 'bbi10pd').phase === 'lie', max: 1500, note: 'at the edge until it is down' }, { hold: 'R', until: X(x + 17.5), max: 400 }], 'bbi10-dui-baja': (x) => [...crossTroupe('bbi10db0', x, 4, 7, 'bridge'), { hold: 'R', until: X(x + 14.5), max: 300 }], 'bbi05-thaka': thakaRun, 'bbi08-dati': datiRun, 'bbi10-patra': (x) => patraRun(x, 'bbi10pt'), 'bbi10-deepa': (x) => [...crossTroupe('bbi10d', x, 4, 8, 'wheel'), { hold: 'R', until: X(x + 15.5), max: 300 }], 'bbi06-sutra': sutraRun, 'bbi07-dui-baja': (x) => [...crossTroupe('bbi7db0', x, 4, 7, 'bridge'), { hold: 'R', until: X(x + 14.5), max: 300 }], 'bbi07-pada': padaRun, 'bbi08-bhanwar': bhanwarRun, 'bbi05-chheli': chheliRun, 'bbi07-bagudi': bagudiRun, 'bbi06-patta': pattaRun, 'bbi05-patra': (x) => patraRun(x), 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi02-dive': act02b, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b,
+/** the honest painter: over the first pit's rotten middle, then on to the second pit's only good plank */
+const patta10Run = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 2.6), max: 600 },
+  leap(() => px(x + 4), 'plank 1'),
+  leap(() => px(x + 8), 'over the rotten middle to plank 3'),
+  { hold: 'R', until: X(x + 10.6), max: 300 },
+  leap(() => px(x + 16), 'the middle plank, the one its panel paints'),
+  leap(() => px(x + 20), 'over the last to the bank'),
+  { hold: 'R', until: X(x + 21.5), max: 300 },
+];
+const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi10-patta': patta10Run, 'bbi10-chheli': chheli10Run, 'bbi10-udaya': udaya10Run, 'bbi05-mama': mamaRun, 'bbi05-ganna': gannaRun, 'bbi10-bagudi': (x) => [{ hold: 'R', until: (w) => bg(w, 'bbi10bg').it, max: 1200, note: 'let him tag you' }, { hold: 'R', until: X(x + 23.5), max: 900, note: 'straight through' }], 'bbi10-pada': (x) => [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 7) - 3, max: 400 }, { hold: '', until: (w) => pd(w, 'bbi10pd').phase === 'lie', max: 1500, note: 'at the edge until it is down' }, { hold: 'R', until: X(x + 17.5), max: 400 }], 'bbi10-dui-baja': (x) => [...crossTroupe('bbi10db0', x, 4, 7, 'bridge'), { hold: 'R', until: X(x + 14.5), max: 300 }], 'bbi05-thaka': thakaRun, 'bbi08-dati': datiRun, 'bbi10-patra': (x) => patraRun(x, 'bbi10pt'), 'bbi10-deepa': (x) => [...crossTroupe('bbi10d', x, 4, 8, 'wheel'), { hold: 'R', until: X(x + 15.5), max: 300 }], 'bbi06-sutra': sutraRun, 'bbi07-dui-baja': (x) => [...crossTroupe('bbi7db0', x, 4, 7, 'bridge'), { hold: 'R', until: X(x + 14.5), max: 300 }], 'bbi07-pada': padaRun, 'bbi08-bhanwar': bhanwarRun, 'bbi05-chheli': chheliRun, 'bbi07-bagudi': bagudiRun, 'bbi06-patta': pattaRun, 'bbi05-patra': (x) => patraRun(x), 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi02-dive': act02b, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b,
   'bbi09-ghoda': chAct('bbi9g', 8, 7),
   'bbi07-deepa': (x) => [...crossTroupe('bbi7l', x, 4, 8, 'bridge'), { hold: 'R', until: X(x + 15.5), max: 300 }],
   'bbi07-shrinkhala': (x) => [...onBridge('bbi7k0', x + 4, x + 22.2, 'on at the stop, then walk the whole chain'), { hold: 'R', until: X(x + 25.5), max: 300 }],
