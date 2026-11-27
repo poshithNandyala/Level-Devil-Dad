@@ -11,6 +11,8 @@ import type { Seesaw } from '../../src/game/cities/koh/s03';
 import type { Lilies } from '../../src/game/cities/koh/s04';
 import type { Log } from '../../src/game/cities/koh/s05';
 import type { Roof } from '../../src/game/cities/koh/s06';
+import type { Cart } from '../../src/game/cities/koh/s07';
+import { acts as acts07 } from '../../src/game/cities/koh/s07';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -360,6 +362,57 @@ const skylightPolicy: Policy = (w, m, d) => {
   return go('R');
 };
 
+// ------------------------------------------------------------------ KOH-07
+const DECK_W = 48;
+/** ride the cart: board it, then stand at the back for a hole and at the front for a beam (mirrored while the controls are flipped) */
+function ridePolicy(key: string, stance: 'read' | 'front' | 'back' = 'read'): (w: World) => Out {
+  return (w) => {
+    const st = w.flags[key] as Cart;
+    const r = st.deck;
+    const p = w.player;
+    if (st.stopped) return go('R');
+    if (!w.standing(r.solid!)) return go('R');
+    const next = st.obs.find((o) => !o.done && o.k !== 'slick');
+    const want = stance === 'front' ? 1 : stance === 'back' ? -1 : next ? (next.k === 'hole' ? -1 : 1) : 0;
+    const target = want < 0 ? r.x + 12 : want > 0 ? r.x + DECK_W - 14 : r.x + DECK_W / 2;
+    let m: Move = toward(w, target, 2);
+    if (w.flipped) m = m === 'L' ? 'R' : m === 'R' ? 'L' : '';
+    return go(m);
+  };
+}
+const cartStopped = (key: string) => (w: World) => (w.flags[key] as Cart).stopped && w.player.onGround;
+const rideSteps = (key: string, end: number): Step[] => [
+  { policy: ridePolicy(key), until: cartStopped(key), max: 3000, note: 'ride the cart' },
+  { hold: 'R', jump: 9, ticks: 9, note: 'hop the front board' },
+  { hold: 'R', until: and(ground, X(end)), max: 600, note: 'off at the landing' },
+];
+/** hop over the waiting cart and walk the lane */
+const walkLane = (x: number): Step[] => [{ hold: 'R', until: X(x + 4.7), max: 600 }, { hold: 'R', jump: 24, ticks: 24, long: true, note: 'over the cart' }, { hold: 'R', until: done, max: 1500 }];
+const room07 = (): Step[] => rideSteps('koh7', 27.5);
+const act07 = (a: { id: string; w: number }) => (x: number): Step[] => rideSteps(`${a.id}:cart`, x + a.w - 2.4);
+const garagePolicy: Policy = (w, m) => {
+  const st = w.flags.koh7e as Cart;
+  const g = w.flags.koh7g as { open: boolean };
+  const p = w.player;
+  if (m.j === undefined) m.j = 0;
+  if (m.j > 0) {
+    m.j--;
+    return { move: 'R', jump: true };
+  }
+  if (!st.stopped) return ridePolicy('koh7e', 'front')(w);
+  if (g.open) {
+    // hop the front board once, then walk in
+    if (!m.hopped && p.onGround && p.cx > st.deck.x + DECK_W - 24) {
+      m.hopped = true;
+      m.j = 9;
+      return { move: 'R', jump: true };
+    }
+    return go('R');
+  }
+  // shut: back to the plank's front
+  return go(toward(w, st.deck.x + DECK_W - 14, 2));
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['KOH-01'] = tourRoute();
   S['KOH-02'] = room02();
@@ -372,6 +425,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('KOH-05', 0, []);
   S['KOH-06'] = room06();
   lengthen('KOH-06', 0, []);
+  S['KOH-07'] = room07();
+  lengthen('KOH-07', 0, []);
 }
 
 const upTo = (n: number) => tourRoute().slice(0, n);
@@ -383,6 +438,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'KOH-04': { steps: runOn, cause: 'koh-daldal' },
   'KOH-05': { steps: runOn, cause: 'koh-nala' },
   'KOH-06': { steps: [...upRoof(5), ...runOn], cause: 'koh-khatkhat' },
+  'KOH-07': { steps: walkLane(2.4), cause: 'koh-dhalan' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'KOH-02': { steps: [{ hold: 'R', until: X(8.4), max: 600, note: 'on to the near end of the mat' }, { hold: '', until: done, max: 1500, note: 'and ride it from there' }], cause: 'koh-dubki' },
@@ -390,15 +446,17 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'KOH-04': { steps: [{ policy: chase('koh4a'), until: (w) => w.player.cx > px(11) + 8 && w.player.onGround, max: 2400 }, { hold: 'R', until: done, max: 1500, note: 'wade the stream' }], cause: 'koh-thand' },
   'KOH-05': { steps: [{ hold: 'R', until: X(6.6), max: 600, note: 'on to the log' }, { hold: '', until: done, max: 2400, note: 'and ride it all the way' }], cause: 'koh-shahtir' },
   'KOH-06': { steps: [...upRoof(5), { hold: 'R', until: X(8.6), max: 900 }, { hold: 'R', jump: 30, ticks: 30, long: true, note: 'a big jump over the tin' }, { hold: 'R', until: done, max: 1500 }], cause: 'koh-chhajja' },
+  'KOH-07': { steps: [{ policy: ridePolicy('koh7', 'front'), until: done, max: 3000, note: 'ride at the front all the way' }], cause: 'koh-gaddha' },
 };
 // mistakes inside the acts: the stage up to the act (route), then `steps` from the act's first column
-const ROOMS: Record<string, () => Step[]> = { 'KOH-02': room02, 'KOH-03': room03, 'KOH-04': room04, 'KOH-05': room05, 'KOH-06': room06 };
+const ROOMS: Record<string, () => Step[]> = { 'KOH-02': room02, 'KOH-03': room03, 'KOH-04': room04, 'KOH-05': room05, 'KOH-06': room06, 'KOH-07': room07 };
 const ACT_ORDER: Record<string, string[]> = {
   'KOH-02': ['koh02-teen'],
   'KOH-03': ['koh03-ulta'],
   'KOH-04': ['koh04-kali'],
   'KOH-05': ['koh05-dui', 'koh05-chadhai'],
   'KOH-06': ['koh06-dhuan', 'koh06-upar'],
+  'KOH-07': acts07.map((a) => a.id),
 };
 const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
 const prefix = (id: string, act: string): Step[] => [...ROOMS[id](), ...ACT_ORDER[id].slice(0, ACT_ORDER[id].indexOf(act)).flatMap((a) => actRoutes[a](actX0(id, a)))];
@@ -437,6 +495,17 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     inAct('KOH-06', 'koh06-upar', 'run on along the roof', (x) => [...upRoof(x + 6), ...runOn], 'koh-gira'),
     inAct('KOH-06', 'koh06-upar', 'ride the puff up and stand on the tin', (x) => [...upRoof(x + 6), { policy: rideChimney(px(x + 8), 2.0, 1.0, 0), until: onTinL(x), max: 2400 }, { hold: '', until: done, max: 1500 }], 'koh-khatkhat'),
   ],
+  'KOH-07': [
+    { what: 'ride at the back all the way', steps: [{ policy: ridePolicy('koh7', 'back'), until: done, max: 3000 }], cause: 'koh-balli' },
+    ...acts07.flatMap((a) => {
+      const first = a.id === 'koh07-mod' || a.id === 'koh07-chikna' || a.id === 'koh07-dhalan' || a.id === 'koh07-kohra-dui' ? 'hole' : 'beam';
+      return [
+        inAct('KOH-07', a.id, `${a.id}: board and stay at the front`, () => [{ policy: ridePolicy(`${a.id}:cart`, 'front'), until: done, max: 3000 }], first === 'hole' ? 'koh-gaddha' : 'koh-gaddha'),
+        inAct('KOH-07', a.id, `${a.id}: board and stay at the back`, () => [{ policy: ridePolicy(`${a.id}:cart`, 'back'), until: done, max: 3000 }], 'koh-balli'),
+        inAct('KOH-07', a.id, `${a.id}: hop the cart and walk the lane`, (x) => walkLane(x), 'koh-dhalan'),
+      ];
+    }),
+  ],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'koh02-teen': (x) => [{ policy: matPolicy('koh2b', x + 20), until: and(ground, X(x + 22.5)), max: 3000, note: 'behind the flag across the long ditch' }, { hold: 'R', until: X(x + 33.4), max: 400 }],
@@ -451,6 +520,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'koh05-chadhai': act05b,
   'koh06-dhuan': act06a,
   'koh06-upar': act06b,
+  ...Object.fromEntries(acts07.map((a) => [a.id, act07(a)])),
 };
 const endingPolicies: Record<string, Policy> = {
   'koh-manch': hoistPolicy,
@@ -458,6 +528,7 @@ const endingPolicies: Record<string, Policy> = {
   'koh-rim-lily': rimPolicy,
   'koh-rocking-drum': drumPolicy,
   'koh-skylight': skylightPolicy,
+  'koh-garage-nose': garagePolicy,
 };
 
 export const test: CityTests = {
@@ -467,5 +538,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['KOH-02', 'KOH-03', 'KOH-04', 'KOH-05', 'KOH-06'],
+  fair: ['KOH-02', 'KOH-03', 'KOH-04', 'KOH-05', 'KOH-06', 'KOH-07'],
 };

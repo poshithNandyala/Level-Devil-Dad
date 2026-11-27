@@ -16,5 +16,8 @@ export const causeLines: Record<string, string[]> = {
   'koh-chhajja': ['You jumped into the eave of the storey above.', 'Every tin roof has an eave hanging over it: hop the tin low, or walk the thatch.'],
   'koh-garam': ['The chimney’s warm air lifted you into the tin eave.', 'The smoke shows the puff. Cross a chimney between puffs.'],
   'koh-kanch': ['The skylight broke under your landing.', 'Glass holds a walker and breaks under a jump: walk over it.'],
+  'koh-gaddha': ['The cart’s nose dropped into the pothole and threw you.', 'Stand at the back for a hole: the nose lifts and skims it. Take your place early, the cart only gets quicker.'],
+  'koh-balli': ['The cart’s raised nose hit the low beam.', 'Stand at the front for a beam: the nose drops and ducks under it. After a wet patch your lean is mirrored for a second.'],
+  'koh-dhalan': ['The scree took you down the lane.', 'The lane is loose on foot. Ride the cart from landing to landing.'],
   'koh-dhol': ['The log rolled over you.', 'After a double shout the log climbs the bank. Step off at the first top and keep going; at the hut hop the drum as it rolls away.'],
 };
