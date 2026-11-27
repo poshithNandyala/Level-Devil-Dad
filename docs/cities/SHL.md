@@ -53,3 +53,57 @@ The bible's one U line (15, "Ayyo") is replaced by its own fallback. The seventh
   only on day 8.
 - Trigger-started clocks: the banks and sun of 02's acts and every stalactite of 07's acts start their clock when Dad
   passes the act's checkpoint column, so the beat from a respawn is the same on every try (the replay bar).
+
+## Ideas used (for the integrator's MECHANICS.md section at merge)
+
+This section was in `docs/MECHANICS.md` during rounds 1-2 and was moved here in fix round 1 (QA F1): a city worker
+does not edit MECHANICS.md. It is rewritten below for the city as it stands after fix round 1 (see the Stages table
+above for the current acts; cut acts are not listed).
+
+- **01 Kumno, Shillong!** at the view point a first drop falls by a pine well short of the cloud and means nothing;
+  the rain falls only under the cloud shape, on a beat, and the cloud drifts over anyone who stands near it waiting:
+  run under it right after it has emptied (`shl-slap`, `shl-lyoh`).
+- **02 Pine Peak** a cloud bank sliding across the gap is a floor only where a sunbeam lights its thick middle, never
+  at its two thin ends (`shl-edge`, `shl-dum`, `shl-pit`); plain door.
+- **03 Sway** the Dawki deck swings to your own running: bursts of a few steps and a stop keep it flat (`shl-sway`);
+  acts: a boat's wake is a full swing to anyone on that span, let it pass from the tower (`shl03-wake`, `shl-wake`);
+  wet planks slide you on after a stop, the slide swings the deck, and a stop near the span's end slides you off it
+  (`shl03-wet`, `shl-slip`, `shl-dawki`); plain door.
+- **04 Knup** jump at a hook to put the rain shield on or hang it up: on, rain and awning drips are nothing but a low
+  branch catches it (`shl-dieng`); off, the drips are a spike row (`shl-drip`); act: a small knup that fits the low arch
+  and the drips but not heavy rain, swap at the hooks (`shl04-khynnah`, `shl-khynnah`); plain door.
+- **05 Seven Sisters (HWIK)** each fall pours on a schedule: full, thinning, on the white mark, a dry moment, full again
+  with no warning; cross on the mark, the dry moment is the lure (`shl-um`, `shl-wah`); act: a basin that floods
+  whenever either sister is full, cross it when both sit on their marks and at once (`shl05-pung`, `shl-pung`,
+  `shl-basin-far`); plain door.
+- **06 Root Guide** three bamboo guides: jump at one and its root grows across the gorge, the others wither; the short
+  one lands in the spray, the middle gives up half way, the long one from the rock lands dry (`shl-gorge`,
+  `shl-spray`); acts: a gorge too wide for one root, near guide first then the far guide from the near root's tip
+  (`shl06-double`, `shl-double`); a standing guide in the path grows a root across it when touched, a hanging one grows
+  one down when hopped into: hop the one, walk under the other (`shl06-kiang`, `shl-jri`, `shl-jri-hang`); plain door.
+- **07 Mawsmai (marathon)** stalactites grow a step towards the floor at every drip you hear; one that meets its stump
+  is a wall for a moment, then breaks and starts again; pass while there is room, a head bump freezes one for a few
+  drips (`shl-maw`, `shl-shut`); acts: the gallery, seven dripping together, wait for the row's break then run them all
+  (`shl07-krem`, `shl-krem-shut`, `shl-krem-maw`, momentum beat); the drip storm with the stalactite over the pool that
+  never meets a stump (`shl07-pool`, shelter beat); tips hidden behind pillars, a high click is a long fall and a deep
+  plop is nearly down (`shl07-plop`, sound beat); two on different clocks a step apart: bump the first and wait under
+  it (`shl07-knock`); stumps that grow too, so a frozen pair still shuts half as fast (`shl07-pairs`, `shl-stump`);
+  plain door.
+- **08 Wettest Desert (HWIK)** the cloud follows whoever is under its reach and soaks them in a moment and a half; the
+  tank fills only while the rain falls into its gutter, so stand out of reach and let it go home over the tank; the
+  spout pours across the path as the gate lifts (`shl-soaked`, `shl-spout`); act: no out-of-reach spot, so under the
+  tank's roof, whose rain drains into the tank, but not under its hole and not at its shedding edge (`shl08-roof`,
+  `shl-leak`, `shl-runoff`); plain door.
+- **09 Eight-Day Market (tough)** every stall's plate is the day it is closed and a closed stall is a cloth over a
+  frame; each arch you pass is a new day and the board shows it (`shl-nala`, `shl-closed`); acts: blank boards, count
+  the arches (`shl09-kot`, `shl-kot-three`, `shl-kot-four`); the arch in the middle of a row, the day turns under you
+  (`shl09-pdeng`, `shl-shift`); the holiday, every stall a frame and the drain dry, then a double arch, two days at once
+  (`shl09-sngi-khlieh`, `shl-two-gates`); plain door.
+- **10 Down Seven Hundred (finale)** law 7, each rule turned: the lone drop tells the truth, stop at it, and the cloud
+  that forms drifts to a waiter (`shl-truedrop`, `shl-drop-cloud`); the knup is wrong for the drizzle and the low arch
+  and right for the awning: leave the first hook, take the second (`shl-drizzle-hook`, `shl-awning-bare`); a sister
+  whose mark was painted too high, read the sheet (`shl10-rong`, `shl-liar`, `shl-liar-dry`); the hanging guide grows a
+  root at head height and the pole from the far bank grows the floor (`shl10-jingkieng`, `shl-far-head`,
+  `shl-far-gorge`); the rest stalls on a Dawki span: the keepers move one stall along at each arch and the deck lurches
+  as they do, so stand still at the arch and read who is behind a counter, not the plate (`shl10-keepers`, `shl-lurch`,
+  `shl-khlem`); plain door.
