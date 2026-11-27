@@ -1,0 +1,89 @@
+# GTK · Gangtok, Sikkim: design notes (module city, 10 stages)
+
+Code: `src/game/cities/gtk/` (one file per stage, `s01.ts` .. `s10.ts`, plus the `entities.ts` kit (`Rig`), `common.ts`,
+`endings.ts`, `levels.ts`, `lines.ts`, `causes.ts`, `theme.ts`, `look.ts`, `music.ts`, `backdrop.ts`, `things.ts`,
+`skin.ts`, `course.ts`). Routes and plays: `tests/cities/gtk.ts`. Allocation: `docs/allocation.json` v2; every stage's
+`meta` is its slot and declares its door ending.
+
+## Stages
+
+Route time is the scripted route's (a bot's) clear time; par is route × 1.35.
+
+| # | Name | Family / betrayal | Room | Acts, in order | Door ending | Route |
+| --- | --- | --- | --- | --- | --- | --- |
+| 01 | Namaste Gangtok (tour) | sweeper-sweeps-ground-things / sweep-arc | four MG Marg sweepers stroke the paving into their carts, Dad too; the first has a bench (be on it), the second a RESERVED bench whose owner asks you off it in front of the broom (reserve F3), the last two none: walk behind the stroke. Two ropeway shuttles to ride | (tour) | `gtk-tour-plain-door` (plain door; key reserved) | 29.7 s |
+| 02 | Momo Steamer | tier-cycle-top-to-bottom / tier-cycle | the cook lifts the top tier, carries it round and slides it under, into the steam; ride it up, off at the top; lower down, the lid | `gtk02-ulta` (shelf behind you: off backwards as he carries it round). `bhatti` cut in round 3 (registry S3: ride the riser, off at the top = KVT-05's shipped lift) | `gtk-steam-vent` | 25.7 s |
+| 03 | Plastic Nahin | inspector-confiscates-thin-bags / inspector-removes | bags over the jhora: cloth (stitches) hold, thin polythene tears | `gtk03-jaanch` (inspector behind you lifts the bag you're on), `gtk03-ulto` (inspector coming towards you: hop over him), `gtk03-jaldi` (closing time, a quicker inspector) | `gtk-jhola-entry` | 21.7 s (floor 25: short; `kagaz` cut in round 3, registry S2 = DMN-03's melting ice plus a tell) |
+| 04 | Kun Floor? | floor-numbering-by-entrance / numbering | house entered at the top road's G; three floors down; first door over the jhora, counting doors gives the basement | `gtk04-ghar` (one floor down), `gtk04-upar` (entered from below at the lower road's G: the upper road's G is the top floor, four flights up), `gtk04-beech` (from below, two floors up) | `gtk-lift-counts-down` | 25.2 s |
+| 05 | MG Marg ka Niyam (HWIK) | dropped-litter-warden-pause / rule-broken-by-jump | jump with a wrapper in hand: fined, held, swept; bin it first; heaped bins are full | `gtk05-shaam` (sweepers: no bench hop with litter), `gtk05-kachra` (wait for the bin round), `gtk05-aarakshit` (reserved benches by the sweepers, reserve F3; own cause `gtk-aarakshit`), `gtk05-chabutra` (the wrapper on the step-up bench), `gtk05-do` (two wrappers, bins with room for one), `gtk05-jhadu` (the stroke sweeps a wrapper to your feet; his cart is the bin), `gtk05-peeche` (the bin man works down the street towards you and the shops refill each bin behind him: only the bin he has just emptied takes a wrapper; recast in round 3, registry I3, no following) | `gtk-taxi-meter` | 55.9 s (floor 60: short) |
+| 06 | Seedhi | shortcut-stairs-one-loop-low / topology | the stair down is the short cut, into the taxi stand; take the stair up | `gtk06-chhat` (stair up to a doorstep; stair down to the roof garden, Tara true), `gtk06-modh` (only stair is down: wait on the last step), `gtk06-ulta` (switchback: the loop above runs back), `gtk06-adda` (stair up into a stand: modh's momentum beat), `gtk06-upar2` (two taxis in turn), `gtk06-chhatein` (roofs down the hill) | `gtk-tank-overflow` | 39.5 s (floor 60: short) |
+| 07 | Badal (marathon, lives: act) | fog-hides-edge-rope-gaps / fog-edge | the kerb rope's posts are missing wherever the road is | `thau` (07's one labelled shelter beat, registry S12: wait under the awning till the cloud lifts; the tell is visibility), `chitra` (painted wall: the rope is the read, kept by round-4 ruling 5), `ghumti` (cloud bank behind), `dagar` (bank behind with rope and mural), `chiya` (two tea stalls, wait twice), `jaldi` (ghumti's momentum beat). `peeche` and `saath` cut in round 4 (ruling 1: keep behind a slow mover = the I3 pace-behind class) | `gtk-rope-climbs-to-door` | about 59 s (floor 120: short) |
+| 08 | Ropeway (HWIK) | door-side-boarding / door-side (round 4, ruling 3; was cabins-cross-at-midpoint) | you ride inside the cabin and board from its door side: the cabin in the bay has its door to the far platform, so walk round over the footbridge and in by that door; walk at it from your side and there is no step over the gap (`gtk-khaai`); the next cabin, door your side, goes back down into the shed (`gtk-ropeway`) | `gtk08-saamne` (the same station the other way about: door your side, get in from here; walking round faces its blind side), `gtk08-tar` (the old middle-station change, kept as the one labelled momentum beat: it decides nothing new). `upar`, `badli`, `der` cut in round 4 | `gtk-cabin-both-doors` | about 28 s (floor 60: short) |
+| 09 | Tsomgo | ride-animal-fixed-loop / ride-fixed-loop | the yak never turns back: it stops for the photo on thin ice that looks like a bank (stay on), then walks on over the real bank and wades into the river (off on the bank as it crosses; stay on and `gtk-nadi`) | `gtk09-chamri` (jump up on to the high bank at the photo stop; it wades straight in after), `gtk09-dophoto` (two photo stops, off on the real bank), `gtk09-barf` (the lake ice holds: off on to it), `gtk09-chattan` (off on the move up on to a stair) | `gtk-gate-yak-snowbank` | 64.9 s |
+| 10 | Kanchenjunga (finale, lives: act) | finale-two-roads-count-in-fog / count-in-fog | the house in the cloud: count the flights | `thela` (rule + steamer), `rassi` (rope), `chadhai` (stair up with a wrapper), `ghar` (house, one floor), `peechha` (bank behind + wrapper), `baadal` (drifting cloud over the mural), `jhola` (bags, inspector towards you), `antim` (last house in the cloud), `tar` (ropeway), `chauri` (yak photo stop, then it wades into the river: off on the real bank), `stool` (the wrapper on the stool), `jhadu` (the tour's sweepers, bench then RESERVED bench) | `gtk-viewpoint-second-floor` | 90.6 s |
+
+Every added act has at least one scripted death in `tests/cities/gtk.ts` (`actDeaths()` in MISTAKES: the act's first-timer play, and the obvious fix where it has one).
+
+Hidden items: momo (01, 02, 05, 08), sel roti (03, 07), churpi (04, 09, 10), thukpa (06).
+
+New causes from the length passes: `gtk-aarakshit` (asked off a reserved bench in front of the broom), `gtk-photo` (off a yak standing for its photo, on the thin shore).
+
+Round 2 cut the acts that played one rule twice with new numbers (07 `chhaya`, `rang`, `bhaga`, `dheere`, `thau2`; 06 `neeche`, `peeche`, `sawari`, `ghumao`; 05 `raat`; 08 `dobaar`; 10 `dhuaan`). Probe: `LDD_GTKPROBE=1 npx vitest run tests/cities/gtk/probe.test.ts --silent=false` (deaths, lags, acts).
+
+New death causes (`causes.ts`): `gtk-jhadu`, `gtk-bhaap`, `gtk-dhakkan`, `gtk-jhora`, `gtk-polythene`, `gtk-jaanch`,
+`gtk-galat-tala`, `gtk-jurmana`, `gtk-taxi`, `gtk-khaai`, `gtk-chhat`, `gtk-badal`, `gtk-deewar`, `gtk-ropeway`,
+`gtk-hiun`.
+
+## Notes for MECHANICS / WAVE1
+
+- Broom sweep (01): kills only a Dad on the paving (`onGround` and feet at road level) while the broom is down.
+- Fall height kills in two places only: a drop of over 40 px out of a wrong door into a house's gully (04, 10) and over
+  72 px on to the roof garden (06 `gtk06-chhat`). Nowhere else.
+- The litter rule (05, 10): a jump with anything in hand drops it (the first airborne tick with upward speed).
+- Fog (07, 10) is drawn on layer 2: over the tiles, under Dad, so it hides edges and never Dad.
+
+## Language
+
+Spoken Nepali is only what `GTK.md` in the city bible marks VERIFIED (Omniglot Nepali): namaste, kasto chha,
+swagatam, hajur, hoina, dhanyabad, roknuhos, guhar, maile bujhina, thaha chhaina, ke cha haal khabar, badhai chha,
+shubhakamana, shubha yatra, ali ali, maphi paun, yasko kati ho, ramrari khanuhola, tapain ko naam ke ho. Everything
+else is plain English on both sides. The retired "Thala" joke is not used; the seventh-death line is "Seven, Dad!
+Back to the first stair." No monasteries, prayer flags, chortens, the border or the army anywhere (bible Avoid list);
+the backdrop has the massif, the ridge, the ropeway's line and the town on the slope.
+
+## Fairness and times
+
+See `/local/home/saiposh/personal/ldd-inbox/reports/cities/gtk/BUILD.md` for the full `LDD_N=80 npm run fair -- GTK`
+output and the route times against par; round 2's N=80 runs and probe tables are in `LENGTH-2.md` there.
+
+Round 3 (`LENGTH-3.md`) made every checkpoint calm. `tests/cpsafe.test.ts -t GTK` passes idle, run and tap-jump at
+lag 0/6/12 on all ten stages. It got there by widening the banks before the thin shore in 09 and 10 `chauri`,
+taking the 05 and 10 `peechha` checkpoints empty-handed, pulling the 01 tour
+checkpoints clear of a tap-jump into the brooms, and adding checkpoints on the 02 shelf and the `ulta` walkway.
+Replay to a trap is still over 7.5 s on 02, 05, 06, 07, 08, 09 and 10. Each of those is one ride or one cloud wait,
+and the probe's `replay` test names the stretch.
+
+The registry's collision rulings (`DECISIONS.md` section 5) then cut `gtk03-kagaz` (S2) and `gtk02-bhatti` (S3),
+recast `gtk05-peeche` so nothing is followed (I3), and kept `gtk07-thau` as 07's one labelled shelter beat (S12).
+
+## Round 5 (`LENGTH-5.md`; where it differs from the table above, this wins)
+
+- 03 gains `gtk03-kalam` (F482 busy-warden-window, the S2 replacement): the inspector comes down the rail towards
+  you and stops to write a tourist's fine; go while his pen moves. Going when he looks up dies in the jhora; waiting
+  on the doubled-polythene bag in front of him (it holds 1.2 s) tears it (`gtk-polythene`).
+- 05 loses `peeche`: its FIX had no second cause by another mechanism.
+- 07 gains four rule acts from ALLOCATION v3:
+  - `ghanti` (F485 walk-to-sound, the sound beat): the mule bells on the track above.
+  - `paani` (F486 drip-line-shelter): shelter between the drip lines of a balcony hidden in the cloud; the
+    remembered awning has gone with its stall.
+  - `chhajja` (F487 fog-hides-ceiling): hop low under the drip lines.
+  - `bijuli` (F488 count-flash-to-thunder): cross the ridge only on a long count.
+- F483 (lamp-warming-tell) and F484 (occupied-means-it-moves) are struck by the registry: PDY-08 (the glow marks
+  where the hazard comes next) and PAT-09 (occupied gondolas swing you off; ride the empty one).
+- 09: the yaks never turn back and walk quicker (44 to 72 px/s). Every ride runs between two real banks in about
+  7 s: the room, `chamri`, `dophoto` (two yaks with a calm bank between), `barf` and `chattan` (whose stay-on play
+  now dies in the lake, `gtk-nadi`).
+- 10: `chauri` is on two yaks. `tar` breaks 08's change: your cabin runs through to the far deck, the other drops
+  away down the valley line, and staying on past the deck is the shed. `baadal` is cut (I3).
+- 02 and 10: the cooks are a quarter quicker.
+- 06: `adda` has three tiles of ground before its stair.

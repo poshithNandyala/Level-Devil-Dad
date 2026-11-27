@@ -40,7 +40,7 @@ How to use this file:
 | 18 | BBI | Bhubaneswar | Odisha | East | Odia + Hindi + English | built (city/bbi) |
 | 19 | CCU | Kolkata | West Bengal | East | Bengali + Hindi + English | built on city/ccu (10 stages, docs/cities/CCU.md) |
 | 20 | SVP | Sri Vijaya Puram (bonus) | Andaman & Nicobar Islands | East | Andaman Hindi + Bengali/Tamil/Telugu + English | done (10 stages, v0.17.3) |
-| 21 | GTK | Gangtok | Sikkim | East | Nepali + Hindi + English | to do |
+| 21 | GTK | Gangtok | Sikkim | East | Nepali + Hindi + English | built on city/gtk (10 stages, docs/cities/GTK.md) |
 | 22 | DIS | Dispur (Guwahati) | Assam | Northeast | Assamese + Hindi + English | built on city/dis (10 stages), waiting for QA; notes in docs/cities/DIS.md |
 | 23 | SHL | Shillong | Meghalaya | Northeast | Khasi + English | to do |
 | 24 | ITA | Itanagar | Arunachal Pradesh | Northeast | Arunachali Hindi + Nyishi + English | to do |
