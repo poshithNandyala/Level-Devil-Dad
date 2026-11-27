@@ -338,13 +338,15 @@ export const act6: Act = {
 
 /** act 7 and 8, the rising spokes: these spokes lie under the water and come up one at a time, each only once you
  *  have stood on the one before. Climbing fast (as at the sinking spokes) drops you in */
+/** seconds a rising spoke holds you before it goes back under */
+const SINK = 3.0;
 export function risingSpokes(id: string, dir: 1 | -1, key: string): Act {
   const n = 8;
   const top = dir > 0 ? 10 : 12;
   return {
     id,
     w: 28,
-    advice: dir > 0 ? 'These spokes lie under the water and rise one at a time, each only after you have stood on the one before. Don’t hurry: wait on each until the next is up.' : 'Down to the far bank on rising spokes: each comes up only once you have stood on the one before. Wait for each.',
+    advice: dir > 0 ? 'These spokes lie under the water and rise one at a time, each only after you have stood on the one before. Don’t hurry: wait on each until the next is up, then go at once: three seconds on one and it goes back under.' : 'Down to the far bank on rising spokes: each comes up only once you have stood on the one before. Wait for each, and go the moment it is up.',
     cps: [],
     paint: (g, c) => {
       g.pit(c.x + 2, c.x + 24);
@@ -352,8 +354,12 @@ export function risingSpokes(id: string, dir: 1 | -1, key: string): Act {
       else g.fill(c.x, c.x + 2, top, 14, '#');
     },
     build: (w, c) => {
-      channel(w, c.x + 2, c.x + 24, 'bbi-udaya', 'water');
-      const st = { stood: [] as number[] };
+      const ch = channel(w, c.x + 2, c.x + 24, 'bbi-udaya', 'water');
+      const st = { stood: [] as number[], sunk: false };
+      // a spoke you stay on too long goes back under: the death line says so
+      ch.o.tick = (r) => {
+        r.hazard!.cause = st.sunk ? 'bbi-dooba' : 'bbi-udaya';
+      };
       (w.flags[key] as unknown) = st;
       for (let k = 0; k < n; k++) {
         const x = c.X(3 + 2.5 * k);
@@ -366,7 +372,12 @@ export function risingSpokes(id: string, dir: 1 | -1, key: string): Act {
               if (r.rides(w2) && st.stood[k] === undefined) st.stood[k] = w2.tick;
               // spoke 1 rises as you reach the edge; each next one a second after you stood on the last
               const prev = k === 0 ? (w2.player.x > c.X(1) ? (st.stood[-1] ??= w2.tick) : undefined) : st.stood[k - 1];
-              const up = prev !== undefined ? Math.min(1, Math.max(0, (w2.tick - prev) / 120 - 1.0) / 0.3) : 0;
+              let up = prev !== undefined ? Math.min(1, Math.max(0, (w2.tick - prev) / 120 - 1.0) / 0.3) : 0;
+              // three seconds after you stood on it, it goes back under
+              if (st.stood[k] !== undefined && (w2.tick - st.stood[k]) / 120 > SINK) {
+                if (r.rides(w2)) st.sunk = true;
+                up = 0;
+              }
               r.s.up = up;
               r.setSolid(up >= 1);
               r.moveTo(w2, x, FL + 30 + (y0 - FL - 30) * up);

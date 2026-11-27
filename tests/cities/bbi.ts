@@ -640,6 +640,12 @@ const cNaive = (len: number): Death => ({
   cause: 'bbi-chakka',
   steps: (x) => [...hop(x + 1.4, 'up on the plinth'), { hold: 'R', until: X(x + len - 1.3), max: 400 }, { hold: 'R', jump: 11, ticks: 11 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: done, max: 900 }],
 });
+/** after the slam: jump off the moving plinth back to the bank before it gets to the wall */
+const cFix = (len: number, k: string): Death => ({
+  what: 'jump back off the plinth before it slams',
+  cause: 'bbi-khai',
+  steps: (x) => [...hop(x + 1.4, 'up on the plinth'), { hold: 'R', until: X(x + len - 1.3), max: 400 }, { hold: 'R', jump: 11, ticks: 11 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: (w) => chOf(w, k).started >= 0 && w.tick - chOf(w, k).started > 70, max: 600 }, { hold: 'L', jump: 15, ticks: 15 }, { hold: 'L', until: done, max: 600 }],
+});
 const bNaive = (left: number): Death => ({ what: 'walk across the settled rice', cause: 'bbi-pakhala', steps: (x) => [...hop(x + left - 1.6, 'up on the rim'), { hold: 'R', until: done, max: 900 }] });
 const bFix = (k: string, left: number, i: number): Death => ({
   what: 'ride the badi the second jug pushes under',
@@ -666,6 +672,12 @@ const pFix = (flag: string): Death => ({
     leap((w) => { const q = (w.flags[flag] as { rig: { x: number; w: number }; cutX: () => number }[])[0]; return q.cutX() > q.rig.x + 20 ? q.rig.x + 9 : q.rig.x + q.rig.w - 9; }, 'land on the silk, not the cut-out'),
     { hold: '', until: done, max: 900 },
   ],
+});
+/** the careful climber: on spoke 1, and wait there to be sure */
+const spokesFix = (k: string, c0: number): Death => ({
+  what: 'wait on each spoke to be sure of it',
+  cause: 'bbi-dooba',
+  steps: (x) => [{ hold: 'R', until: X(x + 1.4), max: 300 }, waitFor((w) => ((w.flags[k] as { stood: number[] }).stood[-1] ?? 1e9) + 1.35 * 120 <= w.tick, 'spoke 1 up'), leap(() => px(x + c0) + 14, 'spoke 1', () => true, 8), { hold: '', until: done, max: 900 }],
 });
 const spokesNaive = (): Death => ({
   what: 'climb the spokes fast, as at the sinking ones',
@@ -751,10 +763,11 @@ const DEATHS: Record<string, Death[]> = {
   ],
   'bbi08-kansa': [bNaive(3), bFix('bbi8b', 3, 1)],
   'bbi08-dui': [bNaive(3), bFix('bbi8h', 3, 0)],
-  'bbi09-ghoda': [cNaive(8)],
-  'bbi09-ratha': [cNaive(10)],
+  'bbi09-ghoda': [cNaive(8), cFix(8, 'bbi9g')],
+  'bbi09-ratha': [cNaive(10), cFix(10, 'bbi9b')],
   'bbi09-ulta': [cNaive(9), { what: 'step down on to the stone after the slam', cause: 'bbi-ulta', steps: (x) => [...chAct('bbi9u', 9, 8)(x).slice(0, 9), { hold: 'L', ticks: 40 }, { hold: '', until: done, max: 900 }] }],
-  'bbi09-udaya': [spokesNaive()],
+  'bbi09-udaya': [spokesNaive(), spokesFix('bbi9r', 3)],
+  'bbi09-asta': [{ what: 'hop down on to spoke 1 at once', cause: 'bbi-udaya', steps: (x) => [...actRoutes['bbi09-asta'](x - (LEAD['bbi09-asta'] ?? 0)).slice(0, 2), { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: done, max: 600 }] }, { ...spokesFix('bbi9s', 3), steps: (x) => [...actRoutes['bbi09-asta'](x - (LEAD['bbi09-asta'] ?? 0)).slice(0, 2), waitFor((w) => ((w.flags.bbi9s as { stood: number[] }).stood[-1] ?? 1e9) + 1.35 * 120 <= w.tick, 'spoke 1 up'), leap(() => px(x + 3) + 14, 'spoke 1', () => true, 8), { hold: '', until: done, max: 900 }] }],
   'bbi10-deepa': [
     { what: 'wait for the bridge and walk under the lamps', cause: 'bbi-deepa', steps: (x) => [...onBridge('bbi10d', x + 4, x + 12.2, 'the bridge')] },
     { what: 'ride the wheel and stay on it', cause: 'bbi-thrown', steps: (x) => [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 4) - 2, max: 900 }, waitFor((w) => tr(w, 'bbi10d').pose === 'wheel' && tr(w, 'bbi10d').into < 0.2, 'the wheel', 2400), leap(() => px(x + 8), 'on to its top'), { hold: '', until: done, max: 900 }] },
