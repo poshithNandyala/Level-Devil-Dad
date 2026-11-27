@@ -172,10 +172,10 @@ jai02-show jai03-zenana jai04-yantras jai05-rasta jai06-mela jai07-udaan jai08-a
 bpl02-jheel bpl03-shelters bpl04-karchob bpl05-mehfil bpl06-chowk bpl07-karkhana bpl08-bhojtal
 rpr02-khet rpr03-chowk rpr04-kothi rpr05-mela rpr06-jungle rpr07-saal rpr08-dussehra
 rnc02-galli rnc03-maidan rnc04-seedhi rnc05-kharkai rnc06-ghariya rnc07-chattan rnc08-ghagh
-ccu02-depot ccu03-dokan ccu04-thak ccu04-thak2 ccu05-uthon ccu05-lane ccu05-pratima ccu05-ghat ccu05-ghatpar
-ccu06-points ccu06-duiline ccu07-girder ccu07-dui ccu07-sandhya ccu07-ulto ccu07-pylon
-ccu08-rok ccu08-tokta ccu08-gali ccu09-sinri ccu09-toran ccu09-chala ccu09-uthan ccu09-uthan2
-ccu10-bus ccu10-tram ccu10-rok ccu10-kumor ccu10-setu ccu10-phera
+ccu03-dokan ccu04-thak ccu05-uthon ccu05-lane ccu05-pratima ccu05-ghat
+ccu06-points ccu06-duiline ccu07-girder ccu07-dui ccu07-sandhya ccu07-ulto ccu07-baan ccu07-pylon
+ccu08-rok ccu08-tokta ccu08-gali ccu09-sinri ccu09-toran ccu09-chala ccu09-dhak ccu09-uthan ccu09-uthan2
+ccu10-bus ccu10-tram ccu10-rok ccu10-kumor ccu10-bisarjan ccu10-setu
 
 ## Door endings (ENDINGS: one stage each)
 Check the advice lines in endings*.ts too: an idea counts as used even under a new name (e.g. catching
