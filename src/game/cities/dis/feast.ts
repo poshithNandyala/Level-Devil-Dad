@@ -58,7 +58,19 @@ export const gamFeast: Act = {
     const x = c.x;
     river(w, x + 6, x + 10, 'dis-kol-paat');
     w.add(new Leaves([px(x + 6), px(x + 8)], px(2)));
-    w.add(new Danger({ x: px(x + 11), y: GROUND + 4, w: px(2), h: 80 }, 'dis-pit'));
+    const ditch = new Danger({ x: px(x + 11), y: GROUND + 4, w: px(2), h: 80 }, 'dis-pit');
+    w.add(ditch);
+    // fix round 2 (QA B1): the ditch's line names how you got into it: walked off the end of the leaves, jumped the
+    // whole feast (dis-pit), or backed off into it from the far side
+    let onLeaves = false;
+    let far = 0; // the furthest he has stood: past the ditch means he came back into it
+    w.onTick((w2) => {
+      const p = w2.player;
+      if (!p.onGround) return;
+      far = Math.max(far, p.cx);
+      if (p.cx > px(x + 6.6) && p.cx < px(x + 9)) onLeaves = true;
+      ditch.hazard.cause = far > px(x + 13.5) ? 'dis-feast-back' : onLeaves ? 'dis-feast-gat' : 'dis-pit';
+    });
     onPass(w, px(x + 2), (w2) => tara(w2, 'Pitha lua, Dad! | Take a pitha, Dad!', 2.4));
   },
 };
@@ -163,9 +175,16 @@ export const gamSanko: Act = {
   build: (w, c) => {
     const x = c.x;
     onPass(w, px(x + 0.5), (w2) => (gam(w2).n = 0));
-    w.add(new Danger({ x: px(x + 5), y: GROUND + 4, w: px(2), h: 80 }, 'dis-pit'));
+    // fix round 2 (QA B1): the ditch names how you got into it: walked on into it, or backed off into it for a host
+    const ditch = new Danger({ x: px(x + 5), y: GROUND + 4, w: px(2), h: 80 }, 'dis-sanko-gat');
+    w.add(ditch);
+    let far = 0; // the furthest he has stood: past the ditch means he came back into it
+    w.onTick((w2) => {
+      if (w2.player.onGround) far = Math.max(far, w2.player.cx);
+      ditch.hazard.cause = far > px(x + 7.5) ? 'dis-sanko-pit' : 'dis-sanko-gat';
+    });
     for (const k of [8, 9, 10]) w.add(new Host(px(x + k) + 8, GROUND, 'give'));
-    river(w, x + 12, x + 17, 'dis-pit');
+    river(w, x + 12, x + 17, 'dis-nala');
     // the bamboo laid over the nala, and its shadow on the far bank
     const bamboo = new Solid(px(x + 12), GROUND, px(5), 6);
     bamboo.collidable = false;

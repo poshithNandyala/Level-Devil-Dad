@@ -7,7 +7,7 @@ import { Solid } from '../../body';
 import { tara } from '../../levels/endkit';
 import type { Act } from '../../levels/acts';
 import { onPass } from '../../levels/trolls';
-import { Danger, GROUND, px } from './entities';
+import { Danger, Decor, GROUND, px } from './entities';
 
 export interface StepDef {
   /** column, row (top of the step), width in tiles */
@@ -104,6 +104,17 @@ export const luitTalatal: Act = {
     // five steps from row 10 down to row 14; the bottom one goes first, then each one above it
     const steps: StepDef[] = [0, 1, 2, 3, 4].map((i) => ({ c: x + 8 + i * 2, r: 10 + i, w: 2, fall: 170 + (4 - i) * 25 }));
     stair(w, steps, x + 6.5, [x + 8, x + 18], [x + 18, x + 18]);
+    // fix round 2 (QA B4): out at the foot of the stair the cellar passage is low. Run out under its brick vault; a
+    // hop there (hopping down a falling stair, or mashing jump) meets the vault
+    w.add(new Danger({ x: px(x + 20), y: GROUND - 26, w: px(3), h: 10 }, 'dis-talatal-ulta'));
+    w.add(
+      new Decor((ctx) => {
+        ctx.fillStyle = '#5A3E2B';
+        ctx.fillRect(px(x + 20), GROUND - 60, px(3), 44);
+        ctx.fillStyle = '#3A2A1E';
+        for (let k = 0; k < 6; k++) ctx.fillRect(px(x + 20) + k * 8, GROUND - 20, 7, 3);
+      }, 2),
+    );
     onPass(w, px(x + 2), (w2) => tara(w2, 'Rakhi thak, Dad! | Wait there, Dad!', 2.4));
   },
 };

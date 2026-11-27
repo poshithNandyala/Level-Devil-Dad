@@ -112,7 +112,10 @@ export class Cloth extends Entity {
 
 /** a pit with a deadly floor: the cause tells you what you did */
 export function pitDanger(w: World, c0: number, c1: number) {
-  return w.add(new Danger({ x: px(c0), y: GROUND + 8, w: px(c1 - c0 + 1), h: 80 }, 'dis-gamosa'));
+  const d = w.add(new Danger({ x: px(c0), y: GROUND + 8, w: px(c1 - c0 + 1), h: 80 }, 'dis-gamosa')) as Danger;
+  // fix round 2 (QA B1): blind under three gamosas, or walking into a pit you could see
+  w.onTick((w2) => (d.hazard.cause = gam(w2).n >= BLIND_AT ? 'dis-gamosa' : 'dis-gamosa-gat'));
+  return d;
 }
 
 /** a bamboo machan (raised stage) drawn over one-way tiles c0..c1 on row `row`, with its legs */

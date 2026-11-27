@@ -181,7 +181,7 @@ export const majuliTraps: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    river(w, x + 6, x + 19, 'dis-luit');
+    river(w, x + 6, x + 19, 'dis-garmur'); // fix round 2 (QA B1): the channel's own line, not 02's sandbar line
     // each trap is slack (just let down) while the one before it rings, and settles a moment later
     const traps = [7, 11.5, 16].map((k, i) => w.add(new Trap(px(x + k), px(x + 4), [330, 60, 390][i])));
     (w.flags.traps ??= []).push(...traps);

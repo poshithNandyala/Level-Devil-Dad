@@ -335,12 +335,9 @@ export class SandField extends Entity {
     b.slab.span(r[0], r[1]);
   }
   /** the tick window in which this kind of change happens */
-  /** fix round 1 (the finale's break of 02): the order turned round, the bar that goes sinks first and the new one
-   *  comes up after it */
-  flip = false;
   private win(from: Span, to: Span): [number, number] {
-    if (!from && to) return this.flip ? [330, 390] : [90, 130];
-    if (from && !to) return this.flip ? [90, 130] : [330, 390];
+    if (!from && to) return [90, 130];
+    if (from && !to) return [330, 390];
     return [210, 270];
   }
   /** is level `l` (0-based) the one the river will be at, once the change in progress is over? */

@@ -63,8 +63,12 @@ export const charHorn: Act = {
   build: (w, c) => {
     const x = c.x;
     // under the long bar's far end, the water it narrows away from; beyond it the river proper
-    w.add(new River(px(x + 2), px(x + 12), GROUND + 10, 'dis-char-sink'));
-    w.add(new River(px(x + 12), px(x + 20), GROUND + 10, 'dis-bhutbhuti'));
+    // fix round 2 (QA B1): each water's line names what happened there: the bar narrowed under you (you stood on it),
+    // you went off on the horn (it blew, the siren had not), or you simply walked or jumped where no bar was
+    const near = new River(px(x + 2), px(x + 12), GROUND + 10, 'dis-char-gat');
+    const far = new River(px(x + 12), px(x + 20), GROUND + 10, 'dis-char-gat');
+    w.add(near);
+    w.add(far);
     const long = sand(w, [[[x + 3, x + 12], [x + 3, x + 8]]], []);
     const next = sand(w, [[null, [x + 11, x + 18]]], []);
     levelPost(w, next, x + 0.6, 2);
@@ -72,6 +76,9 @@ export const charHorn: Act = {
     const ferry = new Bhutbhuti(px(x + 4), HORN_AT);
     w.add(ferry);
     let t0 = -1;
+    let lastOnBar = -1;
+    let hornTick = -1;
+    let hopped = false; // he left the bar with a hop, not by walking off its end
     w.onTick((w2) => {
       const p = w2.player;
       if (t0 < 0 && p.onGround && w2.standing(long.bars[0].slab.solid)) {
@@ -80,6 +87,15 @@ export const charHorn: Act = {
         ferry.t = 0;
       }
       if (t0 >= 0 && w2.tick - t0 === Math.round(SIREN_AT * 120)) next.go(w2);
+      if (w2.standing(long.bars[0].slab.solid)) {
+        lastOnBar = w2.tick;
+        hopped = false;
+      } else if (lastOnBar === w2.tick - 1 && w2.player.vy < 0) hopped = true;
+      if (ferry.blew && hornTick < 0) hornTick = w2.tick;
+      // he left the bar after the horn and before the siren: he went on the horn
+      const onHorn = hopped && hornTick >= 0 && lastOnBar >= hornTick && lastOnBar - t0 < Math.round(SIREN_AT * 120);
+      near.hazard.cause = t0 >= 0 ? 'dis-char-sink' : 'dis-char-gat';
+      far.hazard.cause = onHorn ? 'dis-bhutbhuti' : 'dis-char-gat';
     });
     let said = false;
     w.onTick((w2) => {

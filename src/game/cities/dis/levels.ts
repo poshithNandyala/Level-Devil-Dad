@@ -545,31 +545,14 @@ function luitRoom(): LevelDef {
     name: 'Luit',
     nameEn: 'The river',
     tagline: 'The Brahmaputra, once more, with everything it has taught you. This time the level post is on the far bank.',
-    hint: 'The level post is on the far bank this time, and on this side of it the river does things the other way round: when the siren goes, the bar in front of you goes under FIRST, and the next one comes up only after it. Wait on the bank at the siren, not on the bar, and go when the new bar is up. A bar the post keeps is still safe to wait on. Then the dhol (he slows down), the tug of war (the teams changed ends) and the Talatal steps (they fall from the bottom). At the very end the way over the water is the plucker’s own path: go in front of her.',
+    hint: 'The river bank, with the level post across on the far bank. Then the dhol (this drummer slows down), the tug of war (the teams changed ends) and the Talatal steps (they fall from the bottom up, and the cellar at their foot is low). At the very end the way over the water is the plucker’s own path: go in front of her.',
     par: 40,
-    map: Grid.ground(15).pit(8, 26).put(1, 14, '@').put(30, 14, 'E').rows(),
+    map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      // fix round 1 (QA F5): the finale breaks 02's order. Your bar sinks first, the new one rises after: wait on the bank.
-      const water = new River(px(8), px(27));
-      w.add(water);
-      const f = sand(
-        w,
-        [
-          [[9, 13], null, null],
-          [null, [10, 15], [10, 15]],
-          [null, null, [18, 24]],
-        ],
-        [px(7), px(11)],
-      );
-      f.flip = true;
-      // the death names what killed: on the sinking bar, or in the water before the new one was up
-      let stood = false;
-      w.onTick((w2) => {
-        if (w2.standing(f.bars[0].slab.solid)) stood = true;
-        water.hazard.cause = stood ? 'dis-ulta' : 'dis-agot';
-      });
-      levelPost(w, f, 29.4, 3);
+      // fix round 2 (QA B2): the finale room is PLAIN by ruling. Round 1's break (the bar in front sinks first, wait on
+      // the bank) was DIS-06's room rule, and no other break of 02 passed the gate. The post stands on the far bank.
+      levelPost(w, { level: 0, e: -1 } as never, 29.4, 3);
       sign(w, 3.6, 10.4, 3.4, 'LUIT', 'shop', null, 'the post is over there');
       rival(w, 4, 15, 1, tara(8));
       onPass(w, px(5), (w2) => taraSays(w2, 'Luit one, Dad zero! | The river one, Dad zero!', 2.6));
@@ -736,24 +719,15 @@ const own = (a: Act, map: Record<string, string>): Act => ({
   },
 });
 
-/** as own, from `from` tiles into the act to its end */
-const ownFrom = (a: Act, from: number, map: Record<string, string>): Act => ({
-  ...a,
-  build: (w, c) => {
-    a.build?.(w, c);
-    recause(w, c.x + from, c.x + a.w, map);
-  },
-});
-
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), shape: 'tour', meta: { family: 'carrier-spills-on-contact', betrayals: ['carrier-spill'], ending: 'dis-tea-tray' } },
   longStage({ base: charRoom(), acts: [chapori, charHorn], twist: 'dis-hut-shut', par: 36, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
   longStage({ base: teaRoom(), acts: [bagan], cps: [10], twist: 'dis-muga-reel', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-muga-reel' } }),
   longStage({ base: talatalRoom(), acts: [talatalBatah], twist: 'dis-laru-plate', par: 34, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } /* repo allocation.json label; v3 names this slot collapsing-stair-penultimate-rises (the integrator lands it) */ }),
-  longStage({ base: gamosaRoom(), acts: [atithi, own(gamSanko, { 'dis-pit': 'dis-sanko-pit' }), gamFeast, gamKaath, own(gamMachan, { 'dis-luit': 'dis-machan-luit' })], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
+  longStage({ base: gamosaRoom(), acts: [atithi, gamSanko, gamFeast, gamKaath, own(gamMachan, { 'dis-luit': 'dis-machan-luit' })], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
   longStage({ base: majuliRoom(), acts: [own(majuliWake, { 'dis-bank': 'dis-wake-bank' }), majuliTraps, majuliFlag], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
   longStage({ base: husoriRoom(), acts: [runUp(husDhol, 3), husRope, husGoru, husTekeli, own(husCard, { 'dis-gate': 'dis-card-gate' }), own(husCart, { 'dis-pukhuri': 'dis-cart-pukhuri' }), chowk, own(husPepa, { 'dis-gate': 'dis-pepa-gate' })], cps: [16], twist: 'dis-uruka-net', par: 90, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
-  longStage({ base: gorhRoom(), acts: [gorhJeep, gorhDuiJeep, gorhBogoli, ownFrom(runUp(gorhBagori, 3), 14, { 'dis-gorh': 'dis-gorh-adha' })], twist: 'dis-watch-tower', par: 74, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
+  longStage({ base: gorhRoom(), acts: [gorhJeep, gorhDuiJeep, gorhBogoli, own(runUp(gorhBagori, 3), { 'dis-beel': 'dis-bagori-beel' })], twist: 'dis-watch-tower', par: 74, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
   longStage({ base: rangGharRoom(), acts: [rangTug, kaidhara, own(rangSluice, { 'dis-roof': 'dis-sluice-tel' }), rangTunnels], twist: 'dis-royal-seat', par: 36, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
   longStage({ base: luitRoom(), acts: [own(runUp(luitDhol, 3), { 'dis-pukhuri': 'dis-pukhuri-lahe', 'dis-dhol-sink': 'dis-dhol-lahe' }), own(luitTug, { 'dis-khaal': 'dis-khaal-ulta', 'dis-rope': 'dis-rope-ulta' }), own(luitTalatal, { 'dis-doba': 'dis-doba-ulta', 'dis-talatal': 'dis-talatal-ulta' })], twist: 'dis-post-bank', par: 63, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
 ];

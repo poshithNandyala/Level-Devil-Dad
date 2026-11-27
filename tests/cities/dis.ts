@@ -467,7 +467,7 @@ act('dis10-dhol', 'DIS-10', [() => [{ policy: () => ({ move: 'R', jump: true }),
 act('dis09-tug', 'DIS-09', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => tug(w).phase(w.tick).taut, max: 900, note: 'wait till it is taut' }, { hold: 'R', until: done, max: 900 }], 'dis-rope', 'goes the moment the rope is taut, whoever is winning']);
 /** more scripted deaths inside an act: [act, stage, play from the act's start, cause, what] */
 const ACT_MORE: [string, string, Play, string, string][] = [];
-act('dis10-talatal', 'DIS-10', [(x) => [...hopsUp(x + 2, 6), { hold: 'R', until: and(ground, X(x + 14.2)), max: 400 }, { hold: '', until: done, max: 900 }], 'dis-doba-ulta', 'stops on the step before the last to wait for it, as in 04']);
+act('dis10-talatal', 'DIS-10', [(x) => [...hopsUp(x + 2, 6), { hold: 'R', until: and(ground, X(x + 14.2)), max: 400 }, { hold: '', until: done, max: 900 }], 'dis-doba-ulta', 'stops on the step before the last to wait for it, as in 04'], [(x) => [...hopsUp(x + 2, 6), { policy: (w) => ({ move: 'R', jump: w.player.onGround }), until: done, max: 900, note: 'hops down the falling steps and on out' }], 'dis-talatal-ulta', 'hops down the falling steps and on out: the cellar vault at the foot is low']);
 act('dis07-card', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-card-gate', 'runs to the exit gate: it is shut before the card’s time'], [(x) => [{ hold: 'R', until: X(x + 25), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'dawdles on the road short of the gate: a corridor']);
 ACT_MORE.push(['dis07-card', 'DIS-07', (x) => [{ hold: 'R', until: X(x + 32), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'waits at the gate for the card: the deer cross there']);
 act('dis07-rope', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-pat', 'walks straight across: the middle is whipped under him'], [(x) => [{ hold: 'R', until: X(x + 7), max: 600 }, { hold: '', until: afterWhip, max: 600 }, { hold: 'R', until: X(x + 19.5), max: 300 }, { hold: '', until: done, max: 600 }], 'dis-paakoni', 'crosses the middle between strokes, then waits at the twisters’ end as at an anchor: they step back with it']);
@@ -490,7 +490,7 @@ act('dis06-traps', 'DIS-06', [(x) => [...onTrap(x, 0), { hold: '', until: done, 
 act('dis10-tug', 'DIS-10', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal-ulta', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir < 0 && p.t < 6; }, max: 2400 }, { hold: 'R', until: done, max: 900 }], 'dis-rope-ulta', 'goes on the red flag, as in 09: red is the near team now']);
 act('dis08-jeep', 'DIS-08', [rhinoNaive, 'dis-beel', 'walks into the tall grass'], [rhinoFix, 'dis-gorh', 'waits at the edge of the grass, where the second jeep is']);
 act('dis08-duijeep', 'DIS-08', [(x) => [{ hold: 'R', until: X(x + 5.1), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-gorh', 'waits at the grass edge for the loud jeep’s charge: the rhino comes for the near one, at him'], [(x) => [{ hold: 'R', until: X(x + 5.8), max: 600 }, { hold: 'R', until: done, max: 900 }], 'dis-beel', 'walks into the grass toward the loud jeep’s line before any charge']);
-act('dis08-bagori', 'DIS-08', [(x) => [{ hold: 'R', until: X(x + 2.4), max: 600 }, { hold: '', until: done, max: 2000 }], 'dis-gorh', 'stays on the bank: the rhino comes from behind'], [(x) => [{ hold: 'R', until: X(x + 1.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: '', until: (w) => charges(w).some((c) => c.d.c0 === x + 11 && c.phase === 'rest'), max: 2000 }, { hold: 'R', until: done, max: 2000 }], 'dis-gorh-adha', 'off the hay as soon as the rhino stops halfway']);
+act('dis08-bagori', 'DIS-08', [(x) => [{ hold: 'R', until: X(x + 2.4), max: 600 }, { hold: '', until: done, max: 2000 }], 'dis-gorh', 'stays on the bank: the rhino comes from behind'], [() => [{ hold: 'R', until: done, max: 2000 }], 'dis-bagori-beel', 'hears it coming from behind and runs on ahead of it, past the hay: into the grass it has not flattened']);
 /** after the routes exist: each act's deaths start from the stage route up to the act's own start */
 /** an ending's own policy as a step policy (for plays that follow it part of the way) */
 const viaEnding = (kind: string) => {
@@ -511,11 +511,6 @@ const viaEnding = (kind: string) => {
 function doorDeaths(S: Record<string, Step[]>) {
   const pre = (id: string) => S[id].slice(0, S[id].findIndex((s) => (s.note ?? '').startsWith('the door')));
   (mistakes['DIS-10'] ??= []).push(
-    {
-      what: 'room: waits on the bank as the first bar goes, then jumps for the new bar’s outline before it is up',
-      steps: [{ hold: 'R', until: X(6.9), max: 400 }, { hold: '', until: barGone(0, 0), max: 600 }, { hold: 'R', until: X(7.3), max: 200 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 600 }],
-      cause: 'dis-agot',
-    },
     {
       what: 'door: waits on the bank to follow the plucker, as in 03: she walks into him',
       steps: [...pre('DIS-10'), { hold: 'R', until: (w) => pluckers(w)[pluckers(w).length - 1].phase !== 'wait', max: 900 }, { hold: '', until: done, max: 900 }],
@@ -619,22 +614,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { hold: 'R', until: and(ground, X(31)), max: 900 },
   ];
   lengthen('DIS-09', 0, []);
-  // fix round 1 (QA F5): the finale room breaks 02: the bar in front sinks first and the next comes up after it
-  S['DIS-10'] = [
-    { hold: 'R', until: X(6.9), max: 400, note: 'to the edge of the bank: the siren' },
-    { hold: '', until: barUp(0, 1, 4.9), max: 900, note: 'wait on the bank: the first bar goes under, then the new one comes up' },
-    { hold: 'R', until: X(7.3), max: 200 },
-    { hold: 'R', jump: 14, ticks: 14, note: 'on to the new bar' },
-    { hold: 'R', until: ground, max: 200 },
-    { hold: 'R', until: X(11.2), max: 200, note: 'the second siren: this bar is kept' },
-    { hold: '', until: barUp(0, 2, 5.9), max: 900, note: 'wait for the bar after it' },
-    { hold: 'R', until: X(14.3), max: 200 },
-    { hold: 'R', jump: 14, ticks: 14, note: 'on to the last bar' },
-    { hold: 'R', until: ground, max: 200 },
-    { hold: 'R', until: X(23.4), max: 200 },
-    { hold: 'R', jump: 14, ticks: 14, note: 'on to the far bank' },
-    { hold: 'R', until: and(ground, X(28.4)), max: 300 },
-  ];
+  // fix round 2 (QA B2): the finale room is plain: walk the bank to the first callback
+  S['DIS-10'] = [{ hold: 'R', until: and(ground, X(28.4)), max: 600, note: 'along the bank, the post across the water' }];
   lengthen('DIS-10', 0, []);
   actDeaths(S);
   doorDeaths(S);
@@ -644,8 +625,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   // hop each rib as you reach it, never stopping on the pads: you land on the oil, and the ball finds you
   'DIS-09': { steps: [{ policy: ribHop(7), until: done, max: 3000 }], cause: 'dis-roof' },
-  // 02's answer: on to the first bar and wait there for the siren: here it goes under first
-  'DIS-10': { steps: [{ hold: 'R', until: X(6.9), max: 400 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: done, max: 900 }], cause: 'dis-ulta' },
+  // the room is plain (fix round 2): the obvious play is to run on, and the first callback, the dhol, takes it
+  'DIS-10': { steps: [{ hold: 'R', until: done, max: 3000 }], cause: 'dis-pukhuri-lahe' },
   // straight into the tall grass
   'DIS-08': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'dis-beel' },
   // run at the gate: the stakes
@@ -748,7 +729,6 @@ export const ONE_PLAY: Record<string, string> = {
   'dis05-atithi': 'the guest-house givers have one trap, three gamosas over your feet at the pit',
   'dis07-chowk': 'the chowk gates have one trap, the stakes: early, late and out of the ring all meet them',
   'dis09-chaal': 'the roof has one trap, the ball down the oil: every stop off a grip pad meets it',
-  'dis10-talatal': 'the falling stair has one trap, the vault under it: any stop on a step meets the fall',
 };
 /** acts whose obvious fix is the stage's FIX play (a different trap from the stage's NAIVE) */
 const STAGE_FIX: Record<string, true> = { 'dis07-dhol': true, 'dis10-tug': true };

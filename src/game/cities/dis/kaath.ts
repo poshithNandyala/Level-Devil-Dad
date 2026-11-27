@@ -42,6 +42,8 @@ export class SlidingSplit extends Entity {
     this.danger.box.x = this.x + 2;
     // skidding flat along the dust it cuts nobody; it stands up again where it stops
     this.danger.on = this.settled;
+    // fix round 2 (QA B1): walking into a split that never slid is not "it slid under your landing"
+    this.hazard.cause = this.moved ? 'dis-kaath' : 'dis-kaath-walk';
   }
   draw(ctx: CanvasRenderingContext2D) {
     // the drag marks in the dust that show which way a split went
