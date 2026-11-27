@@ -9,7 +9,7 @@ import type { Ending } from '../../levels/endkit';
 import { Grid } from '../../levels/grid';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
-import { Rig, box } from './entities';
+import { Rig, box, folk } from './entities';
 import { FL, channel, since, taraScript } from './common';
 
 export interface BowlCfg {
@@ -388,24 +388,6 @@ export function room(): LevelDef {
   };
 }
 
-/** act: a smaller bowl, both jugs at once from the start of the pour, and the badi in the middle only */
-export const B08A: BowlCfg = { c0: 4, c1: 15, badi: [6, 10], pour1: [0.5, 2.4], pour2: [2.4, 4.0], v1: 35, v2: 30, v3: 40 };
-export const act: Act = {
-  id: 'bbi08-kansa',
-  w: 22,
-  advice: 'A smaller bowl with two badi. The same rule: on a badi before the jug tips, and not on the one the right jug will push under. Ride back to the rim and hop out.',
-  cps: [],
-  paint: (g, c) => {
-    g.pit(c.x + B08A.c0, c.x + B08A.c1).fill(c.x + B08A.c0 - 1, c.x + B08A.c0 - 1, 13, 14, '#').fill(c.x + B08A.c1 + 1, c.x + B08A.c1 + 1, 13, 14, '#');
-  },
-  build: (w, c) => {
-    const st = { t0: -1 };
-    w.flags.bbi8a = st;
-    onPass(w, c.X(B08A.c0) + 4, (w2) => (st.t0 = w2.tick));
-    bowl(w, { ...B08A, c0: c.x + B08A.c0, c1: c.x + B08A.c1, badi: B08A.badi.map((k) => c.x + k) }, () => st.t0, 'bbi8b');
-  },
-};
-
 /** act 5: four badi and two jugs held over two of them */
 export const B08E: BowlCfg = { c0: 4, c1: 24, badi: [6, 11, 16, 20], pour1: [0.5, 2.8], pour2: [3.4, 6.0], v1: 30, v2: 15, v3: 25, over: [0, 2] };
 export const act5: Act = {
@@ -420,6 +402,98 @@ export const act5: Act = {
     const st = { t0: -1 };
     onPass(w, c.X(B08E.c0) + 4, (w2) => (st.t0 = w2.tick));
     bowl(w, { ...B08E, c0: c.x + B08E.c0, c1: c.x + B08E.c1, badi: B08E.badi.map((k) => c.x + k) }, () => st.t0, 'bbi8h');
+  },
+};
+
+/** act 8, the server (ALLOCATION v3 F470, bad coins that accelerate): a server on the far bank tosses fried
+ *  badi into the trough of pakhala, faster and further each time. The first lands soft and floats across; the
+ *  second he throws too hard and it goes under; from the third on they land on the near bank. Go at once. */
+export const PHINGA = { c0: 4, c1: 13, serve: 16, at: [0.9, 2.2, 3.2, 4.0, 4.6, 5.1, 5.5, 5.9, 6.3], land: (k: number) => Math.max(1, 5.2 - 0.9 * k), v: 60, sink: 0.9 };
+export const act8: Act = {
+  id: 'bbi08-phinga',
+  w: 20,
+  advice: 'The server on the far bank tosses badi into the trough, faster and further each time: the first lands soft and floats across, the second goes under, and the rest land on your bank. Do not stand and watch: hop on the first as it lands and ride it over.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + PHINGA.c0, c.x + PHINGA.c1);
+  },
+  build: (w, c) => {
+    const st = { t0: -1, rode: -1, floats: [] as Rig[] };
+    w.flags.bbi8ph = st;
+    onPass(w, c.X(1), (w2) => (st.t0 = w2.tick));
+    const ch = channel(w, c.x + PHINGA.c0, c.x + PHINGA.c1, 'bbi-pakhala', 'water');
+    // the death line names the badi that went under you
+    ch.o.tick = (r) => {
+      r.hazard!.cause = st.rode > 0 ? 'bbi-buda' : 'bbi-pakhala';
+    };
+    const T = (w2: World) => (st.t0 < 0 ? -1 : since(w2, st.t0));
+    const sx = c.X(PHINGA.serve) + 4;
+    const FLY = 0.55;
+    PHINGA.at.forEach((at, k) => {
+      const lx = c.X(PHINGA.land(k));
+      const inWater = PHINGA.land(k) >= PHINGA.c0;
+      // the badi in flight, and where it lands on the bank: hot, and it hurts
+      w.add(
+        new Rig(-999, -999, 14, 10, {
+          cause: inWater ? undefined : 'bbi-badi',
+          inset: 1,
+          layer: 5,
+          live: (r) => !inWater && r.y > FL - 40,
+          tick: (r, w2) => {
+            const tk = T(w2) - at;
+            r.x = -999;
+            r.y = -999;
+            if (tk < 0 || tk > FLY + (inWater ? 0 : 0.25)) return;
+            const u = Math.min(1, tk / FLY);
+            r.x = sx + (lx - sx) * u;
+            r.y = FL - 40 - 70 * Math.sin(Math.PI * u) + (inWater ? 16 * u : 30 * u);
+          },
+          paint: (ctx, r) => {
+            if (r.x < -100) return;
+            box(ctx, r.x, r.y, 14, 10, '#B5652B');
+            box(ctx, r.x + 3, r.y + 2, 4, 3, '#E0A060');
+          },
+        }),
+      );
+      // the first two land in the water: the first floats across, the second goes under
+      if (inWater)
+        st.floats[k] = w.add(
+          new Rig(-999, FL + 30, 26, 6, {
+            solid: true,
+            layer: 3,
+            tick: (r, w2) => {
+              const tk = T(w2) - at - FLY;
+              if (tk < 0) {
+                r.setSolid(false);
+                return;
+              }
+              const gone = k > 0 && tk > PHINGA.sink;
+              r.setSolid(!gone);
+              const x = Math.min(c.X(PHINGA.c1 + 1) - 26, lx + Math.max(0, tk - 0.2) * PHINGA.v);
+              r.moveTo(w2, x, gone ? FL + 30 : FL - 4 + (k > 0 ? Math.min(6, tk * 6) : 0));
+              if (r.rides(w2) && st.rode < 0) st.rode = k;
+            },
+            paint: (ctx, r) => {
+              if (!r.solid?.collidable) return;
+              box(ctx, r.x, r.y, r.w, r.h, '#B5652B');
+              box(ctx, r.x + 4, r.y + 1, 6, 2, '#E0A060');
+              box(ctx, r.x + 15, r.y + 2, 5, 2, '#E0A060');
+            },
+          }),
+        );
+    });
+    // the server
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: 2,
+        paint: (ctx, _r, w2) => {
+          const t = T(w2);
+          const throwing = PHINGA.at.some((a) => t >= a - 0.2 && t < a);
+          folk(ctx, c.X(PHINGA.serve) + 8, FL, 26, '#F28C28', { skirt: '#E9E1CF', face: -1, arm: throwing ? 1.0 : 0.2 });
+          box(ctx, c.X(PHINGA.serve) + 14, FL - 10, 14, 10, '#9E9E9E');
+        },
+      }),
+    );
   },
 };
 

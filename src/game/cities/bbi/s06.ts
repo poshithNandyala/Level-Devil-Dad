@@ -321,7 +321,7 @@ export const act12: Act = {
     const lo = loom(w, { ...L06P, c0: c.x + L06P.c0 }, () => st.t0, 'bbi6p');
     // the death line names the snapped thread when that is what you fell through
     ch.o.tick = (r) => {
-      r.hazard!.cause = lo.st.snapped >= 0 ? 'bbi-sutra' : 'bbi-ranga';
+      r.hazard!.cause = lo.st.snapped >= 0 ? 'bbi-tantu' : 'bbi-ranga';
     };
   },
 };
