@@ -10,7 +10,6 @@ import { px } from './entities';
 /** Tara at the start of an act, urging the play its trap waits for (she lies; the guide never does) */
 const INTRO: Record<string, string> = {
   'gtk02-ulta': 'Hajur! Stay on, it comes back down!',
-  'gtk03-kagaz': 'Hajur! Wait, let the paper dry, Dad!',
   'gtk03-ulto': 'Hajur! Check each bag for stitches, slowly!',
   'gtk03-jaldi': 'Hajur! Have a good look at each bag!',
   'gtk04-upar': 'Hajur! First door out, Dad!',
@@ -18,7 +17,7 @@ const INTRO: Record<string, string> = {
   'gtk05-aarakshit': 'Hajur! Up on the bench, Dad!',
   'gtk05-do': 'Hajur! One bin is enough, Dad!',
   'gtk05-jhadu': 'Hajur! Walk on, Dad, it’s clean!',
-  'gtk05-peeche': 'Hajur! Overtake him, Dad, hop on!',
+  'gtk05-peeche': 'Hajur! The far bin, Dad, he did that one first!',
   'gtk06-ulta': 'Hajur! The road goes on, Dad!',
   'gtk06-adda': 'Hajur! Straight up the stairs!',
   'gtk06-upar2': 'Hajur! One taxi’s in, go!',
@@ -49,8 +48,8 @@ const withIntros = (acts: Act[]): Act[] =>
     return { ...a, build: (w, c) => { a.build?.(w, c); onPass(w, px(c.x + 0.6), (w2) => tara(w2, `${line} | ${en}`, 2.2)); } };
   });
 import { tourLevel, meta01 } from './s01';
-import { room as room02, act as act02, act2 as act02b, meta02 } from './s02';
-import { room as room03, act as act03, act2 as act03b, act3 as act03c, act4 as act03d, meta03 } from './s03';
+import { room as room02, act2 as act02b, meta02 } from './s02';
+import { room as room03, act as act03, act2 as act03b, act4 as act03d, meta03 } from './s03';
 import { room as room04, act as act04, act2 as act04b, act3 as act04c, meta04 } from './s04';
 import { room as room05, act1 as act05a, act2 as act05b, act3 as act05c, act4 as act05d, act5 as act05e, act6 as act05f, act7 as act05g, meta05 } from './s05';
 import { room as room06, act as act06, act2 as act06b, act3 as act06c, act4 as act06d, act6 as act06f, act9 as act06i, meta06 } from './s06';
@@ -61,8 +60,8 @@ import { room as room10, act1 as act10a, act2 as act10b, act3 as act10c, act4 as
 
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: meta01 },
-  longStage({ base: room02(), acts: withIntros([act02, { ...act02b, cps: [20] }]), cps: [16.5], twist: 'gtk-steam-vent', par: 47, shape: 'long', meta: meta02 }),
-  longStage({ base: room03(), acts: withIntros([act03, act03c, act03b, act03d]), twist: 'gtk-jhola-entry', par: 35, shape: 'long', meta: meta03 }),
+  longStage({ base: room02(), acts: withIntros([{ ...act02b, cps: [20] }]), cps: [16.5], twist: 'gtk-steam-vent', par: 47, shape: 'long', meta: meta02 }),
+  longStage({ base: room03(), acts: withIntros([act03, act03b, act03d]), twist: 'gtk-jhola-entry', par: 35, shape: 'long', meta: meta03 }),
   longStage({ base: room04(), acts: withIntros([act04, act04b, act04c]), twist: 'gtk-lift-counts-down', par: 34, shape: 'long', meta: meta04 }),
   longStage({ base: room05(), acts: withIntros([act05a, act05b, act05e, act05c, act05f, act05g, act05d]), twist: 'gtk-taxi-meter', par: 74, shape: 'wtf', meta: meta05 }),
   longStage({ base: room06(), acts: withIntros([act06, act06b, { ...act06c, cps: [22] }, act06d, act06f, act06i]), twist: 'gtk-tank-overflow', par: 53, shape: 'long', meta: meta06 }),

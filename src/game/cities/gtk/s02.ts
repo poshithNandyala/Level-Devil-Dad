@@ -221,21 +221,6 @@ export function room(): LevelDef {
   };
 }
 
-/** act: a busier stall. No stop at the top: the tier goes round the moment it's up, so you step off on the way up */
-export const act: Act = {
-  id: 'gtk02-bhatti',
-  w: 30,
-  advice: 'The second stall is busier: the cook doesn’t stop at the top, the tier goes straight round. Ride the top tier and jump off to the shelf near the top of the lift, on the way up.',
-  paint: (g, c) => {
-    g.fill(c.x + 5, c.x + 5, 13, 14, '#');
-    g.fill(c.x + 9, c.x + 24, 6, 14, '#');
-  },
-  build: (w, c) => {
-    steamer(w, c.x + 6, ACT_CFG, c.X(0.5), 'gtk2a');
-    sign(w, c.x + 13, 3.2, 4.4, 'THUKPA', 'shop', null, 'momo bhi');
-  },
-};
-
 /** act 2: the third stall has its shelf behind you: ride the top tier up, and as the cook carries it round to
  *  the left, step off backwards on to the shelf over the stool; the way on is the walkway above */
 export const act2: Act = {

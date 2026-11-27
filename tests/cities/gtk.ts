@@ -193,10 +193,6 @@ const act02b = (x: number): Step[] => [
   { hold: 'R', until: X(x + 32.2), max: 900, note: 'along the walkway' },
   { hold: 'R', until: ground, max: 300 },
 ];
-const act02 = (x: number): Step[] => [
-  { policy: rideTier('gtk2a', true), until: and(ground, X(x + 10), (w) => w.player.y < 100), max: 2400, note: 'jump off on the way up' },
-  { hold: 'R', until: and(ground, X(x + 27)), max: 600 },
-];
 /** the steam vent: wait short of the grate till a puff ends, then walk over */
 const ventPolicy: Policy = (w, _m, d) => {
   const st = w.flags.gtk2e as { t0: number };
@@ -391,15 +387,19 @@ const act05c = (x: number): Step[] => [
 ];
 const act05d = (x: number): Step[] => [
   { policy: stepper(), until: X(x + 3), max: 600, note: 'the wrapper underfoot' },
+  { hold: 'R', until: X(x + 20), max: 900, note: 'on to the middle of the round' },
   {
     policy: (w) => {
-      const st = w.flags.gtk5p as { x: number };
+      const st = w.flags.gtk5p as { bins: { x: number; w: number; s: { full: boolean } }[] };
       const p = w.player;
-      return go(p.x + p.w < st.x - 18 ? 'R' : '');
+      const open = st.bins.find((b) => !b.s.full);
+      if (!open) return go('');
+      const mid = open.x + open.w / 2;
+      return go(p.x + p.w / 2 < mid - 2 ? 'R' : p.x + p.w / 2 > mid + 2 ? 'L' : '');
     },
     until: (w) => !held(w),
     max: 3000,
-    note: 'follow the bin man, bin it in the first one he has emptied',
+    note: 'bin it in the one he has just emptied',
   },
   { policy: stepper(), until: X(x + 35.5), max: 900, note: 'then over the bed' },
 ];
@@ -922,6 +922,11 @@ function actDeaths() {
   const on = (): Step[] => [{ policy: stepper(), until: done, max: 3000, note: 'straight on' }];
   for (const id of ['gtk05-peeche', 'gtk05-do', 'gtk05-kachra'])
     actDeath('GTK-05', r5, id, 'straight on, wrapper in hand', on, 'gtk-jurmana');
+  actDeath('GTK-05', r5, 'gtk05-peeche', 'wait for two, then bin it in the first one he emptied', (x) => [
+    ...act05d(x).slice(0, 2),
+    { hold: '', until: (w) => (w.flags.gtk5p as { done: number }).done >= 2, max: 2400 },
+    ...on(),
+  ], 'gtk-jurmana');
   actDeath('GTK-05', r5, 'gtk05-chabutra', 'up on the bench and on to the bed', (x) => [{ hold: 'R', until: X(x + 3.1), max: 600 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: onBench, max: 200 }, ...on()], 'gtk-jurmana');
   actDeath('GTK-05', r5, 'gtk05-jhadu', 'behind the stroke, then on with what it brought you', (x) => [...act05g(x).slice(0, 2), ...on()], 'gtk-jurmana');
   actDeath('GTK-05', r5, 'gtk05-aarakshit', 'walk on past the sweeper', on, 'gtk-jhadu');
@@ -939,9 +944,7 @@ function actDeaths() {
   const r2 = room02();
   actDeath('GTK-02', r2, 'gtk02-ulta', 'ride the top tier and stay on', () => [{ policy: rideTier('gtk2b', false, 'stay'), until: done, max: 3000 }], 'gtk-bhaap');
   actDeath('GTK-02', r2, 'gtk02-ulta', 'let the top tier go, get on the second', () => [{ policy: rideTier('gtk2b', false, 'second'), until: done, max: 3000 }], 'gtk-dhakkan');
-  actDeath('GTK-02', r2, 'gtk02-bhatti', 'wait on the top tier for the hold at the top', () => [{ policy: rideTier('gtk2a', false, 'stay'), until: done, max: 3000 }], 'gtk-bhaap');
   const r3 = room03();
-  actDeath('GTK-03', r3, 'gtk03-kagaz', 'stop on a frame to look', () => [{ policy: bagHop('gtk3k', { dwell: 2.5 }), until: done, max: 3000 }], 'gtk-kagaz');
   actDeath('GTK-03', r3, 'gtk03-ulto', 'on to every bag', () => [{ policy: bagHop('gtk3b', { every: true, dwell: 0.3 }), until: done, max: 3000 }], 'gtk-polythene');
   actDeath('GTK-03', r3, 'gtk03-jaldi', 'a look at the stitches on each bag', () => [{ policy: bagHop('gtk3c', { dwell: 1.2 }), until: done, max: 3000 }], 'gtk-jaanch');
   const r4 = room04();
@@ -1073,12 +1076,10 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'GTK-01': [{ what: 'the bench works, so walk on at the second sweeper', steps: [...benchRoute(), { policy: stepper(), until: done, max: 2400 }], cause: 'gtk-jhadu' }],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
-  'gtk02-bhatti': act02,
   'gtk02-ulta': act02b,
   'gtk03-jaanch': act03,
   'gtk03-ulto': act03b,
   'gtk03-jaldi': (x: number): Step[] => [{ policy: bagHop('gtk3c'), until: and(ground, X(x + 26)), max: 2400, note: 'no stopping, ahead of him' }, { hold: 'R', until: X(x + 30), max: 300 }],
-  'gtk03-kagaz': (x: number): Step[] => [{ policy: bagHop('gtk3k'), until: and(ground, X(x + 21.5)), max: 2400, note: 'frame to frame while the sheets are wet' }, { hold: 'R', until: X(x + 29.5), max: 300 }],
   'gtk04-ghar': act04,
   'gtk04-upar': act04b,
   'gtk04-beech': (x: number): Step[] => [{ policy: upHouseRoute(x + 3, 2), until: and(ground, X(x + 20)), max: 3000, note: 'two flights up, out' }, { hold: 'R', until: X(x + 26.5), max: 300 }],
