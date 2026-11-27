@@ -163,6 +163,9 @@ jai02-show jai03-zenana jai04-yantras jai05-rasta jai06-mela jai07-udaan jai08-a
 bpl02-jheel bpl03-shelters bpl04-karchob bpl05-mehfil bpl06-chowk bpl07-karkhana bpl08-bhojtal
 rpr02-khet rpr03-chowk rpr04-kothi rpr05-mela rpr06-jungle rpr07-saal rpr08-dussehra
 rnc02-galli rnc03-maidan rnc04-seedhi rnc05-kharkai rnc06-ghariya rnc07-chattan rnc08-ghagh
+pat02-chokha pat03-batch pat04-anaaj pat05-ghat pat05-sangam pat06-sau pat06-nau pat07-sadak pat07-adda
+pat08-chowk pat08-vihara pat09-jhoola pat09-ghoda pat09-wapsi pat10-pipa pat10-sau pat10-sidhi pat10-anaaj
+pat05-bori pat06-gaadi pat07-pul pat07-haat pat07-mandi pat10-bori pat10-gaadi
 
 ## Door endings (ENDINGS: one stage each)
 Check the advice lines in endings*.ts too: an idea counts as used even under a new name (e.g. catching
@@ -178,4 +181,39 @@ sutradhar toran shant naap dulha palat salaami
 ghat haath gaanth khaali paan rakhdo kissa
 utar ghanta khisko lattu reel gud rath
 ulta nishana tadit chehra kataar khoh dwar
+pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound pat-charkhi pat-ginti-pad
 (+ the old nine twists: spikes crush swap shy sink rise wall fake none)
+
+## PAT (Patna, Bihar): ideas used (module city, 10 stages)
+- **01 Prannam, Patna!** a tempo pulls in behind you at the bus stop and the waiting crowd surges along the road
+  to it (climb on the kerb board, then run on before the tempo pulls out).
+- **02 Litti ki Aanch** the poker digs where the cracks in the ash are (three strikes, then the rake); act: the poker
+  follows a rolling litti; door: two pestles pounding chokha mortars (`pat-musal`).
+- **03 Ashok Rajpath** hoardings are the platforms; at the class bell each is swapped for a banner whose width shows
+  in the roll above it (grows from its left end, or is pulled taut towards its right end); door: bell-rope
+  pendulums (`pat-ghanti`).
+- **04 Golghar** porters come down the stair you climb, a second steps out of a landing door; act: grain rises in the
+  dome; door leaf swings out across the road (`pat-bhitar`).
+- **05 Pipa Pul** pontoon sections sink under the handcart rolling on them; jump the cart's section; door: the last
+  float drifts off with the door on it (`pat-nawka`).
+- **06 Setu ka Jod** every seam looks plated and numbered, but the plates whose number is a multiple of the sacks on the
+  parked truck are tarps laid over the gap: count the sacks, jump the tarps; door: toll sensor strip slams a boom barrier (`pat-toll`).
+- **07 Tempo** the deck leans to the heavier side (riders on the kerb side, a truck on either side); scrape an arch or a
+  hump while leaning and you die; act: a third tempo backs into the lane between two parked ones; door: the
+  hauled basket whose rope slips (`pat-hauled-basket`).
+- **08 Nalanda** (how would I know) each hatch takes you to the cell with the same number of bricks in the next
+  courtyard; the others have a well; door: the library mound, decoy hatches and a door with zero bricks (`pat-mound`).
+- **09 Sonepur Mela** the crowd parts only behind a horse rider; the giant wheel's occupied gondolas swing you off;
+  door: a four-armed turnstile (`pat-charkhi`).
+- **10 Setu se Golghar** the sacks on a parked handcart are the rule for the part: every n-th plate gone on the
+  bridge, every n-th pontoon section awash, the pad numbered n opens the granary door (`pat-ginti-pad`).
+- **Length pass and fix round (PAT):** 02 a second bed with two litti, each with its own strike (`pat02-bhatti`); 03 a
+  banner can narrow from its right end (`pat03-patti`); 04 a second flight with three porters (`pat04-sidhi`); 05
+  porters load sacks on pontoon sections, and the second sack slides along its rope before it lands (`pat05-bori`); 06
+  the count changes from truck to truck (3, 2, 3 sacks) and trucks lift plates, the second window with a second truck
+  behind the first (`pat06-gaadi`); 07 riders on the road side, riders on both sides, a halt right before a hump, three
+  scrapes in a row (`pat07-pul`, `-haat`, `-mandi`); 09 the horse turns back (`pat09-wapsi`); 10 the cart's sack count
+  sets which pontoon sections the porters load and which plates the trucks lift (`pat10-bori`, `pat10-gaadi`).
+- **Fix round 2 (PAT):** 05 stays at its honest length (no extra act after round 4); 06 the truck at the foot is unloaded while you read it and a second truck half-way is loaded, so the count that
+  counts is the one left when the porter has finished (`pat06-ginti`); 10 callbacks: the coaching hoardings with the
+  cart's three sacks naming the narrowing bell (`pat10-roll`) and the shared tempo with sacks as riders (`pat10-tempo`).
