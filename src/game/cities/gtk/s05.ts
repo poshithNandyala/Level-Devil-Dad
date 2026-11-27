@@ -16,6 +16,8 @@ import { bench, sweeper } from './s01';
 
 export interface Rule {
   hold: boolean;
+  /** how many wrappers are in his hand */
+  n?: number;
   /** tick the wrapper fell (the fine started), or -1 */
   fined: number;
   dropX: number;
@@ -42,6 +44,7 @@ export function mgRule(w: World, holding = true): Rule {
         // jumped with something in hand: it falls out
         if (st.hold && st.wasGround && !p.onGround && p.vy < 0) {
           st.hold = false;
+          st.n = 0;
           st.fined = w2.tick;
           st.dropX = p.cx;
           w2.sfx('whistle', p.cx, p.y);
@@ -52,10 +55,12 @@ export function mgRule(w: World, holding = true): Rule {
       paint: (ctx, _r, w2) => {
         const p = w2.player;
         if (st.hold) {
-          // the wrapper in his hand: a crumpled silver-and-red momo paper
+          // the wrapper in his hand: a crumpled silver-and-red momo paper (two if he has two)
           const hx = p.x + (p.facing > 0 ? 9 : -3);
-          box(ctx, hx, p.y + 7, 5, 4, '#E9EEF2');
-          box(ctx, hx + 1, p.y + 8, 3, 1, '#C62828');
+          for (let k = 0; k < Math.min(2, st.n ?? 1); k++) {
+            box(ctx, hx, p.y + 7 - k * 4, 5, 4, '#E9EEF2');
+            box(ctx, hx + 1, p.y + 8 - k * 4, 3, 1, '#C62828');
+          }
         }
         if (st.fined < 0) return;
         const t = (w2.tick - st.fined) / 120;
@@ -88,9 +93,9 @@ export function mgRule(w: World, holding = true): Rule {
 }
 
 /** a municipal bin at column c: empty ones take what Dad holds as he walks past; full ones are heaped over */
-export function bin(w: World, c: number, full: boolean) {
+export function bin(w: World, c: number, full: boolean, room = 99) {
   const x = px(c) + 3;
-  const st = { told: -999, full };
+  const st = { told: -999, full, room };
   const b = w.add(
     new Rig(x, FL - 16, 10, 16, {
       layer: 3,
@@ -105,8 +110,13 @@ export function bin(w: World, c: number, full: boolean) {
               npc(w2, 'Hoina. | No.', r.x + 5, r.y - 10, 1.2);
             }
           } else {
-            rule.hold = false;
-            npc(w2, 'Dhanyabad! | Thank you!', r.x + 5, r.y - 10, 1.2);
+            const n = rule.n ?? 1;
+            const take = Math.min(n, st.room);
+            st.room -= take;
+            rule.n = n - take;
+            rule.hold = rule.n > 0;
+            if (st.room <= 0) st.full = true;
+            npc(w2, rule.hold ? 'Hoina. | No.' : 'Dhanyabad! | Thank you!', r.x + 5, r.y - 10, 1.2);
           }
         }
       },
@@ -136,6 +146,7 @@ export function litter(w: World, c: number, top = FL) {
         if (rule.fined >= 0) return;
         if (p.x < rr.x + rr.w && p.x + p.w > rr.x && p.y + p.h >= top - 2 && p.y + p.h <= top + 2) {
           rule.hold = true;
+          rule.n = (rule.n ?? 0) + 1;
           rr.on = false;
           rr.alive = false;
         }
@@ -220,8 +231,8 @@ export const act1: Act = {
 /** act 2: the bin round. Both bins here are heaped full and the way back is a wall: wait for the man on his
  *  round to empty one, then bin your wrapper and jump */
 export const ROUND = { speed: 22, start: 0.6 };
-export const act2: Act = {
-  id: 'gtk05-kachra',
+export const kachraAct = (id: string, key: string, speed: number): Act => ({
+  id,
   w: 34,
   advice: 'Down off the step there’s a wrapper, both bins are heaped full, and there’s no going back up. The man doing the bin round comes from the far end, emptying each bin he reaches: wait by the first bin till he has emptied it, bin your wrapper, then jump the beds.',
   cps: [1.5],
@@ -238,7 +249,7 @@ export const act2: Act = {
     planterPaint(w, x + 14, x + 15, 2);
     planterPaint(w, x + 24, x + 25, 1);
     const st = { t0: -1, x: c.X(31) };
-    w.flags.gtk5r = st;
+    w.flags[key] = st;
     onPass(w, c.X(2), (w2) => {
       st.t0 = w2.tick;
     });
@@ -257,7 +268,7 @@ export const act2: Act = {
             }
             return;
           }
-          if (r.x > c.X(5)) r.x -= perTick(ROUND.speed * 3);
+          if (r.x > c.X(5)) r.x -= perTick(speed);
           st.x = r.x;
         },
         paint: (ctx, r) => {
@@ -268,7 +279,10 @@ export const act2: Act = {
     );
     sign(w, x + 18.5, 9.6, 4.6, 'BIN ROUND', 'green', null, 'every evening');
   },
-};
+});
+export const act2 = kachraAct('gtk05-kachra', 'gtk5r', ROUND.speed * 3);
+/** the last bin round of the evening, and a slower man: a longer wait by the full bin */
+export const act8 = kachraAct('gtk05-raat', 'gtk5q', 36);
 
 /** act 3: the high flower bed. The bench in front of it is the only step up, and someone has left a wrapper on
  *  the bench. Stand on it and you've picked it up: walk off the end, back to the bin, and up again */
@@ -290,6 +304,142 @@ export const act3: Act = {
     bin(w, x + 20, false);
     planterPaint(w, x + 22, x + 23, 1);
     sign(w, x + 9, 6.4, 4, 'FLOWER BED', 'green', null, 'MG Marg');
+  },
+};
+
+/** act 4: the bin round, going away from you. A wrapper underfoot, every bin ahead heaped full, and the bin man
+ *  setting off up the street emptying them in turn: follow him, and bin it in the first one he has emptied */
+export const act4: Act = {
+  id: 'gtk05-peeche',
+  w: 36,
+  advice: 'Every bin ahead is heaped full, and the bin man is just setting off up the street, emptying them in turn. Follow him (don’t pass him), bin your wrapper in the first one he has emptied, and only then jump the bed.',
+  paint: (g, c) => {
+    g.fill(c.x + 27, c.x + 28, 13, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    litter(w, x + 2);
+    const bins = [x + 8, x + 13, x + 18, x + 23].map((cc) => bin(w, cc, true));
+    planterPaint(w, x + 27, x + 28, 2);
+    const st = { t0: -1, x: c.X(4) };
+    w.flags.gtk5p = st;
+    onPass(w, c.X(2.5), (w2) => {
+      st.t0 = w2.tick;
+    });
+    w.add(
+      new Rig(c.X(4), FL - 28, 12, 28, {
+        layer: 2,
+        tick: (r, w2) => {
+          if (st.t0 < 0) return;
+          const next = bins.find((b) => b.s.full && b.x + 4 > r.x);
+          if (next && r.x >= next.x - 14) {
+            r.s.tip = (r.s.tip ?? 0) + 1;
+            if (r.s.tip > 120) {
+              next.s.full = false;
+              r.s.tip = 0;
+            }
+            return;
+          }
+          if (r.x < c.X(34)) r.x += perTick(30);
+          st.x = r.x;
+        },
+        paint: (ctx, r) => {
+          box(ctx, r.x - 22, FL - 14, 20, 12, '#2E7D5B');
+          local(ctx, r.x + 6, r.y, 28, '#E8772E', { cap: '#3E8E41' });
+        },
+      }),
+    );
+    sign(w, x + 30, 9.6, 4, 'BIN ROUND', 'green', null, 'up the street');
+  },
+};
+/** act 5: MG Marg's benches with RESERVED cards (GTK reserve F3), by a sweeper. A bench is the way over his stroke;
+ *  a reserved one, the owner asks you off it, down on to the paving, in front of his broom */
+export const act5: Act = {
+  id: 'gtk05-aarakshit',
+  w: 36,
+  advice: 'Two sweepers along a row of benches. Some benches have a RESERVED card on them: get up on one and its owner asks you down, straight on to the paving in front of the broom. Use the benches with no card, or walk behind the stroke.',
+  build: (w, c) => {
+    const x = c.x;
+    sweeper(w, x + 9, 6, 'gtk5b');
+    reserved(w, c.X(8), true);
+    sweeper(w, x + 25, 6, 'gtk5b');
+    reserved(w, c.X(22), true);
+    reserved(w, c.X(26), false);
+    sign(w, x + 15.5, 9.6, 4.4, 'MG MARG', 'green', null, 'benches');
+  },
+};
+/** an MG Marg bench, with or without a RESERVED card; a reserved one turns you off it */
+function reserved(w: World, x: number, card: boolean) {
+  const b = bench(w, x, 32);
+  const st = { on: 0, off: 0 };
+  w.add(
+    new Rig(x, FL - 30, 32, 16, {
+      layer: 3,
+      tick: (_r, w2) => {
+        if (st.off > 0) {
+          st.off--;
+          if (st.off === 0) b.setSolid(true);
+          return;
+        }
+        if (card && b.carries(w2)) {
+          st.on++;
+          if (st.on > 24) {
+            st.on = 0;
+            st.off = 90;
+            b.setSolid(false);
+            npc(w2, 'Maphi paun. | Excuse me.', x + 16, FL - 40, 1.2);
+          }
+        } else st.on = 0;
+      },
+      paint: (ctx, r) => {
+        if (!card) return;
+        box(ctx, r.x + 8, r.y + 4, 16, 8, '#F4F1EA');
+        box(ctx, r.x + 8, r.y + 4, 16, 2, '#C0392B');
+      },
+    }),
+  );
+  return b;
+}
+
+/** act 6: two wrappers. Two left lying close together, and the bins here are nearly full: each takes one more
+ *  and is heaped. One bin won't do: bin one, and the other in the next, before the jump */
+export const act6: Act = {
+  id: 'gtk05-do',
+  w: 30,
+  advice: 'Two wrappers lie close together, so you pick up both, and these bins are nearly full: each takes just one more. The bin ahead takes one; take the other back to the bin you passed, before you jump.',
+  paint: (g, c) => {
+    g.fill(c.x + 13, c.x + 14, 14, 14, '#');
+    g.fill(c.x + 23, c.x + 24, 13, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    bin(w, x + 1, false, 1);
+    litter(w, x + 4);
+    litter(w, x + 6);
+    bin(w, x + 9, false, 1);
+    planterPaint(w, x + 13, x + 14, 1);
+    planterPaint(w, x + 23, x + 24, 2);
+    sign(w, x + 10.5, 9.6, 3.8, 'NEARLY FULL', 'warn', null, 'one each');
+  },
+};
+
+/** act 7: what the broom brings you. Each stroke sweeps the paving towards his cart, and the wrapper it pushed
+ *  along ends up right where you'll step in behind it. You pick it up; the only bin is his cart, behind you */
+export const act7: Act = {
+  id: 'gtk05-jhadu',
+  w: 30,
+  advice: 'The sweeper’s strokes push litter towards his cart, so a wrapper lies just where you step in behind the stroke: you’ll pick it up. The only bin is his cart, behind you: go back to it before the flower bed.',
+  paint: (g, c) => {
+    g.fill(c.x + 22, c.x + 23, 13, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const sw = sweeper(w, x + 12, 6, 'gtk5j');
+    // his cart takes litter like a bin (it is one)
+    bin(w, Math.floor((sw.sx - 32 - 30) / 16), false);
+    litter(w, x + 10);
+    planterPaint(w, x + 22, x + 23, 2);
+    sign(w, x + 1, 9.6, 3.6, 'MG MARG', 'green', null, 'swept hourly');
   },
 };
 

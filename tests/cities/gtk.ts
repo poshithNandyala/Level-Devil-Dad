@@ -332,6 +332,38 @@ const act05c = (x: number): Step[] => [
   { hold: 'R', until: onBench, max: 200 },
   { policy: stepper(), until: X(x + 29), max: 1200, note: 'up on the bed, down, the next wrapper into the next bin, over the low bed' },
 ];
+const act05d = (x: number): Step[] => [
+  { policy: stepper(), until: X(x + 3), max: 600, note: 'the wrapper underfoot' },
+  {
+    policy: (w) => {
+      const st = w.flags.gtk5p as { x: number };
+      const p = w.player;
+      return go(p.x + p.w < st.x - 18 ? 'R' : '');
+    },
+    until: (w) => !held(w),
+    max: 3000,
+    note: 'follow the bin man, bin it in the first one he has emptied',
+  },
+  { policy: stepper(), until: X(x + 35.5), max: 900, note: 'then over the bed' },
+];
+const act05f = (x: number): Step[] => [
+  { policy: stepper(), until: X(x + 9.3), max: 600, note: 'both wrappers; the bin ahead takes one' },
+  { hold: 'L', until: (w) => !held(w), max: 900, note: 'back to the bin you passed with the other' },
+  { policy: stepper(), until: X(x + 29.5), max: 900, note: 'then over both beds' },
+];
+const act05g = (x: number): Step[] => [
+  { policy: stepper(), until: X(x + 2), max: 300 },
+  { policy: behindStroke(0, 'gtk5j'), until: (w) => held(w), max: 1500, note: 'behind the stroke: the wrapper it swept along' },
+  { hold: 'L', until: (w) => !held(w), max: 900, note: 'back to his cart with it' },
+  { policy: behindStroke(0, 'gtk5j'), until: X(x + 15), max: 1500, note: 'behind the stroke again' },
+  { policy: stepper(), until: X(x + 29.5), max: 600, note: 'over the bed' },
+];
+const act05e = (x: number): Step[] => [
+  { policy: stepper(), until: X(x + 1), max: 300 },
+  { policy: behindStroke(0, 'gtk5b'), until: X(x + 12.5), max: 1500, note: 'behind the first stroke on foot' },
+  { policy: behindStroke(1, 'gtk5b'), until: X(x + 29), max: 1500, note: 'and the second' },
+  { policy: stepper(), until: X(x + 35.5), max: 600 },
+];
 /** the taxi: walk past the bin, jump up and pay at the meter, wait for it to go, walk in */
 const taxiPolicy: Policy = (w, _m, d) => {
   const st = w.flags.gtk5e as { paid: boolean };
@@ -846,6 +878,14 @@ function actDeaths() {
   actDeath('GTK-07', r7, 'gtk07-thau2', 'no stop at the stall', () => blind(), 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-thau2', 'wait once, then walk on blind past the second stall', (x) => [...chiyaRoute('gtk7m')(x).slice(0, 3), ...blind()], 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-jaldi', 'walk, don’t jump: the holes are right there', () => blind(), 'gtk-badal');
+  const r5 = room05();
+  const on = (): Step[] => [{ policy: stepper(), until: done, max: 3000, note: 'straight on' }];
+  for (const id of ['gtk05-peeche', 'gtk05-do', 'gtk05-raat', 'gtk05-kachra'])
+    actDeath('GTK-05', r5, id, 'straight on, wrapper in hand', on, 'gtk-jurmana');
+  actDeath('GTK-05', r5, 'gtk05-chabutra', 'up on the bench and on to the bed', (x) => [{ hold: 'R', until: X(x + 3.1), max: 600 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: onBench, max: 200 }, ...on()], 'gtk-jurmana');
+  actDeath('GTK-05', r5, 'gtk05-jhadu', 'behind the stroke, then on with what it brought you', (x) => [...act05g(x).slice(0, 2), ...on()], 'gtk-jurmana');
+  actDeath('GTK-05', r5, 'gtk05-aarakshit', 'walk on past the sweeper', on, 'gtk-jhadu');
+  actDeath('GTK-05', r5, 'gtk05-aarakshit', 'up on the bench, as at the tour', (x) => [{ hold: 'R', until: X(x + 6.6), max: 600 }, { hold: 'R', jump: 10, ticks: 10, note: 'up on the reserved bench' }, { hold: '', until: done, max: 1200 }], 'gtk-jhadu');
   const r6 = room06();
   const straight = (): Step[] => [{ policy: stepper(), until: done, max: 3000, note: 'straight on' }];
   for (const id of ['gtk06-modh', 'gtk06-ulta', 'gtk06-adda', 'gtk06-neeche', 'gtk06-sawari', 'gtk06-ghumao', 'gtk06-peeche'])
@@ -980,7 +1020,12 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk04-ghar': act04,
   'gtk05-shaam': act05,
   'gtk05-kachra': act05b,
+  'gtk05-raat': act05b,
   'gtk05-chabutra': act05c,
+  'gtk05-peeche': act05d,
+  'gtk05-do': act05f,
+  'gtk05-jhadu': act05g,
+  'gtk05-aarakshit': act05e,
   'gtk06-chhat': act06,
   'gtk06-modh': act06b,
   'gtk06-ulta': ultaRoute('gtk6u', STAND3),
