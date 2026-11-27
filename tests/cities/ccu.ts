@@ -520,6 +520,8 @@ const jowarRoute = (x: number, bad?: 'stop' | 'long'): Step[] => {
 };
 
 // ------------------------------------------------------------------ CCU-07 the bore
+/** CCU-07's shelter beat at the second pylon (the act's own route), for the scripts after it */
+const PYL = (x: number): Step[] => [walk(x + 3.9), ...hopTo(px(x + 6.4), 10, 'up the pylon step'), hopUp((w) => ahead(w, 55, 54), 'wait for the tall porter, and up on his load'), { hold: '', until: X(x + 40.6), max: 1800, note: 'ride him on' }];
 const baanRoute = (x: number): Step[] => [
   walk(x + 6.4, 'down the ghat steps, quickly'),
   { hold: 'R', until: (w) => w.player.onGround && w.player.isRiding((w.flags.baan as Bore).launch) && w.player.x > px(x + 8), max: 300, note: 'on to the moored launch' },
@@ -721,9 +723,9 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     { what: 'staying on the tall porter of the upside-down span', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false).slice(0, 3), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
     { what: 'stopping at the first drain on the causeway', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...jowarRoute(184, 'stop')], cause: 'ccu-baan' },
     { what: 'a long jump at the first drain on the causeway', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...jowarRoute(184, 'long')], cause: 'ccu-nala' },
-    { what: 'waiting on the ghat steps for the launch to come up to you', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...jowarRoute(184), walk(224 + 4.5), { hold: '', until: done, max: 2400, note: 'wait on the steps' }], cause: 'ccu-baan' },
-    { what: 'a full jump from the launch at the jetty, without the tide', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...jowarRoute(184), ...baanRoute(224).slice(0, 2), steerHop(px(224 + 15), 34, 'a full jump at the jetty', true), { hold: 'R', until: done, max: 400 }], cause: 'ccu-ghat' },
-    { what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...jowarRoute(184), ...baanRoute(224), walk(252 + 3.9), ...hopTo(px(258.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
+    { what: 'waiting on the ghat steps for the launch to come up to you', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...jowarRoute(184), ...PYL(224), walk(264 + 4.5), { hold: '', until: done, max: 2400, note: 'wait on the steps' }], cause: 'ccu-baan' },
+    { what: 'a full jump from the launch at the jetty, without the tide', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...jowarRoute(184), ...PYL(224), ...baanRoute(264).slice(0, 2), steerHop(px(264 + 15), 34, 'a full jump at the jetty', true), { hold: 'R', until: done, max: 400 }], cause: 'ccu-ghat' },
+    { what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...jowarRoute(184), walk(224 + 3.9), ...hopTo(px(230.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
   'CCU-02': [
     {
       what: 'stepping off backwards on the crawl',
@@ -860,12 +862,13 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   ],
   'ccu08-rok': (x) => [{ policy: hopWater(), until: and(ground, X(x + 38)), max: 1800, note: 'through both addas, hopping the water' }],
   'ccu07-girder': girderRoute,
-  'ccu07-pylon': (x) => [walk(x + 3.9), ...hopTo(px(x + 6.4), 10, 'up the pylon step'), hopUp((w) => ahead(w, 55, 54), 'wait for the tall porter, and up on his load'), { hold: '', until: X(x + 40.6), max: 1800, note: 'ride him to Howrah' }],
+  'ccu07-pylon': (x) => PYL(x),
   'ccu06-points': ACT06,
   'ccu06-duiline': (x) => [
     { hold: '', until: (w) => tramB(w)!.state === 'stop' && w.player.cx > px(x + 19), max: 2400, note: 'through two junctions on the step, to the island' },
     { hold: 'R', until: and(ground, X(x + 23.6)), max: 300, note: 'off on to the island: the other line’s tram is coming' },
     { hold: '', until: (w) => !!w.flags.otherPassed, max: 600, note: 'let it go by' },
+    { hold: 'R', until: and(ground, X(x + 25.6)), max: 120, note: 'to the far end of the island' },
     { hold: 'L', until: (w) => w.player.cx < tramB(w)!.step.x + 14, max: 300 },
     { hold: '', jump: 8, until: (w) => tramB(w)!.onStep(w), max: 120, note: 'back up on to the step' },
     { hold: '', until: (w) => tramB(w)!.state === 'end', max: 3000, note: 'to the end of the line' },
@@ -998,10 +1001,23 @@ const endingPolicies: Record<string, Policy> = {
 
 
 
-  'ccu-arch'(w, _m, d) {
-    const k = w.flags.arch as { D: number };
+  'ccu-arch'(w, m, d) {
+    const k = w.flags.arch as { D: number; porter: Porter };
     const p = w.player;
+    if (m.hold > 0) {
+      m.hold--;
+      return { move: '', jump: true };
+    }
     if (riding(w)) return go(p.cx > px(k.D - 2.6) ? 'R' : '');
+    if (p.onGround && p.cx < px(k.D - 4)) {
+      // on the ghat's top step: wait for the porter, and up on his load as he passes
+      const q = k.porter;
+      if (q.state === 'walk' && Math.abs(p.cx - q.x - q.o.v * 0.22) < 5 && !q.riding(w)) {
+        m.hold = 12;
+        return { move: '', jump: true };
+      }
+      return go(p.cx < px(k.D - 17.6) ? 'R' : '');
+    }
     return go(p.onGround ? toward(w, d.x + 8, 1) || 'R' : '');
   },
   'ccu-pole-turn'(w, m, d) {

@@ -114,8 +114,6 @@ function poleRoom(): LevelDef {
     map: Grid.ground(15).fill(4, 4, 13, 14, '#').fill(5, 6, 12, 12, '=').pit(11, 31).put(1, 14, '@').rows(),
     build(w: World) {
       khod(w, 11, 32);
-      checkpoint(w, 18);
-      checkpoint(w, 28);
       w.add(new Junction(px(24)));
       sign(w, 8.2, 8.4, 3.6, 'TRAM STOP', 'green', null, 'route 5');
       rival(w, 2, 15, 1, tara(4));
@@ -126,26 +124,25 @@ function poleRoom(): LevelDef {
 }
 
 
-/** CCU-06 act: the double line. Two more junctions (the step again), and an island stop where a tram on
- *  the other line comes past right by the step: off on to the island till it's gone, then back on */
+/** CCU-06 act: the double line. One more junction (the step again), and an island stop where a tram on
+ *  the other line comes past right by the step: off on to the island till it's gone, then back on. The act
+ *  ends on the island, so its last checkpoint is on the ground, never on the step */
 const duiLine: Act = {
   id: 'ccu06-duiline',
-  w: 48,
+  w: 26,
+  // its checkpoint is the door's, at the island's far end, past the other line's tram
   cp0: false,
-  cps: [6, 23.5],
-  advice: 'Two more junctions: stay on the step. At the island stop a tram on the other line comes past, right by the step: get off on to the island, let it go by, and hop back on before yours leaves.',
+  advice: 'One more junction: stay on the step. At the island stop a tram on the other line comes past, right by the step: get off on to the island, let it go by, and hop back on before yours leaves.',
   paint: (g, c) => {
-    g.pit(c.x, c.x + 19).pit(c.x + 26, c.x + 47);
+    g.pit(c.x, c.x + 19);
   },
   build: (w, c) => {
     const x = c.x;
     khod(w, x, x + 20);
-    khod(w, x + 26, x + 48);
     w.add(new Junction(c.X(8)));
-    w.add(new Junction(c.X(40)));
     sign(w, x + 21.5, 8.4, 3.6, 'TRAM STOP', 'green', null, 'double line');
-    w.flags.junctions6 = [c.X(8), c.X(40)];
-    w.flags.stops6 = [{ x: c.X(20) - 2, dwell: 3.4, ride: true }];
+    w.flags.junctions6 = [c.X(8)];
+    w.flags.stops6 = [{ x: c.X(20) - 2, dwell: 4.6, ride: true }];
     const other = w.add(new OtherTram(c.X(36), c.X(12)));
     w.when(
       (w2) => w2.flags.tramB && w2.flags.tramB.state === 'stop' && w2.flags.tramB.x > c.X(19),
@@ -162,8 +159,8 @@ const points: Act = {
   id: 'ccu06-points',
   w: 48,
   cp0: false,
-  // calm checkpoints on the island and on the straight-line tram's step
-  cps: [1, 8, 22, 38],
+  // on the island's ground, never on the tram's step
+  cps: [6.3],
   advice: 'At the island stop, look at the pointsman: his lever is set for the other line, and this tram turns off there, step and all. Get off at the island and wait. The next tram comes along the straight line: hop on its step and stay on it through the second junction.',
   paint: (g, c) => {
     g.pit(c.x, c.x + 3).pit(c.x + 10, c.x + 47);
@@ -222,6 +219,7 @@ function howrahRoom(): LevelDef {
 const girder: Act = {
   id: 'ccu07-girder',
   w: 48,
+  cp0: false,
   advice: 'From the pylon step, on to the tall porter’s load. His chai stop is ahead on the road: a short porter comes up from behind, faster, and passes under you. Walk off the front of your load on to his as he goes by.',
   paint: (g, c) => {
     g.fill(c.x, c.x + 3, 14, 14, '#').fill(c.x + 1, c.x + 3, 13, 13, '#');
@@ -263,12 +261,13 @@ const dui: Act = {
 
 /** CCU-07 long acts: a relay of three porters over a long span of road. `v` are the speeds of the first,
  *  second and third porter (also how the routes tell them apart); `tallFirst` swaps the heights */
-function relay(id: string, v: [number, number, number], tallFirst: boolean, advice: string): Act {
+function relay(id: string, v: [number, number, number], tallFirst: boolean, advice: string, cps: number[]): Act {
   return {
     id,
     w: 60,
-    // shortcut: calm checkpoints ride on the first and second porters, seconds before their CHA boards
-    cps: [14, 36],
+    // on the pylon step, never on a load
+    cp0: false,
+    cps,
     advice,
     paint: (g, c) => {
       g.fill(c.x, c.x + 3, 14, 14, '#').fill(c.x + 1, c.x + 3, 13, 13, '#');
@@ -290,7 +289,7 @@ function relay(id: string, v: [number, number, number], tallFirst: boolean, advi
     },
   };
 }
-const ulto = relay('ccu07-ulto', [41, 59, 79], false, 'A long span, and the relay the other way up: a short porter from the pylon, a tall one overtaking (hop up when nothing is coming over), then a short one passing under (walk off the front on to him) before the second CHA board.');
+const ulto = relay('ccu07-ulto', [41, 59, 79], false, 'A long span, and the relay the other way up: a short porter from the pylon, a tall one overtaking (hop up when nothing is coming over), then a short one passing under (walk off the front on to him) before the second CHA board.', [2.4]);
 
 /** CCU-07 act (R2, the bore's front, its A3): the low causeway along the river. The front comes up the
  *  river behind you as you step on to it and floods all it has passed: the momentum beat. Keep moving,
@@ -449,7 +448,7 @@ const rok: Act = {
   id: 'ccu08-rok',
   w: 44,
   cp0: false,
-  cps: [17.5],
+  cps: [15.2],
   advice: 'Two more addas on the rok, and a door ahead whose maid throws her water every few seconds: you see the door open first. Walk through the old men without stopping, hop each sheet of water, and if you need to wait, wait on the bare rok between them.',
   paint: (g, c) => {
     g.pit(c.x, c.x + 35).fill(c.x, c.x + 35, 13, 14, '#');
@@ -526,6 +525,8 @@ function pandalRoom(): LevelDef {
  *  the next foothold under the roof frame, so its top is no place to stand either */
 const sinri: Act = {
   id: 'ccu09-sinri',
+  cp0: false,
+  cps: [-3.4],
   w: 30,
   advice: 'The panels they’ve already tied make a staircase: climb it, cloth top to cloth top. At the top a new panel goes up across the next bamboo: a full jump on to it, and walk straight off the far side before they tie the next one above, into the roof frame.',
   paint: (g, c) => {
@@ -765,6 +766,8 @@ const uthon: Act = {
 /** CCU-05 act: the lane where they're finishing in order, one after another behind you */
 const ghat: Act = {
   id: 'ccu05-ghat',
+  cp0: false,
+  cps: [-0.6],
   w: 26,
   advice: 'Here they finish one after another, from the near end, and carry each one out as you go: keep moving, never wait, and still walk off (never jump) on to the pale dry ones.',
   paint: (g, c) => {
@@ -797,6 +800,8 @@ function thakAct(id: string, tall: number, flag: string, label: string, advice: 
   return {
     id,
     w: 24,
+    cp0: false,
+    cps: [-1.5],
     advice,
     paint: (g, c) => {
       g.pit(c.x + 3, c.x + 17);
@@ -831,7 +836,9 @@ const thak = thakAct('ccu04-thak', 7, 'thak', 'SECOND HAND', 'A pile too tall to
 const dui3: Act = {
   id: 'ccu03-dokan',
   w: 30,
-  cps: [1.5],
+  // on the pavement before the tin: a run or a hop from here never reaches the muri
+  cp0: false,
+  cps: [-0.2],
   advice: 'The next seller’s tin is wider and his hand is quicker, and his peanuts are further apart. Same rules: wait on the rim for his first shake, be on a peanut for every shake, and hop on as the chilli comes up under you.',
   paint: (g, c) => {
     g.pit(c.x + 3, c.x + 26);
@@ -882,6 +889,8 @@ const rok10: Act = {
  *  up to the high stall. The quiet one is being bought, and goes */
 const pherot: Act = {
   id: 'ccu10-pherot',
+  cp0: false,
+  cps: [-1.3],
   w: 24,
   advice: 'College Street again, but this customer is bringing books back: the stack he points at grows a book at a time, all the way up to the high stall. Stand on that one and ride it up. The quiet stack next to it is being bought down.',
   paint: (g, c) => {
@@ -931,6 +940,8 @@ const phire: Act = {
  *  ride it up, step across. Under it there's no way through, and it comes down again */
 const chhad: Act = {
   id: 'ccu10-chhad',
+  cp0: false,
+  cps: [-0.2],
   w: 26,
   advice: 'The canopy again, but they’re hauling it up for good now, level with the gallery: no running under it this time, there’s no way through. Get on top of it while it’s down, ride it up, and step across to the gallery.',
   paint: (g, c) => {
@@ -955,7 +966,8 @@ const chhad: Act = {
 const khola: Act = {
   id: 'ccu10-khola',
   w: 32,
-  cps: [7.4],
+  cp0: false,
+  cps: [-0.7],
   advice: 'The pandal again, after the festival: they’re taking it down. A cloth top you land on, they untie under you. Stand on the bamboo now and jump over each panel to the next bamboo. Under the roof frame they let a panel down on to the bamboo: straight on from that one.',
   paint: (g, c) => {
     const x = c.x;
@@ -992,6 +1004,8 @@ const khola: Act = {
 /** CCU-10 act 4: Kumartuli once more, the figures finishing fast */
 const kumor10: Act = {
   id: 'ccu10-kumor',
+  cp0: false,
+  cps: [-3.3],
   w: 24,
   advice: 'Kumartuli once more: on the ones painted below the waist, quickly off the others, and walk (never jump) down on to the pale dry ones.',
   paint: (g, c) => {
@@ -1052,6 +1066,8 @@ const lane: Act = {
  *  the arch's frame */
 const toran: Act = {
   id: 'ccu09-toran',
+  cp0: false,
+  cps: [-3.2],
   w: 26,
   advice: 'At the gate arch two panels go up at once, across both the next bamboos: a full jump on to the first, run across both tops, and off the far end at once, because the second is under the arch’s frame and they tie another on above it.',
   paint: (g, c) => {
@@ -1170,13 +1186,15 @@ const gali = brokenRok('ccu08-gali', 34, [[6, 12, 13, 20, 32]], 55, 'A lane brok
 
 
 /** CCU-10 acts 5 and 6: back over Howrah Bridge, on the porters, both ways up */
-const setu10a = relay('ccu10-setu', [45, 63, 83], true, 'Howrah Bridge again: tall porter, short one under you before his CHA board, tall one over you before the next, never jumping into a load coming the other way.');
+const setu10a = relay('ccu10-setu', [45, 63, 83], true, 'Howrah Bridge again: tall porter, short one under you before his CHA board, tall one over you before the next, never jumping into a load coming the other way.', [0.2]);
 
 
 /** CCU-09 act: the canopy. Over a long stretch of lashed bamboo they let the canopy frame down on the
  *  dhak's beat to tie it, and haul it up again: wait on the bamboo before it, and run under it as it goes up */
 const dhak: Act = {
   id: 'ccu09-dhak',
+  cp0: false,
+  cps: [-2.1],
   w: 24,
   advice: 'The canopy: over the long lashed bamboo they let its frame right down on each beat of the dhak, then haul it up. Wait on the bamboo before it, and the moment it starts going up, run under it in one go.',
   paint: (g, c) => {
@@ -1200,6 +1218,8 @@ const dhak: Act = {
  *  stakes. Move up into the bamboo just left, beat by beat */
 const line: Act = {
   id: 'ccu09-line',
+  cp0: false,
+  cps: [-0.3],
   w: 30,
   advice: 'Opening night, and the queue for the pandal: one person to a bamboo, and on each beat of the dhak they all step one bamboo on. Nobody climbs over the queue, and under it are the stakes. Move up into the bamboo they’ve just left, one beat at a time.',
   paint: (g, c) => {
@@ -1229,7 +1249,7 @@ function liftAct(id: string, wait: number, advice: string): Act {
     id,
     w: 30,
     cp0: false,
-    cps: [9.4, 27],
+    cps: [11.6, 27],
     advice,
     paint: (g, c) => {
       const x = c.x;
@@ -1309,7 +1329,7 @@ export const levels = (): LevelDef[] => [
         sign(w, 105.4, 10.4, 3.2, 'KUMIR-DANGA', 'green', null, 'chalk river');
         onPass(w, px(56), (w2) => w2.guide('Tram! Ei je, shunun! | The tram line! Excuse me, listen!', (w3) => w3.player.cx < px(70)));
       },
-      cps: [15, 42, 57, 75, 97],
+      cps: [8, 42, 57, 75, 97],
       par: 36,
     }),
     meta: meta('rail-groove-sticks-foot', ['groove-catch'], 'ccu-esplanade-tram-shuttle'),
@@ -1319,7 +1339,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: boiRoom(), par: 23, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
   longStage({ base: kumartuliRoom(), par: 70, acts: [uthon, lane, pratima, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
   longStage({ base: poleRoom(), par: 85, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
-  longStage({ base: howrahRoom(), par: 127, acts: [girder, dui, ulto, jowar, baan, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
+  longStage({ base: howrahRoom(), par: 127, acts: [girder, dui, ulto, jowar, pylon, baan], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 60, acts: [rok, tokta, gali], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
   longStage({ base: pandalRoom(), par: 72, acts: [sinri, toran, chala, dhak, uthan, uthan2, line], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
   longStage({ base: finaleRoom(), par: 128, acts: [bus10, tram10, chhad, phire, rok10, pherot, kumor10, khola, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),

@@ -9,7 +9,7 @@ import type { Ending } from '../../levels/endkit';
 import { Bus, FLOOR as FLOOR_Y } from './entities';
 import { Customer, Muck, Stack, Stall } from './books';
 import { Paint } from '../../levels/endkit';
-import { ChaiBoard, Road } from './porters';
+import { ChaiBoard, Porter, Road, TALL } from './porters';
 import { Tin } from './muri';
 import { BigFigure, Ghat } from './kumartuli';
 import { Adda, House, ROK, TeaSeller } from './adda';
@@ -109,7 +109,8 @@ export const endings: Record<CcuEndingKind, Ending> = {
    *  conductor walks the pole round to the other end for the trip back, and it swings low over the platform.
    *  Stay on the step till it's round, then step up. */
   'ccu-pole-turn': {
-    space: 14,
+    // calm road between the last island and the dug-up terminus approach
+    space: 16,
     advice: 'At the end of the line the door is up on the terminus platform, right by the step. Wait: the conductor walks the pole round for the trip back, and it swings low over the platform. Once it’s round, step up.',
     paint: (g, D) => {
       g.pit(D - 12, D - 4);
@@ -164,18 +165,22 @@ export const endings: Record<CcuEndingKind, Ending> = {
   'ccu-arch': {
     space: 22,
     after: 6,
-    advice: 'At the Howrah end the porters walk straight into the station under its low arch, and the beam sweeps anything on a load. The door is on the platform just before it: walk off the load on to the platform.',
+    advice: 'Up the ghat steps, and the last porter is going into Howrah station: hop on his load from the top step. He walks straight in under the station’s low arch, and its beam sweeps anything on a load. The door is on the platform just before it: walk off the load on to the platform.',
     paint: (g, D) => {
+      // the ghat's top step, then the porters' way in
+      g.fill(D - 22, D - 18, 14, 14, '#');
       g.fill(D - 4, D, 13, 14, '#');
       g.put(D, 14, '#');
       g.put(D, 12, 'E');
     },
     build(w, d) {
       const D = Math.round(d.x / 16);
-      w.add(new Road(px(D - 22), px(D - 4), (w2) => (w2.flags.cha ? 'ccu-cha' : 'ccu-gaari')));
+      w.add(new Road(px(D - 17), px(D - 4), (w2) => (w2.flags.cha ? 'ccu-cha' : 'ccu-gaari')));
       w.add(new Road(px(D + 1), px(D + 7), () => 'ccu-gaari'));
       const beam = { x: px(D + 2), y: FLOOR_Y - 92, w: px(3), h: 26 };
-      w.flags.arch = { D, beam };
+      // the last porter into the station, from the ghat steps
+      const porter = w.add(new Porter({ x: px(D - 30), v: 50, h: TALL, go: (w2: World) => w2.player.cx > px(D - 27), off: Infinity }));
+      w.flags.arch = { D, beam, porter };
       w.flags.twist = 'arch';
       w.add(
         new (class extends Entity {
