@@ -178,10 +178,12 @@ function shops(w: World, c0: number, c1: number) {
 }
 
 export const OPENS03: { c: number; y: number; cut: -1 | 0 | 1; open: [number, number]; peel?: number }[] = [
-  { c: 8, y: FL - 40, cut: 0, open: [0.8, 3.6] },
-  { c: 12, y: FL - 48, cut: -1, open: [2.8, 5.6] },
-  { c: 16, y: FL - 40, cut: 1, open: [4.6, 7.6], peel: 6.4 },
-  { c: 20, y: FL - 48, cut: 0, open: [5.4, 8.8] },
+  // the street runs 0.8 s sooner than round 4 so a dad who waits on the third cut-out is peeled off
+  // within 7.5 s of the start (the tester's replay bar); the first opens only 0.4 s sooner
+  { c: 8, y: FL - 40, cut: 0, open: [0.4, 3.2] },
+  { c: 12, y: FL - 48, cut: -1, open: [2.0, 4.8] },
+  { c: 16, y: FL - 40, cut: 1, open: [3.8, 6.8], peel: 5.6 },
+  { c: 20, y: FL - 48, cut: 0, open: [4.6, 8.0] },
 ];
 
 export function room(): LevelDef {

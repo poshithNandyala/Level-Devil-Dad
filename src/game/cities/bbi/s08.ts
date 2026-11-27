@@ -426,7 +426,7 @@ export const act5: Act = {
 /** ending: a trough of pakhala water before the door; a sal-leaf plate floats in it, and turns over when it
  *  reaches the door's side, so step off on to the step before it gets there */
 export const ending: Ending = {
-  space: 12,
+  space: 14,
   advice: 'A trough of pakhala before the door with a sal-leaf plate floating in it. Ride the plate across, but step off on to the door’s step before it reaches the far end: there it turns over.',
   paint: (g, D) => {
     g.pit(D - 8, D - 2);

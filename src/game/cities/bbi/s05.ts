@@ -423,7 +423,7 @@ export function tendaAct(id: string, wallRows: number, up: number, key: string, 
     },
   };
 }
-export const act6 = tendaAct('bbi05-tenda', 5, 5.0, 'bbi5t', 'A wall too high to jump, and the well’s water lift beside it. This once, start a machine on purpose: step on the bucket, ride it up, and step off on to the wall before it swings back down into the well.');
+export const act6 = tendaAct('bbi05-tenda', 5, 4.2, 'bbi5t', 'A wall too high to jump, and the well’s water lift beside it. This once, start a machine on purpose: step on the bucket, ride it up, and step off on to the wall before it swings back down into the well.');
 
 /** the mill on the bank: started on purpose, it flings you over a channel too wide to jump; stand on its far half */
 export function flingAct(id: string, key: string, advice: string): Act {
@@ -951,12 +951,12 @@ export const act14: Act = {
  *  machine starts, he walks over and stops it, the nearest running one first, and then sits by it a while to
  *  grumble. Start the water lift (as 05 taught) and he stops it under you. Start the little grinder by the well
  *  first: he goes to that, and the lift is yours; stay on it and he shoves you off it into the well. */
-export const MAMA = { decoy: 10, lift: 8, v: 45, rest: 7.5, up: 5.0 };
+export const MAMA = { decoy: 10, lift: 8, v: 45, rest: 7.5, up: 3.6 };
 export const act15: Act = {
   id: 'bbi05-mama',
   w: 26,
   advice: 'An uncle keeps the holiday: whatever machine you start, he walks over and stops it, the nearest first, then sits by it a while to grumble. Start the little grinder by the well first and step off it at once; while he deals with it, ride the water lift up the wall.',
-  cps: [],
+  cps: [5],
   paint: (g, c) => {
     g.pit(c.x + MAMA.lift + 5, c.x + MAMA.lift + 7).fill(c.x + MAMA.lift + 8, c.x + 25, 10, 14, '#');
   },

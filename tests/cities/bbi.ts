@@ -633,7 +633,7 @@ const tFix = (k: string, c0: number, n: number): Death => ({
 const lFix = (k: string): Death => ({
   what: 'step on the moment the motif lines up, and look',
   cause: 'bbi-shuttle',
-  steps: (x) => [{ hold: 'R', until: X(x + 0.2), max: 300 }, waitFor((w) => lm(w, k).bridge, 'the motif'), { hold: 'R', until: X(x + 3.3), max: 200 }, { hold: '', until: done, max: 900 }],
+  steps: (x) => [{ hold: 'R', until: X(x + 0.2), max: 300 }, waitFor((w) => lm(w, k).bridge, 'the motif'), { hold: 'R', until: X(x + 5.3), max: 300, note: 'on to the motif' }, { hold: '', until: done, max: 900 }],
 });
 const cNaive = (len: number): Death => ({
   what: 'ride the chariot from its horses',

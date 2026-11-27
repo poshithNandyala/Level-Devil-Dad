@@ -270,7 +270,8 @@ export function stagePit(w: World, c0: number, c1: number) {
   );
 }
 
-export const T07: TroupeCfg = { c0: 10, n: 8, drum: 1.5, hold: 1.3, poses: ['tower', 'wheel', 'bridge'], form: 0.35 };
+// phase: the first stop is the wheel, so the bridge comes second, within 7.5 s of the start (the replay bar)
+export const T07: TroupeCfg = { c0: 10, n: 8, drum: 1.5, hold: 1.3, poses: ['tower', 'wheel', 'bridge'], form: 0.35, phase: 2.8 };
 
 export function room(): LevelDef {
   return {
@@ -280,7 +281,7 @@ export function room(): LevelDef {
     name: 'Gotipua',
     nameEn: 'The drum and the poses',
     tagline: 'Raja nights: Gotipua boys in bright skirts and flowers hold impossible poses whenever the mardala stops.',
-    hint: 'While the drum plays, the dancers whirl: there’s nothing to stand on. When it stops they hold a pose: a tower, a wheel, then a bridge across the pit. Wait for the bridge, but don’t wait for it to finish forming: walk on the moment the drum stops, because when the drummer lifts his sticks and starts again, the pose breaks and throws whoever is on it.',
+    hint: 'While the drum plays, the dancers whirl: there’s nothing to stand on. When it stops they hold a pose: a wheel, then a bridge across the pit, then a tower. Wait for the bridge, but don’t wait for it to finish forming: walk on the moment the drum stops, because when the drummer lifts his sticks and starts again, the pose breaks and throws whoever is on it.',
     par: 60,
     map: Grid.ground(15).pit(T07.c0, T07.c0 + T07.n - 1).put(1, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
@@ -419,7 +420,8 @@ export const act8 = deepaAct('bbi07-deepa', 'bbi7l');
 /** act 9, the chain: three troupes in one long pit with no bank between them; each drummer stops as you reach his
  *  part, and each bridge only lasts the walk: no stopping anywhere */
 export const T07C: TroupeCfg[] = [
-  { c0: 4, n: 6, drum: 2.4, hold: 1.5, poses: ['tower', 'bridge'], form: 0.25 },
+  // phase: the bridge comes first (replay bar); the tower follows
+  { c0: 4, n: 6, drum: 2.4, hold: 1.5, poses: ['tower', 'bridge'], form: 0.25, phase: 3.9 },
   { c0: 10, n: 6, drum: 0.12, hold: 1.4, poses: ['bridge', 'wheel'], form: 0.2 },
   { c0: 16, n: 6, drum: 0.12, hold: 1.4, poses: ['bridge', 'tower'], form: 0.2 },
 ];
@@ -429,7 +431,7 @@ export const act9: Act = { ...troupeAct('bbi07-shrinkhala', 26, T07C, 'bbi7k', '
  *  the plinth (the shelter), not on a pose */
 export const T07I: TroupeCfg[] = [
   { c0: 4, n: 6, drum: 1.6, hold: 1.5, poses: ['bridge', 'wheel'], form: 0.3 },
-  { c0: 12, n: 7, drum: 1.8, hold: 1.5, poses: ['tower', 'bridge'], form: 0.3, phase: 0.8 },
+  { c0: 12, n: 7, drum: 1.4, hold: 1.3, poses: ['tower', 'bridge'], form: 0.3, phase: 1.2 },
 ];
 export const act10 = troupeAct('bbi07-dweepa', 22, T07I, 'bbi7i', 'A lamp plinth stands in the middle of this pit. Cross the first troupe’s bridge to it and wait there: the second troupe makes a tower before its bridge comes.');
 
@@ -662,7 +664,8 @@ export const act17: Act = {
     const st = { t0: -1 };
     onPass(w, c.X(HULA.c0 - 2.5), (w2) => (st.t0 = w2.tick));
     stagePit(w, c.x + HULA.c0, c.x + HULA.c0 + HULA.n - 1);
-    const cfg: TroupeCfg = { c0: c.x + HULA.c0, n: HULA.n, drum: HULA.drum, hold: 1, holds: HULA.holds, poses: ['bridge', 'bridge', 'bridge'], form: 0.25 };
+    // phase: the first stop you meet is the second silent one, so the cheered one comes next (replay bar)
+    const cfg: TroupeCfg = { c0: c.x + HULA.c0, n: HULA.n, drum: HULA.drum, hold: 1, holds: HULA.holds, poses: ['bridge', 'bridge', 'bridge'], form: 0.25, phase: HULA.drum + HULA.holds[0] };
     const { st: ts } = troupe(w, cfg, () => st.t0, 'bbi7hh');
     const cheered = () => ts.pose === 'bridge' && HULA.holds[((ts.stops - 1) % 3 + 3) % 3] > 1;
     // the far-end boy bows to the end of the cheer: whoever is still at that end is kicked off
