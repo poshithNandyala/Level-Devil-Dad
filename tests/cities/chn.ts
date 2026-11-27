@@ -65,9 +65,9 @@ const remount = (foot: number): Step => ({
   note: 'back up on the kerb',
 });
 /** from the kerb, step on to the escalator (a step must be under the kerb's edge), stand still, ride till past x `offAt`, walk off */
-const ride = (name: string, foot: number, offAt: number, when: (w: World) => boolean = () => true): Step[] => [
+const ride = (name: string, foot: number, offAt: number, when: (w: World) => boolean = () => true, band?: [number, number]): Step[] => [
   { hold: 'R', until: X(foot - 0.85), max: 300, note: 'to the edge of the kerb' },
-  until((w) => stepUnder(w, name) && when(w), `wait for a step under the kerb (${name})`, 1500),
+  until((w) => stepUnder(w, name, band) && when(w), `wait for a step under the kerb (${name})`, 1500),
   { hold: 'R', until: riding(name), max: 60, note: `board the ${name} escalator` },
   { hold: 'L', until: (w) => w.player.vx <= 0 || !w.player.onGround, max: 20, note: 'brake' },
   { hold: '', until: X(offAt), max: 1500, note: 'ride it up' },
@@ -245,7 +245,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'chn10-kaanal': (x) => [{ hold: 'R', until: X(x + 4.4), max: 600, note: 'walk the shimmer' }, { hold: 'R', jump: 12, ticks: 12, note: 'hop the dark well' }, { hold: 'R', until: ground, max: 300 }, ...hopAt(x + 11.4, 12, 'hop the next well'), ...hopAt(x + 17.4, 12, 'and the last'), walk(x + 25.5)],
   'chn10-keezhe': (x) => [
     ...mount(x + 8),
-    ...ride('keezhe', x + 8, x + 17.2, (w) => { const k = esc('keezhe')(w).shoppers[0]; return k.p >= 0.15 && k.p <= 0.95; }),
+    // the down escalator's step comes toward the kerb and goes under the comb: take one 24..33 px up the run, so a
+    // step-off up to 12 ticks late still lands on it
+    ...ride('keezhe', x + 8, x + 17.2, (w) => { const k = esc('keezhe')(w).shoppers[0]; return k.p >= 0.15 && k.p <= 0.95; }, [24, 33]),
     walk(x + 29.5),
   ],
   'chn10-pattarai': (x) => [...hopAt(x + 3.4, 12, 'on to the pale one'), ...hopAt(x + 10.4, 12, 'across the plaster one without stopping'), ...hopAt(x + 17.4, 12, 'on to the far pale one'), walk(x + 29.5)],

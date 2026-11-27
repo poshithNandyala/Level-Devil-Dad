@@ -308,10 +308,12 @@ export class Escalator extends Entity {
   }
 }
 
-/** a step of escalator `name` is right under the mount's edge, ready to be stepped on to */
-export const stepUnder = (w: World, name: string) => {
+/** a step of escalator `name` is right under the mount's edge, ready to be stepped on to: its left edge is within
+ *  `band` px of the foot (default -6..18). On a DOWN escalator the step is coming toward the kerb and goes under the
+ *  comb at 0, so a step-off up to 12 ticks late still lands only on a step taken from 24..33 (tests/cities/chn.ts) */
+export const stepUnder = (w: World, name: string, band: [number, number] = [-6, 18]) => {
   const e = escalatorOf(w, name);
-  return !!e && e.steps.some((s) => s.x <= e.x0 + 18 && s.x + s.w >= e.x0 + 26 && s.y >= e.y0 - 14);
+  return !!e && e.steps.some((s) => s.x >= e.x0 + band[0] && s.x <= e.x0 + band[1] && s.y >= e.y0 - 30);
 };
 export const escalatorOf = (w: World, name: string) => w.entities.find((e) => e instanceof Escalator && e.spec.name === name) as Escalator | undefined;
 
