@@ -18,6 +18,7 @@ import type { TugRope } from '../../src/game/cities/dis/tug';
 import type { Dheki } from '../../src/game/cities/dis/dheki';
 import type { TimeCard } from '../../src/game/cities/dis/card';
 import type { Stair } from '../../src/game/cities/dis/stair';
+import type { Trap, Wake } from '../../src/game/cities/dis/majuli';
 
 type Out = { move: 'L' | 'R' | ''; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
@@ -369,6 +370,10 @@ const hopsUp = (c0: number, n: number): Step[] => [
   { policy: withHold((w, h) => (w.player.onGround && wallAhead(w) ? (h(8), { move: 'R', jump: true }) : { move: 'R', jump: false })), until: and(ground, X(c0 + n - 0.6)), max: 900, note: 'up the brick steps' },
   { hold: '', ticks: 6 },
 ];
+const wakes = (w: World) => w.flags.wakes as Wake[];
+const traps = (w: World) => w.flags.traps as Trap[];
+/** on to trap i (from the bank or trap i-1) */
+const onTrap = (x: number, i: number): Step[] => hopR(x + (i ? 8.2 + (i - 1) * 4 : 5.2), 'on to the next trap', 11);
 const tug = (w: World) => (w.flags.tug as TugRope[]).find((r) => w.player.cx < r.d1 + 40)!;
 type Play = (x: number) => Step[];
 const ACT_DEATHS: { act: string; stage: string; naive: [Play, string, string]; fix?: [Play, string, string] }[] = [];
@@ -419,6 +424,8 @@ ACT_MORE.push(['dis07-dheki', 'DIS-07', (x) => [...crossDheki(x + 6, 0), ...cros
 act('dis10-talatal', 'DIS-10', [(x) => [...hopsUp(x + 2, 6), { hold: 'R', until: and(ground, X(x + 14.2)), max: 400 }, { hold: '', until: done, max: 900 }], 'dis-doba', 'stops on the step before the last to wait for it, as in 04']);
 act('dis07-card', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-gate', 'runs to the exit gate: it is shut before the card’s time'], [(x) => [{ hold: 'R', until: X(x + 25), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'dawdles on the road short of the gate: a corridor']);
 ACT_MORE.push(['dis07-card', 'DIS-07', (x) => [{ hold: 'R', until: X(x + 32), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'waits at the gate for the card: the deer cross there']);
+act('dis06-wake', 'DIS-06', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-dhal', 'runs to outrun the wake'], [(x) => [{ hold: 'R', until: X(x + 6.3), max: 600 }, { hold: '', until: (w) => wakes(w)[0].running && w.player.cx - wakes(w)[0].x < 50, max: 600 }, { hold: '', jump: 14, ticks: 14, note: 'hops the wave' }, { hold: '', until: done, max: 600 }], 'dis-bank', 'waits for the wake on the undercut bank and hops it: the landing breaks the slab off']);
+act('dis06-traps', 'DIS-06', [(x) => [...onTrap(x, 0), { hold: '', until: done, max: 900 }], 'dis-dirru', 'stands on the first trap as on a floor: it rings and is hoisted'], [(x) => [...onTrap(x, 0), { hold: '', until: (w) => traps(w)[0].state(w) === 'ring', max: 900 }, ...onTrap(x, 1), { hold: '', until: done, max: 600 }], 'dis-tip', 'hops on at the ring to the next trap: it is still slack and tips']);
 act('dis07-dheki', 'DIS-07', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-dheki', 'runs and hops the mortar while the pestle is up'], [(x) => [{ hold: 'R', until: X(x + 7), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-dheki-tail', 'waits on the tail plank: she steps off and it flies up']);
 act('dis07-bordoisila', 'DIS-07', [(x) => [{ hold: 'R', until: X(x + 8.6), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-hail', 'shelters under the granary’s roof: the hail drives in on the wind'], [(x) => [{ hold: 'R', until: X(x + 14), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-bordoisila', 'runs on past the granary to get away from it: the wind takes him into the pond']);
 act('dis10-tug', 'DIS-10', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir < 0 && p.t < 6; }, max: 2400 }, { hold: 'R', until: done, max: 900 }], 'dis-rope', 'goes on the red flag, as in 09: red is the near team now']);
@@ -804,6 +811,21 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: '', until: (w) => (w.flags.card as TimeCard[])[0].left(w) <= 200, max: 1500, note: 'sit out the card on the bench' },
     { hold: 'R', until: and(ground, X(x + 38)), max: 600, note: 'through the corridors, reaching the gate as it opens' },
   ]),
+  'dis06-wake': mark('dis06-wake', (x) => [
+    ...hopR(x + 8.9, 'over the spur into its lee', 12),
+    { hold: '', ticks: 4 },
+    { hold: '', until: (w) => wakes(w)[0].started >= 0 && !wakes(w)[0].running, max: 900, note: 'let the wake run over' },
+    { hold: 'R', until: and(ground, X(x + 33)), max: 600, note: 'walk the undercut slabs, no hopping' },
+  ]),
+  'dis06-traps': mark('dis06-traps', (x) => [
+    ...onTrap(x, 0),
+    { hold: '', until: (w) => traps(w)[1].state(w) === 'rest', max: 900, note: 'wait for the next trap to be silent and settled' },
+    ...onTrap(x, 1),
+    { hold: '', until: (w) => traps(w)[2].state(w) === 'rest', max: 900 },
+    ...onTrap(x, 2),
+    ...hopR(x + 16.2, 'on to the bank', 11),
+    { hold: 'R', until: and(ground, X(x + 22)), max: 400 },
+  ]),
   'dis07-dheki': mark('dis07-dheki', (x) => [
     ...crossDheki(x + 6, 0),
     ...crossDheki(x + 14, 1),
@@ -874,7 +896,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 };
 // acts without a mark step: tag their first step (no extra tick), so their scripted deaths can start where they start
 /** acts given a run-up in levels.ts (`runUp`): their content starts this many columns later */
-const RUNUP: Record<string, number> = { 'dis04-bhogali': 3, 'dis07-dhol': 3, 'dis08-bagori': 3, 'dis10-dhol': 3, 'dis10-bordoisila': 3 };
+const RUNUP: Record<string, number> = { 'dis07-bordoisila': 3, 'dis04-bhogali': 3, 'dis07-dhol': 3, 'dis08-bagori': 3, 'dis10-dhol': 3, 'dis10-bordoisila': 3 };
 for (const [id, f0] of Object.entries(actRoutes)) {
   const k = RUNUP[id] ?? 0;
   if (k) actRoutes[id] = (x) => f0(x + k);
@@ -916,7 +938,7 @@ const endingPolicies: Record<string, Policy> = {
       m.hold = 12;
       return { move: 'R', jump: true };
     }
-    if (pl.phase === 'wait') return go(p.cx < px(D - 37) ? 'R' : '');
+    if (pl.phase === 'wait') return go(p.cx < px(D - 33.3) ? 'R' : '');
     // keep a few steps in FRONT of her: go when she is close behind, and only on to a bar that is up
     const gap = p.cx - pl.x;
     if (ground && gap < 52) return go('R');

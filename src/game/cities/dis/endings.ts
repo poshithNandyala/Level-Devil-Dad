@@ -266,7 +266,7 @@ export const endings: Record<DisEndingKind, Ending> = {
       const D = Math.round(d.x / 16);
       river(w, D - 33, D - 3);
       // she starts behind you on the bank (DIS-03 taught "follow her"; here she sinks the path behind her)
-      const p = w.add(new Plucker(px(D - 43), px(D - 38), [], px(D - 3), 64));
+      const p = w.add(new Plucker(px(D - 43), px(D - 33.6), [], px(D - 3), 64));
       (w.flags.pluckers ??= []).push(p);
       const starts = [D - 32, D - 28, D - 24, D - 20, D - 16, D - 12, D - 8];
       const pb = w.add(new PathBars(starts, 4, p, 0, 9));
