@@ -271,8 +271,12 @@ export const act: Act = {
     g.pit(c.x + 2, c.x + 24).fill(c.x + 25, c.x + 27, 10, 14, '#');
   },
   build: (w, c) => {
-    channel(w, c.x + 2, c.x + 24, 'bbi-ara', 'water');
-    const st = { t0: -1 };
+    const st = { t0: -1, sunk: false };
+    // two ways in: a spoke sank under you (you stopped on it), or you hopped short of the next (you hurried)
+    const ch = channel(w, c.x + 2, c.x + 24, 'bbi-ara', 'water');
+    ch.o.tick = (r) => {
+      r.hazard!.cause = st.sunk ? 'bbi-ara' : 'bbi-ara-gap';
+    };
     w.flags.bbi9a = st;
     const spokes: Rig[] = [];
     for (let k = 0; k < S09.n; k++) {
@@ -287,6 +291,7 @@ export const act: Act = {
               if (st.t0 < 0 && k === 0 && r.rides(w2)) st.t0 = w2.tick;
               if (st.t0 < 0) return;
               const t = since(w2, st.t0) - (S09.first + S09.each * k);
+              if (t > 0.12 && r.rides(w2)) st.sunk = true;
               if (t > 0) r.moveTo(w2, x, Math.min(FL + 40, y0 + t * t * 900));
             },
             paint: (ctx, r) => {

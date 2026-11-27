@@ -64,6 +64,7 @@ export const causeLines: Record<string, string[]> = {
   'bbi-chakka': ['The chariot slammed into the temple wall, with you on it.', 'The wheel never turns: start the chariot from the horses, then wait on the hub.'],
   'bbi-khai': ['Into the moat, Dad.', 'The plinth is the bridge: start it, and let it slide under the hub.'],
   'bbi-ara': ['The spoke sank under you: they go in order.', 'Once you’re on spoke 1, climb steadily, one hop after another; don’t stop.'],
+  'bbi-ara-gap': ['You hopped short of the next spoke, Dad, into the water.', 'They sink one at a time, slowly enough: one hop to each spoke, never two at once.'],
   'bbi-ghoda': ['The horses’ plinths slid together, with you between.', 'Don’t touch the horses: jump right over the near one into the gap.'],
   'bbi-deepa': ['Your head hit the lamps, Dad: the wheel was too high under them.', 'Under the lamp string, wait for the bridge and walk under.'],
   'bbi-rachh': ['The beater swept the warp, with you on it.', 'Cross the moment the shuttle has gone: be off before the beater sweeps.'],

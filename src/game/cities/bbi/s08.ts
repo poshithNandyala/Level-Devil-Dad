@@ -13,8 +13,6 @@ import { Rig, box, folk } from './entities';
 import { FL, channel, since, taraScript } from './common';
 
 export interface BowlCfg {
-  /** the second pour comes from a jug held over these badi (by index), not from the right rim */
-  over?: number[];
   /** inside of the bowl: columns c0..c1 (rims at c0-1 and c1+1) */
   c0: number;
   c1: number;
@@ -108,7 +106,7 @@ export function bowl(w: World, cfg: BowlCfg, t0: () => number, key: string) {
           }
           r.s.fx = x;
           // under the second jug's stream it is pushed under
-          const under = t >= cfg.pour2[0] && t < cfg.pour2[1] && (cfg.over ? cfg.over.includes(i) : x + BW > x1 - 30);
+          const under = t >= cfg.pour2[0] && t < cfg.pour2[1] && x + BW > x1 - 30;
           if (under && !r.s.under && r.rides(w2)) w2.flags.bbi8why = 'bbi-dhara';
           r.s.under = under;
           r.setSolid(!under);
@@ -160,23 +158,7 @@ export function bowl(w: World, cfg: BowlCfg, t0: () => number, key: string) {
         jug(x0 - 8, 1, p1 ? 1.2 : t >= cfg.pour1[1] ? 0.2 : wob, p1);
         const p2 = t >= cfg.pour2[0] && t < cfg.pour2[1];
         const pre2 = t >= cfg.pour2[0] - 1.2 && t < cfg.pour2[0];
-        if (!cfg.over) jug(x1 + 8, -1, p2 ? 1.2 : pre2 ? 0.45 + 0.04 * Math.sin(w2.tick / 6) : 0.12, p2);
-        else
-          // a second jug, held high by the cook, over the badi it will push under
-          for (const i of cfg.over) {
-            const b = st.badis[i];
-            const bx = ((b.s.fx as number | undefined) ?? b.x) + BW / 2;
-            ctx.save();
-            ctx.translate(bx - 10, FL - 92);
-            ctx.rotate(p2 ? 1.0 : pre2 ? 0.35 : 0.1);
-            ctx.fillStyle = '#8D6E63';
-            ctx.beginPath();
-            ctx.ellipse(0, -8, 8, 9, 0, 0, Math.PI * 2);
-            ctx.fill();
-            box(ctx, -5, -12, 10, 2, '#E9C46A');
-            ctx.restore();
-            if (p2) box(ctx, bx - 2, FL - 86, 5, 86 + (FL - st.water) - 20, 'rgba(236,232,214,0.9)');
-          }
+        jug(x1 + 8, -1, p2 ? 1.2 : pre2 ? 0.45 + 0.04 * Math.sin(w2.tick / 6) : 0.12, p2);
       },
     }),
   );
