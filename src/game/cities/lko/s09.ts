@@ -124,9 +124,10 @@ export class Flock {
 }
 
 /** the flyer on his roof with his bamboo pole and flag */
-export function drawFlyer(w: World, f: Flyer) {
+export function drawFlyer(w: World, f: Flyer, show?: (w: World) => boolean) {
   w.add(
     new Art((ctx, w2) => {
+      if (show && !show(w2)) return;
       // the two-faced flag swings round in the wind every 1.5 s and for a moment shows its far face whole
       const swing = f.twoSided && w2.tick % 180 > 140;
       const seen = swing ? (f.seen(w2) === 'red' ? 'white' : 'red') : f.seen(w2);
@@ -240,12 +241,19 @@ function kabootarRoom(): LevelDef {
 // ================================================================ the act: the flag in the wind
 /** The flyer is behind you now, and his flag is two-sided: red one face, white the other. The birds ahead
  *  go by the face that's turned to them, the far face. What you see is the near face: the opposite. */
-export const HAWA = lay(7, [13, 12, 13, 12, 13, 12, 13, 12]);
+export const HAWA = lay(7, [13, 12, 13, 12]);
+/** the flyer who walks round in front of you for the last crossing: then the face you see is the birds' too */
+class Round extends Flyer {
+  front = false;
+  seen(w: World) {
+    return this.front ? this.order(w).c : super.seen(w);
+  }
+}
 const HAWA_END = after(HAWA);
 export const hawa: Act = {
   id: 'lko09-hawa',
   w: HAWA_END + 3,
-  advice: 'Now the flyer is behind you, and his flag has two faces, red and white. The birds ahead go by the face turned towards them, the one you can’t see: the flag you see is the opposite of their order. Read the tip where the cloth curls over: that’s their colour. Cross while you see white.',
+  advice: 'Now the flyer is behind you, and his flag has two faces, red and white. The birds ahead go by the face turned towards them, the one you can’t see: the flag you see is the opposite of their order. Cross while you see white. For the last roof he walks round in front of you: now you and the birds see the same face, so cross on red again.',
   cps: HAWA.map(([a]) => a + 0.2),
   paint: (g, c) => {
     const x = c.x;
@@ -258,10 +266,18 @@ export const hawa: Act = {
     const x = c.x;
     const rs = [...HAWA.map(([a, r, wd]) => roofOf(x + a, x + a + wd - 1, r)), roofOf(x + HAWA_END, x + HAWA_END + 2, 14)];
     roofs(w, [roofOf(x, x + 5, 14), ...rs], c.X(0), c.X(HAWA_END + 3));
-    const f = new Flyer(c.X(1) + 8, px(14), [['white', 1.6], ['red', 2.4]], c.X(2.5), true);
-    drawFlyer(w, f);
+    const f = new Round(c.X(1) + 8, px(14), [['white', 1.6], ['red', 2.4]], c.X(2.5), true);
+    // the same man, the same flag, seen from in front once he has come round on to the end roof
+    const ahead = new Flyer(c.X(HAWA_END + 1) + 8, px(14), f.plan, f.from, false);
+    drawFlyer(w, f, () => !f.front);
+    drawFlyer(w, ahead, () => f.front);
     const fl = new Flock(w, rs, f, { x: c.X(HAWA_END / 2), y: px(4) }, 'lko-hawa');
     fl.near = true;
+    w.onTick((w2) => {
+      ahead.t0 = f.t0;
+      if (!f.front && w2.player.onGround && w2.player.cx > c.X(HAWA[2][0])) f.front = true;
+      fl.z.hazard.cause = f.front ? 'lko-hawa-ulta' : 'lko-hawa';
+    });
     w.flags[c.f('k')] = { f, fl };
   },
 };
@@ -433,6 +449,7 @@ export const gumbad: Act = {
     });
     w.flags[c.f('domes')] = domes;
     // the long garden pool
+    const pools: { z: Zone; d: number }[] = [];
     for (const d of GUMBAD) {
       w.add(
         new Art((ctx, w2) => {
@@ -442,8 +459,18 @@ export const gumbad: Act = {
           for (let xx = c.X(d) + ((w2.tick >> 2) % 9); xx < c.X(d + 5) - 3; xx += 9) ctx.fillRect(xx, FLOOR + 6, 4, 1);
         }, -4),
       );
-      w.add(new Zone(c.X(d) + 1, FLOOR + 14, px(5) - 2, 30, d === GUMBAD[GUMBAD.length - 1] ? 'lko-aks' : 'lko-gumbad'));
+      const z = w.add(new Zone(c.X(d) + 1, FLOOR + 14, px(5) - 2, 30, d === GUMBAD[GUMBAD.length - 1] ? 'lko-aks' : 'lko-gumbad'));
+      if (d !== GUMBAD[GUMBAD.length - 1]) pools.push({ z, d });
     }
+    // from far back the terrace froze too high to land on; from close up it had shrunk into the pool
+    let left = 0;
+    let was = true;
+    w.onTick((w2) => {
+      const p = w2.player;
+      if (was && !p.onGround) left = p.x + p.w;
+      was = p.onGround;
+      for (const { z, d } of pools) z.hazard.cause = c.X(d + 1) - left > 46 ? 'lko-gumbad-uncha' : 'lko-gumbad';
+    });
     sign(w, x + 0.2, 10.4, 3.4, 'BAGH', 'shop', null, 'gumbad');
     sign(w, x + 18.6, 10.4, 2.6, 'AKS', 'shop', null, 'reflection');
   },

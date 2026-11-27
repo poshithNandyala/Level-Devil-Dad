@@ -162,8 +162,11 @@ export const shaam: Act = {
   id: 'lko07-shaam',
   cp0: false,
   cps: [-2],
-  w: 46,
-  advice: 'Dusk: the shops let their awnings down. Most come down behind you, but the one that shivers on its rope is next, and it may be ahead of you: stop short of it until it is down, then walk over it.',
+  w: 54,
+  advice: 'Dusk: the shops let their awnings down. Most come down behind you, but the one that shivers on its rope is next, and it may be ahead of you: stop short of it until it is down, then walk over it. Past the last awning the strollers are out under the lamps: once the awnings are behind you, don’t rush them.',
+  paint: (g, c) => {
+    g.pit(c.x + 42, c.x + 43);
+  },
   build: (w, c) => {
     const x = c.x;
     arcade(w, x, x + 45);
@@ -214,6 +217,9 @@ export const shaam: Act = {
         if (S.t >= 0 && w2.tick - S.t > (SHAAM.early.includes(k) ? SHAAM.down : 12)) z.on = false;
       });
     });
+    // past the awnings: the evening strollers, and the drain they tut you back into if you rush them
+    nala(w, x + 42, x + 43);
+    strollers(w, x + 49, c.f('ganj'), 'lko-ganj', -210);
     sign(w, x + 0.2, 10.4, 3.2, 'SHAAM', 'shop', null, 'dusk');
   },
 };
@@ -258,6 +264,7 @@ class Lamplighter {
       else set('swing');
     } else if (this.s === 'swing') {
       this.sweep.on = age > 10 && age < 50;
+      this.sweep.hazard.cause = 'lko-seedhi';
       if (age >= 50) {
         this.sweep.on = false;
         this.body.set(false);
@@ -267,6 +274,8 @@ class Lamplighter {
       if (age > 170) set('down');
     } else if (this.s === 'down') {
       this.sweep.on = age > 10 && age < 50;
+      // bringing it down is its own mistake: you went under, then stayed there
+      this.sweep.hazard.cause = 'lko-seedhi-utar';
       if (age >= 50) {
         this.sweep.on = false;
         this.body.set(true);

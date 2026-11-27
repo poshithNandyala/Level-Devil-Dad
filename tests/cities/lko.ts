@@ -574,7 +574,11 @@ const R_lko07_shaam = (id: string) => (x: number): Step[] => [
   until(awningDown(id, 3), 300, 'it is down'),
   walkTo(x + 28.4, 600, 'over it, and on to the next that shivers'),
   until(awningDown(id, 7), 300),
-  runTo(x + 45, 800),
+  runTo(x + 40, 800),
+  hop(x + 41, x + 44.6, 'over the drain'),
+  walkTo(x + 45.4, 300),
+  pause('pause before the strollers'),
+  runTo(x + 53, 400),
 ];
 actRoutes['lko07-shaam'] = R_lko07_shaam('lko07-shaam');
 actRoutes['lko07-dukaan'] = (x) => [
@@ -999,7 +1003,7 @@ fix['LKO-09'] = {
 mistakes['LKO-09'] = [
   { what: 'jumping for the reflection from the usual distance', steps: [...room09, ...R_lko09_gumbad()(actX('LKO-09', 0)).slice(0, 6), walkTo(actX('LKO-09', 0) + 19, 300), { hold: 'R', jump: 12, ticks: 60 }, until(done, 300)], cause: 'lko-aks' },
   { what: 'walking up to the white dome', steps: [...room09, { hold: 'R', until: done, max: 900 }], cause: 'lko-gumbad' },
-  { what: 'jumping for the dome from far back, where it looked big', steps: [...room09, walkTo(actX('LKO-09', 0) + 2.2, 300), { hold: 'R', jump: 14, ticks: 60 }, until(done, 300)], cause: 'lko-gumbad' },
+  { what: 'jumping for the dome from far back, where it looked big', steps: [...room09, walkTo(actX('LKO-09', 0) + 2.2, 300), { hold: 'R', jump: 14, ticks: 60 }, until(done, 300)], cause: 'lko-gumbad-uncha' },
 ];
 const DK = (i: number) => (w: World) => (w.flags['lko05-dum:kebabs'] ?? [])[i]?.stage === 1;
 mistakes['LKO-05'] = [
@@ -1055,7 +1059,7 @@ mistakes['LKO-06'].push(
 );
 mistakes['LKO-07'].push(
   { what: 'at dusk, running the row without a stop, as the old awnings taught', steps: [...room07, { hold: 'R', until: done, max: 900 }], cause: 'lko-shamiyana' },
-  { what: 'at dusk, stopping for the first shivering awning, then running the rest', steps: [...room07, walkTo(actX('LKO-07', 0) + 12.4, 400), until(awningDown('lko07-shaam', 3), 300), { hold: 'R', until: done, max: 900 }], cause: 'lko-shamiyana' },
+  { what: 'at dusk, through the awnings as they shiver, then running on now they are behind you', steps: [...room07, walkTo(actX('LKO-07', 0) + 12.4, 400), until(awningDown('lko07-shaam', 3), 300), walkTo(actX('LKO-07', 0) + 28.4, 600), until(awningDown('lko07-shaam', 7), 300), runTo(actX('LKO-07', 0) + 40, 800), hop(actX('LKO-07', 0) + 41, actX('LKO-07', 0) + 44.6), { hold: 'R', until: done, max: 900 }], cause: 'lko-ganj' },
 );
 mistakes['LKO-08'].push({ what: 'in the vault, walking on through the well arch too', steps: [...through('LKO-08', room08, 3), runTo(actX('LKO-08', 3) + 12, 400), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' });
 mistakes['LKO-10'].push(
@@ -1161,6 +1165,31 @@ mistakes['LKO-10'].push(
   { what: 'the hall door again: stopping on arrival to look again, as in the maze', steps: [...through('LKO-10', room10, 5), walkTo(actX('LKO-10', 5) + 2, 300), { hold: 'R', until: warped('lko10-thahra'), max: 200 }, until(done, 600)], cause: 'lko-tehzeeb' },
   { what: 'the hall door again: jumping where the arch moved to in the maze', steps: [...through('LKO-10', room10, 5), walkTo(actX('LKO-10', 5) + 2, 300), { hold: 'R', until: warped('lko10-thahra'), max: 200 }, runTo(actX('LKO-10', 5) + 10.5, 300), hop(actX('LKO-10', 5) + 11.6, actX('LKO-10', 5) + 15, '', 8, 16), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
 );
+
+mistakes['LKO-09'].push({
+  what: 'the flag in the wind: for the last roof, still crossing while you see white, though he is in front now',
+  steps: [
+    ...through('LKO-09', room09, 1),
+    stroll(actX('LKO-09', 1) + 3),
+    walkTo(actX('LKO-09', 1) + 4.9, 300),
+    hops(HAWA.slice(0, 3).flatMap(([a, , wd]) => [[actX('LKO-09', 1) + a + 0.6, redNow('lko09-hawa:k')] as [number, (w: World) => boolean], actX('LKO-09', 1) + a + wd - 0.9])),
+    until((w) => { const f = w.flags['lko09-hawa:k']?.f as (Fl & { seen: (w: World) => string }) | undefined; return !!f && f.seen(w) === 'white' && f.order(w).left > 1.0; }, 900),
+    hops([actX('LKO-09', 1) + HAWA[3][0] + 0.6]),
+    until(done, 600),
+  ],
+  cause: 'lko-hawa-ulta',
+});
+
+mistakes['LKO-07'].push({
+  what: 'the lamplighter: going under while he is up, then waiting there under the ladder',
+  steps: [
+    ...room07,
+    ...actRoutes0('lko07-shaam', actX('LKO-07', 0)),
+    { policy: (w) => { const l = w.flags['lko07-batti:ll1'] as LL; const p = w.player; if (l.s === 'up') return go(toward(w, l.x - 24, 1)); return go(!l.lamps.length || p.cx < l.x - 70 ? 'R' : ''); }, until: (w) => { const l = w.flags['lko07-batti:ll1'] as LL; return l.s === 'up' && Math.abs(w.player.cx - (l.x - 24)) < 14 && w.player.onGround; }, max: 1500 },
+    until(done, 600),
+  ],
+  cause: 'lko-seedhi-utar',
+});
 
 export const test: CityTests = {
   solutions,
