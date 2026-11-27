@@ -378,6 +378,12 @@ actRoutes['lko05-dum'] = (x) => {
   const cols = [...DUM.slice(1).map((d) => d + 0.1), 19.5];
   return [runTo(x + 0.5, 300), hops([x + 3, ...cols.map((c, i) => [x + c, kflat(k, i)] as [number, (w: World) => boolean])], 'wait for every squash, then hop'), runTo(x + 21, 300)];
 };
+const sizzling = (i: number) => (w: World) => !!(w.flags['lko05-ghee:heaps'] as { low: boolean }[] | undefined)?.[i]?.low;
+actRoutes['lko05-ghee'] = (x) => [
+  runTo(x + 0.6, 300),
+  hops([x + 3, [x + 6, sizzling(0)], [x + 9, sizzling(1)], [x + 12, sizzling(2)], [x + 15.6, sizzling(3)]], 'heap to heap, each time the ladle makes it sizzle'),
+  runTo(x + 17, 300),
+];
 const R_lko05_lane = (id: string) => (x: number): Step[] => [
   runTo(x + 1.2, 300),
   hops([x + 3], 'on to the end of the slab'),
@@ -1061,6 +1067,11 @@ mistakes['LKO-09'].push(
 mistakes['LKO-07'].push(
   { what: 'the evening sprinkle: walking straight on past the boys', steps: [...through('LKO-07', room07, 3), hop(actX('LKO-07', 3) + 8, actX('LKO-07', 3) + 10.5), until(done, 900)], cause: 'lko-chhidkav' },
   { what: 'the evening sprinkle: sheltering against the third pillar, as at the first two', steps: [...through('LKO-07', room07, 3), ...actRoutes0('lko07-chhidkav', actX('LKO-07', 3)).slice(0, 6), walkTo(actX('LKO-07', 3) + 27.4, 300), until(done, 900)], cause: 'lko-chhidkav-ulta' },
+);
+
+mistakes['LKO-05'].push(
+  { what: 'under the ladle: waiting on a heap for it to squash, as all along', steps: [...through('LKO-05', room05, 5), runTo(actX('LKO-05', 5) + 0.6, 300), hops([actX('LKO-05', 5) + 3]), until(done, 900)], cause: 'lko-ghee' },
+  { what: 'under the ladle: hopping on from a crusted heap', steps: [...through('LKO-05', room05, 5), runTo(actX('LKO-05', 5) + 0.6, 300), hops([actX('LKO-05', 5) + 3, actX('LKO-05', 5) + 6]), until(done, 600)], cause: 'lko-seekh' },
 );
 
 export const test: CityTests = {

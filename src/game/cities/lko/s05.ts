@@ -336,6 +336,96 @@ export const bhara: Act = {
   },
 };
 
+// ================================================================ act: ghee, the cook's ladle
+/** The cook walks his ladle of ghee down the row. These heaps are set: your weight flattens nothing. A
+ *  heap under fresh ghee sizzles down to half height for a moment, then crusts back up, glossy and full.
+ *  Hop while it sizzles (from half height the hop passes under the skewers); don't stand in the sizzle. */
+const GHEE = [3, 6, 9, 12];
+export class GheeHeap extends Galouti {
+  sizzle = -1;
+  fry = 0;
+  low = false;
+  constructor(x: number) {
+    super(x, false, 1e9, 1e9);
+  }
+  update(w: World) {
+    const here = on(w, this.solid);
+    const s = this.sizzle >= 0 ? w.tick - this.sizzle : -1;
+    const want = s >= 0 && s < 150;
+    if (want && !this.low) {
+      this.low = true;
+      this.solid.h -= 16;
+      this.move(w, 0, 16);
+      w.sfx('thud', this.x + 8, this.y);
+    } else if (!want && this.low) {
+      this.low = false;
+      this.solid.h += 16;
+      this.move(w, 0, -16);
+    }
+    this.fry = here && this.low ? this.fry + 1 : 0;
+    if (this.fry > 70) w.die('lko-ghee');
+  }
+  draw(ctx: Ctx, w: World) {
+    super.draw(ctx, w);
+    if (this.low) {
+      // sizzle lines over the frying heap
+      ctx.strokeStyle = 'rgba(255,236,179,0.9)';
+      ctx.lineWidth = 1;
+      for (let k = 0; k < 3; k++) {
+        const ph = ((w.tick + k * 7) % 20) / 20;
+        ctx.beginPath();
+        ctx.moveTo(this.x + 3 + k * 5, this.y - 1 - ph * 6);
+        ctx.lineTo(this.x + 5 + k * 5, this.y - 4 - ph * 6);
+        ctx.stroke();
+      }
+    } else if (this.sizzle >= 0) {
+      // crusted, glossy
+      ctx.fillStyle = 'rgba(255,248,225,0.6)';
+      ctx.fillRect(this.x + 3, this.y + 2, 10, 2);
+    }
+  }
+}
+export const ghee: Act = {
+  id: 'lko05-ghee',
+  w: 18,
+  cp0: false,
+  cps: [-2],
+  advice: 'The cook walks his ladle of ghee down the row. These heaps are set: your weight flattens nothing. A heap under fresh ghee sizzles down nearly flat for a moment, then crusts back up full: hop while it sizzles, and don’t stand in the sizzle.',
+  build: (w, c) => {
+    const x = c.x;
+    tawa(w, x + 2, x + 13);
+    seekhRack(w, x + 2, x + 13, 72);
+    const heaps = GHEE.map((d) => w.add(new GheeHeap(px(x + d))));
+    w.flags[c.f('heaps')] = heaps;
+    const L = { x: c.X(0), go: false };
+    w.flags[c.f('ladle')] = L;
+    w.onTick((w2) => {
+      if (!L.go && w2.player.cx > c.X(1)) L.go = true;
+      // he ladles at your pace: never more than a step ahead of you
+      if (L.go && L.x < c.X(17) && L.x < w2.player.cx + 12) L.x += 0.6;
+      for (const h of heaps) if (h.sizzle < 0 && L.x >= h.x + 8) h.sizzle = w2.tick;
+    });
+    w.add(
+      new Art((ctx) => {
+        // the cook's long ladle, dripping ghee as it goes
+        if (!L.go) return;
+        ctx.strokeStyle = '#6D4C41';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(L.x, FLOOR - 26);
+        ctx.lineTo(L.x + 14, FLOOR - 60);
+        ctx.stroke();
+        ctx.fillStyle = '#FFD54F';
+        ctx.beginPath();
+        ctx.ellipse(L.x, FLOOR - 25, 5, 3, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }, 3),
+    );
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Munh mein ghul jaayega! | It’ll melt in your mouth!', 2.2));
+    sign(w, x + 0.2, 10.4, 3, 'GHEE', 'shop', null, 'chhan chhan');
+  },
+};
+
 // ================================================================ the door: the sheermal in the tandoor
 /** The door is beyond the baker's tandoor, too wide to jump. When you reach its edge he slaps a sheermal
  *  on to the tandoor's inside wall: a ledge, below the rim, for as long as the bread is raw. */
@@ -479,5 +569,5 @@ export const dum: Act = {
   },
 };
 
-export const s05 = { room: galoutiRoom, acts: [tawa2, lane, ulta, bhara, dum] };
+export const s05 = { room: galoutiRoom, acts: [tawa2, lane, ulta, bhara, dum, ghee] };
 export const meta05 = { family: 'flatten-platforms-build-low-lane', betrayals: ['flatten-lane'], ending: 'lko-sheermal' } as StageMeta;
