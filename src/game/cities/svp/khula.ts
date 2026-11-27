@@ -8,7 +8,7 @@ import { Fx, Hurt, Plat, FLOOR, px, TAU, type Ctx } from './kit';
 
 export const DOWN = 420;
 export const WARN = 90;
-export const UP = 540;
+export const UP = 660;
 export const LIFT = 90;
 const HIGH = 96;
 const CYCLE = DOWN + WARN + LIFT + UP + LIFT;
@@ -128,19 +128,19 @@ export class LiftBridge extends Entity {
   }
 }
 
-/** SVP-07's fourth act: three lift bridges across the harbour channels, a plain stretch between each */
+/** SVP-07's fourth act: five lift bridges across the harbour channels, a plain stretch between each */
 export const khula: Act = {
   id: 'svp07-khula',
-  w: 66,
+  w: 106,
   advice: 'The harbour road crosses its channels on lift bridges. When a ship wants to pass the lights on the posts flash and the bell rings, and the deck lifts clear of the road, with whatever is on it. Cross while the lights are green, and not once they flash: wait on the road for the green.',
-  cps: [24, 46],
+  cps: [24, 44, 64, 84],
   paint: (g, c) => {
     const x = c.x;
-    for (const s of [6, 26, 46]) g.pit(x + s, x + s + 8);
+    for (const s of [6, 26, 46, 66, 86]) g.pit(x + s, x + s + 8);
   },
   build: (w, c) => {
     const x = c.x;
-    [6, 26, 46].forEach((s, i) => {
+    [6, 26, 46, 66, 86].forEach((s, i) => {
       const b = new LiftBridge(px(x + s), px(x + s + 9), px(x + s - 6), i * 170).install(w);
       (w.flags.bridges ??= []).push(b);
     });

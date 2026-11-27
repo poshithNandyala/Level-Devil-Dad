@@ -453,7 +453,7 @@ const lift = (i: number) => (w: World) => (w.flags.lifts as Lift[])[i];
 /** on to lift `i` and ride to its last stop (where `until` ends the wait) */
 const liftRide = (i: number, boardTx: number): Step[] => [
   { hold: 'R', until: (w) => w.standing(lift(i)(w).plat.solid) && w.player.cx > lift(i)(w).x + 20, max: 900, note: 'on to the lift' },
-  { hold: '', until: (w) => lift(i)(w).state === 'stop' && lift(i)(w).at === 1, max: 6000, note: 'ride it past the first stop to the last' },
+  { hold: '', until: (w) => lift(i)(w).state === 'stop', max: 6000, note: 'ride it to its floor' },
 ];
 // ------------------------------------------------------------------ SVP-07 act 4: the lift bridges
 const bridge = (i: number) => (w: World) => (w.flags.bridges as LiftBridge[])[i];
@@ -529,14 +529,15 @@ function floatsStep(k: number, lastTx: number, note: string): Step {
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'svp07-uthao': (x) => [
     ...liftRide(0, x + 8),
-    { hold: 'R', until: and(ground, X(x + 16)), max: 600, note: 'off on to the roof' },
+    ...liftRide(1, x + 18),
     { hold: 'R', until: (w) => w.standing(((w.flags.belts ?? []) as { plat: { solid: unknown } }[])[0].plat.solid as never), max: 600, note: 'along the roof to the moving walkway' },
     { hold: 'R', jump: 15, ticks: 15, note: 'jump from the walkway: it carries you over the gap' },
-    ...liftRide(1, x + 28),
-    { hold: 'R', until: and(ground, X(x + 38)), max: 600, note: 'off on to the road' },
-    { hold: 'R', until: and(ground, X(x + 44)), max: 600 },
+    ...liftRide(2, x + 39),
+    ...liftRide(3, x + 51),
+    { hold: 'R', until: and(ground, X(x + 56)), max: 600, note: 'off on to the road' },
+    { hold: 'R', until: and(ground, X(x + 57.5)), max: 600 },
   ],
-  'svp07-khula': (x) => [...bridgeCross(0, x + 6), ...bridgeCross(1, x + 26), ...bridgeCross(2, x + 46), { hold: 'R', until: and(ground, X(x + 64)), max: 600 }],
+  'svp07-khula': (x) => [...bridgeCross(0, x + 6), ...bridgeCross(1, x + 26), ...bridgeCross(2, x + 46), ...bridgeCross(3, x + 66), ...bridgeCross(4, x + 86), { hold: 'R', until: and(ground, X(x + 104)), max: 600 }],
   'svp09-hauz': (x) => [...poolCross(0, x + 6), ...poolCross(1, x + 26), ...poolCross(2, x + 46), { hold: 'R', until: and(ground, X(x + 64)), max: 600 }],
   'svp08-bazaar': (x) => [...stallCross(0, x + 4), ...stallCross(1, x + 24), ...stallCross(2, x + 44), { hold: 'R', until: and(ground, X(x + 62)), max: 600 }],
   'svp06-lehar': (x) => [
@@ -703,12 +704,12 @@ actDeath('SVP-07', 'svp07-uthao', 'ride the lift up and stay aboard past the las
   { hold: '', until: (w) => w.state !== 'play', max: 6000, note: 'stay aboard' },
 ]);
 actDeath('SVP-07', 'svp07-uthao', 'step on the walkway and just stand there', 'svp-uthao', (x) => [
-  ...actRoutes['svp07-uthao'](x).slice(0, 4),
+  ...actRoutes['svp07-uthao'](x).slice(0, 5),
   { hold: '', until: (w) => w.state !== 'play', max: 900, note: 'it carries you to the edge of the gap, and over' },
 ]);
 actDeath('SVP-07', 'svp07-uthao', 'take the roof lift down and stay aboard past the ground', 'svp-uthao', (x) => [
   ...actRoutes['svp07-uthao'](x).slice(0, 6),
-  { hold: 'R', until: (w) => w.standing(lift(1)(w).plat.solid) && w.player.cx > lift(1)(w).x + 20, max: 900 },
+  { hold: 'R', until: (w) => w.standing(lift(2)(w).plat.solid) && w.player.cx > lift(2)(w).x + 20, max: 900 },
   { hold: '', until: (w) => w.state !== 'play', max: 6000, note: 'stay aboard' },
 ]);
 actDeath('SVP-07', 'svp07-khula', 'run across the bridge without looking at the lights', 'svp-khula', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 1200, note: 'across the deck' }]);

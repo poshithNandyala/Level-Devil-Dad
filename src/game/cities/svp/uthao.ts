@@ -8,9 +8,9 @@ import { DT } from '../../constants';
 import type { Act } from '../../levels/acts';
 import { Fx, Hurt, Plat, FLOOR, px, type Ctx } from './kit';
 
-const SPEED = 8;
+const SPEED = 16;
 const STOP1 = 240;
-const STOP2 = 300;
+const STOP2 = 240;
 const OVER = 28;
 
 export class Lift extends Entity {
@@ -28,6 +28,7 @@ export class Lift extends Entity {
     readonly y0: number,
     readonly stops: number[],
     readonly wd = 64,
+    readonly speed = SPEED,
   ) {
     super();
     this.layer = 1;
@@ -68,7 +69,7 @@ export class Lift extends Entity {
       } else this.still = 0;
     } else if (this.state === 'go') {
       const d = this.stops[this.at] - this.y;
-      const step = SPEED * DT;
+      const step = this.speed * DT;
       if (Math.abs(d) <= step) {
         this.y = this.stops[this.at];
         this.state = 'stop';
@@ -180,28 +181,33 @@ export class Walkway extends Entity {
   }
 }
 
-/** SVP-07's fifth act: up one lift to the godown roof, over a gap on a moving walkway, and down another lift */
+/** SVP-07's fifth act: up two lifts to the godown roof, over a gap on a moving walkway, and down two more */
 export const uthao: Act = {
   id: 'svp07-uthao',
-  w: 46,
-  advice: 'The godown lifts, in open shafts: one goes up to the roof, and another takes you down the far side. They go slowly, and at each floor the gate is open for a few seconds. The first stop has a balcony that goes nowhere. Stay aboard until the last stop, and step off there: if you stay on after it the lift overruns the shaft. On the roof a moving walkway carries you to the edge of a gap too wide to jump from standing: jump from the walkway, and what it carries stays with you in the air.',
-  cps: [13],
+  w: 58,
+  advice: 'The godown lifts, in open shafts: two go up to the roof in turn and two take you down the far side, each with a ledge between. Each stops at its floor for a few seconds with the gate open. Step off then: if you stay aboard the lift overruns the shaft. On the roof a moving walkway carries you to the edge of a gap too wide to jump from standing: jump from the walkway, and what it carries stays with you in the air.',
+  cps: [13, 22, 47],
   paint: (g, c) => {
     const x = c.x;
+    // up: lift A (pit under it) to the first ledge, lift B to the roof
     g.pit(x + 7, x + 10);
-    g.fill(x + 3, x + 6, 12, 12, '#');
-    g.fill(x + 11, x + 15, 7, 14, '#');
-    g.pit(x + 21, x + 26);
-    g.pit(x + 27, x + 33);
-    g.fill(x + 34, x + 36, 12, 12, '#');
+    g.fill(x + 11, x + 16, 11, 14, '#');
+    g.fill(x + 21, x + 26, 7, 14, '#');
+    // over the roof: walkway on x+27..31, gap, then lift C (pit under it) down to the second ledge, lift D down to the road
+    g.pit(x + 32, x + 44);
+    g.fill(x + 45, x + 49, 11, 14, '#');
+    g.pit(x + 50, x + 53);
   },
   build: (w, c) => {
     const x = c.x;
-    const up = new Lift(px(x + 7), FLOOR, [FLOOR - 48, FLOOR - 128]).install(w);
-    const down = new Lift(px(x + 27), FLOOR - 128, [FLOOR - 48, FLOOR], px(7)).install(w);
+    const a = new Lift(px(x + 7), FLOOR, [FLOOR - 64]).install(w);
+    const b = new Lift(px(x + 17), FLOOR - 64, [FLOOR - 128]).install(w);
+    const d = new Lift(px(x + 38), FLOOR - 128, [FLOOR - 64], px(7)).install(w);
+    const e = new Lift(px(x + 50), FLOOR - 64, [FLOOR]).install(w);
     w.add(new Hurt(px(x + 7), FLOOR + 16, px(4), 40, 'svp-uthao', null));
-    w.add(new Hurt(px(x + 21), FLOOR + 16, px(13), 40, 'svp-uthao', null));
-    (w.flags.lifts ??= []).push(up, down);
-    (w.flags.belts ??= []).push(new Walkway(px(x + 16), FLOOR - 128, px(5), 260).install(w));
+    w.add(new Hurt(px(x + 32), FLOOR + 16, px(13), 40, 'svp-uthao', null));
+    w.add(new Hurt(px(x + 50), FLOOR + 16, px(4), 40, 'svp-uthao', null));
+    (w.flags.lifts ??= []).push(a, b, d, e);
+    (w.flags.belts ??= []).push(new Walkway(px(x + 27), FLOOR - 128, px(5), 320).install(w));
   },
 };
