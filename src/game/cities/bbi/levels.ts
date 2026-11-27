@@ -6,7 +6,7 @@ import { tourLevel, meta01 } from './s01';
 import { room as room02, act as act02, act2 as act02b, act4 as act02d, meta02 } from './s02';
 import { room as room03, act as act03, act2 as act03b, meta03 } from './s03';
 import { room as room04, act as act04, meta04 } from './s04';
-import { room as room05, act1 as act05a, act2 as act05b, act3 as act05c, act6 as act05f, act8 as act05h, act9 as act05i, act11 as act05k, act12 as act05l, act13 as act05m, meta05 } from './s05';
+import { room as room05, act1 as act05a, act2 as act05b, act3 as act05c, act6 as act05f, act8 as act05h, act9 as act05i, act11 as act05k, act12 as act05l, act13 as act05m, act14 as act05n, meta05 } from './s05';
 import { room as room06, act as act06, act6 as act06f, act7 as act06g, act9 as act06i, act11 as act06k, meta06 } from './s06';
 import { room as room07, act1 as act07a, act2 as act07b, act8 as act07h, act11 as act07k, act12 as act07l, act13 as act07m, act9 as act07i, act10 as act07j, meta07 } from './s07';
 import { room as room08, act as act08, act5 as act08e, act6 as act08f, act7 as act08g, meta08 } from './s08';
@@ -33,7 +33,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: room02(), acts: [lead(act02), lead(act02b), lead(act02d)], twist: 'bbi-turf-roll', par: 35, shape: 'short', meta: meta02 }),
   longStage({ base: room03(), acts: [lead(act03), lead(act03b)], twist: 'bbi-lantern-drop', par: 32, shape: 'short', meta: meta03 }),
   longStage({ base: room04(), acts: [lead(act04)], twist: 'bbi-curl-stair', par: 36, shape: 'short', meta: meta04 }),
-  longStage({ base: room05(), acts: [lead(act05a), lead(act05b), lead(act05f), lead(act05l), lead(act05c), lead(act05m), lead(act05k), lead(act05i), lead(act05h)], twist: 'bbi-behind-step', par: 62, shape: 'wtf', meta: meta05 }),
+  longStage({ base: room05(), acts: [lead(act05a), lead(act05b), lead(act05f), lead(act05l), lead(act05c), lead(act05m), lead(act05k), lead(act05i), lead(act05n), lead(act05h)], twist: 'bbi-behind-step', par: 62, shape: 'wtf', meta: meta05 }),
   longStage({ base: room06(), acts: [lead(act06), lead(act06f), lead(act06i), lead(act06k), lead(act06g)], twist: 'bbi-motif-door', par: 46, shape: 'long', meta: meta06 }),
   longStage({ base: room07(), acts: [lead(act07a), lead(act07h), lead(act07b), lead(act07m), lead(act07k), lead(act07l), lead(act07i), lead(act07j)], twist: 'bbi-pose-gate', par: 78, shape: 'marathon', lives: 'act', meta: meta07 }),
   longStage({ base: room08(), acts: [lead(act08), lead(act08f), lead(act08g), lead(act08e)], twist: 'bbi-leaf-plate', par: 52, shape: 'wtf', meta: meta08 }),

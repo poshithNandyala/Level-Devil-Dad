@@ -809,6 +809,87 @@ export const act13: Act = {
   },
 };
 
+/** act 14, the belt (IDEAS C6, idle-world family): the hand mill on the bank shares one drive belt with the cane
+ *  crusher across the channel. Start the mill to be flung over (as 05 taught) and the crusher's rollers turn too,
+ *  right where you land. Knock the belt off its pulley first (it hangs over the bank: jump into it), and the mill
+ *  spins alone. */
+export const GANNA = { pulley: 0, crush: [15, 16] as [number, number], run: 4.0 };
+export const act14: Act = {
+  id: 'bbi05-ganna',
+  w: 22,
+  advice: 'The mill shares its belt with the cane crusher over the channel: start the mill and the crusher’s rollers turn too, right where you land. Jump up into the belt on its pulley first to knock it off, then start the mill on its far half.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + 6, c.x + 12).pit(c.x + GANNA.crush[0], c.x + GANNA.crush[1]);
+  },
+  build: (w, c) => {
+    const key = 'bbi5gm';
+    flingAct('bbi05-ganna', key, '').build!(w, c);
+    village(w, c.x + 18, c.x + 22);
+    const mill = w.flags[key] as { started: number };
+    const st = { belt: true, runT: -1 };
+    w.flags.bbi5gn = st;
+    // the pulley over the bank: jump up into the belt and it comes off
+    w.add(
+      new Rig(c.X(GANNA.pulley), FL - 40, 20, 6, {
+        layer: 3,
+        tick: (r, w2) => {
+          const p = w2.player;
+          if (st.belt && p.x < r.x + r.w && p.x + p.w > r.x && p.y < r.y + r.h && p.y + p.h > r.y) st.belt = false;
+          if (mill.started >= 0 && st.runT < 0 && st.belt) st.runT = w2.tick;
+        },
+        paint: (ctx, r) => {
+          box(ctx, r.x + 8, r.y, 4, FL - r.y, '#6E4A2E');
+          ctx.strokeStyle = '#3B2416';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(r.x + 10, r.y + 3, 6, 0, Math.PI * 2);
+          ctx.stroke();
+          if (st.belt) {
+            // the belt: from the pulley, over the mill, across to the crusher
+            ctx.beginPath();
+            ctx.moveTo(r.x + 10, r.y - 3);
+            ctx.lineTo(c.X(GANNA.crush[0]) + 16, FL - 30);
+            ctx.stroke();
+          } else box(ctx, r.x + 2, FL - 2, 16, 2, '#3B2416');
+        },
+      }),
+    );
+    // the crusher's rollers, in a narrow pit: a floor while still, a mangle while the belt drives them
+    const running = (w2: World) => st.runT >= 0 && since(w2, st.runT) < GANNA.run;
+    w.add(
+      new Rig(c.X(GANNA.crush[0]), FL, px(GANNA.crush[1] - GANNA.crush[0] + 1), 6, {
+        solid: true,
+        layer: 3,
+        tick: (r, w2) => {
+          r.setSolid(!running(w2));
+          // once you're over the channel, the mill's blame stays here, not on the next channel down the lane
+          const p = w2.player;
+          if (p.onGround && p.x > c.X(13) && p.x < c.X(22)) w2.flags.bbi5blame = undefined;
+        },
+        paint: (ctx, r, w2) => {
+          const a = running(w2) ? w2.tick / 4 : 0;
+          for (let i = 0; i < 2; i++) {
+            ctx.fillStyle = '#7A6A58';
+            ctx.beginPath();
+            ctx.arc(r.x + 8 + i * 16, r.y + 4, 7, 0, Math.PI * 2);
+            ctx.fill();
+            box(ctx, r.x + 8 + i * 16 + Math.cos(a + i) * 5 - 1, r.y + 4 + Math.sin(a + i) * 5 - 1, 2, 2, '#3B2416');
+          }
+        },
+      }),
+    );
+    w.add(
+      new Rig(c.X(GANNA.crush[0]), FL - 4, px(GANNA.crush[1] - GANNA.crush[0] + 1), 40, {
+        cause: 'bbi-ganna',
+        inset: 2,
+        layer: 4,
+        live: (_r, w2) => running(w2),
+      }),
+    );
+  },
+};
+
 /** ending: the house with podapitha on the verandah step; the front door up there is locked. The way in is
  *  below, behind the step. On the verandah, the grinding stone's roller starts when you land by it. */
 export const ending: Ending = {

@@ -22,6 +22,7 @@ export const causeLines: Record<string, string[]> = {
   'bbi-pani': ['You stopped it low, Dad, and the other end tipped its bucket on you.', 'Step on the plate only when the stone is right up at its top.'],
   'bbi-ghera': ['You waited too long, Dad: they only let “it” through for a moment.', 'Tagged? Walk straight through at once.'],
   'bbi-dooba': ['You waited too long on that spoke, Dad: it went back under.', 'Wait only until the next spoke is up, then go at once.'],
+  'bbi-ganna': ['The cane crusher, Dad! The mill’s belt drives it too.', 'Knock the belt off its pulley first: jump up into it on the bank.'],
   'bbi-rangapani': ['Into the dye gutter, Dad: that parasol was shut.', 'A parasol only opens when a customer comes to its shop. Wait for it.'],
   'bbi-silk': ['The silk is slippery: you slid off the edge.', 'Stand on the cut-out sewn on top, and nowhere else.'],
   'bbi-peeled': ['He sold the cut-out you were standing on!', 'On the third parasol, don’t wait: go on as soon as the next one opens.'],
