@@ -410,8 +410,8 @@ export const doosra: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    const crowd = new Crowd(px(x + 42), px(x + 13), 150, 72);
-    const hall = new Hall([{ x: px(x + 4), w: px(3), h: 16 }, { x: px(x + 7), w: px(5), h: 24 }], 600, crowd, [px(x + 4), px(x + 12)], 240, [px(x + 38) + 8, px(x + 39) + 8, px(x + 40) + 8, px(x + 41) + 8]).install(w);
+    const crowd = new Crowd(px(x + 42), px(x + 13), 210, 72);
+    const hall = new Hall([{ x: px(x + 4), w: px(3), h: 16 }, { x: px(x + 7), w: px(5), h: 24 }], 300, crowd, [px(x + 4), px(x + 12)], 130, [px(x + 38) + 8, px(x + 39) + 8, px(x + 40) + 8, px(x + 41) + 8]).install(w);
     (w.flags.halls ??= []).push(hall);
     trenchArt(w, x + 24, x + 26);
     w.add(
@@ -435,9 +435,9 @@ export const teesra: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    const back = new Crowd(px(x + 13), px(x + 44), 150, 72);
-    const crowd = new Crowd(px(x + 42), px(x + 13), 150, 72);
-    const hall = new Hall([{ x: px(x + 4), w: px(3), h: 24 }, { x: px(x + 7), w: px(5), h: 16 }], 300, crowd, [px(x + 4), px(x + 12)], 0, [px(x + 38) + 8, px(x + 39) + 8, px(x + 40) + 8, px(x + 41) + 8]).install(w);
+    const back = new Crowd(px(x + 13), px(x + 44), 250, 72);
+    const crowd = new Crowd(px(x + 42), px(x + 13), 250, 72);
+    const hall = new Hall([{ x: px(x + 4), w: px(3), h: 24 }, { x: px(x + 7), w: px(5), h: 16 }], 180, crowd, [px(x + 4), px(x + 12)], 0, [px(x + 38) + 8, px(x + 39) + 8, px(x + 40) + 8, px(x + 41) + 8]).install(w);
     w.add(back);
     w.add(back.hurt);
     crowd.onArrive = (w2) => w2.after(1.6, () => back.go());
