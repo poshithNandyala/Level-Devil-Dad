@@ -1,6 +1,7 @@
 // CCU-08: adda on the rok. Old men sit on the raised brick platform outside an old house, arguing over tea.
 // Stand still beside them and you've joined the adda: you can't get up until the tea seller comes by. And
 // in the morning the maid sloshes a bucket of water along the rok from the door, washing it.
+import { Solid } from '../../body';
 import { Entity, type Hazard, type World } from '../../world';
 import { DT, TILE } from '../../constants';
 import { person } from '../../levels/endkit';
@@ -201,5 +202,47 @@ export class House extends Entity {
     ctx.moveTo(this.x0, ROK - 78);
     ctx.lineTo(this.x1, ROK - 78);
     ctx.stroke();
+  }
+}
+
+/** CCU-08: the crowd round the phuchka man. A wall of backs; it lets through only someone who has just eaten
+ *  (for `open` s after), and whoever climbs on to it, or is still in it when it closes, is shoved off the rok */
+export class Crowd extends Entity {
+  solid: Solid;
+  openUntil = -1;
+  constructor(
+    readonly x: number,
+    readonly wd: number,
+  ) {
+    super();
+    this.layer = 1;
+    this.solid = new Solid(x, ROK - 48, wd, 48);
+    this.solid.velX = 0;
+  }
+  open(w: World, s: number) {
+    this.openUntil = w.tick + Math.round(s * 120);
+    this.solid.collidable = false;
+  }
+  update(w: World) {
+    const p = w.player;
+    const inside = p.x + p.w > this.x && p.x < this.x + this.wd && p.y + p.h > ROK - 48 && p.y < ROK;
+    if (!this.solid.collidable && w.tick >= this.openUntil) {
+      if (inside) return w.die('ccu-bhid');
+      this.solid.collidable = true;
+    }
+    if (this.solid.collidable && p.onGround && p.isRiding(this.solid)) w.die('ccu-bhid');
+  }
+  draw(ctx: CanvasRenderingContext2D, w: World) {
+    const open = !this.solid.collidable;
+    for (let k = 0; k < this.wd / 8; k++) {
+      const x = this.x + k * 8 + (open ? (k % 2 ? 6 : -6) : 0);
+      ctx.fillStyle = ['#7B4B3A', '#3F5E8C', '#8C6D3F', '#5E7D4A'][k % 4];
+      ctx.fillRect(x, ROK - 34, 7, 34);
+      ctx.fillStyle = '#5D4037';
+      ctx.beginPath();
+      ctx.arc(x + 3.5, ROK - 40, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    void w;
   }
 }

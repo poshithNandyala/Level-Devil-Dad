@@ -15,7 +15,7 @@ import { NALA } from './endings';
 import { Customer, Muck, Stack, Stall } from './books';
 import { Junction, OtherTram, Points, Tram } from './tram';
 import { BookPorter, ChaiBoard, Girders, Pointer, Porter, Road, SHORT, TALL } from './porters';
-import { Adda, House, TeaSeller, Wash } from './adda';
+import { Adda, Crowd, House, TeaSeller, Wash } from './adda';
 import { ClothPanel, Decorator, DhakFrame, Lowered, Skeleton, Stakes } from './pandal';
 import { Tin } from './muri';
 import { Kumir } from './kumir';
@@ -473,6 +473,50 @@ const rok: Act = {
     );
     w.flags.addas = [...(w.flags.addas ?? []), a1, a2];
     w.flags.rokWash = wash;
+  },
+};
+
+
+/** CCU-08 act (the bible's phuchka concept): stop in front of the phuchka man and he hands you one, and you
+ *  eat it: you're going nowhere for a moment. The crowd round him lets through only someone who has just
+ *  eaten. So stop and eat, but only just after the maid's water has gone by */
+const phuchka: Act = {
+  id: 'ccu08-phuchka',
+  w: 32,
+  cp0: false,
+  cps: [3.5],
+  advice: 'The phuchka man, and a crowd round him you can’t climb: they only let through someone who has just eaten. Stop in front of him and he hands you one, and you’re eating for a moment, going nowhere. So watch the maid’s door: let her water go by first, then stop and eat, and go straight through the gap.',
+  paint: (g, c) => {
+    g.pit(c.x, c.x + 31).fill(c.x, c.x + 31, 13, 14, '#');
+  },
+  build: (w, c) => {
+    w.add(new House(c.X(0), c.X(32)));
+    khod(w, c.x, c.x + 32);
+    const stall = w.add(new Adda(c.X(8), c.X(11), 1, 0.35));
+    const crowd = w.add(new Crowd(c.X(12), px(2)));
+    w.when(
+      () => stall.held,
+      (w2) =>
+        w2.after(2.5, () => {
+          stall.release(w2);
+          crowd.open(w2, 1.4);
+        }),
+      false,
+    );
+    const wash = w.add(new Wash(c.X(30), c.X(8)));
+    let beat = -1;
+    w.add(
+      new (class extends Entity {
+        update(w2: World) {
+          if (beat < 0 && w2.player.cx > c.X(1)) beat = w2.tick + 96;
+          if (beat >= 0 && w2.tick >= beat && (w2.tick - beat) % 840 === 0) wash.throw(w2);
+        }
+      })(),
+    );
+    sign(w, c.x + 7.6, 8.4, 3.4, 'PHUCHKA', 'shop', null, 'tok-jhal');
+    // her water is the one to hop from here on
+    onPass(w, c.X(0), (w2) => (w2.flags.rokWash = wash));
+    w.flags.phuchka = { stall, crowd, wash };
   },
 };
 
@@ -1270,7 +1314,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: kumartuliRoom(), par: 55, acts: [uthon, lane, pratima, ghat, khor], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
   longStage({ base: poleRoom(), par: 85, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 120, acts: [girder, dui, sandhya, ulto, jowar, baan, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
-  longStage({ base: addaRoom(), par: 46, acts: [rok, tokta, gali], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
+  longStage({ base: addaRoom(), par: 46, acts: [rok, tokta, gali, phuchka], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
   longStage({ base: pandalRoom(), par: 56, acts: [sinri, toran, chala, dhak, uthan, uthan2], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
   longStage({ base: finaleRoom(), par: 94, acts: [bus10, tram10, chhad, rok10, kumor10, khola, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];

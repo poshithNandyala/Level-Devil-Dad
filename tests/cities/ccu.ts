@@ -499,6 +499,21 @@ function liftRoute(id: string, x: number, bad?: 'early' | 'stay'): Step[] {
   ];
 }
 
+// ------------------------------------------------------------------ CCU-08 the phuchka man
+const phuchkaRoute = (x: number, bad?: 'eat' | 'climb'): Step[] => {
+  const P = (w: World) => w.flags.phuchka as { stall: Adda; crowd: { solid: { collidable: boolean } }; wash: Wash };
+  if (bad === 'eat') return [walk(x + 9.5, 'stop in front of him at once'), { hold: '', until: (w) => P(w).stall.releasedAt > 0, max: 900 }, { hold: 'R', until: done, max: 900, note: 'and straight on' }];
+  if (bad === 'climb') return [walk(x + 9.2), { hold: 'R', jump: 34, ticks: 34, note: 'never stop: up over the crowd' }, { hold: 'R', until: done, max: 300 }];
+  return [
+    walk(x + 5.6),
+    { hold: '', until: (w) => P(w).wash.openT > 0 && P(w).wash.waves.length === 0 && w.tick - P(w).wash.openT > 90, max: 1500, note: 'wait for the maid’s water to go by' },
+    walk(x + 9.5, 'then stop in front of him'),
+    { hold: '', until: (w) => P(w).stall.releasedAt > 0, max: 900, note: 'eat it' },
+    { hold: 'R', until: X(x + 15), max: 200, note: 'straight through the gap in the crowd' },
+    { policy: hopWater(), until: and(ground, X(x + 31)), max: 1800, note: 'hopping her next sheet of water' },
+  ];
+};
+
 // ------------------------------------------------------------------ CCU-05 the straw yard
 const khorRoute = (x: number, bad?: 'straw' | 'wait'): Step[] => {
   const S = (k: number) => (w: World) => (w.flags.khor as Straw[])[k].clay;
@@ -787,6 +802,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     walk(x + 29.4),
   ],
   'ccu07-dui': (x) => duiRoute(x),
+  'ccu08-phuchka': (x) => phuchkaRoute(x),
   'ccu08-tokta': (x) => [
     walk(x - 1.8),
     steerHop(px(x + 0.8), 12, 'up on the broken rok'),
@@ -870,7 +886,10 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 // CCU-08's broken lane: the obvious plays there
 {
   const to110 = (): Step[] => [...addaRoute(), ...actRoutes['ccu08-rok'](32), ...actRoutes['ccu08-tokta'](76)];
+  const to144 = (): Step[] => [...to110(), ...actRoutes['ccu08-gali'](110)];
   mistakes['CCU-08'].push(
+    { what: 'stopping to eat as soon as you reach the phuchka man', steps: [...to144(), ...phuchkaRoute(144, 'eat')], cause: 'ccu-dhowa' },
+    { what: 'climbing over the crowd round the phuchka man', steps: [...to144(), ...phuchkaRoute(144, 'climb')], cause: 'ccu-bhid' },
     { what: 'jumping the first break in the lane', steps: [...to110(), walk(110 + 11.8), { hold: 'R', jump: 30, ticks: 40, long: true, note: 'a long jump at the break' }, { hold: 'R', until: done, max: 300 }], cause: 'ccu-khod' },
     { what: 'sitting on after the tea seller has gone by', steps: [...to110(), walk(110 + 9), { hold: '', until: (w) => (w.flags['ccu08-gali'] as RokSeg[])[0].a.releasedAt > 0, max: 3000 }, walk(110 + 12.05), { hold: '', ticks: 720, note: 'wait at the break for a while' }, { hold: 'R', until: done, max: 600 }], cause: 'ccu-khod' },
   );
