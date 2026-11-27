@@ -234,7 +234,7 @@ export const hawa: Act = {
   id: 'lko09-hawa',
   w: 58,
   advice: 'Now the flyer is behind you, and his flag has two faces, red and white. The birds ahead go by the face turned towards them, the one you can’t see: the flag you see is the opposite of their order. Read the tip where the cloth curls over: that’s their colour. Cross while you see white.',
-  cps: [9.5],
+  cps: [9.5, 20.5, 32.5, 44.5],
   paint: (g, c) => {
     const x = c.x;
     g.pit(x + 0, x + 57, 15);
@@ -250,6 +250,70 @@ export const hawa: Act = {
     drawFlyer(w, f);
     const fl = new Flock(w, rs, f, { x: c.X(30), y: px(4) }, 'lko-hawa');
     w.flags[c.f('k')] = { f, fl };
+  },
+};
+
+// ================================================================ act: two flags
+/** Two flyers, one on the roof behind you and one on the roof far ahead, and only one flock. It obeys the
+ *  flag nearer to you (it circles over that flyer's roof): the one behind for the first half of the way,
+ *  the one ahead once you're past the middle. Both flags are plain, one face. */
+class Nearer extends Flyer {
+  constructor(
+    readonly a: Flyer,
+    readonly b: Flyer,
+  ) {
+    super(a.x, a.feet, a.plan, a.from);
+  }
+  near(w: World) {
+    const c = w.player.cx;
+    return Math.abs(c - this.a.x) <= Math.abs(c - this.b.x) ? this.a : this.b;
+  }
+  order(w: World) {
+    return this.near(w).order(w);
+  }
+}
+const JHANDE: [number, number][] = [
+  [6, 13],
+  [12, 12],
+  [18, 13],
+  [24, 12],
+  [30, 13],
+];
+export const jhande: Act = {
+  id: 'lko09-jhande',
+  w: 46,
+  advice: 'Two flyers now, one behind you and one far ahead, and one flock. It obeys the flag nearer to you (watch where it circles): the one behind you for the first half of the way, the one ahead once you’re over the middle of the middle roof. Cross on the nearer flag’s red.',
+  cps: [20, 31.5],
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x, x + 45, 15);
+    g.fill(x, x + 4, 14, 17, '#');
+    JHANDE.forEach(([a, r]) => g.fill(x + a, x + a + 3, r, 17, '#'));
+    g.fill(x + 36, x + 45, 14, 17, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const rs = JHANDE.map(([a, r]) => roofOf(x + a, x + a + 3, r));
+    roofs(w, [roofOf(x, x + 4, 14), ...rs, roofOf(x + 36, x + 45, 14)], c.X(0), c.X(46));
+    const a = new Flyer(c.X(1) + 8, px(14), [['red', 1.8], ['white', 1.8]], c.X(1.5));
+    const b = new Flyer(c.X(37) + 8, px(14), [['white', 1.8], ['red', 1.8]], c.X(1.5));
+    drawFlyer(w, a);
+    drawFlyer(w, b);
+    const f = new Nearer(a, b);
+    const home = { x: a.x, y: px(4) };
+    const fl = new Flock(w, rs, f, home, 'lko-jhanda-peeche');
+    w.flags[c.f('k')] = { f, fl, a, b };
+    w.onTick((w2) => {
+      const n = f.near(w2);
+      // the flock circles over the flyer it obeys; its death names which flag it was
+      home.x = n === a ? a.x + 40 : b.x - 40;
+      fl.z.hazard.cause = n === a ? 'lko-jhanda-peeche' : 'lko-jhanda-aage';
+    });
+    w.when(
+      (w2) => w2.player.cx > c.X(19),
+      (w2) => taraNow(w2, 'Ab aage waala! | Now the one ahead!', 1.8),
+    );
+    sign(w, x + 0.2, 9.4, 3.4, 'DO JHANDE', 'shop', null, 'paas waala');
   },
 };
 
@@ -381,5 +445,5 @@ export const gumbad: Act = {
   },
 };
 
-export const s09 = { room: kabootarRoom, acts: [gumbad, hawa] };
+export const s09 = { room: kabootarRoom, acts: [gumbad, hawa, jhande] };
 export const meta09 = { family: 'flag-colour-steers-flock', betrayals: ['flag-signal'], ending: 'lko-chhatri' } as StageMeta;

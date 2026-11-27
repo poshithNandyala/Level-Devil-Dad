@@ -32,6 +32,8 @@ export const causeLines: Record<string, string[]> = {
   'lko-badal': ['You ran ahead of the cloud’s shadow: a single cup in the sun sinks under you.', 'Wait for the shadow to cover the next cup before you go.'],
   'lko-badal-peeche': ['The cloud’s shadow moved on and left you in the sun: no cup has a shady side.', 'Don’t wait on a cup: keep going cup to cup with the shadow.'],
   'lko-dhakkan': ['He lifted his shiny lid: now the light comes from the other side, on to your tile.', 'When the lid goes up, move to the other tile of the heap.'],
+  'lko-jhanda-peeche': ['The flock obeys the nearer flag, and that was still the one behind you.', 'Till the middle roof, cross on the red of the flag behind you.'],
+  'lko-jhanda-aage': ['Past the middle the flag ahead is the nearer one: the flock went by its white.', 'Watch where the flock circles: cross on the red of the flag it circles over.'],
   'lko-hawa': ['The birds read the other face of the flag: you saw red, they saw white.', 'Here, go while YOU see white: the curl at the flag’s tip shows their colour.'],
   'lko-gumbad': ['The dome was a different size from where you jumped: too high, or shrunk into the pool.', 'Stand on the red paving line in front of it, and jump from there.'],
   'lko-mehfil': ['She spins the whole stage end to end, and you were on her floor.', 'Wait on a takht till she has spun past beneath you, going away, then cross to the next.'],

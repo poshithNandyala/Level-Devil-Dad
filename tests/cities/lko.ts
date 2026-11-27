@@ -577,6 +577,16 @@ const R_lko09_hawa = (id: string) => (x: number): Step[] => {
   ];
 };
 actRoutes['lko09-hawa'] = (x) => [stroll(x + 3, 'up on to the roofs'), ...R_lko09_hawa('lko09-hawa')(x)];
+const JHANDE = [6, 12, 18, 24, 30];
+const R_lko09_jhande = (ok: (w: World) => boolean) => (x: number): Step[] => [
+  walkTo(x + 3.4, 300),
+  hops([...JHANDE.flatMap((a) => [[x + a + 0.6, ok] as [number, (w: World) => boolean], x + a + 3.1]), [x + 36.6, ok], x + 38], 'cross on the red of the nearer flag'),
+];
+actRoutes['lko09-jhande'] = (x) => [...R_lko09_jhande(redNow('lko09-jhande:k'))(x), runTo(x + 45, 300)];
+const redOf = (who: 'a' | 'b') => (w: World) => {
+  const o = (w.flags['lko09-jhande:k']?.[who] as Fl | undefined)?.order(w);
+  return !!o && o.c === 'red' && o.left > 1.0;
+};
 const GUMBAD = [5, 13, 21];
 /** stand where the dome is your size (its terrace 24 px up), then jump on to it */
 const domeJump = (id: string, k: number, d: number, x: number): Step => {
@@ -873,6 +883,10 @@ mistakes['LKO-08'].push(
   { what: 'in the minaret, jumping through every arch', steps: [...through('LKO-08', room08, 1), hop(actX('LKO-08', 1) + 3, actX('LKO-08', 1) + 6), hop(actX('LKO-08', 1) + 9, actX('LKO-08', 1) + 12), hop(actX('LKO-08', 1) + 16, actX('LKO-08', 1) + 18), until(done, 400)], cause: 'lko-bhool' },
   { what: 'jumping through the hanging arch up close, as everywhere', steps: [...through('LKO-08', room08, 3), walkTo(actX('LKO-08', 3) + 3.5, 300), hop(actX('LKO-08', 3) + 8, actX('LKO-08', 3) + 10, '', 6), until(done, 400)], cause: 'lko-bhool' },
   { what: 'walking through the hanging arch', steps: [...through('LKO-08', room08, 3), walkTo(actX('LKO-08', 3) + 3.5, 300), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
+);
+mistakes['LKO-09'].push(
+  { what: 'two flags: watching the one behind you the whole way, as on the last roofs', steps: [...through('LKO-09', room09, 2), ...R_lko09_jhande(redOf('a'))(actX('LKO-09', 2)), until(done, 600)], cause: 'lko-jhanda-aage' },
+  { what: 'two flags: watching the one ahead from the start', steps: [...through('LKO-09', room09, 2), ...R_lko09_jhande(redOf('b'))(actX('LKO-09', 2)), until(done, 600)], cause: 'lko-jhanda-peeche' },
 );
 mistakes['LKO-04'].push(
   { what: 'under the cloud: hopping on before its shadow comes', steps: [...through('LKO-04', room04, 1), walkTo(actX('LKO-04', 1) + 2.4, 300), hops([actX('LKO-04', 1) + 3.5, actX('LKO-04', 1) + 6]), until(done, 300)], cause: 'lko-badal' },
