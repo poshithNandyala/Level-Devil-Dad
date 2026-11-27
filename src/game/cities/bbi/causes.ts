@@ -18,6 +18,7 @@ export const causeLines: Record<string, string[]> = {
   'bbi-sinha': ['The goat butted you, Dad.', 'Wait on the straw until the goat has crossed back to your side, then jump.'],
   'bbi-dhua': ['Into the wash vat, Dad: you steered too soon and hit the bank.', 'Stay over the sari on the first bounce; steer only on the second, once you’re above the bank.'],
   'bbi-sari': ['They let go of the sari, Dad! Two bounces is all you get.', 'Use the second bounce: steer on to the bank once you are above it.'],
+  'bbi-bhanwar': ['Down the drain with the badi, Dad.', 'The water takes every badi to the hole: hop up on to the far rim just before yours goes down.'],
   'bbi-rangapani': ['Into the dye gutter, Dad: that parasol was shut.', 'A parasol only opens when a customer comes to its shop. Wait for it.'],
   'bbi-silk': ['The silk is slippery: you slid off the edge.', 'Stand on the cut-out sewn on top, and nowhere else.'],
   'bbi-peeled': ['He sold the cut-out you were standing on!', 'On the third parasol, don’t wait: go on as soon as the next one opens.'],

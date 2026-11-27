@@ -183,6 +183,97 @@ export function bowl(w: World, cfg: BowlCfg, t0: () => number, key: string) {
   return st;
 }
 
+/** act 6, the drain (pakhala family): a bowl being emptied through a hole by the far rim. The cook drops a badi
+ *  in at the near rim every few seconds and the water carries it to the hole, where it goes down. The badi is
+ *  still the only floor, and it takes you down with it. A2: hop off before the hole. A3: only at the very last
+ *  moment: from further out, the far rim is out of reach. */
+export const DRAIN = { c0: 4, c1: 15, hole: 14, v: 24, per: 8, n: 2 };
+export const act6: Act = {
+  id: 'bbi08-bhanwar',
+  w: 22,
+  advice: 'This bowl is being emptied through a hole by the far rim. The badi still float, but the water carries each one to the hole and down. Ride one, and hop up on to the far rim at the very last moment: any sooner and the rim is out of reach.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + DRAIN.c0, c.x + DRAIN.c1).fill(c.x + DRAIN.c0 - 1, c.x + DRAIN.c0 - 1, 13, 14, '#').fill(c.x + DRAIN.c1 + 1, c.x + DRAIN.c1 + 1, 13, 14, '#');
+  },
+  build: (w, c) => {
+    const x0 = c.X(DRAIN.c0);
+    const x1 = c.X(DRAIN.c1 + 1);
+    const hx = c.X(DRAIN.hole) + 8;
+    const st = { t0: -1, why: 'bbi-pakhala', s: [] as number[], badis: [] as Rig[] };
+    w.flags.bbi8dr = st;
+    onPass(w, c.X(0.5), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
+    w.add(
+      new Rig(x0, FL - 2, x1 - x0, 60, {
+        cause: 'bbi-pakhala',
+        inset: 0,
+        layer: 4,
+        tick: (r) => {
+          r.hazard!.cause = st.why;
+        },
+        paint: (ctx, _r, w2) => {
+          ctx.fillStyle = 'rgba(236,232,214,0.72)';
+          ctx.fillRect(x0, FL - 4, x1 - x0, 52);
+          box(ctx, x0, FL - 4, x1 - x0, 1, 'rgba(255,255,255,0.9)');
+          // the whirl over the hole
+          ctx.strokeStyle = 'rgba(120,110,90,0.8)';
+          ctx.lineWidth = 1;
+          for (let k = 1; k <= 3; k++) {
+            ctx.beginPath();
+            ctx.ellipse(hx, FL - 2, 5 * k, 1.6 * k, 0, (w2.tick / 8 + k) % 6, ((w2.tick / 8 + k) % 6) + 4);
+            ctx.stroke();
+          }
+          // the cook at the near rim with his basket of badi
+          box(ctx, x0 - 30, FL - 12, 12, 8, '#8D6E63');
+        },
+      }),
+    );
+    for (let k = 0; k < DRAIN.n; k++) {
+      st.s.push(-1);
+      const b = w.add(
+        new Rig(x0 + 2, FL - 8, BW, 8, {
+          solid: true,
+          layer: 5,
+          tick: (r, w2) => {
+            if (st.t0 < 0) {
+              r.setSolid(false);
+              return;
+            }
+            const s2 = (since(w2, st.t0) + (k * DRAIN.per) / DRAIN.n) % DRAIN.per;
+            st.s[k] = s2;
+            const x = x0 + 2 + s2 * DRAIN.v;
+            const under = x + BW / 2 > hx - 6;
+            if (under && r.solid?.collidable && r.rides(w2)) st.why = 'bbi-bhanwar';
+            r.setSolid(!under);
+            r.moveTo(w2, Math.min(x, hx - BW / 2), under ? FL + 10 : FL - 8);
+          },
+          paint: (ctx, r) => {
+            if (!r.solid?.collidable) return;
+            ctx.fillStyle = '#9C5A1E';
+            ctx.beginPath();
+            ctx.ellipse(r.x + BW / 2, r.y + 4, BW / 2, 4.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            box(ctx, r.x + 4, r.y + 1, 2, 2, '#D08A3C');
+            box(ctx, r.x + 11, r.y + 2, 2, 2, '#D08A3C');
+          },
+        }),
+      );
+      st.badis.push(b);
+    }
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: 6,
+        paint: (ctx) => {
+          box(ctx, x0 - 16, FL - 32, 16, 32, '#C9A13B');
+          box(ctx, x1, FL - 32, 16, 32, '#C9A13B');
+          box(ctx, x0 - 16, FL - 33, 16, 3, '#E8C766');
+          box(ctx, x1, FL - 33, 16, 3, '#E8C766');
+        },
+      }),
+    );
+  },
+};
+
 export const B08: BowlCfg = { c0: 7, c1: 24, badi: [9, 14, 20], pour1: [0.6, 3.0], pour2: [3.8, 6.0], v1: 30, v2: 40, v3: 45 };
 
 export function room(): LevelDef {

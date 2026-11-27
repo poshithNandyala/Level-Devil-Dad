@@ -746,6 +746,10 @@ const DEATHS: Record<string, Death[]> = {
   'bbi07-stambha': [walkOn('bbi-nacha')],
   'bbi07-dhol': [walkOn('bbi-nacha')],
   'bbi07-raati': [walkOn('bbi-nacha'), tFix('bbi7f0', 3, 7)],
+  'bbi08-bhanwar': [
+    { what: 'stay on the badi', cause: 'bbi-bhanwar', steps: (x) => [...hop(x + 1.4, 'up on the rim'), { hold: '', until: ground, max: 300 }, { hold: '', until: (w) => { const k = fresh(w); if (k >= 0) ridden.k = k; return k >= 0; }, max: 1500 }, leap((w) => dr(w).badis[ridden.k].x + 13, 'on to it', () => true, 5), { hold: '', until: done, max: 1500 }] },
+    { what: 'hop for the far rim early', cause: 'bbi-pakhala', steps: (x) => [...hop(x + 1.4, 'up on the rim'), { hold: '', until: ground, max: 300 }, { hold: '', until: (w) => { const k = fresh(w); if (k >= 0) ridden.k = k; return k >= 0; }, max: 1500 }, leap((w) => dr(w).badis[ridden.k].x + 13, 'on to it', () => true, 5), stayOn((w) => dr(w).badis[ridden.k].x + 13, (w) => dr(w).badis[ridden.k].x + 13 > px(x + 10), 'ride a little', 1500), { hold: 'R', jump: 15, ticks: 15 }, { hold: 'R', until: done, max: 600 }] },
+  ],
   'bbi08-kansa': [bNaive(3), bFix('bbi8b', 3, 1)],
   'bbi08-handi': [bNaive(3), bFix('bbi8f', 3, 2)],
   'bbi08-majhi': [bNaive(3), bFix('bbi8g', 3, 1)],
@@ -915,7 +919,21 @@ const sariRun = (x: number): Step[] => [
   { steer: (w) => (w.player.y + w.player.h < 240 - 16 * 6 - 2 ? 'R' : ''), until: (w) => w.player.onGround && w.player.y + w.player.h <= 240 - 96 + 1, max: 400, note: 'on to the bank once above it' },
   { hold: 'R', until: X(x + 23.6), max: 600 },
 ];
-const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi06-sari': sariRun, 'bbi05-chheli': chheliRun, 'bbi09-jhadu': jhaduRun, 'bbi07-bagudi': bagudiRun, 'bbi06-patta': pattaRun, 'bbi05-patra': patraRun, 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi10-ratha': act10c, 'bbi02-dive': act02b, 'bbi06-buni': act06b, 'bbi07-sahi': act07c, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b, 'bbi08-thali': act08b, 'bbi07-stambha': act07d, 'bbi07-raati': act07e, 'bbi06-tani': act06c, 'bbi09-chakra': act09c, 'bbi10-khela': act10d, 'bbi10-nacha': act10e,
+/** the drain: on to a badi just dropped in, ride it to the hole, up on to the far rim at the last moment */
+const dr = (w: World) => w.flags.bbi8dr as { s: number[]; badis: { x: number }[] };
+const fresh = (w: World) => { const d = dr(w); const k = d.s.findIndex((v) => v > 0.2 && v < 1.4); return k; };
+const ridden = { k: 0 };
+const bhanwarRun = (x: number): Step[] => [
+  ...hop(x + 1.4, 'up on the rim'),
+  { hold: '', until: ground, max: 300 },
+  { hold: '', until: (w) => { const k = fresh(w); if (k >= 0) ridden.k = k; return k >= 0; }, max: 1500, note: 'a badi just dropped in' },
+  leap((w) => dr(w).badis[ridden.k].x + 13, 'down on to it', () => true, 5),
+  stayOn((w) => dr(w).badis[ridden.k].x + 13, (w) => dr(w).badis[ridden.k].x + 13 > px(x + 14) - 8, 'ride it to the hole', 1500),
+  { hold: 'R', jump: 15, ticks: 15, note: 'up on to the far rim at the last moment' },
+  { hold: 'R', until: ground, max: 300 },
+  { hold: 'R', until: X(x + 21.5), max: 400 },
+];
+const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi08-bhanwar': bhanwarRun, 'bbi06-sari': sariRun, 'bbi05-chheli': chheliRun, 'bbi09-jhadu': jhaduRun, 'bbi07-bagudi': bagudiRun, 'bbi06-patta': pattaRun, 'bbi05-patra': patraRun, 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi10-ratha': act10c, 'bbi02-dive': act02b, 'bbi06-buni': act06b, 'bbi07-sahi': act07c, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b, 'bbi08-thali': act08b, 'bbi07-stambha': act07d, 'bbi07-raati': act07e, 'bbi06-tani': act06c, 'bbi09-chakra': act09c, 'bbi10-khela': act10d, 'bbi10-nacha': act10e,
   'bbi06-jala': loomRun('bbi6g', 6, 0.5),
   'bbi06-pata': loomRun('bbi6h', 9, 0.45 + 0.52 + 0.1),
   'bbi09-ghoda': chAct('bbi9g', 8, 7),
