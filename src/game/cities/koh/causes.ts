@@ -22,5 +22,9 @@ export const causeLines: Record<string, string[]> = {
   'koh-kukur': ['The lane dog went for you.', 'He keeps off an open pot: hop once before him and the smell sends him back. He goes for a lidded one.'],
   'koh-kag': ['A crow dived at you.', 'Crows keep off an open pot. Lidded, a crow dives at where a walker will be: stop under it and it lands ahead of you.'],
   'koh-billi': ['The cat ran at the open pot and tripped you.', 'She loves axone. Stand still half a second before her wall so the lid is back on, then walk past her.'],
+  'koh-takhta': ['The drum floor boomed under your landing and a roof plank came down on you.', 'In the drum house walk, never jump: a landing is what booms.'],
+  'koh-aag': ['You walked into the hearth.', 'The hearth house is the opposite: jump the coals.'],
+  'koh-phatak': ['The gate bar came down.', 'The gate house counts from your first step in: keep moving and be out before the notches run out.'],
+  'koh-jhukav': ['The plank tipped under your walk.', 'The plank house is the opposite of the gate: walk a little, stand still until the creak stops, walk again.'],
   'koh-dhol': ['The log rolled over you.', 'After a double shout the log climbs the bank. Step off at the first top and keep going; at the hut hop the drum as it rolls away.'],
 };
