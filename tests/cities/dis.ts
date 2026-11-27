@@ -12,6 +12,7 @@ import type { Pan } from '../../src/game/cities/dis/pitha';
 import type { Bank } from '../../src/game/cities/dis/bank';
 import type { Gate, Husori } from '../../src/game/cities/dis/husori';
 import type { Charge } from '../../src/game/cities/dis/gorh';
+import type { DholPlanks } from '../../src/game/cities/dis/dhol';
 
 type Out = { move: 'L' | 'R' | ''; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
@@ -295,6 +296,45 @@ const changClimb = (bankEdge: number, walkOff = false): Pol =>
 
 /** S['DIS-0n'] = room route; lengthen(id, drop, extra) appends each act's route and the door's policy */
 /** the length pass's acts: each one's obvious play and obvious fix, both dying inside the act */
+/** across the dhol planks: on each beat hop to the plank that has just come up (never sooner than `minWait` ticks after the last hop: a player counting a tempo) */
+const dholHop = (minWait = 0): NonNullable<Step['policy']> => {
+  let last = -9999;
+  let air = 0;
+  let tgt = -1;
+  let seen: World | null = null;
+  return (w) => {
+    if (seen !== w) {
+      seen = w;
+      last = -9999;
+      air = 0;
+      tgt = -1;
+    }
+    const d = (w.flags.dhol as DholPlanks[])[0];
+    const p = w.player;
+    const i = d.planks.findIndex((s) => p.cx >= s.x - 2 && p.cx <= s.x + s.w + 2 && p.onGround);
+    const n = d.planks[i + 1];
+    if (!p.onGround) {
+      air++;
+      const t = d.planks[tgt];
+      const c = t ? t.x + t.w / 2 : p.cx + 40;
+      return { move: p.cx < c - 3 ? 'R' : p.cx > c + 3 ? 'L' : '', jump: air < 8 };
+    }
+    air = 0;
+    if (i < 0) {
+      tgt = 0;
+      return { move: 'R', jump: p.cx > d.planks[0].x - 14 && p.cx < d.planks[0].x && d.planks[0].collidable };
+    }
+    if (!n) return { move: 'R', jump: false };
+    const up = (i + 1 + d.beat) % 2 === 0 && d.beat >= 0;
+    const c = d.planks[i].x + d.planks[i].w / 2;
+    if (up && n.collidable && w.tick - last >= minWait && d.started >= 0) {
+      last = w.tick;
+      tgt = i + 1;
+      return { move: 'R', jump: true };
+    }
+    return { move: p.cx < c - 3 ? 'R' : p.cx > c + 3 ? 'L' : '', jump: false };
+  };
+};
 type Play = (x: number) => Step[];
 const ACT_DEATHS: { act: string; stage: string; naive: [Play, string, string]; fix: [Play, string, string] }[] = [];
 const die = (x: number): Step[] => [{ hold: 'R', until: done, max: 6000 }];
@@ -332,6 +372,7 @@ const roofNaive: Play = () => [{ policy: ribHop(7), until: done, max: 4000 }];
 const roofFix: Play = () => [{ policy: ribHop(16), until: done, max: 4000 }];
 const act = (a: string, stage: string, naive: [Play, string, string], fix: [Play, string, string]) => ACT_DEATHS.push({ act: a, stage, naive, fix });
 act('dis06-chang', 'DIS-06', [changNaive, 'dis-bank', 'jumps at the stilt house'], [changFix(11), 'dis-bank', 'up the ladder, then walks off the house into the river']);
+act('dis07-dhol', 'DIS-07', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholHop(110), until: (w) => done(w) || w.player.cx > px(x + 36), max: 6000 }, { hold: '', until: done, max: 900 }], 'dis-pukhuri', 'keeps the first tempo after the dhol quickens']);
 act('dis08-jeep', 'DIS-08', [rhinoNaive, 'dis-beel', 'walks into the tall grass'], [rhinoFix, 'dis-gorh', 'waits at the edge of the grass, where the second jeep is']);
 act('dis08-bagori', 'DIS-08', [(x) => [{ hold: 'R', until: X(x + 2.4), max: 600 }, { hold: '', until: done, max: 2000 }], 'dis-gorh', 'stays on the bank: the rhino comes from behind'], [(x) => [{ hold: 'R', until: X(x + 1.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: '', until: (w) => charges(w).some((c) => c.d.c0 === x + 11 && c.phase === 'rest'), max: 2000 }, { hold: 'R', until: done, max: 2000 }], 'dis-gorh', 'off the hay as soon as the rhino stops halfway']);
 act('dis10-gamosa', 'DIS-10', [() => [{ hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'walks into every giver'], [(x) => [{ hold: 'R', until: X(x + 12.4), max: 600 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'a little hop over the third giver, into the fourth']);
@@ -657,6 +698,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: and(ground, X(x + 63)), max: 900 },
   ],
   'dis07-ghar': (x) => [{ policy: atTheGate(1), until: and(ground, X(x + 61)), max: 6000, note: 'gate by gate with the singers' }],
+  'dis07-dhol': mark('dis07-dhol', (x) => [{ policy: dholHop(), until: and(ground, X(x + 36)), max: 6000, note: 'one plank on every beat of the dhol' }]),
   'dis07-chowk': (x) => [{ policy: atTheGate(2), until: and(ground, X(x + 73)), max: 7000, note: 'three gates, the middle one after the gamosas' }],
   'dis06-majuli': (x) => [
     { hold: 'R', until: X(x + 2.7), max: 600, note: 'run to the edge' },
