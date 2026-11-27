@@ -7,7 +7,7 @@ import type { Ending } from '../../levels/endkit';
 import { Paint, tara } from '../../levels/endkit';
 import { Grid } from '../../levels/grid';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
-import { Rig, box, folk, perTick } from './entities';
+import { Rig, box, perTick } from './entities';
 import { since, taraScript } from './common';
 import { onPass } from '../../levels/trolls';
 import { lines as L } from './lines';
@@ -269,91 +269,6 @@ export const actBori: Act = {
       { k: 8, from: 9, at: 8.0, dur: 4.0 },
     ]);
     sign(w, c.x + 1, 10.4, 3, 'LOADING', 'shop', null, 'sacks going on');
-  },
-};
-
-/** one lane, two porters coming the other way: a laden porter sinks the three floats he is on (the heaviest thing on the
- *  deck), so the lane is deadly as he walks along it. Step up on the lay-by (a stilted walkway) and let him go by. A second
- *  porter follows a few steps behind the first. */
-export const actKuli: Act = {
-  id: 'pat05-kuli',
-  w: 70,
-  advice: 'Porters come along the deck towards you, each bent under a sack, and the three floats under a laden man go under the Ganga as he walks. There is no room to pass on a one-lane deck: climb on to the lay-by (the raised walkway on stilts) and let him go by. Another porter follows behind the first, so wait until the lane behind them is clear.',
-  cps: [23],
-  paint: (g, c) => {
-    g.fill(c.x + 4, c.x + 4 + 55 - 1, 15, 17, '.');
-  },
-  build: (w, c) => {
-    const N = 22;
-    const x0 = px(c.x + 4);
-    const pt = pontoon(w, c.x + 4, N, [], 'pat5k0');
-    const st = { t0: -1, porters: [] as { cx: number; on: boolean; delay: number }[], wx: x0 + 7 * SEC, ww: 3 * SEC, x0 };
-    w.flags.pat5k = st;
-    const V = 72;
-    const start = x0 + N * SEC + 60;
-    [0, 3.0].forEach((delay, i) => st.porters.push({ cx: start, on: false, delay }));
-    w.when(
-      (w2) => w2.player.cx >= x0 - 200,
-      (w2) => {
-        st.t0 = w2.tick;
-      },
-    );
-    w.onTick((w2) => {
-      const t = st.t0 < 0 ? -1 : since(w2, st.t0);
-      st.porters.forEach((q) => {
-        q.cx = start - V * (t - q.delay);
-        q.on = t >= q.delay && q.cx > x0 - 40;
-      });
-      // whichever porter is nearest the player names a death in the water
-      const near = st.porters.findIndex((q) => q.on && Math.abs(q.cx - w2.player.cx) < 110);
-      pt.water!.hazard!.cause = near === 0 ? 'pat-kuli' : near === 1 ? 'pat-kuli2' : 'pat-ganga';
-      pt.secs.forEach((sec) => {
-        const mid = sec.x + SEC / 2;
-        const hit = st.porters.findIndex((q) => q.on && Math.abs(q.cx - mid) < 62);
-        sec.s.awash = hit >= 0;
-        // a float still bobbing back up behind a porter is still his
-        const wake = st.porters.findIndex((q) => q.cx > x0 - 300 && q.cx - mid < 200 && q.cx - mid > -200 && q.delay < 99 && st.t0 >= 0 && since(w2, st.t0) >= q.delay);
-        sec.hazard!.cause = wake === 0 ? 'pat-kuli' : wake === 1 ? 'pat-kuli2' : 'pat-pipa';
-      });
-    });
-    // the porters: a body hazard under the sack, so touching one is its own death
-    st.porters.forEach((q, i) => {
-      w.add(
-        new Rig(0, FL - 26, 22, 26, {
-          layer: 3,
-          cause: i === 0 ? 'pat-kuli' : 'pat-kuli2',
-          inset: 2,
-          live: () => q.on,
-          tick: (r) => {
-            r.x = q.cx - 11;
-            const sec = pt.secs.find((s) => q.cx >= s.x && q.cx < s.x + SEC);
-            r.y = (sec ? sec.y : FL) - 26;
-          },
-          paint: (ctx, r) => {
-            if (!q.on) return;
-            folk(ctx, r.x + 11, r.y - 2, 30, i === 0 ? '#2F6BB0' : '#D7262E');
-            box(ctx, r.x - 3, r.y - 10, 28, 12, '#C9A56B');
-            box(ctx, r.x - 3, r.y - 10, 28, 3, '#E3C58A');
-            if (i === 1) box(ctx, r.x + 1, r.y - 18, 20, 9, '#C9A56B');
-          },
-        }),
-      );
-    });
-    // the lay-by: a walkway on stilts a step above the deck, three floats long
-    const walk = w.add(
-      new Rig(st.wx, FL - 26, st.ww, 26, {
-        solid: true,
-        layer: 2,
-        paint: (ctx, r) => {
-          box(ctx, r.x, r.y, r.w, 6, '#8A5A2B');
-          box(ctx, r.x, r.y, r.w, 2, '#B07A3E');
-          for (const k of [4, r.w / 2 - 2, r.w - 8]) box(ctx, r.x + k, r.y + 6, 4, 20, '#5C3A1A');
-          for (let k = 0; k < r.w; k += 20) box(ctx, r.x + k, r.y - 10, 2, 10, '#D7262E');
-        },
-      }),
-    );
-    void walk;
-    sign(w, c.x + 4 + 6.5, 8.2, 3.2, 'LAY-BY', 'shop', null, 'step up, let them pass');
   },
 };
 

@@ -16,8 +16,6 @@ export const causeLines: Record<string, string[]> = {
   'pat-bhitar': ['The door of Golghar opens inwards, into you.', 'Stay back while it swings, and walk in when it has swung open.'],
   'pat-ganga': ['You went into the Ganga between the pontoon sections.', 'Hop from section to section, and jump over the one the cart is on.'],
   'pat-pipa': ['That pontoon section went under with you on it.', 'A section sinks under the cart. Never wait on one the cart is coming to.'],
-  'pat-kuli': ['A porter’s load sank the floats under you, head-on.', 'Three floats under a laden man go under. On a one-lane deck step up on the lay-by and let him pass.'],
-  'pat-kuli2': ['A second porter came along right behind the first.', 'Porters come in a line. Stay on the lay-by until the lane behind the last one is clear.'],
   'pat-jod': ['That plate was only a tarp over the gap.', 'Count the sacks on the truck: every plate numbered a multiple of that count is a painted tarp. Jump those from the deck.'],
   'pat-ginti': ['You counted with the last truck’s sacks: this truck has a different load.', 'Read the sacks at the foot of each stretch again. The tarps are the plates numbered by this count.'],
   'pat-load': ['The second truck was still being loaded, and its count is the one that counts.', 'Read each truck after the porter has finished with it, and count the plates after it by its sacks.'],

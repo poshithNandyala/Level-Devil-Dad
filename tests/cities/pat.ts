@@ -592,7 +592,7 @@ const ACT_ORDER: Record<string, string[]> = {
   'PAT-03': ['pat03-batch', 'pat03-patti'],
   'PAT-02': ['pat02-chokha', 'pat02-bhatti'],
   'PAT-04': ['pat04-sidhi', 'pat04-anaaj'],
-  'PAT-05': ['pat05-ghat', 'pat05-sangam', 'pat05-bori', 'pat05-kuli'],
+  'PAT-05': ['pat05-ghat', 'pat05-sangam', 'pat05-bori'],
   'PAT-06': ['pat06-sau', 'pat06-nau', 'pat06-ginti', 'pat06-gaadi'],
   'PAT-07': ['pat07-sadak', 'pat07-pul', 'pat07-haat', 'pat07-mandi', 'pat07-adda'],
   'PAT-09': ['pat09-jhoola', 'pat09-ghoda', 'pat09-wapsi'],
@@ -619,33 +619,6 @@ const stair2 = (x: number, wait: number): Step[] => [
   { hold: 'R', until: and(ground, X(x + 29)), max: 900, note: 'over the landing and down the far stair' },
   { hold: 'R', until: X(x + 33.4), max: 300 },
 ];
-/** the one-lane deck with porters coming the other way: step up on the lay-by, wait until the porters (the first only, or both) have gone by, then on */
-function bayWalk(both: boolean): (w: World) => Out {
-  let W: World | null = null;
-  let jt = 0;
-  return (w) => {
-    if (W !== w) {
-      W = w;
-      jt = 0;
-    }
-    if (jt > 0) {
-      jt--;
-      return { move: 'R', jump: true };
-    }
-    const st = w.flags.pat5k as { t0: number; porters: { cx: number; on: boolean }[]; wx: number; ww: number };
-    const p = w.player;
-    const ps = both ? st.porters : st.porters.slice(0, 1);
-    const gone = st.t0 >= 0 && ps.every((q) => q.cx < st.wx - 80);
-    if (gone) return go('R');
-    const onWalk = p.onGround && p.y + p.h <= 214 + 2 && p.cx >= st.wx && p.cx <= st.wx + st.ww;
-    if (onWalk) return go('');
-    if (p.onGround && p.x + p.w >= st.wx - 6 && p.cx < st.wx) {
-      jt = 14;
-      return { move: 'R', jump: true };
-    }
-    return go('R');
-  };
-}
 const ACT_MISTAKES: Record<string, ReturnType<typeof inAct>[]> = {
   'PAT-03': [
     inAct('PAT-03', 'pat03-patti', 'stop on the left part of the third hoarding', (x) => [{ hold: 'R', until: X(x + 13.5), max: 900 }, { hold: '', until: done, max: 1500 }], 'pat-jam'),
@@ -660,8 +633,6 @@ const ACT_MISTAKES: Record<string, ReturnType<typeof inAct>[]> = {
     inAct('PAT-04', 'pat04-sidhi', 'wait for two porters, as on the first flight, then climb', (x) => stair2(x, 6.0), 'pat-sidhi'),
   ],
   'PAT-05': [
-    inAct('PAT-05', 'pat05-kuli', 'run on along the lane to meet the first porter', () => runOn, 'pat-kuli'),
-    inAct('PAT-05', 'pat05-kuli', 'let the first porter pass from the lay-by, then step down (the second is right behind)', () => [{ policy: bayWalk(false), until: done, max: 6000 }], 'pat-kuli2'),
     inAct('PAT-05', 'pat05-bori', 'run on across the loading deck', () => runOn),
     inAct('PAT-05', 'pat05-bori', 'wait before the section the second sack hangs over (it slides back)', () => [{ policy: sackWalk('pat5s', true), until: done, max: 6000 }], 'pat-bori'),
   ],
@@ -715,7 +686,6 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'pat04-sidhi': (x) => stair2(x, 9.0),
   'pat03-patti': (x) => [{ policy: laneWalk('pat3b'), until: and(ground, X(x + 27.5)), max: 5000, note: 'wait for the last bell, then cross' }, { hold: 'R', until: X(x + 35.4), max: 400 }],
   'pat05-ghat': act05,
-  'pat05-kuli': (x) => [{ policy: bayWalk(true), until: and(ground, X(x + 58.6)), max: 4000, note: 'step up on the lay-by, let both porters by, walk on' }, { hold: 'R', until: X(x + 69), max: 400 }],
   'pat05-bori': (x) => [{ policy: sackWalk('pat5s'), until: and(ground, X(x + 54.6)), max: 5000, note: 'wait at the end of the section before the one the sack lands on' }, { hold: 'R', until: X(x + 61.4), max: 400 }],
   'pat06-ginti': (x) => [
     { hold: 'R', until: X(x + 3), max: 600, note: 'to the truck being unloaded' },
