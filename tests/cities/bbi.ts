@@ -33,16 +33,25 @@ const pastG1 = (): Step[] => [
   ...hop(28.8, 'over the drain'),
 ];
 // the tour's own walk after the second drain: steps, posts and the cart (the course pieces)
+const ferryAt = (x0: number) => (w: World) => (w.entities as any[]).find((e) => e.ferry && Math.abs(e.solid.x - x0 * 16) < 260);
+const ride = (x0: number, wd: number): Step[] => [
+  { hold: 'R', until: X(x0 - 1.2), max: 900 },
+  { hold: '', until: (w) => { const f = ferryAt(x0)(w); return f.state === 'rest' && f.x === x0 * 16; }, max: 900, note: 'wait for the shuttle at its stop' },
+  { hold: 'R', until: (w) => w.standing(ferryAt(x0)(w).solid) && w.player.x >= ferryAt(x0)(w).x + 10, max: 200, note: 'step aboard' },
+  { hold: '', until: (w) => { const f = ferryAt(x0)(w); return f.state === 'rest' && f.x === (x0 + wd - 3) * 16; }, max: 900, note: 'ride across' },
+  { hold: 'R', until: X(x0 + wd + 0.4), max: 200, note: 'step off' },
+];
 const tourTail = (): Step[] => [
   ...hop(38.7, 'a step up'),
   ...hop(40.7, 'a step up'),
-  ...hop(50.6, 'a post'),
-  ...hop(53.6, 'a post'),
-  ...hop(56.6, 'a post'),
-  ...hop(70.2, 'jump from the tile before the wet one'),
-  { hold: 'R', until: X(82), max: 600 },
+  ...hop(48.6, 'a post'),
+  ...hop(51.6, 'a post'),
+  ...hop(54.6, 'a post'),
+  { hold: 'R', until: X(58.8), max: 600 },
   { hold: 'R', jump: 14, ticks: 14, note: 'hop the parked cart' },
-  { hold: 'R', until: ground, max: 300 },
+  { hold: 'R', until: (w) => w.player.onGround && w.player.y > 220, max: 400 },
+  ...hop(70.2, 'jump from the tile before the wet one'),
+  ...ride(75, 15),
   { hold: 'R', until: X(92.4), max: 300 },
   { hold: 'R', jump: 12, ticks: 12, note: 'up on the deck' },
   { hold: 'R', until: ground, max: 200 },
@@ -685,7 +694,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'BBI-04': { steps: [passTorch(9, r4on, 'keep moving, as learnt'), { hold: 'R', until: X(15.6), max: 400 }, { hold: 'R', jump: 15, ticks: 15, note: 'and jump the trough' }, { hold: 'R', until: done, max: 600 }], cause: 'bbi-kunda' },
   'BBI-03': { steps: [{ hold: 'R', until: X(3.4), max: 600 }, waitFor((w) => p3(w, 0).open(w), 'wait for the customer'), leap((w) => (w.flags.bbi3p as { rig: { x: number } }[])[0].rig.x + 9, 'land on the near side of the silk'), { hold: '', until: done, max: 900, note: 'stand where you landed' }], cause: 'bbi-silk' },
   'BBI-02': { steps: [...board02(), onPad(4, 12), { hold: '', until: (w) => k2(w).ball === 'rebound', max: 900 }, { hold: 'R', until: done, max: 900, note: 'off the moment he lands, and on' }], cause: 'bbi-rebound' },
-  'BBI-01': { steps: [...pastG1(), ...tourTail().slice(0, 15), ...hop(72.2, 'jump the drain at its lip, as before'), { hold: 'R', until: done, max: 900 }], cause: 'bbi-nala' },
+  'BBI-01': { steps: [...pastG1(), ...tourTail().slice(0, 18), ...hop(72.2, 'jump the drain at its lip, as before'), { hold: 'R', until: done, max: 900 }], cause: 'bbi-nala' },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
   'BBI-05': [{ what: 'climb on the cart and ride it', steps: [...room05(), ...act05a(32), { hold: 'R', until: X(58 + 6.9), max: 400 }, { hold: 'R', jump: 8, ticks: 8, note: 'up on the cart' }, { hold: '', until: done, max: 900 }], cause: 'bbi-gadi' }],

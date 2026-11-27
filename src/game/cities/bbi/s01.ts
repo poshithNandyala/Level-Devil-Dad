@@ -11,7 +11,7 @@ import { Rig, box, folk } from './entities';
 import { FL, channel, cyc, decor } from './common';
 
 /** gardener 1: watering the pots for POTS s, then the road for ROAD s, on a loop from the start */
-export const G1 = { col: 24, potsFor: 2.4, roadFor: 2.4, aim0: 27, drain: [30, 30] as [number, number], reach: 8 };
+export const G1 = { col: 24, potsFor: 2.4, roadFor: 4.8, aim0: 27, drain: [30, 30] as [number, number], reach: 8 };
 export const G2 = { col: 66, wet: 72, drain: [73, 73] as [number, number] };
 export const SLIDE = { v: 180, ticks: 96 };
 
@@ -160,11 +160,11 @@ export const tourLevel = (): LevelDef =>
     ],
     props: [],
     par: 22,
-    cps: [8, 33.5, 52, 77, 90],
+    cps: [8, 33.5, 48, 75, 92],
     paint: (g) => {
       g.pit(G1.drain[0], G1.drain[1]).pit(G2.drain[0], G2.drain[1]);
     },
-    hint: 'The gardener on the median turns his hose on the road, and his jet follows a dad who stands and waits: the tile it wets slides you straight into the open drain. Go while he faces his pots, and hop the drain. The second gardener has his back to you, but the tile at the lip of the next drain is still wet: jump from the tile before it. Then the steps, the posts and what’s parked.',
+    hint: 'The gardener on the median turns his hose on the road, and his jet follows a dad who stands and waits: the tile it wets slides you straight into the open drain. Go while he faces his pots, and hop the drain. The second gardener has his back to you, but the tile at the lip of the next drain is still wet: jump from the tile before it. Then the steps, the posts, the parked cart, and the bus: wait for it at its stop, ride, step off.',
     extra,
   });
 
