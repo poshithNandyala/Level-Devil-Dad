@@ -34,12 +34,14 @@ badi (08).
 
 `bbi-nala`, `bbi-turf`, `bbi-ball`, `bbi-rebound`, `bbi-rangapani`, `bbi-silk`, `bbi-peeled`, `bbi-lantern`, `bbi-agni`,
 `bbi-jhala`, `bbi-kunda`, `bbi-jaanta`, `bbi-dhan`, `bbi-dhenki`, `bbi-sila`, `bbi-gadi`, `bbi-tenda`, `bbi-bail`,
-`bbi-ranga`, `bbi-shuttle`, `bbi-rachh`, `bbi-tana`, `bbi-nacha`, `bbi-thrown`, `bbi-kick`, `bbi-deepa`, `bbi-pakhala`,
-`bbi-dhara`, `bbi-chakka`, `bbi-khai`, `bbi-ulta`, `bbi-udaya`, `bbi-ara`, `bbi-ghoda`, `bbi-kainchi`, `bbi-roll`,
+`bbi-ranga`, `bbi-shuttle`, `bbi-rachh`, `bbi-nacha`, `bbi-thrown`, `bbi-kick`, `bbi-deepa`, `bbi-pakhala`,
+`bbi-dhara`, `bbi-chakka`, `bbi-khai`, `bbi-ulta`, `bbi-udaya`, `bbi-ara`, `bbi-ghoda`, `bbi-roll`,
 `bbi-patra`, `bbi-khali`, `bbi-chheli`, `bbi-sinha`, `bbi-sadha`, `bbi-chitra`, `bbi-sutra`,
 `bbi-bagudi`, `bbi-chhuin`, `bbi-pada`, `bbi-bhanwar`, `bbi-roll-back`, `bbi-likhita`, `bbi-ghera`, `bbi-pathara`, `bbi-pani`, `bbi-dooba`, `bbi-ganna`, `bbi-mama`, `bbi-dhakka`, `bbi-kua`, `bbi-adha`, `bbi-ulta-gadi`,
 `bbi-gadi-tala`, `bbi-saja`, `bbi-dauda`, `bbi-tantu`, `bbi-ganthi`, `bbi-badi`, `bbi-buda`, `bbi-ghurni`, `bbi-chamacha`,
-`bbi-kachha`.
+`bbi-kachha`, `bbi-pothi`, `bbi-nala-lip`, `bbi-lob`, `bbi-chakka-room10`. QA fix round 1 (law 9): acts listed in
+`OWN_CAUSES` (causes.ts) report their own cause for a shared hazard, so the finale's lines name the rule tonight breaks:
+`bbi-ranga-palaa`, `bbi-rachh-palaa`, `bbi-nacha-dui` and the `-10` / `...10` finale causes.
 
 ## Route times (scripted route, no deaths), par, checkpoints
 
