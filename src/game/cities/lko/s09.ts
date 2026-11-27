@@ -440,5 +440,92 @@ export const gumbad: Act = {
   },
 };
 
-export const s09 = { room: kabootarRoom, acts: [gumbad, hawa, jhande] };
+// ================================================================ act: seeti, the whistle duel
+/** Two flyers, yours behind you and a rival on the far roof, both flying red. But they duel with
+ *  whistles: a whistle calls the flock down to the roof beside the whistler, whatever any flag says. Yours
+ *  calls them to the near roof, his to the far one. Stand where neither calls them: the tank roof between. */
+const SEETI = { period: 360, ours: [50, 150], his: [230, 330], raise: 50 };
+class Whistles extends Flyer {
+  constructor(
+    readonly clock: { t: number },
+    x: number,
+  ) {
+    super(x, px(14), [['red', 99]], 0);
+  }
+  ph(w: World) {
+    return this.clock.t < 0 ? -1 : (w.tick - this.clock.t) % SEETI.period;
+  }
+  order(w: World) {
+    const p = this.ph(w);
+    const on = (r: number[]) => p >= r[0] && p < r[1];
+    return { c: on(SEETI.ours) || on(SEETI.his) ? ('white' as const) : ('red' as const), left: 1 };
+  }
+}
+export const seeti: Act = {
+  id: 'lko09-seeti',
+  w: 36,
+  advice: 'Two flyers, yours behind you and a rival on the far roof, both flying red. But they duel with whistles, and a whistle beats any flag: yours calls the flock down to the near roof, his to the far one. Watch who lifts his whistle, and wait on the tank roof between, where neither calls them.',
+  cps: [15.2],
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x, x + 35, 15);
+    g.fill(x, x + 5, 14, 17, '#');
+    g.fill(x + 8, x + 11, 13, 17, '#');
+    g.fill(x + 14, x + 19, 12, 17, '#');
+    g.fill(x + 22, x + 25, 13, 17, '#');
+    g.fill(x + 28, x + 35, 14, 17, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const R1 = roofOf(x + 8, x + 11, 13),
+      T = roofOf(x + 14, x + 19, 12),
+      R2 = roofOf(x + 22, x + 25, 13);
+    roofs(w, [roofOf(x, x + 5, 14), R1, T, R2, roofOf(x + 28, x + 35, 14)], c.X(0), c.X(36));
+    const t0 = { t: -1 };
+    const sig = new Whistles(t0, c.X(1) + 8);
+    w.flags[c.f('k')] = { sig };
+    // the two flyers, drawn with plain red flags: the flag is not what the birds go by here
+    const mine = new Flyer(c.X(1) + 8, px(14), [['red', 99]], c.X(0.5));
+    const his = new Flyer(c.X(33) + 8, px(14), [['red', 99]], c.X(0.5));
+    drawFlyer(w, mine);
+    drawFlyer(w, his);
+    const fl = new Flock(w, [R1, R2], sig, { x: c.X(17), y: px(4) }, 'lko-seeti');
+    w.add(
+      new Art((ctx, w2) => {
+        // the whistle raised to the lips before it blows: the tell
+        const p = sig.ph(w2);
+        for (const [f, r] of [
+          [mine, SEETI.ours],
+          [his, SEETI.his],
+        ] as [Flyer, number[]][]) {
+          const up = p >= r[0] - SEETI.raise && p < r[0] + 20;
+          if (!up) continue;
+          ctx.fillStyle = '#ECEFF1';
+          ctx.fillRect(f.x - 6, f.feet - 26, 4, 2);
+          if (p >= r[0]) {
+            ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+            ctx.lineWidth = 1;
+            for (let k = 1; k <= 3; k++) {
+              ctx.beginPath();
+              ctx.arc(f.x - 8, f.feet - 25, 3 * k, -0.6, 0.6);
+              ctx.stroke();
+            }
+          }
+        }
+      }, 4),
+    );
+    w.onTick((w2) => {
+      if (t0.t < 0 && w2.player.cx > c.X(0.5)) t0.t = w2.tick;
+      const p = sig.ph(w2);
+      // the whistle decides the roof: yours the near one, his the far one
+      fl.always = p >= SEETI.ours[0] - 10 && p < SEETI.his[0] - 10 ? R1 : R2;
+      fl.z.hazard.cause = fl.always === R1 ? 'lko-seeti' : 'lko-seeti-jawab';
+      if (p === SEETI.ours[0] || p === SEETI.his[0]) w2.sfx('click', p === SEETI.ours[0] ? mine.x : his.x, px(13));
+    });
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Intezaar kis baat ka? | Waiting for what?', 2.2));
+    sign(w, x + 0.2, 9.4, 3, 'SEETI', 'shop', null, 'muqabla');
+  },
+};
+
+export const s09 = { room: kabootarRoom, acts: [gumbad, hawa, jhande, seeti] };
 export const meta09 = { family: 'flag-colour-steers-flock', betrayals: ['flag-signal'], ending: 'lko-chhatri' } as StageMeta;

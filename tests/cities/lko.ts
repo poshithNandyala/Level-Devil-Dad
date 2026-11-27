@@ -639,6 +639,19 @@ const redOf = (who: 'a' | 'b') => (w: World) => {
   const o = (w.flags['lko09-jhande:k']?.[who] as Fl | undefined)?.order(w);
   return !!o && o.c === 'red' && o.left > 1.0;
 };
+const seetiPh = (w: World) => ((w.flags['lko09-seeti:k'] as { sig: { ph: (w: World) => number } } | undefined)?.sig.ph(w) ?? -1);
+const seetiIn = (a: number, b: number) => (w: World) => {
+  const p = seetiPh(w);
+  return p >= a && p < b;
+};
+actRoutes['lko09-seeti'] = (x) => [
+  walkTo(x + 2.5, 300),
+  until(seetiIn(165, 175), 900, 'your flyer has called them and they have lifted'),
+  hops([x + 2.5, x + 4.6, x + 8.8, x + 10.6, x + 15.6], 'over the near roof to the tank roof'),
+  until(seetiIn(345, 355), 900, 'the rival has called them and they have lifted'),
+  hops([x + 15.6, x + 18.6, x + 22.8, x + 24.6, x + 29.6], 'over the far roof'),
+  runTo(x + 35, 300),
+];
 const GUMBAD = [5, 13, 21];
 /** stand where the dome is your size (its terrace 24 px up), then jump on to it */
 const domeJump = (id: string, k: number, d: number, x: number): Step => {
@@ -1020,6 +1033,11 @@ mistakes['LKO-08'].push(
 mistakes['LKO-07'].push(
   { what: 'in the fog, stopping to return the greeting, as 02 taught', steps: [...through('LKO-07', room07, 4), walkTo(actX('LKO-07', 4) + 6, 300, 'stop for the greeting'), until((w) => fog07(w) > px(actX('LKO-07', 4) + 14.2), 1200), { hold: 'R', until: done, max: 600 }], cause: 'lko-kohra' },
   { what: 'in the fog, running on ahead of it', steps: [...through('LKO-07', room07, 4), runTo(actX('LKO-07', 4) + 9.5, 300), hop(actX('LKO-07', 4) + 12, actX('LKO-07', 4) + 14.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-ganj' },
+);
+
+mistakes['LKO-09'].push(
+  { what: 'the whistle duel: crossing on the red flag, as on the first roofs', steps: [...through('LKO-09', room09, 3), walkTo(actX('LKO-09', 3) + 2.5, 300), until(seetiIn(20, 30), 900), hops([actX('LKO-09', 3) + 2.5, actX('LKO-09', 3) + 5.3, actX('LKO-09', 3) + 8.8]), until(done, 600)], cause: 'lko-seeti' },
+  { what: 'the whistle duel: going on past the tank roof once your flyer has called', steps: [...through('LKO-09', room09, 3), walkTo(actX('LKO-09', 3) + 2.5, 300), until(seetiIn(165, 175), 900), hops([actX('LKO-09', 3) + 2.5, actX('LKO-09', 3) + 5.3, actX('LKO-09', 3) + 8.8, actX('LKO-09', 3) + 11.2, actX('LKO-09', 3) + 15.6, actX('LKO-09', 3) + 19.2, actX('LKO-09', 3) + 22.8]), until(done, 600)], cause: 'lko-seeti-jawab' },
 );
 
 export const test: CityTests = {
