@@ -26,7 +26,7 @@ class PepaCue extends Entity {
     const every = Math.max(12, Math.min(90, Math.round(d / 4)));
     if (w.tick % every === 0) w.sfx('whistle', c.x, GROUND - 40);
     // the guard stakes in front of the gate come down as the singers arrive
-    if (c.at === 0 && c.t < 24 && w.state === 'play' && w.player.cx > this.gx - 16 && w.player.cx < this.gx - 5) w.die('dis-stakes');
+    if (c.at === 0 && c.t < 24 && w.state === 'play' && w.player.cx > this.gx - 18 && w.player.cx < this.gx - 5) w.die('dis-stakes');
   }
   draw(ctx: CanvasRenderingContext2D, w: World) {
     const c = this.coming;
@@ -42,7 +42,7 @@ class PepaCue extends Entity {
     }
     if (c.at === 0 && c.t < 24) {
       ctx.fillStyle = '#7A5A22';
-      for (let k = 0; k < 3; k++) ctx.fillRect(this.gx - 16 + k * 4, GROUND - 30 + c.t, 3, 30 - c.t);
+      for (let k = 0; k < 3; k++) ctx.fillRect(this.gx - 18 + k * 4, GROUND - 30 + c.t, 3, 30 - c.t);
     }
   }
 }
