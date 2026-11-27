@@ -12,7 +12,7 @@ import { hiranRoom, ghat } from './s04';
 import { tasveerRoom, dekho, ooncha } from './s05';
 import { choona } from './choona';
 import { toteRoom, sanjh } from './s06';
-import { jettyRoom, ghatSte, doosra, teesra } from './s07';
+import { jettyRoom, ghatSte, doosra } from './s07';
 import { monsoonRoom, gali, deewar, chhajja, tin } from './s08';
 import { jadRoom, pul } from './s09';
 import { nali, patta } from './nali';
@@ -61,7 +61,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: hiranRoom(), acts: [ghat], twist: 'svp-jetty-guard', par: 35, shape: 'short', meta: { family: 'food-holder-followed-by-deer', betrayals: ['carry-attracts'], ending: 'svp-jetty-guard' } }),
   longStage({ base: tasveerRoom(), acts: [dekho, ooncha, choona], twist: 'svp-note-door', par: 56, shape: 'wtf', meta: { family: 'picture-aligns-ledge-from-spot', betrayals: ['viewpoint-align'], ending: 'svp-note-door' } }),
   longStage({ base: toteRoom(), acts: [sanjh], twist: 'svp-bough-door', par: 49, shape: 'long', meta: { family: 'bird-weight-bends-tree', betrayals: ['crowd-weight-bends'], ending: 'svp-bough-door' } }),
-  longStage({ base: jettyRoom(), acts: [ghatSte, doosra, teesra, busStand], twist: 'svp-ticket-window', par: 60, shape: 'marathon', lives: 'act', meta: { family: 'luggage-stacks-as-floor', betrayals: ['crowd-belongings-floor'], ending: 'svp-ticket-window' } }),
+  longStage({ base: jettyRoom(), acts: [ghatSte, doosra, busStand], twist: 'svp-ticket-window', par: 60, shape: 'marathon', lives: 'act', meta: { family: 'luggage-stacks-as-floor', betrayals: ['crowd-belongings-floor'], ending: 'svp-ticket-window' } }),
   longStage({ base: monsoonRoom(), acts: [gali, deewar, chhajja, tin], twist: 'svp-gutter-river', par: 117, shape: 'wtf', meta: { family: 'rain-direction-reverses-awnings', betrayals: ['second-season'], ending: 'svp-gutter-river' } }),
   longStage({ base: jadRoom(), acts: [pul, nali, patta], twist: 'svp-frame-door', par: 48, shape: 'long', meta: { family: 'brick-crumbles-roots-hold', betrayals: ['visual-rule-brick-root'], ending: 'svp-frame-door' } }),
   longStage({ base: dweepRoom(), acts: [nadi, jadFin, samanFin, naliFin, ghatFin], twist: 'svp-dweep-gate', par: 87, shape: 'marathon', lives: 'act', meta: { family: 'finale-food-through-sawmill', betrayals: ['food-through-sawmill'], ending: 'svp-dweep-gate' } }),

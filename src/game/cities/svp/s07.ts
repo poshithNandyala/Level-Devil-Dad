@@ -104,8 +104,10 @@ export class Hall extends Entity {
     /** a false alarm first: the call that is not the call */
     readonly alarmAfter = 0,
     readonly seatsOn: number[] = [],
-    /** lashed down for the storm: the luggage stays after the call */
-    readonly lashed = false,
+    /** lashed down for the storm: the luggage from this x (px) on stays after the call */
+    readonly lashedFrom = Infinity,
+    /** the cause of falling into the water under the luggage */
+    readonly gapCause = 'svp-saman',
   ) {
     super();
     this.layer = 1;
@@ -121,7 +123,7 @@ export class Hall extends Entity {
     for (const p of this.stacks) w.add(p);
     w.add(this.crowd);
     w.add(this.crowd.hurt);
-    w.add(new Hurt(this.gapX[0], FLOOR + 10, this.gapX[1] - this.gapX[0], 40, 'svp-saman', null));
+    w.add(new Hurt(this.gapX[0], FLOOR + 10, this.gapX[1] - this.gapX[0], 40, this.gapCause, null));
     w.add(new Fx(null, (ctx, w2) => this.water(ctx, w2), 5));
     return this;
   }
@@ -158,8 +160,8 @@ export class Hall extends Entity {
     }
     if (t >= this.callAfter) {
       this.called = true;
-      if (!this.lashed)
-        for (const p of this.stacks) {
+      for (const p of this.stacks)
+        if (p.x < this.lashedFrom) {
           p.hide();
           w.emit('fx', p.x + p.w / 2, p.y + 6, { kind: 'poof', w: p.w, h: p.h });
         }
@@ -385,7 +387,10 @@ export const ghatSte: Act = {
     const s2 = new Ship(px(x + 8), 7, false, '#B3392E').install(w);
     (w.flags.ships ??= []).push(s1, s2);
     const h = sea(w, px(x + 6), px(x + 15), 'svp-jahaz');
-    void h;
+    // into the water beside the second ship while it is still coming in: the deck was not there yet
+    w.onTick((w2) => {
+      h.cause = w2.player.cx > px(x + 8) && s2.state === 'arriving' ? 'svp-jahaz2' : 'svp-jahaz';
+    });
     hall.crowd.onArrive = (w2) => {
       w2.after(1.0, () => s1.leave());
       w2.after(3.5, () => s2.arrive());
@@ -471,7 +476,7 @@ export const teesra: Act = {
 export const lashedHall: Act = {
   id: 'svp10-saman',
   w: 48,
-  advice: 'The luggage hall again, but the storm is coming and every bag is lashed down with rope: it stays after the call. There is no trench tonight. The crowd still runs for the ship, and then comes back: look for a stack that is tall enough to be over them.',
+  advice: 'The luggage hall again, and the storm is coming: the bags on the pier are lashed down with rope and stay after the call, but the few over the water were never tied and go with the call, as before. There is no trench tonight. The crowd still runs for the ship: look for a stack on the pier that is tall enough to be over them.',
   cps: [],
   paint: (g, c) => {
     const x = c.x;
@@ -480,7 +485,6 @@ export const lashedHall: Act = {
   build: (w, c) => {
     const x = c.x;
     const crowd = new Crowd(px(x + 42), px(x + 13), 250, 72, 'svp-bheed', true);
-    const back = new Crowd(px(x + 13), px(x + 44), 250, 72, 'svp-bheed2', true);
     const hall = new Hall(
       [
         { x: px(x + 4), w: px(3), h: 16 },
@@ -493,13 +497,10 @@ export const lashedHall: Act = {
       [px(x + 4), px(x + 12)],
       0,
       [px(x + 38) + 8, px(x + 39) + 8, px(x + 40) + 8, px(x + 41) + 8],
-      true,
+      px(x + 20),
+      'svp-saman2',
     ).install(w);
-    w.add(back);
-    w.add(back.hurt);
-    crowd.onArrive = (w2) => w2.after(1.0, () => back.go());
     (w.flags.halls ??= []).push(hall);
-    (w.flags.backs ??= []).push(back);
     w.add(
       new Fx(null, (ctx) => {
         // the rope lashings over the tall stack

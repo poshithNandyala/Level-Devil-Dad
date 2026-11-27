@@ -378,7 +378,7 @@ function atAct(id: string, act: string, then: (x: number) => Step[]): Step[] {
 }
 /** a death that must happen in an added act: the NAIVE play and the obvious FIX of it */
 /** acts taken out of the stages after the uniqueness probe (docs: LENGTH.md): their routes and files stay, one line in levels.ts puts them back */
-const RETIRED = new Set(['svp06-lehar', 'svp07-khula', 'svp07-uthao', 'svp08-bazaar', 'svp09-hauz', 'svp05-rassi', 'svp10-rassi']);
+const RETIRED = new Set(['svp06-lehar', 'svp07-khula', 'svp07-uthao', 'svp08-bazaar', 'svp09-hauz', 'svp05-rassi', 'svp10-rassi', 'svp07-teesra']);
 function actDeath(id: string, act: string, what: string, cause: string, then: (x: number) => Step[]) {
   if (RETIRED.has(act)) return;
   (mistakes[id] ??= []).push({
@@ -605,7 +605,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: and(ground, X(x + 20)), max: 600, note: 'along the pier to the stacks' },
     { hold: 'R', jump: 14, until: (w) => w.player.onGround && w.player.y + w.player.h < 255 && w.player.x >= px(x + 21), max: 300, note: 'up the low stack' },
     { hold: 'R', jump: 14, until: (w) => w.player.onGround && w.player.y + w.player.h <= 241 - 28 && w.player.x >= px(x + 24), max: 300, note: 'up the tall stack' },
-    { hold: '', until: (w) => ((w.flags.backs as Crowd[])[0]).done, max: 4000, note: 'on the tall stack through the crowd going and the crowd coming back' },
+    { hold: '', until: (w) => ((w.flags.halls as Hall[])[0]).crowd.done, max: 4000, note: 'on the tall stack while the crowd goes by' },
     { hold: 'R', until: and(ground, X(x + 30)), max: 600, note: 'down off the stack' },
     { hold: 'R', until: and(ground, X(x + 47)), max: 900 },
   ],
@@ -809,6 +809,11 @@ actDeath('SVP-07', 'svp07-ghat', 'on to the first ship with everyone else', 'svp
   { hold: 'R', until: and(ground, X(x + 4.5)), max: 600, note: 'along the pier' },
   { hold: 'R', jump: 14, until: (w) => w.state !== 'play', max: 1800, note: 'step over to the first ship’s deck, and ride it out' },
 ]);
+actDeath('SVP-07', 'svp07-ghat', 'jump for the second ship as it comes in, before it is alongside', 'svp-jahaz2', (x) => [
+  { hold: 'R', until: and(ground, (w) => w.player.x >= px(x + 4)), max: 600, note: 'on along the pier to the quay' },
+  { policy: (w) => go(toward(w, px(x + 6) - 12, 3)), until: (w) => ships(w)[1].state === 'arriving', max: 3600, note: 'wait at the quay edge until the second ship starts to come in' },
+  { hold: 'R', jump: 14, until: (w) => w.state !== 'play', max: 900, note: 'and jump for it now' },
+]);
 actDeath('SVP-07', 'svp07-doosra', 'sit down on the luggage like everyone', 'svp-bheed', (x) => [hopUntil(and(ground, X(x + 11.5)), 'on to the luggage'), { hold: '', until: (w) => w.state !== 'play', max: 2400, note: 'wait for the ship' }]);
 actDeath('SVP-07', 'svp07-doosra', 'out of the trench the moment the real call comes', 'svp-bheed', (x) => [
   hopUntil(and(ground, X(x + 12.5)), 'across the luggage'),
@@ -871,7 +876,7 @@ fix['SVP-10'] = {
   cause: 'svp-aari',
   steps: [{ hold: 'R', until: (w) => herd0(w).carrying, max: 600 }, putDown(herd0, 'put it down'), board((w) => hall(w, -1), 'on to the log'), { policy: (w) => go(toward(w, hall(w, -1).L + 48, 2)), until: (w) => w.state !== 'play', max: 2400, note: 'the middle of the log' }],
 });
-actDeath('SVP-10', 'svp10-saman', 'sit down on the luggage like everyone', 'svp-bheed', (x) => [hopUntil(and(ground, X(x + 11.5)), 'on to the luggage'), { hold: '', until: (w) => w.state !== 'play', max: 2400, note: 'wait for the ship' }]);
+actDeath('SVP-10', 'svp10-saman', 'sit down on the luggage over the water, trusting the lashings', 'svp-saman2', (x) => [hopUntil(and(ground, X(x + 9.5)), 'on to the luggage over the water'), { hold: '', until: (w) => w.state !== 'play', max: 2400, note: 'wait for the call' }]);
 
 // ------------------------------------------------------------------ the plays that must die in an added act
 actDeath('SVP-07', 'svp07-uthao', 'ride the lift up and stay aboard past the last stop', 'svp-uthao', () => [
@@ -923,12 +928,6 @@ actDeath('SVP-10', 'svp10-saman', 'wait in the open on the pier: there is no tre
   hopUntil(and(ground, X(x + 12.5)), 'across the lashed luggage'),
   { hold: 'R', until: and(ground, X(x + 20)), max: 600, note: 'along the pier' },
   { hold: '', until: (w) => w.state !== 'play', max: 3000, note: 'wait there for the crowd' },
-]);
-actDeath('SVP-10', 'svp10-saman', 'up on the tall stack for the first crowd, down at once, and out into the one coming back', 'svp-bheed2', (x) => [
-  ...actRoutes['svp10-saman'](x).slice(0, 4),
-  { hold: '', until: (w) => ((w.flags.halls as Hall[])[0]).crowd.done, max: 4000, note: 'the first crowd has gone by' },
-  { hold: 'R', until: and(ground, X(x + 29.5)), max: 600, note: 'down off the stack' },
-  { hold: '', until: (w) => w.state !== 'play', max: 3000, note: 'and wait there: it is over' },
 ]);
 actDeath('SVP-10', 'svp10-ghat', 'put the fritter down at the stall, as before, and take the boat', 'svp-hiran3', (x) => [
   { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },
