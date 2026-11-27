@@ -11,7 +11,7 @@
    28.5,
    35.5,
    47.5,
-   67.5,
+   63.5,
    89.5
   ],
   "route": {
@@ -20,8 +20,8 @@
   },
   "naive": {
    "state": "dead",
-   "tick": 1108,
-   "cause": "hit"
+   "tick": 1871,
+   "cause": "splash"
   },
   "fix": {
    "state": "dead",
@@ -43,7 +43,7 @@
   ],
   "route": {
    "state": "won",
-   "tick": 1494
+   "tick": 1500
   },
   "naive": {
    "state": "dead",
@@ -52,7 +52,7 @@
   },
   "fix": {
    "state": "dead",
-   "tick": 893,
+   "tick": 900,
    "cause": "splash"
   }
  },
@@ -97,7 +97,7 @@
   ],
   "route": {
    "state": "won",
-   "tick": 1251
+   "tick": 975
   },
   "naive": {
    "state": "dead",
@@ -119,7 +119,7 @@
   ],
   "route": {
    "state": "won",
-   "tick": 2206
+   "tick": 2205
   },
   "naive": {
    "state": "dead",
@@ -201,6 +201,72 @@
    "state": "dead",
    "tick": 109,
    "cause": "fell"
+  }
+ },
+ "PDY-09": {
+  "par": 75,
+  "item": [
+   [
+    28,
+    14.9
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   63,
+   64.5,
+   95,
+   96.5,
+   127,
+   128.5,
+   159,
+   160.5,
+   191,
+   191.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 7589
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 138,
+   "cause": "pdy-boule"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 427,
+   "cause": "pdy-plomb"
+  }
+ },
+ "PDY-10": {
+  "par": 60,
+  "item": [
+   [
+    21,
+    11.7
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   53,
+   54.5,
+   79,
+   79.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2316
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 67,
+   "cause": "splash"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 653,
+   "cause": "pdy-mul"
   }
  }
 }
