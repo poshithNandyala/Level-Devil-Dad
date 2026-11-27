@@ -7,6 +7,7 @@ export const causeLines: Record<string, string[]> = {
   'lko-jali': ['The jali is only pulled threads: the second wash took it, and you.', 'Solid white flowers only. Hop over the little net of holes.'],
   'lko-malai': ['The side of the malai facing the light goes soft, and you stood on it.', 'Stand in each heap’s own long shadow, and watch where the light comes from.'],
   'lko-seekh': ['A hop off a full heap of galouti puts your head in the seekh skewers.', 'Stand on the heap till it squashes flat, then tap the jump.'],
+  'lko-kafgir': ['The cook pressed the slab from his end, and his kafgir pressed you with it.', 'Wait on the ground before the slab till he lifts his kafgir, then walk the lane.'],
   'lko-tawa': ['Flat galouti is thin: the tawa burned straight through it, and you.', 'Once it’s flat, go. Hop off thin ones at once.'],
   'lko-tandoor': ['The tandoor was too wide to jump, and very hot inside.', 'Wait at the rim for the sheermal, drop on to it, hop out before it bakes.'],
   'lko-chakkar': ['You made the bells ring, so the dancer spun across the floor to the sound, through you.', 'Hop over the red ghungroo strips, land on plain boards.'],

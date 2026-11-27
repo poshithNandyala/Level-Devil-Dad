@@ -210,6 +210,122 @@ export const lane: Act = {
   },
 };
 
+// ================================================================ act 3: ulta, the cook presses from his end
+/** The same low rack over a long slab, but this time the cook presses it himself, from HIS end, with his
+ *  big iron kafgir: the squash comes at you. Standing on the slab's end to squash it (as learned) puts you
+ *  under his kafgir. Wait off the slab till he has pressed it all flat, then walk the lane. */
+export const ulta: Act = {
+  id: 'lko05-ulta',
+  w: 28,
+  advice: 'Here the cook presses the slab himself, from his end, with his big iron kafgir: the squash comes at you. Don’t stand on the slab to squash it: wait on the ground before it till he has pressed it all flat and lifted his kafgir, then walk the lane.',
+  build: (w, c) => {
+    const x = c.x;
+    tawa(w, x + 2, x + 23);
+    seekhRack(w, x + 4, x + 23, 30);
+    const pcs = Array.from({ length: 22 }, (_, i) => w.add(new Galouti(px(x + 2 + i), false, 1e9, 90)));
+    const K = { t0: -1, i: pcs.length, done: false, kx: px(x + 24) + 8 };
+    w.flags[c.f('slab')] = pcs;
+    w.flags[c.f('k')] = K;
+    // the kafgir: a broad iron blade riding the top of the slab at the squash front
+    const blade = w.add(
+      new Zone(K.kx - 4, FLOOR - 30, 8, 26, 'lko-kafgir', (ctx, z) => {
+        if (!z.on) return;
+        ctx.fillStyle = '#4E342E';
+        ctx.fillRect(z.x + 2, z.y - 30, 3, 32);
+        ctx.fillStyle = '#90A4AE';
+        ctx.fillRect(z.x - 2, z.y + 18, 12, 4);
+        ctx.fillStyle = '#B0BEC5';
+        ctx.fillRect(z.x - 2, z.y + 18, 12, 1);
+      }, 3),
+    );
+    blade.on = false;
+    w.add(new Art((ctx, w2) => gent(ctx, px(x + 25) + 8, FLOOR, 26, '#EDE6D8', { face: -1, topi: '#F5F0E6', skin: '#A06B45', arms: K.t0 >= 0 && !K.done ? 1 : 0 }), 3));
+    w.onTick((w2) => {
+      if (K.t0 < 0 && w2.player.cx > px(x + 1)) {
+        K.t0 = w2.tick;
+        blade.on = true;
+        w2.say('Dabaata hoon! | I’ll press it!', px(x + 25) + 8, FLOOR - 34, 1.6, 'npc');
+      }
+      if (K.t0 < 0 || K.done) return;
+      const n = Math.floor((w2.tick - K.t0 - 40) / 14);
+      while (K.i > 0 && pcs.length - K.i <= n) {
+        K.i--;
+        pcs[K.i].force = true;
+      }
+      blade.x = px(x + 2 + K.i) + 4;
+      if (K.i === 0 && pcs[0].flat && w2.tick - K.t0 - 40 > 14 * (pcs.length + 2)) {
+        K.done = true;
+        blade.on = false;
+      }
+    });
+    sign(w, x + 0.1, 10.4, 3.2, 'ULTA', 'shop', null, 'kafgir');
+  },
+};
+
+// ================================================================ act 4: bhara, keep it full
+/** Under a rack the cook keeps low (low enough to stand under on a full heap, too low to hop), the heaps
+ *  stand in pairs. He hoists the rack now and then to turn the seekh: that's when you hop. Till then keep
+ *  your heap full: step from one heap of the pair to the other, so neither squashes. A flat one drops you
+ *  on to the thin patty, out of reach of the next. */
+const BHARA = [3, 7, 11];
+export const bhara: Act = {
+  id: 'lko05-bhara',
+  w: 18,
+  advice: 'The cook keeps this rack low: you can stand under it on a full heap but not hop. Hop only when he hoists it to turn the seekh. Till then keep your heap full: step from one heap of the pair to the other so neither squashes. Don’t wait for a squash here.',
+  build: (w, c) => {
+    const x = c.x;
+    tawa(w, x + 2, x + 13);
+    const R = { t0: -1, period: 230, up: 70, tip: 42 };
+    w.flags[c.f('rack')] = R;
+    const x0 = px(x + 1.5),
+      x1 = px(x + 14.5);
+    const z = w.add(new Zone(x0, FLOOR - R.tip - 22, x1 - x0, 22, 'lko-seekh'));
+    const ph = (w2: World) => (R.t0 < 0 ? 0 : (w2.tick - R.t0) % R.period);
+    w.flags[c.f('upNow')] = (w2: World) => {
+      const p = ph(w2);
+      return R.t0 >= 0 && p >= R.period - R.up ? R.period - p : 0;
+    };
+    w.add(
+      new Art((ctx, w2) => {
+        const tip = FLOOR - R.tip;
+        ctx.fillStyle = '#4E342E';
+        ctx.fillRect(x0 - 6, FLOOR - 150, 3, 150);
+        ctx.fillRect(x1 + 3, FLOOR - 150, 3, 150);
+        ctx.strokeStyle = '#78909C';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x0 - 4, FLOOR - 150);
+        ctx.lineTo(x0 - 4, z.y - 4);
+        ctx.stroke();
+        // the shiver before he hoists it
+        const p = ph(w2);
+        const sh = R.t0 >= 0 && p > R.period - R.up - 30 && p < R.period - R.up ? ((w2.tick >> 1) % 2) * 2 - 1 : 0;
+        const top = z.y - 4 + sh;
+        ctx.fillStyle = '#4E342E';
+        ctx.fillRect(x0 - 4, top, x1 - x0 + 8, 4);
+        for (let xx = x0 + 3; xx < x1 - 2; xx += 6) {
+          ctx.fillStyle = '#B0BEC5';
+          ctx.fillRect(xx + sh, top + 4, 1.4, 22);
+          ctx.fillStyle = '#8D4A2B';
+          ctx.fillRect(xx - 1.5 + sh, top + 8, 4.4, 9);
+        }
+        void tip;
+      }, 2),
+    );
+    const heaps = BHARA.flatMap((d) => [w.add(new Galouti(px(x + d), false, 75, 80)), w.add(new Galouti(px(x + d + 1), false, 75, 80))]);
+    w.flags[c.f('kebabs')] = heaps;
+    w.add(new Art((ctx, w2) => gent(ctx, px(x + 15) + 8, FLOOR, 26, '#EDE6D8', { face: -1, topi: '#F5F0E6', skin: '#A06B45', arms: (w2.flags[c.f('upNow')] as (w: World) => number)(w2) > 0 ? 1 : 0 }), 3));
+    w.onTick((w2) => {
+      if (R.t0 < 0 && w2.player.cx > px(x)) R.t0 = w2.tick;
+      const up = (w2.flags[c.f('upNow')] as (w: World) => number)(w2) > 0;
+      // the rack eases up and down (a few ticks), the deadly tips with it
+      const want = FLOOR - (up ? 112 : R.tip) - 22;
+      z.y += Math.sign(want - z.y) * Math.min(Math.abs(want - z.y), 9);
+    });
+    sign(w, x + 0.1, 10.4, 3.2, 'BHARA', 'shop', null, 'seekh');
+  },
+};
+
 // ================================================================ the door: the sheermal in the tandoor
 /** The door is beyond the baker's tandoor, too wide to jump. When you reach its edge he slaps a sheermal
  *  on to the tandoor's inside wall: a ledge, below the rim, for as long as the bread is raw. */
@@ -342,5 +458,5 @@ export const dum: Act = {
   },
 };
 
-export const s05 = { room: galoutiRoom, acts: [tawa2, lane, dum] };
+export const s05 = { room: galoutiRoom, acts: [tawa2, lane, ulta, bhara, dum] };
 export const meta05 = { family: 'flatten-platforms-build-low-lane', betrayals: ['flatten-lane'], ending: 'lko-sheermal' } as StageMeta;
