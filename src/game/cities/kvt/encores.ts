@@ -443,6 +443,7 @@ const ridge: Act = {
  *  side of the heap you want to go, and it slides you off that side and carries you over. */
 const shingle: Act = {
   id: 'kvt09-ozhukku',
+  cps: [29.5],
   w: 34,
   advice: 'A shelf of loose shingle under a low lip of beach rock: a jump for the far ledge hits the lip, and walking off drops you in. Land short and let the shingle carry you: every landing slides you on, and the slide that takes you off the edge carries you under the lip. On the pillar after it, land on the side of the heap you want to go.',
   paint: (g, c) => {
