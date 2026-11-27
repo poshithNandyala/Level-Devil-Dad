@@ -20,8 +20,11 @@ export class Nest extends Entity {
   hazard: Hazard;
   private said = false;
 
-  constructor(o: { tx: number; groundTy: number; waterTx: number; n?: number; gap?: number }) {
+  /** what the islander shouts as it hatches (KVT-01's: stop) */
+  readonly line: string;
+  constructor(o: { tx: number; groundTy: number; waterTx: number; n?: number; gap?: number; line?: string }) {
     super();
+    this.line = o.line ?? 'Nilkku! Aamakkunjungal! | Stop! Baby turtles!';
     this.layer = 2;
     this.x = o.tx * TILE + 8;
     this.ground = o.groundTy * TILE;
@@ -64,7 +67,7 @@ export class Nest extends Entity {
     this.t0 = this.tick;
     w.sfx('crack', this.x, this.ground - 6);
     w.emit('fx', this.x, this.ground - 4, { kind: 'dust' });
-    w.say('Nilkku! Aamakkunjungal! | Stop! Baby turtles!', this.x, this.ground - 50, 2.2, 'npc');
+    w.say(this.line, this.x, this.ground - 50, 2.2, 'npc');
   }
 
   update(w: World) {

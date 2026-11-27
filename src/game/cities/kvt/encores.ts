@@ -13,6 +13,7 @@ import type { Ending } from '../../levels/endkit';
 import { CoralStep } from './tide';
 import { Eel } from './levels';
 import { Thing } from '../../entities/traps';
+import { Nest } from './entities';
 
 export type KvtEncoreEndingKind = 'kvt-buried-door' | 'kvt-sand-arm';
 declare module '../../levels/endings' {
@@ -794,7 +795,26 @@ const highTuna: Act = {
   },
 };
 
-export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, highTuna, risingTide, tideHoles] };
+/** KVT-10 act, the tour turned over: a turtle nest hatches behind you this time, and the babies scramble the
+ *  way you are going, to the lagoon ahead. Stop and wait for them, as on the jetty at Kavaratti, and they run into
+ *  you. Keep going, and over the water before they get there. */
+const turtlesBehind: Act = {
+  id: 'kvt10-aama',
+  w: 28,
+  advice: 'A nest hatches behind you and the babies run the way you are going, to the water ahead: don’t stop for them this time. Run on and hop the water before they reach it.',
+  paint: (g, c) => {
+    g.pit(c.x + 20, c.x + 21);
+  },
+  build: (w, c) => {
+    const { X } = c;
+    pool(w, c.x + 20, c.x + 22, 15.3, { colors: LAGOON });
+    const nest = Nest.place(w, { tx: c.x + 3, groundTy: 15, waterTx: c.x + 20, line: 'Aamakkunjungal! Kadalilekku! | Baby turtles! Off to the sea!' });
+    onPass(w, X(5), (w2) => nest.hatch(w2));
+    onPass(w, X(8), (w2) => taraSays(w2, 'Nilkku, Dad! Kunjungal pokatte! | Stop, Dad! Let the babies go first!', 2.4));
+  },
+};
+
+export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, risingTide, tideHoles] };
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {
