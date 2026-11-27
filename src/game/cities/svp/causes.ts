@@ -11,6 +11,7 @@ export const causeLines: Record<string, string[]> = {
   'svp-lakdi': ['Lakdi! A plank came down on your head.', 'Wait back from the stack: the shadow shows where the next one lands.'],
   'svp-magar': ['Magarmachh! The board’s arrow was pointing right at it.', 'The arrow always points at the crocodile: if it points at the log you’re landing on, don’t land.'],
   'svp-hiran': ['Hiran! The herd nudged you off the edge.', 'The deer follow the food. Put it down well back from the pit, then wait for the boat.'],
+  'svp-nazar2': ['Nazar! You climbed the signboard and the picture lined up from too high: the ledge appeared far below the road.', 'The note was taken from eye height, not from the top of a pole. The bench is the right height: stand on that.'],
   'svp-nazar': ['Nazar! The ledge was only a picture from the bench.', 'Stand on the footprints without moving, and the view lines up. Then run, it only holds a few seconds.'],
   'svp-saman': ['Saman! They all stood up and took the floor with them.', 'Don’t wait on the luggage: when the ship is called it goes. Cross, and get into the trench.'],
   'svp-bheed2': ['Bheed! You came down when the crowd had gone by, and the same crowd was coming back.', 'The storm has turned the whole hall round: the crowd goes to the ship and comes back. Stay up on the tall stack for both.'],

@@ -9,7 +9,7 @@ import { extra, paint } from './s01';
 import { aariRoom, chirai } from './s02';
 import { magarRoom, nala } from './s03';
 import { hiranRoom, ghat } from './s04';
-import { tasveerRoom, dekho } from './s05';
+import { tasveerRoom, dekho, ooncha } from './s05';
 import { choona } from './choona';
 import { toteRoom, sanjh } from './s06';
 import { jettyRoom, ghatSte, doosra, teesra } from './s07';
@@ -58,7 +58,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: aariRoom(), acts: [chirai], twist: 'svp-timber-stack', par: 35, cps: [6.5], shape: 'short', meta: { family: 'cut-floor-saw-carriage', betrayals: ['cut-floor'], ending: 'svp-timber-stack' } }),
   longStage({ base: magarRoom(), acts: [nala], twist: 'svp-board-bridge', par: 35, shape: 'short', meta: { family: 'warning-board-arrow-turns', betrayals: ['honest-moving-sign'], ending: 'svp-board-bridge' } }),
   longStage({ base: hiranRoom(), acts: [ghat], twist: 'svp-jetty-guard', par: 35, shape: 'short', meta: { family: 'food-holder-followed-by-deer', betrayals: ['carry-attracts'], ending: 'svp-jetty-guard' } }),
-  longStage({ base: tasveerRoom(), acts: [dekho, choona], twist: 'svp-note-door', par: 86, shape: 'wtf', meta: { family: 'picture-aligns-ledge-from-spot', betrayals: ['viewpoint-align'], ending: 'svp-note-door' } }),
+  longStage({ base: tasveerRoom(), acts: [dekho, ooncha, choona], twist: 'svp-note-door', par: 86, shape: 'wtf', meta: { family: 'picture-aligns-ledge-from-spot', betrayals: ['viewpoint-align'], ending: 'svp-note-door' } }),
   longStage({ base: toteRoom(), acts: [sanjh], twist: 'svp-bough-door', par: 49, shape: 'long', meta: { family: 'bird-weight-bends-tree', betrayals: ['crowd-weight-bends'], ending: 'svp-bough-door' } }),
   longStage({ base: jettyRoom(), acts: [ghatSte, doosra, teesra], twist: 'svp-ticket-window', par: 80, shape: 'marathon', lives: 'act', meta: { family: 'luggage-stacks-as-floor', betrayals: ['crowd-belongings-floor'], ending: 'svp-ticket-window' } }),
   longStage({ base: monsoonRoom(), acts: [gali, deewar, chhajja, tin], twist: 'svp-gutter-river', par: 80, shape: 'wtf', meta: { family: 'rain-direction-reverses-awnings', betrayals: ['second-season'], ending: 'svp-gutter-river' } }),

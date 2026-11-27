@@ -15,7 +15,7 @@ import type { Lift } from '../../src/game/cities/svp/uthao';
 import type { SawHall } from '../../src/game/cities/svp/s02';
 import type { Creek } from '../../src/game/cities/svp/s03';
 import type { Herd, LateBoat } from '../../src/game/cities/svp/s04';
-import type { Viewpoint } from '../../src/game/cities/svp/s05';
+import type { EyeView, Viewpoint } from '../../src/game/cities/svp/s05';
 import type { Bough, Flock } from '../../src/game/cities/svp/s06';
 import type { Crowd, Hall, Ship } from '../../src/game/cities/svp/s07';
 import type { Weather } from '../../src/game/cities/svp/s08';
@@ -80,6 +80,12 @@ const boatA = (w: World) => (w.flags.boats as LateBoat[])[0];
 /** stand on the footprints until the view lines up */
 const standOn = (get: (w: World) => Viewpoint, note: string): Step => ({ policy: (w) => go(toward(w, get(w).spot, 2)), until: (w) => get(w).aligned > 0, max: 900, note });
 const vp0 = (w: World) => w.flags.vp as Viewpoint;
+const eye = (w: World) => (w.flags.eyes as EyeView[])[0];
+/** up on to the low bench at tile x+3 */
+const onBench = (x: number): Step[] => [
+  { hold: 'R', until: and(ground, X(x + 2)), max: 600, note: 'up to the bench' },
+  { hold: 'R', jump: 14, until: (w) => w.player.onGround && Math.abs(w.player.y + w.player.h - (FLOOR_Y - 16)) < 3, max: 200, note: 'up on to the bench' },
+];
 const vpN = (i: number) => (w: World) => (w.flags.vps as Viewpoint[])[i];
 
 // ------------------------------------------------------------------ SVP-06: the parrots
@@ -667,6 +673,12 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     hopUntil(and(ground, X(x + 107)), 'the whole long ledge'),
     { hold: 'R', until: and(ground, X(x + 111)), max: 300 },
   ],
+  'svp05-ooncha': (x) => [
+    ...onBench(x),
+    { hold: '', until: (w) => eye(w).aligned > 0, max: 400, note: 'stand on the bench, the height of the eyes in the note' },
+    hopUntil(and(ground, X(x + 27)), 'across the ledge'),
+    { hold: 'R', until: and(ground, X(x + 35)), max: 600 },
+  ],
   'svp04-ghat': (x) => [
     { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },
     putDown(herdA, 'put it down at the stall: the herd gathers there'),
@@ -918,6 +930,18 @@ const windSpot = (idx: number, against = false) => (w: World) => {
   return (d > 0) !== against ? a.x1 - 20 : a.x0 + 20;
 };
 const intoStreet = (x: number): Step => ({ hold: 'R', until: (w) => { return w.player.onGround && w.player.cx >= px(x + 4.5); }, max: 900, note: 'on along the road into the street' });
+actDeath('SVP-05', 'svp05-ooncha', 'stand on the footprints, then step out on to the ledge', 'svp-nazar', (x) => [
+  ...onBench(x),
+  { hold: 'R', until: (w) => w.player.onGround && w.player.y + w.player.h > FLOOR_Y - 2 && w.player.cx >= px(x + 7), max: 400, note: 'down off the bench on to the footprints' },
+  { hold: '', ticks: 120, note: 'a moment on the footprints' },
+  { hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'and out on to the ledge' },
+]);
+actDeath('SVP-05', 'svp05-ooncha', 'up the signboard for the height', 'svp-nazar2', (x) => [
+  ...onBench(x),
+  { hold: 'R', jump: 14, until: (w) => w.player.onGround && Math.abs(w.player.y + w.player.h - (FLOOR_Y - 40)) < 3, max: 300, note: 'on to the signboard' },
+  { hold: '', until: (w) => eye(w).alignedLow > 0, max: 400, note: 'stand up there until it lines up' },
+  { hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'and down on to the ledge' },
+]);
 actDeath('SVP-08', 'svp08-chhajja', 'to the lee end by the wind, as the awnings taught', 'svp-chhajja', (x) => [intoStreet(x), { policy: (w) => go(toward(w, windSpot(11)(w), 2)), until: (w) => w.state !== 'play', max: 3000, note: 'at the lee end of the first stall' }]);
 actDeath('SVP-08', 'svp08-chhajja', 'the high end of the first stall, then the lee end by the wind at the second', 'svp-chhajja2', (x) => [
   intoStreet(x),
