@@ -371,5 +371,81 @@ function shove(w: World, p: World['player'], body: Block, G: Who, dx: number) {
   w.say('Nahin nahin, pehle aap! | No no, after you!', dx + 16, FLOOR - 34, 2, 'npc');
 }
 
-export const s02 = { room: pehleRoom, acts: [gali, takrar] };
+// ================================================================ act 3: dakiya, the men in a hurry
+/** The postman comes up the lane behind you on his cycle, ringing, and the milkman right behind him. Men
+ *  in a hurry don't bow back: stand still in the lane (a bow) and he rides straight into you. Step up on to
+ *  the chabutra at the side and let them by, both of them. */
+export const dakiya: Act = {
+  id: 'lko02-dakiya',
+  w: 22,
+  advice: 'Two cycles come up the lane behind you, ringing: the postman, and the milkman right behind him. Men in a hurry don’t bow back. Don’t stand in the lane, and don’t run on to the shut gate: step up on to the chabutra at the side and let them by, both of them; the chowkidar opens the gate for the postman.',
+  paint: (g, c) => {
+    g.fill(c.x + 9, c.x + 10, 14, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const still = stillness(w);
+    const R = [
+      { x: c.X(-60), cloth: '#B8860B', cause: 'lko-dakiya' },
+      { x: c.X(-70), cloth: '#F2EEE4', cause: 'lko-dakiya-doosra' },
+    ].map((r) => ({ ...r, z: w.add(new Zone(r.x - 10, FLOOR - 13, 20, 13, r.cause)) }));
+    const S = { go: false };
+    w.flags[c.f('riders')] = R;
+    // the haveli gate at the lane's end: the chowkidar opens it when he hears the postman's bell
+    const gate = w.add(
+      new Block(c.X(18), FLOOR - 64, 16, 64, (ctx, b) => {
+        if (!b.on) return;
+        ctx.fillStyle = '#6D4C41';
+        ctx.fillRect(b.x, b.y, 16, 64);
+        ctx.fillStyle = '#A1887F';
+        for (let k = 0; k < 4; k++) ctx.fillRect(b.x + 2, b.y + 6 + k * 15, 12, 2);
+      }, 2),
+    );
+    R.forEach((r) => (r.z.on = false));
+    w.onTick((w2) => {
+      if (!S.go && w2.player.cx > c.X(2)) {
+        S.go = true;
+        R.forEach((r) => (r.z.on = true));
+        w2.sfx('click', c.X(2), FLOOR - 20);
+      }
+      if (!S.go) return;
+      for (const r of R) {
+        if (r.x < c.X(40)) r.x += 3;
+        else r.z.on = false;
+        r.z.x = r.x - 10;
+        // stood still in his way (a bow), or stepped down in front of the one behind
+        if (r === R[0]) r.z.hazard.cause = w2.player.cx > c.X(11) ? 'lko-dakiya-aage' : still() > 30 ? 'lko-dakiya' : 'lko-dakiya-aage';
+      }
+      if (gate.on && R[0].x > c.X(12)) gate.set(false);
+    });
+    w.add(
+      new Art((ctx, w2) => {
+        for (const r of R) {
+          ctx.strokeStyle = '#2B2B2B';
+          ctx.lineWidth = 1.5;
+          for (const wx of [r.x - 7, r.x + 7]) {
+            ctx.beginPath();
+            ctx.arc(wx, FLOOR - 5, 5, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+          ctx.beginPath();
+          ctx.moveTo(r.x - 7, FLOOR - 5);
+          ctx.lineTo(r.x, FLOOR - 12);
+          ctx.lineTo(r.x + 7, FLOOR - 5);
+          ctx.moveTo(r.x, FLOOR - 12);
+          ctx.lineTo(r.x + 6, FLOOR - 14);
+          ctx.stroke();
+          gent(ctx, r.x - 1, FLOOR - 9, 20, r.cloth, { face: 1, arms: 0.6, skin: '#9C6B48', topi: r === R[0] ? '#8B5A2B' : undefined });
+          if (S.go && (w2.tick >> 4) % 2 === 0) {
+            ctx.fillStyle = '#FFE082';
+            ctx.fillRect(r.x + 6, FLOOR - 18, 2, 2);
+          }
+        }
+      }, 3),
+    );
+    sign(w, x + 4.2, 10.4, 3.4, 'DAKIYA', 'shop', null, 'chabutra');
+  },
+};
+
+export const s02 = { room: pehleRoom, acts: [gali, takrar, dakiya] };
 export const meta02 = { family: 'politeness-bow-sets-order', betrayals: ['bow-order'], ending: 'lko-kiwad' } as StageMeta;

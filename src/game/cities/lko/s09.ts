@@ -309,10 +309,6 @@ export const jhande: Act = {
       home.x = n === a ? a.x + 40 : b.x - 40;
       fl.z.hazard.cause = n === a ? 'lko-jhanda-peeche' : 'lko-jhanda-aage';
     });
-    w.when(
-      (w2) => w2.player.cx > c.X(19),
-      (w2) => taraNow(w2, 'Ab aage waala! | Now the one ahead!', 1.8),
-    );
     sign(w, x + 0.2, 9.4, 3.4, 'DO JHANDE', 'shop', null, 'paas waala');
   },
 };

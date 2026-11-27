@@ -334,6 +334,16 @@ actRoutes['lko02-takrar'] = (x) => [
   hop(x + 13, x + 15.5, 'over the hole he left'),
   runTo(x + 23, 300),
 ];
+const ridersBy = (n: number) => (w: World) => {
+  const R = w.flags['lko02-dakiya:riders'] as { x: number }[] | undefined;
+  return !!R && R.slice(0, n).every((r) => r.x > w.player.cx + 40);
+};
+actRoutes['lko02-dakiya'] = (x) => [
+  walkTo(x + 3, 300, 'the bell behind you'),
+  hops([x + 9.5], 'up on to the chabutra at the side'),
+  until(ridersBy(2), 900, 'let both cycles by'),
+  runTo(x + 21, 300),
+];
 const hoopK = (w: World) => (w.flags['lko03-adda:hoop'] as { k: number }).k;
 actRoutes['lko03-adda'] = (x) => [
   walkTo(x + 4.5, 400, 'into the hoop'),
@@ -887,6 +897,11 @@ mistakes['LKO-08'].push(
 mistakes['LKO-09'].push(
   { what: 'two flags: watching the one behind you the whole way, as on the last roofs', steps: [...through('LKO-09', room09, 2), ...R_lko09_jhande(redOf('a'))(actX('LKO-09', 2)), until(done, 600)], cause: 'lko-jhanda-aage' },
   { what: 'two flags: watching the one ahead from the start', steps: [...through('LKO-09', room09, 2), ...R_lko09_jhande(redOf('b'))(actX('LKO-09', 2)), until(done, 600)], cause: 'lko-jhanda-peeche' },
+);
+mistakes['LKO-02'].push(
+  { what: 'the cycles: standing in the lane to bow, as learned', steps: [...through('LKO-02', room02, 2), walkTo(actX('LKO-02', 2) + 5, 300), until(done, 600)], cause: 'lko-dakiya' },
+  { what: 'the cycles: stepping down once the postman is by', steps: [...through('LKO-02', room02, 2), walkTo(actX('LKO-02', 2) + 3, 300), hops([actX('LKO-02', 2) + 9.5]), until(ridersBy(1), 900), { hold: 'R', until: done, max: 600 }], cause: 'lko-dakiya-doosra' },
+  { what: 'the cycles: running on ahead of them', steps: [...through('LKO-02', room02, 2), stroll(actX('LKO-02', 2) + 60), until(done, 300)], cause: 'lko-dakiya-aage' },
 );
 mistakes['LKO-04'].push(
   { what: 'under the cloud: hopping on before its shadow comes', steps: [...through('LKO-04', room04, 1), walkTo(actX('LKO-04', 1) + 2.4, 300), hops([actX('LKO-04', 1) + 3.5, actX('LKO-04', 1) + 6]), until(done, 300)], cause: 'lko-badal' },

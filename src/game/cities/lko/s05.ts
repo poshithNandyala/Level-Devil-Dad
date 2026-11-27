@@ -244,7 +244,6 @@ export const ulta: Act = {
       if (K.t0 < 0 && w2.player.cx > px(x + 1)) {
         K.t0 = w2.tick;
         blade.on = true;
-        w2.say('Dabaata hoon! | I’ll press it!', px(x + 25) + 8, FLOOR - 34, 1.6, 'npc');
       }
       if (K.t0 < 0 || K.done) return;
       const n = Math.floor((w2.tick - K.t0 - 40) / 14);
