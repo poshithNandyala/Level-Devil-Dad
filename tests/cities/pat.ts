@@ -649,7 +649,7 @@ const ACT_MISTAKES: Record<string, ReturnType<typeof inAct>[]> = {
   ],
   'PAT-09': [
     inAct('PAT-09', 'pat09-wapsi', 'hop the horse into the crowd', (x) => [{ hold: 'R', until: X(x + 9), max: 600 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 20, ticks: 26 }))], 'pat-bheed'),
-    inAct('PAT-09', 'pat09-wapsi', 'let the horse go and follow late', (x) => [{ hold: 'R', until: X(x + 7.5), max: 600 }, { hold: '', until: (w) => w.flags.pat9d.horse.x > w.flags.pat9d.x0 + 420, max: 1500 }, { hold: 'R', until: done, max: 2000 }], 'pat-bheed'),
+    inAct('PAT-09', 'pat09-wapsi', 'let the horse go and follow late', (x) => [{ hold: 'R', until: X(x + 7.5), max: 600 }, { hold: '', until: (w) => w.flags.pat9d.horse.x > w.flags.pat9d.x0 + 150, max: 1500 }, { hold: 'R', until: done, max: 2000 }], 'pat-bheed'),
   ],
   'PAT-10': [
     inAct('PAT-10', 'pat10-roll', 'run on across the hoardings', () => runOn, 'pat-jam'),
