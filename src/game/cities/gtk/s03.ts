@@ -149,7 +149,8 @@ export function room(): LevelDef {
 }
 
 /** act: the inspector comes down the rail behind you; thin bags he takes for good, a bag with you on it he lifts */
-export const INSPECTOR = { speed: 46, lift: 1.0, startBehind: 2.5 };
+// round 5: a little quicker, and the one coming towards you starts nearer, so a stop replays in under 7.5 s at lag 12
+export const INSPECTOR = { speed: 56, lift: 1.0, startBehind: 2.5 };
 export const inspectorAct = (id: string, key: string, pattern: string, dir: 1 | -1, speed: number, advice: string): Act => ({
   id,
   w: 36,
@@ -160,7 +161,7 @@ export const inspectorAct = (id: string, key: string, pattern: string, dir: 1 | 
   build: (w, c) => {
     jhora(w, c.x + 4, c.x + 26, key);
     const row = bags(w, c.x + 5, pattern, key);
-    const from = dir > 0 ? c.X(1) : c.X(28);
+    const from = dir > 0 ? c.X(1) : c.X(25);
     const st = { t0: -1, x: from, dir };
     w.flags[key + 'i'] = st;
     onPass(w, c.X(3), (w2) => {
@@ -236,7 +237,7 @@ export const act4 = inspectorAct(
 /** act 5 (F482 busy-warden-window): the inspector comes down the rail towards you and stops to write a tourist's
  *  fine. While his pen is moving he lifts nothing: pass under him then. When the pen stops he looks up and lifts
  *  the bag you are on; and the two bags in front of him are doubled polythene, which hold you a moment, not a wait */
-export const KALAM = { speed: 40, writeAt: 15, write: 2.4, start: 22 };
+export const KALAM = { speed: 40, writeAt: 15, write: 2.4, start: 19 };
 export const act5: Act = {
   id: 'gtk03-kalam',
   w: 30,

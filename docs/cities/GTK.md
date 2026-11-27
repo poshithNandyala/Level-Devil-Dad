@@ -65,3 +65,25 @@ and the probe's `replay` test names the stretch.
 
 The registry's collision rulings (`DECISIONS.md` section 5) then cut `gtk03-kagaz` (S2) and `gtk02-bhatti` (S3),
 recast `gtk05-peeche` so nothing is followed (I3), and kept `gtk07-thau` as 07's one labelled shelter beat (S12).
+
+## Round 5 (`LENGTH-5.md`; where it differs from the table above, this wins)
+
+- 03 gains `gtk03-kalam` (F482 busy-warden-window, the S2 replacement): the inspector comes down the rail towards
+  you and stops to write a tourist's fine; go while his pen moves. Going when he looks up dies in the jhora; waiting
+  on the doubled-polythene bag in front of him (it holds 1.2 s) tears it (`gtk-polythene`).
+- 05 loses `peeche`: its FIX had no second cause by another mechanism.
+- 07 gains four rule acts from ALLOCATION v3:
+  - `ghanti` (F485 walk-to-sound, the sound beat): the mule bells on the track above.
+  - `paani` (F486 drip-line-shelter): shelter between the drip lines of a balcony hidden in the cloud; the
+    remembered awning has gone with its stall.
+  - `chhajja` (F487 fog-hides-ceiling): hop low under the drip lines.
+  - `bijuli` (F488 count-flash-to-thunder): cross the ridge only on a long count.
+- F483 (lamp-warming-tell) and F484 (occupied-means-it-moves) are struck by the registry: PDY-08 (the glow marks
+  where the hazard comes next) and PAT-09 (occupied gondolas swing you off; ride the empty one).
+- 09: the yaks never turn back and walk quicker (44 to 72 px/s). Every ride runs between two real banks in about
+  7 s: the room, `chamri`, `dophoto` (two yaks with a calm bank between), `barf` and `chattan` (whose stay-on play
+  now dies in the lake, `gtk-nadi`).
+- 10: `chauri` is on two yaks. `tar` breaks 08's change: your cabin runs through to the far deck, the other drops
+  away down the valley line, and staying on past the deck is the shed. `baadal` is cut (I3).
+- 02 and 10: the cooks are a quarter quicker.
+- 06: `adda` has three tiles of ground before its stair.
