@@ -34,6 +34,44 @@ export class Awning {
   lee(d: Wind): [number, number] {
     return d > 0 ? [this.x1 - LEE, this.x1] : [this.x0, this.x0 + LEE];
   }
+  /** a shelter that draws itself (a building) */
+  paint?: (ctx: Ctx, rain: boolean, d: Wind) => void;
+}
+
+/** a building in the street: the rain shadow it throws is as wide as it is tall, on its lee side */
+export class Block extends Awning {
+  constructor(
+    readonly bx: number,
+    readonly bw: number,
+    readonly tiles: number,
+  ) {
+    super(bx - 4, bx + bw + tiles * 14 + 4);
+    this.paint = (ctx, rain, d) => this.drawBlock(ctx, rain, d);
+  }
+  lee(d: Wind): [number, number] {
+    const strip = this.tiles * 14;
+    return d > 0 ? [this.bx + this.bw, this.bx + this.bw + strip] : [this.bx - strip, this.bx];
+  }
+  private drawBlock(ctx: Ctx, rain: boolean, d: Wind) {
+    const h = this.tiles * 16;
+    const y = FLOOR - h;
+    ctx.fillStyle = '#8C7B66';
+    ctx.fillRect(this.bx, y, this.bw, h);
+    ctx.fillStyle = '#6E5E4B';
+    ctx.fillRect(this.bx - 3, y - 4, this.bw + 6, 5);
+    ctx.fillStyle = 'rgba(30,24,18,0.45)';
+    for (let r = 0; r < this.tiles; r++) for (let c = 0; c < Math.floor(this.bw / 16); c++) ctx.fillRect(this.bx + 4 + c * 16, y + 6 + r * 16, 8, 9);
+    if (rain) {
+      // the shadow the rain leaves on its lee side, as long as the building is tall
+      const [z0, z1] = this.lee(d);
+      ctx.fillStyle = 'rgba(20,40,50,0.28)';
+      ctx.beginPath();
+      ctx.moveTo(d > 0 ? this.bx + this.bw : this.bx, y);
+      ctx.lineTo(d > 0 ? z1 : z0, FLOOR);
+      ctx.lineTo(d > 0 ? this.bx + this.bw : this.bx, FLOOR);
+      ctx.fill();
+    }
+  }
 }
 
 /** the weather over the whole stage: it starts when Dad first comes near the street */
@@ -51,6 +89,12 @@ export class Weather extends Entity {
   private now = 0;
   /** where the weather starts over from its first lull (each section of the street has its own), px */
   readonly resets: number[] = [];
+  /** the cause of a death in the section a reset starts (default svp-baarish) */
+  readonly causes: Record<number, string> = {};
+  private cause = 'svp-baarish';
+  /** a longer first lull for the sections that start with a long walk to the shelter, by reset x */
+  readonly firsts: Record<number, number> = {};
+  private first = FIRST_LULL;
   private fired = new Set<number>();
   constructor(readonly startX: number) {
     super();
@@ -62,10 +106,11 @@ export class Weather extends Entity {
   }
   /** phase from the clock */
   private phaseAt(t: number): { rain: boolean; dir: Wind; next: Wind; left: number; age: number } {
-    if (t < FIRST_LULL) return { rain: false, dir: 1, next: 1, left: FIRST_LULL - t, age: t };
+    const F = this.first;
+    if (t < F) return { rain: false, dir: 1, next: 1, left: F - t, age: t };
     // a section has two rains, west and then east, and then the sky is clear until the next section starts it again
-    if (t >= FIRST_LULL + RAIN + LULL + RAIN) return { rain: false, dir: -1, next: -1, left: 99999, age: t };
-    const k = t - FIRST_LULL;
+    if (t >= F + RAIN + LULL + RAIN) return { rain: false, dir: -1, next: -1, left: 99999, age: t };
+    const k = t - F;
     const period = RAIN + LULL;
     const n = Math.floor(k / period);
     const r = k % period;
@@ -93,6 +138,8 @@ export class Weather extends Entity {
         this.fired.add(r);
         this.t = 0;
         this.wet = 0;
+        this.cause = this.causes[r] ?? 'svp-baarish';
+        this.first = this.firsts[r] ?? FIRST_LULL;
       }
     const ph = this.phaseAt(this.t);
     this.raining = ph.rain;
@@ -109,7 +156,7 @@ export class Weather extends Entity {
     const p = w.player;
     const exposed = ph.rain && !this.dryAt(p.cx, ph.dir) && p.y + p.h > FLOOR - 70;
     this.wet = exposed ? this.wet + 1 : Math.max(0, this.wet - 3);
-    if (this.wet >= KILL) w.die('svp-baarish');
+    if (this.wet >= KILL) w.die(this.cause);
   }
   /** a running count for the board: ticks since the weather started */
   draw(ctx: Ctx, w: World) {
@@ -125,6 +172,10 @@ export class Weather extends Entity {
       ctx.fillRect(a, FLOOR - 36, b - a, 36);
     }
     for (const a of this.awnings) {
+      if (a.paint) {
+        a.paint(ctx, this.raining, this.raining ? this.dir : this.next);
+        continue;
+      }
       const lean = -a.tilt * 14;
       drawAwning(ctx, a.x0, a.x1, a.y, '#1F7A8C', '#F4ECD6', lean);
       // shop front behind: a shutter and a plank counter
@@ -222,6 +273,26 @@ export const gali: Act = {
     wx.porches.push([px(x), px(x + 4)]);
     w.add(new Fx(null, (ctx) => text(ctx, 'BAZAAR', px(x + 31), FLOOR - 62, 6.5, '#F4ECD6', 'rgba(0,0,0,0.5)'), 3));
     for (const [a, b] of [[x + 9, x + 14], [x + 19, x + 24], [x + 38, x + 43], [x + 47, x + 52]]) wx.add(new Awning(px(a), px(b)));
+  },
+};
+
+// ================================================================== the act: the rain shadow of a building
+/** the shadow a building throws is as wide as it is tall: the short one has a hairline of dry ground, the tall one a room */
+export const deewar: Act = {
+  id: 'svp08-deewar',
+  w: 64,
+  advice: 'Old buildings along the road, short ones and tall ones. A building keeps the rain off a strip of road on its lee side, and the strip is as wide as the building is tall: a one-storey shop leaves a hairline, a tall house leaves room to stand. Shelter by the height of the wall, not by whether it is a wall.',
+  cps: [28.5],
+  build: (w, c) => {
+    const x = c.x;
+    const wx = w.flags.weather as Weather;
+    wx.porches.push([px(x), px(x + 4)], [px(x + 24), px(x + 33)]);
+    wx.resets.push(px(x + 4), px(x + 34.5));
+    wx.causes[px(x + 34.5)] = 'svp-baarish2';
+    wx.firsts[px(x + 4)] = 220;
+    wx.firsts[px(x + 34.5)] = 220;
+    // first street: a one-storey shop, then a four-storey house; second: a three-storey and a two-storey, close together
+    for (const [bx, bw, h] of [[x + 9, 2, 1], [x + 17, 3, 4], [x + 38, 3, 3], [x + 47, 3, 2]] as const) wx.add(new Block(px(bx), px(bw), h));
   },
 };
 

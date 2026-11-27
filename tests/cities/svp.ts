@@ -113,7 +113,7 @@ function streetPolicy(w: World): Out {
   const p = w.player;
   const cx = p.cx;
   if (k.t < 0) return go('R');
-  const aws = k.awnings.slice().sort((a, b) => a.x0 - b.x0);
+  const aws = k.awnings.filter((a) => a.lee(1)[1] - a.lee(1)[0] >= 36).sort((a, b) => a.x0 - b.x0);
   const inside = aws.find((a) => cx >= a.x0 - 6 && cx <= a.x1 + 6);
   const nextAw = aws.find((a) => a.x0 > cx + 4);
   const dirNow = k.raining ? k.dir : k.next;
@@ -578,6 +578,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: and(ground, X(x + 110)), max: 300 },
   ],
   'svp08-gali': () => [streetUntil(6, 'the longer street, awning to awning')],
+  'svp08-deewar': () => [streetUntil(9, 'the tall buildings, not the short ones'), { policy: streetPolicy, until: (w) => !wx(w).raining && wx(w).left > 9000, max: 4000, note: 'in the shadow of the tall one until both rains have gone' }],
   'svp07-ghat': (x) => [
     { hold: 'R', until: and(ground, (w) => w.player.x >= px(x + 4)), max: 600, note: 'on along the pier to the quay' },
     { policy: (w) => go(toward(w, px(x + 6) - 12, 3)), until: (w) => ships(w)[1].docked, max: 3600, note: 'wait at the quay edge: the first ship is the crowd’s' },
@@ -742,7 +743,7 @@ fix['SVP-08'] = {
     for (const p of def.parts ?? []) out.push(...actRoutes[p.kind](p.x0));
     return [
       ...out,
-      streetUntil(7, 'to the last awning, before the gutter'),
+      streetUntil(11, 'to the last awning, before the gutter'),
       { hold: '', until: (w) => (w.flags.gutter as { flood: number }).flood > 0.5, max: 4000, note: 'wait there for the rain: the gutter fills' },
       { hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'and cross it now, the awnings are dry' },
     ];
@@ -812,6 +813,13 @@ actDeath('SVP-09', 'svp09-hauz', 'run across the dry pool to the wall', 'svp-hau
 actDeath('SVP-09', 'svp09-hauz', 'wait for the water on the floor beside the raft', 'svp-hauz', (x) => [
   { hold: 'R', until: X(x + 6.5), max: 600 },
   { hold: '', until: (w) => w.state !== 'play', max: 2500, note: 'wait on the floor by the raft' },
+]);
+actDeath('SVP-08', 'svp08-deewar', 'shelter against the first building you come to, the short shop', 'svp-baarish', () => [
+  { policy: (w) => go(toward(w, (wx(w).awnings[7] as unknown as { bx: number; bw: number }).bx + 40, 2)), until: (w) => w.state !== 'play', max: 3000, note: 'in the shadow of the short shop' },
+]);
+actDeath('SVP-08', 'svp08-deewar', 'the tall house right, then the two-storey one instead of the three', 'svp-baarish2', (x) => [
+  streetUntil(8, 'the tall house'),
+  { policy: (w) => go(toward(w, (wx(w).awnings[10] as unknown as { bx: number; bw: number }).bx - 20, 2)), until: (w) => w.state !== 'play', max: 3000, note: 'and the nearer, lower one' },
 ]);
 actDeath('SVP-08', 'svp08-bazaar', 'run over the stalls', 'svp-tel', () => [hopUntil((w) => w.state !== 'play', 'hop the counters')]);
 actDeath('SVP-08', 'svp08-bazaar', 'climb on in the rest and stay on the right half', 'svp-tel', (x) => [
