@@ -31,6 +31,8 @@ export interface TroupeCfg {
   decoy?: number;
   /** the drum plays while they hold the pose and stops while they whirl: the finale breaks the stage's rule */
   rev?: boolean;
+  /** with `decoy`: the out-of-step drummer is the one across the pit, and the troupe follows the one by you */
+  decoyFar?: boolean;
 }
 
 export interface TroupeSt {
@@ -159,8 +161,10 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
         else if (cfg.decoy === undefined) drummer(x0 - 22, 1, a.pose === null, a.pose !== null && a.left < 0.45);
         else {
           // the troupe's own drummer is across the pit; the one by you plays out of step
-          drummer(x0 + W + 6, -1, a.pose === null, a.pose !== null && a.left < 0.45);
-          drummer(x0 - 22, 1, !st.decoyStopped, !!st.decoyStopped && (st.decoyLeft ?? 9) < 0.45);
+          const near = cfg.decoyFar ? x0 + W + 6 : x0 - 22;
+          const far = cfg.decoyFar ? x0 - 22 : x0 + W + 6;
+          drummer(near, cfg.decoyFar ? -1 : 1, a.pose === null, a.pose !== null && a.left < 0.45);
+          drummer(far, cfg.decoyFar ? 1 : -1, !st.decoyStopped, !!st.decoyStopped && (st.decoyLeft ?? 9) < 0.45);
         }
         const n = Math.max(3, Math.round(cfg.n * 0.75));
         if (a.pose === null) {
