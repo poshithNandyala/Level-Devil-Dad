@@ -417,17 +417,16 @@ export function tendaAct(id: string, wallRows: number, up: number, key: string, 
               // up slowly, a moment at the top, then it swings back down, fast, into the well
               if (t > 0 && t < up) k = t / up;
               else if (t >= up && t < up + 1.2) k = 1;
-              else if (t >= up + 1.2 && t < up + 1.6) k = 1 - (t - up - 1.2) / 0.4 - 0.0;
-              else if (t >= up + 1.6) {
-                k = -1;
-                st.started = -1;
-              }
+              else if (t >= up + 1.2 && t < up + 1.6) k = 1 - (t - up - 1.2) / 0.4;
+              else if (t >= up + 1.6 && t < up + 2.6) k = -1;
+              else if (t >= up + 2.6) st.started = -1;
             }
             st.k = k;
+            // into the well: the bucket goes under for a second, and holds nobody
+            r.setSolid(k >= 0);
             const y = k >= 0 ? y0 + (top - 8 - y0) * k : FL + 30;
             r.moveTo(w2, x, y);
             r.solid!.velX = 0;
-            if (k < 0) r.moveTo(w2, x, y0);
           },
           paint: (ctx, r) => {
             // the post, the long pole and the bucket on its rope
