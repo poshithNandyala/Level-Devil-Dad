@@ -82,7 +82,6 @@ function rottenThatch(w: World, x: number, wd: number, y: number) {
 }
 
 const Y1 = FL - 48;
-const step = (w: World, c: number) => w.add(new Rig(px(c), FL - 24, 16, 24, { solid: true, layer: 2, paint: (ctx, r) => box(ctx, r.x, r.y, r.w, r.h, '#6E4F3A') }));
 
 export function room(): LevelDef {
   return {
@@ -92,7 +91,7 @@ export function room(): LevelDef {
     name: 'Subah Kisama',
     nameEn: 'Morning at Kisama',
     tagline: 'The run to the Hornbill ground. Everything you learned, backwards.',
-    hint: 'The rod across the drain is lashed to its brackets this time: walk it. The house beyond is empty for the festival (dark windows, no one home): its thatch is rotten and gives after a step, and its tin is the floor, rung or not. Hop from the step to the tin, and from tin to tin, low: the eaves still hang over them.',
+    hint: 'The rod across the drain is lashed to its brackets this time: walk it. The house beyond is empty for the festival (dark windows, no one home): the tin is the floor, rung or not, and the thatch past the first tin is rotten and gives after a step. Jump up on to the first roof, walk the tin, hop the rotten thatch low: the eaves still hang over the tin.',
     par: 40,
     map: Grid.ground(15).fill(6, 11, 15, 17, '.').fill(15, 26, 15, 17, '.').put(1, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
@@ -101,11 +100,10 @@ export function room(): LevelDef {
       lashedRod(w, 6, 12);
       // the empty house: a step up, rotten thatch, tin, rotten thatch, tin, down
       ditch(w, px(15), px(27), 'koh-gira', FL + 8, ['rgba(70,60,50,0.95)', 'rgba(30,24,18,0.98)']);
-      step(w, 14);
-      rottenThatch(w, px(15), 48, Y1);
-      roof(w, px(18), 48, Y1, 'tin', 'koh10t1', { eave: 70, empty: true });
+      roof(w, px(15), 48, Y1, 'thatch', 'koh10h');
+      roof(w, px(18), 48, Y1, 'tin', 'koh10t1', { eave: 64, empty: true });
       rottenThatch(w, px(21), 48, Y1);
-      roof(w, px(24), 48, Y1, 'tin', 'koh10t2', { eave: 70, empty: true });
+      roof(w, px(24), 48, Y1, 'tin', 'koh10t2', { eave: 64, empty: true });
       // nobody home: the household is at the festival, so the tin rings to an empty house (no hatch)
       w.flags.koh10empty = true;
       w.add(

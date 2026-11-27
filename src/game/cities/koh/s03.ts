@@ -189,7 +189,7 @@ export function room(): LevelDef {
     map: Grid.ground(15).fill(9, 16, 15, 17, '.').put(1, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      seesaw(w, 9, 4, 1, 'koh3', { wedge: true, ledge: [px(18), FL - 76], full: 3.1 });
+      seesaw(w, 9, 4, 1, 'koh3', { wedge: true, ledge: [px(18), FL - 76], full: 2.4 });
       w.add(
         new Rig(px(3), 0, 1, 1, {
           paint: () => {},
@@ -215,7 +215,7 @@ export const actUlta: Act = {
     g.fill(c.x + 6, c.x + 6 + 4, 15, 17, '.');
   },
   build: (w, c) => {
-    seesaw(w, c.x + 6, 2.5, -1, 'koh3b', { wedge: false, ledge: [px(c.x + 1), FL - 76], full: 1.9 });
+    seesaw(w, c.x + 6, 3, -1, 'koh3b', { wedge: false, ledge: [px(c.x + 1), FL - 76], full: 1.3 });
     sign(w, c.x + 1, 10.4, 3, 'ULTA', 'shop', null, 'wrong end');
   },
 };

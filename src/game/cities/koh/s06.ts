@@ -89,7 +89,7 @@ export function roof(w: World, x: number, wd: number, y: number, kind: RoofKind,
   }
   if (kind === 'tin') {
     // the storey above overhangs the tin: its eave hangs `eave` px over the roof, so hop the tin low
-    const eave = o.eave ?? 60;
+    const eave = o.eave ?? 80;
     w.add(
       new Rig(x - 4, y - eave - 8, wd + 8, 8, {
         layer: 3,
@@ -171,8 +171,6 @@ export function chimney(w: World, x: number, y: number, key: string, o: { period
 }
 
 const Y1 = FL - 48;
-/** a step up on to the first roof: a low wall at column c */
-const step = (w: World, c: number) => w.add(new Rig(px(c), FL - 24, 16, 24, { solid: true, layer: 2, paint: (ctx, r) => box(ctx, r.x, r.y, r.w, r.h, '#6E4F3A') }));
 
 export function room(): LevelDef {
   return {
@@ -182,18 +180,18 @@ export function room(): LevelDef {
     name: 'Chaal-Chaal',
     nameEn: 'The stacked roofs',
     tagline: 'The lane fell away. The roofs are the road.',
-    hint: 'Thatch is silent. A tin roof rings under your step, and the household bangs the attic hatch open a moment later, through whoever is standing on it. Cross thatch to thatch and hop the tin, low: the storey above hangs its eave over every tin roof.',
+    hint: 'Thatch is silent. A tin roof rings under your step, and the household bangs the attic hatch open a moment later, through whoever is standing on it. Cross thatch to thatch and hop the tin (not too high: the storey above hangs its eave over every tin roof). The chimney on the middle roof puffs warm air that lifts you into the eave: walk through it between puffs.',
     par: 36,
-    map: Grid.ground(15).fill(5, 25, 15, 17, '.').put(1, 14, '@').put(30, 14, 'E').rows(),
+    map: Grid.ground(15).fill(5, 26, 15, 17, '.').put(1, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      gully(w, 5, 26);
+      gully(w, 5, 27);
       roof(w, px(5), 64, Y1, 'thatch', 'koh6a');
-      roof(w, px(9) + 8, 48, Y1, 'tin', 'koh6b');
-      roof(w, px(13), 64, Y1, 'thatch', 'koh6c');
-      roof(w, px(17) + 8, 48, Y1, 'tin', 'koh6d');
-      roof(w, px(21), 80, Y1, 'thatch', 'koh6e');
-      step(w, 4);
+      roof(w, px(9) + 8, 40, Y1, 'tin', 'koh6b');
+      roof(w, px(12) + 8, 80, Y1, 'thatch', 'koh6c');
+      chimney(w, px(15) + 8, Y1, 'koh6c1', { period: 2.2, on: 0.9, phase: 1.35, lift: 44, eave: true });
+      roof(w, px(18), 40, Y1, 'tin', 'koh6d');
+      roof(w, px(21), 96, Y1, 'thatch', 'koh6e');
       w.add(
         new Rig(px(3), 0, 1, 1, {
           paint: () => {},
@@ -224,7 +222,6 @@ export const actDhuan: Act = {
   },
   build: (w, c) => {
     gully(w, c.x + 6, c.x + 31);
-    step(w, c.x + 5);
     roof(w, px(c.x + 6), 96, Y1, 'thatch', 'koh6f');
     chimney(w, px(c.x + 9), Y1, 'koh6f1', { period: 2.2, on: 0.9, phase: 0, lift: 44, eave: true });
     roof(w, px(c.x + 12) + 8, 48, Y1, 'tin', 'koh6g');
@@ -252,14 +249,13 @@ export const actUpar: Act = {
   },
   build: (w, c) => {
     gully(w, c.x + 6, c.x + 29);
-    step(w, c.x + 5);
     const Y2 = Y1 - 56;
     roof(w, px(c.x + 6), 80, Y1, 'thatch', 'koh6k');
     chimney(w, px(c.x + 8), Y1, 'koh6k1', { period: 2.0, on: 1.0, phase: 0, lift: 62 });
     // the upper row: tin where the lift sets you down (its edge just right of the column), thatch beyond it, a tin step and the last thatch
-    roof(w, px(c.x + 9), 56, Y2, 'tin', 'koh6l', { bang: 0.4, eave: 72 });
+    roof(w, px(c.x + 9), 56, Y2, 'tin', 'koh6l', { bang: 0.6, eave: 84 });
     roof(w, px(c.x + 13), 80, Y2, 'thatch', 'koh6m');
-    roof(w, px(c.x + 18) + 8, 48, Y2, 'tin', 'koh6n', { bang: 0.4, eave: 72 });
+    roof(w, px(c.x + 18) + 8, 48, Y2, 'tin', 'koh6n', { bang: 0.6, eave: 84 });
     roof(w, px(c.x + 22), 64, Y2, 'thatch', 'koh6o');
     // a thatch roof below the end to come down on
     roof(w, px(c.x + 26), 48, Y1, 'thatch', 'koh6p');
@@ -283,8 +279,6 @@ export const ending: Ending = {
     // the door stands on the roof, not in the gully
     d.y = Y1 - 32;
     gully(w, D - 8, D);
-    step(w, D - 10);
-    step(w, D - 9);
     roof(w, px(D - 8), 64, Y1, 'thatch', 'koh6q');
     // the skylight: a glass pane flush with the roof, then more thatch to the door
     const st = { wasAir: false, broken: false };

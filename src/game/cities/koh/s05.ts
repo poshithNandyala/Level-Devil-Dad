@@ -203,7 +203,7 @@ export function room(): LevelDef {
     build(w: World) {
       door(w);
       ford(w, 6, 15);
-      log(w, 6, 17, 22, 'koh5', { P: 1.3, surge: 4, roll: 2.5, bank: 16 });
+      log(w, 6, 17, 22, 'koh5', { P: 1.5, surge: 4, hold: 0.6, roll: 2.5, bank: 16 });
       lintel(w, 15.8);
       w.add(
         new Rig(px(3), 0, 1, 1, {
@@ -262,10 +262,10 @@ export const actChadhai: Act = {
   },
   build: (w, c) => {
     ford(w, c.x + 3, c.x + 12);
-    log(w, c.x + 3, c.x + 12, c.x + 15, 'koh5c', { P: 1.1, surge: 3, roll: 2, colour: '#2E7D32', name: 'HO', bank: c.x + 13 });
+    log(w, c.x + 3, c.x + 12, c.x + 15, 'koh5c', { P: 1.3, surge: 3, hold: 0.55, roll: 2, colour: '#2E7D32', name: 'HO', bank: c.x + 13 });
     lintel(w, c.x + 10.6);
     ford(w, c.x + 18, c.x + 28);
-    log(w, c.x + 18, c.x + 26, c.x + 31, 'koh5d', { P: 2.0, surge: 4, roll: 3, colour: '#E0B04A', name: 'HOI', bank: c.x + 29 });
+    log(w, c.x + 18, c.x + 26, c.x + 31, 'koh5d', { P: 2.0, surge: 4, hold: 0.6, roll: 3, colour: '#E0B04A', name: 'HOI', bank: c.x + 29 });
     lintel(w, c.x + 25.4);
     sign(w, c.x + 1, 10.4, 3, 'CHADHAI', 'shop', null, 'the climb');
   },
