@@ -1,8 +1,8 @@
 # Cities: what's done, what's next
 
 The journey runs south to north through every state and UT capital (36 chapters, `CHAPTERS` in
-`src/game/cities.ts`, pins in `src/map/india-data.ts`). **15 done (120 stages), 21 to go.**
-The 15 done cities have 8 stages: 01 is a welcome tour, 02–08 are long stages (a room + an act + a door
+`src/game/cities.ts`, pins in `src/map/india-data.ts`). **16 done (130 stages), 20 to go.**
+The 15 cities done before the modules have 8 stages: 01 is a welcome tour, 02–08 are long stages (a room + an act + a door
 ending), harder each time; 08 is the finale and may call back to its own city's ideas (never another city's).
 **Every new city has 10 stages** (01 tour, 02–10 long stages, 10 the finale), built as a module:
 `docs/CITY-MODULE.md`.
@@ -35,7 +35,7 @@ How to use this file:
 | 13 | BPL | Bhopal | Madhya Pradesh | Central | Bhopali Hindi + English | done |
 | 14 | RPR | Raipur | Chhattisgarh | Central | Chhattisgarhi + English | done |
 | 15 | RNC | Ranchi | Jharkhand | Central | Nagpuri (Sadri) + Hindi + English | done |
-| 16 | PAT | Patna | Bihar | Central | Magahi / Bhojpuri + Hindi + English | to do |
+| 16 | PAT | Patna | Bihar | Central | Magahi / Bhojpuri + Hindi + English | done (10 stages, v0.17.0) |
 | 17 | LKO | Lucknow | Uttar Pradesh | Central | Lakhnavi Hindustani (Urdu-rich) + Awadhi + English | to do |
 | 18 | BBI | Bhubaneswar | Odisha | East | Odia + Hindi + English | to do |
 | 19 | CCU | Kolkata | West Bengal | East | Bengali + Hindi + English | built on city/ccu (10 stages, docs/cities/CCU.md) |

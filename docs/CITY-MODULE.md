@@ -216,10 +216,22 @@ Tag each long stage's shape: `longStage({ ..., shape: 'long' | 'marathon' | 'wtf
 - **Lives.** 7 lives; by default the 7th death starts the stage over. Pass `lives: 'act'` to `longStage` (or
   set it on a LevelDef) and the 7th death goes back to the start of the act Dad is in (the last act-start
   checkpoint he passed, `LevelDef.actStarts`), with a full set of lives. Use it on every marathon.
-- **Marathon:** at most 120 s once known. **Long:** 60-80 s. Both: a calm checkpoint at least every 25 s
-  of play (an act start gets one; add more with the act's `cps`).
-- **Fairness:** 90% average-timing success for the whole stage (as today) and **95% for every stretch
-  between two checkpoints**. Put both numbers in `docs/cities/<CODE>.md`.
+- **Length** (the scripted route's time, once known): stages 02-04 25-45 s; 05, 06, 08 and 09 at least
+  60 s; 07 (the marathon) at least 120 s; 10 (the finale) at least 90 s.
+- **Checkpoints:** a calm checkpoint every 25-30 s of play, and no stretch between two checkpoints over
+  25 s (an act start gets one; add more with the act's `cps`). Replay to any trap is at most 8 s from the
+  last checkpoint, at lag 0, 6 and 12 ticks. No checkpoint sits within 3.5 tiles past a trigger, and each
+  is reached only after the previous hazard has run out at lag 12. Every checkpoint survives standing idle,
+  running then idling, and a tap jump then idling. `tests/cpsafe.test.ts` plays each, from every checkpoint
+  of every stage: idle 4 s; wait 0, 6 or 12 ticks, run forward 0.3 s, idle to 4 s; wait 0, 6 or 12 ticks,
+  tap jump (6 ticks) running forward until he lands, idle to 4 s. Dad must be alive at the end of all seven
+  (cities still on the modules-test allow-list, and new cities named in `CPSAFE3_PENDING` in that test,
+  keep the old 1.5 s idle check until their pass or named fix round removes them). Use as many checkpoints as this needs: the shared
+  checkpoint tests have no count limit (a 180 s marathon at one per 8 s is 23).
+- **Every act:** its FIX death differs from its NAIVE death in cause and tick, and no window is the same
+  as one already passed once the first momentum beat is behind you.
+- **Fairness:** 90% average-timing success for the whole stage and **95% for every stretch between two
+  checkpoints** (`npm run fair -- <CODE>`). Put both numbers in `docs/cities/<CODE>.md`.
 
 ### Hint parts
 
