@@ -1020,7 +1020,44 @@ const shadowSteps: Act = {
   },
 };
 
-export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, archDolphin, shadowSteps, risingTide, tideHoles] };
+/** KVT-10 act, KVT-02 turned over: at the jetty the boat left as you came and came back if you waited. This boat
+ *  pulls out as you come and is not coming back: run down the jetty and jump aboard as it goes. (And the old
+ *  planks at the end still go if you stand on them.) */
+const leavingBoat: Act = {
+  id: 'kvt10-thoni',
+  w: 30,
+  advice: 'This boat pulls out as you come and it is not coming back: run down the jetty and jump aboard while it is still close, ride it over, and step off at the far side.',
+  paint: (g, c) => {
+    g.pit(c.x + 4, c.x + 24);
+  },
+  build: (w, c) => {
+    const { X } = c;
+    pool(w, c.x + 4, c.x + 25, 15.3, { colors: LAGOON });
+    const end = w.add(new Thing('jetty', X(4), px(15), { w: px(3) }));
+    let stood = 0,
+      gone = false;
+    w.onTick((w2) => {
+      if (gone) return;
+      stood = w2.standing(end.solid) ? stood + 1 : 0;
+      if (stood === 60) w2.sfx('creak', end.cx, end.y);
+      if (stood >= 90) {
+        gone = true;
+        w2.sfx('crack', end.cx, end.y);
+        end.fall(w2, { delay: 0, land: false });
+      }
+    });
+    const boat = w.add(new Thing('odam', X(7.2), px(14) + 4, {}));
+    w.flags[c.f('boat')] = boat;
+    onPass(w, X(2), (w2) => {
+      w2.say('Pokaam! | Off we go!', boat.cx, boat.y - 30, 1, 'npc');
+      boat.moveTo(w2, X(20), boat.y, 5.5, 'inOut');
+    });
+    sign(w, c.x + 0.2, G - 4.4, 3.4, 'BOAT', 'wood', 'right', 'last one today');
+    onPass(w, X(3), (w2) => taraSays(w2, 'Nilkku, Dad! Odam thirichu varum! | Wait, Dad! The boat comes back!', 2.4));
+  },
+};
+
+export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, archDolphin, shadowSteps, risingTide, leavingBoat, tideHoles] };
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {
