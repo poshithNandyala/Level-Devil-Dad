@@ -281,8 +281,9 @@ export const act5 = loomAct('bbi06-pata', 17, L06E2, 'bbi6h', 'A loom whose shut
 
 /** act 6, the staircase: these threads are dyed so the motif lines up as steps, up to the raised far bank */
 export const L06S: LoomCfg = { c0: 3, n: 7, speeds: [1, 2, 3, 4, 3, 2, 1], beat: 0.8, hold: 2.4, shuttle: [], rise: 9 };
-export const act6: Act = {
-  id: 'bbi06-sidhi',
+export function sidhiAct(id: string, key: string): Act {
+  return {
+  id,
   w: 16,
   advice: 'This motif is a staircase, not a bridge: on its beat the patches line up as steps rising to the raised bank. Hop up them, one each, before the beat ends.',
   cps: [],
@@ -293,9 +294,11 @@ export const act6: Act = {
     const st = { t0: -1 };
     onPass(w, c.X(0.5), (w2) => (st.t0 = w2.tick));
     channel(w, c.x + L06S.c0, c.x + L06S.c0 + L06S.n - 1, 'bbi-ranga', 'water');
-    loom(w, { ...L06S, c0: c.x + L06S.c0 }, () => st.t0, 'bbi6s');
+    loom(w, { ...L06S, c0: c.x + L06S.c0 }, () => st.t0, key);
   },
 };
+}
+export const act6 = sidhiAct('bbi06-sidhi', 'bbi6s');
 /** act 7, the beater: the motif holds, but at its end the beater sweeps the warp from the weaver's side */
 export const L06R: LoomCfg = { c0: 3, n: 8, speeds: [4, 2, 1, 3, 1, 4, 3, 2], beat: 0.8, hold: 2.2, shuttle: [[0, -1]], reed: true };
 export const act7 = loomAct('bbi06-rachh', 16, L06R, 'bbi6q', 'Here the beater sweeps the warp at the end of the motif beat. Let the shuttle by, then cross at once: be off the threads before the beater comes.');

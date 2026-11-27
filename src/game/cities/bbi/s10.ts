@@ -13,9 +13,9 @@ import { Rig, box, folk } from './entities';
 import { FL, channel, cyc, since, taraScript } from './common';
 import { keeperOn } from './s02';
 import { parasol } from './s03';
-import { loom, loomAct, type LoomCfg } from './s06';
-import { troupe, troupeAct, type TroupeCfg } from './s07';
-import { chariot, chariotAct, templeWall, type ChariotCfg } from './s09';
+import { loom, loomAct, sidhiAct, type LoomCfg } from './s06';
+import { deepaAct, troupe, troupeAct, type TroupeCfg } from './s07';
+import { chariot, chariotAct, risingSpokes, templeWall, type ChariotCfg } from './s09';
 
 export const C10: ChariotCfg = { c0: 18, len: 10, stopAt: 36, hub: 30, hubY: FL - 58, wait: 0.35, any: true, bare: true };
 export const K10 = { x0: 5, travel: 9, gap: [9, 35] as [number, number] };
@@ -158,6 +158,21 @@ export const act8 = troupeAct(
   'Two troupes before the gate: the first lies down for a bridge, the second only ever makes a wheel.',
   [10.5],
 );
+
+export const act9 = sidhiAct('bbi10-sidhi', 'bbi10s');
+export const act10 = deepaAct('bbi10-deepa', 'bbi10d');
+export const act11 = troupeAct(
+  'bbi10-shrinkhala',
+  26,
+  [
+    { c0: 4, n: 6, drum: 2.0, hold: 1.5, poses: ['wheel', 'bridge'], form: 0.25 },
+    { c0: 10, n: 6, drum: 0.12, hold: 1.4, poses: ['bridge', 'tower'], form: 0.2 },
+    { c0: 16, n: 6, drum: 0.12, hold: 1.4, poses: ['bridge', 'wheel'], form: 0.2 },
+  ],
+  'bbi10k3',
+  'The chain of troupes once more: no bank between them, each bridge only lasts its walk. Once on, keep going.',
+);
+export const act12 = risingSpokes('bbi10-udaya', 1, 'bbi10u');
 
 /** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */
 export const RIB = { period: 2.2, shut: 0.5, at: 9 };

@@ -81,13 +81,16 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
   const W = px(cfg.n);
   const cx = x0 + W / 2;
   const form = cfg.form ?? 0.35;
-  const shapes: Record<Pose, Rig> = {
-    bridge: w.add(new Rig(x0, FL, W, 6, { solid: true, layer: 3 })),
-    tower: w.add(new Rig(cx - 12, FL - 40, 24, 58, { solid: true, layer: 3 })),
-    wheel: w.add(new Rig(cx - 32, FL - 36, 64, 8, { solid: true, layer: 3 })),
-    gate: w.add(new Rig(x0, FL - 56, W, 8, { solid: true, layer: 3 })),
+  // one solid for the whole troupe, reshaped to whatever pose they hold (fewer solids: a faster world)
+  const boxes: Record<Pose, [number, number, number, number]> = {
+    bridge: [x0, FL, W, 6],
+    tower: [cx - 12, FL - 40, 24, 58],
+    wheel: [cx - 32, FL - 36, 64, 8],
+    gate: [x0, FL - 56, W, 8],
   };
-  for (const r of Object.values(shapes)) r.setSolid(false);
+  const body = w.add(new Rig(x0, FL, W, 6, { solid: true, layer: 3 }));
+  body.setSolid(false);
+  const shapes = { bridge: body };
   let was: Pose | null = null;
   w.add(
     new Rig(0, 0, 0, 0, {
@@ -102,8 +105,7 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
         st.stops = a.stops;
         // the drum starts again: whoever is on the pose is thrown up off it
         if (was && was !== a.pose) {
-          const r = shapes[was];
-          if (r.rides(w2)) {
+          if (body.rides(w2)) {
             const p = w2.player;
             // straight up and a little back: the dancer under you stands up
             p.vy = -240;
@@ -116,16 +118,24 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
           }
         }
         was = a.pose;
-        for (const [k, r] of Object.entries(shapes) as [Pose, Rig][]) {
-          const on = a.pose === k;
-          r.setSolid(on);
-          if (k === 'bridge' && r.solid) {
-            // the bridge forms left to right as the dancers lie down, one after another
-            const ww = on ? Math.max(8, Math.min(W, (a.into / form) * W)) : W;
-            r.solid.w = ww;
-            r.w = ww;
-          }
+        const sol = body.solid!;
+        if (!a.pose) {
+          body.setSolid(false);
+          return;
         }
+        const [bx, by, bw, bh] = boxes[a.pose];
+        // the bridge forms left to right as the dancers lie down, one after another
+        const ww = a.pose === 'bridge' ? Math.max(8, Math.min(W, (a.into / form) * W)) : bw;
+        sol.x = Math.round(bx);
+        sol.y = Math.round(by);
+        sol.w = ww;
+        sol.h = bh;
+        sol.velX = 0;
+        body.x = sol.x;
+        body.y = sol.y;
+        body.w = ww;
+        body.h = bh;
+        body.setSolid(true);
       },
       paint: (ctx, _r, w2) => {
         const a = st;
@@ -336,7 +346,7 @@ export const act6 = troupeAct(
   'The main stage: a slow drummer, then a long pit whose bridge only just lasts the walk. Rest on the bank between them.',
   [],
 );
-export const act7 = troupeAct(
+export const act7: Act = { cp0: false, ...troupeAct(
   'bbi07-dhol',
   24,
   [
@@ -346,13 +356,14 @@ export const act7 = troupeAct(
   'bbi7h',
   'The drummers trade places: the first troupe only towers and wheels (on to its top and off), the second makes two towers before its bridge.',
   [],
-);
+) };
 
 /** act 8, lamps: a string of oil lamps hangs low over the pit. The wheel pose comes first and looks like the way,
  *  but standing on its top puts your head in the lamps; only the bridge goes under them */
 export const T07L: TroupeCfg = { c0: 4, n: 8, drum: 2.6, hold: 1.6, poses: ['wheel', 'tower', 'bridge'], form: 0.3 };
-export const act8: Act = {
-  id: 'bbi07-deepa',
+export function deepaAct(id: string, key: string): Act {
+  return {
+  id,
   w: 16,
   advice: 'A string of oil lamps hangs low over this pit. The wheel comes first, but its top puts your head in the lamps: wait for the bridge and walk under them.',
   cps: [],
@@ -363,7 +374,7 @@ export const act8: Act = {
     const st = { t0: -1 };
     onPass(w, c.X(T07L.c0 - 2.5), (w2) => (st.t0 = w2.tick));
     stagePit(w, c.x + T07L.c0, c.x + T07L.c0 + T07L.n - 1);
-    troupe(w, { ...T07L, c0: c.x + T07L.c0 }, () => st.t0, 'bbi7l');
+    troupe(w, { ...T07L, c0: c.x + T07L.c0 }, () => st.t0, key);
     w.add(
       new Rig(c.X(T07L.c0) + 8, FL - 64, px(T07L.n) - 16, 12, {
         cause: 'bbi-deepa',
@@ -386,6 +397,8 @@ export const act8: Act = {
     );
   },
 };
+}
+export const act8 = deepaAct('bbi07-deepa', 'bbi7l');
 
 /** act 9, the chain: three troupes in one long pit with no bank between them; each drummer stops as you reach his
  *  part, and each bridge only lasts the walk: no stopping anywhere */
@@ -394,7 +407,7 @@ export const T07C: TroupeCfg[] = [
   { c0: 10, n: 6, drum: 0.12, hold: 1.4, poses: ['bridge', 'wheel'], form: 0.2 },
   { c0: 16, n: 6, drum: 0.12, hold: 1.4, poses: ['bridge', 'tower'], form: 0.2 },
 ];
-export const act9 = troupeAct('bbi07-shrinkhala', 26, T07C, 'bbi7k', 'One long pit, three troupes and no bank between them. Each drummer stops as you reach his part, and each bridge only lasts the walk over it: once on, keep walking to the far side without stopping.');
+export const act9: Act = { cp0: false, ...troupeAct('bbi07-shrinkhala', 26, T07C, 'bbi7k', 'One long pit, three troupes and no bank between them. Each drummer stops as you reach his part, and each bridge only lasts the walk over it: once on, keep walking to the far side without stopping.') };
 
 /** act 10, the island: a long pit with a lamp plinth in the middle; the far troupe's bridge comes rarely: rest on
  *  the plinth (the shelter), not on a pose */
