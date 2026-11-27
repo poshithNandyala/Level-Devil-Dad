@@ -10,6 +10,7 @@ import type { Formation } from '../../src/game/cities/svp/choona';
 import type { Barge, Swell } from '../../src/game/cities/svp/lehar';
 import type { Stall } from '../../src/game/cities/svp/kadhai';
 import type { Pool } from '../../src/game/cities/svp/hauz';
+import type { LiftBridge } from '../../src/game/cities/svp/khula';
 import type { SawHall } from '../../src/game/cities/svp/s02';
 import type { Creek } from '../../src/game/cities/svp/s03';
 import type { Herd, LateBoat } from '../../src/game/cities/svp/s04';
@@ -446,6 +447,13 @@ const bargeOf = (w: World) => (w.flags.barges as Barge[])[0];
 // ------------------------------------------------------------------ SVP-08 act 2: the fish-fry stalls
 // ------------------------------------------------------------------ SVP-09 act 2: the drained pools
 const pool = (i: number) => (w: World) => (w.flags.pools as Pool[])[i];
+// ------------------------------------------------------------------ SVP-07 act 4: the lift bridges
+const bridge = (i: number) => (w: World) => (w.flags.bridges as LiftBridge[])[i];
+/** back from the channel on the road until the lights have just gone green, then straight across and on to the far road */
+const bridgeCross = (i: number, s: number): Step[] => [
+  { policy: (w) => go(toward(w, px(s) - 20, 3)), until: (w) => { const p = bridge(i)(w).phase; return p.name === 'down' && p.left >= 330 && Math.abs(w.player.cx - (px(s) - 20)) < 8; }, max: 4000, note: 'on the road, waiting for the green' },
+  { hold: 'R', until: and(ground, X(s + 11)), max: 700, note: 'straight across the deck' },
+];
 /** into the pool, on to the raft, up with the water, across to the wall and off its far side */
 const poolCross = (i: number, p: number): Step[] => [
   { hold: 'R', until: X(p + 0.9), max: 900, note: 'into the dry pool: a pipe starts to run' },
@@ -511,6 +519,7 @@ function floatsStep(k: number, lastTx: number, note: string): Step {
   };
 }
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp07-khula': (x) => [...bridgeCross(0, x + 6), ...bridgeCross(1, x + 26), ...bridgeCross(2, x + 46), { hold: 'R', until: and(ground, X(x + 64)), max: 600 }],
   'svp09-hauz': (x) => [...poolCross(0, x + 6), ...poolCross(1, x + 26), ...poolCross(2, x + 46), { hold: 'R', until: and(ground, X(x + 64)), max: 600 }],
   'svp08-bazaar': (x) => [...stallCross(0, x + 4), ...stallCross(1, x + 24), ...stallCross(2, x + 44), { hold: 'R', until: and(ground, X(x + 62)), max: 600 }],
   'svp06-lehar': (x) => [
@@ -672,6 +681,11 @@ const endingPolicies: Record<string, Policy> = {
 };
 
 // ------------------------------------------------------------------ the plays that must die in an added act
+actDeath('SVP-07', 'svp07-khula', 'run across the bridge without looking at the lights', 'svp-khula', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 1200, note: 'across the deck' }]);
+actDeath('SVP-07', 'svp07-khula', 'start across when the lights begin to flash', 'svp-khula', (x) => [
+  { policy: (w) => go(toward(w, px(x + 6) - 20, 3)), until: (w) => bridge(0)(w).phase.name === 'warn' && Math.abs(w.player.cx - (px(x + 6) - 20)) < 8, max: 4000, note: 'wait for the flashing lights' },
+  { hold: 'R', until: (w) => w.state !== 'play', max: 1200, note: 'and cross before it lifts' },
+]);
 actDeath('SVP-09', 'svp09-hauz', 'run across the dry pool to the wall', 'svp-hauz', (x) => [
   { hold: 'R', until: X(x + 7.5), max: 600 },
   { hold: '', until: (w) => w.state !== 'play', max: 2500, note: 'wait at the wall: the water has to go somewhere' },

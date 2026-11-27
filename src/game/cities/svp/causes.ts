@@ -15,6 +15,7 @@ export const causeLines: Record<string, string[]> = {
   'svp-baha': ['Baha! The sheet of rain water carried you back into the drain.', 'Wait under the awning until the sun is out: the cloud has two lobes, and the lull between them is not the end.'],
   'svp-rassi': ['Rassi! You jumped for a boat that was still tied up on the far bank.', 'The rope answers hops by the bollard. Hop there until the boat is alongside, then step on.'],
   'svp-chuna': ['Chuna! The wet limestone slid you back into the drain.', 'Hop, then wait on the dry side: the formation drips for seven seconds, and the floor is only slippery while it does.'],
+  'svp-khula': ['Khula! The bridge lifted for the ship, and you were on it.', 'When the lights flash the deck is about to lift. Wait on the road for the green, then cross at once.'],
   'svp-hauz': ['Hauz! The pool filled up and you were on the floor.', 'A pipe starts to run when you walk in, and the water climbs the wall. Get on the raft: it rises with the water, and you step across at the top.'],
   'svp-tel': ['Tel! The oil spat on the half of the counter you were standing on.', 'The cook turns to the half that spits next, and the pan bubbles there first. Stand on the other half, and change halves once the oil has stopped.'],
   'svp-lehar': ['Lehar! The float you jumped for was a man’s height up.', 'Each float rides the swell a beat behind the last. Stand on one and watch the next: go when it is no higher than you can jump.'],
