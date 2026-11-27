@@ -328,6 +328,13 @@ const R_lko05_tawa = (id: string) => (x: number): Step[] => {
   return [runTo(x + 0.5, 300), hops([x + 3, ...cols.map((c, i) => [x + c, kflat(k, i)] as [number, (w: World) => boolean])], 'thin ones at once, thick ones once squashed'), runTo(x + 23.5, 300)];
 };
 actRoutes['lko05-tawa'] = R_lko05_tawa('lko05-tawa');
+const hoopK = (w: World) => (w.flags['lko03-adda:hoop'] as { k: number }).k;
+actRoutes['lko03-adda'] = (x) => [
+  walkTo(x + 4.5, 400, 'into the hoop'),
+  until((w) => hoopK(w) === 4, 1500, 'ride the hoop from flower to flower'),
+  hops([x + 29.1, x + 32.6], 'off the far side'),
+  runTo(x + 35, 300),
+];
 const BADAL = [4, 6.5, 9, 11.5, 14, 16.5, 19, 21.5, 24, 26.5];
 /** a cup is safe to land on when the cloud's shadow covers it with room to spare */
 const shaded = (x: number, d: number) => (w: World) => {
@@ -676,15 +683,10 @@ const endingPolicies: Record<string, Policy> = {
     if (!m.h) m.h = hops([D - 5, D - 2, D + 1], 'the right tiles of the steps, then the counter').policy!;
     return m.h(w);
   },
-  'lko-bakhiya'(w, m, d) {
-    const p = w.player;
-    if (m.hold > 0) return { move: toward(w, d.x + 8, 1), jump: true };
-    if (p.onGround && p.y + p.h <= px(13)) return go(toward(w, d.x + 8, 1));
-    if (p.onGround && p.cx > d.x - 30 && p.cx < d.x + 8) {
-      m.hold = 13;
-      return { move: 'R', jump: true };
-    }
-    return go(p.onGround ? toward(w, d.x - 22, 1) : toward(w, d.x + 8, 1));
+  'lko-balti'(w, m, d) {
+    const D = Math.round(d.x / 16);
+    if (!m.h) m.h = hops([D - 7.4, D - 4, D - 1, D + 0.5], 'flower, flower, door, before his bucket').policy!;
+    return m.h(w);
   },
   'lko-kiwad'(w, _m, d) {
     if (w.flags.twist === 'open') return go(toward(w, d.x + 8, 1));
@@ -698,7 +700,10 @@ function actRoutes0(id: string, x: number) {
 
 mistakes['LKO-03'] = [
   { what: 'stopping on the jali in the middle of the second vat', steps: [...room03, runTo(actX('LKO-03') + 1.5), runTo(actX('LKO-03') + 18.2), until(done, 400)], cause: 'lko-jali' },
-  { what: 'walking to the bright blue printed door', steps: [...room03, runTo(actX('LKO-03') + 1.5), runTo(actX('LKO-03') + 39), { hold: 'R', until: done, max: 900 }], cause: 'lko-chhapa' },
+  { what: 'walking straight on to the door over the cloth', steps: [...through('LKO-03', room03, 2), runTo(doorX('LKO-03') - 9), { hold: 'R', until: done, max: 900 }], cause: 'lko-chhapa' },
+  { what: 'at the door, waiting on a white flower for the second wash, as the room taught', steps: [...through('LKO-03', room03, 2), runTo(doorX('LKO-03') - 9), hops([doorX('LKO-03') - 7.4, doorX('LKO-03') - 4]), until(done, 600)], cause: 'lko-balti' },
+  { what: 'on the frame, waiting on the next flower ahead', steps: [...through('LKO-03', room03, 1), walkTo(actX('LKO-03', 1) + 4.5, 400), hops([actX('LKO-03', 1) + 5.6, actX('LKO-03', 1) + 9]), until(done, 600)], cause: 'lko-adda' },
+  { what: 'on the frame, walking on off the hoop', steps: [...through('LKO-03', room03, 1), { hold: 'R', until: done, max: 900 }], cause: 'lko-kunda' },
 ];
 
 mistakes['LKO-04'] = [

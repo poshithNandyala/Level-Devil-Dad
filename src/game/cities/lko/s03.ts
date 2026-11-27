@@ -203,62 +203,58 @@ export const kunda: Act = {
   },
 };
 
-// ================================================================ the door: bakhiya, the shadow work
-/** Bakhiya is stitched on the back of the muslin and shows on the front only as a shadow. The bright blue
- *  door ahead is print, on cloth over a vat; the real door stands on the dhobi's slab behind a hanging
- *  muslin, and all you see of it is its shadow. */
-export const bakhiya: Ending = {
+// ================================================================ the door: balti, the dhobi's bucket
+/** The door is real, and right there. Its threshold is cloth over the rinse vat, print and stitched flowers,
+ *  and this dhobi whistles the moment you touch it: the print goes at once. The room taught you to wait on
+ *  the white for both washes; here the second thing that comes is his bucket, thrown across the whole cloth. */
+export const balti: Ending = {
   space: 12,
-  advice: 'The bright blue door is printed on the cloth, and the cloth is over a vat: it washes away at the whistle. The real door is the faint shadow on the hanging muslin, up on the drying rack’s ledge. Hop up into the shadow.',
+  advice: 'The door is real; its threshold is cloth over the rinse vat. The print goes the moment you step on it, so hop on to the white flowers. But don’t wait on them for a second wash: this dhobi’s second move is his bucket of rinse water, across the whole cloth. Flower, flower, door, at once.',
   paint: (g, D) => {
-    g.put(D, 14, '.');
-    g.fill(D - 6, D - 3, 13, 13, '=');
-    g.put(D - 4, 12, 'E');
-    g.pit(D - 1, D + 1);
+    g.pit(D - 6, D - 1);
   },
   build(w, d) {
-    const D = Math.round(d.x / 16) + 4;
-    w.flags.twist = 'print';
-    const L = washLine(w, D - 1, 'ppp', 'bakhiya', { dhobiAt: D + 3 });
-    let fired = false;
+    const D = Math.round(d.x / 16);
+    w.flags.twist = 'cloth';
+    const L = washLine(w, D - 6, 'ppspps', 'balti', { dhobiAt: D + 2 });
+    const S = { t0: -1, wave: -1 };
+    w.flags.balti = S;
     w.onTick((w2) => {
-      if (!fired && w2.player.cx > px(D - 3.5) && w2.player.y + w2.player.h >= FLOOR - 1) {
-        fired = true;
-        w2.flags['bakhiya:blow'] = w2.tick;
-        w2.after(0.3, () => {
-          L.dh.wash(w2, ['p'], 'lko-chhapa');
-          w2.flags.twist = 'washed';
-        });
+      const p = w2.player;
+      if (S.t0 < 0 && L.cloth.some((cl) => on(w2, cl.solid))) S.t0 = w2.tick;
+      if (S.t0 < 0) return;
+      const t = w2.tick - S.t0;
+      if (t === 8) w2.flags['balti:blow'] = w2.tick;
+      if (t === 12) {
+        L.dh.wash(w2, ['p'], 'lko-chhapa');
+        w2.flags.twist = 'washed';
+      }
+      if (t === 150) {
+        // the bucket: a sheet of rinse water across the whole cloth
+        S.wave = w2.tick;
+        w2.sfx('splash', px(D - 3), FLOOR);
+        if (p.x + p.w > px(D - 6) && p.x < px(D) && p.y + p.h >= FLOOR - 2) w2.die('lko-balti');
+        L.dh.wash(w2, ['s'], 'lko-balti');
+        w2.flags.twist = 'bucket';
+      }
+      // a fresh cloth laid back over the vat, and the whole thing again
+      if (t === 330) {
+        for (const cl of L.cloth) cl.set(true);
+        S.t0 = -1;
+        w2.flags.twist = 'cloth';
       }
     });
     w.add(
       new Art((ctx, w2) => {
-        // the printed door on a cloth panel hung over the vat
-        if (w2.flags.twist === 'washed') return;
-        const x = px(D) + 8;
-        ctx.fillStyle = 'rgba(245,241,232,0.95)';
-        ctx.fillRect(x - 16, FLOOR - 44, 32, 44);
-        ctx.strokeStyle = '#3F6FB5';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(x - 8, FLOOR - 34, 16, 32);
-        ctx.beginPath();
-        ctx.arc(x, FLOOR - 34, 8, Math.PI, 0);
-        ctx.stroke();
-        ctx.fillStyle = '#3F6FB5';
-        ctx.fillRect(x + 4, FLOOR - 18, 2, 2);
-      }, 1),
-    );
-    w.add(
-      new Art((ctx) => {
-        // the muslin hung in front of the real door: you see it only as a shadow
-        const x = d.x + 8;
-        ctx.fillStyle = '#6D5A48';
-        ctx.fillRect(x - 22, px(13) - 62, 2, 62);
-        ctx.fillRect(x + 20, px(13) - 62, 2, 62);
-        ctx.fillStyle = 'rgba(247,244,236,0.86)';
-        ctx.fillRect(x - 20, px(13) - 58, 40, 56);
-        ctx.fillStyle = 'rgba(120,110,95,0.18)';
-        for (let k = 0; k < 5; k++) ctx.fillRect(x - 18 + k * 8, px(13) - 58, 1, 56);
+        // the dhobi's bucket, raised when he is about to throw, and the sheet of water
+        const bx = px(D + 2) - 2;
+        const raised = S.t0 >= 0 && w2.tick - S.t0 > 100;
+        ctx.fillStyle = '#7E8C96';
+        ctx.fillRect(bx - 12, FLOOR - (raised ? 34 : 12), 9, 10);
+        if (S.wave >= 0 && w2.tick - S.wave < 30) {
+          ctx.fillStyle = `rgba(140,190,230,${0.7 - (w2.tick - S.wave) / 45})`;
+          ctx.fillRect(px(D - 6), FLOOR - 14, px(6), 14);
+        }
       }, 4),
     );
     w.when(
@@ -268,5 +264,85 @@ export const bakhiya: Ending = {
   },
 };
 
-export const s03 = { room: chhapaRoom, acts: [kunda] };
-export const meta03 = { family: 'print-washed-stitch-remains', betrayals: ['wash-remains'], ending: 'lko-bakhiya' } as StageMeta;
+// ================================================================ act 2: the adda, the embroidery frame
+/** The karigar's wooden hoop clamps the muslin taut over the rinse vat: inside the hoop it holds you. Each
+ *  time he finishes a flower he lifts the hoop and clamps it down on the next one. Ride inside the hoop;
+ *  standing on the next flower (the safe white of the room) is standing where the hoop comes down. */
+const ADDA = [3, 9, 15, 21, 27];
+export const adda: Act = {
+  id: 'lko03-adda',
+  w: 36,
+  advice: 'The karigar’s wooden hoop holds the muslin taut over the rinse vat: stand inside the hoop. Each time he finishes a flower he lifts it and clamps it down on the next one, with you in it. Don’t wait on the next flower ahead: that is where the hoop comes down.',
+  cps: [1],
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 31);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const vat = w.add(new Zone(c.X(3) + 1, FLOOR + 10, px(29) - 2, 40, 'lko-kunda'));
+    let moved = -999;
+    w.add(
+      new Art((ctx, w2) => {
+        const g = ctx.createLinearGradient(0, FLOOR, 0, FLOOR + 48);
+        g.addColorStop(0, '#6E97C9');
+        g.addColorStop(1, '#22406E');
+        ctx.fillStyle = g;
+        ctx.fillRect(c.X(3), FLOOR + 6, px(29), 42);
+        ctx.fillStyle = 'rgba(255,255,255,0.35)';
+        for (let xx = c.X(3) + ((w2.tick * 0.25) % 10); xx < c.X(32) - 3; xx += 10) ctx.fillRect(xx, FLOOR + 7, 4, 1);
+      }, -4),
+    );
+    // the next flowers: solid white work, the safe place in the room
+    ADDA.slice(1).forEach((s) => w.add(new Cloth(c.X(s), 's')));
+    const H = { k: 0, t: -1, go: false, moving: 0, dx: 0 };
+    w.flags[c.f('hoop')] = H;
+    const hoop = w.add(
+      new Block(c.X(ADDA[0]), FLOOR, 48, 6, (ctx, b) => {
+        // the round wooden hoop seen side on, with the taut muslin across it
+        ctx.fillStyle = '#F5F1E8';
+        ctx.fillRect(b.x, b.y, 48, 4);
+        ctx.strokeStyle = '#8D5A3B';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(b.x + 24, b.y + 2, 25, 5, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }, 2),
+    );
+    const sx = (k: number) => c.X(ADDA[k]);
+    w.onTick((w2) => {
+      const p = w2.player;
+      if (!H.go && p.onGround && p.isRiding(hoop.solid)) {
+        H.go = true;
+        H.t = w2.tick;
+      }
+      if (!H.go || H.k >= ADDA.length - 1) return;
+      const age = w2.tick - H.t;
+      // knocked off the next flower by the hoop coming over: the hoop's doing, not the vat's
+      vat.hazard.cause = w2.tick - moved < 90 && !p.isRiding(hoop.solid) ? 'lko-adda' : 'lko-kunda';
+      if (age === 114) {
+        H.moving = 1;
+        moved = w2.tick;
+        w2.sfx('whoosh', hoop.x + 24, FLOOR - 10);
+      }
+      if (age > 114 && age <= 126) hoop.move(w2, 0, -1.5);
+      else if (age > 126 && age <= 144) hoop.move(w2, (sx(H.k + 1) - sx(H.k)) / 18, 0);
+      else if (age === 145) {
+        // the clamp: whoever is standing where it comes down, and not in it, is caught
+        const zx = sx(H.k + 1);
+        if (!p.isRiding(hoop.solid) && p.x + p.w > zx && p.x < zx + 48 && p.y + p.h > FLOOR - 20 && p.y + p.h <= FLOOR + 1) w2.die('lko-adda');
+      } else if (age > 145 && age <= 150) hoop.move(w2, 0, 18 / 5);
+      else if (age > 150) {
+        hoop.solid.x = sx(H.k + 1);
+        hoop.solid.y = FLOOR;
+        H.k++;
+        H.t = w2.tick;
+        H.moving = 0;
+      }
+    });
+    w.add(new Art((ctx) => gent(ctx, c.X(33) + 8, FLOOR, 24, '#D9D2C2', { face: -1, arms: H.moving, skin: '#9C6B48' }), 3));
+    sign(w, x + 0.2, 10.4, 3.2, 'ADDA', 'shop', null, 'chikan');
+  },
+};
+
+export const s03 = { room: chhapaRoom, acts: [kunda, adda] };
+export const meta03 = { family: 'print-washed-stitch-remains', betrayals: ['wash-remains'], ending: 'lko-balti' } as StageMeta;

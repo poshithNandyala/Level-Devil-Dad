@@ -2,7 +2,7 @@
 import type { World } from '../../world';
 import type { Ending } from '../../levels/endkit';
 import { lock, tara as taraNow } from '../../levels/endkit';
-import { bakhiya } from './s03';
+import { balti } from './s03';
 import { kulhad } from './s04';
 import { sheermal } from './s05';
 import { sam } from './s06';
@@ -12,7 +12,7 @@ import { chhatri } from './s09';
 import { tehzeeb } from './s10';
 import { Art, FLOOR, Zone, gent, px } from './kit';
 
-export type LkoEndingKind = 'lko-kiwad' | 'lko-bakhiya' | 'lko-kulhad' | 'lko-sheermal' | 'lko-sam' | 'lko-darban' | 'lko-489' | 'lko-chhatri' | 'lko-tehzeeb';
+export type LkoEndingKind = 'lko-kiwad' | 'lko-balti' | 'lko-kulhad' | 'lko-sheermal' | 'lko-sam' | 'lko-darban' | 'lko-489' | 'lko-chhatri' | 'lko-tehzeeb';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<LkoEndingKind, true> {}
@@ -93,4 +93,4 @@ const kiwad: Ending = {
   },
 };
 
-export const endings: Record<LkoEndingKind, Ending> = { 'lko-kiwad': kiwad, 'lko-bakhiya': bakhiya, 'lko-kulhad': kulhad, 'lko-sheermal': sheermal, 'lko-sam': sam, 'lko-darban': darban, 'lko-489': doorway489, 'lko-chhatri': chhatri, 'lko-tehzeeb': tehzeeb };
+export const endings: Record<LkoEndingKind, Ending> = { 'lko-kiwad': kiwad, 'lko-balti': balti, 'lko-kulhad': kulhad, 'lko-sheermal': sheermal, 'lko-sam': sam, 'lko-darban': darban, 'lko-489': doorway489, 'lko-chhatri': chhatri, 'lko-tehzeeb': tehzeeb };

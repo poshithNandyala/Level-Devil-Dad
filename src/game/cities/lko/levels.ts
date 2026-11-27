@@ -17,7 +17,7 @@ import { s10, meta10 } from './s10';
 export const levels = (): LevelDef[] => [
   s01(),
   longStage({ base: s02.room(), acts: s02.acts, twist: 'lko-kiwad', par: 16, shape: 'short', meta: meta02 }),
-  longStage({ base: s03.room(), acts: s03.acts, twist: 'lko-bakhiya', par: 15, shape: 'short', meta: meta03 }),
+  longStage({ base: s03.room(), acts: s03.acts, twist: 'lko-balti', par: 15, shape: 'short', meta: meta03 }),
   longStage({ base: s04.room(), acts: s04.acts, twist: 'lko-kulhad', par: 15, shape: 'short', meta: meta04 }),
   longStage({ base: s05.room(), acts: s05.acts, twist: 'lko-sheermal', par: 46, shape: 'long', meta: meta05 }),
   longStage({ base: s06.room(), acts: s06.acts, twist: 'lko-sam', par: 43, shape: 'long', meta: meta06 }),
