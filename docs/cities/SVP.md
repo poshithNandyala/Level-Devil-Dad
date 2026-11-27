@@ -8,7 +8,7 @@ Sound: one music loop (104 bpm), no new SFX names.
 | # | Id | Name | Family [betrayal] | Ending key | Shape |
 |---|---|---|---|---|---|
 | 01 | SVP-01 | Namaste SVP | lane-sheet-flow-push [sheet-flow] | svp-lane-sun (meta only) | tour |
-<!-- route times in seconds (bot), round 3: 01 30.1, 02 25.8, 03 29.1, 04 20.6, 05 41.5, 06 21.2, 07 44.5, 08 86.8, 09 35.3, 10 64.5 -->
+<!-- route times in seconds (bot), fix round 2: 01 30.1, 02 25.8, 03 29.1, 04 20.6, 05 31.0, 06 19.7, 07 30.9, 08 86.8, 09 27.0, 10 57.9 -->
 
 | 02 | SVP-02 | Aari | cut-floor-saw-carriage [cut-floor] | svp-timber-stack | short |
 | 03 | SVP-03 | Magarmachh | warning-board-arrow-turns [honest-moving-sign] | svp-board-bridge | short |
@@ -77,3 +77,11 @@ Foods: svp-machhli, svp-fishstick, svp-kela, svp-lobster, svp-padauk.
 - The act ids are `svp02-chirai`, `svp03-nala`, `svp04-ghat`, `svp05-dekho`, `svp06-sanjh`, `svp07-ghat`, `svp07-doosra`, `svp07-teesra`, `svp08-gali`, `svp09-pul`, `svp05-rassi`, `svp05-choona`, `svp06-lehar`, `svp07-khula`, `svp07-uthao`, `svp08-bazaar`, `svp09-hauz`, `svp08-deewar`, `svp09-nali`, `svp10-rassi`, `svp10-nali`, `svp10-nadi`, `svp10-jad`, `svp10-saman`, `svp10-ghat`.
 - Cellular Jail is a far silhouette in the backdrop only, with no gag.
 - Intro lines are plain Hindi and need a native check. Tara's intros are lies; the only truthful Tara line is stage 08 ("Awning ke neeche raho"), and that is only partly true.
+
+## Fix round 2 (QA B1-B8)
+
+- 07: `svp07-teesra` is cut (it was PAT-04's second-follows). `svp07-doosra` is the stage's one labelled shelter beat. `svp07-ghat` has a second trap: jumping for the second ship while it is still coming in (`svp-jahaz2`).
+- 10: the mill breaks the end that stays (tonight the far end stays), and its NAIVE line names the herd and the food (`svp-hiran4`). `svp10-nadi` has a second crocodile that lies still under the last gap with no ripples (`svp-magar4`). `svp10-saman` breaks the luggage rule with loose bags over the water that still go at the call (`svp-saman2`); the returning crowd is gone. The gate wants the fritter on the guard's counter (it was 04's door).
+- 05: `svp05-dekho` is one view (the bench three tiles before the footprints) with a second trap (`svp-nazar3`, standing on the footprints too long). Choona's second wall is the stage's labelled momentum beat.
+- 09: `svp09-pul` is two creeks, with the grey root as its NAIVE (`svp-grey`).
+- Four new doors (`doors.ts`): 05 sleeping turtle (do not hop), 06 wasps' nest over the creek (hop low), 07 harbour bell (hop up under it), 09 old wall (hold the jump).
