@@ -111,10 +111,16 @@ function poleRoom(): LevelDef {
     tagline: 'Asia’s oldest trams still run here, slower than walking, on a pole that touches a wire. At junctions it jumps off.',
     hint: 'The road is dug up: ride the tram. At the junction in the overhead wire the pole jumps the wire, the tram stops dead and the pole swings forward right over the roof. Ride on the open rear step instead (hop on to it from the road), not on the roof.',
     par: 14,
-    map: Grid.ground(15).fill(4, 4, 13, 14, '#').fill(5, 6, 12, 12, '=').pit(11, 31).put(1, 14, '@').rows(),
+    map: Grid.ground(15).fill(4, 4, 13, 14, '#').fill(5, 6, 12, 12, '=').pit(11, 13).pit(20, 26).put(1, 14, '@').rows(),
     build(w: World) {
-      khod(w, 11, 32);
+      khod(w, 11, 14);
+      khod(w, 20, 27);
       checkpoint(w, 6.5);
+      // fix 3: a stop on the way, so the ride is two short legs; step off on to its island and back on: he waits
+      checkpoint(w, 15.2);
+      checkpoint(w, 28.4);
+      sign(w, 27.6, 8.4, 3.6, 'TRAM STOP', 'green', null, 'Park St');
+      sign(w, 14.6, 8.4, 3.6, 'TRAM STOP', 'green', null, 'Maidan');
       w.add(new Junction(px(24)));
       sign(w, 8.2, 8.4, 3.6, 'TRAM STOP', 'green', null, 'route 5');
       rival(w, 2, 15, 1, tara(4));
@@ -133,19 +139,21 @@ const duiLine: Act = {
   w: 26,
   // on the island's middle, clear of the other line's tram; the door's is at its far end
   cp0: false,
-  cps: [24.5],
+  cps: [11.2, 24.5],
   advice: 'One more junction: stay on the step. At the island stop a tram on the other line comes past, right by the step: get off on to the island, let it go by, and hop back on before yours leaves.',
   paint: (g, c) => {
-    g.pit(c.x, c.x + 19);
+    g.pit(c.x, c.x + 9).pit(c.x + 16, c.x + 19);
   },
   build: (w, c) => {
     const x = c.x;
-    khod(w, x, x + 20);
+    khod(w, x, x + 10);
+    khod(w, x + 16, x + 20);
+    sign(w, x + 10.6, 8.4, 3.6, 'TRAM STOP', 'green', null, 'island 3');
     w.add(new Junction(c.X(8)));
     sign(w, x + 21.5, 8.4, 3.6, 'TRAM STOP', 'green', null, 'double line');
     w.flags.junctions6 = [c.X(8)];
-    w.flags.stops6 = [{ x: c.X(20) - 2, dwell: 4.6, ride: true }];
-    const other = w.add(new OtherTram(c.X(36), c.X(12)));
+    w.flags.stops6 = [{ x: c.X(13), dwell: 1, ride: true }, { x: c.X(20) - 2, dwell: 3.4, ride: true }];
+    const other = w.add(new OtherTram(c.X(30), c.X(12)));
     w.when(
       (w2) => w2.flags.tramB && w2.flags.tramB.state === 'stop' && w2.flags.tramB.x > c.X(19),
       (w2) => {
@@ -162,26 +170,28 @@ const points: Act = {
   w: 48,
   cp0: false,
   // on the islands' ground, never on the tram's step
-  cps: [6.3, 40.4],
+  cps: [4.4, 6.8, 20.2, 37.8],
   advice: 'At the island stop, look at the pointsman: his lever is set for the other line, and this tram turns off there, step and all. Get off at the island and wait. The next tram comes along the straight line: hop on its step and stay on it through the second junction. At the next island stop, step off and back on: he waits.',
   paint: (g, c) => {
-    g.pit(c.x, c.x + 3).pit(c.x + 10, c.x + 37).pit(c.x + 43, c.x + 47);
+    g.pit(c.x, c.x + 3).pit(c.x + 10, c.x + 18).pit(c.x + 25, c.x + 37).pit(c.x + 45, c.x + 47);
   },
   build: (w, c) => {
     const x = c.x;
     khod(w, x, x + 4);
-    khod(w, x + 10, x + 38);
-    khod(w, x + 43, x + 48);
+    khod(w, x + 10, x + 19);
+    khod(w, x + 25, x + 38);
+    sign(w, x + 19.6, 8.4, 3.6, 'TRAM STOP', 'green', null, 'island 1a');
+    khod(w, x + 45, x + 48);
     sign(w, x + 40.2, 8.4, 3.6, 'TRAM STOP', 'green', null, 'island 2');
-    w.add(new Junction(c.X(30)));
+    w.add(new Junction(c.X(35)));
     w.add(new Points(c.X(16), true));
     sign(w, x + 6.2, 8.4, 3.6, 'TRAM STOP', 'green', null, 'island');
-    const a = w.add(new Tram({ x: px(7), speed: 56, stops: [{ x: px(7), dwell: 0.6, ride: true }, { x: c.X(5) - 2, dwell: 1.8 }], junctions: [px(24)], turnAt: c.X(14), label: '5' }));
+    const a = w.add(new Tram({ x: px(7), speed: 64, stops: [{ x: px(7), dwell: 0.6, ride: true }, { x: px(17), dwell: 1, ride: true }, { x: px(29), dwell: 1, ride: true }, { x: c.X(5) - 2, dwell: 1 }], junctions: [px(24)], turnAt: c.X(14), label: '5' }));
     w.flags.tramA = a;
     w.when(
-      (w2) => (a.state === 'turn' || a.state === 'gone') && w2.player.onGround && w2.player.cx > c.X(4) && w2.player.cx < c.X(10) && !a.riding(w2),
+      (w2) => w2.player.onGround && w2.player.cx > c.X(4) && w2.player.cx < c.X(10) && !a.riding(w2),
       (w2) => {
-        const b = w2.add(new Tram({ x: c.X(4) - 300, speed: 70, stops: [{ x: c.X(5) - 2, dwell: 0.8, ride: true }, { x: c.X(39) - 2, dwell: 2.6, ride: true }, ...(w2.flags.stops6 ?? [])], junctions: [c.X(30), ...(w2.flags.junctions6 ?? [])], end: w2.flags.terminus, label: '25' }));
+        const b = w2.add(new Tram({ x: c.X(4) - 140, speed: 96, stops: [{ x: c.X(7), dwell: 0.6, ride: true }, { x: c.X(22), dwell: 0.6, ride: true }, { x: c.X(39) - 2, dwell: 1, ride: true }, ...(w2.flags.stops6 ?? [])], junctions: [c.X(35), ...(w2.flags.junctions6 ?? [])], end: w2.flags.terminus, label: '25' }));
         w2.flags.tramB = b;
       },
     );
@@ -675,14 +685,14 @@ function stopBus(id: string, flag: string, stopName: string, label: string, advi
       pool(w, c.x + 12, c.x + 25, 16, { colors: NALA, cause: 'ccu-nala' });
       sign(w, c.x + 2, 10.4, 3.2, 'BUS STOP', 'green', null, stopName);
       const stop = [c.X(1), c.X(5)];
-      const bus = w.add(new Bus({ x: c.X(-14), go: (w2) => w2.player.cx > c.X(1), slow: [[c.X(25), c.X(28.5)]], end: c.X(31), fast: 130, crawl: 20, label, hidden: true }));
+      const bus = w.add(new Bus({ x: c.X(-14), go: (w2) => w2.player.cx > c.X(1), slow: [[c.X(25), c.X(27.5)]], end: c.X(30), fast: 130, crawl: 24, label, hidden: true }));
       w.flags[flag] = { bus, stop };
       w.add(
         new (class extends Entity {
           update(w2: World) {
             const p = w2.player;
             const still = p.onGround && Math.abs(p.vx) < 4 && p.cx > stop[0] && p.cx < stop[1];
-            if (!bus.slowed && still && bus.x < stop[0] - 8 && bus.x > stop[0] - 150) bus.slowed = true;
+            if (!bus.slowed && still && bus.x < stop[0] - 8 && bus.x > stop[0] - 64) bus.slowed = true;
             if (bus.slowed && bus.x > c.X(9)) bus.slowed = false;
           }
         })(),
@@ -929,7 +939,7 @@ const pherot: Act = {
     w.add(new Customer(c.X(9.2), '#00897B'));
     const buyer = w.add(new Customer(c.X(3.2), '#6D4C41'));
     onPass(w, c.X(1), (w2) => {
-      for (let k = 0; k < 7; k++) w2.after(1 + 1.2 * k, () => a.shelve(w2));
+      for (let k = 0; k < 7; k++) w2.after(0.6 + 0.8 * k, () => a.shelve(w2));
       [2, 3.5].forEach((t) => w2.after(t, () => buyer.ask(w2, b, 1, 0.6)));
     });
     w.flags.pherot = { a, b };

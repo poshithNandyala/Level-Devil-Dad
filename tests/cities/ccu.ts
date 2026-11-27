@@ -421,21 +421,33 @@ function relayRoute(x: number, v: [number, number, number], tallFirst: boolean):
 
 
 // ------------------------------------------------------------------ CCU-06 helpers
+/** at a stop on the way: off on to its island and back on to the step (he waits for you) */
+const offAndOn = (tram: (w: World) => Tram | undefined, at: number, back: number): Step[] => [
+  { hold: '', until: (w) => !!tram(w) && tram(w)!.state === 'stop' && w.player.cx > px(at), max: 2400, note: 'ride to the stop' },
+  { hold: 'L', until: (w) => !tram(w)!.onStep(w) && w.player.cx < px(back), max: 120, note: 'off the back of the step on to the island' },
+  { hold: '', until: ground, max: 120 },
+  { hold: 'R', until: (w) => w.player.cx > tram(w)!.step.x + 8, max: 300 },
+  { hold: '', jump: 8, until: (w) => tram(w)!.onStep(w), max: 120, note: 'and a hop back on to the step: he waits' },
+];
 const S06 = (): Step[] => [
   walk(2.4),
   ...hopTo(px(5), 12, 'over the stop’s step'),
   { hold: 'R', until: (w) => w.player.onGround && w.player.y > 222 && w.player.cx > px(6.6), max: 300 },
   ...hopTo(px(7) + 12, 8, 'on to the tram’s rear step'),
+  ...offAndOn(tramA6, 16.5, 15.6),
+  ...offAndOn(tramA6, 28.5, 27.6),
   { hold: '', until: X(32.5), max: 2400, note: 'ride the step through the junction' },
 ];
 const tramA6 = (w: World) => w.flags.tramA as Tram;
 const tramB6 = (w: World) => w.flags.tramB as Tram | undefined;
 const ACT06 = (x: number): Step[] => [
   { hold: '', until: (w) => tramA6(w).state === 'stop' && w.player.cx > px(x + 4), max: 1800, note: 'ride to the island stop' },
-  { hold: 'R', until: and(ground, X(x + 8.2)), max: 300, note: 'off at the island: the points are set for the other line' },
+  { hold: 'L', until: (w) => !tramA6(w).onStep(w), max: 120, note: 'off the back of the step at the island: the points are set for the other line' },
+  { hold: '', until: ground, max: 120 },
   { hold: '', until: (w) => !!tramB6(w) && tramB6(w)!.state === 'stop', max: 2400, note: 'wait for the tram on the straight line' },
-  { hold: 'L', until: (w) => w.player.cx < tramB6(w)!.step.x + 14, max: 300 },
+  { hold: 'R', until: (w) => w.player.cx > tramB6(w)!.step.x + 8, max: 300 },
   { hold: '', jump: 8, until: (w) => tramB6(w)!.onStep(w), max: 120, note: 'up on to its step' },
+  ...offAndOn(tramB6, x + 21.5, x + 20.6),
   { hold: '', until: (w) => tramB6(w)!.state === 'stop' && w.player.cx > px(x + 37), max: 3000, note: 'through the second junction, to the next island' },
   { hold: 'R', until: and(ground, X(x + 40.6)), max: 200, note: 'off on to the island' },
   { hold: 'L', until: (w) => w.player.cx < tramB6(w)!.step.x + 14, max: 200 },
@@ -878,7 +890,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   ],
   'ccu10-bus': (x) => [
     boardAtStop((w) => w.flags.bus10),
-    ...ride(px(x + 25), px(x + 28.5), 'over the drain, and off on his one “aaste”'),
+    ...ride(px(x + 25), px(x + 27.5), 'over the drain, and off on his one “aaste”'),
     walk(x + 38),
   ],
   'ccu10-tram': (x) => [
@@ -902,6 +914,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'ccu07-pylon': (x) => PYL(x),
   'ccu06-points': ACT06,
   'ccu06-duiline': (x) => [
+    ...offAndOn(tramB, x + 12.5, x + 11.6),
     { hold: '', until: (w) => tramB(w)!.state === 'stop' && w.player.cx > px(x + 19), max: 2400, note: 'through two junctions on the step, to the island' },
     { hold: 'R', until: and(ground, X(x + 23.6)), max: 300, note: 'off on to the island: the other line’s tram is coming' },
     { hold: '', until: (w) => !!w.flags.otherPassed, max: 600, note: 'let it go by' },
