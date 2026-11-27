@@ -11,6 +11,7 @@ import { room as room02, act as act02, meta02 } from './s02';
 import { room as room03, act as act03, meta03 } from './s03';
 import { room as room04, act as act04, meta04 } from './s04';
 import { room as room05, act as act05, actGilahri as act05b, meta05 } from './s05';
+import { room as room06, act as act06, meta06 } from './s06';
 
 const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
 
@@ -39,7 +40,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: room03(), acts: [act03], twist: 'ita-baada', par: 45, shape: 'long', meta: meta03 }),
   longStage({ base: room04(), acts: [act04], twist: 'ita-peti', par: 50, shape: 'long', meta: meta04 }),
   longStage({ base: room05(), acts: [act05, act05b], twist: 'ita-khokhla', par: 80, shape: 'long', lives: 'act', meta: meta05 }),
-  longStage({ base: todoRoom(6), par: 30, shape: 'long' }), // ITA-06 TODO
+  longStage({ base: room06(), acts: [act06], twist: 'ita-mori', par: 70, shape: 'long', lives: 'act', meta: meta06 }),
   longStage({ base: todoRoom(7), par: 30, shape: 'long' }), // ITA-07 TODO
   longStage({ base: todoRoom(8), par: 30, shape: 'long' }), // ITA-08 TODO
   longStage({ base: todoRoom(9), par: 30, shape: 'long' }), // ITA-09 TODO

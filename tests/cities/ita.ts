@@ -2,7 +2,7 @@
 // Found by tests/city-tests.ts; merged into SOLUTIONS, NAIVE, FIX, MISTAKES, ACT_ROUTES and ENDING_POLICIES.
 import type { World } from '../../src/game/world';
 import type { Door } from '../../src/game/entities/basics';
-import { Step, X, and, ground, done } from '../runner';
+import { Step, X, XL, and, ground, done } from '../runner';
 import type { CityTests } from '../city-tests';
 import { LEVEL_BY_ID } from '../../src/game/levels';
 
@@ -303,6 +303,81 @@ const hollowPolicy: Policy = (w, m) => {
   return go('R');
 };
 
+// ------------------------------------------------------------------ ITA-06
+type PaddySt = { tanks: { c: number; level: 'full' | 'low'; drainT: number; fillT: number }[]; levers: { c: number; k: number; to: number; pulledT: number }[] };
+const settled = (key: string, k: number) => (w: World) => {
+  const st = w.flags[key] as PaddySt;
+  return st.tanks[k].level === 'low' && st.tanks.every((t) => t.fillT < 0);
+};
+/** pull the lever at column `lever` (a tap jump at its handle), wait for the tank to drain and every surge to finish, cross the tank and climb out on the bund at `out` */
+const pullCross = (key: string, k: number, lever: number, out: number): Step[] => [
+  { hold: 'R', until: X(lever), max: 900, note: 'to the lever' },
+  { hold: 'L', until: XL(lever + 0.4), max: 300, note: 'under its handle' },
+  { hold: '', ticks: 18 },
+  { hold: '', jump: 20, ticks: 22, long: true, note: 'pull: a full jump at the handle' },
+  { hold: '', until: settled(key, k), max: 900, note: 'drained, and the surge has gone where it was going' },
+  { hold: 'R', until: (w) => w.player.x >= px(out) - 12, max: 600, note: 'through the low tank' },
+  { hold: 'R', jump: 14, ticks: 14, note: 'up on to the bund' },
+  { hold: 'R', until: and(ground, (w) => w.player.y <= FL - 13), max: 300 },
+];
+const room06 = (): Step[] => [...pullCross('ita6', 0, 5, 10), ...pullCross('ita6', 1, 11, 16), ...pullCross('ita6', 2, 17, 22), { hold: 'R', until: X(29), max: 600 }];
+const act06 = (x: number): Step[] => [
+  ...pullCross('ita6a', 0, x + 3, x + 8),
+  ...pullCross('ita6a', 1, x + 7.6, x + 15),
+  // the third tank is full from the first tank's water, and its lever is the far one on the second bund: go back for it
+  { hold: 'L', until: (w) => w.player.x <= px(x + 11) + 2, max: 600, note: 'back down through the second tank' },
+  { hold: 'L', jump: 14, ticks: 14, note: 'up on to the second bund' },
+  { hold: 'L', until: and(ground, (w) => w.player.y <= FL - 13), max: 300 },
+  { hold: 'L', until: (w) => w.player.x <= px(x + 10.2), max: 300, note: 'under the far lever' },
+  { hold: '', ticks: 18 },
+  { hold: '', jump: 20, ticks: 22, long: true, note: 'pull: the third tank drains back into the second' },
+  { hold: 'R', until: (w) => w.player.x >= px(x + 15) - 12, max: 600, note: 'straight back across the second tank before the surge' },
+  { hold: 'R', jump: 14, ticks: 14, note: 'up on to the third bund' },
+  { hold: 'R', until: and(ground, (w) => w.player.y <= FL - 13), max: 300 },
+  { hold: '', until: settled('ita6a', 2), max: 900, note: 'the third tank is low and the second has filled' },
+  { hold: 'R', until: (w) => w.player.x >= px(x + 21) - 12, max: 600, note: 'through the third tank' },
+  { hold: 'R', jump: 14, ticks: 14 },
+  { hold: 'R', until: and(ground, (w) => w.player.y <= FL - 13), max: 300 },
+  ...pullCross('ita6a', 3, x + 21, x + 27),
+  ...pullCross('ita6a', 4, x + 27, x + 33),
+  { hold: 'R', until: X(x + 35.4), max: 600 },
+];
+/** the river sluice: pull, cross the drained tank, wait on the bund for the pour to stop, go through before the gate falls */
+const sluicePolicy: Policy = (w, m, d) => {
+  const st = w.flags.ita6e as PaddySt;
+  const g = w.flags.ita6g as { open: number; pourT: number };
+  const p = w.player;
+  const D = Math.round(d.x / 16);
+  const tank = st.tanks[0];
+  if (m.hold > 0) return { move: m.dir ?? 'R', jump: true };
+  if (p.x > px(D - 3) + 8) return go('R');
+  const inTank = p.y > FL - 8;
+  if (inTank) {
+    if (p.x >= px(D - 7) - 12) {
+      m.hold = 14;
+      m.dir = 'R';
+      return { move: 'R', jump: true };
+    }
+    return go('R');
+  }
+  if (p.x < px(D - 12)) return go('R');
+  if (p.x + p.w <= px(D - 11) + 6 && p.x < px(D - 9)) {
+    // on the lever's bund (or hopping on it)
+    if (tank.level === 'full' && g.pourT < 0 && w.tick > (m.cool ?? 0)) {
+      m.hold = 20;
+      m.dir = '';
+      m.cool = w.tick + 150;
+      return { move: '', jump: true };
+    }
+    if (tank.level === 'low' && tank.drainT < 0) return go('R');
+    return go('');
+  }
+  // on the bund before the gate
+  const t = g.pourT < 0 ? -1 : (w.tick - g.pourT) / 120;
+  if (t >= 2.25 && t < 3.3) return go('R');
+  return go(p.x + p.w >= px(D - 3) - 30 ? '' : 'R');
+};
+
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-01': { steps: [...courseRoute(), ...hop(62.4, 'hop the fort wall like the others'), { hold: 'R', until: done, max: 900 }], cause: 'ita-ita' },
@@ -310,6 +385,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-03': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-keechad' },
   'ITA-04': { steps: [{ hold: 'R', until: X(9.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12, note: 'jump for the oranges in the tree' }, { hold: '', until: done, max: 600 }], cause: 'ita-santra' },
   'ITA-05': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-khai' },
+  'ITA-06': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-doob' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-01': { steps: [...upTo(24), { hold: 'R', until: X(77.0), max: 600 }, { hold: 'R', jump: 16, ticks: 16, note: 'skip the first brick, as on the first wall' }, { hold: 'R', until: done, max: 900 }], cause: 'ita-pop' },
@@ -327,6 +403,16 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
     ],
     cause: 'ita-anjeer',
   },
+  'ITA-06': {
+    steps: [
+      ...pullCross('ita6', 0, 5, 10).slice(0, 4),
+      { hold: '', until: (w) => (w.flags.ita6 as PaddySt).tanks[0].level === 'low', max: 600, note: 'drained: go at once' },
+      { hold: 'R', until: (w) => w.player.x >= px(10) - 12, max: 600 },
+      { hold: 'R', jump: 14, ticks: 14 },
+      { hold: 'R', until: done, max: 1500, note: 'straight on into the next tank' },
+    ],
+    cause: 'ita-bahaav',
+  },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
   'ITA-03': [{ what: 'wait on the young one’s back for the next to dip', steps: [{ policy: herdWalk('ita3'), until: (w) => w.player.x >= px(15), max: 3000 }, { hold: '', until: done, max: 1500 }], cause: 'ita-seeng' }],
@@ -342,6 +428,24 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
       cause: 'ita-gilahri',
     },
   ],
+  'ITA-06': [
+    {
+      what: 'on the second bund pull both levers at once (drain everything ahead) and walk on',
+      get steps(): Step[] {
+        const x = actX0('ITA-06', 'ita06-nahar');
+        return [
+          ...room06(),
+          ...pullCross('ita6a', 0, x + 3, x + 8),
+          { hold: 'R', until: X(x + 8.2), max: 600, note: 'between the two handles' },
+          { hold: '', ticks: 18 },
+          { hold: '', jump: 20, ticks: 22, long: true, note: 'both at once' },
+          { hold: '', until: (w) => (w.flags.ita6a as PaddySt).tanks[1].level === 'low', max: 600 },
+          { hold: 'R', until: done, max: 1500 },
+        ];
+      },
+      cause: 'ita-bahaav',
+    },
+  ],
   'ITA-02': [{ what: 'wait in the deep bay for the first porter only, then run on', steps: [...hopGaps([12]), { hold: 'R', until: (w) => w.player.x >= px(18) && w.player.y > FL - 8, max: 900 }, { hold: '', until: (w) => (w.flags.ita2 as DeckSt).porters[0].x < px(18) - 34, max: 1500 }, { hold: 'R', jump: 16, ticks: 16 }, { hold: 'R', until: done, max: 1500 }], cause: 'ita-bhaar' }],
 };
 const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
@@ -351,12 +455,14 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'ita04-upar': act04,
   'ita05-shaam': act05,
   'ita05-gilahri': act05b,
+  'ita06-nahar': act06,
 };
 const endingPolicies: Record<string, Policy> = {
   'ita-phatak': gatePolicy,
   'ita-baada': penPolicy,
   'ita-peti': shedPolicy,
   'ita-khokhla': hollowPolicy,
+  'ita-mori': sluicePolicy,
 };
 
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
@@ -369,6 +475,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('ITA-04', 0, []);
   S['ITA-05'] = room05();
   lengthen('ITA-05', 0, []);
+  S['ITA-06'] = room06();
+  lengthen('ITA-06', 0, []);
 }
 
 export const test: CityTests = {
@@ -378,5 +486,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['ITA-02', 'ITA-03', 'ITA-04', 'ITA-05'],
+  fair: ['ITA-02', 'ITA-03', 'ITA-04', 'ITA-05', 'ITA-06'],
 };

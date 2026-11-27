@@ -14,4 +14,7 @@ export const causeLines: Record<string, string[]> = {
   'ita-khai': ['You went down into the gorge: there was no platform there yet.', 'A cluster is a platform only once it has dropped. Wait for it to land before you step across.'],
   'ita-anjeer': ['A ripe cluster came down on you.', 'A dropping cluster lands over the edges of its neighbours. Wait on the far side of your platform from the one that is next: the nearest to orange (at dusk, the darkest).'],
   'ita-gilahri': ['The flying squirrel took you in mid-air.', 'It chirps a second before it glides through. Be standing on a platform, not jumping, when it passes.'],
+  'ita-doob': ['You walked into a full tank: deep water.', 'A tank is a floor only when it is low. Pull the lever on its bund and wait a second for it to drain.'],
+  'ita-bahaav': ['The surge from the channel swept you out of the tank.', 'The water you drained goes down the channel into another tank, a second and a half later. Read the channel, and never be in that tank when it arrives: wait on the bund.'],
+  'ita-mori': ['The sluice took you: the pour, or the gate coming down.', 'Pull the lever and let the water pour through. The gate stays up a second and a half after the pour stops: go through then.'],
 };
