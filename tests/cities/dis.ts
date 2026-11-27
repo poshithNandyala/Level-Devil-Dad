@@ -498,6 +498,11 @@ function tooEarly(): (w: World) => { move: 'L' | 'R' | ''; jump: boolean } {
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
   'DIS-01': [
     {
+      what: 'steps off the deck as the second boy comes: his tray',
+      steps: [...tourStart(), ...ghatRun(), ...hop(94 - 1.6, 'up on the deck'), { hold: 'R', until: done, max: 900 }],
+      cause: 'dis-spill',
+    },
+    {
       what: 'climbs out of the ghat the moment the boy is overhead: the tray swings back',
       steps: [...tourStart(), { hold: 'R', until: inGhat, max: 700 }, { hold: '', until: (w) => boy(w).x < px(79), max: 1500 }, { hold: 'R', until: (w) => w.player.x >= px(79) - 2, max: 200 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 900 }],
       cause: 'dis-spill',

@@ -25,6 +25,29 @@ New death causes (all in `causes.ts`): `dis-spill`, `dis-luit`, `dis-basket`, `d
 Hidden items (`things.ts`): `dis-chah` (lal chah), `dis-japi`, `dis-paat` (two leaves and a bud), `dis-pitha`,
 `dis-gamosa`, `dis-tenga` (masor tenga), `dis-pepa`, `dis-laru`.
 
+## Length pass (acts added after the first build)
+
+Floors from the conductor, measured as the scripted route's time: 01 25-35 s, 02-04 25-45 s, 05 06 08 09 >= 60 s,
+07 >= 120 s, 10 >= 90 s. Every added act is one of DIS's own ideas used in a stage that had not used it yet, after a
+plain stretch of road, and has its own obvious play and obvious fix that die inside it (recorded as MISTAKES:
+`<act>: ...` and `<act> (fix): ...`).
+
+| Stage | Added acts (in order) | Idea it borrows | Its own death plays |
+| --- | --- | --- | --- |
+| DIS-01 | (tour) second tea boy from Fancy Bazar; the deck is the shelter | tea boy | step off the deck before he has set the tray down |
+| DIS-02 | (river slowed: new bars 0.75-1.1 s after the siren, narrowing 1.75-2.25 s, sinking 2.75-3.25 s) | | |
+| DIS-04 | `dis04-bhogali` gets a fourth crepe, each poured a little after the last | pitha | |
+| DIS-05 | `dis05-char`, `dis05-husori`, `dis05-ghat` | sandbars with a taker on a bar; husori yards with givers; the tea boy's ghat | run-jump bars / wait on a narrowing bar's right end; run at the gate / take both yard givers; straight out of the ghat / hop the boy |
+| DIS-06 | `dis06-chang`, `dis06-chapori3`, `dis06-ghat`, `dis06-char`, `dis06-pitha`, `dis06-chang2` | stilt house ladder in the water; sandbars; tea boy; bank into sandbars; Bhogali pitha pan; ladder behind a slab bank | jump at the house / walk off its roof; run-jump / narrowing bar; ghat x2; run at the pan / wait on a crepe; run the slabs early / wait on a slab |
+| DIS-07 | `dis07-paar` (momentum beat), `dis07-ghat` (shelter beat), `dis07-lane` | Majuli's bank; tea boy; three more gates, the last with the host's ritual | stop at the edge / stop on a slab; ghat x2; run at the gate / go before the host has finished |
+| DIS-08 | `dis08-jeep`, `dis08-bagori`, `dis08-kohora` | the jeep moves: the rhino stops halfway at one jeep, then charges on at a second; from behind with the haystack | walk into the grass / wait at the edge where the second jeep is; stay on the bank / leave the hay when it stops halfway |
+| DIS-09 | `dis09-bihu` (before the roof), `dis09-chaal3` | Rongali Bihu at Rang Ghar: husori gates; a steeper roof | run at the gate / go before the gamosas are done; hop the ribs / a bigger hop from a standstill |
+| DIS-10 | `dis10-char`, `dis10-gorh`, `dis10-ghat`, `dis10-chang`, `dis10-gamosa` | finale callbacks: sandbars, rhino, tea boy, stilt house, gamosa (four givers, clear the last two in one jump) | run-jump / narrowing bar; grass / edge; ghat x2; house x2; walk into every giver / a little hop into the fourth |
+
+Other changes in the pass: the husori group leaves the lane seven tiles after its last house (it used to walk on for
+ever and pile up at the door); calm checkpoints three tiles before every gate where you wait for the singers; the
+river water drawn darker so it never reads as a sandbar.
+
 ## Fairness (`LDD_N=80 npm run fair -- DIS`)
 
 | Stage | quick / avg / relaxed | worst stretch at avg |

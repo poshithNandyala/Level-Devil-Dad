@@ -68,7 +68,7 @@ const tourLevel = () =>
       g.fill(ghat.x0, ghat.x1, 17, 17, '#');
     },
     extra: (w) => {
-      w.add(new Carrier(px(92), px(60), px(62), 40, [px(ghat.x0), px(ghat.x1 + 1)]));
+      w.add(new Carrier(px(92), px(60), px(62), 34, [px(ghat.x0), px(ghat.x1 + 1)]));
       w.add(
         new Decor((ctx) => {
           // the ghat: stone steps down to the water
@@ -83,7 +83,7 @@ const tourLevel = () =>
       sign(w, 71.2, 10.6, 3.4, 'GHAT', 'green', null, 'river side');
       // the second boy, from Fancy Bazar, with the evening's chah: he comes once you are up on the deck, and sets his tray
       // down at its foot. The deck is the shelter; step off before he has stopped and the tray is in your face.
-      teaBoy(w, 118, 97, 100.5, [0, 0], 36);
+      teaBoy(w, 108, 97, 100.5, [0, 0], 18);
       // Tara urges you on as the boy comes (a lie: stepping out now meets the tray)
       onPass(w, px(66), (w2) => taraSays(w2, 'Bhal, Dad! | Good, Dad!', 2));
       onPass(w, px(58), (w2) => w2.guide('Lahe lahe, Dad? | Slowly slowly, Dad?', (w3) => w3.info.deaths > 0));
