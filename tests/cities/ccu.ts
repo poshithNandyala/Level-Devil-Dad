@@ -12,7 +12,7 @@ import type { Tram } from '../../src/game/cities/ccu/tram';
 import { BookPorter, Porter } from '../../src/game/cities/ccu/porters';
 import type { Tin } from '../../src/game/cities/ccu/muri';
 import { Figure, type BigFigure } from '../../src/game/cities/ccu/kumartuli';
-import type { Adda, Wash } from '../../src/game/cities/ccu/adda';
+import type { Adda, TeaSeller, Wash } from '../../src/game/cities/ccu/adda';
 import type { ClothPanel } from '../../src/game/cities/ccu/pandal';
 
 type Move = 'L' | 'R' | '';
@@ -451,6 +451,22 @@ function carrySeg(s0: number, early = false): Step[] {
 }
 const carryRoute = (x: number, n: number, lastDown = true): Step[] => Array.from({ length: n }, (_, k) => carrySeg(x + 22 * k).slice(0, k === n - 1 && !lastDown ? 5 : 6)).flat();
 
+
+// ------------------------------------------------------------------ CCU-08 broken-rok acts
+type RokSeg = { a: Adda; t: TeaSeller; plank: { collidable: boolean } };
+function brokenRoute(id: string, x: number, segs: [number, number, number, number, number][], climb = true): Step[] {
+  const seg = (k: number) => (w: World) => (w.flags[id] as RokSeg[])[k];
+  return [
+    ...(climb ? [walk(x - 1.8), steerHop(px(x + 0.8), 12, 'up on the rok')] : []),
+    ...segs.flatMap(([a0, a1, , g1], k): Step[] => [
+      walk(x + (a0 + a1) / 2),
+      { hold: '', until: (w) => seg(k)(w).a.releasedAt > 0 && seg(k)(w).plank.collidable, max: 3000, note: 'sit in the adda: the tea seller comes, on his plank' },
+      { hold: 'R', until: and(ground, X(x + g1 + 1.5)), max: 600, note: 'straight across behind him' },
+    ]),
+    walk(x + segs[segs.length - 1][3] + 3),
+  ];
+}
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['CCU-01'] = tourRun('onto');
   S['CCU-02'] = [...ride(px(25), px(28.5), 'past the first “aaste” (over the drain), off on the second'), walk(30)];
@@ -556,6 +572,8 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu08-gali': (x) => brokenRoute('ccu08-gali', x, [[6, 12, 13, 20, 32], [40, 46, 47, 54, 66]], false),
+  'ccu08-duur': (x) => brokenRoute('ccu08-duur', x, [[6, 12, 13, 21, 44]], false),
   'ccu05-pratima': (x) => carryRoute(x, 2, false),
   'ccu05-ghatpar': (x) => carryRoute(x, 2),
   'ccu07-sandhya': (x) => relayRoute(x, [42, 60, 80], true),
@@ -702,6 +720,16 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   mistakes['CCU-05'].push(
     { what: 'jumping the ghat mud from the step', steps: [...to92(), walk(92.4), steerHop(px(94.5), 12, 'up'), { hold: 'R', jump: 30, ticks: 40, long: true, note: 'a long jump at the mud' }, { hold: 'R', until: done, max: 300 }], cause: 'ccu-ganga' },
     { what: 'stepping off the carried figure as soon as it moves', steps: [...to92(), ...carrySeg(92, true), { hold: 'R', until: done, max: 300 }], cause: 'ccu-ganga' },
+  );
+}
+
+
+// CCU-08's broken lane: the obvious plays there
+{
+  const to110 = (): Step[] => [...addaRoute(), ...actRoutes['ccu08-rok'](32), ...actRoutes['ccu08-tokta'](76)];
+  mistakes['CCU-08'].push(
+    { what: 'jumping the first break in the lane', steps: [...to110(), walk(110 + 11.8), { hold: 'R', jump: 30, ticks: 40, long: true, note: 'a long jump at the break' }, { hold: 'R', until: done, max: 300 }], cause: 'ccu-khod' },
+    { what: 'sitting on after the tea seller has gone by', steps: [...to110(), walk(110 + 9), { hold: '', until: (w) => (w.flags['ccu08-gali'] as RokSeg[])[0].a.releasedAt > 0, max: 3000 }, walk(110 + 12.3), { hold: '', ticks: 720, note: 'wait at the break for a while' }, { hold: 'R', until: done, max: 600 }], cause: 'ccu-khod' },
   );
 }
 

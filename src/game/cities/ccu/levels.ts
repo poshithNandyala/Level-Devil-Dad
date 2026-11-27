@@ -936,6 +936,70 @@ function carryAct(id: string, n: number, rate: number, advice: string): Act {
 const pratima = carryAct('ccu05-pratima', 2, 0.15, 'Down at the ghat the mud is too wide to jump. Each big figure beside it is nearly painted: climb on to its head and stay there. When the paint reaches the crown, they carry it across, with you; step off on to the landing.');
 const ghatpar = carryAct('ccu05-ghatpar', 2, 0.1, 'Two more crossings, the painters slower: climb up, wait on the head, ride it over, and never step off while it’s moving.');
 
+
+/** CCU-08 broken-rok acts: each break in the rok is crossed only on the tea seller's plank, laid as he
+ *  comes and taken up again a few seconds after he has passed. He comes when someone sits in the adda
+ *  before the break: [adda from, adda to, gap from, gap to, where he starts], columns in the act */
+function brokenRok(id: string, w0: number, segs: [number, number, number, number, number][], speed: number, advice: string): Act {
+  return {
+    id,
+    w: w0,
+    cp0: false,
+    cps: [3.5],
+    advice,
+    paint: (g, c) => {
+      g.pit(c.x, c.x + w0 - 1).fill(c.x, c.x + w0 - 1, 13, 14, '#');
+      for (const [, , g0, g1] of segs) g.fill(c.x + g0, c.x + g1, 13, 14, '.');
+    },
+    build: (w, c) => {
+      w.add(new House(c.X(0), c.X(w0)));
+      khod(w, c.x, c.x + w0);
+      const out: { a: Adda; t: TeaSeller; plank: Solid }[] = [];
+      for (const [a0, a1, g0, g1, from] of segs) {
+        const a = w.add(new Adda(c.X(a0), c.X(a1), 3));
+        const t = w.add(new TeaSeller(c.X(from), -speed, [a]));
+        w.when(() => a.held, () => w.after(0.3, () => { if (!t.active) t.send(c.X(from)); }), false);
+        const plank = new Solid(c.X(g0), px(13), px(g1 - g0 + 1), 4);
+        plank.oneWay = true;
+        plank.collidable = false;
+        plank.velX = 0;
+        let laid = -1,
+          passed = -1;
+        w.add(
+          new (class extends Entity {
+            solid = plank;
+            update(w2: World) {
+              if (t.active && t.x < c.X(g1 + 2) && t.x > c.X(g0 - 2) && laid < 0 && passed === -1) {
+                laid = w2.tick;
+                plank.collidable = true;
+              }
+              // taken up again three seconds after he has crossed it, unless someone's on it
+              if (laid >= 0 && passed < 0 && t.x < c.X(g0 - 2)) passed = w2.tick;
+              if (passed >= 0 && w2.tick - passed > 360 && !w2.player.isRiding(plank)) {
+                plank.collidable = false;
+                laid = -1;
+                passed = -2;
+              }
+            }
+            draw(ctx: CanvasRenderingContext2D) {
+              if (!plank.collidable) return;
+              ctx.fillStyle = '#8B6B3E';
+              ctx.fillRect(plank.x, plank.y, plank.w, 4);
+              ctx.fillStyle = '#6B4A2E';
+              for (let x = plank.x + 10; x < plank.x + plank.w; x += 22) ctx.fillRect(x, plank.y, 1, 4);
+            }
+          })(),
+        );
+        out.push({ a, t, plank });
+        w.flags.addas = [...(w.flags.addas ?? []), a];
+      }
+      w.flags[id] = out;
+    },
+  };
+}
+const gali = brokenRok('ccu08-gali', 68, [[6, 12, 13, 20, 32], [40, 46, 47, 54, 66]], 55, 'A lane broken twice. Sit in the adda before each break and wait for the tea seller; his plank goes back up a few seconds after he’s gone by, so cross it right behind him, and sit again at the next.');
+const duur = brokenRok('ccu08-duur', 46, [[6, 12, 13, 21, 44]], 45, 'The tea seller is far off down this lane, and slow: sit in the adda and wait. He’ll come.');
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -989,7 +1053,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: kumartuliRoom(), par: 80, acts: [uthon, lane, pratima, ghat, ghatpar], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
   longStage({ base: poleRoom(), par: 84, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 160, acts: [girder, dui, sandhya, ulto, bhor, dupur, raat, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
-  longStage({ base: addaRoom(), par: 32, acts: [rok, tokta], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
+  longStage({ base: addaRoom(), par: 80, acts: [rok, tokta, gali, duur], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
   longStage({ base: pandalRoom(), par: 24, acts: [sinri, toran, chala], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
   longStage({ base: finaleRoom(), par: 68, acts: [bus10, tram10, rok10, kumor10], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];
