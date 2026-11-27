@@ -14,7 +14,7 @@ import type { Door } from '../../entities/basics';
 import { Pan } from './pitha';
 import { husori } from './husori';
 import { charge } from './gorh';
-import { roof, type RoofSection } from './rangghar';
+import { Eave, roof, type RoofSection } from './rangghar';
 import { majChar3, majGhat, majPitha, gorhKohora, luitGhat, gamChar, gamGhat, gamHusori, gorhBagori, gorhJeep, husGhat, husLane, husPaar, luitChang, luitChar, luitGamosa, luitGorh, majChang, majChang2, majChar, rangBihu, rangWide, teaBoy } from './acts2';
 import { Bank, type BankDef } from './bank';
 import { Cloth, Host, gam, machan, pitDanger } from './gamosa';
@@ -705,6 +705,9 @@ const ROOF_ROOM: RoofSection[] = [
 function rangGharRoom(): LevelDef {
   const g = Grid.ground(15).put(1, 14, '@').put(30, 14, 'E');
   for (const c of [8, 15, 22]) g.put(c, 14, '#');
+  // the pavilion's side: a step and the upper eave, both one-way (you walk under them on the roof)
+  g.fill(2, 3, 12, 12, '=');
+  g.fill(4, 11, 9, 9, '=');
   return {
     id: 'DIS-09',
     city: 'DIS',
@@ -712,13 +715,14 @@ function rangGharRoom(): LevelDef {
     name: 'Rang Ghar',
     nameEn: 'The Ahom pavilion',
     tagline: 'The royal pavilion at Sivasagar, with its boat-shaped roof. The roof is oiled, and the royal games roll their balls down it.',
-    hint: 'The roof is oiled: where it shines it pushes you back down the slope, almost as fast as you can run, and wooden balls roll down it from the gutters. They smash against the wooden ribs. Stand on the red-and-white grip pads in front of a rib, where nothing pushes you and no ball can reach, take a run along the pad and jump the rib and the oiled stretch beyond it in one leap, on to the next pad. Never stand or land on the oil.',
+    hint: 'The roof is oiled: where it shines it pushes you back down the slope, almost as fast as you can run, and wooden balls roll down it from the gutters. They smash against the wooden ribs. Stand on the red-and-white grip pads in front of a rib, where nothing pushes you and no ball can reach, take a run along the pad and jump the rib and the oiled stretch beyond it in one leap, on to the next pad. Never stand or land on the oil. The steps up the pavilion’s side go only to the upper eave, which is the gutter: a ball comes rolling down it the moment you stand on it, and it ends over the oil.',
     par: 36,
     map: g.rows(),
     build(w: World) {
       door(w);
       roof(w, ROOF_ROOM, 4);
-      sign(w, 6.2, 10.4, 3.6, 'RANG GHAR', 'shop', null, 'grip pad');
+      w.add(new Eave(4, 11, 9));
+      sign(w, 12.6, 10.4, 3.6, 'RANG GHAR', 'shop', null, 'grip pad');
       rival(w, 5, 15, 1, tara(7));
       onPass(w, px(6), (w2) => taraSays(w2, 'Xubho zatra, Dad! | Good journey, Dad!', 2.4));
       onPass(w, px(7.5), (w2) => taraSays(w2, 'Bhal, Dad! | Good, Dad!', 2));

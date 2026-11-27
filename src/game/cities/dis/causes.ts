@@ -12,4 +12,5 @@ export const causeLines: Record<string, string[]> = {
   'dis-beel': ['Beel! There is no floor under the tall grass.', 'Don’t step into grass that has not been flattened. A rhino flattens a strip when it charges at the jeep’s dust: wait, then walk its strip.'],
   'dis-gorh': ['Gorh! You were in the rhino’s way.', 'It charges straight at the dust, along the grass and the bank. Stay clear of the line between where it starts and the dust, or climb up out of its way.'],
   'dis-roof': ['Gola! A ball rolled down the oiled roof into you.', 'Don’t stand or land on the oil. Stop on the grip pad before a rib, take a run, and jump the rib and the oil together on to the next pad.'],
+  'dis-gutter': ['Gola! The upper eave is the gutter, and its ball rolled down it into you.', 'The pavilion’s side only leads to the gutter. Stay on the roof: stop on each grip pad, take a run, and leap the rib and the oil.'],
 };

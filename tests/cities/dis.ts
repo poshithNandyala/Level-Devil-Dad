@@ -469,6 +469,17 @@ const dis02Start: Step[] = [
   { hold: 'R', until: ground, max: 200 },
 ];
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  // after the oil, keep off the roof: up the pavilion's side on to the eave. It is the gutter, and its ball comes down it
+  'DIS-09': {
+    steps: [
+      { hold: 'R', until: X(1.4), max: 200 },
+      { hold: 'R', jump: 20, ticks: 20, long: true, note: 'up the pavilion’s side' },
+      { hold: '', until: and(ground, (w) => w.player.y + w.player.h === px(12)), max: 200 },
+      { hold: 'R', jump: 22, ticks: 22, long: true, note: 'on to the eave' },
+      { hold: 'R', until: done, max: 900 },
+    ],
+    cause: 'dis-gutter',
+  },
   // wait right at the edge of the grass for the strip: the rhino stops at the dust, which is right there
   'DIS-08': { steps: [{ hold: 'R', until: X(7.2), max: 600 }, { hold: '', until: done, max: 1500 }], cause: 'dis-gorh' },
   // go at once, but stop on the first slab to think: it is gone beneath you

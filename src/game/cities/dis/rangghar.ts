@@ -1,8 +1,9 @@
 // DIS-09: Rang Ghar's boat roof. The roof is oiled: wherever it is slick it pushes Dad back down the slope, faster than he can
 // walk up it, and the royal games' wooden balls roll down it from the gutters. The ribs are the only things that stop a ball
 // (they smash against them) and the grip pads in front of the ribs are the only places Dad can stand still.
-import { Entity, type World } from '../../world';
+import { Entity, type Hazard, type World } from '../../world';
 import { roller } from '../../levels/kit';
+import { DT } from '../../constants';
 import { GROUND, px } from './entities';
 
 export interface RoofSection {
@@ -143,4 +144,61 @@ export function roof(w: World, secs: RoofSection[], from: number) {
   const r = w.add(new Roof(secs, px(from)));
   (w.flags.roofs ??= []).push(r);
   return r;
+}
+
+/**
+ * The pavilion's side and its upper eave: brick steps up the side of Rang Ghar to the eave, which looks like a dry way over
+ * the oil. It is the gutter: the moment you stand on it a wooden ball comes rolling down it at you, and the eave ends in
+ * mid-air over the oil anyway. (The obvious fix after the oil; DIS-09's A2.)
+ */
+export class Eave extends Entity {
+  hazard: Hazard;
+  ball = -1;
+  bx = 0;
+  constructor(
+    readonly c0: number,
+    readonly c1: number,
+    readonly row: number,
+  ) {
+    super();
+    this.layer = 2;
+    const self = this;
+    this.hazard = {
+      active: true,
+      cause: 'dis-gutter',
+      hits: (x, y, w, h) => self.ball >= 0 && x < self.bx + 9 && x + w > self.bx + 1 && y < px(self.row) && y + h > px(self.row) - 10,
+    };
+  }
+  update(w: World) {
+    const p = w.player;
+    const on = p.onGround && p.y + p.h === px(this.row) && p.cx >= px(this.c0) && p.cx < px(this.c1 + 1);
+    if (on && this.ball < 0) {
+      this.ball = w.tick;
+      this.bx = px(this.c1 + 1) - 10;
+      w.sfx('thud', this.bx, px(this.row));
+    }
+    if (this.ball >= 0) {
+      this.bx -= 80 * DT;
+      if (this.bx < px(this.c0) - 12) this.ball = -2;
+    }
+  }
+  draw(ctx: CanvasRenderingContext2D, w: World) {
+    const y = px(this.row);
+    // the eave: a gutter of wooden boards along the upper roof, with brick steps up the pavilion's side
+    ctx.fillStyle = '#6A4B1C';
+    ctx.fillRect(px(this.c0), y, px(this.c1 - this.c0 + 1), 4);
+    ctx.fillStyle = '#8D6B2E';
+    ctx.fillRect(px(this.c0), y - 3, px(this.c1 - this.c0 + 1), 3);
+    ctx.fillStyle = '#8C3B2A';
+    ctx.fillRect(px(this.c0) - 32, px(12), 32, 4);
+    for (let k = 0; k < 4; k++) ctx.fillRect(px(this.c0) - 30 + k * 8, px(12) + 4, 3, GROUND - px(12) - 4);
+    if (this.ball >= 0) {
+      ctx.fillStyle = '#8D5A2B';
+      ctx.beginPath();
+      ctx.arc(this.bx + 5, y - 5, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#F3E6C4';
+      ctx.fillRect(this.bx + 3 + ((w.tick >> 2) % 3), y - 7, 1.5, 1.5);
+    }
+  }
 }
