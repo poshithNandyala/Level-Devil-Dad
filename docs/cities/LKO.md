@@ -1,0 +1,78 @@
+# LKO · Lucknow (Uttar Pradesh): build notes
+
+Module: `src/game/cities/lko/` (one file per stage, `s01.ts` .. `s10.ts`; shared bits in `kit.ts`).
+Routes and the plays that must die: `tests/cities/lko.ts`. Allocation v2 slots, in order.
+Every spoken line is from the city bible's VERIFIED list (standard Lakhnavi Hindustani courtesy).
+
+## Fix round 6 (QA FAIL-2): what the table below no longer has
+
+The table below is the build history. Since fix round 6 these parts are gone from the tree:
+- The doors of 04 `lko-kulhad`, 06 `lko-sam`, 07 `lko-darban`, 08 `lko-489`, 09 `lko-chhatri` and 10 `lko-tehzeeb` are **plain doors**: no idea, walk in. Each one re-asked its own room (C1). The ids stay.
+- Acts cut (C2, C3, C4): `lko02-aadaab`, `lko04-badal`, `lko05-dum`, `lko06-tihai`, `lko07-chauraha`, `lko08-minar`, `lko08-mehrab`, `lko10-dhulai`, `lko10-julus`, `lko10-raasta`, `lko10-chirag`, `lko10-do`, `lko10-galiyara`.
+- `lko09-hawa` has four roofs. For the last one the flyer walks round in front (`lko-hawa-ulta`).
+- The finale keeps only the callbacks that break their rule. Since fix round 7 (QA FAIL-3) that is `tasveer`, `daana`, `seedha` and `thahra`. `darbar` and `jawab` are cut: darbar borrowed 02's refusal of the offered way, and jawab broke a greeting the city no longer teaches.
+- Fix round 7 also changed `lko07-shaam` and the death lines:
+  - `lko07-shaam` keeps one trap, the shivering awning.
+  - Every callback and every place with a different lesson has its own cause id and line, in `causes.ts`.
+
+## Stages
+
+| Id | Name | Slot / family | The room's idea | Acts | Door ending |
+| --- | --- | --- | --- | --- | --- |
+| LKO-01 | Aadaab Lucknow (tour) | LKO-F1 `sold-bolt-hooked-out-sideways` [B3, bolt-unrolls-curtain] | Chowk's cloth bolts hung over a dug-up lane are the way across; land on one and it's sold: the shopkeeper's bamboo hook rises, grips, and slides it out sideways from under you. Then a long bolt unrolls down across the road, a wooden roller on its end: run under before it lands | (tour) | plain door by the Gomti (`lko-gomti-ghat`) |
+| LKO-02 | Pehle Aap | `politeness-bow-sets-order` [bow-order] | The first one through the haveli doorway gets the loose threshold stone. Lean into the two gentlemen and they see you through first; stand still (a bow) and one goes first and drops the stone; bow again instead of taking the second one's offer and he sees you through himself | `lko02-gali`: a man behind offers you the way, stand still and he goes first; `lko02-takrar`: a stand-off at a doorway, whoever stops bowing first goes first, keep bowing till he gives up; `lko02-aadaab`: gentlemen greet you from their chabutras; return it with one short bow after his greeting, not walking past and not bowing on | `lko-kiwad`: the haveli door opens outwards, its leaves sweep the two tiles in front of it |
+| LKO-03 | Chhapa | `print-washed-stitch-remains` [wash-remains] | Printed blue vine, solid white stitched flowers and white jali over the dhobi's vat. First whistle washes the print, second the jali: stand only on solid flowers | `lko03-kunda`: three vats where the print is the only way, run it without stopping; `lko03-adda`: the karigar's embroidery hoop carries you over the vat from flower to flower, step off on the far side (waiting on the next flower gets you clamped); `lko03-rang`: the rangrez dips the far half of the muslin into his neel, stitch and all: cross it in one go as it comes up | `lko-balti`: the door is real, but its threshold is cloth over the vat; the print washes and the dhobi's bucket comes down on whoever is on the cloth |
+| LKO-04 | Makhan Malai | `sun-direction-sinks-foam` [light-sinks] | Every heap of malai: the tile facing the low sun goes soft and sinks under you; the tile in its own long shadow holds. The halwai lifts his shiny lid and the light comes from the other side | `lko04-chowk`: single cups shaded only by the long shadow of a kulhad stack, the shadows shorten as the sun climbs; `lko04-badal`: a cloud's moving shadow over single cups, go with it, not ahead, not behind | `lko-kulhad`: the halwai stokes his bhatti behind you: light from the left, the left tiles of the steps go soft |
+| LKO-05 | Galouti (lives: act) | `flatten-platforms-build-low-lane` [flatten-lane] | A hop off a full heap of galouti puts your head in the seekh rack; stand a moment and it squashes flat and stays; from flat your hop clears. Flat is thin: linger and the tawa burns through | `lko05-tawa`: six heaps, some already thin (hop at once); `lko05-lane`: a slab under the lowest rack squashes from your feet forward; `lko05-ulta`: the cook presses the slab from his end with his kafgir, wait off it; `lko05-bhara`: a low rack he hoists now and then, keep your heap full by stepping between a pair; the last time he only half-hoists it, so squash first; `lko05-dum`: double heaps (two squashes), the last a triple; `lko05-ghee`: set heaps under the cook's ladle, your weight flattens nothing: hop while it sizzles; `lko05-charkhi` (v3 F471): the spit turns by itself, hop as the skewers come up flat, not once they lie still | `lko-sheermal`: the baker slaps a sheermal on the tandoor's inside wall: a ledge until it bakes |
+| LKO-06 | Kathak (lives: act) | `sound-draws-dancer-spin` [sound-draws] | Red ghungroo strips in the stage floor ring when stepped on and the dancer spins across to the sound; the board she taps rings too: go over it on the musicians' takht | `lko06-tatkar`: her tatkar patch moves to and fro; hop it as it comes at you; `lko06-guru` (v3 F472): at every stamp left and right swap, at the next they swap back; `lko06-tihai` (v3 F473): the tabla plays one phrase three times, tied-up grey strips stay silent for two, on sam every bell rings: on the third be on plain board; `lko06-mehfil`: she spins the stage end to end without stopping, shelter on the musicians' takhts (takhts now six wide, she spins faster) | `lko-sam`: three chakkars and a stamp; the door opens on the stamp; wait on the takht |
+| LKO-07 | Hazratganj (marathon, lives: act) | `pace-sets-crowd-shape` [pace-crowd, ladder-block] | Rush (no pause for half a second) and the strollers close ranks and tut you back into the nala; pause and they part | `lko07-shaam` dusk awnings: the one that shivers on its rope is next and may be ahead, stop short of it (registry S11 tell); `lko07-batti` three lamplighters swing their ladders (shelter, then go under); `lko07-julus` a slow procession going your way: walk behind at its pace, wait at each nala (the last one comes early); `lko07-photo` a posing group parts for no one: run through them in the moment the photographer's flash dazzles them, and not on the second camera's test flash; `lko07-dukaan` (v3 F474): the window-shopper steps back blind, pass on the sill over his head; `lko07-chauraha` stroll so they part, then run before the awnings over them come down; `chhidkav` and `kohra` cut (DECISIONS I2, I1/W1) | `lko-darban`: the café's darban holds the door only for strollers; land off the nala hop rushing and he shoves you back |
+| LKO-08 | Bhool Bhulaiya (HWIK, lives: act) | `entry-height-routes-level` [enter-height] | Every arch is alike: through one at a jump and you come out a floor up; on foot and you stay. The first has a little drain (a hop takes you up on to the hooks), the second the old well beyond it (jump) | `lko08-chausar` (Pachisi reserve): two half courts with a calm chabutra between; a cowrie throw lights that many squares ahead, only lit ones hold, never the courtier's; `lko08-minar`: three arches stacked a floor apart, jump, jump, walk; `lko08-toota` (v3 F478): a crownless arch lifts no one, jump the whole one before it; `lko08-mehrab`: a low vault (walk) then the well (jump); `lko08-utar`: the hanging arch takes you a floor DOWN if you come through it falling; `lko08-wapas`: an arch taken backwards at a jump takes you a floor down; `lko08-upar`: the beamless vault, come down on to the arch tops from above; `lko08-darwaza` (v3 F477): through the hall door the arch has moved, look again; `lko08-sargoshi` (v3 F479): the whispering gallery, keep off the rail ledge, hop the up-lit holes; `lko08-roshandan`: the light well, down-lit patches are floor, up-lit ones are holes | `lko-489`: the last arch at the end of the gallery: walk through and step off to the door; hop the crack into it and you're on the roof |
+| LKO-09 | Kabootarbazi (lives: act) | `flag-colour-steers-flock` [flag-signal] | The flyer's flag: red, the flock circles; white, it comes down on the roof just ahead of you. Cross only early in the red | `lko09-gumbad` (a Chota Imambara-style garden tank): white domes seem bigger the farther you stand, jump from the red paving line; the third is the reflection; `lko09-hawa`: the flyer is behind you and the flag has two faces, the birds go by the far face (death `lko-hawa`); `lko09-jhande`: two flyers, the flock obeys the nearer flag; `lko09-seeti`: a whistle duel beats the flag, wait on the roof neither flyer calls; `lko09-girah` (v3 F480): a tumble is not a landing, cross early in the red through it | `lko-chhatri`: the pigeon loft's door: on white the flock comes home through it |
+| LKO-10 | Lakhnavi Tehzeeb (finale, lives: act) | `finale-bow-meets-bells` [bow-vs-bells] | The gentlemen at the door again, but the floor before it is bells sewn under chikan covers: a step is silent, a bow (standing still) rings them and the dancer spins to you. Bow on the one plain board | `lko10-dhulai` wash line + malai heaps in the low sun; `lko10-darbar`: the court again, but the courtier bows you on to the square between ('pehle aap') and it does not hold; `lko10-julus`: the procession again, a plain callback (W2); `lko10-galiyara`: the arches again, a plain callback (W2); `lko10-tasveer`: the photograph on the bell floor, wait back off the covers; `lko10-jawab`: return the greeting off the covers; `lko10-raasta`: the strollers part and the gap is a doorway, let him go first; `lko10-daana` (10.4): grain beats the flag, cross while the flock is up; `lko10-chirag` (10.2): the lamplighter's lantern moves, each heap's shady side changes as he passes; `lko10-seedha`: 06's guru, but a stamp swaps nothing; `lko10-do`: 06's tihai cut short, sam on the second, on covered boards; `lko10-thahra`: 08's hall door, but the maze stays put and the floor past it is covers | `lko-tehzeeb`: the last door opens to a bow; bow from the plain board two steps back, not on the covered threshold |
+
+## New death causes (causes.ts)
+
+`lko-julus lko-goti lko-gumbad lko-mehfil lko-than lko-parda lko-pehle lko-dhakka lko-kiwad lko-chhapa lko-jali lko-malai lko-seekh lko-tawa lko-tandoor lko-chakkar lko-tatkar lko-ganj lko-shamiyana lko-seedhi lko-darban lko-bhool lko-kuan lko-mehrab lko-kabootar lko-chhat lko-tehzeeb lko-hawa lko-takrar lko-adda lko-kunda lko-balti lko-badal lko-badal-peeche lko-dhakkan lko-kafgir lko-jhanda-peeche lko-jhanda-aage lko-goti-pehle lko-aadaab lko-aadaab-zyada lko-photo lko-photo-jaldi lko-photo-test lko-nala lko-ghungroo lko-julus-nala lko-rang lko-rang-kood lko-dum lko-dum-teen lko-aks lko-ghee lko-chhidkav lko-chhidkav-ulta lko-kohra lko-roshandan lko-seeti lko-seeti-jawab`
+
+## Hidden items (things.ts)
+
+`lko-malai` (makhan malai in a kulhad), `lko-chikan` (a folded chikan kurta), `lko-galouti`, `lko-ghungroo`, `lko-kulfi` (matka kulfi), `lko-sheermal`.
+
+## Fairness (`LDD_N=80 npm run fair -- LKO`, after fix round 3)
+
+| Stage | quick 0-6t | average 0-12t | relaxed 0-18t | every stretch at 0-12t |
+| --- | --- | --- | --- | --- |
+| LKO-01 | 100% | 100% | 84% | 100% |
+| LKO-02 | 100% | 100% | 100% | 100% |
+| LKO-03 | 100% | 100% | 76% | 100% |
+| LKO-04 | 100% | 100% | 76% | 100% |
+| LKO-05 | 100% | 100% | 76% | 100% |
+| LKO-06 | 100% | 100% | 85% | 100% |
+| LKO-07 | 100% | 100% | 98% | 100% |
+| LKO-08 | 100% | 100% | 93% | 100% |
+| LKO-09 | 100% | 100% | 76% | 100% |
+| LKO-10 | 100% | 100% | 80% | 100% |
+
+## Clear times (scripted route, final by QA round 4's pre-ruling)
+
+01 14.2 s · 02 20.2 · 03 25.2 · 04 10.7 · 05 42.9 · 06 37.3 · 07 49.9 · 08 37.1 · 09 61.0 · 10 24.5. Why the long stages stop short of their floors: the reports in ldd-inbox (`reports/cities/lko/FIX-3.md` to `FIX-7.md`); `darbar` and `jawab` were cut from 10, and `shaam` keeps one trap (rulings).
+
+## Fix round 8 (QA FAIL-4: every death line true for the play that died)
+
+Each place now has its own cause, so the line always names what this play did, and never advises the act's other fatal move:
+`lko-chowk` (04's single cups: only the kulhad stack's shadow holds), `lko-tawa-khali` and `lko-ghee-tawa` (the bare tawa),
+`lko-seekh-lane`, `lko-seekh-ulta`, `lko-seekh-bhara`, `lko-seekh-ghee`, `lko-seekh-charkhi` (each rack's own skewers),
+`lko-rang-vat` (the dyer's vat), `lko-vat` (into the karigar's rinse vat without ever riding his hoop, e.g. backing
+off from the dyer's), `lko-dukaan-nala` (the nala in front of the shop), `lko-upar`, `lko-toota-kuan`, `lko-utar`
+(each vault's own well, saying what that act asks), `lko-guru-aage` and `lko-seedha-aage` (a red strip ahead, apart
+from turning back on to one), `lko-girah-der` (the red ran out before you were across). Lines rewritten to be true
+for every play: `lko-kuan`, `lko-wapas`, `lko-bhool`, `lko-andhera`, `lko-goti-andhera`, `lko-guru`, `lko-julus-nala`,
+`lko-photo-test`, `lko-nala`.
+`lko08-wapas` has its own second death now: the well runs on past the gallery's end and the vault comes low over
+it, so walking (or jumping) off the end is a fall into wapas's own well (`lko-wapas`).
+
+Checks (QA round 5, lag 0/6/12): the six-play generic probe (walk, short hop, long jump, wait 4 s then walk, hop every
+0.3 s, back off) from every part's start, 846 plays: every line true for its play. Scripted NAIVE, FIX and MISTAKES: each
+dies in its own cause at every lag except the two pre-ruled lag-12 cases (`dukaan` m8, `tasveer` m0). Lag-captured
+sweep at lag 0/6/11/12 x idle 0/37/120/251: no death for idle, run or tap jump; worst replay 7.46 s (04 m0, lag 6).
+Strict cpsafe 10/10; fair at N=80 100/100 at 6t/12t on all ten; walk-4.5 clear (nearest +4.7 tiles).
