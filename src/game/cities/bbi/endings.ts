@@ -10,7 +10,8 @@ import { ending as e08 } from './s08';
 import { ending as e09 } from './s09';
 import { ending as e10 } from './s10';
 
-export type BbiEndingKind = 'bbi-turf-roll' | 'bbi-lantern-drop' | 'bbi-curl-stair' | 'bbi-behind-step' | 'bbi-motif-door' | 'bbi-pose-gate' | 'bbi-leaf-plate' | 'bbi-horse-gap' | 'bbi-ribbon-snip';
+// 06, 07, 08 and 10 end at a plain door (QA fix F4): the road ends at the door and the door is the way out
+export type BbiEndingKind = 'bbi-turf-roll' | 'bbi-lantern-drop' | 'bbi-curl-stair' | 'bbi-behind-step' | 'bbi-tanti-ghara' | 'bbi-sajaghara-door' | 'bbi-rosei-ghara' | 'bbi-horse-gap' | 'bbi-stadium-gate';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<BbiEndingKind, true> {}
@@ -21,9 +22,9 @@ export const endings: Record<BbiEndingKind, Ending> = {
   'bbi-lantern-drop': e03,
   'bbi-curl-stair': e04,
   'bbi-behind-step': e05,
-  'bbi-motif-door': e06,
-  'bbi-pose-gate': e07,
-  'bbi-leaf-plate': e08,
+  'bbi-tanti-ghara': e06,
+  'bbi-sajaghara-door': e07,
+  'bbi-rosei-ghara': e08,
   'bbi-horse-gap': e09,
-  'bbi-ribbon-snip': e10,
+  'bbi-stadium-gate': e10,
 };

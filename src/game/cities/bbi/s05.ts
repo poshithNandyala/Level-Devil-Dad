@@ -423,7 +423,6 @@ export function tendaAct(id: string, wallRows: number, up: number, key: string, 
     },
   };
 }
-export const act6 = tendaAct('bbi05-tenda', 5, 4.2, 'bbi5t', 'A wall too high to jump, and the well’s water lift beside it. This once, start a machine on purpose: step on the bucket, ride it up, and step off on to the wall before it swings back down into the well.');
 
 /** the mill on the bank: started on purpose, it flings you over a channel too wide to jump; stand on its far half */
 export function flingAct(id: string, key: string, advice: string): Act {

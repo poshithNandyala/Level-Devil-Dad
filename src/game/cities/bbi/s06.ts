@@ -545,45 +545,23 @@ export function pattaAct(id: string, key: string, honest = false): Act {
 }
 export const act9 = pattaAct('bbi06-patta', 'bbi6pc');
 
-/** ending: a curtain of warp threads in front of the door; only on the motif beat do they part into its shape */
-export const L06E: LoomCfg = { c0: 0, n: 3, speeds: [1, 2, 3], beat: 0.8, hold: 1.6, shuttle: [] };
+/** ending (QA fix F4, plain): the old motif curtain re-asked the room. The road ends at the weaver's house: the
+ *  door is open, finished saris hang either side of it, and it is the way out */
 export const ending: Ending = {
-  space: 12,
-  advice: 'The door is behind a curtain of warp threads. Only on the motif beat do they part into the door’s shape: walk through then, and don’t be in it when the next beat closes it.',
+  space: 6,
+  advice: 'The weaver’s house at the end of the street: its door is open. Walk in.',
   build(w, d) {
     const D = Math.round(d.x / 16);
-    w.flags.twist = 'bbi-motif-door';
-    const st = { t0: -1, open: false };
-    w.flags.bbi6e = st;
-    onPass(w, px(D - 10), (w2) => (st.t0 = w2.tick));
-    const cfg = { ...L06E, c0: D - 3 };
+    w.flags.twist = 'bbi-tanti-ghara';
     w.add(
-      new Rig(px(D - 3), FL - 64, px(3), 64, {
-        solid: true,
-        cause: 'bbi-tana',
-        inset: 3,
-        layer: 4,
-        live: (r) => !!r.solid?.collidable,
-        tick: (r, w2) => {
-          const open = st.t0 >= 0 && beatAt(cfg, since(w2, st.t0)).j === 4;
-          st.open = open;
-          r.setSolid(!open);
-        },
-        paint: (ctx, r, w2) => {
-          const a = st.t0 >= 0 ? beatAt(cfg, since(w2, st.t0)) : { b: 0, j: 0 };
-          for (let k = 0; k < 9; k++) {
-            const x = r.x + k * 5 + 2;
-            if (st.open && k >= 2 && k <= 6) {
-              // parted: the motif, the shape of a door, in the cloth either side
-              box(ctx, x, r.y, 2, 6, IKAT[k % 5]);
-              continue;
-            }
-            for (let y = 0; y < 64; y += 8) box(ctx, x, r.y + y, 3, 8, IKAT[(k + y / 8 + a.b * (k % 3 + 1)) % 5]);
-          }
+      new Rig(0, 0, 0, 0, {
+        layer: -2,
+        paint: (ctx) => {
+          for (let k = 0; k < 2; k++) for (let y = 0; y < 48; y += 8) box(ctx, px(D - 2) + k * 44, FL - 56 + y, 8, 8, IKAT[(k + y / 8) % 5]);
         },
       }),
     );
   },
 };
 
-export const meta06 = { family: 'loom-beat-aligns-threads', betrayals: ['beat-align'], ending: 'bbi-motif-door' };
+export const meta06 = { family: 'loom-beat-aligns-threads', betrayals: ['beat-align'], ending: 'bbi-tanti-ghara' };

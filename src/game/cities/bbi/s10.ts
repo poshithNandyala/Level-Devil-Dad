@@ -165,42 +165,20 @@ export const act16 = palaaAct('bbi10-palaa', 'bbi10pl', true);
 export const act17 = ghurniAct('bbi10-ghurni', 'bbi10gr', true);
 export const act15 = chariotAct('bbi10-chakra', 8, 7, 14, 'bbi10ck', 'Look at the hub: tonight it stands on a post on the stone and slides with it into the wall. The wheel’s rim above it stays still: from the hub, go up on to the rim before the slam, then down on to the stone and up the wall.', true);
 
-/** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */
-export const RIB = { period: 2.2, shut: 0.5, at: 9 };
+/** ending (QA fix F4, plain): the old snipping scissors were "cross between cycles" (BLR-08's spikes). The ribbon
+ *  is already cut: its two ends hang from the stadium gate's pillars, and the gate is the way out */
 export const ending: Ending = {
-  space: 12,
-  advice: 'A ribbon across the gate, and a pair of ceremonial scissors snipping at it every couple of seconds. Wait while they close, then walk through as they open.',
+  space: 6,
+  advice: 'The ribbon at the stadium gate is already cut. Walk in.',
   build(w, d) {
     const D = Math.round(d.x / 16);
-    w.flags.twist = 'bbi-ribbon-snip';
-    const st = { t0: -1 };
-    w.flags.bbi10e = st;
-    onPass(w, px(D - RIB.at), (w2) => (st.t0 = w2.tick));
+    w.flags.twist = 'bbi-stadium-gate';
     w.add(
-      new Rig(px(D - 3), FL - 40, 24, 40, {
-        cause: 'bbi-kainchi',
-        inset: 2,
-        layer: 4,
-        live: (_r, w2) => st.t0 >= 0 && cyc(w2, RIB.period, 0.4 - st.t0 / 120) < RIB.shut,
-        paint: (ctx, r, w2) => {
-          const t = st.t0 >= 0 ? cyc(w2, RIB.period, 0.4 - st.t0 / 120) : 1.5;
-          const shut = t < RIB.shut;
-          const open = shut ? 0 : Math.min(1, (t - RIB.shut) / 0.3) * (t > RIB.period - 0.4 ? (RIB.period - t) / 0.4 : 1);
-          // the ribbon
-          box(ctx, px(D - 4), FL - 18, px(5), 3, shut ? '#E63946' : '#E63946');
-          // two blades meeting on the ribbon
-          ctx.fillStyle = '#CFD8DC';
-          ctx.save();
-          ctx.translate(r.x + 12, r.y - 6);
-          ctx.rotate(0.5 * open);
-          ctx.fillRect(-2, 0, 4, 42);
-          ctx.restore();
-          ctx.save();
-          ctx.translate(r.x + 12, r.y - 6);
-          ctx.rotate(-0.5 * open);
-          ctx.fillRect(-2, 0, 4, 42);
-          ctx.restore();
-          box(ctx, r.x + 8, r.y - 12, 8, 8, '#F4D35E');
+      new Rig(0, 0, 0, 0, {
+        layer: -2,
+        paint: (ctx) => {
+          box(ctx, px(D - 5) + 12, FL - 40, 10, 3, '#E63946');
+          box(ctx, px(D + 2) - 10, FL - 40, 10, 3, '#E63946');
         },
       }),
     );
@@ -220,4 +198,4 @@ export const ending: Ending = {
   },
 };
 
-export const meta10 = { family: 'finale-pads-onto-plinth', betrayals: ['pads-to-plinth'], ending: 'bbi-ribbon-snip' };
+export const meta10 = { family: 'finale-pads-onto-plinth', betrayals: ['pads-to-plinth'], ending: 'bbi-stadium-gate' };

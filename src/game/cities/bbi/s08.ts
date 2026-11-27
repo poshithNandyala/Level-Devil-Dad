@@ -388,23 +388,6 @@ export function room(): LevelDef {
   };
 }
 
-/** act 5: four badi and two jugs held over two of them */
-export const B08E: BowlCfg = { c0: 4, c1: 24, badi: [6, 11, 16, 20], pour1: [0.5, 2.8], pour2: [3.4, 6.0], v1: 30, v2: 15, v3: 25, over: [0, 2] };
-export const act5: Act = {
-  id: 'bbi08-dui',
-  w: 31,
-  advice: 'Four badi and two jugs held over two of them. Watch where the jugs hang and ride one of the other two.',
-  cps: [],
-  paint: (g, c) => {
-    g.pit(c.x + B08E.c0, c.x + B08E.c1).fill(c.x + B08E.c0 - 1, c.x + B08E.c0 - 1, 13, 14, '#').fill(c.x + B08E.c1 + 1, c.x + B08E.c1 + 1, 13, 14, '#');
-  },
-  build: (w, c) => {
-    const st = { t0: -1 };
-    onPass(w, c.X(B08E.c0) + 4, (w2) => (st.t0 = w2.tick));
-    bowl(w, { ...B08E, c0: c.x + B08E.c0, c1: c.x + B08E.c1, badi: B08E.badi.map((k) => c.x + k) }, () => st.t0, 'bbi8h');
-  },
-};
-
 /** act 8, the server (ALLOCATION v3 F470, bad coins that accelerate): a server on the far bank tosses fried
  *  badi into the trough of pakhala, faster and further each time. The first lands soft and floats across; the
  *  second he throws too hard and it goes under; from the third on they land on the near bank. Go at once. */
@@ -606,53 +589,23 @@ export function ghurniAct(id: string, key: string, rev = false): Act {
 }
 export const act9 = ghurniAct('bbi08-ghurni', 'bbi8gh');
 
-/** ending: a trough of pakhala water before the door; a sal-leaf plate floats in it, and turns over when it
- *  reaches the door's side, so step off on to the step before it gets there */
+/** ending (QA fix F4, plain): the old leaf-plate ride was the lift class laid flat. The road ends at the kitchen
+ *  door, a pile of sal-leaf plates by it, and the door is the way out */
 export const ending: Ending = {
-  space: 14,
-  advice: 'A trough of pakhala before the door with a sal-leaf plate floating in it. Ride the plate across, but step off on to the door’s step before it reaches the far end: there it turns over.',
-  paint: (g, D) => {
-    g.pit(D - 8, D - 2);
-  },
+  space: 6,
+  advice: 'The kitchen door at the end of the yard, leaf plates stacked by it. Walk in.',
   build(w, d) {
     const D = Math.round(d.x / 16);
-    w.flags.twist = 'bbi-leaf-plate';
-    const st = { t0: -1, x: px(D - 8) + 2, flipped: false };
-    w.flags.bbi8e = st;
-    channel(w, D - 8, D - 2, 'bbi-pakhala', 'water');
-    onPass(w, px(D - 9), (w2) => (st.t0 = w2.tick));
+    w.flags.twist = 'bbi-rosei-ghara';
     w.add(
-      new Rig(st.x, FL - 4, 30, 6, {
-        solid: true,
-        layer: 4,
-        tick: (r, w2) => {
-          if (st.t0 < 0) return;
-          const t = since(w2, st.t0);
-          // it drifts over once it's been stepped on, and turns over at the far wall
-          if (r.rides(w2)) st.flipped = st.flipped || false;
-          if (t > 0.6) {
-            const nx = Math.min(px(D - 2) - 30, st.x + (t - 0.6) * 50);
-            r.moveTo(w2, nx, FL - 4);
-            const atEnd = nx >= px(D - 2) - 31;
-            if (atEnd && !st.flipped) {
-              st.flipped = true;
-              r.s.flipAt = w2.tick;
-            }
-          }
-          r.setSolid(!st.flipped);
-        },
-        paint: (ctx, r) => {
-          if (st.flipped) {
-            box(ctx, r.x + 4, FL + 18, 22, 3, '#3F7A3A');
-            return;
-          }
-          box(ctx, r.x, r.y, r.w, 4, '#5D8A3A');
-          box(ctx, r.x + 2, r.y - 1, r.w - 4, 1, '#7FB15A');
-          for (let i = 0; i < 4; i++) box(ctx, r.x + 4 + i * 7, r.y + 1, 1, 2, '#3F6B2A');
+      new Rig(0, 0, 0, 0, {
+        layer: -2,
+        paint: (ctx) => {
+          for (let i = 0; i < 4; i++) box(ctx, px(D - 2) + 2, FL - 4 - i * 3, 22, 2, i % 2 ? '#5D8A3A' : '#7FB15A');
         },
       }),
     );
   },
 };
 
-export const meta08 = { family: 'pakhala-pour-floats-grains', betrayals: ['pour-floats'], ending: 'bbi-leaf-plate' };
+export const meta08 = { family: 'pakhala-pour-floats-grains', betrayals: ['pour-floats'], ending: 'bbi-rosei-ghara' };

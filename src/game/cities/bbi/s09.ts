@@ -337,7 +337,6 @@ export function chariotAct(id: string, len: number, slide: number, hubAt: number
     },
   };
 }
-export const act4 = chariotAct('bbi09-ghoda', 8, 7, 14, 'bbi9g', 'A short chariot and a short slide: the hub comes over almost at once. Be ready on the horses.');
 
 /** act 6, the one that sinks: a second after it slams the wall, this chariot's plinth settles into the moat.
  *  From the hub go straight up on to the wall; don't step down on to the stone */
@@ -441,7 +440,6 @@ export function risingSpokes(id: string, dir: 1 | -1, key: string, whole = false
 }
 /** 09's labelled momentum beat (ALLOCATION v3): ten spokes, then a bare terrace to run */
 export const act7 = risingSpokes('bbi09-udaya', 1, 'bbi9r', false, 10, 5);
-export const act8 = risingSpokes('bbi09-asta', -1, 'bbi9s');
 
 /** ending: the door between two stone horses on little plinths; step on a horse and the plinths slide together */
 export const ending: Ending = {

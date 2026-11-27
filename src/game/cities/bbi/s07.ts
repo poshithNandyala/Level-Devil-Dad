@@ -432,24 +432,6 @@ export function deepaAct(id: string, key: string, low = false): Act {
 }
 export const act8 = deepaAct('bbi07-deepa', 'bbi7l');
 
-/** act 9, the chain: three troupes in one long pit with no bank between them; each drummer stops as you reach his
- *  part, and each bridge only lasts the walk: no stopping anywhere */
-export const T07C: TroupeCfg[] = [
-  // phase: the bridge comes first (replay bar); the tower follows
-  { c0: 4, n: 6, drum: 2.4, hold: 1.5, poses: ['tower', 'bridge'], form: 0.25, phase: 3.9 },
-  { c0: 10, n: 6, drum: 0.12, hold: 1.4, poses: ['bridge', 'wheel'], form: 0.2 },
-  { c0: 16, n: 6, drum: 0.12, hold: 1.4, poses: ['bridge', 'tower'], form: 0.2 },
-];
-export const act9: Act = { ...troupeAct('bbi07-shrinkhala', 26, T07C, 'bbi7k', 'One long pit, three troupes and no bank between them. Each drummer stops as you reach his part, and each bridge only lasts the walk over it: once on, keep walking to the far side without stopping.') };
-
-/** act 10, the island: a long pit with a lamp plinth in the middle; the far troupe's bridge comes rarely: rest on
- *  the plinth (the shelter), not on a pose */
-export const T07I: TroupeCfg[] = [
-  { c0: 4, n: 6, drum: 1.6, hold: 1.5, poses: ['bridge', 'wheel'], form: 0.3 },
-  { c0: 12, n: 7, drum: 1.4, hold: 1.3, poses: ['tower', 'bridge'], form: 0.3, phase: 1.2 },
-];
-export const act10 = troupeAct('bbi07-dweepa', 22, T07I, 'bbi7i', 'A lamp plinth stands in the middle of this pit. Cross the first troupe’s bridge to it and wait there: the second troupe makes a tower before its bridge comes.');
-
 /** act 11, Bagudi (BBI reserve, tag-it-passes-to-you): the boys play bagudi between shows. The raider's touch
  *  makes Dad "it", and the line of boys tackles whoever is it. He jumps for anyone hopping him, so the tag
  *  can't be dodged. A2: tagged, run back over the chalk line to pass it on. A3: hopping him is a tag too. */
@@ -766,29 +748,22 @@ export const act18: Act = {
   },
 };
 
-/** ending: the last pose is a gate over the door; between poses the troupe whirls across the doorway */
-export const T07e: TroupeCfg = { c0: 0, n: 4, drum: 1.6, hold: 1.6, poses: ['gate'], form: 0.3, ground: true };
+/** ending (QA fix F4, plain): the old pose gate re-asked the room. The night's show is over: the troupe sits by the
+ *  green-room door, and the door is the way out */
 export const ending: Ending = {
-  space: 12,
-  advice: 'The troupe dances across the doorway, and its last pose is a gate over the door. Wait while they whirl; walk through under the gate as soon as the drum stops.',
+  space: 6,
+  advice: 'The show is over: the boys sit by the green-room door. Walk in.',
   build(w, d) {
     const D = Math.round(d.x / 16);
-    w.flags.twist = 'bbi-pose-gate';
-    const st = { t0: -1 };
-    w.flags.bbi7e = st;
-    onPass(w, px(D - 10), (w2) => (st.t0 = w2.tick));
-    const cfg = { ...T07e, c0: D - 3 };
-    const tr = troupe(w, cfg, () => st.t0, 'bbi7e');
-    // while they whirl, the dancers fill the doorway: their kicks send you flying
+    w.flags.twist = 'bbi-sajaghara-door';
     w.add(
-      new Rig(px(D - 3), FL - 24, px(4), 24, {
-        cause: 'bbi-kick',
-        inset: 3,
-        layer: 4,
-        live: (_r, w2) => st.t0 >= 0 && troupeAt(cfg, since(w2, st.t0)).pose === null,
+      new Rig(0, 0, 0, 0, {
+        layer: -2,
+        paint: (ctx) => {
+          for (let i = 0; i < 3; i++) dancer(ctx, px(D - 3) + i * 12, FL, i, true);
+        },
       }),
     );
-    void tr;
   },
 };
 
@@ -960,4 +935,4 @@ export const act21: Act = {
   },
 };
 
-export const meta07 = { family: 'troupe-pose-platform-shapes', betrayals: ['pose-shapes'], ending: 'bbi-pose-gate' };
+export const meta07 = { family: 'troupe-pose-platform-shapes', betrayals: ['pose-shapes'], ending: 'bbi-sajaghara-door' };
