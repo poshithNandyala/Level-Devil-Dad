@@ -1187,17 +1187,17 @@ mistakes['LKO-07'].push(
 
 mistakes['LKO-06'].push(
   { what: 'the guru: pressing on the old way after her stamp, as on every stage so far', steps: [...through('LKO-06', room06, 2), { ...guruFwd(actX('LKO-06', 2), actX('LKO-06', 2) + 25.5, true), until: done }], cause: 'lko-ghungroo' },
-  { what: 'the guru: stopping after each stamp to work out which way is which', steps: [...through('LKO-06', room06, 2), { ...guruFwd(actX('LKO-06', 2), actX('LKO-06', 2) + 25.5), until: (w) => ((w.flags['lko06-guru:g'] as { n: number } | undefined)?.n ?? 0) >= 1 }, until(done, 900)], cause: 'lko-chakkar' },
+  { what: 'the guru: stopping after each stamp to work out which way is which', steps: [...through('LKO-06', room06, 2), { ...guruFwd(actX('LKO-06', 2), actX('LKO-06', 2) + 25.5), until: (w) => ((w.flags['lko06-guru:g'] as { n: number } | undefined)?.n ?? 0) >= 1 && w.player.onGround && GURU_STRIPS.every((s0) => Math.abs(w.player.cx - (px(actX('LKO-06', 2) + s0) + 8)) > 16) }, until(done, 900)], cause: 'lko-chakkar' },
 );
 
 mistakes['LKO-05'].push(
-  { what: 'the turning skewers: waiting till they lie still before hopping, as with a still rack', steps: [...through('LKO-05', room05, 6), walkTo(actX('LKO-05', 6) + 0.8, 300), hops([[actX('LKO-05', 6) + 4, spit(48, 56)]]), until(done, 600)], cause: 'lko-seekh' },
-  { what: 'the turning skewers: staying on a heap till it all looks safe', steps: [...through('LKO-05', room05, 6), walkTo(actX('LKO-05', 6) + 0.8, 300), hops([[actX('LKO-05', 6) + 4, spit(0, 16)]]), until(done, 900)], cause: 'lko-tawa' },
+  { what: 'the turning skewers: waiting till they lie still before hopping, as with a still rack', steps: [...through('LKO-05', room05, 6), walkTo(actX('LKO-05', 6) + 0.8, 300), until(spit(48, 50), 600), { hold: 'R', jump: 12, ticks: 50 }, until(done, 400)], cause: 'lko-seekh' },
+  { what: 'the turning skewers: staying on a heap till it all looks safe', steps: [...through('LKO-05', room05, 6), walkTo(actX('LKO-05', 6) + 1.8, 300), until(spit(2, 4), 600), { hold: 'R', jump: 12, ticks: 20 }, until(done, 600)], cause: 'lko-tawa' },
 );
 
 mistakes['LKO-10'].push(
   { what: 'the guru again: pressing the other way after her stamp, as 06 taught', steps: [...through('LKO-10', room10, 8), { ...guruFwd(actX('LKO-10', 8), actX('LKO-10', 8) + 25.5, false, 'lko10-seedha', true), until: done }], cause: 'lko-ghungroo' },
-  { what: 'the guru again: stopping after her stamp to see which way is which', steps: [...through('LKO-10', room10, 8), { ...guruFwd(actX('LKO-10', 8), actX('LKO-10', 8) + 25.5, false, 'lko10-seedha'), until: (w) => ((w.flags['lko10-seedha:g'] as { n: number } | undefined)?.n ?? 0) >= 1 }, until(done, 900)], cause: 'lko-chakkar' },
+  { what: 'the guru again: stopping after her stamp to see which way is which', steps: [...through('LKO-10', room10, 8), { ...guruFwd(actX('LKO-10', 8), actX('LKO-10', 8) + 25.5, false, 'lko10-seedha'), until: (w) => ((w.flags['lko10-seedha:g'] as { n: number } | undefined)?.n ?? 0) >= 1 && w.player.onGround && GURU_STRIPS.every((s0) => Math.abs(w.player.cx - (px(actX('LKO-10', 8) + s0) + 8)) > 16) }, until(done, 900)], cause: 'lko-chakkar' },
 );
 
 mistakes['LKO-10'].push(

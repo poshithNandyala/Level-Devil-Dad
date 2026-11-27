@@ -465,7 +465,7 @@ export const tihai = makeTihai(
 /** The guru's rule: the student mirrors her. At every stamp of her foot Dad's left and right swap, and at
  *  the next stamp they swap back. Every stamp is a change of state: press the other way, at once. Go back
  *  over a red strip and it rings; stand still on her floor and that's a bow, and she spins to you. */
-const GURU = { first: 70, every: 150, strips: [4, 9, 14, 19], from: 2, to: 23 };
+const GURU = { first: 70, every: 150, strips: [4, 9, 14, 19], from: 3, to: 23 };
 export const makeGuru = (id: string, flip: boolean, advice: string, word: string): Act => ({
   id,
   w: 28,
