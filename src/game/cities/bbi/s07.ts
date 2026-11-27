@@ -267,7 +267,8 @@ export function stagePit(w: World, c0: number, c1: number) {
   const g = channel(w, c0, c1, 'bbi-nacha', 'drain');
   g.o.tick = (r, w2) => {
     const p = w2.player;
-    if (p.onGround && p.y + p.h >= FL - 1 && !w2.flags.bbiThrownKeep) w2.flags.bbiThrown = 0;
+    // still reeling from the throw (stunned) on the bank's lip is still the throw's doing (QA fix round 2)
+    if (p.onGround && p.y + p.h >= FL - 1 && p.stun <= 0 && !w2.flags.bbiThrownKeep) w2.flags.bbiThrown = 0;
     if (!w2.flags.bbiThrown) w2.flags.bbiThrownCause = undefined;
     r.hazard!.cause = w2.flags.bbiThrown ? ((w2.flags.bbiThrownCause as string | undefined) ?? 'bbi-thrown') : 'bbi-nacha';
   };
@@ -557,6 +558,8 @@ export function padaAct(id: string, key: string, away = false): Act {
           }
           if (was === 'lie' && st.phase !== 'lie' && bridge.rides(w2)) {
             const p = w2.player;
+            // tonight's turn: still walking when it gets up means you set off too far back (QA fix round 2)
+            if (away && Math.abs(p.vx) > 20) w2.flags.bbiThrownCause = 'bbi-pada-late10';
             p.vy = -240;
             p.vx = -50;
             p.onGround = false;

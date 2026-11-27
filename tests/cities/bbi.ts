@@ -621,10 +621,11 @@ const tFix = (k: string, c0: number, n: number): Death => ({
     { hold: '', until: done, max: 900 },
   ],
 });
-const lFix = (k: string): Death => ({
+/** `at`: where to wait; nearer the edge, a late start still meets the shuttle on the motif (QA fix round 2) */
+const lFix = (k: string, at = 0.2): Death => ({
   what: 'step on the moment the motif lines up, and look',
   cause: 'bbi-shuttle',
-  steps: (x) => [{ hold: 'R', until: X(x + 0.2), max: 300 }, waitFor((w) => lm(w, k).bridge, 'the motif'), { hold: 'R', until: X(x + 5.3), max: 300, note: 'on to the motif' }, { hold: '', until: done, max: 900 }],
+  steps: (x) => [{ hold: 'R', until: X(x + at), max: 300 }, waitFor((w) => lm(w, k).bridge, 'the motif'), { hold: 'R', until: X(x + 5.3), max: 300, note: 'on to the motif' }, { hold: '', until: done, max: 900 }],
 });
 const cNaive = (len: number): Death => ({
   what: 'ride the chariot from its horses',
@@ -744,14 +745,15 @@ const DEATHS: Record<string, Death[]> = {
   ],
   'bbi05-bail': [{ what: 'push on past the cart', cause: 'bbi-bail', steps: () => [{ hold: 'R', until: done, max: 900 }] }],
   'bbi06-tana': [walkOn('bbi-ranga'), lFix('bbi6b')],
-  'bbi06-rachh': [walkOn('bbi-ranga'), lFix('bbi6q')],
+  'bbi06-rachh': [walkOn('bbi-ranga'), lFix('bbi6q', 1.9)],
   'bbi06-palaa': [
     { what: 'run at the shuttle and jump on', cause: 'bbi-ranga', steps: (x) => [{ hold: 'R', until: X(x + 3.4), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 600 }] },
     { what: 'wait at the edge for it to come back to you', cause: 'bbi-rachh', steps: (x) => [{ hold: 'R', until: X(x + 2.4), max: 400 }, { hold: '', until: done, max: 1200 }] },
   ],
   'bbi06-tantu': [
     { what: 'snap the nearest thread, from the edge', cause: 'bbi-tantu', steps: (x) => [{ hold: 'R', until: X(x + 3.6), max: 400 }, waitFor((w) => lm(w, 'bbi6p').bridge, 'the motif'), { hold: 'R', jump: 12, ticks: 12, note: 'up into the first thread' }, { hold: 'R', until: done, max: 600 }] },
-    { what: 'leave the loom alone and time the shuttle', cause: 'bbi-rachh', steps: (x) => [{ hold: 'R', until: X(x + 3.6), max: 400 }, waitFor((w) => lm(w, 'bbi6p').bridge && lm(w, 'bbi6p').into > 0.9, 'both passes of the shuttle by'), { hold: 'R', until: done, max: 600 }] },
+    // lag-aware (QA fix round 2): wait right at the edge, so a late start still has Dad in the beater's sweep at its start
+    { what: 'leave the loom alone and time the shuttle', cause: 'bbi-rachh', steps: (x) => [{ hold: 'R', until: X(x + 4.1), max: 400 }, waitFor((w) => lm(w, 'bbi6p').bridge && lm(w, 'bbi6p').into > 0.9, 'both passes of the shuttle by'), { hold: 'R', until: done, max: 600 }] },
   ],
   'bbi06-sutra': [
     { what: 'let the shuttle by, then walk across', cause: 'bbi-sutra', steps: (x) => [{ hold: 'R', until: X(x + 2.1), max: 300 }, waitFor((w) => lm(w, 'bbi6z').bridge && lm(w, 'bbi6z').into > 0.6, 'the shuttle by'), { hold: 'R', until: done, max: 600 }] },
@@ -776,7 +778,8 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'go on the far drummer’s stop, but take your time', cause: 'bbi-thrown', steps: (x) => [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 4) - 2, max: 400 }, waitFor((w) => tr(w, 'bbi7db0').pose === 'bridge' && tr(w, 'bbi7db0').into > 0.3, 'his stop', 1500), { hold: 'R', until: X(x + 6.5), max: 300 }, { hold: '', until: done, max: 900 }] },
   ],
   'bbi07-jodi': [
-    { what: 'wait for the whole bridge, then walk', cause: 'bbi-nacha', steps: (x) => [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 4) - 2, max: 900 }, waitFor((w) => tr(w, 'bbi7jd1n').pose === 'bridge' && tr(w, 'bbi7jd1n').into > 0.35, 'the whole bridge', 2400), { hold: 'R', until: done, max: 600 }] },
+    // lag-aware (QA fix round 2): a real look (0.6 s, not 0.35) puts Dad on the older far half when its drum starts, at every lag
+    { what: 'wait for the whole bridge, then walk', cause: 'bbi-thrown', steps: (x) => [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 4) - 2, max: 900 }, waitFor((w) => tr(w, 'bbi7jd1n').pose === 'bridge' && tr(w, 'bbi7jd1n').into > 0.6, 'the whole bridge', 2400), { hold: 'R', until: done, max: 600 }] },
     { what: 'go the moment the second half lands', cause: 'bbi-adha', steps: (x) => [...jodiRun(x).slice(0, 4), waitFor((w) => tr(w, 'bbi7jd2f').pose === 'bridge', 'the second half lands', 2400), { hold: 'R', until: done, max: 600 }] },
   ],
   'bbi07-gadiba': [
@@ -817,11 +820,17 @@ const DEATHS: Record<string, Death[]> = {
   ],
   'bbi10-phinga': [
     { what: 'to the rim at once and ride the first, as before', cause: 'bbi-badi', steps: (x) => [{ hold: 'R', until: X(x + 2.6), max: 400 }, { hold: '', until: done, max: 1200 }] },
-    { what: 'wait back, then ride the first one in the water', cause: 'bbi-buda', steps: (x) => [{ hold: 'R', until: X(x + 1.3), max: 400 }, waitFor((w) => ph10(w).t0 >= 0 && (w.tick - ph10(w).t0) / 120 > 2.5 + 0.6, 'one lands in the water'), { hold: 'R', until: X(x + 2.0), max: 200 }, leap((w) => ph10(w).floats[2].x + 13, 'on to it'), { hold: '', until: done, max: 600 }] },
+    { what: 'wait back, then ride the first one in the water', cause: 'bbi-buda', steps: (x) => [
+      // lag-aware (QA fix round 2): wait where the jump starts, so a late press still lands before it goes under
+      { hold: 'R', until: X(x + 1.9), max: 400 },
+      leap((w) => ph10(w).floats[2].x + 13, 'one lands in the water: on to it', (w) => ph10(w).t0 >= 0 && (w.tick - ph10(w).t0) / 120 > 2.5 + 0.6),
+      { hold: '', until: done, max: 600 },
+    ] },
   ],
   'bbi10-tantu': [
     { what: 'snap the plain thread, as before', cause: 'bbi-ganthi', steps: (x) => [{ hold: 'R', until: X(x + 2.6), max: 400 }, { hold: '', until: (w) => Math.abs(w.player.vx) < 5, max: 120 }, { hold: '', jump: 12, ticks: 40 }, { hold: 'R', until: X(x + 3.6), max: 300 }, waitFor((w) => lm(w, 'bbi10tn').bridge && lm(w, 'bbi10tn').into > 0.08, 'the motif'), { hold: 'R', until: done, max: 600 }] },
-    { what: 'leave the loom alone and time the shuttle', cause: 'bbi-rachh', steps: (x) => [{ hold: 'R', until: X(x + 3.6), max: 400 }, waitFor((w) => lm(w, 'bbi10tn').bridge && lm(w, 'bbi10tn').into > 0.9, 'both passes of the shuttle by'), { hold: 'R', until: done, max: 600 }] },
+    // lag-aware (QA fix round 2): wait right at the edge, so a late start still has Dad in the beater's sweep at its start
+    { what: 'leave the loom alone and time the shuttle', cause: 'bbi-rachh', steps: (x) => [{ hold: 'R', until: X(x + 4.1), max: 400 }, waitFor((w) => lm(w, 'bbi10tn').bridge && lm(w, 'bbi10tn').into > 0.9, 'both passes of the shuttle by'), { hold: 'R', until: done, max: 600 }] },
   ],
   'bbi07-pothi': [
     { what: 'walk over the screen', cause: 'bbi-pothi', steps: (x) => [{ hold: 'R', until: done, max: 900 }] },
@@ -859,8 +868,9 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'go on the near drummer’s stop, but take your time', cause: 'bbi-thrown', steps: (x) => [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 4) - 2, max: 400 }, waitFor((w) => tr(w, 'bbi10db0').pose === 'bridge' && tr(w, 'bbi10db0').into > 0.3, 'his stop', 1500), { hold: 'R', until: X(x + 6.5), max: 300 }, { hold: '', until: done, max: 900 }] },
   ],
   'bbi10-pada': [
-    { what: 'wait back by the scuffs, as before', cause: 'bbi-nacha', steps: (x) => [{ hold: 'R', until: X(x + 4.2), max: 400 }, { hold: '', until: (w) => pd(w, 'bbi10pd').phase === 'lie', max: 1500 }, { hold: 'R', until: done, max: 600 }] },
-    { what: 'go from the edge, then stop on it to rest', cause: 'bbi-thrown', steps: (x) => [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 7) - 3, max: 400 }, { hold: '', until: (w) => pd(w, 'bbi10pd').phase === 'lie', max: 1500 }, { hold: 'R', until: X(x + 10), max: 300 }, { hold: '', until: done, max: 600 }] },
+    { what: 'wait back by the scuffs, as before', cause: 'bbi-pada-late10', steps: (x) => [{ hold: 'R', until: X(x + 4.2), max: 400 }, { hold: '', until: (w) => pd(w, 'bbi10pd').phase === 'lie', max: 1500 }, { hold: 'R', until: done, max: 600 }] },
+    // QA fix round 2: was 'go from the edge, then stop on it to rest', thrown by the same rise, at the same tick, as the play above
+    { what: 'go from the edge the moment it starts to fall', cause: 'bbi-nacha', steps: (x) => [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 7) - 3, max: 400 }, { hold: '', until: (w) => pd(w, 'bbi10pd').phase === 'fall', max: 1500 }, { hold: 'R', until: done, max: 600 }] },
   ],
   'bbi10-bagudi': [
     { what: 'tagged, back over the line to pass it on', cause: 'bbi-bagudi', steps: (x) => [{ hold: 'R', until: (w) => bg(w, 'bbi10bg').it, max: 1200 }, { hold: 'L', until: (w) => bg(w, 'bbi10bg').out, max: 600 }, { hold: 'R', until: done, max: 900 }] },
@@ -969,7 +979,8 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'BBI-09': { steps: [], cause: 'bbi-ara' },
   'BBI-08': { steps: [...hop(4.4, 'up on the rim'), leap(badiX('bbi8', 2), 'on to the badi nearest the way out'), stayOn(badiX('bbi8', 2), done, 'and wait on it')], cause: 'bbi-dhara' },
   'BBI-07': { steps: [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(10) - 2, max: 900 }, waitFor((w) => tr(w, 'bbi7').pose === 'bridge' && tr(w, 'bbi7').into > 0.35, 'wait for the bridge to be whole'), { hold: '', ticks: 18, note: 'a look to be sure' }, { hold: 'R', until: done, max: 900 }], cause: 'bbi-thrown' },
-  'BBI-06': { steps: [{ hold: 'R', until: X(6.8), max: 600 }, waitFor((w) => lm(w, 'bbi6').bridge, 'the motif lines up: go'), { hold: 'R', until: done, max: 600 }], cause: 'bbi-shuttle' },
+  // lag-aware (QA fix round 2): wait at the edge, so even a late start meets the shuttle on the motif
+  'BBI-06': { steps: [{ hold: 'R', until: X(8.0), max: 600 }, waitFor((w) => lm(w, 'bbi6').bridge, 'the motif lines up: go'), { hold: 'R', until: done, max: 600 }], cause: 'bbi-shuttle' },
   'BBI-05': { steps: [], cause: 'bbi-sila' },
   'BBI-04': { steps: [passTorch(9, r4on, 'keep moving, as learnt'), { hold: 'R', until: X(15.6), max: 400 }, { hold: 'R', jump: 15, ticks: 15, note: 'and jump the trough' }, { hold: 'R', until: done, max: 600 }], cause: 'bbi-kunda' },
   'BBI-03': { steps: [{ hold: 'R', until: X(3.4), max: 600 }, waitFor((w) => p3(w, 0).open(w), 'wait for the customer'), leap((w) => (w.flags.bbi3p as { rig: { x: number } }[])[0].rig.x + 9, 'land on the near side of the silk'), { hold: '', until: done, max: 900, note: 'stand where you landed' }], cause: 'bbi-silk' },
