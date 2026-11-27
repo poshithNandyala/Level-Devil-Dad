@@ -216,24 +216,54 @@ export const act: Act = {
 /** act 2: a span whose planks are wet: after every stop you slide on a moment, and the slide swings the deck too */
 export const actWet: Act = {
   id: 'shl03-wet',
-  w: 32,
-  advice: 'The last span’s planks are wet. When you stop you slide on for a moment, and the slide swings the deck like a step does: stop earlier than you think, and stand longer, before each burst. The deck stops a tile short of the far tower: a stop near its end slides you off into the river, so make your last stop well back and hop the gap.',
+  w: 30,
+  advice: 'The last span’s planks are wet. When you stop you slide on for a moment, and the slide swings the deck like a step does: stop earlier than you think, and stand longer, before each burst.',
   cps: [1],
   paint: (g, c) => {
-    g.fill(c.x + 4, c.x + 26, 15, 17, '.');
+    g.fill(c.x + 4, c.x + 25, 15, 17, '.');
   },
   build: (w, c) => {
     const st = w.flags.shl3 as SwayState;
-    river(w, c.x + 4, c.x + 26);
+    river(w, c.x + 4, c.x + 25);
     tower(w, c.x + 2);
-    tower(w, c.x + 27);
-    // the deck ends a tile short of the far tower: the wet slide carries whoever stops near its end into the river
+    tower(w, c.x + 26);
     span(w, st, c.x + 4, c.x + 25, 'shl-slip', true);
     sign(w, c.x + 1, 10.4, 3, 'WET', 'shop', null, 'planks after rain');
   },
 };
 
-/** the plain door of 03 lives in endings.ts (QA F2: the toll bar re-asked the room's rule) */
-export const ending: Ending | null = null;
+/** ending: the toll bar at the far tower drops on anyone who arrives with the deck still swinging */
+export const ending: Ending = {
+  space: 14,
+  advice: 'The toll bar at the far tower comes down on anyone who arrives with the deck still swinging. Cross the last span in bursts, stop before the bar until the red line has gone, then walk through.',
+  paint: (g, D) => {
+    g.fill(D - 11, D - 3, 15, 17, '.');
+  },
+  build(w, d) {
+    const D = Math.round(d.x / 16);
+    const st = w.flags.shl3 as SwayState;
+    w.flags.twist = 'tollbar';
+    river(w, D - 11, D - 3);
+    tower(w, D - 13);
+    tower(w, D - 2);
+    span(w, st, D - 11, D - 3);
+    const e = { x: px(D - 2), w: 18 };
+    w.flags.shl3e = e;
+    w.add(
+      new Rig(e.x, FL - 30, e.w, 30, {
+        layer: 3,
+        cause: 'shl-bar',
+        inset: 2,
+        live: () => st.e >= 0.3,
+        paint: (ctx, r) => {
+          const down = st.e >= 0.3;
+          box(ctx, r.x + r.w - 2, FL - 46, 3, 46, '#3E4D47');
+          if (down) box(ctx, r.x - 10, FL - 14, r.w + 12, 3, '#D7262E');
+          else box(ctx, r.x + r.w - 4, FL - 46, 3, -30, '#D7262E');
+        },
+      }),
+    );
+  },
+};
 
 export const meta03 = { family: 'bridge-swing-matches-step-cadence', betrayals: ['cadence-swing'], ending: 'shl-tollbar' };

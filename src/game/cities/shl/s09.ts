@@ -21,9 +21,10 @@ export interface Pitch {
   x: number;
   w: number;
   plate: number;
-  /** closed on this day (the plate) */
+  /** closed on this day (the plate), or because its keeper has packed up */
   closedOn: (day: number, w: World) => boolean;
   cause: (day: number) => string;
+  packed: boolean;
 }
 export interface Market {
   day: number;
@@ -78,25 +79,23 @@ export function arch(w: World, st: Market, c: number, o: { board?: 'day' | 'blan
 /**
  * A row of stalls over the drain: a tile of drain at column c0, then one continuous counter of three-tile pitches,
  * then a tile of drain. Plates give each stall the day it is closed; a closed stall's counter is a cloth over a
- * frame with no boards: it is not solid. The drain under the row is deadly; `drainCause` is its line (and `causeFor`
- * a closed counter's). Row columns: c0 .. c0 + 3n + 1; bank at c0 + 3n + 2.
+ * frame with no boards: it is not solid. `pack` names a pitch (index) whose keeper takes the boards off when Dad
+ * passes `pack.at` (a column). The drain under the row is deadly. Row columns: c0 .. c0 + 3n + 1; bank at c0 + 3n + 2.
  */
-export function row(w: World, st: Market, c0: number, plates: number[], o: { causeFor?: (plate: number, day: number) => string; dryOn?: number; drainCause?: string } = {}) {
+export function row(w: World, st: Market, c0: number, plates: number[], o: { pack?: { i: number; at: number }; causeFor?: (plate: number, day: number) => string; dryOn?: number } = {}) {
   const n = plates.length;
   const x0 = px(c0);
   const x1 = px(c0 + n * 3 + 2);
   const pitches: Pitch[] = [];
-  // what this row's drain says: the row's own line until Dad stands over a closed counter, then that counter's
-  const nala = o.drainCause ?? 'shl-nala';
-  let over = nala;
   plates.forEach((plate, i) => {
     const x = px(c0 + 1 + i * 3);
     const p: Pitch = {
       x,
       w: px(PITCH_W),
       plate,
-      closedOn: (day) => plate === day,
-      cause: (day) => (o.causeFor ? o.causeFor(plate, day) : 'shl-closed'),
+      packed: false,
+      closedOn: (day) => p.packed || plate === day,
+      cause: (day) => (p.packed ? 'shl-pack' : o.causeFor ? o.causeFor(plate, day) : 'shl-closed'),
     };
     pitches.push(p);
     st.pitches.push(p);
@@ -109,10 +108,7 @@ export function row(w: World, st: Market, c0: number, plates: number[], o: { cau
           rr.setSolid(!closed);
           const pl = w2.player;
           // Dad over this pitch at counter height: remember what would take him
-          if (pl.x + pl.w > x + 2 && pl.x < x + rr.w - 2 && pl.y + pl.h >= TOP - 4 && pl.y + pl.h <= TOP + 20) {
-            over = closed ? p.cause(st.day) : nala;
-            st.cause = over;
-          }
+          if (pl.x + pl.w > x + 2 && pl.x < x + rr.w - 2 && pl.y + pl.h >= TOP - 4 && pl.y + pl.h <= TOP + 20) st.cause = closed ? p.cause(st.day) : 'shl-nala';
         },
         paint: (ctx, rr, w2) => {
           const closed = p.closedOn(st.day, w2);
@@ -139,11 +135,28 @@ export function row(w: World, st: Market, c0: number, plates: number[], o: { cau
           ctx.textAlign = 'center';
           ctx.fillText(String(plate), rr.x + rr.w / 2, TOP - 32);
           ctx.textAlign = 'left';
+          // the keeper, packing up or standing
+          if (o.pack && o.pack.i === i) {
+            if (p.packed) {
+              box(ctx, rr.x + 6, TOP - 30, 20, 3, '#8A6A3E');
+              folk(ctx, rr.x + rr.w + 8, TOP - 26, 26, '#2F6BB0');
+            } else folk(ctx, rr.x + rr.w / 2, TOP - 26, 26, '#2F6BB0');
+          }
         },
       }),
     );
     if (r.solid) r.solid.velX = 0;
   });
+  if (o.pack) {
+    const p = pitches[o.pack.i];
+    onPass(w, px(o.pack.at), (w2) => {
+      const t0 = w2.tick;
+      w2.when((w3) => w3.tick - t0 >= 30, (w3) => {
+        p.packed = true;
+        w3.sfx('thud', p.x, TOP);
+      });
+    });
+  }
   // the drain under the row; on the market's holiday (`dryOn`) the sluice is shut and the bed is dry: a floor two tiles down
   const dry = (w2: World) => o.dryOn !== undefined && st.day === o.dryOn;
   const bed = w.add(
@@ -158,13 +171,11 @@ export function row(w: World, st: Market, c0: number, plates: number[], o: { cau
   w.add(
     new Rig(x0, FL + 2, x1 - x0, 30, {
       layer: 0,
-      cause: nala,
+      cause: 'shl-nala',
       inset: 0,
       live: (_r, w2) => !dry(w2),
-      tick: (r, w2) => {
-        const pl = w2.player;
-        if (!pitches.some((p) => pl.x + pl.w > p.x + 2 && pl.x < p.x + p.w - 2)) over = nala;
-        if (r.hazard) r.hazard.cause = over;
+      tick: (r) => {
+        if (r.hazard) r.hazard.cause = st.cause;
       },
       paint: (ctx, r, w2) => {
         box(ctx, r.x, FL + 4, r.w, 40, '#3E4D47');
@@ -208,15 +219,27 @@ export function room(): LevelDef {
   };
 }
 
-// Cut in fix round 1 (QA F6: one play of their own each, the other being the room's NAIVE or FIX): `shl09-sngi` (another
-// arch, another day: the room's read with the day advanced) and `shl09-doh` (the sold-out stall: no second trap of its
-// own that is not the room's plate read). The days now run: room 1; kot 2, 3; pdeng 4, 5; holiday 6, then 7 and 8.
+/** act 1: a second arch and the day turns: yesterday's closed stall is open and another is closed */
+export const actTwo: Act = {
+  id: 'shl09-sngi',
+  w: 26,
+  advice: 'Another arch: another day. The stall that was closed is open, and the one with today’s plate is the frame. Read the board, then jump the stall whose plate matches.',
+  paint: (g, c) => {
+    g.fill(c.x + 6, c.x + 19, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const st = w.flags.shl9 as Market;
+    arch(w, st, c.x + 2);
+    row(w, st, c.x + 6, [4, 2, 1, 3]);
+    sign(w, c.x + 22, 10.4, 3, 'DAY TWO', 'shop', null, 'the plates stay, the day moves');
+  },
+};
 
-/** act: two arches with blank boards (washed by the rain): the arches are the days, count them. Each row's fall has its own line */
+/** act 2: two arches with blank boards (washed by the rain): the arches are the days, count them */
 export const actBlank: Act = {
   id: 'shl09-kot',
   w: 46,
-  advice: 'The rain has washed the boards blank. The arches are still the days: count them. The second arch is day two, the third is day three.',
+  advice: 'The rain has washed the boards blank. The arches are still the days: count them. The third arch is day three, the fourth is day four.',
   cps: [21.5],
   paint: (g, c) => {
     g.fill(c.x + 6, c.x + 19, 15, 17, '.');
@@ -225,14 +248,14 @@ export const actBlank: Act = {
   build: (w, c) => {
     const st = w.flags.shl9 as Market;
     arch(w, st, c.x + 2, { board: 'blank' });
-    row(w, st, c.x + 6, [4, 2, 3, 5], { causeFor: () => 'shl-kot-two' });
+    row(w, st, c.x + 6, [4, 2, 3, 5]);
     arch(w, st, c.x + 24, { board: 'blank' });
-    row(w, st, c.x + 27, [5, 3, 4, 6], { causeFor: () => 'shl-kot-three' });
+    row(w, st, c.x + 27, [5, 3, 4, 6]);
     sign(w, c.x + 43, 10.4, 3, 'WASHED', 'shop', null, 'no boards: count the arches');
   },
 };
 
-/** act 2: a long row with the arch in its middle: the day turns while you are on the counters */
+/** act 3: a long row with the arch in its middle: the day turns while you are on the counters */
 export const actMid: Act = {
   id: 'shl09-pdeng',
   w: 38,
@@ -243,18 +266,34 @@ export const actMid: Act = {
   build: (w, c) => {
     const st = w.flags.shl9 as Market;
     arch(w, st, c.x + 2);
-    // one long counter; the arch stands on the counter between pitch 4 and 5 and turns the day from four to five
-    row(w, st, c.x + 6, [7, 4, 8, 6, 8, 5, 7, 6], { causeFor: (plate, day) => (plate === 5 && day === 5 ? 'shl-shift' : 'shl-closed') });
+    // one long counter; the arch stands on the counter between pitch 4 and 5 and turns the day to six
+    row(w, st, c.x + 6, [4, 5, 7, 8, 8, 6, 7, 5], { causeFor: (plate, day) => (plate === 6 && day === 6 ? 'shl-shift' : 'shl-closed') });
     arch(w, st, c.x + 19);
     sign(w, c.x + 34, 10.4, 3, 'MID-ROW', 'shop', null, 'the arch stands in the row');
   },
 };
 
-/** act 3: the market's day off: every stall a frame and the sluice shut, so the drain bed is dry; then a double arch turns two days at once */
+/** act 4: the keeper of an open stall has sold out and packs up as you come: boards off means closed, plate or no plate */
+export const actPack: Act = {
+  id: 'shl09-doh',
+  w: 30,
+  advice: 'The fish stall has sold out: its keeper takes the boards off as you come, whatever its plate says. A stall with its boards leaning against the frame is closed too. Today’s plate is one frame; the packed stall is another.',
+  paint: (g, c) => {
+    g.fill(c.x + 6, c.x + 22, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const st = w.flags.shl9 as Market;
+    arch(w, st, c.x + 2);
+    row(w, st, c.x + 6, [1, 7, 2, 8, 3], { pack: { i: 3, at: c.x + 8 } });
+    sign(w, c.x + 25, 10.4, 3, 'SOLD OUT', 'shop', null, 'boards off, stall shut');
+  },
+};
+
+/** act 5: a double arch turns two days at once, and the second row is the market's holiday: every stall a frame, the drain dry */
 export const actHoliday: Act = {
   id: 'shl09-sngi-khlieh',
   w: 58,
-  advice: 'The sixth day is the market’s day off: every stall is a frame, and the sluice is shut, so the drain bed is dry. Drop into the bed and walk under the frames. Then a double arch, two gates a step apart: two days at once, so count gates, not arches: seven and eight. The sluice is open again under that row.',
+  advice: 'The eighth day: the whole market is shut, every stall a frame, and the sluice is closed, so the drain bed is dry. Drop into the bed and walk under the frames. Then a double arch, two gates a step apart: two days at once, so count gates, not arches: after eight comes one, and then two.',
   cps: [30],
   paint: (g, c) => {
     g.fill(c.x + 6, c.x + 25, 15, 17, '.');
@@ -265,16 +304,29 @@ export const actHoliday: Act = {
   build: (w, c) => {
     const st = w.flags.shl9 as Market;
     arch(w, st, c.x + 2);
-    row(w, st, c.x + 6, [6, 6, 6, 6, 6, 6], { dryOn: 6 });
+    row(w, st, c.x + 6, [8, 8, 8, 8, 8, 8], { dryOn: 8 });
     arch(w, st, c.x + 32);
     arch(w, st, c.x + 33.2);
-    row(w, st, c.x + 37, [7, 8, 2, 4], { causeFor: () => 'shl-two-gates', drainCause: 'shl-sluice' });
-    sign(w, c.x + 28, 10.4, 3, 'DAY OFF', 'shop', null, 'day six: everything shut');
+    row(w, st, c.x + 37, [1, 2, 4, 3]);
+    sign(w, c.x + 28, 10.4, 3, 'HOLIDAY', 'shop', null, 'day eight: everything shut');
     sign(w, c.x + 53, 10.4, 3, 'TWO GATES', 'shop', null, 'two days at once');
   },
 };
 
-/** the plain door of 09 lives in endings.ts (QA F2: the flipped board re-asked `kot`'s count) */
-export const ending: Ending | null = null;
+/** ending: the last arch's board was flipped by a keeper (it shows yesterday); after day 8 comes day 1 */
+export const ending: Ending = {
+  space: 22,
+  advice: 'The keeper by the last arch has flipped its board: it shows yesterday. Trust the gates, not the paint: this is day three, and the stall with plate 3 is the frame.',
+  paint: (g, D) => {
+    g.fill(D - 17, D - 4, 15, 17, '.');
+  },
+  build(w, d) {
+    const D = Math.round(d.x / 16);
+    const st = w.flags.shl9 as Market;
+    w.flags.twist = 'board';
+    arch(w, st, D - 20, { board: 2, keeper: true });
+    row(w, st, D - 17, [6, 3, 7, 1], { causeFor: (plate) => (plate === 3 ? 'shl-board' : 'shl-closed') });
+  },
+};
 
 export const meta09 = { family: 'day-cycle-rearranged-stalls', betrayals: ['day-cycle'], ending: 'shl-board' };

@@ -84,28 +84,19 @@ export function guide(w: World, set: RootSet, i: number, c: number, label: strin
       },
       paint: (ctx, rr) => {
         const dead = set.chosen >= 0 && set.chosen !== i;
-        guideArt(ctx, rr.x + 11, FL, dead, label);
+        box(ctx, rr.x + 11, FL - 96, 2, 40, dead ? '#6B6B5A' : '#B9A25A');
+        box(ctx, rr.x + 6, FL - 58, 12, 3, dead ? '#6B6B5A' : '#B9A25A');
+        // the young root's tip hanging at the guide
+        box(ctx, rr.x + 10, FL - 55, 4, 8, dead ? '#5A4A3A' : '#6B4A2B');
+        ctx.fillStyle = '#F4F7F2';
+        ctx.font = '7px monospace';
+        ctx.fillText(label, rr.x + 2, FL - 98);
       },
     }),
   );
 }
 
-/** a guide's bamboo: a pole planted in the ground at x, leaning, with the young root's tip hanging from its top (QA F12: nothing floats) */
-export function guideArt(ctx: CanvasRenderingContext2D, x: number, ground: number, dead: boolean, label: string) {
-  const c = dead ? '#6B6B5A' : '#B9A25A';
-  // the pole from the ground to the hook height, with a cross-piece and a lashing at the foot
-  box(ctx, x, ground - 96, 2, 96, c);
-  box(ctx, x - 5, ground - 58, 12, 3, c);
-  box(ctx, x - 3, ground - 6, 8, 6, '#6B4A2B');
-  box(ctx, x - 2, ground - 10, 6, 4, c);
-  // the young root's tip hanging from the cross-piece
-  box(ctx, x - 1, ground - 55, 4, 8, dead ? '#5A4A3A' : '#6B4A2B');
-  ctx.fillStyle = '#F4F7F2';
-  ctx.font = '7px monospace';
-  ctx.fillText(label, x - 9, ground - 98);
-}
-
-/** the gorge under cols c0..c1: the fall is a death with its own line (`cause` names the place: one line per place) */
+/** a plume of spray from the gorge over columns c0..c1: it reaches a tile and a half up, never higher */
 export function spray(w: World, c0: number, c1: number) {
   w.add(
     new Rig(px(c0), FL - 24, px(c1 - c0 + 1), 24, {
@@ -125,11 +116,12 @@ export function spray(w: World, c0: number, c1: number) {
   );
 }
 
-export function gorge(w: World, c0: number, c1: number, cause = 'shl-gorge') {
+/** the gorge under cols c0..c1: the fall is a death with its own line */
+export function gorge(w: World, c0: number, c1: number) {
   w.add(
     new Rig(px(c0), FL + 28, px(c1 - c0 + 1), 30, {
       layer: 0,
-      cause,
+      cause: 'shl-gorge',
       inset: 0,
       paint: (ctx, r) => {
         box(ctx, r.x, FL + 8, r.w, 70, 'rgba(20,34,30,0.9)');
@@ -175,7 +167,15 @@ export function room(): LevelDef {
               w2.sfx('snap', rr.x, rr.y);
             }
           },
-          paint: (ctx, rr) => guideArt(ctx, rr.x + 11, FL - 32, set.chosen >= 0 && set.chosen !== 2, 'long'),
+          paint: (ctx, rr) => {
+            const dead = set.chosen >= 0 && set.chosen !== 2;
+            box(ctx, rr.x + 11, FL - 32 - 96, 2, 40, dead ? '#6B6B5A' : '#B9A25A');
+            box(ctx, rr.x + 6, FL - 32 - 58, 12, 3, dead ? '#6B6B5A' : '#B9A25A');
+            box(ctx, rr.x + 10, FL - 32 - 55, 4, 8, dead ? '#5A4A3A' : '#6B4A2B');
+            ctx.fillStyle = '#F4F7F2';
+            ctx.font = '7px monospace';
+            ctx.fillText('long', rr.x + 2, FL - 32 - 98);
+          },
         }),
       );
       onPass(w, px(2.5), (w2) => tara(w2, L.intro[4], 2.2));
@@ -186,18 +186,53 @@ export function room(): LevelDef {
   };
 }
 
-// `shl06-sprout` (stand on the tip of the root you grew and it sprouts the next span) was cut in fix round 1: QA F4, one
-// play and no second trap of its own that is not the gorge again.
+/** act: no guides here; the root you came over keeps growing if you stand on its tip, and sprouts the next span */
+export const act: Act = {
+  id: 'shl06-sprout',
+  w: 32,
+  advice: 'No guides at this gorge. The root you grew is alive: stand on its tip at the edge and it sprouts the next span across. Nothing else here grows anything, so no jumping the gap.',
+  cps: [1],
+  paint: (g, c) => {
+    g.fill(c.x + 6, c.x + 19, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const st = { t0: -1, stood: 0 };
+    w.flags.shl6a = st;
+    gorge(w, c.x + 6, c.x + 19);
+    // the old root's tip: a marked strip at the edge; standing on it starts the sprout
+    w.add(
+      new Rig(px(c.x + 3), FL - 2, px(3), 2, {
+        layer: 1,
+        tick: (r, w2) => {
+          const p = w2.player;
+          const on = p.onGround && p.x + p.w > r.x && p.x < r.x + r.w && Math.abs(p.vx) < 5;
+          st.stood = on ? st.stood + 1 : 0;
+          if (st.stood >= 60 && st.t0 < 0) {
+            st.t0 = w2.tick;
+            w2.sfx('snap', r.x, FL);
+          }
+        },
+        paint: (ctx, r) => {
+          box(ctx, r.x, FL - 6, r.w, 6, '#6B4A2B');
+          for (let x = r.x + 3; x < r.x + r.w; x += 12) box(ctx, x, FL - 9, 4, 3, '#4E8A3E');
+          box(ctx, r.x + r.w - 3, FL - 7, 3, 7, '#C8D86B');
+        },
+      }),
+    );
+    root(w, px(c.x + 6), FL, px(14), 3.5, () => st.t0);
+    sign(w, c.x + 1, 10.4, 3, 'ALIVE', 'shop', null, 'it grows while you stand');
+  },
+};
 
-/** act: two guides in the path: a standing one that grows a root across the path when touched (hop it), and a hanging one that grows a root down into the path when hopped into (walk under it) */
+/** act 2: a guide stands in the path on the far landing: touch it and a root grows across the path; hop it */
 export const actPole: Act = {
   id: 'shl06-kiang',
-  w: 34,
-  advice: 'Two guides stand in the path, and every guide you touch grows a root. The first stands on the ground: walk into it and its root grows across the path at head height, so hop over it. The second hangs from a pole over the path at jump height: hop into it and its root grows down into the path, so walk under it. Hop the one, walk under the other.',
+  w: 30,
+  advice: 'A bamboo guide stands in the path. Every guide you touch grows a root, and this one grows straight across the path at head height a moment after you touch it. Hop over the guide; do not walk into it.',
   cps: [1],
   paint: () => {},
   build: (w, c) => {
-    const st = { t0: -1, t1: -1 };
+    const st = { t0: -1 };
     w.flags.shl6b = st;
     const pole = px(c.x + 12);
     w.add(
@@ -214,11 +249,10 @@ export const actPole: Act = {
         paint: (ctx, r) => {
           box(ctx, r.x, r.y, 3, r.h, '#B9A25A');
           box(ctx, r.x - 2, r.y, 7, 2, '#B9A25A');
-          box(ctx, r.x - 2, FL - 4, 7, 4, '#6B4A2B');
         },
       }),
     );
-    // the standing guide's root: across the path ahead at head height, within a second
+    // the root it grows: across the path ahead at head height, within a second
     w.add(
       new Rig(pole + 8, FL - 30, px(4), 22, {
         layer: 3,
@@ -234,50 +268,11 @@ export const actPole: Act = {
         },
       }),
     );
-    // the hanging guide: its tip hangs 2 tiles up from a pole planted beside the path; a hop into it grows a root down into the path
-    const hx = px(c.x + 22);
-    w.add(
-      new Rig(hx - 4, FL - 46, 14, 16, {
-        layer: 3,
-        tick: (r, w2) => {
-          const p = w2.player;
-          const over = p.x < r.x + r.w && p.x + p.w > r.x && p.y < r.y + r.h && p.y + p.h > r.y;
-          if (over && st.t1 < 0) {
-            st.t1 = w2.tick;
-            w2.sfx('snap', r.x, r.y);
-          }
-        },
-        paint: (ctx, r) => {
-          // the pole beside the path, its arm over the path, the root's tip hanging from the arm
-          box(ctx, hx + 20, FL - 70, 3, 70, '#B9A25A');
-          box(ctx, hx - 4, FL - 70, 27, 3, '#B9A25A');
-          box(ctx, hx + 18, FL - 6, 7, 6, '#6B4A2B');
-          box(ctx, r.x + 5, FL - 67, 2, 22, '#B9A25A');
-          box(ctx, r.x + 4, r.y, 4, 8, st.t1 >= 0 ? '#C8D86B' : '#6B4A2B');
-        },
-      }),
-    );
-    // the hanging guide's root: down to the floor and along the path ahead
-    w.add(
-      new Rig(hx + 4, FL - 46, px(3), 46, {
-        layer: 3,
-        cause: 'shl-jri-hang',
-        inset: 2,
-        live: (_r, w2) => st.t1 >= 0 && w2.tick - st.t1 >= 30,
-        paint: (ctx, r, w2) => {
-          if (st.t1 < 0) return;
-          const k = Math.min(1, (w2.tick - st.t1) / 30);
-          box(ctx, r.x, r.y, 5, Math.round(r.h * k), '#6B4A2B');
-          box(ctx, r.x + 5, r.y, 2, Math.round(r.h * k), '#4E3520');
-          for (let y = r.y + 6; y < r.y + r.h * k; y += 12) box(ctx, r.x + 7, y, 3, 4, '#4E8A3E');
-        },
-      }),
-    );
-    sign(w, c.x + 2, 10.4, 3, 'MIND THEM', 'shop', null, 'two guides in the path');
+    sign(w, c.x + 2, 10.4, 3, 'MIND IT', 'shop', null, 'a guide in the path');
   },
 };
 
-/** act 2: a gorge too wide for one root: the near guide's root stops half way; the far guide hangs over its tip. Near first, then far. */
+/** act 3: a gorge too wide for one root: the near guide's root stops half way; the far guide hangs over its tip. Near first, then far. */
 export const actDouble: Act = {
   id: 'shl06-double',
   w: 40,
@@ -290,13 +285,13 @@ export const actDouble: Act = {
   build: (w, c) => {
     const st = { near: -1, far: -1 };
     w.flags.shl6c = st;
-    gorge(w, c.x + 10, c.x + 31, 'shl-double');
+    gorge(w, c.x + 10, c.x + 31);
     // the near root: ten tiles out from the bank, at floor level if it is the first chosen; at head height if the far one came first
-    root(w, px(c.x + 10), FL, px(11), 3.5, () => ((st.near >= 0 && st.far < 0) || (st.near >= 0 && st.near < st.far) ? st.near : -1));
+    root(w, px(c.x + 10), FL, px(11), 3.5, () => (st.near >= 0 && st.far < 0 || (st.near >= 0 && st.near < st.far) ? st.near : -1));
     w.add(
       new Rig(px(c.x + 10), FL - 30, px(11), 18, {
         layer: 3,
-        cause: 'shl-double-high',
+        cause: 'shl-jri',
         inset: 2,
         live: (_r, w2) => st.near >= 0 && st.far >= 0 && st.far < st.near && w2.tick - st.near >= 40,
         paint: (ctx, r, w2) => {
@@ -309,8 +304,8 @@ export const actDouble: Act = {
     );
     // the far root grows from the far bank leftwards to meet the near one
     root(w, px(c.x + 32), FL, px(11), 3.5, () => st.far, { left: true });
-    // the near guide stands on the bank; the far guide hangs over the near root's tip from a pole on the far bank, and over the high rock by the edge
-    const hang = (cx: number, y: number, pick: () => void, chosen: () => boolean, label: string, poleFrom: number) =>
+    // the near guide hangs over the bank; the far guide hangs over the near root's tip, and over the high rock by the edge
+    const hang = (cx: number, y: number, pick: () => void, chosen: () => boolean, label: string) =>
       w.add(
         new Rig(px(cx) - 2, y - 56, 24, 20, {
           layer: 3,
@@ -323,34 +318,39 @@ export const actDouble: Act = {
             }
           },
           paint: (ctx, rr) => {
-            const col = chosen() ? '#6B6B5A' : '#B9A25A';
-            if (poleFrom === cx) guideArt(ctx, rr.x + 11, y, chosen(), label);
-            else {
-              // a long bamboo from the far bank, its tip over the water, the root's tip hanging from it
-              ctx.strokeStyle = col;
-              ctx.lineWidth = 3;
-              ctx.beginPath();
-              ctx.moveTo(px(poleFrom) + 8, FL - 2);
-              ctx.lineTo(rr.x + 12, y - 58);
-              ctx.stroke();
-              box(ctx, px(poleFrom) + 4, FL - 6, 9, 6, '#6B4A2B');
-              box(ctx, rr.x + 10, y - 55, 4, 8, '#6B4A2B');
-              ctx.fillStyle = '#F4F7F2';
-              ctx.font = '7px monospace';
-              ctx.fillText(label, rr.x + 2, y - 62);
-            }
+            box(ctx, rr.x + 11, y - 96, 2, 40, chosen() ? '#6B6B5A' : '#B9A25A');
+            box(ctx, rr.x + 6, y - 58, 12, 3, chosen() ? '#6B6B5A' : '#B9A25A');
+            box(ctx, rr.x + 10, y - 55, 4, 8, '#6B4A2B');
+            ctx.fillStyle = '#F4F7F2';
+            ctx.font = '7px monospace';
+            ctx.fillText(label, rr.x + 2, y - 98);
           },
         }),
       );
-    hang(c.x + 4, FL, () => (st.near = w.tick), () => st.near >= 0, 'near', c.x + 4);
-    hang(c.x + 20, FL, () => (st.far = w.tick), () => st.far >= 0, 'far', c.x + 33);
-    // the high rock by the edge reaches the far guide's tip too (out of order)
-    hang(c.x + 7.5, FL - 32, () => (st.far = w.tick), () => st.far >= 0, 'far', c.x + 33);
+    hang(c.x + 4, FL, () => (st.near = w.tick), () => st.near >= 0, 'near');
+    hang(c.x + 20, FL, () => (st.far = w.tick), () => st.far >= 0, 'far');
+    // the high rock by the edge reaches the far guide too (out of order)
+    hang(c.x + 7.5, FL - 32, () => (st.far = w.tick), () => st.far >= 0, 'far');
     sign(w, c.x + 1, 10.4, 3, 'TWO ROOTS', 'shop', null, 'near first, then far');
   },
 };
 
-/** the plain door of 06 lives in endings.ts (QA F2: the root door re-asked the room's rule) */
-export const ending: Ending | null = null;
+/** ending: the door is on a ledge across a last gorge, reached only by a root: jump at the one guide, wait, walk */
+export const ending: Ending = {
+  space: 16,
+  advice: 'The door stands on a ledge across one last gorge, and one guide hangs at the edge: jump at it, wait for the root to reach the ledge, then walk across.',
+  paint: (g, D) => {
+    g.fill(D - 10, D - 2, 15, 17, '.');
+  },
+  build(w, d) {
+    const D = Math.round(d.x / 16);
+    const set: RootSet = { chosen: -1, roots: [], t0: -1 };
+    w.flags.shl6e = set;
+    w.flags.twist = 'rootdoor';
+    gorge(w, D - 10, D - 2);
+    set.roots.push(root(w, px(D - 10), FL, px(9), 3.0, () => (set.chosen === 0 ? set.t0 : -1)));
+    guide(w, set, 0, D - 12, 'door');
+  },
+};
 
 export const meta06 = { family: 'choose-guide-root-grows', betrayals: ['choose-grow'], ending: 'shl-rootdoor' };

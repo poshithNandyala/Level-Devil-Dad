@@ -31,6 +31,8 @@ export interface TankOpts {
   gate?: number;
   /** the spout column: pours across the path for 2.2 s when the tank fills */
   spout?: number;
+  /** the gauge is a bucket on a rope hanging over this column: it drops there when full */
+  bucket?: number;
   /** seconds of rain into the gutter (or on to the roof) to fill */
   fill?: number;
   /** a second tank the gate also waits for */
@@ -119,13 +121,10 @@ export function tank(w: World, o: TankOpts): TankState {
       },
       paint: (ctx, r, w2) => {
         if (!st.armed) return;
-        // the cloud sits below the HUD band (QA F10), its rain from under it
-        cloudArt(ctx, r.x - 14, r.x + r.w + 14, 50, 32, 0.6);
-        rainArt(ctx, r.x + 2, r.x + r.w - 2, 78, w2.tick / 120, 1);
-        // the shadow on the ground, the tell of where the rain is: a dark wet band with a pale rim, half a tile tall
-        box(ctx, r.x - 6, FL - 7, r.w + 12, 7, '#0F1A17');
-        box(ctx, r.x - 6, FL - 7, r.w + 12, 1, 'rgba(190,224,240,0.9)');
-        box(ctx, r.x - 2, FL - 4, r.w + 4, 2, 'rgba(90,167,201,0.6)');
+        cloudArt(ctx, r.x - 14, r.x + r.w + 14, 24, 32, 0.6);
+        rainArt(ctx, r.x + 2, r.x + r.w - 2, 52, w2.tick / 120, 1);
+        // the shadow on the ground, the tell of where the rain is
+        box(ctx, r.x - 4, FL - 2, r.w + 8, 2, 'rgba(20,34,30,0.55)');
         // the soak meter over Dad when it is rising
         if (st.soak > 0.1) {
           const p = w2.player;
@@ -145,12 +144,9 @@ export function tank(w: World, o: TankOpts): TankState {
       box(ctx, x + 2, FL - 44, 28, 3, '#5C6F66');
       box(ctx, x + 4, FL - 12, 3, 12, '#3A4842');
       box(ctx, x + 25, FL - 12, 3, 12, '#3A4842');
-      // the gutter: a bright funnel on top of the tank, in the city's leaf-yellow, so it reads against the roof (QA F10)
-      box(ctx, x - 4, FL - 54, 40, 3, '#C8D86B');
-      box(ctx, x - 6, FL - 58, 44, 4, '#E8B04B');
-      box(ctx, x + 12, FL - 51, 8, 8, '#C8D86B');
-      // the gauge: a glass strip with the level, a white frame so an empty gauge still shows
-      box(ctx, x + 5, FL - 41, 8, 26, '#F4F7F2');
+      // the gutter: a pipe mouth on top
+      box(ctx, x - 2, FL - 50, 36, 4, '#8A6A3E');
+      // the gauge: a glass strip with the level
       box(ctx, x + 6, FL - 40, 6, 24, st.armed ? '#1D2A26' : '#0E1512');
       box(ctx, x + 7, FL - 40 + 24 - Math.round(22 * st.gauge), 4, Math.round(22 * st.gauge), '#5AA7C9');
       if (o.roof) {
@@ -159,8 +155,6 @@ export function tank(w: World, o: TankOpts): TankState {
         box(ctx, r0, FL - 60, r1 - r0, 5, '#7A8A84');
         box(ctx, r0, FL - 55, r1 - r0, 2, '#3A4842');
         for (let xx = r0 + 4; xx < r1; xx += 24) box(ctx, xx, FL - 55, 3, 55, '#5C6F66');
-        // the roof's lower edge over the shedding tile: a lip that drips
-        if (o.runoff !== undefined) box(ctx, px(o.runoff) - 2, FL - 60, 20, 7, '#5C6F66');
         if (o.hole) {
           box(ctx, px(o.hole[0]), FL - 60, px(o.hole[1] + 1) - px(o.hole[0]), 7, '#9FB8C7');
           // rain through the hole
@@ -172,6 +166,16 @@ export function tank(w: World, o: TankOpts): TankState {
           if (rain[0] < r1 && rain[1] > r0) rainArt(ctx, px(o.runoff) + 1, px(o.runoff) + 15, FL - 56, w2.tick / 120, 1);
         }
       }
+      if (o.bucket !== undefined) {
+        // the bucket on its rope over the path: it hangs high, and drops when full
+        const bx = px(o.bucket) + 8;
+        const k = st.fullAt < 0 ? 0 : Math.min(1, (w2.tick - st.fullAt) / 40);
+        const by = FL - 100 + k * 86;
+        box(ctx, bx - 1, 0, 2, by - 8, '#6B4F2E');
+        box(ctx, bx - 9, by - 8, 18, 12, '#8A6A3E');
+        box(ctx, bx - 9, by - 8 + 12 - Math.round(10 * st.gauge), 18, Math.round(10 * st.gauge), '#5AA7C9');
+        box(ctx, bx - 8, FL - 2, 16, 2, 'rgba(20,34,30,0.5)');
+      }
     }, -3),
   );
   // the runoff sheet
@@ -182,6 +186,18 @@ export function tank(w: World, o: TankOpts): TankState {
         cause: 'shl-runoff',
         inset: 3,
         live: () => st.cx - 20 < roofPx[1] && st.cx + 20 > roofPx[0],
+        paint: () => {},
+      }),
+    );
+  }
+  // the bucket's drop
+  if (o.bucket !== undefined) {
+    w.add(
+      new Rig(px(o.bucket) - 2, FL - 20, 20, 20, {
+        layer: 4,
+        cause: 'shl-bucket',
+        inset: 2,
+        live: (_r, w2) => st.fullAt >= 0 && w2.tick - st.fullAt >= 30 && w2.tick - st.fullAt < 90,
         paint: () => {},
       }),
     );
@@ -260,27 +276,65 @@ export function room(): LevelDef {
   };
 }
 
-/**
- * act: a bigger cloud, no out-of-reach spot: stand under the tank's roof, whose rain drains into the tank; but not under
- * the hole at its near end, and not at its far edge, which sheds a sheet while rain is on the roof. Two traps of its own
- * (QA F6): the hole (`shl-leak`) and the shedding edge (`shl-runoff`).
- */
+/** act 1: a bigger cloud, no out-of-reach spot: stand under the tank's roof, and not under the hole in it */
 export const actRoof: Act = {
   id: 'shl08-roof',
   w: 30,
-  advice: 'This cloud reaches the whole stretch: there is no standing out of it. Stand under the tank’s tin roof: the rain on you runs into the tank, and you stay dry, except under the hole at the roof’s near end, and except at its far edge, which sheds a sheet on to the path while rain is on the roof. Stand under the whole middle of it.',
+  advice: 'This cloud reaches the whole stretch: there is no standing out of it. Stand under the tank’s tin roof: the rain on you runs into the tank, and you stay dry, except under the hole at the roof’s near end.',
   paint: () => {},
   build: (w, c) => {
-    tank(w, { key: 'shl8a', tank: c.x + 18, reach: [c.x + 6, c.x + 29], roof: [c.x + 12, c.x + 19], hole: [c.x + 12, c.x + 13], runoff: c.x + 20, gate: c.x + 23, spout: c.x + 21.5, arm: c.x + 1 });
+    tank(w, { key: 'shl8a', tank: c.x + 18, reach: [c.x + 6, c.x + 29], roof: [c.x + 12, c.x + 19], hole: [c.x + 12, c.x + 13], gate: c.x + 23, spout: c.x + 21.5, arm: c.x + 1 });
     sign(w, c.x + 2, 10.4, 3, 'NO SHADE', 'shop', null, 'the cloud reaches all of it');
   },
 };
 
-// Cut in fix round 1 (QA F6: one play of their own each, the other being the room's rule): `shl08-pull` (the cloud resting
-// over the path, dragged on to the roof), `shl08-bucket` (the bucket gauge over the only out-of-reach spot) and `shl08-two`
-// (two tanks, one gate). The runoff edge from `pull` moved into `roof`.
+/** act 2: the cloud's home is over the path, not the tank: pull it on to the roof yourself; the roof's edge sheds */
+export const actPull: Act = {
+  id: 'shl08-pull',
+  w: 32,
+  advice: 'Out of reach, this cloud rests over the path and fills nothing. Go in and stand under the roof so the rain follows you on to it. The roof’s lower edge sheds a sheet while rain is on it: stand well in, not at the edge.',
+  paint: () => {},
+  build: (w, c) => {
+    tank(w, { key: 'shl8b', tank: c.x + 22, reach: [c.x + 8, c.x + 27], home: c.x + 5, roof: [c.x + 17, c.x + 23], runoff: c.x + 16, gate: c.x + 26, spout: c.x + 25, arm: c.x + 1 });
+    sign(w, c.x + 2, 10.4, 3, 'DRY TANK', 'shop', null, 'the cloud rests over the road');
+  },
+};
 
-/** the plain door of 08 lives in endings.ts (QA F2: the tap re-asked the room's rule) */
-export const ending: Ending | null = null;
+/** act 3: the gauge is a bucket on a rope over the only out-of-reach spot: fill from under the roof, not from under it */
+export const actBucket: Act = {
+  id: 'shl08-bucket',
+  w: 32,
+  advice: 'Here the gauge is a bucket on a rope, hanging over the path by the start, and the only spot out of the cloud’s reach is right under it. When it is full it drops. Fill it from under the tank’s roof and let it fall on nobody.',
+  paint: () => {},
+  build: (w, c) => {
+    tank(w, { key: 'shl8c', tank: c.x + 22, reach: [c.x + 6, c.x + 27], roof: [c.x + 17, c.x + 23], bucket: c.x + 4.5, gate: c.x + 26, spout: c.x + 25, arm: c.x + 1 });
+    sign(w, c.x + 1, 10.4, 3, 'BUCKET', 'shop', null, 'it drops when full');
+  },
+};
+
+/** act 4: two tanks, one gate: the first's spout pours across the way to the second's roof */
+export const actTwo: Act = {
+  id: 'shl08-two',
+  w: 44,
+  advice: 'Two tanks and one gate that waits for both. Fill the first from under its roof; when it fills, its spout pours across the way to the second roof for a moment. Let it finish, then fill the second.',
+  paint: () => {},
+  build: (w, c) => {
+    tank(w, { key: 'shl8d', tank: c.x + 14, reach: [c.x + 6, c.x + 40], roof: [c.x + 10, c.x + 15], spout: c.x + 17, arm: c.x + 1 });
+    tank(w, { key: 'shl8e', tank: c.x + 32, reach: [c.x + 6, c.x + 40], roof: [c.x + 28, c.x + 33], gate: c.x + 38, spout: c.x + 36.5, also: 'shl8d', arm: c.x + 1 });
+    sign(w, c.x + 2, 10.4, 3, 'TWO TANKS', 'shop', null, 'one gate');
+  },
+};
+
+/** ending: the tank's tap is the door: it opens when the last tank is full; stand out of reach to fill it */
+export const ending: Ending = {
+  space: 16,
+  advice: 'The door is the tank’s tap, and it opens when this last tank is full. Stand back out of the cloud’s reach, let the gauge fill, then walk to the tap.',
+  build(w, d) {
+    const D = Math.round(d.x / 16);
+    w.flags.twist = 'tap';
+    const st = tank(w, { key: 'shl8e2', tank: D - 4, reach: [D - 9, D + 2], gate: D - 1.5, arm: D - 15 });
+    void st;
+  },
+};
 
 export const meta08 = { family: 'tank-fills-when-not-under-rain', betrayals: ['cloud-meter'], ending: 'shl-tap' };
