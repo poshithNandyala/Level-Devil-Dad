@@ -51,14 +51,27 @@ export class GrassRhino extends Entity {
     ctx.beginPath();
     ctx.ellipse(this.x + 15, GROUND - 14, 15, 9, 0, 0, Math.PI * 2);
     ctx.fill();
-    // the egrets: on its back, or a little cloud of white over it
+    // the egrets (fix round 1, QA F7: a flock of six big white birds that read at phone size): standing in a row on its
+    // back, or flapping in a cloud high over it
     ctx.fillStyle = '#FFFFFF';
     const up = this.flying;
-    for (let k = 0; k < 4; k++) {
-      const bx = this.x + 6 + k * 6;
-      const by = up ? GROUND - 34 - ((k * 7 + this.t) % 14) : GROUND - 25;
-      ctx.fillRect(bx, by, 4, up ? 2 : 4);
-      if (!up) ctx.fillRect(bx + 3, by - 2, 1.5, 2);
+    for (let k = 0; k < 6; k++) {
+      const bx = this.x - 4 + k * 7;
+      if (!up) {
+        const by = GROUND - 30;
+        ctx.fillRect(bx, by, 7, 5); // body
+        ctx.fillRect(bx + 5, by - 5, 2, 5); // neck
+        ctx.fillRect(bx + 5, by - 6, 4, 2); // head and bill
+        ctx.fillStyle = '#E0A800';
+        ctx.fillRect(bx + 8, by - 6, 2, 1);
+        ctx.fillStyle = '#FFFFFF';
+      } else {
+        const by = GROUND - 56 - ((k * 9 + this.t) % 22);
+        const flap = Math.floor((this.t + k * 5) / 6) % 2;
+        ctx.fillRect(bx, by, 7, 3);
+        ctx.fillRect(bx - 4, by - (flap ? 4 : -2), 5, 2); // wings
+        ctx.fillRect(bx + 6, by - (flap ? 4 : -2), 5, 2);
+      }
     }
   }
 }
