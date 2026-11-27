@@ -334,6 +334,97 @@ export function tantuAct(id: string, key: string, rev = false): Act {
 };
 }
 export const act12 = tantuAct('bbi06-tantu', 'bbi6p');
+
+/** act 13, the shuttle that runs (ALLOCATION v3 F466, B29 portal that runs): a big flying-shuttle box rests at
+ *  the edge of the dye pit, a ride across. Come at it and it jumps away over the pit, then comes back to you on
+ *  the warp; when it reaches the edge the beater beats the bank. Get on where it is now, out over the pit, and it
+ *  takes you back to the edge and then across. */
+export const PALAA = { c0: 4, c1: 16, near: 40, away: 160, back: 50, fly: 150, rest: 0.6 };
+export const act13: Act = {
+  id: 'bbi06-palaa',
+  w: 21,
+  advice: 'The shuttle box at the edge runs from you: come at it and it jumps away over the pit, then comes back along the warp. Don’t wait for it at the edge: when it gets there the beater beats the bank. Jump on where it is, out over the pit, and ride it back and across.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + PALAA.c0, c.x + PALAA.c1);
+  },
+  build: (w, c) => {
+    channel(w, c.x + PALAA.c0, c.x + PALAA.c1, 'bbi-ranga', 'water');
+    const x0 = c.X(PALAA.c0);
+    const xEnd = c.X(PALAA.c1 + 1) - 32;
+    const st = { phase: 'rest' as 'rest' | 'jump' | 'back' | 'beat' | 'fly' | 'done', t: 0, x: x0, box: null as Rig | null };
+    w.flags.bbi6pl = st;
+    const set = (p: typeof st.phase, w2: World) => {
+      st.phase = p;
+      st.t = w2.tick;
+    };
+    st.box = w.add(
+      new Rig(x0, FL - 6, 32, 6, {
+        solid: true,
+        layer: 4,
+        tick: (r, w2) => {
+          const p = w2.player;
+          const t = since(w2, st.t);
+          if (st.phase === 'rest' && p.cx > x0 - PALAA.near && p.cx < x0) set('jump', w2);
+          else if (st.phase === 'jump' && t > 0.3) {
+            st.x = x0 + PALAA.away;
+            set('back', w2);
+          } else if (st.phase === 'back') {
+            st.x = Math.max(x0, st.x - PALAA.back / 120);
+            if (st.x <= x0) set('beat', w2);
+          } else if (st.phase === 'beat' && t > PALAA.rest) set('fly', w2);
+          else if (st.phase === 'fly') {
+            st.x = Math.min(xEnd, st.x + PALAA.fly / 120);
+            if (st.x >= xEnd) set('done', w2);
+          } else if (st.phase === 'done' && t > 2.5) {
+            st.x = x0;
+            set('rest', w2);
+          }
+          r.setSolid(st.phase !== 'jump');
+          const y = st.phase === 'jump' ? FL - 6 - 60 * Math.sin(Math.PI * Math.min(1, t / 0.3)) : FL - 6;
+          const x = st.phase === 'jump' ? x0 + PALAA.away * Math.min(1, t / 0.3) : st.x;
+          r.moveTo(w2, x, y);
+        },
+        paint: (ctx, r) => {
+          ctx.fillStyle = '#8D5A2B';
+          ctx.beginPath();
+          ctx.moveTo(r.x, r.y + 3);
+          ctx.lineTo(r.x + 6, r.y);
+          ctx.lineTo(r.x + 26, r.y);
+          ctx.lineTo(r.x + 32, r.y + 3);
+          ctx.lineTo(r.x + 26, r.y + 6);
+          ctx.lineTo(r.x + 6, r.y + 6);
+          ctx.closePath();
+          ctx.fill();
+          box(ctx, r.x + 12, r.y + 2, 8, 2, '#F4D35E');
+        },
+      }),
+    );
+    // the beater beats the weft in at the near edge as the shuttle gets back there
+    w.add(
+      new Rig(x0 - 40, FL - 40, 38, 40, {
+        cause: 'bbi-rachh',
+        inset: 2,
+        layer: 4,
+        live: () => st.phase === 'beat',
+        paint: (ctx, r) => {
+          box(ctx, r.x + 30, st.phase === 'beat' ? FL - 40 : FL - 100, 6, 40, '#A0703C');
+          box(ctx, r.x + 30, FL - 110, 2, st.phase === 'beat' ? 70 : 10, '#6E4A2E');
+        },
+      }),
+    );
+    // the warp threads the shuttle runs on, over the whole pit
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: 2,
+        paint: (ctx) => {
+          for (let k = PALAA.c0; k <= PALAA.c1; k++) box(ctx, c.X(k) + 7, FL - 107, 2, 101, 'rgba(250,240,220,0.6)');
+          box(ctx, c.X(PALAA.c0) - 6, FL - 112, px(PALAA.c1 - PALAA.c0 + 1) + 12, 5, '#6E4A2E');
+        },
+      }),
+    );
+  },
+};
 export const act7 = loomAct('bbi06-rachh', 16, L06R, 'bbi6q', 'Here the beater sweeps the warp at the end of the motif beat. Let the shuttle by, then cross at once: be off the threads before the beater comes.');
 /** act 11, the undyed thread (loom family): one warp thread here was never tied and dyed, so it carries no
  *  patch: the motif lines up with a hole in it. A2: the shuttle still goes first. A3: and then the hole, which

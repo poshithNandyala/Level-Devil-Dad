@@ -732,6 +732,10 @@ const DEATHS: Record<string, Death[]> = {
   'bbi05-bail': [{ what: 'push on past the cart', cause: 'bbi-bail', steps: () => [{ hold: 'R', until: done, max: 900 }] }],
   'bbi06-tana': [walkOn('bbi-ranga'), lFix('bbi6b')],
   'bbi06-rachh': [walkOn('bbi-ranga'), lFix('bbi6q')],
+  'bbi06-palaa': [
+    { what: 'run at the shuttle and jump on', cause: 'bbi-ranga', steps: (x) => [{ hold: 'R', until: X(x + 3.4), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 600 }] },
+    { what: 'wait at the edge for it to come back to you', cause: 'bbi-rachh', steps: (x) => [{ hold: 'R', until: X(x + 2.4), max: 400 }, { hold: '', until: done, max: 1200 }] },
+  ],
   'bbi06-tantu': [
     { what: 'snap the nearest thread, from the edge', cause: 'bbi-tantu', steps: (x) => [{ hold: 'R', until: X(x + 3.6), max: 400 }, waitFor((w) => lm(w, 'bbi6p').bridge, 'the motif'), { hold: 'R', jump: 12, ticks: 12, note: 'up into the first thread' }, { hold: 'R', until: done, max: 600 }] },
     { what: 'leave the loom alone and time the shuttle', cause: 'bbi-rachh', steps: (x) => [{ hold: 'R', until: X(x + 3.6), max: 400 }, waitFor((w) => lm(w, 'bbi6p').bridge && lm(w, 'bbi6p').into > 0.9, 'both passes of the shuttle by'), { hold: 'R', until: done, max: 600 }] },
@@ -1026,6 +1030,16 @@ const padaRun = (x: number): Step[] => [
 ];
 /** the undyed thread: the shuttle by, then out on the motif and over the hole */
 /** the plain thread: jump up into it on the bank, then walk the motif as soon as it lines up */
+/** the shuttle that runs: let it jump away, back off a step, and jump on as it comes back over the pit */
+const pl6 = (w: World) => w.flags.bbi6pl as { phase: string; x: number; box: { x: number } };
+const palaaRun = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 2.4), max: 400, note: 'near it: it jumps away' },
+  waitFor((w) => pl6(w).phase === 'back' && pl6(w).x <= px(x + 4) + 24, 'it comes back: two tiles out'),
+  leap((w) => pl6(w).box.x + 16, 'on to it, where it is now'),
+  stayOn((w) => pl6(w).box.x + 16, (w) => pl6(w).phase === 'fly' && pl6(w).x > px(x + 14), 'ride it back and across', 900),
+  { hold: 'R', until: and(ground, X(x + 17.5)), max: 400, note: 'off on to the far bank' },
+  { hold: 'R', until: X(x + 20.5), max: 300 },
+];
 const tantuRun = (x: number): Step[] => [
   { hold: 'R', until: X(x + 2.6), max: 400, note: 'under the plain thread' },
   { hold: '', until: (w) => Math.abs(w.player.vx) < 5, max: 120 },
@@ -1237,6 +1251,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi07-sajaghara': sa
   'bbi06-sidhi': sidhiRun('bbi6s'),
   'bbi06-rachh': loomRun('bbi6q', 8, 0.5),
   'bbi06-tantu': tantuRun,
+  'bbi06-palaa': palaaRun,
   'bbi08-phinga': phingaRun,
   'bbi08-ghurni': ghurniRun,
   'bbi07-ghungur': ghungurRun,
