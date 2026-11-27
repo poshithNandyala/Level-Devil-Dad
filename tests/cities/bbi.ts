@@ -720,6 +720,10 @@ const DEATHS: Record<string, Death[]> = {
   'bbi06-tani': [walkOn('bbi-ranga'), lFix('bbi6f')],
   'bbi06-dui': [walkOn('bbi-ranga'), lFix('bbi6t')],
   'bbi06-pata': [walkOn('bbi-ranga')],
+  'bbi06-sari': [
+    { what: 'bounce on to the bank at once', cause: 'bbi-dhua', steps: (x) => [{ hold: 'R', until: X(x + 5.4), max: 400 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: done, max: 600 }] },
+    { what: 'keep bouncing until high enough', cause: 'bbi-sari', steps: (x) => [{ hold: 'R', until: X(x + 5.4), max: 400 }, { hold: 'R', jump: 10, ticks: 10 }, { steer: (w) => (w.player.x < px(x + 8) ? 'R' : ''), until: done, max: 600 }] },
+  ],
   'bbi06-patta': [
     { what: 'walk straight over both pits', cause: 'bbi-sadha', steps: () => [{ hold: 'R', until: done, max: 900 }] },
     { what: 'follow the panel beside the second pit', cause: 'bbi-chitra', steps: (x) => [{ hold: 'R', until: X(x + 10.6), max: 600 }, leap(() => px(x + 16), 'the plank its panel paints'), { hold: '', until: done, max: 300 }] },
@@ -902,7 +906,16 @@ const chheliRun = (x: number): Step[] => [
   { hold: 'R', until: ground, max: 300 },
   { hold: 'R', until: X(x + 25), max: 600 },
 ];
-const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi05-chheli': chheliRun, 'bbi09-chhera': chheraRun, 'bbi07-bagudi': bagudiRun, 'bbi06-patta': pattaRun, 'bbi05-patra': patraRun, 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi10-ratha': act10c, 'bbi02-dive': act02b, 'bbi06-buni': act06b, 'bbi07-sahi': act07c, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b, 'bbi08-thali': act08b, 'bbi07-stambha': act07d, 'bbi07-raati': act07e, 'bbi06-tani': act06c, 'bbi09-chakra': act09c, 'bbi10-khela': act10d, 'bbi10-nacha': act10e,
+/** the wet sari: hop on, bounce once in place, steer on to the bank on the second bounce once above it */
+const sr = (w: World) => w.flags.bbi6sr as { bounces: number };
+const sariRun = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 5.4), max: 400 },
+  { hold: 'R', jump: 10, ticks: 10, note: 'on to the sari' },
+  { steer: (w) => (w.player.cx < px(x + 8) - 2 ? 'R' : w.player.cx > px(x + 8) + 6 ? 'L' : ''), until: (w) => sr(w).bounces >= 2, max: 400, note: 'in place for the first bounce' },
+  { steer: (w) => (w.player.y + w.player.h < 240 - 16 * 6 - 2 ? 'R' : ''), until: (w) => w.player.onGround && w.player.y + w.player.h <= 240 - 96 + 1, max: 400, note: 'on to the bank once above it' },
+  { hold: 'R', until: X(x + 23.6), max: 600 },
+];
+const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi06-sari': sariRun, 'bbi05-chheli': chheliRun, 'bbi09-chhera': chheraRun, 'bbi07-bagudi': bagudiRun, 'bbi06-patta': pattaRun, 'bbi05-patra': patraRun, 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi10-ratha': act10c, 'bbi02-dive': act02b, 'bbi06-buni': act06b, 'bbi07-sahi': act07c, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b, 'bbi08-thali': act08b, 'bbi07-stambha': act07d, 'bbi07-raati': act07e, 'bbi06-tani': act06c, 'bbi09-chakra': act09c, 'bbi10-khela': act10d, 'bbi10-nacha': act10e,
   'bbi06-jala': loomRun('bbi6g', 6, 0.5),
   'bbi06-pata': loomRun('bbi6h', 9, 0.45 + 0.52 + 0.1),
   'bbi09-ghoda': chAct('bbi9g', 8, 7),
