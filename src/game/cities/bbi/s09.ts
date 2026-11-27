@@ -342,23 +342,24 @@ export const act6: Act = {
 const SINK = 3.0;
 /** `whole` (the finale's turn, law 7): the spokes rise one after another only while you wait on the bank; leave
  *  it and the next one stops. Wait there for the whole stair, then climb it straight up. */
-export function risingSpokes(id: string, dir: 1 | -1, key: string, whole = false): Act {
-  const n = 8;
-  const top = dir > 0 ? 10 : 12;
+export function risingSpokes(id: string, dir: 1 | -1, key: string, whole = false, n = 8, plain = 0): Act {
+  // the pit runs to pe; `plain` tiles of bare terrace after it are a run with nothing on it (09's momentum beat)
+  const pe = 4 + 2.5 * n;
+  const top = dir > 0 ? 10 - Math.max(0, Math.ceil((n - 8) / 2)) : 12;
   return {
     id,
-    w: 28,
+    w: pe + 4 + plain,
     advice: whole
       ? 'These spokes rise one after another only while you wait on the bank: step off it and the next one stops. Wait there until the whole stair is up, then climb it straight up: three seconds on one and it goes back under.'
       : dir > 0 ? 'These spokes lie under the water and rise one at a time, each only after you have stood on the one before. Don’t hurry: wait on each until the next is up, then go at once: three seconds on one and it goes back under.' : 'Down to the far bank on rising spokes: each comes up only once you have stood on the one before. Wait for each, and go the moment it is up.',
     cps: [],
     paint: (g, c) => {
-      g.pit(c.x + 2, c.x + 24);
-      if (dir > 0) g.fill(c.x + 25, c.x + 27, top, 14, '#');
+      g.pit(c.x + 2, c.x + pe);
+      if (dir > 0) g.fill(c.x + pe + 1, c.x + pe + 3 + plain, top, 14, '#');
       else g.fill(c.x, c.x + 2, top, 14, '#');
     },
     build: (w, c) => {
-      const ch = channel(w, c.x + 2, c.x + 24, 'bbi-udaya', 'water');
+      const ch = channel(w, c.x + 2, c.x + pe, 'bbi-udaya', 'water');
       const st = { stood: [] as number[], sunk: false, prog: 0, on: false, onNext: false };
       // a spoke you stay on too long goes back under: the death line says so
       ch.o.tick = (r) => {
@@ -412,7 +413,8 @@ export function risingSpokes(id: string, dir: 1 | -1, key: string, whole = false
     },
   };
 }
-export const act7 = risingSpokes('bbi09-udaya', 1, 'bbi9r');
+/** 09's labelled momentum beat (ALLOCATION v3): ten spokes, then a bare terrace to run */
+export const act7 = risingSpokes('bbi09-udaya', 1, 'bbi9r', false, 10, 5);
 export const act8 = risingSpokes('bbi09-asta', -1, 'bbi9s');
 
 /** ending: the door between two stone horses on little plinths; step on a horse and the plinths slide together */

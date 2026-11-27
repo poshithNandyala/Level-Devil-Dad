@@ -33,9 +33,6 @@ export interface TroupeCfg {
   rev?: boolean;
   /** with `decoy`: the out-of-step drummer is the one across the pit, and the troupe follows the one by you */
   decoyFar?: boolean;
-  /** the last stroke before each stop names the pose: a deep stroke (wide mark) ends in the bridge, a sharp one
-   *  (thin high mark) in the tower */
-  forecast?: boolean;
   /** the drummer sits at this column (world tiles) instead of on the troupe's own near bank */
   drumX?: number;
   /** on these stops (by index in `poses`) a drum roll at `at` s into the pose turns the bridge over towards the
@@ -106,7 +103,7 @@ function dancer(ctx: CanvasRenderingContext2D, x: number, y: number, k: number, 
 
 /** a troupe in the pit at columns c0..c0+n-1, its drummer on the left bank */
 export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) {
-  const st: TroupeSt & { t: number; decoyStopped?: boolean; decoyLeft?: number; next?: Pose; rolling?: boolean; rollSoon?: boolean } = { pose: null, into: 0, left: 0, stops: 0, t: -1 };
+  const st: TroupeSt & { t: number; decoyStopped?: boolean; decoyLeft?: number; rolling?: boolean; rollSoon?: boolean } = { pose: null, into: 0, left: 0, stops: 0, t: -1 };
   (w.flags[key] as unknown) = st;
   const x0 = px(cfg.c0);
   const W = px(cfg.n);
@@ -135,7 +132,6 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
         st.into = a.into;
         st.left = a.left;
         st.stops = a.stops;
-        if (cfg.forecast) st.next = cfg.poses[((a.stops % cfg.poses.length) + cfg.poses.length) % cfg.poses.length];
         if (cfg.decoy !== undefined) {
           const d = t < 0 ? { pose: null, left: 9 } : troupeAt({ ...cfg, phase: (cfg.phase ?? 0) + cfg.decoy }, t);
           st.decoyStopped = d.pose !== null;
@@ -219,12 +215,6 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
           const far = cfg.decoyFar ? x0 - 22 : x0 + W + 6;
           drummer(near, cfg.decoyFar ? -1 : 1, a.pose === null, a.pose !== null && a.left < 0.45);
           drummer(far, cfg.decoyFar ? 1 : -1, !st.decoyStopped, !!st.decoyStopped && (st.decoyLeft ?? 9) < 0.45);
-        }
-        // the last stroke before the stop, drawn over the drummer: deep and wide for the bridge, sharp and high for the tower
-        if (cfg.forecast && a.pose === null && a.left < 0.5 && st.next) {
-          const dx = x0 - 22;
-          if (st.next === 'bridge') box(ctx, dx - 6, FL - 40, 28, 6, '#1B1B3A');
-          else box(ctx, dx + 6, FL - 58, 4, 22, '#E63946');
         }
         const n = Math.max(3, Math.round(cfg.n * 0.75));
         if (a.pose === null) {
@@ -612,12 +602,6 @@ export const act12 = padaAct('bbi07-pada', 'bbi7pd');
  *  sticks are the warning too: the near drummer's still sticks don't mean you have time. */
 export const T07F: TroupeCfg[] = [{ c0: 4, n: 7, drum: 1.6, hold: 1.7, poses: ['bridge'], form: 0.3, decoy: 1.65 }];
 export const act13 = troupeAct('bbi07-dui-baja', 15, T07F, 'bbi7db', 'Two drummers: one by you, one across the pit. The troupe follows the one across the pit: go when he stops, not when yours does. And watch his sticks for the restart, not your drummer’s.');
-
-/** act 14, gum-ta (IDEAS-3 B3, pose-shapes family): the mardala's last stroke before each stop names the pose: a
- *  deep stroke ends in the bridge, a sharp one in the tower. These bridges hold only just long enough to cross
- *  from the moment they land, so you must commit on the stroke, before you can see the shape. */
-export const T07G: TroupeCfg[] = [{ c0: 4, n: 8, drum: 1.4, hold: 1.3, poses: ['tower', 'bridge', 'tower', 'tower', 'bridge'], form: 0.25, forecast: true }];
-export const act14 = troupeAct('bbi07-gum-ta', 16, T07G, 'bbi7gt', 'Listen to the mardala’s last stroke before it stops: a deep stroke (the wide mark over the drummer) ends in the bridge, a sharp one (the thin high mark) in the tower. This bridge only just lasts the walk: on a deep stroke, go as it stops, before you can see it; on a sharp one, stay.');
 
 /** act 15, jodi (IDEAS-3 B5, pose-shapes family): two troupes share each pit, half the bridge each, each on its own
  *  drummer; the half whose drummer stopped first gets up first. In the first pit the far half is older: go as the
