@@ -6,6 +6,8 @@ import { Solid } from '../../body';
 import { person } from '../../levels/endkit';
 import { GROUND, px } from './entities';
 import type { Act } from '../../levels/acts';
+import { onPass } from '../../levels/trolls';
+import { tara } from '../../levels/endkit';
 
 /**
  * A rope over a ditch between two teams. Each round the referee's flag shows who is winning and the taut rope drifts
@@ -28,6 +30,8 @@ export class TugRope extends Entity {
     readonly slack = 150,
     readonly speed = 48,
     readonly wait = 240,
+    /** the finale: the teams have changed ends, so the red caps (and the red flag) are the NEAR team */
+    readonly swapped = false,
   ) {
     super();
     this.layer = 1;
@@ -103,15 +107,16 @@ export class TugRope extends Entity {
       const nx = this.d0 - 22 - i * 12;
       const fx = this.d1 + 22 + i * 12;
       if (fell === -1) ctx.fillRect(nx - 8, GROUND - 5, 16, 5);
-      else person(ctx, nx - lean, GROUND - 24, 24, '#F1EBDD', '#B9855A', { arms: 4, cap: '#2F6B3A' });
+      else person(ctx, nx - lean, GROUND - 24, 24, '#F1EBDD', '#B9855A', { arms: 4, cap: this.swapped ? '#C1121F' : '#2F6B3A' });
       if (fell === 1) ctx.fillRect(fx - 8, GROUND - 5, 16, 5);
-      else person(ctx, fx + lean, GROUND - 24, 24, '#F1EBDD', '#B9855A', { arms: 4, cap: '#C1121F' });
+      else person(ctx, fx + lean, GROUND - 24, 24, '#F1EBDD', '#B9855A', { arms: 4, cap: this.swapped ? '#2F6B3A' : '#C1121F' });
     }
     // the referee on the far bank's corner; his flag shows the team that is winning (green: near, red: far)
     const rx = this.d1 + 8;
     person(ctx, rx, GROUND - 40, 22, '#1F2A44', '#B9855A');
     if (p.taut) {
-      ctx.fillStyle = p.dir < 0 ? '#2F6B3A' : '#C1121F';
+      // the flag is the winning team's colour
+      ctx.fillStyle = p.dir < 0 !== this.swapped ? '#2F6B3A' : '#C1121F';
       ctx.fillRect(rx + (p.dir < 0 ? -14 : 6), GROUND - 52, 10, 7);
     }
   }
@@ -131,5 +136,25 @@ export const rangTug: Act = {
     const r = w.add(new TugRope(px(x + 12), px(x + 23), px(x + 4)));
     w.solids.push(r.solid);
     (w.flags.tug ??= []).push(r);
+    onPass(w, px(x + 2), (w2) => tara(w2, 'Bhal, Dad! | Good, Dad!', 2.4));
+  },
+};
+
+/** DIS-10 callback: the tug of war again, but the teams have changed ends: the red caps pull from your side now, so the
+ *  red flag that meant "go" in 09 means the rope is coming back at you. Read the lean of the teams, not the colour. */
+export const luitTug: Act = {
+  id: 'dis10-tug',
+  w: 34,
+  advice: 'The tug of war again on the river bank, but the teams have changed ends: the red caps are on your side now. The flag shows the winning team’s colour, so go when the far team (green) is winning.',
+  cps: [1.5, 30.5],
+  paint: (g, c) => {
+    g.pit(c.x + 12, c.x + 22);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const r = w.add(new TugRope(px(x + 12), px(x + 23), px(x + 4), 300, 150, 48, 240, true));
+    w.solids.push(r.solid);
+    (w.flags.tug ??= []).push(r);
+    onPass(w, px(x + 2), (w2) => tara(w2, 'Moi najanu! | I don’t know!', 2.4));
   },
 };

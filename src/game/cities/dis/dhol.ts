@@ -5,6 +5,8 @@ import { Solid } from '../../body';
 import { person } from '../../levels/endkit';
 import { GROUND, px, river } from './entities';
 import type { Act } from '../../levels/acts';
+import { onPass } from '../../levels/trolls';
+import { tara } from '../../levels/endkit';
 
 /**
  * Planks across a pond. On each beat of the dhol, plank i is up when (i + beat) is even, so the next plank rises on every
@@ -95,6 +97,7 @@ export const husDhol: Act = {
     const d = w.add(new DholPlanks(xs, 32, px(x + 3), 120, 84, 5, 30, px(x + 1.5)));
     w.solids.push(...d.planks);
     (w.flags.dhol ??= []).push(d);
+    onPass(w, px(x + 2), (w2) => tara(w2, 'Lahe lahe, Dad? | Slowly slowly, Dad?', 2.4));
   },
 };
 
@@ -116,5 +119,6 @@ export const luitDhol: Act = {
     const d = w.add(new DholPlanks(xs, 32, px(x + 3), 84, 156, 4, 30, px(x + 1.5)));
     w.solids.push(...d.planks);
     (w.flags.dhol ??= []).push(d);
+    onPass(w, px(x + 2), (w2) => tara(w2, 'Akou ebar? | Once again?', 2.4));
   },
 };

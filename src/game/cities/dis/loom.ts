@@ -6,6 +6,8 @@ import { Solid } from '../../body';
 import { person } from '../../levels/endkit';
 import { GROUND, px, Danger } from './entities';
 import type { Act } from '../../levels/acts';
+import { onPass } from '../../levels/trolls';
+import { tara } from '../../levels/endkit';
 
 /**
  * A handloom across a ditch. Each pass: the shuttle flies out along the woven cloth to its edge and back (`fly` ticks
@@ -100,6 +102,7 @@ export const taat: Act = {
     w.add(l.shuttle);
     w.solids.push(l.cloth);
     (w.flags.loom ??= []).push(l);
+    onPass(w, px(x + 2), (w2) => tara(w2, 'Olop! | A little!', 2.4));
     w.add(new Danger({ x: px(x + 6), y: GROUND + 12, w: px(14), h: 40 }, 'dis-taat'));
   },
 };

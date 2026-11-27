@@ -4,7 +4,7 @@
 import { type LevelDef, type World } from '../../world';
 import { bordoisila } from './storm';
 import { taat } from './loom';
-import { rangTug } from './tug';
+import { rangTug, luitTug } from './tug';
 import { husDhol, luitDhol } from './dhol';
 import { lines as L } from './lines';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
@@ -808,5 +808,5 @@ export const levels = (): LevelDef[] => [
   longStage({ base: husoriRoom(), acts: [ghar, bordoisila, husDhol, chowk], cps: [18.5], twist: 'dis-uruka-net', par: 170, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
   longStage({ base: gorhRoom(), acts: [kaziranga, gorhJeep, gorhBagori], twist: 'dis-watch-tower', par: 90, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
   longStage({ base: rangGharRoom(), acts: [rangTug, kaidhara, dhal], twist: 'dis-royal-seat', par: 84, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
-  longStage({ base: luitRoom(), acts: [luitDhol, luitGamosa], twist: 'dis-post-bank', par: 133, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
+  longStage({ base: luitRoom(), acts: [luitDhol, luitTug, luitGamosa], twist: 'dis-post-bank', par: 133, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
 ];

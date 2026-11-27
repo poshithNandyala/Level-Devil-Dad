@@ -5,6 +5,8 @@ import { Entity, type World } from '../../world';
 import { Gust } from '../../entities/traps';
 import { GROUND, px, Danger, river } from './entities';
 import type { Act } from '../../levels/acts';
+import { onPass } from '../../levels/trolls';
+import { tara } from '../../levels/endkit';
 
 export class Bordoisila extends Entity {
   started = -1;
@@ -74,6 +76,7 @@ export const bordoisila: Act = {
       s.hail.push(w.add(new Danger({ x: px(a), y: 0, w: px(b - a), h: GROUND }, 'dis-hail', false)));
     }
     (w.flags.storm ??= []).push(s);
+    onPass(w, px(x + 2), (w2) => tara(w2, 'Roba! | Stop!', 2.4));
     // the bhoral: a granary on four bamboo stilts, thatched, high enough to walk under
     w.add(
       new (class extends Entity {
