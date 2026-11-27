@@ -405,7 +405,7 @@ function stairUpLeft(): (w: World) => Out {
     const p = w.player;
     if (p.onGround) {
       const fr = Math.round((p.y + p.h) / 16);
-      const tx = Math.floor((p.x - 3) / 16);
+      for (const tx of [Math.floor((p.x - 3) / 16), Math.floor((p.x + p.w / 2) / 16)])
       for (let ty = fr - 2; ty <= fr - 1; ty++)
         if (w.tileAt(tx, ty) === 3) {
           jt = 10;
@@ -421,9 +421,9 @@ const parked = (key: string, cfg: { period: number; out: number }) => (w: World)
   const u = cyc(w, st.t0, cfg.period);
   return u >= cfg.out * 2 + 0.02 && u < cfg.out * 2 + 0.25;
 };
-const act06c = (x: number): Step[] => [
-  { hold: 'R', until: X(x + 7.5), max: 600 },
-  { hold: '', until: parked('gtk6u', STAND3), max: 900, note: 'wait for the taxi to pull back in' },
+const ultaRoute = (key: string, cfg: { period: number; out: number }) => (x: number): Step[] => [
+  { policy: stepper(), until: and(ground, X(x + 7.5)), max: 600 },
+  { hold: '', until: parked(key, cfg), max: 1200, note: 'wait for the taxi to pull back in' },
   { policy: stairUp(), until: (w) => w.player.onGround && w.player.y + w.player.h <= 160 && w.player.y + w.player.h >= 158, max: 900, note: 'past the stand, up the stair at the end' },
   { policy: stairUpLeft(), until: (w) => w.player.onGround && w.player.y + w.player.h <= 80, max: 1500, note: 'back along the loop above, up the next stair' },
   { hold: 'R', until: X(x + 36.2), max: 900, note: 'along the top loop, over the hill' },
@@ -441,7 +441,7 @@ const act06e = (x: number): Step[] => [
   { policy: stepper(), until: X(x + 33.5), max: 400 },
 ];
 const act06g = (x: number): Step[] => [
-  { hold: 'R', until: and(ground, X(x + 7.5)), max: 400 },
+  { policy: stepper(), until: and(ground, X(x + 11)), max: 400 },
   { policy: stairUpLeft(), until: (w) => w.player.onGround && w.player.y + w.player.h <= 144, max: 1200, note: 'back, and up the stair behind you' },
   { hold: 'R', until: X(x + 34.2), max: 900, note: 'along the loop above, over the hill' },
   { hold: 'R', until: ground, max: 300 },
@@ -452,6 +452,7 @@ const act06h = (x: number): Step[] => [
   { hold: 'R', until: and(ground, X(x + 22)), max: 600, note: 'down and past the stand' },
   { policy: stepper(), until: X(x + 31.5), max: 400 },
 ];
+const act06i = (x: number): Step[] => [{ policy: gapJumper(), until: and(ground, X(x + 31)), max: 1500, note: 'roof to roof down the hill, hopping each gap' }, { policy: stepper(), until: X(x + 35.5), max: 300 }];
 const bothParked = (w: World) => {
   const a = w.flags.gtk6p as { t0: number };
   if (a.t0 < 0) return false;
@@ -845,6 +846,16 @@ function actDeaths() {
   actDeath('GTK-07', r7, 'gtk07-thau2', 'no stop at the stall', () => blind(), 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-thau2', 'wait once, then walk on blind past the second stall', (x) => [...chiyaRoute('gtk7m')(x).slice(0, 3), ...blind()], 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-jaldi', 'walk, don’t jump: the holes are right there', () => blind(), 'gtk-badal');
+  const r6 = room06();
+  const straight = (): Step[] => [{ policy: stepper(), until: done, max: 3000, note: 'straight on' }];
+  for (const id of ['gtk06-modh', 'gtk06-ulta', 'gtk06-adda', 'gtk06-neeche', 'gtk06-sawari', 'gtk06-ghumao', 'gtk06-peeche'])
+    actDeath('GTK-06', r6, id, 'straight on, past the stand', straight, 'gtk-taxi');
+  actDeath('GTK-06', r6, 'gtk06-upar2', 'go as soon as the first taxi is in', (x) => [
+    { policy: stepper(), until: and(ground, X(x + 8.2), (w) => w.player.y + w.player.h <= 193), max: 900 },
+    { hold: '', until: parked('gtk6p', STAND6), max: 1500 },
+    { policy: stepper(), until: done, max: 900 },
+  ], 'gtk-taxi');
+  actDeath('GTK-06', r6, 'gtk06-chhatein', 'walk off the roof without a hop', straight, 'gtk-khaai');
   const r8 = room08();
   const early = (key: string, i: number): Step[] => [
     { policy: chain(key), until: (w) => { const c = (w.flags[key] as Rig[])[i]; return c.carries(w) && (c.s.ph === 'up' || c.s.ph === 'down') && c.s.k > 0.4 && c.s.k < 0.7; }, max: 6000 },
@@ -972,12 +983,14 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk05-chabutra': act05c,
   'gtk06-chhat': act06,
   'gtk06-modh': act06b,
-  'gtk06-ulta': act06c,
+  'gtk06-ulta': ultaRoute('gtk6u', STAND3),
+  'gtk06-ghumao': ultaRoute('gtk6g', { period: 5.2, out: 1.0 }),
   'gtk06-adda': act06d,
   'gtk06-neeche': act06e,
   'gtk06-upar2': act06f,
   'gtk06-peeche': act06g,
   'gtk06-sawari': act06h,
+  'gtk06-chhatein': act06i,
   'gtk07-thau': act07a,
   'gtk07-chitra': act07b,
   'gtk07-ghumti': act07c,

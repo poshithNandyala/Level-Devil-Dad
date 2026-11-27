@@ -172,7 +172,7 @@ export const act: Act = {
 
 /** act 2: the next bend. Here the short cut down is the only way, and its foot is the taxi stand again: wait
  *  on the last step while the taxi backs out, and go behind it as it pulls back in */
-export const STAND2 = { period: 3.8, out: 0.8 };
+export const STAND2 = { period: 4.6, out: 0.8 };
 export const act2: Act = {
   id: 'gtk06-modh',
   w: 30,
@@ -197,8 +197,8 @@ export const act2: Act = {
 /** act 3: the switchback. The road ends at the hillside; its stair up is at the far end, past a taxi stand, and the
  *  loop above runs back the way you came, to another stair up at its far end, and only the top loop goes on */
 export const STAND3 = { period: 3.6, out: 0.8 };
-export const act3: Act = {
-  id: 'gtk06-ulta',
+export const ultaAct = (id: string, key: string, cfg: { period: number; out: number }): Act => ({
+  id,
   w: 36,
   advice: 'The road ends at the hillside. Get past the taxi stand while the taxi is in, up the stair at the end, then along the loop above back the way you came (yes, back), up the next stair, and on along the top loop over the hill.',
   paint: (g, c) => {
@@ -213,7 +213,7 @@ export const act3: Act = {
     g.fill(x - 6, x + 35, 5, 5, '=');
   },
   build: (w, c) => {
-    standTaxi(w, c.X(14), c.X(9.5), FL, c.X(2), 'gtk6u', STAND3);
+    standTaxi(w, c.X(14), c.X(9.5), FL, c.X(2), key, cfg);
     decor(w, -3, (ctx) => {
       box(ctx, c.X(13), px(12), px(6), 3, '#2E86AB');
       box(ctx, c.X(13), px(12), 2, px(3), '#4E5A62');
@@ -227,7 +227,10 @@ export const act3: Act = {
     ]);
     sign(w, c.x + 20, 6.4, 3.6, 'UPPER RD', 'green', 'left', 'this way');
   },
-};
+});
+export const act3 = ultaAct('gtk06-ulta', 'gtk6u', STAND3);
+/** act 10: one more switchback, its stand slower */
+export const act10 = ultaAct('gtk06-ghumao', 'gtk6g', { period: 5.2, out: 1.0 });
 /** act 4: the stair up comes out at the top among the taxis: wait on the step below the top while one backs out */
 export const act4: Act = {
   id: 'gtk06-adda',
@@ -302,9 +305,9 @@ export const act7: Act = {
   paint: (g, c) => {
     const x = c.x;
     g.fill(x + 30, x + 33, 10, 17, '#');
-    g.fill(x + 3, x + 6, 13, 13, '=');
-    g.fill(x + 1, x + 4, 11, 11, '=');
-    g.fill(x - 2, x + 33, 9, 9, '=');
+    g.fill(x + 3, x + 9, 13, 13, '=');
+    g.fill(x + 0, x + 5, 11, 11, '=');
+    g.fill(x - 8, x + 33, 9, 9, '=');
   },
   build: (w, c) => {
     stairArt(w, [
@@ -322,7 +325,7 @@ export const act7: Act = {
 
 /** act 8: the share-jeep stand at the foot of a long stair down. A share jeep waits to fill up and then pulls
  *  out across the foot of the stair, and the next one backs straight in: wait on the step for the gap */
-export const JEEP = { period: 6.2, out: 1.1 };
+export const JEEP = { period: 8.0, out: 1.4 };
 export const act8: Act = {
   id: 'gtk06-sawari',
   w: 32,
@@ -345,6 +348,55 @@ export const act8: Act = {
       box(ctx, c.X(21) - 2, px(13), 2, px(3), '#4E5A62');
     });
     sign(w, c.x + 13, 9.4, 4.2, 'SHARE JEEP', 'green', null, 'singtam, rangpo');
+  },
+};
+
+/** act 9: roofs all the way down the hill. Each house's flat roof is the next one's step; the stair up from each
+ *  roof goes to a front door, and a jump off a doorstep on to the roof below is too far */
+export const act9: Act = {
+  id: 'gtk06-chhatein',
+  w: 36,
+  advice: 'Down the hill over the rooftops: each flat roof is a step down to the next, a little hop across the gap. The stairs up only go to front doors; the gaps between the houses go all the way down.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x, x + 35, 15, 15, '.');
+    g.fill(x, x + 2, 11, 17, '#');
+    g.fill(x + 3, x + 10, 10, 17, '#');
+    g.fill(x + 12, x + 19, 12, 17, '#');
+    g.fill(x + 21, x + 28, 14, 17, '#');
+    g.fill(x + 30, x + 35, 16, 17, '#');
+    for (const [a, r] of [
+      [x + 5, 8],
+      [x + 7, 6],
+      [x + 14, 10],
+      [x + 16, 8],
+      [x + 23, 12],
+      [x + 25, 10],
+    ] as [number, number][])
+      g.fill(a, a + 2, r, r, '=');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    stairArt(w, [
+      [x + 5, 8],
+      [x + 14, 10],
+      [x + 23, 12],
+    ]);
+    decor(w, -2, (ctx) => {
+      for (const [a, r] of [
+        [x + 8, 6],
+        [x + 17, 8],
+        [x + 26, 10],
+      ]) {
+        box(ctx, px(a), px(r) - 32, px(2), 32, '#8E6C8A');
+        box(ctx, px(a) + 4, px(r) - 28, px(2) - 8, 28, '#5B4458');
+      }
+      for (const a of [x + 4, x + 13, x + 22]) {
+        box(ctx, px(a), px(10) - 8, 8, 8, '#B5562E');
+      }
+    });
+    w.add(new Rig(c.X(0), px(17) - 2, px(36), 24, { cause: 'gtk-khaai', inset: 0 }));
+    sign(w, x + 0.4, 12.6, 3.4, 'SEEDHI', 'green', 'down', 'roofs');
   },
 };
 
