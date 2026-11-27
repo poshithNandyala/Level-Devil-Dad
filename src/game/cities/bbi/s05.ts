@@ -372,14 +372,14 @@ export function rajaAct(id: string, w0: number, pieces: RajaPiece[], advice: str
           pitBlame(w, c.x + p.at, c.x + p.at + 1, 'bbi-dhenki', 'spikes');
           dhenki(w, c.x + p.at, c.x + p.at + 1);
         } else if (p.k === 'stone') sila(w, c.x + p.at + 0.75);
-        else cart(w, c.x + p.at, c.x + p.at + 6);
+        else cart(w, c.x + p.at, c.x + p.at + 2);
       }
     },
   };
 }
 export const RAJA4: RajaPiece[] = [{ k: 'stone', at: 3 }, { k: 'mill', at: 11 }, { k: 'cart', at: 18 }, { k: 'pounder', at: 25 }];
 export const act4 = rajaAct('bbi05-pokhari', 30, RAJA4, 'Past the pond: a grinding stone at a step, a hand mill in the channel, a cart and a pounder in its pit. Touch none of them: climb the step itself, jump the channel and the pit, hop the cart.');
-export const RAJA5: RajaPiece[] = [{ k: 'cart', at: 3 }, { k: 'pounder', at: 9 }, { k: 'mill', at: 14 }, { k: 'stone', at: 20 }, { k: 'cart', at: 28 }];
+export const RAJA5: RajaPiece[] = [{ k: 'cart', at: 3 }, { k: 'pounder', at: 9 }, { k: 'mill', at: 14 }, { k: 'stone', at: 20 }, { k: 'cart', at: 27 }];
 export const act5 = rajaAct('bbi05-gaon', 34, RAJA5, 'The far end of the village, the same still machines in a new order. Touch nothing.');
 
 /**
@@ -456,8 +456,8 @@ export function tendaAct(id: string, wallRows: number, up: number, key: string, 
     },
   };
 }
-export const act6 = tendaAct('bbi05-tenda', 5, 3.5, 'bbi5t', 'A wall too high to jump, and the well’s water lift beside it. This once, start a machine on purpose: step on the bucket, ride it up, and step off on to the wall before it swings back down into the well.');
-export const act7 = tendaAct('bbi05-kua', 6, 4.5, 'bbi5k', 'A higher wall and a slower lift: on to the bucket, up, and off at the top before it drops.');
+export const act6 = tendaAct('bbi05-tenda', 5, 5.0, 'bbi5t', 'A wall too high to jump, and the well’s water lift beside it. This once, start a machine on purpose: step on the bucket, ride it up, and step off on to the wall before it swings back down into the well.');
+export const act7 = tendaAct('bbi05-kua', 6, 6.5, 'bbi5k', 'A higher wall and a slower lift: on to the bucket, up, and off at the top before it drops.');
 
 /** the mill on the bank: started on purpose, it flings you over a channel too wide to jump; stand on its far half */
 export function flingAct(id: string, key: string, advice: string): Act {
@@ -485,7 +485,7 @@ export function flingAct(id: string, key: string, advice: string): Act {
             if (st.started >= 0 && since(w2, st.started) > 0.5 && since(w2, st.started) < 0.52 && r.rides(w2)) {
               // it spins the way you stand: the far half throws you forward, the near half back
               const fwd = p.cx > r.x + 16;
-              p.vx = fwd ? 290 : -200;
+              p.vx = fwd ? 340 : -200;
               p.vy = -360;
               p.onGround = false;
               p.coyoteT = 0;
@@ -509,6 +509,113 @@ export function flingAct(id: string, key: string, advice: string): Act {
   };
 }
 export const act8 = flingAct('bbi05-chakki', 'bbi5f', 'A channel too wide to jump, and a big hand mill on the bank. Start it on purpose: stand on its far half, and it spins you forward over the water. On the near half it throws you back.');
+
+/**
+ * The bullocks lie across a narrow lane under the hayloft, too tall to climb past. Touch their cart and they get
+ * up and walk on down the lane, slowly, and out through the gate at its end. Follow, but not close: the cart's
+ * tail swings at whoever walks right behind it.
+ */
+export function bailAct(id: string, len: number, v: number, key: string, advice?: string): Act {
+  const BAIL = { c0: 3, len, v, kick: 22 };
+  return {
+  id,
+  w: len + 8,
+  advice: advice ?? 'The bullocks lie right across the lane under the hayloft. Touch their cart and they get up and walk on down it, slowly: step back at once and follow them, well behind the cart, until they turn out through the gate.',
+  cps: [],
+  paint: (g, c) => {
+    g.fill(c.x + 2, c.x + BAIL.c0 + BAIL.len + 1, 11, 11, '#');
+  },
+  build: (w, c) => {
+    village(w, c.x, c.x + len + 8);
+    const st = { started: -1, x: c.X(BAIL.c0 + 1), gone: false };
+    (w.flags[key] as unknown) = st;
+    const cartR = w.add(
+      new Rig(c.X(BAIL.c0) - 4, FL - 12, 16, 12, {
+        solid: true,
+        layer: 3,
+        tick: (r, w2) => {
+          if (st.started < 0 && touches(w2, r.x, r.y, r.w, r.h)) st.started = w2.tick;
+          if (st.started >= 0 && !st.gone) {
+            r.s.fx = Math.min(c.X(BAIL.c0 + BAIL.len), ((r.s.fx as number | undefined) ?? r.x) + BAIL.v / 120);
+            r.moveTo(w2, r.s.fx, r.y);
+            r.solid!.velX = 0;
+          }
+          if (r.x >= c.X(BAIL.c0 + BAIL.len) - 1) {
+            st.gone = true;
+            r.setSolid(false);
+          }
+          st.x = r.x + 16;
+        },
+        paint: (ctx, r) => {
+          if (st.gone) return;
+          box(ctx, r.x, r.y + 2, r.w, 5, '#8D5A2B');
+          ctx.fillStyle = '#5D3A1E';
+          ctx.beginPath();
+          ctx.arc(r.x + 8, r.y + 9, 3, 0, Math.PI * 2);
+          ctx.fill();
+          if (st.started < 0) restCloth(ctx, r.x, r.y + 2, r.w);
+        },
+      }),
+    );
+    void cartR;
+    // the two bullocks: a block too tall to get past while they lie (the hayloft is right above), and a kick
+    // behind them while they walk
+    w.add(
+      new Rig(c.X(BAIL.c0) + 12, FL - 28, 44, 28, {
+        solid: true,
+        layer: 3,
+        tick: (r, w2) => {
+          r.moveTo(w2, st.x - 4, FL - 28);
+          r.solid!.velX = 0;
+          if (st.gone) r.setSolid(false);
+        },
+        paint: (ctx, r, w2) => {
+          if (st.gone) return;
+          const up = st.started >= 0;
+          ctx.fillStyle = '#ECE6DA';
+          if (up) {
+            const step = Math.floor(w2.tick / 15) % 2;
+            for (const bx of [r.x + 2, r.x + 24]) {
+              ctx.fillRect(bx, r.y + 6, 20, 12);
+              ctx.fillRect(bx + 16, r.y, 7, 8);
+              ctx.fillRect(bx + 2 + step * 2, r.y + 18, 3, 10);
+              ctx.fillRect(bx + 14 - step * 2, r.y + 18, 3, 10);
+            }
+          } else {
+            ctx.fillRect(r.x + 2, r.y + 16, 40, 12);
+            ctx.fillRect(r.x + 34, r.y + 10, 8, 8);
+          }
+          box(ctx, r.x + 20, r.y + 8, 2, 4, '#5D3A1E');
+        },
+      }),
+    );
+    w.add(
+      new Rig(0, FL - 20, BAIL.kick, 20, {
+        cause: 'bbi-bail',
+        inset: 0,
+        layer: 4,
+        live: (_r, w2) => st.started >= 0 && !st.gone && since(w2, st.started) > 0.6,
+        tick: (r) => {
+          // the cart's tail swings at whoever walks right behind it once they are moving
+          r.x = st.x - 16 - BAIL.kick;
+        },
+      }),
+    );
+    // the gate at the lane's end, where they turn out
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: -3,
+        paint: (ctx) => {
+          box(ctx, c.X(BAIL.c0 + BAIL.len + 2), FL - 50, 4, 50, '#6E4A2E');
+          box(ctx, c.X(BAIL.c0 + BAIL.len + 2) + 10, FL - 50, 4, 50, '#6E4A2E');
+        },
+      }),
+    );
+  },
+};
+}
+export const act9 = bailAct('bbi05-bail', 14, 38, 'bbi5b');
+export const act10 = bailAct('bbi05-gali', 20, 22, 'bbi5g', 'A longer lane and slower bullocks: touch the cart, step back, and follow well behind it all the way to the gate.');
 
 /** ending: the house with podapitha on the verandah step; the front door up there is locked. The way in is
  *  below, behind the step. On the verandah, the grinding stone's roller starts when you land by it. */

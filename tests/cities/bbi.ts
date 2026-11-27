@@ -621,6 +621,13 @@ const tendaRun = (k: string, rows: number) => (x: number): Step[] => [
   { hold: 'R', until: X(x + 15.5), max: 300 },
 ];
 
+const bailRun = (k: string, len: number) => (x: number): Step[] => [
+  { hold: 'R', until: (w) => (w.flags[k] as { started: number }).started >= 0, max: 600, note: 'touch the cart: they get up' },
+  { hold: 'L', ticks: 30, note: 'step back at once' },
+  { steer: (w) => (w.player.x + w.player.w < (w.flags[k] as { x: number }).x - 16 - 22 - 20 ? 'R' : ''), until: (w) => (w.flags[k] as { gone: boolean }).gone, max: 2400, note: 'follow, well back' },
+  { hold: 'R', until: X(x + len + 7.5), max: 400 },
+];
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['BBI-01'] = [...pastG1(), ...tourTail()];
   S['BBI-02'] = room02();
@@ -765,6 +772,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02
     { hold: '', until: (w) => w.player.onGround && w.player.x > px(x + 13), max: 400, note: 'flung over the channel' },
     { hold: 'R', until: X(x + 17.5), max: 300 },
   ],
+  'bbi05-bail': bailRun('bbi5b', 14),
+  'bbi05-gali': bailRun('bbi5g', 20),
   'bbi10-mela': (x) => [...crossTroupe('bbi10m0', x, 3, 6, 'bridge'), ...crossTroupe('bbi10m1', x, 13, 7, 'wheel'), { hold: 'R', until: X(x + 23.5), max: 300 }],
 };
 const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy, 'bbi-pose-gate': gatePolicy, 'bbi-leaf-plate': platePolicy, 'bbi-horse-gap': horseGap, 'bbi-ribbon-snip': ribbonPolicy };
