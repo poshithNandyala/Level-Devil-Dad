@@ -7,8 +7,8 @@ Patna wrote, copied), `common.ts`, `endings.ts`, `levels.ts`, `lines.ts`, `theme
 
 **Status (round 2):** all ten stages built and green (routes, NAIVE, FIX, MISTAKES, checkpoints, cpsafe strict at lag
 0/6/12, items, allocation, jump audit, the module guard). Lengths: 01 13.5 s, 02 33.9 s, 03 25.3 s, 04 12.4 s,
-05 31.1 s, 06 35.3 s, 07 50.2 s, 08 68.6 s, 09 28.8 s, 10 28.1 s: 04, 05, 06, 07, 09 and 10 are under their floors
-(25 / 60 / 60 / 120 / 60 / 90 s). Build reports: `/local/home/saiposh/personal/ldd-inbox/reports/cities/shl/BUILD.md`
+05 31.1 s, 06 35.3 s, 07 50.2 s, 08 58.9 s, 09 28.8 s, 10 28.1 s: 04, 05, 06, 07, 08 (by 1.1 s), 09 and 10 are under their floors
+(25 / 60 / 60 / 120 / 60 / 60 / 90 s). Build reports: `/local/home/saiposh/personal/ldd-inbox/reports/cities/shl/BUILD.md`
 (round 1) and `BUILD-2.md` (round 2, with the honest numbers and what is missing).
 
 ## Stages
