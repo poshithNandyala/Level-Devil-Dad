@@ -7,6 +7,8 @@ export const causeLines: Record<string, string[]> = {
   'dis-dheki-tail': ['Dheki! The tail flew up when she stepped off, and you went into the trench.', 'The tail is a plank only while she presses it. Cross it at once, on to the pedestal, and never wait on it.'],
   'dis-tel': ['Tel! The shine on the cold pan was only oil, and you slid off into the ash.', 'The fire is out and the cook is asleep: nothing is poured and nothing is rolled. Matte crepes have set and stay; hop from matte to matte.'],
   'dis-horin': ['Horin! A hog deer crossed the road through you.', 'Cross each marked corridor between deer, and spend the card’s time on the bench under the tree: no corridor reaches it. Leave the bench so you reach the gate just as the card says GO.'],
+  'dis-talatal': ['Talatal! The bottom step was gone, and you went down the shaft.', 'Don’t race the stair to the bottom. Stop on the step before the last: it is the one that comes back up. Wait on it as it rises.'],
+  'dis-doba': ['Doba! The stair went into the flooded vault, and you with it.', 'Keep ahead of the fall going down, and stop on the step before the last. At the top, the landing goes once the stair is done.'],
   'dis-luit': ['Luit! The sandbar was not there, or it went out from under you.', 'Read the level post. When the siren goes the next bar comes up first, the bar you stand on goes last, and a bar that narrows keeps its left end. The hut never moves.'],
   'dis-basket': ['Tokari! The plucker’s basket swung into you.', 'Stay a few steps behind her and follow. Never hop over her, and when the path is wet wait before it: you can’t stop on it.'],
   'dis-tawa': ['Zui! You fell on the hot pan.', 'Hop only when the next crepe is poured and shiny.'],

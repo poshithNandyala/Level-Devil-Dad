@@ -17,6 +17,7 @@ import type { Bordoisila } from '../../src/game/cities/dis/storm';
 import type { TugRope } from '../../src/game/cities/dis/tug';
 import type { Dheki } from '../../src/game/cities/dis/dheki';
 import type { TimeCard } from '../../src/game/cities/dis/card';
+import type { Stair } from '../../src/game/cities/dis/stair';
 
 type Out = { move: 'L' | 'R' | ''; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
@@ -361,6 +362,13 @@ const crossDheki = (c: number, i: number, second = false): Step[] => [
   { hold: '', until: (w) => !dk(w, i).pressed(w) && (!second || dk(w, i).t(w) >= 250), max: 900, note: second ? 'let the quick fall go, wait for the second' : 'wait on the pedestal till the pestle drops' },
   { hold: 'R', until: X(c + 8.1), max: 200, note: 'over the mortar on the pestle' },
 ];
+const stairs = (w: World) => (w.flags.stair as Stair[]);
+/** up a run of one-tile brick steps: walk right and hop only when a riser is in front, until column `top` on the ground */
+const wallAhead = (w: World) => !!w.solidAt(w.player.x + w.player.w + 2, w.player.y + w.player.h - 10, 2, 6);
+const hopsUp = (c0: number, n: number): Step[] => [
+  { policy: withHold((w, h) => (w.player.onGround && wallAhead(w) ? (h(8), { move: 'R', jump: true }) : { move: 'R', jump: false })), until: and(ground, X(c0 + n - 0.6)), max: 900, note: 'up the brick steps' },
+  { hold: '', ticks: 6 },
+];
 const tug = (w: World) => (w.flags.tug as TugRope[]).find((r) => w.player.cx < r.d1 + 40)!;
 type Play = (x: number) => Step[];
 const ACT_DEATHS: { act: string; stage: string; naive: [Play, string, string]; fix?: [Play, string, string] }[] = [];
@@ -408,7 +416,7 @@ act('dis09-tug', 'DIS-09', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-
 /** more scripted deaths inside an act: [act, stage, play from the act's start, cause, what] */
 const ACT_MORE: [string, string, Play, string, string][] = [];
 ACT_MORE.push(['dis07-dheki', 'DIS-07', (x) => [...crossDheki(x + 6, 0), ...crossDheki(x + 14, 1), { hold: 'R', until: X(x + 24.6), max: 400 }, ...crossDheki(x + 29, 2), { hold: 'R', until: done, max: 600 }], 'dis-dheki', 'two women at the third dheki: goes on its first, quick fall, and the pestle is pressed up again under him']);
-act('dis10-thanda', 'DIS-10', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-tel', 'walks on to the shine, as 04 taught'], [(x) => [{ hold: 'R', until: X(x + 7.4), max: 600 }, { hold: 'R', jump: 8, ticks: 8 }, { hold: 'R', until: done, max: 600 }], 'dis-tel', 'hops short on to the shiny patch to wait for it to set, as in 04']);
+act('dis10-talatal', 'DIS-10', [(x) => [...hopsUp(x + 2, 6), { hold: 'R', until: and(ground, X(x + 14.2)), max: 400 }, { hold: '', until: done, max: 900 }], 'dis-doba', 'stops on the step before the last to wait for it, as in 04']);
 act('dis07-card', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-gate', 'runs to the exit gate: it is shut before the card’s time'], [(x) => [{ hold: 'R', until: X(x + 25), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'dawdles on the road short of the gate: a corridor']);
 ACT_MORE.push(['dis07-card', 'DIS-07', (x) => [{ hold: 'R', until: X(x + 32), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'waits at the gate for the card: the deer cross there']);
 act('dis07-dheki', 'DIS-07', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-dheki', 'runs and hops the mortar while the pestle is up'], [(x) => [{ hold: 'R', until: X(x + 7), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-dheki-tail', 'waits on the tail plank: she steps off and it flies up']);
@@ -497,7 +505,16 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('DIS-02', 0, []);
   S['DIS-03'] = [{ policy: follow(0), until: and(ground, X(31.4)), max: 4000, note: 'a few steps behind the plucker, up each hedge once it is picked' }];
   lengthen('DIS-03', 0, []);
-  S['DIS-04'] = [{ policy: crossPan(0), until: and(ground, X(27.5)), max: 3000, note: 'crepe to crepe, only ever on a shiny one' }];
+  S['DIS-04'] = [
+    ...hopsUp(1, 5),
+    { hold: 'R', until: X(5.4), max: 300 },
+    { hold: 'R', jump: 14, ticks: 14, note: 'up on to the landing: the stair starts to fall' },
+    { hold: 'R', until: and(ground, X(17.4)), max: 400, note: 'down with the fall, on to the step before the last' },
+    { hold: '', until: (w) => stairs(w)[0].solids[5].y <= px(9), max: 600, note: 'wait on it as it rises' },
+    { hold: 'R', until: X(18.6), max: 100 },
+    { hold: 'R', jump: 14, ticks: 14, note: 'over to the far side' },
+    { hold: 'R', until: and(ground, X(28)), max: 400 },
+  ];
   lengthen('DIS-04', 0, []);
   S['DIS-05'] = gamosaSet(0, 18);
   lengthen('DIS-05', 0, []);
@@ -565,7 +582,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   // straight through every host, under the platform: three gamosas, and the pit is under the cloth
   'DIS-05': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'dis-gamosa' },
   // run at it: the next crepe isn't poured yet
-  'DIS-04': { steps: [{ hold: 'R', until: X(6.3), max: 400 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 12, ticks: 20 }))], cause: 'dis-tawa' },
+  'DIS-04': { steps: [...hopsUp(1, 5), { hold: 'R', until: X(5.4), max: 300 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 900 }], cause: 'dis-talatal' },
   // run at the plucker and the hedge
   'DIS-03': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'dis-basket' },
   // run and jump from bar to bar: the next one isn't there yet
@@ -602,7 +619,8 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   // wait for the silt on the near slab (in front of the spur): the river takes it
   'DIS-06': { steps: [{ hold: 'R', until: X(13.6), max: 600 }, { hold: '', until: done, max: 900 }], cause: 'dis-bank' },
   // wait on the first shiny crepe and stay: it dulls, sets, and is rolled with you in it
-  'DIS-04': { steps: [{ hold: 'R', until: X(6.3), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: done, max: 1500 }], cause: 'dis-roll' },
+  // the careful play: wait on the landing for the stair to finish falling; the landing goes too
+  'DIS-04': { steps: [...hopsUp(1, 5), { hold: 'R', until: X(5.4), max: 300 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: '', until: done, max: 900 }], cause: 'dis-doba' },
   // hop over her to get ahead: pinned against the hedge when she picks
   'DIS-03': { steps: [{ hold: 'R', until: (w) => pluckers(w)[0].phase !== 'wait' && pluckers(w)[0].x - w.player.cx < 30, max: 900 }, { hold: 'R', jump: 20, ticks: 20, note: 'over her' }, { hold: 'R', until: done, max: 1500 }], cause: 'dis-basket' },
   // the obvious correction: wait on every bar for the next one. The narrowing bar goes out from under the right end
@@ -657,7 +675,7 @@ export const ONE_PLAY: Record<string, string> = {
   'dis05-atithi': 'the guest-house givers have one trap, three gamosas over your feet at the pit',
   'dis07-chowk': 'the chowk gates have one trap, the stakes: early, late and out of the ring all meet them',
   'dis09-chaal': 'the roof has one trap, the ball down the oil: every stop off a grip pad meets it',
-  'dis10-thanda': 'the cold pan’s one trap is the oil: shine now means a slide, and every wrong step is a step on the shine',
+  'dis10-talatal': 'the falling stair has one trap, the vault under it: any stop on a step meets the fall',
   'dis10-gamosa': 'the callback has one trap, the blinding gamosa at the pit: walking into the givers and taking the fourth one both blind you',
 };
 /** acts whose obvious fix is the stage's FIX play (a different trap from the stage's NAIVE) */
@@ -765,12 +783,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...hopR(x + 19.4, 'off the last slab', 12),
     { hold: 'R', until: X(x + 29), max: 600 },
   ],
-  'dis10-thanda': mark('dis10-thanda', (x) => [
-    { hold: 'R', until: X(x + 7.6), max: 600, note: 'on to the first matte crepe' },
-    ...hopR(x + 8.2, 'over the oil on to the next matte one', 14),
-    ...hopR(x + 13.2, 'over the oil', 14),
-    ...hopR(x + 18.2, 'over the oil', 14),
-    { hold: 'R', until: and(ground, X(x + 28)), max: 400 },
+  'dis10-talatal': mark('dis10-talatal', (x) => [
+    ...hopsUp(x + 2, 6),
+    { hold: 'R', until: and(ground, X(x + 21)), max: 600, note: 'straight down and out before the fall climbs up' },
   ]),
   'dis07-card': mark('dis07-card', (x) => [
     { hold: 'R', until: X(x + 16), max: 600, note: 'take the card, through the first corridor, to the bench' },

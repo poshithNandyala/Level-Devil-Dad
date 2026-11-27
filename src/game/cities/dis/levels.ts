@@ -9,7 +9,7 @@ import { lines as L } from './lines';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
 import type { Act } from '../../levels/acts';
 import { husDheki } from './dheki';
-import { luitThanda } from './cold';
+import { luitTalatal, stair } from './stair';
 import { husCard } from './card';
 import { onPass } from '../../levels/trolls';
 import { tour } from '../../levels/tour';
@@ -214,6 +214,43 @@ export function pitha(w: World, c0: number, c1: number, defs: { x: number; w: nu
   p.setup(w);
   (w.flags.pans ??= []).push(p);
   return p;
+}
+
+// ================================================================== DIS-04: Talatal (allocation v3 F448; the pitha room was TAKEN)
+function talatalRoom(): LevelDef {
+  return {
+    id: 'DIS-04',
+    city: 'DIS',
+    index: 4,
+    name: 'Talatal',
+    nameEn: 'The palace below ground',
+    tagline: 'Talatal Ghar at Sivasagar: the Ahom palace has more floors under the ground than above it, and its stairs are old.',
+    hint: 'Climb on to the landing at the top of the stair. As soon as you are on it the stair starts to fall, one step after another, from the top down, and the bottom step is already gone. Go down with it, keeping ahead of the fall, and stop on the step before the last: that one comes back up. Wait on it as it rises, then hop over to the far side. Wait at the top instead and the landing goes too, into the flooded vault.',
+    par: 22,
+    map: Grid.ground(15).pit(6, 20).fill(1, 5, 14, 14, '#').fill(2, 5, 13, 13, '#').fill(3, 5, 12, 12, '#').fill(4, 5, 11, 11, '#').fill(5, 5, 10, 10, '#').fill(21, 31, 9, 14, '#').put(0, 14, '@').put(30, 8, 'E').rows(),
+    build(w: World) {
+      door(w);
+      // the landing (sinks once the stair is done) and five steps down; the fifth, the step before the last, rises back
+      stair(
+        w,
+        [
+          { c: 6, r: 9, w: 3, fall: 330 },
+          { c: 9, r: 10, w: 2, fall: 120 },
+          { c: 11, r: 11, w: 2, fall: 150 },
+          { c: 13, r: 12, w: 2, fall: 180 },
+          { c: 15, r: 13, w: 2, fall: 210 },
+          { c: 17, r: 14, w: 2, fall: Infinity, rise: [230, 5, 80] },
+        ],
+        6.4,
+        [6, 19],
+        [19, 21],
+      );
+      sign(w, 1.2, 10.4, 3.4, 'TALATAL', 'shop', null, 'palace stairs');
+      rival(w, 2, 15, 1, tara(1));
+      onPass(w, px(6.4), (w2) => taraSays(w2, 'Jaldi, Dad! Tolot! | Quick, Dad! Down!', 2.2));
+      collectible(w, 'dis-pitha', 18, 7.2);
+    },
+  };
 }
 
 function pithaRoom(): LevelDef {
@@ -662,11 +699,11 @@ export const levels = (): LevelDef[] => [
   { ...tourLevel(), shape: 'tour', meta: { family: 'carrier-spills-on-contact', betrayals: ['carrier-spill'], ending: 'dis-tea-tray' } },
   longStage({ base: charRoom(), acts: [chapori], twist: 'dis-hut-shut', par: 36, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
   longStage({ base: teaRoom(), acts: [bagan], cps: [14.5], twist: 'dis-muga-reel', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-muga-reel' } }),
-  longStage({ base: pithaRoom(), acts: [runUp(bhogali, 3)], twist: 'dis-laru-plate', par: 34, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
+  longStage({ base: talatalRoom(), acts: [], twist: 'dis-laru-plate', par: 34, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } /* repo allocation.json label; v3 names this slot collapsing-stair-penultimate-rises (the integrator lands it) */ }),
   longStage({ base: gamosaRoom(), acts: [atithi], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
   longStage({ base: majuliRoom(), acts: [], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
   longStage({ base: husoriRoom(), acts: [bordoisila, runUp(husDhol, 3), husDheki, husCard, chowk], cps: [16], twist: 'dis-uruka-net', par: 90, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
   longStage({ base: gorhRoom(), acts: [gorhJeep, runUp(gorhBagori, 3)], twist: 'dis-watch-tower', par: 74, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
   longStage({ base: rangGharRoom(), acts: [rangTug, kaidhara], twist: 'dis-royal-seat', par: 36, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
-  longStage({ base: luitRoom(), acts: [runUp(luitDhol, 3), runUp(luitBordoisila, 3), luitTug, luitThanda, luitGamosa], twist: 'dis-post-bank', par: 63, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
+  longStage({ base: luitRoom(), acts: [runUp(luitDhol, 3), runUp(luitBordoisila, 3), luitTug, luitTalatal, luitGamosa], twist: 'dis-post-bank', par: 63, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
 ];
