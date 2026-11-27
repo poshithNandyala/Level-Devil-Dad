@@ -3,7 +3,7 @@
 // tests/modules.test.ts fails until every table is filled. Scaffolded by scripts/dev/new-city.mjs.
 import type { World } from '../../src/game/world';
 import { Door as DoorE, type Door } from '../../src/game/entities/basics';
-import { Step, X, and, ground } from '../runner';
+import { Step, X, XL, and, ground } from '../runner';
 import type { CityTests } from '../city-tests';
 import { LEVELS } from '../../src/game/levels';
 import { Carrier, SandField } from '../../src/game/cities/dis/entities';
@@ -420,6 +420,7 @@ act('dis07-bordoisila', 'DIS-07', [(x) => [{ hold: 'R', until: X(x + 8.6), max: 
 act('dis10-tug', 'DIS-10', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir < 0 && p.t < 6; }, max: 2400 }, { hold: 'R', until: done, max: 900 }], 'dis-rope', 'goes on the red flag, as in 09: red is the near team now']);
 act('dis10-bordoisila', 'DIS-10', [(x) => [...hopR(x + 11.3, 'jumps the channel before the wind', 14), { hold: 'R', until: done, max: 600 }], 'dis-bordoisila', 'jumps the channel before the wind comes'], [(x) => [{ hold: 'R', until: X(x + 6.2), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-bhoral', 'shelters under the bhoral, as in 07']);
 act('dis08-jeep', 'DIS-08', [rhinoNaive, 'dis-beel', 'walks into the tall grass'], [rhinoFix, 'dis-gorh', 'waits at the edge of the grass, where the second jeep is']);
+act('dis08-duijeep', 'DIS-08', [(x) => [{ hold: 'R', until: X(x + 5.1), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-gorh', 'waits at the grass edge for the loud jeep’s charge: the rhino comes for the near one, at him'], [(x) => [{ hold: 'R', until: X(x + 5.8), max: 600 }, { hold: 'R', until: done, max: 900 }], 'dis-beel', 'walks into the grass toward the loud jeep’s line before any charge']);
 act('dis08-bagori', 'DIS-08', [(x) => [{ hold: 'R', until: X(x + 2.4), max: 600 }, { hold: '', until: done, max: 2000 }], 'dis-gorh', 'stays on the bank: the rhino comes from behind'], [(x) => [{ hold: 'R', until: X(x + 1.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: '', until: (w) => charges(w).some((c) => c.d.c0 === x + 11 && c.phase === 'rest'), max: 2000 }, { hold: 'R', until: done, max: 2000 }], 'dis-beel', 'off the hay as soon as the rhino stops halfway']);
 act('dis10-gamosa', 'DIS-10', [() => [{ hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'walks into every giver'], [(x) => [{ hold: 'R', until: X(x + 12.4), max: 600 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: ground, max: 200 }, { hold: '', ticks: 40, note: 'the fourth host puts his gamosa on him' }, { hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'a little hop over the third giver lands in the fourth one’s arms: three gamosas, blind at the pit']);
 /** after the routes exist: each act's deaths start from the stage route up to the act's own start */
@@ -741,6 +742,12 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'dis07-ghat': mark('dis07-ghat', (x) => [...ghatWait(x + 10, x + 14), { hold: 'R', until: and(ground, X(x + 29)), max: 600 }]),
   'dis07-lane': mark('dis07-lane', (x) => [{ policy: atTheGate(-1), until: and(ground, X(x + 77)), max: 9000, note: 'three gates' }]),
   'dis08-jeep': mark('dis08-jeep', (x) => [{ policy: rhinoWalk(), until: and(ground, X(x + 39)), max: 4000, note: 'stand back for both charges, then the strip' }]),
+  'dis08-duijeep': mark('dis08-duijeep', (x) => [
+    { hold: 'R', until: X(x + 5.1), max: 600, note: 'to the grass: both jeeps start up' },
+    { hold: 'L', until: XL(x + 2.4), max: 200, note: 'back off the end of the near jeep’s strip' },
+    { hold: '', until: (w) => charges(w).filter((c) => c.d.c0 === x + 6).every((c) => c.phase === 'gone'), max: 1500, note: 'the rhino charges the near jeep, rests, goes' },
+    { policy: rhinoWalk(), until: and(ground, X(x + 25)), max: 1500 },
+  ]),
   'dis08-bagori': mark('dis08-bagori', (x) => [
     { hold: 'R', until: X(x + 1.4), max: 600 },
     { hold: 'R', jump: 12, ticks: 12, note: 'up on the haystack' },

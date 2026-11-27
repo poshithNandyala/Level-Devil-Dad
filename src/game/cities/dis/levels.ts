@@ -22,7 +22,7 @@ import { Pan } from './pitha';
 import { husori } from './husori';
 import { charge } from './gorh';
 import { Eave, roof, type RoofSection } from './rangghar';
-import { majChar3, majGhat, majPitha, gorhKohora, luitGhat, gamChar, gamGhat, gamHusori, gorhBagori, gorhJeep, husGhat, husLane, husPaar, luitChang, luitChar, luitGamosa, luitGorh, majChang, majChang2, majChar, rangBihu, rangWide, teaBoy } from './acts2';
+import { majChar3, majGhat, majPitha, gorhKohora, luitGhat, gamChar, gamGhat, gamHusori, gorhBagori, gorhDuiJeep, gorhJeep, husGhat, husLane, husPaar, luitChang, luitChar, luitGamosa, luitGorh, majChang, majChang2, majChar, rangBihu, rangWide, teaBoy } from './acts2';
 import { Bank, type BankDef } from './bank';
 import { Cloth, Host, gam, machan, pitDanger } from './gamosa';
 import { Hedge, Plucker, Sprinkler } from './pluck';
@@ -704,7 +704,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: gamosaRoom(), acts: [atithi, gamFeast, gamMachan], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
   longStage({ base: majuliRoom(), acts: [majuliWake, majuliTraps], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
   longStage({ base: husoriRoom(), acts: [runUp(bordoisila, 3), runUp(husDhol, 3), husCard, chowk], cps: [16], twist: 'dis-uruka-net', par: 90, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
-  longStage({ base: gorhRoom(), acts: [gorhJeep, runUp(gorhBagori, 3)], twist: 'dis-watch-tower', par: 74, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
+  longStage({ base: gorhRoom(), acts: [gorhJeep, gorhDuiJeep, runUp(gorhBagori, 3)], twist: 'dis-watch-tower', par: 74, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
   longStage({ base: rangGharRoom(), acts: [rangTug, kaidhara], twist: 'dis-royal-seat', par: 36, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
   longStage({ base: luitRoom(), acts: [runUp(luitDhol, 3), runUp(luitBordoisila, 3), luitTug, luitTalatal, luitGamosa], twist: 'dis-post-bank', par: 63, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
 ];

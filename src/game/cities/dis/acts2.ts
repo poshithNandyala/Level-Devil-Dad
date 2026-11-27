@@ -295,6 +295,32 @@ export const gorhJeep: Act = {
   },
 };
 
+/** DIS-08 act, the room's labelled twist (v3 08 row: the rhino charges the NEARER noise, not the louder): two jeeps rev at
+ *  once, a big loud one far off on the right and a small one near you on the left. The rhino charges the near one. */
+export const gorhDuiJeep: Act = {
+  id: 'dis08-duijeep',
+  w: 26,
+  advice: 'Two jeeps start up at once: a big one, loud and smoking, far off to the right, and a small one right by you on the left. The rhino does not go for the louder: it charges the nearer, along a strip that ends at your bank. Stand back from the end of that strip, let it come and rest, then walk its strip.',
+  cps: [1.5],
+  paint: (g, c) => {
+    g.pit(c.x + 6, c.x + 19);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    charge(w, { trig: px(x + 5), c0: x + 6, c1: x + 20, start: x + 21, plume: x + 6, delay: 150, rest: 90 });
+    w.add(
+      new Decor((ctx, w2) => {
+        // the loud jeep far off: a big plume and a rattle, that the rhino ignores
+        const jx = px(x + 30);
+        ctx.fillStyle = '#4E5B3A';
+        ctx.fillRect(jx, GROUND - 18, 30, 12);
+        ctx.fillStyle = 'rgba(120,110,100,0.5)';
+        for (let k = 0; k < 4; k++) ctx.fillRect(jx - 6 - k * 6, GROUND - 26 - k * 8 - ((w2.tick >> 3) % 3), 10 + k * 4, 8);
+      }, -2),
+    );
+  },
+};
+
 /** DIS-08 act: the jeep moves, from behind. The first charge comes from behind you on to a strip ahead; the haystack again. */
 export const gorhBagori: Act = {
   id: 'dis08-bagori',
