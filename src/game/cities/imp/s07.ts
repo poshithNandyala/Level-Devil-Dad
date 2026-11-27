@@ -183,19 +183,19 @@ const actChingjao: Act = {
 /** act 2: two short rides back to back; the second's branch comes early, right after it detaches */
 const actPabot: Act = {
   id: 'imp07-pabot',
-  w: 50,
+  w: 54,
   advice: 'Two mats in a row. Walk straight to the front of each as the rain starts; the second mat’s branch comes almost at once.',
-  cps: [22, 46],
+  cps: [24, 50],
   paint: (g, c) => {
     g.fill(c.x + 3, c.x + 18, 15, 17, '.');
-    g.fill(c.x + 24, c.x + 42, 15, 17, '.');
+    g.fill(c.x + 28, c.x + 46, 15, 17, '.');
   },
   build: (w, c) => {
     lake(w, c.x + 3, c.x + 19);
-    lake(w, c.x + 24, c.x + 43);
+    lake(w, c.x + 28, c.x + 47);
     ride(w, c.f('ride1'), c.x + 3, 6, 10, { branch: c.x + 14 });
-    ride(w, c.f('ride2'), c.x + 24, 6, 13, { branch: c.x + 33, hut: true });
-    sign(w, c.x + 45, 10.4, 3.4, 'PABOT', 'green', null, 'the last hill');
+    ride(w, c.f('ride2'), c.x + 28, 6, 13, { branch: c.x + 37, hut: true });
+    sign(w, c.x + 49, 10.4, 3.4, 'PABOT', 'green', null, 'the last hill');
   },
 };
 

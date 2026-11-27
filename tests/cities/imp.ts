@@ -295,10 +295,10 @@ const act07b = (x: number): Step[] => [
   { hold: 'R', until: X(x + 1.4), max: 400 },
   { hold: 'R', jump: 10, ticks: 10 },
   { policy: rideFront(`imp07-pabot:ride1`), until: and(ground, X(x + 19.5)), max: 3000, note: 'first ride' },
-  { hold: 'R', until: X(x + 22.4), max: 400 },
+  { hold: 'R', until: X(x + 26.4), max: 400 },
   { hold: 'R', jump: 10, ticks: 10 },
-  { policy: rideFront(`imp07-pabot:ride2`), until: and(ground, X(x + 43.5)), max: 3000, note: 'second ride, branch at once' },
-  { hold: 'R', until: X(x + 49.5), max: 400 },
+  { policy: rideFront(`imp07-pabot:ride2`), until: and(ground, X(x + 47.5)), max: 3000, note: 'second ride, branch at once' },
+  { hold: 'R', until: X(x + 53.5), max: 400 },
 ];
 
 // ------------------------------------------------------------------ IMP-08

@@ -29,13 +29,14 @@ export const led = (a: Act): Act => ({
 
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: meta01 },
-  longStage({ base: room02(), acts: [act02].map(led), par: 40, shape: 'long', meta: meta02 }),
-  longStage({ base: room03(), acts: [act03].map(led), par: 40, shape: 'long', meta: meta03 }),
-  longStage({ base: room04(), acts: [act04].map(led), par: 40, shape: 'long', meta: meta04 }),
-  longStage({ base: room05(), acts: [act05, act05b].map(led), par: 85, shape: 'long', lives: 'act', meta: meta05 }),
-  longStage({ base: room06(), acts: [act06, act06b].map(led), par: 85, shape: 'long', lives: 'act', meta: meta06 }),
-  longStage({ base: room07(), acts: acts07.map(led), par: 170, shape: 'marathon', lives: 'act', meta: meta07 }),
-  longStage({ base: room08(), acts: [act08].map(led), par: 60, shape: 'wtf', meta: meta08 }),
-  longStage({ base: room09(), acts: acts09.map(led), par: 100, shape: 'long', lives: 'act', meta: meta09 }),
-  longStage({ base: room10(), acts: acts10.map(led), par: 130, shape: 'long', lives: 'act', meta: meta10 }),
+  // pars: 1.35 x the scripted route's clear time (BUILD.md has the times)
+  longStage({ base: room02(), acts: [act02].map(led), par: 18, shape: 'long', meta: meta02 }),
+  longStage({ base: room03(), acts: [act03].map(led), par: 36, shape: 'long', meta: meta03 }),
+  longStage({ base: room04(), acts: [act04].map(led), par: 18, shape: 'long', meta: meta04 }),
+  longStage({ base: room05(), acts: [act05, act05b].map(led), par: 42, shape: 'long', lives: 'act', meta: meta05 }),
+  longStage({ base: room06(), acts: [act06, act06b].map(led), par: 19, shape: 'long', lives: 'act', meta: meta06 }),
+  longStage({ base: room07(), acts: acts07.map(led), par: 38, shape: 'marathon', lives: 'act', meta: meta07 }),
+  longStage({ base: room08(), acts: [act08].map(led), par: 12, shape: 'wtf', meta: meta08 }),
+  longStage({ base: room09(), acts: acts09.map(led), par: 38, shape: 'long', lives: 'act', meta: meta09 }),
+  longStage({ base: room10(), acts: acts10.map(led), par: 21, shape: 'long', lives: 'act', meta: meta10 }),
 ];
