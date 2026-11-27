@@ -240,6 +240,8 @@ export class PathBars extends Entity {
     readonly wTiles: number,
     readonly who: Plucker,
     readonly life = 560,
+    /** ahead mode (tiles): a bar rises when she is this far before it and sinks once she has walked past it */
+    readonly ahead = 0,
   ) {
     super();
     this.layer = 0;
@@ -254,6 +256,17 @@ export class PathBars extends Entity {
     });
   }
   update(w: World) {
+    if (this.ahead > 0) {
+      this.starts.forEach((tx, i) => {
+        const walking = this.who.phase !== 'wait';
+        if (this.up[i] < 0 && walking && this.who.x >= px(tx - this.ahead)) {
+          this.up[i] = w.tick;
+          w.sfx('splash', px(tx) + 24, GROUND);
+        }
+        this.slabs[i].solid.collidable = this.up[i] >= 0 && this.who.x < px(tx + this.wTiles);
+      });
+      return;
+    }
     this.starts.forEach((tx, i) => {
       if (this.up[i] < 0 && this.who.phase !== 'wait' && this.who.x >= px(tx) - 6) {
         this.up[i] = w.tick;
@@ -265,6 +278,7 @@ export class PathBars extends Entity {
   }
   private paintBar(ctx: CanvasRenderingContext2D, sl: Slab, i: number, w: World) {
     const { x, w: ww } = sl.solid;
+    if (this.ahead > 0 && !sl.solid.collidable) return;
     const age = w.tick - this.up[i];
     const left = this.life - age;
     const sink = left < 90 && (w.tick >> 3) % 2 === 0;

@@ -7,7 +7,7 @@ import { Pan } from './pitha';
 import { roller, checkpoint } from '../../levels/kit';
 import { Host, gam, machan } from './gamosa';
 import { TeaBoy } from './bank';
-import { MugaReel, UrukaNet } from './doors';
+import { MugaReel, NetStrokes } from './doors';
 import { husori } from './husori';
 import { charge } from './gorh';
 import { roof } from './rangghar';
@@ -217,15 +217,16 @@ export const endings: Record<DisEndingKind, Ending> = {
   'dis-uruka-net': {
     space: 22,
     after: 6,
-    advice: 'Uruka night: a fishing net lies across the last pond, and as you come near the fishers on the far bank pull it in, all together. Its near end slides away towards them: cross at a run, and don’t stop on it.',
+    advice: 'Uruka night: a fishing net lies across the last pond in two stretches, with a bamboo stake between them. The fishers on the far bank pull it in strokes, all together, and rest between: anyone on the net during a pull is jerked off it. Cross a stretch only while they rest, and wait on the stake while they pull.',
     paint: (g, D) => {
       g.pit(D - 14, D - 5);
+      // the bamboo stake in the middle of the pond: the one place off the net
+      g.fill(D - 10, D - 9, 15, 15, '#');
     },
     build(w: World, d) {
       const D = Math.round(d.x / 16);
-      river(w, D - 14, D - 4, 'dis-net');
-      const n = w.add(new UrukaNet(px(D - 14), px(D - 4), px(D - 14) + 8));
-      w.solids.push(n.solid);
+      river(w, D - 14, D - 4, 'dis-pukhuri');
+      const n = w.add(new NetStrokes([[px(D - 14), px(D - 10)], [px(D - 8), px(D - 4)]], px(D - 16)));
       w.flags.net = n;
       w.flags.twist = 'net';
     },
@@ -257,17 +258,18 @@ export const endings: Record<DisEndingKind, Ending> = {
   'dis-post-bank': {
     space: 40,
     after: 5,
-    advice: 'The level post is on the far bank, and the water between is crossed only on the plucker’s path: a bar comes up under each step she takes and goes a few seconds after. Follow her a few steps behind, not touching her basket, and keep up.',
+    advice: 'The level post is on the far bank, and the water is crossed only on the plucker’s path. This time the bars come up a few steps AHEAD of her, and each one sinks as she walks past it. She comes up behind you: go in front of her, a few steps ahead, never so far that the bar is not up yet, and never let her catch you.',
     paint: (g, D) => {
       g.pit(D - 33, D - 4);
     },
     build(w: World, d) {
       const D = Math.round(d.x / 16);
       river(w, D - 33, D - 3);
-      const p = w.add(new Plucker(px(D - 26), px(D - 37), [], px(D - 3), 56));
+      // she starts behind you on the bank (DIS-03 taught "follow her"; here she sinks the path behind her)
+      const p = w.add(new Plucker(px(D - 43), px(D - 38), [], px(D - 3), 64));
       (w.flags.pluckers ??= []).push(p);
       const starts = [D - 32, D - 28, D - 24, D - 20, D - 16, D - 12, D - 8];
-      const pb = w.add(new PathBars(starts, 4, p, 640));
+      const pb = w.add(new PathBars(starts, 4, p, 0, 9));
       pb.setup(w);
       levelPost(w, { level: 2, e: -1 } as never, D - 1.8, 3);
       w.flags.twist = 'post';

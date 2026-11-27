@@ -446,10 +446,22 @@ const viaEnding = (kind: string) => {
 function doorDeaths(S: Record<string, Step[]>) {
   const pre = (id: string) => S[id].slice(0, S[id].findIndex((s) => (s.note ?? '').startsWith('the door')));
   (mistakes['DIS-07'] ??= []).push({
-    what: 'door: stops on the Uruka net to look: it is pulled in from under him',
-    steps: [...pre('DIS-07'), { hold: 'R', until: (w) => !!w.flags.net && (w.flags.net as { started: number }).started >= 0, max: 900 }, { hold: 'R', ticks: 12 }, { hold: '', until: done, max: 900 }],
+    what: 'door: runs straight across the net without stopping (Kavaratti’s answer): a pull catches him on it',
+    steps: [...pre('DIS-07'), { hold: 'R', until: done, max: 900 }],
     cause: 'dis-net',
   });
+  (mistakes['DIS-10'] ??= []).push(
+    {
+      what: 'door: waits on the bank to follow the plucker, as in 03: she walks into him',
+      steps: [...pre('DIS-10'), { hold: 'R', until: (w) => pluckers(w)[pluckers(w).length - 1].phase !== 'wait', max: 900 }, { hold: '', until: done, max: 900 }],
+      cause: 'dis-basket',
+    },
+    {
+      what: 'door: runs on ahead of her: the bars that far ahead are not up yet',
+      steps: [...pre('DIS-10'), { hold: 'R', until: done, max: 900 }],
+      cause: 'dis-luit',
+    },
+  );
   (mistakes['DIS-03'] ??= []).push({
     what: 'door: rides the muga cocoon and stays on it at the top: reeled in',
     steps: [...pre('DIS-03'), { policy: viaEnding('dis-muga-reel'), until: (w) => w.player.onGround && w.player.isRiding((w.flags.reel as any).solid), max: 3000 }, { hold: '', until: done, max: 1500 }],
@@ -893,17 +905,22 @@ const endingPolicies: Record<string, Policy> = {
   'dis-post-bank'(w, m, d) {
     const pl = pluckers(w)[pluckers(w).length - 1];
     const p = w.player;
+    const D = Math.round(d.x / 16);
     if (m.hold > 0) return { move: 'R', jump: true };
-    if (pl.phase === 'wait') return go('R');
-    if (p.cx > pl.endX + 8 || (pl.phase as string) === 'end') return go(toward(w, d.x + 8, 1) || 'R');
+    if (p.cx > px(D - 3)) return go(toward(w, d.x + 8, 1) || 'R');
     if (!p.onGround) return go('R');
     const ground = w.solidAt(p.x + p.w + 3, p.y + p.h + 1, 1, 2);
-    if (ground && pl.x - p.cx < 62 && (pl.phase as string) !== 'end') return go('');
-    if (!ground) {
+    // a tile of water before a bar (or the bank) that is up: hop it
+    const beyond = w.solidAt(p.x + p.w + 20, p.y + p.h + 1, 6, 2);
+    if (!ground && beyond && (p.cx > px(D - 6) || p.cx - pluckers(w)[pluckers(w).length - 1].x < 52)) {
       m.hold = 12;
       return { move: 'R', jump: true };
     }
-    return go('R');
+    if (pl.phase === 'wait') return go(p.cx < px(D - 37) ? 'R' : '');
+    // keep a few steps in FRONT of her: go when she is close behind, and only on to a bar that is up
+    const gap = p.cx - pl.x;
+    if (ground && gap < 52) return go('R');
+    return go('');
   },
   'dis-watch-tower'(w, m, d) {
     const cs = charges(w);
@@ -921,7 +938,26 @@ const endingPolicies: Record<string, Policy> = {
     void B;
     return go('R');
   },
-  'dis-uruka-net'(w, _m, d) {
+  'dis-uruka-net'(w, m, d) {
+    const n = w.flags.net as { t: (w: World) => number; pull: number };
+    const D = Math.round(d.x / 16);
+    const p = w.player;
+    const t = n.t(w);
+    const restFresh = t >= n.pull && t < n.pull + 20;
+    m.stage ??= 0;
+    if (m.stage === 0) {
+      if (p.cx < px(D - 15)) return go('R');
+      if (!restFresh) return go('');
+      m.stage = 1;
+    }
+    if (m.stage === 1) {
+      if (p.cx < px(D - 10) + 12) return go('R');
+      m.stage = 2;
+    }
+    if (m.stage === 2) {
+      if (!restFresh || !p.onGround) return go('');
+      m.stage = 3;
+    }
     return go(toward(w, d.x + 8, 1) || 'R');
   },
 

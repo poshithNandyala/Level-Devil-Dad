@@ -141,3 +141,64 @@ export class MugaReel extends Entity {
     }
   }
 }
+
+/**
+ * DIS-07's door, recast (round 4, ruling S9): the Uruka net is pulled in STROKES. Each stroke the fishers haul together
+ * (`pull` ticks) and the net jerks toward them; then they rest (`rest` ticks) and it slides back. Anyone on a stretch of net
+ * during a pull is jerked off it. Cross a stretch while they rest; wait on the stake between the stretches while they pull.
+ */
+export class NetStrokes extends Entity {
+  solids: Solid[] = [];
+  started = -1;
+  constructor(
+    readonly spans: [number, number][],
+    readonly trig: number,
+    readonly pull = 40,
+    readonly rest = 120,
+  ) {
+    super();
+    this.layer = 1;
+    for (const [a, b] of spans) this.solids.push(new Solid(a, GROUND, b - a, 8));
+  }
+  /** ticks into the stroke cycle (-1 before the trigger) */
+  t(w: World) {
+    return this.started < 0 ? -1 : (w.tick - this.started) % (this.pull + this.rest);
+  }
+  pulling(w: World) {
+    const t = this.t(w);
+    return t >= 0 && t < this.pull;
+  }
+  update(w: World) {
+    if (this.started < 0 && w.player.cx >= this.trig) {
+      this.started = w.tick;
+      w.sfx('shove', this.spans[this.spans.length - 1][1], GROUND - 20);
+    }
+    const pull = this.pulling(w);
+    // the jerk: the net moves 6 px toward the fishers during the pull and eases back during the rest
+    const t = this.t(w);
+    const off = t < 0 ? 0 : pull ? (6 * t) / this.pull : 6 * (1 - (t - this.pull) / this.rest);
+    this.solids.forEach((so, i) => {
+      const nx = Math.round(this.spans[i][0] + off);
+      if (nx !== so.x) so.moveBy(w, nx - so.x, 0);
+    });
+    if (pull && w.state === 'play' && this.solids.some((so) => w.standing(so))) w.die('dis-net');
+  }
+  draw(ctx: CanvasRenderingContext2D, w: World) {
+    for (const s of this.solids) {
+      ctx.strokeStyle = 'rgba(230,220,190,0.9)';
+      ctx.lineWidth = 1;
+      for (let x = s.x; x < s.x + s.w - 2; x += 6) {
+        ctx.beginPath();
+        ctx.moveTo(x, GROUND + 1);
+        ctx.lineTo(x + 6, GROUND + 6);
+        ctx.moveTo(x + 6, GROUND + 1);
+        ctx.lineTo(x, GROUND + 6);
+        ctx.stroke();
+      }
+    }
+    // the stake, and the fishers on the far bank: hauling together on the pull, standing easy on the rest
+    const last = this.spans[this.spans.length - 1][1];
+    const pulling = this.pulling(w);
+    for (const dx of [12, 26, 40]) person(ctx, last + dx + (pulling ? 3 : 0), GROUND - 24, 24, '#E8E1CC', '#B9855A', { arms: pulling ? 6 : 0, cap: '#C1121F' });
+  }
+}
