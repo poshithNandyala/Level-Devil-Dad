@@ -3,7 +3,7 @@
 // replaces that stage's (or act's, or ending's) entry there, so a hardness-pass worker edits only this file
 // and the city's stage files. After a change on purpose: npm run refreeze -- CHN (docs/CITY-MODULE.md).
 import type { World } from '../../src/game/world';
-import type { Door } from '../../src/game/entities/basics';
+import { Door } from '../../src/game/entities/basics';
 import { type Step, X, and, done, ground, thingOf } from '../runner';
 import type { CityTests } from '../city-tests';
 import { ladleOf, murukkuOf, pressOf } from '../../src/game/cities/chn/murukku';
@@ -223,6 +223,29 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
       note: 'off the drain, on to the road before the gap',
     };
     S['CHN-06'] = [...R.slice(0, k), offDrain, ...R.slice(k + 2)];
+  }
+  // 08 (human timing, route only): the shared door policy walks AWAY from the ducked door by the sign of the distance,
+  // and a dad whose turn comes 12 ticks late has overrun the door by then, walks on into the end wall and waits there
+  // for a door that only rises once he is five tiles off. Here he always walks back the way he came
+  {
+    const R = S['CHN-08'];
+    const k = R.findIndex((st) => st.note === 'the door, and whatever it does');
+    if (k < 0) throw new Error("CHN-08: no door step");
+    R[k] = {
+      policy: (w) => {
+        const d = w.entities.find((e) => e instanceof Door && !(e as Door).fake) as Door | undefined;
+        if (!d) return go('R');
+        const tw = w.flags.twist as string | undefined;
+        const dist = d.x + 8 - w.player.cx;
+        // ducked: back off to the left till it comes up; up or armed: walk in
+        if (tw === 'sunk') return go('L');
+        if (tw === 'up') return go(dist > 2 ? 'R' : dist < -2 ? 'L' : 'R');
+        return go(dist > 0 ? 'R' : 'L');
+      },
+      until: done,
+      max: 1800,
+      note: 'the door ducks: back off left, then walk in',
+    };
   }
   // 07: the room's three room steps are replaced by the steered flight; everything after (the act, the door) stays
   {

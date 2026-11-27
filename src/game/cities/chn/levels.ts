@@ -710,7 +710,9 @@ export const levels = (): LevelDef[] => [
       let train: ReturnType<typeof rider> | null = null;
       w.onTick((w2) => {
         if (!train && w2.player.x >= px(4)) {
-          train = rider(w2, 'chn-loco', -px(5), 12, 120, 5);
+          // round 2 (human timing): the train starts four tiles further back (was -5), half a second more to let
+          // the first wave pass before it is on you; it still comes, and still waits for no one
+          train = rider(w2, 'chn-loco', -px(9), 12, 120, 5);
           w2.say('Poo! Poo! | Toot! Toot!', px(2), px(9), 1.2, 'npc');
           w2.sfx('honk', 0, px(11));
         }
