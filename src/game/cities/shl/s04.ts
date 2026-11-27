@@ -72,14 +72,18 @@ export function hook(w: World, st: KnupState, c: number, size: 'big' | 'small' =
   return r;
 }
 
-/** heavy rain over columns c0..c1: deadly to a bare Dad */
-export function rain(w: World, st: KnupState, c0: number, c1: number) {
+/** heavy rain over columns c0..c1: deadly to a bare Dad, and to one under the small knup (its own line) */
+export function rain(w: World, st: KnupState, c0: number, c1: number, cause = 'shl-slap') {
   return w.add(
     new Rig(px(c0), 0, px(c1 - c0 + 1), FL, {
       layer: 4,
-      cause: 'shl-slap',
+      cause,
       inset: 3,
       live: () => !st.on || st.size === 'small',
+      tick: (r) => {
+        // law 9: the line names what happened: a bare head, or the small knup
+        if (r.hazard) r.hazard.cause = st.on && st.size === 'small' ? 'shl-khynnah' : cause;
+      },
       paint: (ctx, r, w2) => {
         ctx.fillStyle = 'rgba(150,170,180,0.45)';
         ctx.fillRect(r.x - 6, 20, r.w + 12, 18);
@@ -90,14 +94,17 @@ export function rain(w: World, st: KnupState, c0: number, c1: number) {
 }
 
 /** an awning whose edge drips in a row over columns c0..c1: a spike row to a bare head, nothing to a knup */
-export function drips(w: World, st: KnupState, c0: number, c1: number) {
+export function drips(w: World, st: KnupState, c0: number, c1: number, cause = 'shl-drip') {
   return w.add(
     new Rig(px(c0), FL - 40, px(c1 - c0 + 1), 40, {
       layer: 4,
-      cause: 'shl-drip',
+      cause,
       inset: 2,
       live: () => !st.on,
       paint: (ctx, r, w2) => {
+        // the awning on two posts (QA F12: nothing floats)
+        box(ctx, r.x - 6, FL - 58, 3, 58, '#1F4030');
+        box(ctx, r.x + r.w + 3, FL - 58, 3, 58, '#1F4030');
         box(ctx, r.x - 8, FL - 64, r.w + 16, 6, '#2F5D45');
         box(ctx, r.x - 8, FL - 58, r.w + 16, 2, '#1F4030');
         ctx.fillStyle = 'rgba(190,224,240,0.9)';
@@ -162,38 +169,7 @@ export function room(): LevelDef {
   };
 }
 
-/** act: the market lane: a tall arch the knup fits under, with a hook before it as a lure, then a low one */
-export const act: Act = {
-  id: 'shl04-iew',
-  w: 34,
-  advice: 'The lane to Ïewduh. The first arch is tall: the knup fits, so leave it on for the rain beyond, whatever the hook before the arch invites. The second arch is low: hang the knup up before it, and take it again for the awning after.',
-  cps: [1.5],
-  paint: () => {},
-  build: (w, c) => {
-    const st = w.flags.shl4 as KnupState;
-    rain(w, st, c.x + 4, c.x + 8);
-    hook(w, st, c.x + 10.5);
-    // the tall arch: 4 tiles clear, the knup passes
-    w.add(
-      new Paint((ctx) => {
-        const x = px(c.x + 13);
-        box(ctx, x - 4, FL - 76, 6, 76, '#5C6F66');
-        box(ctx, x + 14, FL - 76, 6, 76, '#5C6F66');
-        box(ctx, x - 6, FL - 82, 28, 8, '#5C6F66');
-      }, -3),
-    );
-    rain(w, st, c.x + 15, c.x + 19);
-    hook(w, st, c.x + 21.5);
-    lowBar(w, st, c.x + 24, 24, 'shl-lintel', (ctx, x) => {
-      box(ctx, x - 4, FL - 30, 4, 30, '#5C6F66');
-      box(ctx, x + 10, FL - 30, 4, 30, '#5C6F66');
-      box(ctx, x - 6, FL - 36, 22, 8, '#5C6F66');
-    });
-    hook(w, st, c.x + 26.5);
-    drips(w, st, c.x + 29, c.x + 31);
-    sign(w, c.x + 1, 10.4, 3, 'ÏEWDUH', 'shop', null, 'the big market');
-  },
-};
+// `shl04-iew` (the lure hook before a tall arch) was cut in fix round 1: QA F4/F7, one play and the room's on/off read again.
 
 /** act 2: a child's knup hangs by the school lane: small enough for the low arch, too small for the heavy rain */
 export const actSmall: Act = {
@@ -217,21 +193,7 @@ export const actSmall: Act = {
   },
 };
 
-/** ending: a Khasi half-door, lintel at head height: hang the knup on the hook outside and walk in bare */
-export const ending: Ending = {
-  space: 12,
-  advice: 'The house door is a half-door, low: hang the knup on the hook outside it and walk in without it.',
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    const st = w.flags.shl4 as KnupState;
-    w.flags.twist = 'halfdoor';
-    hook(w, st, D - 6);
-    lowBar(w, st, D - 1.2, 24, 'shl-lintel', (ctx, x) => {
-      box(ctx, x - 6, FL - 30, 4, 30, '#6B4F2E');
-      box(ctx, x + 12, FL - 30, 4, 30, '#6B4F2E');
-      box(ctx, x - 8, FL - 36, 28, 6, '#6B4F2E');
-    }, 14);
-  },
-};
+/** the plain door of 04 lives in endings.ts (QA F2: the half-door re-asked the low-arch rule) */
+export const ending: Ending | null = null;
 
 export const meta04 = { family: 'wide-gear-hitbox', betrayals: ['wide-gear'], ending: 'shl-halfdoor' };

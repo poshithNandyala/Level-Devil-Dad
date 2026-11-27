@@ -173,82 +173,10 @@ export function room(): LevelDef {
   };
 }
 
-/** act: a longer gap, three beams, a shorter bank: the third beam is lit while the bank's END is under it; wait for the middle */
-export const act: Act = {
-  id: 'shl02-sngi',
-  w: 32,
-  advice: 'A longer gap, three beams, and a thinner bank. The third beam lights up while only the end of the bank is under it: lit or not, an end is thin. Stay on the second beam until the thick middle has reached the third, then jump.',
-  paint: (g, c) => {
-    g.fill(c.x + 6, c.x + 24, 15, 17, '.');
-  },
-  build: (w, c) => {
-    cloudGap(w, 'shl2a', [c.x + 6, c.x + 24], [[c.x + 9, c.x + 11], [c.x + 14, c.x + 16], [c.x + 19, c.x + 21]], { w: 14, end: 2, speed: 1.875, span: 40, phase: 10, n: 2, from: c.x });
-    sign(w, c.x + 2, 10.4, 3, 'SUN', 'shop', null, 'through the pines');
-  },
-};
-
-/** act 2: the same floor, but a high cloud crosses the sun: while it does, no beam lights anything and nothing holds */
-export const actSun: Act = {
-  id: 'shl02-lyoh',
-  w: 30,
-  advice: 'Back at the view point, and a high cloud crosses the sun every few seconds. While the sun is covered, no beam lights anything and nothing holds, whatever the bank below is doing. Cross beam to beam only with the sun out and time in hand; wait on the bank while it is in.',
-  paint: (g, c) => {
-    g.fill(c.x + 6, c.x + 20, 15, 17, '.');
-  },
-  build: (w, c) => {
-    cloudGap(w, 'shl2b', [c.x + 6, c.x + 20], [[c.x + 9, c.x + 11], [c.x + 15, c.x + 17]], { w: 20, end: 2, speed: 2.5, span: 44, phase: 14, n: 2, sun: { period: 12, inFor: 2.0, phase: 10.5 }, from: c.x });
-    sign(w, c.x + 2, 10.4, 3, 'SUN', 'shop', null, 'behind a high cloud');
-  },
-};
-
-/** ending: the radar dish by the door turns, and its beam sweeps the last stretch of path every few seconds */
-export const ending: Ending = {
-  space: 14,
-  advice: 'The radar dish beside the door turns, and when it faces the path its beam sweeps the last four tiles. Wait just outside them until a sweep has gone by, then walk in.',
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    w.flags.twist = 'dish';
-    const P = 4.0,
-      ON = 0.8;
-    const e = { x0: px(D - 5), x1: px(D - 1), P, ON, on: (w2: World) => cyc(w2, P) < ON };
-    w.flags.shl2e = e;
-    w.add(
-      new Rig(e.x0, 0, e.x1 - e.x0, FL, {
-        layer: 3,
-        cause: 'shl-dish',
-        inset: 3,
-        live: (_r, w2) => e.on(w2),
-        paint: (ctx, r, w2) => {
-          const t = cyc(w2, P);
-          const ang = (t / P) * Math.PI * 2;
-          // the pole and the dish
-          box(ctx, px(D) + 20, FL - 70, 3, 70, '#3E4D47');
-          ctx.save();
-          ctx.translate(px(D) + 21, FL - 74);
-          ctx.rotate(ang);
-          box(ctx, -9, -4, 18, 8, '#C9D3D0');
-          ctx.restore();
-          if (e.on(w2)) {
-            ctx.fillStyle = 'rgba(255,240,180,0.35)';
-            ctx.beginPath();
-            ctx.moveTo(px(D) + 21, FL - 74);
-            ctx.lineTo(r.x, FL);
-            ctx.lineTo(r.x + r.w, FL);
-            ctx.closePath();
-            ctx.fill();
-          } else if (t > P - 0.6) {
-            ctx.fillStyle = 'rgba(255,240,180,0.12)';
-            ctx.beginPath();
-            ctx.moveTo(px(D) + 21, FL - 74);
-            ctx.lineTo(r.x + 20, FL);
-            ctx.lineTo(r.x + r.w, FL);
-            ctx.closePath();
-            ctx.fill();
-          }
-        },
-      }),
-    );
-  },
-};
+// Fix round 1 cut both acts of this stage and made its door plain (QA F2, F3, F4, F5, F7): `shl02-sngi` (the lit end
+// under the third beam) re-asked the room's "never the thin ends" and had one play whose cause changed with lag;
+// `shl02-lyoh` (the high cloud over the sun) is GNR-03's thought ("board a beam just after its cloud has passed"), which
+// a shipped city owns; the radar dish re-asked BLR-07's `cctv` (let the sweeping beam pass). The stage is its room.
+export const ending: Ending | null = null;
 
 export const meta02 = { family: 'cloud-bank-platform-thins-edge', betrayals: ['cloud-platform'], ending: 'shl-dish' };

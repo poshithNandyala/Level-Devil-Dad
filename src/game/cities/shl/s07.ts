@@ -28,8 +28,11 @@ export interface Stal {
  * A stalactite over column c: starts `g0` px off the floor, grows `step` px at every drip (`period` s), is a wall for
  * `shut` s once it meets the floor, then breaks and starts again. A head bump freezes its growth for 3 s.
  */
-export function stal(w: World, list: Stal[], c: number, o: { g0: number; step: number; period: number; shut?: number; phase?: number; from?: number; startGap?: number; minGap?: number; pairStep?: number; pillar?: boolean; wet?: boolean }) {
+export function stal(w: World, list: Stal[], c: number, o: { g0: number; step: number; period: number; shut?: number; phase?: number; from?: number; startGap?: number; minGap?: number; pairStep?: number; pillar?: boolean; causes?: { maw: string; shut: string } }) {
   const s = { period: o.period, step: o.step, g0: o.g0, shut: o.shut ?? 2.0, freeze: 0, lastDrip: -1, shutAt: -1, stump: 6 };
+  // the place's own cause ids (QA F9: one line per place); the room's by default
+  const MAW = o.causes?.maw ?? 'shl-maw';
+  const SHUT = o.causes?.shut ?? 'shl-shut';
   const st: Stal = { c, gap: o.startGap ?? o.g0, closed: () => st.gap < FIT, s };
   list.push(st);
   const phase = o.phase ?? 0;
@@ -40,7 +43,7 @@ export function stal(w: World, list: Stal[], c: number, o: { g0: number; step: n
   w.add(
     new Rig(px(c), 0, 16, FL, {
       layer: 3,
-      cause: 'shl-maw',
+      cause: MAW,
       inset: 2,
       live: () => st.gap < FIT,
       tick: (r, w2) => {
@@ -79,30 +82,21 @@ export function stal(w: World, list: Stal[], c: number, o: { g0: number; step: n
           if (st.gap < FIT) {
             st.s.shutAt = w2.tick;
             // the cause: it came down on you, or you walked into a wall; a pair that shut by its stump says so
-            if (r.hazard) r.hazard.cause = inside ? (o.pairStep && st.s.freeze > 0 ? 'shl-stump' : 'shl-maw') : 'shl-shut';
+            if (r.hazard) r.hazard.cause = inside ? (o.pairStep && st.s.freeze > 0 ? 'shl-stump' : MAW) : SHUT;
           }
         }
-        // a head bump while open freezes it for 3 s; a wet one (it glistens) sheds three drips at once instead
+        // a head bump while open freezes it for 3 s
         if (inside && st.gap >= FIT && p.y <= FL - st.gap + 2 && p.vy < 0 && st.s.freeze <= 0 && w2.tick - (st.s.bumpAt ?? -99) > 30) {
           st.s.bumpAt = w2.tick;
-          if (o.wet) {
-            st.gap = Math.max(0, st.gap - 3 * st.s.step);
-            w2.sfx('splash', r.x + 8, FL - st.gap);
-            if (st.gap < FIT) {
-              st.s.shutAt = w2.tick;
-              if (r.hazard) r.hazard.cause = 'shl-wet';
-            }
-          } else {
-            st.s.freeze = 360;
-            w2.sfx('bonk', r.x + 8, FL - st.gap);
-          }
+          st.s.freeze = 360;
+          w2.sfx('bonk', r.x + 8, FL - st.gap);
         }
-        if (!inside && r.hazard && st.gap < FIT) r.hazard.cause = 'shl-shut';
+        if (!inside && r.hazard && st.gap < FIT) r.hazard.cause = SHUT;
       },
       paint: (ctx, r, w2) => {
         const tipY = FL - st.gap;
         // the stalactite: a pale tapering cone from the cave roof to the tip
-        ctx.fillStyle = st.s.freeze > 0 ? '#D9E4DC' : o.wet ? '#B7D4E6' : '#C9D3CC';
+        ctx.fillStyle = st.s.freeze > 0 ? '#D9E4DC' : '#C9D3CC';
         ctx.beginPath();
         ctx.moveTo(r.x - 2, 70);
         ctx.lineTo(r.x + 18, 70);
@@ -110,7 +104,6 @@ export function stal(w: World, list: Stal[], c: number, o: { g0: number; step: n
         ctx.closePath();
         ctx.fill();
         box(ctx, r.x + 6, tipY - 6, 4, 6, '#AEBBB3');
-        if (o.wet) for (let i = 0; i < 3; i++) box(ctx, r.x + 5 + i * 3, 90 + ((w2.tick * 2 + i * 37) % Math.max(1, tipY - 96)), 1, 4, 'rgba(255,255,255,0.8)');
         // the stump on the floor (a pair's stump grows), or the pool it drips into
         if (o.minGap !== undefined) {
           box(ctx, r.x - 6, FL - 3, 28, 3, 'rgba(120,200,210,0.8)');
@@ -179,14 +172,15 @@ export function room(): LevelDef {
 export const act: Act = {
   id: 'shl07-krem',
   w: 36,
-  advice: 'The narrow gallery: seven stalactites, all dripping fast and all starting high together. Once the first has broken, go, and keep going: a stop under any of them is the end of the gallery for you.',
+  advice: 'The narrow gallery: seven stalactites, all dripping fast and all on one clock, so the whole row shuts and breaks together. Going before the row has broken walks you into a wall; once it has broken, go, and keep going: a stop under any of them is the end of the gallery for you.',
   cps: [2],
   paint: () => {},
   build: (w, c) => {
     const list = w.flags.shl7 as Stal[];
     cave(w, c.x, c.x + 35);
-    // the gallery's clock starts at its checkpoint, one drip from shutting: the break comes 2.3 s after it, every try
-    for (let i = 0; i < 7; i++) stal(w, list, c.x + 6 + i * 3.5, { g0: 70, step: 10, period: 0.7, shut: 1.6, phase: 0.0, from: c.x + 2, startGap: 20 });
+    // the gallery's clock starts at its checkpoint, one drip from shutting: the break comes 2.3 s after it, every try;
+    // the gallery's deaths carry their own lines (QA F9)
+    for (let i = 0; i < 7; i++) stal(w, list, c.x + 6 + i * 3.5, { g0: 70, step: 10, period: 0.7, shut: 1.6, phase: 0.0, from: c.x + 2, startGap: 20, causes: { maw: 'shl-krem-maw', shut: 'shl-krem-shut' } });
     sign(w, c.x + 2, 10.4, 3, 'KREM', 'shop', null, 'the gallery');
   },
 };
@@ -259,16 +253,7 @@ export const actPairs: Act = {
 };
 
 /** ending: the column that has just closed behind the door's arch: pass as it breaks */
-export const ending: Ending = {
-  space: 12,
-  advice: 'One last stalactite over the door’s arch, the slowest in the cave: wait for it to meet the floor and break, then walk through.',
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    const list = w.flags.shl7 as Stal[];
-    w.flags.twist = 'column';
-    cave(w, D - 12, D + 4);
-    stal(w, list, D - 3, { g0: 60, step: 12, period: 1.4, shut: 2.4, phase: 0.3 });
-  },
-};
+/** the plain door of 07 lives in endings.ts (QA F2: the column re-asked the room's rule) */
+export const ending: Ending | null = null;
 
 export const meta07 = { family: 'drip-growth-gate-pairs', betrayals: ['drip-growth'], ending: 'shl-column' };

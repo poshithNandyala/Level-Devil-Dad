@@ -141,33 +141,23 @@ export function room(): LevelDef {
   };
 }
 
-/** act: two more sisters; the second never goes dry (full, thin, mark, full): thinning is not the mark */
-export const act: Act = {
-  id: 'shl05-ar',
-  w: 34,
-  cps: [16],
-  advice: 'Two more sisters. The first keeps the same time as the one before. The second never goes dry: full, thinning, the mark, and full again. Thinning is not the mark: wait for the sheet to start at the white line, then cross.',
-  paint: () => {},
-  build: (w, c) => {
-    const falls = w.flags.shl5 as Fall[];
-    fall(w, falls, c.x + 7, { ...SCHED, phase: 1.1 });
-    fall(w, falls, c.x + 22, { strong: 2.4, fade: 1.4, mark: 1.3, dry: 0, phase: 2.0 });
-    sign(w, c.x + 2, 10.4, 3, 'TWO MORE', 'shop', null, 'each in her own time');
-  },
-};
+// `shl05-ar` (a sister that never goes dry) was cut in fix round 1: QA F4/F7, one play and the room's "thinning kills" again.
+// `shl05-roar` (a sister read by her roar, and the quick sister) was cut too: QA F3, the sound-phase read is 07's (`plop`),
+// and its hidden sister had no tell readable with the sound off (F10).
 
-/** act 2: a basin between two sisters: it floods whenever either is full. Cross it when both sit on their marks */
+/** act: a basin between two sisters: it floods whenever either is full. Cross it when both sit on their marks, and at once */
 export const actBasin: Act = {
   id: 'shl05-pung',
   w: 36,
-  advice: 'Two sisters pour into one basin, and the basin floods whenever either of them is full or thinning. The basin is five tiles wide: cross it only when both sit on their marks at once, and go at once when they do.',
+  advice: 'Two sisters pour into one basin, and the basin floods whenever either of them is full or thinning. The basin is five tiles wide: cross it only when both sit on their marks at once, and go at once when they do: the far sister comes back first, on whoever is still in the basin.',
   cps: [20],
   paint: () => {},
   build: (w, c) => {
     const falls = w.flags.shl5 as Fall[];
-    // the two sisters keep the same time, a little apart: both sit on their marks together for 1.3 s of every 4.6
+    // the two sisters keep the same time, a little apart: both sit on their marks together for 1.3 s of every 4.6;
+    // the far one has her own cause and line (QA F9: one line per place)
     const a = fall(w, falls, c.x + 6, { strong: 1.6, fade: 0.8, mark: 1.9, dry: 0.3, phase: 0.4 });
-    const b = fall(w, falls, c.x + 14, { strong: 1.6, fade: 0.8, mark: 1.9, dry: 0.3, phase: 1.0 });
+    const b = fall(w, falls, c.x + 14, { strong: 1.6, fade: 0.8, mark: 1.9, dry: 0.3, phase: 1.0 }, 'shl-basin-far');
     const flooded = (w2: World) => ['strong', 'fade'].includes(a.at(w2).k) || ['strong', 'fade'].includes(b.at(w2).k);
     w.flags.shl5p = { x0: px(c.x + 9), x1: px(c.x + 14), flooded };
     w.add(
@@ -195,37 +185,7 @@ export const actBasin: Act = {
   },
 };
 
-/** act 3: a long ledge to a sister hidden behind an outcrop (the roar is the read), then the quick sister: the labelled momentum beat */
-export const actRoar: Act = {
-  id: 'shl05-roar',
-  w: 40,
-  advice: 'A long ledge, and a sister behind the rock: you see only her foot and hear her roar. Loud is full, softer is thinning, quiet is the mark, silence is the dry lure: cross on the quiet, never on the silence. Then the quick sister: her mark lasts half a second. Stand at the very edge and go the instant the sheet drops to the mark.',
-  cps: [14],
-  paint: () => {},
-  build: (w, c) => {
-    const falls = w.flags.shl5 as Fall[];
-    fall(w, falls, c.x + 19, { strong: 2.4, fade: 1.0, mark: 1.3, dry: 0.4, phase: 0.6 }, 'shl-um', true);
-    fall(w, falls, c.x + 30, { strong: 3.0, fade: 0.9, mark: 0.5, dry: 0.35, phase: 1.9 });
-    sign(w, c.x + 4, 10.4, 3, 'LISTEN', 'shop', null, 'you hear her before you see her');
-    sign(w, c.x + 25, 10.4, 3, 'QUICK', 'shop', null, 'half a second on the mark');
-  },
-};
-
-/** ending: the seventh sister pours into the pool the door stands in: cross its bed on the mark */
-export const ending: Ending = {
-  space: 14,
-  advice: 'The seventh sister pours into the pool before the door. Same rule: when the water sits on the mark, walk through the pool to the door.',
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    const falls = w.flags.shl5 as Fall[];
-    w.flags.twist = 'pool';
-    fall(w, falls, D - 6, { strong: 2.0, fade: 1.0, mark: 1.4, dry: 0.35, phase: 1.3 });
-    w.add(
-      new Paint((ctx) => {
-        box(ctx, px(D - 9), FL - 3, px(10), 3, 'rgba(150,205,220,0.5)');
-      }, 1),
-    );
-  },
-};
+/** the plain door of 05 lives in endings.ts (QA F2: the pool re-asked the room's rule) */
+export const ending: Ending | null = null;
 
 export const meta05 = { family: 'one-stream-schedule-mark', betrayals: ['hidden-schedule'], ending: 'shl-pool' };

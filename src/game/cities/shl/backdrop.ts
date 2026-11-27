@@ -1,12 +1,40 @@
 import type { Theme } from '../../../render/theme';
 import { type Ctx, hash } from '../../../render/art/common';
 
+/** the inside of Mawsmai cave: a dark rock wall with wet streaks, boulders at the foot, and the roof band the stalactites hang from */
+function cave(ctx: Ctx, x0: number, x1: number) {
+  ctx.fillStyle = '#1D2A26';
+  ctx.fillRect(x0 - 8, 0, x1 - x0 + 16, 260);
+  // the rock face: slabs of a slightly lighter grey-green
+  for (let x = Math.floor(x0 / 40) * 40; x < x1 + 40; x += 40) {
+    const k = hash(Math.round(x / 40), 23);
+    ctx.fillStyle = k > 0.5 ? '#26352F' : '#22302B';
+    ctx.fillRect(x, 70 + k * 30, 40, 170);
+    // wet streaks
+    ctx.fillStyle = 'rgba(140,180,190,0.18)';
+    ctx.fillRect(x + 8 + k * 20, 70, 2, 90 + k * 60);
+  }
+  // boulders at the foot of the wall
+  for (let x = Math.floor(x0 / 30) * 30; x < x1 + 30; x += 30) {
+    const k = hash(Math.round(x / 30), 29);
+    ctx.fillStyle = '#3A4842';
+    ctx.beginPath();
+    ctx.ellipse(x + 15, 236, 10 + k * 8, 6 + k * 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
 /**
  * Shillong, drawn between x0 and x1 in world px: a far pine ridge with the peak's mast, a middle ridge of pines,
  * Assam-type houses with slanting tin roofs and many windows along the slope, one church spire as a silhouette,
  * and low cloud banks lying in the valleys.
  */
-export function backdrop(ctx: Ctx, th: Theme, x0: number, x1: number) {
+export function backdrop(ctx: Ctx, th: Theme, x0: number, x1: number, variant = 0) {
+  // stage 07 is inside Mawsmai cave: rock all round, no town (QA F12)
+  if (variant === 7) {
+    cave(ctx, x0, x1);
+    return;
+  }
   // far ridge
   ctx.fillStyle = th.far;
   ctx.beginPath();
