@@ -410,30 +410,56 @@ const downAgain: Act = {
   },
 };
 
-const RIDGE = (x: number): RubbleRect[] => Array.from({ length: 9 }, (_, i) => ({ c0: x + 3 + i * 4, c1: x + 5 + i * 4, top: 13, ridge: true }));
+const RIDGE = (x: number): RubbleRect[] => Array.from({ length: 11 }, (_, i) => ({ c0: x + 3 + i * 4, c1: x + 5 + i * 4, top: 13, ridge: true }));
 /** KVT-09 act: a thin rubble ridge out across the lagoon, water on both sides. Each heap runs off towards the
  *  nearer water: land deep, as the bank taught you, and it slides you off the far side. Only the middle holds. */
 const ridge: Act = {
   id: 'kvt09-varambu',
-  w: 44,
+  w: 52,
   advice: 'A thin ridge of rubble heaps with water on both sides: each heap runs off towards the nearer edge, so landing deep slides you off its far side. Land in the middle of each heap; only the middle holds.',
   paint: (g, c) => {
     const x = c.x;
     g.fill(x, x + 1, 13, 17, '#');
-    g.pit(x + 2, x + 39);
+    g.pit(x + 2, x + 47);
     for (const r of RIDGE(x)) g.fill(r.c0, r.c1, r.top, 17, '#');
-    g.fill(x + 40, x + 43, 13, 17, '#');
+    g.fill(x + 48, x + 51, 13, 17, '#');
   },
   build: (w, c) => {
     const { X } = c;
-    pool(w, c.x + 2, c.x + 40, 15.3, { colors: LAGOON });
+    pool(w, c.x + 2, c.x + 48, 15.3, { colors: LAGOON });
     w.add(new RubbleBank(RIDGE(c.x)));
     sign(w, c.x + 0.2, 13 - 4.4, 3.4, 'VARAMBU', 'warn', null, 'water both sides');
     onPass(w, X(2), (w2) => taraSays(w2, 'Munpathe pole akathu chaadu! | Land deep, like before!', 2.4));
   },
 };
 
-export const kvt09 = { room: stormBankRoom, acts: [overhang, summit, seaWall, downAgain, ridge, breaches] };
+const BOWL_DOWN = (x: number): RubbleRect[] => [10, 13, 16, 19].map((c, i) => ({ c0: x + c, c1: x + c + 2, top: 10 + i }));
+const BOWL_UP = (x: number): RubbleRect[] => [23, 26, 29, 32].map((c, i) => ({ c0: x + c, c1: x + c + 2, top: 13 - i }));
+/** KVT-09 act: a hollow in the bank where the storm water stands. Both sides slide towards the pool at the
+ *  bottom: going down, the slide pushes you on, so walk off each step; coming up, it pulls you back, so land deep.
+ *  Switch at the bottom. */
+const hollow: Act = {
+  id: 'kvt09-kuzhi',
+  w: 44,
+  advice: 'A hollow with storm water at the bottom, and both sides slide towards it. Going down, walk off each step; at the bottom jump the pool, and coming up the far side land deep on each step, as on the bank.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 1, x + 3, 13, 17, '#').fill(x + 4, x + 6, 11, 17, '#').fill(x + 7, x + 9, 9, 17, '#');
+    for (const r of [...BOWL_DOWN(x), ...BOWL_UP(x)]) g.fill(r.c0, r.c1, r.top, 17, '#');
+    g.pit(x + 22, x + 22);
+    g.fill(x + 35, x + 38, 9, 17, '#').fill(x + 39, x + 40, 11, 17, '#').fill(x + 41, x + 42, 13, 17, '#');
+  },
+  build: (w, c) => {
+    const { X } = c;
+    pool(w, c.x + 22, c.x + 23, 15.3, { colors: LAGOON });
+    w.add(new RubbleBank(BOWL_DOWN(c.x), 1));
+    w.add(new RubbleBank(BOWL_UP(c.x)));
+    sign(w, c.x + 7.2, 9 - 4.4, 3.4, 'KUZHI', 'warn', null, 'storm water');
+    onPass(w, X(20), (w2) => taraSays(w2, 'Ini nadannu kayaru! | Now just walk up!', 2.4));
+  },
+};
+
+export const kvt09 = { room: stormBankRoom, acts: [overhang, summit, seaWall, downAgain, ridge, hollow, breaches] };
 
 // ================================================================== KVT-10: the octopus
 const CORAL: Record<string, [string, string]> = {

@@ -483,10 +483,34 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { hold: 'R', until: ground, max: 200 },
       { hold: 'R', until: X(x + 1.3), max: 200 },
       ...mid(0, 12, 30, 'the middle of each heap: deep slides you off the far side'),
-      ...[4, 8, 12, 16, 20, 24, 28, 32, 36].flatMap((c) => mid(x + c, 30, 52)),
-      { hold: 'R', until: X(x + 43.2), max: 300 },
+      ...[4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44].flatMap((c) => mid(x + c, 30, 52)),
+      { hold: 'R', until: X(x + 51.2), max: 300 },
     ];
   },
+  'kvt09-kuzhi': (x) => [
+    ...[0.3, 3.3, 6.3].flatMap((c, i): Step[] => [
+      { hold: 'R', until: X(x + c), max: 300, ...(i === 0 ? { note: 'up the rock to the rim of the hollow' } : {}) },
+      { hold: '', until: still, max: 60 },
+      { hold: 'R', jump: 14, ticks: 24 },
+      { hold: '', until: ground, max: 200 },
+    ]),
+    // down: walk off each step (you land at its back and the slide pushes you on to its middle)
+    ...[10, 13, 16, 19].flatMap((c, i): Step[] => [
+      { hold: 'R', until: (w) => w.player.x >= px(x + c - 0.2) || w.state !== 'play', max: 300, ...(i === 0 ? { note: 'down into the hollow: walk off each step' } : {}) },
+      { hold: '', until: (w) => (w.player.onGround && !w.flags.kvtSlide && w.player.x >= px(x + c)) || w.state !== 'play', max: 200 },
+    ]),
+    { hold: '', until: still, max: 100 },
+    { hold: 'R', until: X(x + 21.3), max: 200, note: 'over the pool, and land deep on the far side' },
+    { hold: '', until: still, max: 60 },
+    { hold: 'R', jump: 30, ticks: 48 },
+    { hold: '', until: ground, max: 200 },
+    { hold: '', until: still, max: 200 },
+    ...stepUp(x + 25),
+    ...stepUp(x + 28),
+    ...stepUp(x + 31),
+    ...stepUp(x + 34, 'up on to the far rim'),
+    { hold: 'R', until: and(ground, X(x + 43.2)), max: 400 },
+  ],
   'kvt09-murivu': (x) => [
     { hold: 'R', until: X(x - 0.2), max: 200 },
     { hold: 'R', jump: 16, ticks: 16, long: true, note: 'up on to the breached crest' },
@@ -975,7 +999,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { what: 'land deep on the first heap of the ridge, as on the bank', steps: [...upTo(S['KVT-09'], 'the middle of each heap: deep slides you off the far side'), { hold: '', until: still, max: 200 }, { hold: 'R', jump: 30, ticks: 44 }, { hold: '', until: ground, max: 200 }, dies], cause: 'splash' },
     { what: 'land on the one loose block in the second break, like the heap in the first', steps: [...upTo(S['KVT-09'], 'the second break: one loose block, jump it whole'), { hold: 'R', until: X(136 + 32.3), max: 300 }, { hold: '', until: still, max: 60 }, { hold: 'R', jump: 8, ticks: 10 }, { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, dies], cause: 'splash' },
     { what: 'hop down the far side of the summit, as Tara says', steps: [...upTo(S['KVT-09'], 'walk off each step, never hop down'), ...Array.from({ length: 5 }, (): Step[] => [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, { hold: '', until: (w) => !w.flags.kvtSlide || w.state !== 'play', max: 200 }]).flat(), dies], cause: 'splash' },
-    { what: 'a little hop over the storm cut, as Tara says', steps: [...upTo(S['KVT-09'], 'well past the first cut').slice(0, -1), { hold: 'R', until: X(272 + 5.2), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 400 }], cause: 'splash' },
+    { what: 'a little hop over the storm cut, as Tara says', steps: [...upTo(S['KVT-09'], 'well past the first cut').slice(0, -1), { hold: 'R', until: X(324 + 5.2), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 400 }], cause: 'splash' },
   ];
   // hop straight up the steps from wherever you land
   naive['KVT-09'] = {

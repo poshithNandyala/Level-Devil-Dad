@@ -1142,7 +1142,7 @@ export const levels = (): LevelDef[] => [
     // down off the crest to the shore road
     join: (g) => g.fill(32, 33, 15, 17, '#'),
     joinW: 2,
-    par: 32,
+    par: 70,
     acts: kvt09.acts,
     twist: 'kvt-buried-door',
     shape: 'long',
@@ -1151,7 +1151,7 @@ export const levels = (): LevelDef[] => [
   }),
   longStage({
     base: kvt10.room(),
-    par: 22,
+    par: 100,
     acts: kvt10.acts,
     twist: 'kvt-sand-arm',
     shape: 'long',
