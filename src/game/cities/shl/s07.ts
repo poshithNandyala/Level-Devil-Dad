@@ -219,8 +219,8 @@ export const actPlop: Act = {
   build: (w, c) => {
     const list = w.flags.shl7 as Stal[];
     cave(w, c.x, c.x + 35);
-    stal(w, list, c.x + 10, { g0: 66, step: 8, period: 0.8, shut: 2.0, phase: 0.0, from: c.x + 2, startGap: 66, pillar: true });
-    stal(w, list, c.x + 18, { g0: 66, step: 8, period: 0.6, shut: 2.0, phase: 0.0, from: c.x + 2, startGap: 34, pillar: true });
+    stal(w, list, c.x + 10, { g0: 66, step: 8, period: 0.8, shut: 2.0, phase: 0.0, from: c.x + 2, startGap: 42, pillar: true });
+    stal(w, list, c.x + 18, { g0: 66, step: 11, period: 0.6, shut: 2.0, phase: 0.0, from: c.x + 2, startGap: 33, pillar: true });
     stal(w, list, c.x + 26, { g0: 66, step: 8, period: 1.0, shut: 2.0, phase: 0.0, from: c.x + 2, startGap: 50, pillar: true });
     sign(w, c.x + 2, 10.4, 3, 'LISTEN', 'shop', null, 'click or plop');
   },

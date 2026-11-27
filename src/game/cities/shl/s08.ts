@@ -55,7 +55,7 @@ export interface TankState {
 
 export const SOAK_AT = 1.5;
 export const SPOUT_FOR = 2.2;
-export const CLOUD_V = 60;
+export const CLOUD_V = 100;
 
 /** one tank, one cloud, one gate: the whole beat */
 export function tank(w: World, o: TankOpts): TankState {
@@ -267,7 +267,7 @@ export function room(): LevelDef {
     map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      tank(w, { key: 'shl8', tank: 16, reach: [5, 21], gate: 20, spout: 18.5, arm: 2 });
+      tank(w, { key: 'shl8', tank: 16, reach: [5, 21], gate: 20, spout: 18.5, arm: 2, fill: 2.2 });
       onPass(w, px(2.5), (w2) => tara(w2, L.intro[6], 2.2));
       sign(w, 2, 10.2, 3.2, 'SOHRA', 'shop', null, 'wettest place, dry tank');
       rival(w, 29, 15, -1, taraScript(8));
