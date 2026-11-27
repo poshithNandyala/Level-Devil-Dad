@@ -642,3 +642,14 @@ round 4: four death lines no longer advise the act's other death, the gamosa pit
 `dis08-bagori` is cut (its decision was the wake's and the bull's). Route times: 01 22.6, 02 21.9, 03 33.6, 04 11.2, 05
 32.0, 06 24.3, 07 88.3, 08 31.0, 09 34.6, 10 34.2 s; the ones under their floors are honest and ruled final. Fair at
 N=80: 100 at 6 and 12 ticks on all ten; worst replay 7.17 s (07). Design notes: `docs/cities/DIS.md`.
+
+## v0.17.8: Bhubaneswar, ten stages
+Bhubaneswar (BBI, Odisha) is a module city: ten stages in `src/game/cities/bbi/`, routes in `tests/cities/bbi.ts`. 01
+the median gardener's jet that chases a walker, 02 Hockey (ride the keeper's pad), 03 Chandua (parasols open only for
+a customer), 04 Tarakasi (standing builds the silver curl), 05 Raja (the village's machines start when touched), 06
+Bandha (the ikat motif lines up one beat in five), 07 Gotipua (the marathon: go on the pose), 08 Pakhala (the pour
+floats the rice), 09 Chakka (the hub stays still), 10 Kalinga (the finale breaks each rule). QA round 1 failed (finale
+lines teaching the broken rule, in-stage repeats, the lift class, doors, lag); fix rounds 1-2 cut seven acts, made four
+doors plain and made every scripted play hold its cause at lag 0/6/12. Route times: 01 25.4, 02 26.4, 03 25.9, 04 29.3,
+05 54.2, 06 46.9, 07 86.0, 08 33.3, 09 39.4, 10 94.4 s. Fair at N=80: 100 at 6 and 12 ticks on all ten; worst replay
+7.24 s. Design notes: `docs/cities/BBI.md`.

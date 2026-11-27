@@ -184,6 +184,53 @@ ulta nishana tadit chehra kataar khoh dwar
 pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound pat-charkhi pat-ginti-pad
 (+ the old nine twists: spikes crush swap shy sink rise wall fake none)
 
+## BBI (Bhubaneswar, Odisha): ideas used (module city, 10 stages)
+- **01 Namaskara Bhubaneswar** the median gardener's jet chases a walking dad and spares one who stands still; the wet
+  tile slides you into the drain; a second gardener's wet tile at the next drain's lip.
+- **02 Hockey** ride the keeper's back pad across the drain; the front pad takes the flick; the save rebounds off the
+  boards. Acts: cross the stopper while the ball sits still (`bbi02-corner`), a second keeper (`bbi02-dive`), a dummy
+  corner lets the first ball through (`bbi02-chhal`). Door `bbi-turf-roll`: two turf rolls meet; the bare strip is safe.
+- **03 Chandua** appliqué parasols open only for a customer; silk slides you off, only the cut-out holds; the third
+  shopkeeper sells his cut-out. Acts: the far one opens first (`bbi03-gali`), the last one is sold (`bbi03-mela`).
+  Door `bbi-lantern-drop`.
+- **04 Tarakasi** stand half a second and the silversmith solders a glowing curl ahead: a wall on the bench, a bridge
+  over the trough. Act: two torches, two troughs (`bbi04-karkhana`). Door `bbi-curl-stair`: your wall is the stair.
+- **05 Raja** (HWIK) the village's machines sit still for the festival and start when touched, with you on them: touch
+  nothing. Acts: the rice pounder over the husk pit (`bbi05-dhenki`), the bullock cart under the hayloft beam
+  (`bbi05-gadi`), the goat walks the pounder (`bbi05-chheli`), the threshing yard (`bbi05-khala`), the well sweep you
+  must stop at its top (`bbi05-thaka`), the talapatra whose written leaves hold once the soot shows them
+  (`bbi05-patra`), the bullock's swinging tail (`bbi05-bail`), the still mill to jump (`bbi05-chakki`), knock the cane
+  belt off its pulley (`bbi05-ganna`), the uncle who stops whatever you start (`bbi05-mama`). Door `bbi-behind-step`.
+- **06 Bandha** one beat in five the ikat patches line up into a bridge and the shuttle crosses on it. Acts: across and
+  back (`bbi06-tana`), a staircase motif (`bbi06-sidhi`, the momentum beat), each pattachitra panel shows the next pit
+  (`bbi06-patta`), undyed threads leave a hole (`bbi06-sutra`), the beater sweeps at the beat's end (`bbi06-rachh`), snap
+  the plain thread to stop the loom (`bbi06-tantu`), the shuttle box runs from you (`bbi06-palaa`). Door plain.
+- **07 Gotipua** (marathon) the boys whirl while the drum plays and pose on the stop (wheel, bridge, tower): go at the
+  stop, the restart throws you. Acts: `mardala` (shelter bank), `deepa` (lamps over the wheel), `bandha`, `dui-baja`
+  (the troupe follows the drummer across the pit), `bagudi` (tagged: pass it back over the line), `pada` (the tower falls
+  over as the bridge), `jodi` (two half-bridges), `gadiba` (the roll), `hulahuli` (the bowing boy kicks), `sajaghara`
+  (the tent is safe only while they dance), `ghungur` (lamps out: jump where the bells ring), `kachha` (tucked pleats
+  mean the line rolls), `pothi` (hop the palm-leaf screen's hinges). Door plain.
+- **08 Pakhala** (HWIK) the jug's pour floats the rice apart: ride a badi; the second jug pushes its badi under. Acts:
+  the server throws faster the longer you wait (`bbi08-phinga`), the bowl drains (`bbi08-bhanwar`), let your badi plug
+  the hole (`bbi08-dati`), hop only at the slow edge of the stir (`bbi08-ghurni`). Door plain.
+- **09 Chakka** the horses start the plinth; wait on the still hub as it slides under and slams. Acts: spokes rise one
+  at a time (`bbi09-udaya`, the momentum beat), `bbi09-ratha`, the plinth sinks after the slam (`bbi09-ulta`), spokes
+  sink in order (`bbi09-ara`). Door `bbi-horse-gap`.
+- **10 Kalinga** (finale) the flick lifts over the keeper's front pad and drops on his back pad: ride the front, on to a
+  sliding plinth. Callbacks that break their rule: the old manuscript's written leaves are rotten (`bbi10-patra`), every
+  parasol open until a buyer folds it (`bbi10-chhata`), the boys let "it" through (`bbi10-bagudi`), the tower falls away
+  from your edge (`bbi10-pada`), the far drummer is out of step (`bbi10-dui-baja`), lamps hang to the bridge
+  (`bbi10-deepa`), a drummer plays during the pose (`bbi10-tana`), the stair rises only while you wait (`bbi10-udaya`),
+  the goat charges the straw on its way back (`bbi10-chheli`), an honest painter and a rotten first plank
+  (`bbi10-patta`), stop the sweep low (`bbi10-thaka`), bells over the empty floor (`bbi10-ghungur`), the server slows
+  (`bbi10-phinga`), snap a coloured thread (`bbi10-tantu`), the weaver holds the shuttle (`bbi10-palaa`), the reversed
+  stir (`bbi10-ghurni`), the hub slides and the rim stays (`bbi10-chakra`). Door plain.
+- **Cut, and why:** `bbi09-asta` (= udaya), `bbi09-ghoda` (= the 09 room), `bbi08-dui` (= the 08 room), `bbi07-dweepa`
+  (= mardala), `bbi07-shrinkhala` (= bandha's momentum half), `bbi05-tenda` (the lift class, `kvt05-lift`'s),
+  `bbi07-gum-ta` (a forecast read, DIS-02's); doors `bbi-pose-gate`, `bbi-motif-door`, `bbi-ribbon-snip`,
+  `bbi-leaf-plate` made plain.
+
 ## CHN (Chennai, Tamil Nadu): ideas used (hardness pass, 10 stages)
 - **01 tour bite** the sundal cart on the promenade: the vendor lifts the pan's lid on a steady beat and its steam stands
   over the path while it is up; as you come near the beat lies once (a short shut, then up again). The honest tell is his
