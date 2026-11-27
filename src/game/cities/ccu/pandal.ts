@@ -266,3 +266,61 @@ export class DhakFrame extends Entity {
     ctx.fillRect(s.x, s.y + 8, s.w, 2);
   }
 }
+
+/** CCU-09 (the bible's "opening night, the queue"): the queue into the pandal stands one person to a bamboo,
+ *  and on each beat of the dhak the whole queue steps one bamboo on. Nobody climbs over it, and nobody gets
+ *  ahead of it: move up into the bamboo just left, one beat at a time */
+export class Queue extends Entity {
+  people: { k: number; solid: Solid }[];
+  t0 = -1;
+  beats = 0;
+  constructor(
+    readonly xs: number[],
+    readonly top: number,
+    start: number[],
+    readonly every = 1.6,
+  ) {
+    super();
+    this.layer = 1;
+    this.people = start.map((k) => {
+      const s = new Solid(xs[k] + 2, top - 28, 12, 28);
+      s.velX = 0;
+      return { k, solid: s };
+    });
+  }
+  get solids() {
+    return this.people.map((p) => p.solid);
+  }
+  /** is anyone standing on bamboo `k` */
+  taken(k: number) {
+    return this.people.some((p) => p.k === k);
+  }
+  update(w: World) {
+    const pl = w.player;
+    for (const p of this.people) if (p.solid.collidable && pl.onGround && pl.isRiding(p.solid)) return w.die('ccu-line');
+    if (this.t0 < 0 || w.tick < this.t0) return;
+    if ((w.tick - this.t0) % Math.round(this.every * 120) !== 0) return;
+    this.beats++;
+    w.sfx('thud', this.xs[0], this.top);
+    for (const p of this.people) {
+      p.k++;
+      if (p.k >= this.xs.length) {
+        p.solid.collidable = false;
+        continue;
+      }
+      p.solid.x = this.xs[p.k] + 2;
+    }
+  }
+  draw(ctx: CanvasRenderingContext2D) {
+    for (const [i, p] of this.people.entries()) {
+      if (!p.solid.collidable) continue;
+      const s = p.solid;
+      ctx.fillStyle = ['#8E3B46', '#2F6E8E', '#B07D2B', '#5E7D4A'][i % 4];
+      ctx.fillRect(s.x + 1, s.y + 8, 10, 20);
+      ctx.fillStyle = '#5D4037';
+      ctx.beginPath();
+      ctx.arc(s.x + 6, s.y + 4, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}

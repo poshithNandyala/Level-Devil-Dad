@@ -12,7 +12,7 @@ import type { Tram } from '../../src/game/cities/ccu/tram';
 import { BookPorter, Porter } from '../../src/game/cities/ccu/porters';
 import type { Tin } from '../../src/game/cities/ccu/muri';
 import type { Bore, Ebb } from '../../src/game/cities/ccu/baan';
-import type { DhakFrame } from '../../src/game/cities/ccu/pandal';
+import type { DhakFrame, Queue } from '../../src/game/cities/ccu/pandal';
 import { Figure, type BigFigure, type Straw } from '../../src/game/cities/ccu/kumartuli';
 import type { Adda, TeaSeller, Wash } from '../../src/game/cities/ccu/adda';
 import type { ClothPanel } from '../../src/game/cities/ccu/pandal';
@@ -514,6 +514,18 @@ const phuchkaRoute = (x: number, bad?: 'eat' | 'climb'): Step[] => {
   ];
 };
 
+// ------------------------------------------------------------------ CCU-09 the opening-night queue
+const lineRoute = (x: number, bad?: 'heads' | 'under'): Step[] => {
+  const Q = (w: World) => w.flags.line as Queue;
+  const at = (k: number) => px(x + 3 + 2 * k + 0.4);
+  const head: Step[] = [steerHop(px(x + 1.5), 12, 'up on the block'), steerHop(at(0), 12, 'on to the first bamboo, behind the queue')];
+  if (bad === 'heads') return [...head, steerHop(at(1), 24, 'up on to the queue, like a cloth top'), { hold: '', until: done, max: 300 }];
+  if (bad === 'under') return [...head, { hold: 'R', until: done, max: 300, note: 'the queue is in the way: walk off and go under it' }];
+  const moves: Step[] = [];
+  for (let k = 1; k < 8; k++) moves.push({ hold: '', until: (w) => !Q(w).taken(k), max: 600, note: 'wait for the beat' }, steerHop(at(k), 12, 'into the bamboo just left'));
+  return [...head, ...moves, steerHop(px(x + 20.5), 12, 'on to the gate’s deck'), walk(x + 23.4)];
+};
+
 // ------------------------------------------------------------------ CCU-05 the straw yard
 const khorRoute = (x: number, bad?: 'straw' | 'wait'): Step[] => {
   const S = (k: number) => (w: World) => (w.flags.khor as Straw[])[k].clay;
@@ -863,6 +875,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: and(ground, X(x + 43.5)), max: 600, note: 'off at the island, before the points' },
   ],
   'ccu09-dhak': (x) => dhakRoute(x),
+  'ccu09-line': (x) => lineRoute(x),
   'ccu09-chala': (x) => [
     steerHop(px(x + 3), 10, 'on to the bamboo: the wide panel goes up'),
     steerHop(px(x + 7.5), 34, 'a full jump on to the wide cloth', true),
@@ -933,8 +946,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 // CCU-09's lift acts: the obvious plays there
 {
   const toLift = (): Step[] => [...pandalRoute(), ...actRoutes['ccu09-sinri'](32), ...actRoutes['ccu09-toran'](62), ...actRoutes['ccu09-chala'](88), ...dhakRoute(128)];
+  const toLine = (): Step[] => [...toLift(), ...liftRoute('ccu09-uthan', 152), ...liftRoute('ccu09-uthan2', 182)];
   mistakes['CCU-09'].push(
     { what: 'waiting under the canopy for the beat to pass', steps: [...toLift().slice(0, -dhakRoute(128).length), ...dhakRoute(128, 'walk')], cause: 'crushed' },
+    { what: 'climbing on to the queue', steps: [...toLine(), ...lineRoute(212, 'heads')], cause: 'ccu-line' },
+    { what: 'going under the queue', steps: [...toLine(), ...lineRoute(212, 'under')], cause: 'ccu-bansh' },
     { what: 'jumping for the high bamboo before the lift', steps: [...toLift(), ...liftRoute('ccu09-uthan', 152, 'early')], cause: 'ccu-bansh' },
     { what: 'resting on the lifted panel under the roof frame', steps: [...toLift(), ...liftRoute('ccu09-uthan', 152, 'stay')], cause: 'crushed' },
   );
