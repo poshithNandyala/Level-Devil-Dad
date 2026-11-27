@@ -401,23 +401,19 @@ export const endings: Record<ChnEndingKind, Ending> = {
     },
   },
 
-  /** CHN-10's door: the floor before the glass door has just been mopped: you slide on it. The WET FLOOR sign stands on
-   *  the only dry tiles, the doormat; the door opens only for someone who has stood on the mat. */
+  /** CHN-10's door: a PLAIN door (round 2). The mopped-floor rule (slide, the door shut for wet feet, the sign on the
+   *  dry mat) was the same thought as TVM-10's shipped door `tvm-oily-feet-coir-mat` and was taken out; the two recasts
+   *  gated in EXTEND-2.md failed too (one re-asked kaanal's shine read, one was the wait-for-the-cycle class). The
+   *  WET FLOOR board and the mat stay as dressing: the floor is dry, the door opens, nothing here kills. Key kept. */
   'chn-wet-floor-sign': {
     space: 9,
-    paint(g, D) {
-      g.fill(D - 8, D - 1, 15, 15, '~');
-      g.fill(D - 5, D - 4, 15, 15, '#');
-    },
-    advice: 'The floor before the glass door is freshly mopped: you slide on it, and the door stays shut for wet feet. The WET FLOOR sign stands on the only dry tiles, the doormat: stop on them a moment, and the door opens.',
+    advice: 'The glass door at the end of the floor. The WET FLOOR board is only a board today: walk in.',
     build(w, d) {
-      const L = lock(w, d, 'Kaal thudachu vaanga! | Wipe your feet first!');
       const sx = d.x - px(4.5);
-      let stood = 0;
-      w.flags.twist = 'wet';
+      w.flags.twist = 'plain';
       w.add(
-        new Paint((ctx, w2) => {
-          // the sign: a yellow A-board on the mat
+        new Paint((ctx) => {
+          // the sign: a yellow A-board beside the mat
           ctx.fillStyle = '#FDD835';
           ctx.beginPath();
           ctx.moveTo(sx, FLOOR - 26);
@@ -426,23 +422,10 @@ export const endings: Record<ChnEndingKind, Ending> = {
           ctx.fill();
           text(ctx, 'WET', sx, FLOOR - 12, 5, '#212121', '');
           text(ctx, 'FLOOR', sx, FLOOR - 5, 4, '#212121', '');
-          // the mat, and the sheen on the mopped tiles
           ctx.fillStyle = '#6D4C41';
-          ctx.fillRect(d.x - px(5), FLOOR - 2, px(2), 2);
-          ctx.fillStyle = 'rgba(255,255,255,0.25)';
-          for (let x = d.x - px(8); x < d.x - px(1); x += 6) if (x < d.x - px(5) - 2 || x > d.x - px(3)) ctx.fillRect(x + ((w2.tick * 0.2) % 4), FLOOR - 1.5, 3, 1);
+          ctx.fillRect(d.x - px(3), FLOOR - 2, px(2), 2);
         }, 2),
       );
-      w.onTick((w2) => {
-        const p = w2.player;
-        const onMat = p.onGround && p.cx >= d.x - px(5) && p.cx <= d.x - px(3) && Math.abs(p.vx) < 20;
-        stood = onMat ? stood + 1 : 0;
-        if (!L.open && stood >= 24) {
-          L.unlock();
-          npc(w2, 'Seri, ulla vaanga! | Right, come in!', d.x + 8, d.y - 6, 1.2);
-        }
-        w2.flags.twist = L.open ? 'open' : onMat ? 'mat' : 'wet';
-      });
     },
   },
 

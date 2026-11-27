@@ -75,6 +75,8 @@ export class SundalCart extends Entity {
       this.lid = 'open';
       this.at = w.tick;
       this.hazard.active = true;
+      // the lift after the short shut is its own death (law 9): the beat lied, not the steam
+      this.hazard.cause = this.shutFor === LIE ? 'chn-sooda' : 'chn-sundal';
       w.sfx('pour', this.x0 + this.w / 2, this.ground - 30);
       if (this.shutFor === LIE) w.say('Paaru, sooda irukku! | Look, it is hot!', this.x0 + 40, this.ground - 58, 1.2, 'npc');
     }

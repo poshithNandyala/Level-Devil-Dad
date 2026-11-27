@@ -19,9 +19,9 @@ const tara = (n: number, point: 1 | -1 = 1) => ({ intro: L.intro[n % L.intro.len
 export const SPENCER_META = meta('stair-direction-by-load', ['escalator-flip'], 'chn-wet-floor-sign');
 
 const FOUNTAIN: [string, string] = ['rgba(120,200,230,0.8)', 'rgba(30,100,150,0.95)'];
-/** the atrium below an escalator: the fountain basin */
-function basin(w: World, tx0: number, tx1: number) {
-  pool(w, tx0, tx1, G + 1 / 16, { colors: FOUNTAIN, cause: 'chn-fountain' });
+/** the atrium below an escalator: the fountain basin (each act names its own fall: law 9) */
+function basin(w: World, tx0: number, tx1: number, cause = 'chn-fountain') {
+  pool(w, tx0, tx1, G + 1 / 16, { colors: FOUNTAIN, cause });
 }
 
 export interface Shopper {
@@ -465,7 +465,7 @@ export const kaanal: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    for (const t of [6, 13, 19]) basin(w, x + t, x + t + 2);
+    for (const t of [6, 13, 19]) basin(w, x + t, x + t + 2, 'chn-kinaru');
     for (const t of [3, 10, 16, 22]) w.add(new Shimmer(px(x + t), px(G), px(2), '#CFD8DC', '#90A4AE'));
     // the wells: dark, and really open (the basin shows through)
     for (const t of [6, 13, 19]) w.add(new Decal(px(x + t), px(G) - 1, px(2), 3));
@@ -485,7 +485,7 @@ export const pattarai: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    basin(w, x + 4, x + 25);
+    basin(w, x + 4, x + 25, 'chn-plaster');
     const pale = w.add(new Murukku('d1', px(x + 6), px(5), 'pale'));
     pale.friesAt = -1;
     const plaster = w.add(new Murukku('d2', px(x + 13), px(5), 'golden'));

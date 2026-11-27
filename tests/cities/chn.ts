@@ -110,9 +110,10 @@ function tour01(S: Record<string, Step[]>) {
   // the obvious play: walk on like past the posts, into the steam he has just lifted the lid off
   naive['CHN-01'] = { steps: [...before, die], cause: 'chn-sundal' };
   // the obvious fix: go the moment it shuts (Tara's line): the shut after the lift is the short one
-  fix['CHN-01'] = { steps: [...before, upTo, until(sundalShut, 'it shut: go', 900), die], cause: 'chn-sundal' };
+  // (the lift after the short shut is its own cause, chn-sooda: NAIVE and FIX are two causes at two ticks)
+  fix['CHN-01'] = { steps: [...before, upTo, until(sundalShut, 'it shut: go', 900), die], cause: 'chn-sooda' };
   mistakes['CHN-01'] = [
-    { what: 'wait for the hand to go up, then go (the lift follows the hand)', steps: [...before, upTo, until((w) => !!sundalOf(w)?.hand(w), 'hand up', 900), die], cause: 'chn-sundal' },
+    { what: 'wait for the hand to go up, then go (the lift follows the hand)', steps: [...before, upTo, until((w) => !!sundalOf(w)?.hand(w), 'hand up', 900), die], cause: 'chn-sooda' },
     { what: 'hop the cart like the parked auto', steps: [...before, ...hopAt(74.6, 14, 'hop the cart'), die], cause: 'chn-sundal' },
   ];
   // the pot (the old FIX): stand where it bubbles
@@ -137,9 +138,9 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     const prefix = (note: string) => r.slice(0, at(note));
     mistakes['CHN-10'].push(
       { what: 'family A1 (the room taught it): hop back off when they board', steps: [...prefix('board the moodal escalator'), { hold: 'R', until: riding('moodal'), max: 600 }, { hold: 'L', until: (w) => w.player.x <= px(32 + 8.6), max: 60 }, { hold: 'L', jump: 30, ticks: 30, long: true }, { hold: 'L', until: (w) => w.player.onGround && !riding('moodal')(w), max: 120 }, { hold: '', until: done, max: 900 }], cause: 'chn-trolley' },
-      { what: 'polished floor A1 (the beach road taught it): hop the shimmer, walk the dark patch', steps: [...prefix('walk the shimmer'), ...hopAt(32 + 30 + 2.4, 12, 'hop the shimmer'), die], cause: 'chn-fountain' },
+      { what: 'polished floor A1 (the beach road taught it): hop the shimmer, walk the dark patch', steps: [...prefix('walk the shimmer'), ...hopAt(32 + 30 + 2.4, 12, 'hop the shimmer'), die], cause: 'chn-kinaru' },
       { what: 'down escalator A1: step on while it is empty', steps: [...prefix('wait for a step under the kerb (keezhe)'), until((w) => esc('keezhe')(w).shoppers[0].p < 0 && stepUnder(w, 'keezhe'), 'wait for the kid to step off', 1200), { hold: 'R', until: riding('keezhe'), max: 60 }, { hold: 'L', until: (w) => w.player.vx <= 0, max: 20 }, stay], cause: 'chn-comb' },
-      { what: 'display A1 (the kitchen taught it): stand on the golden one', steps: [...prefix('across the plaster one without stopping'), { hold: 'R', until: (w) => w.player.onGround && w.player.x >= px(32 + 30 + 26 + 30 + 14), max: 600 }, stay], cause: 'chn-fountain' },
+      { what: 'display A1 (the kitchen taught it): stand on the golden one', steps: [...prefix('across the plaster one without stopping'), { hold: 'R', until: (w) => w.player.onGround && w.player.x >= px(32 + 30 + 26 + 30 + 14), max: 600 }, stay], cause: 'chn-plaster' },
     );
   }
   {
@@ -258,17 +259,9 @@ const endingPolicies: Record<string, Policy> = {
   'chn-fresh-curtain'(w, _m, d) {
     return go(toward(w, d.x + 8, 1));
   },
-  // stop on the doormat (the sign's dry tiles) till the door opens, then walk in
+  // a plain door (round 2): walk in
   'chn-wet-floor-sign'(w, _m, d) {
-    const mat = d.x - px(4);
-    if (w.flags.twist === 'open') return go(toward(w, d.x + 8, 1));
-    const p = w.player;
-    const dx = mat - p.cx;
-    if (dx > 20) return go('R');
-    if (dx < -20) return go('L');
-    // on the mopped floor you slide: brake against the slide, then stand
-    if (Math.abs(p.vx) > 15) return go(p.vx > 0 ? 'L' : 'R');
-    return go('');
+    return go(toward(w, d.x + 8, 1));
   },
 };
 
