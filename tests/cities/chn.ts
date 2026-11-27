@@ -169,6 +169,25 @@ const chn07Room = (): Step[] => [
 
 const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) => {
   tour01(S);
+  // 02 (human timing, route only): the hop over pot three starts a tile earlier and is a little longer, so a jump up
+  // to 12 ticks late still leaves before pot three (a late one stepped on it and started the stampede); the wait for
+  // the spray is on pot five, not at the very end of the pots (a late landing ran off the end into the spray)
+  {
+    const R = S['CHN-02'];
+    const j = R.findIndex((st) => st.note === 'skip pot number three');
+    if (j < 3) throw new Error("CHN-02: no step 'skip pot number three'");
+    // two hops in a row (on to pots one-two, then over three) left no room for a late press: the second hop's take-off
+    // slid on to pot three. One long jump from the road before pot one clears pots one to three and lands on four
+    // to six whether it starts at 7.6 or 12 ticks later; the wait for the spray is on pot five
+    S['CHN-02'] = [
+      { hold: 'R', until: X(6.0), max: 600 },
+      { hold: 'R', jump: 12, ticks: 12, note: 'onto the first pots' },
+      { hold: 'R', until: and(ground, X(10.4)), max: 300 },
+      { hold: 'R', jump: 12, ticks: 12, note: 'skip pot number three' },
+      { hold: 'R', until: and(ground, X(14.4)), max: 300 },
+      ...R.slice(j + 2),
+    ];
+  }
   // 07: the room's three room steps are replaced by the steered flight; everything after (the act, the door) stays
   {
     const R = S['CHN-07'];

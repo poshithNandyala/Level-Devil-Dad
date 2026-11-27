@@ -355,7 +355,11 @@ export const levels = (): LevelDef[] => [
     build(w: World) {
       exitTwist(w, door(w), 'spikes');
       const tints = ['#E53935', '#1E88E5', '#43A047', '#FDD835', '#8E24AA', '#FB8C00'];
-      const pots = tints.map((tint, i) => thingOn(w, 'kudam', 9 + i, 15, { tint }));
+      // round 2 (human timing): the first two pots are the big ones (24 px, at 9 and 10.5), so the hop from the second
+      // over the third has a 48 px run-up instead of 32: a jump up to 12 ticks late still leaves before pot three.
+      // Pot three is still pot three (12), and the queue still ends in the wet (pots four to six at 13-15).
+      const at = [9, 10.5, 12, 13, 14, 15];
+      const pots = tints.map((tint, i) => thingOn(w, 'kudam', at[i], 15, i < 2 ? { tint, w: 24 } : { tint }));
       let tipped = false;
       w.when(
         (w2) => !tipped && w2.standing(pots[2].solid),
@@ -373,7 +377,9 @@ export const levels = (): LevelDef[] => [
         },
       );
       const lorry = thingOn(w, 'chn-lorry', 21, 15, { h: 40 });
-      const spray = { period: 1.7, on: 0.9, phase: 0.4 };
+      // round 2 (human timing): the spray pauses 1.3 s between bursts (was 0.8): the run from the pots to the lorry
+      // takes 0.85 s, and a start up to 12 ticks late still makes it. The burst itself is unchanged.
+      const spray = { period: 2.2, on: 0.9, phase: 0.4 };
       arc(w, px(21), 222, px(16), 236, 12, spray, 'rgba(120,190,230,0.95)', 'splash');
       lorry.look = 'leak';
       sign(w, 4, 10.6, 3.4, 'QUEUE HERE', 'shop', 'right', 'one pot per house');
