@@ -401,6 +401,7 @@ const CORAL: Record<string, [string, string]> = {
   pink: ['#E98AA0', '#B85A73'],
   yellow: ['#E9C35A', '#B48E2A'],
   green: ['#7FB77A', '#4E8650'],
+  rubble: ['#DCCDB4', '#BFAF94'],
 };
 const mix = (a: string, b: string, k: number) => {
   const pa = [1, 3, 5].map((i) => parseInt(a.slice(i, i + 2), 16));
@@ -740,7 +741,31 @@ const risingTide: Act = {
   },
 };
 
-export const kvt10 = { room: octopusRoom, acts: [midden, plank, risingTide, tideHoles] };
+/** KVT-10 act, the storm bank and the octopus together: on the second step the far tile, where KVT-09 taught you
+ *  to land, is an octopus the colour of the rubble. Land in the middle of that step instead, and go over it. */
+const rubbleOctopus: Act = {
+  id: 'kvt10-kallu',
+  w: 30,
+  advice: 'Kalpeni’s rubble again, but the far tile of the second step is an octopus the colour of the rubble: its speckles drift. Land in the middle of that step, and jump on over the octopus.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 3, x + 4);
+    bankUp(g, x + 5, 4, 3, 14);
+    g.fill(x + 17, x + 23, 10, 17, '#').fill(x + 24, x + 25, 12, 17, '#').fill(x + 26, x + 27, 14, 17, '#');
+  },
+  build: (w, c) => {
+    const { X } = c;
+    pool(w, c.x + 3, c.x + 5, 15.3, { colors: LAGOON });
+    const r = bankUpRects(c.x + 5, 4, 3, 14);
+    r[1] = { ...r[1], c1: r[1].c1 - 1 };
+    w.add(new RubbleBank(r));
+    w.add(new Octopus(c.x + 10, 13, 1, 'rubble'));
+    sign(w, c.x + 0.4, G - 4.4, 3.4, 'LOOSE', 'warn', null, 'coral rubble');
+    onPass(w, X(3), (w2) => taraSays(w2, 'Kallumala pole thanne! Akathu chaadu! | Just like Kalpeni! Land deep!', 2.4));
+  },
+};
+
+export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, risingTide, tideHoles] };
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {

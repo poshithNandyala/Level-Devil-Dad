@@ -149,6 +149,20 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: '', until: (w) => !!w.flags['kvt10-palaka:dropped'] && w.player.onGround && w.player.y + w.player.h >= px(14) - 1, max: 300 },
     { hold: 'R', until: and(ground, X(x + 34)), max: 600, note: 'along the catwalk, under the wall' },
   ],
+  'kvt10-kallu': (x) => [
+    ...deepOn(x + 2.3, 20, 'the rubble again: land deep on the first step'),
+    { steer: (w) => (w.player.x < px(x + 5.9) - 1 ? 'R' : w.player.x > px(x + 5.9) + 1 ? 'L' : ''), until: (w) => Math.abs(w.player.x - px(x + 5.9)) <= 1, max: 120, note: 'not the far end this time: the middle' },
+    { hold: '', until: still, max: 60 },
+    { hold: 'R', jump: 12, ticks: 30 },
+    { hold: '', until: ground, max: 200 },
+    { hold: '', until: still, max: 200, note: 'in the middle of the octopus step' },
+    { hold: 'R', jump: 30, ticks: 60, long: true, note: 'over the octopus, deep on the next step' },
+    { hold: '', until: ground, max: 200 },
+    { hold: '', until: still, max: 200 },
+    ...stepUp(x + 13),
+    ...stepUp(x + 16),
+    { hold: 'R', until: and(ground, X(x + 30)), max: 600 },
+  ],
   'kvt10-veliyettam': (x) => [...hop(x + 1.6, 12, 'from head to head, never stopping'), ...hop(x + 6.6, 12, 'the next head'), ...hop(x + 11.6, 12, 'the next'), ...hop(x + 16.6, 12, 'and the shore'), { hold: 'R', until: X(x + 24), max: 300 }],
   'kvt10-irakkam': (x) => {
     const tide = (i: number) => (w: World) => (w.flags['kvt10-irakkam:tide'] as boolean[])[i] && still(w);
@@ -702,7 +716,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   fix['KVT-10'] = { steps: [...upTo(S['KVT-10'], 'the far side of the bare hole: it goes right through'), ...hop(32 + 7.0, 12, 'into the dark hole'), dies], cause: 'splash' };
   mistakes['KVT-10'] = [
     { what: 'land on the pink head: it was yellow a moment ago', steps: [...upTo(S['KVT-10'], 'over the pink one: that pink moved'), ...hop(32 + 22.6, 12, 'on to the pink head'), dies], cause: 'kvt-octopus' },
-    { what: 'stop on the first coral head in the incoming tide, as on the tour', steps: [...upTo(S['KVT-10'], 'from head to head, never stopping'), ...hop(100 + 1.6, 12, 'on to the first head', true), { hold: '', until: done, max: 400 }], cause: 'splash' },
+    { what: 'stop on the first coral head in the incoming tide, as on the tour', steps: [...upTo(S['KVT-10'], 'from head to head, never stopping'), ...hop(130 + 1.6, 12, 'on to the first head', true), { hold: '', until: done, max: 400 }], cause: 'splash' },
     { what: 'run straight over the hole with eyes', steps: [...upTo(S['KVT-10'], 'the hole with eyes: let the moray lunge and go back in'), { hold: 'R', until: done, max: 300 }], cause: 'kvt-bitten' },
     { what: 'walk into the door', steps: [...upTo(S['KVT-10'], 'the door: kvt-sand-arm'), { hold: 'R', until: done, max: 900 }], cause: 'kvt-octopus' },
   ];
