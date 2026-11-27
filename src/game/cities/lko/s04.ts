@@ -235,7 +235,7 @@ const gali: Act = {
   id: 'lko04-chowk',
   w: 36,
   advice: 'Single cups of malai have no shady side: the only shade they get is the long shadow of the tall stack of kulhads beyond them, and as the sun climbs those shadows get shorter. Hop only on cups inside a shadow, and don’t wait about: the cup at the far tip of a shadow goes warm first.',
-  cps: [17.5],
+  cps: [14.5],
   paint: (g, c) => {
     g.pit(c.x + 3, c.x + 13).pit(c.x + 19, c.x + 30);
   },

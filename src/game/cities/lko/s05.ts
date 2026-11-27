@@ -172,6 +172,8 @@ function galoutiRoom(): LevelDef {
 const TAWA2 = 'FTFTTF';
 export const tawa2: Act = {
   id: 'lko05-tawa',
+  cp0: false,
+  cps: [-2],
   w: 24,
   advice: 'Down the long tawa some kebabs are already flat, squashed by the last customer: they’re thin, and the heat comes through fast. Hop off a flat one at once; on a full heap, wait till it squashes, then hop.',
   build: (w, c) => {
@@ -269,6 +271,8 @@ export const ulta: Act = {
 const BHARA = [3, 7, 11];
 export const bhara: Act = {
   id: 'lko05-bhara',
+  cp0: false,
+  cps: [-2],
   w: 18,
   advice: 'The cook keeps this rack low: you can stand under it on a full heap but not hop. Hop only when he hoists it to turn the seekh. Till then keep your heap full: step from one heap of the pair to the other so neither squashes. The last time he only half-hoists it: let that heap squash flat first, and hop from flat.',
   build: (w, c) => {
@@ -451,7 +455,8 @@ export const dum: Act = {
   id: 'lko05-dum',
   w: 22,
   advice: 'At the end of the stall the heaps are piled two high. One squash only takes the top kebab off, and a hop off a full heap still finds the skewers: wait for the second squash, then hop at once. The last heap is piled three high: count the squashes.',
-  cps: [0.5],
+  cp0: false,
+  cps: [-2],
   build: (w, c) => {
     const x = c.x;
     tawa(w, x + 2, x + 17);

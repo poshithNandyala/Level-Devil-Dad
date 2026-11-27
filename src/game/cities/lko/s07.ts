@@ -157,6 +157,8 @@ function ganjRoom(): LevelDef {
 /** At dusk the shops let their awnings down one after another, from behind you: keep moving and you stay ahead. */
 export const shaam: Act = {
   id: 'lko07-shaam',
+  cp0: false,
+  cps: [-2],
   w: 46,
   advice: 'Dusk: the shops let their awnings down one after another, starting behind you, and a falling awning flattens a stroller. Here, don’t pause: run the row without stopping.',
   build: (w, c) => {
@@ -500,106 +502,87 @@ export const julus: Act = {
 // four nalas, and the last one isn't where the rhythm says: it comes two steps early
 const JULUS_NALAS = [12, 24, 36, 46];
 
-// ================================================================ act 5: saamne, the procession coming the other way
-/** Groups of strollers coming towards you down the arcade, a banner on a pole held high over them. They
- *  don't part for anyone coming the other way: they walk you back into the nala you crossed. Hopping over
- *  them puts you into the banner. Step up into the alcove in the arcade wall and let them pass under you. The last alcove's sill is
- *  cracked: wait in the one before while the last group passes too. */
-const SAAMNE = [10, 26, 42];
-export const saamne: Act = {
-  id: 'lko07-saamne',
-  w: 52,
-  advice: 'Now the strollers come the other way, a banner on a pole held high over them, and they don’t part: they walk you back into the nala behind you. Hopping over them puts you in the banner. After each nala, step up into the alcove in the arcade wall and let them pass under you. The last alcove’s sill is cracked: the last group comes on straight after the one before, so wait in the second alcove till both have passed.',
-  cps: [17.5, 26.2, 34],
+// ================================================================ act 5: photo, the group photograph
+/** Outside the old studio a photographer takes the evening crowd's picture. A posing group doesn't part
+ *  for a stroller (they won't spoil the photo) and closes ranks on a rusher, as everywhere on the Ganj.
+ *  But when his flash goes they are dazzled for a moment: that is the moment to run through them. The
+ *  second photographer fires a short test flash first: wait for the real one. */
+const PHOTO = [
+  { nala: 6, wall: 10, cam: 17, period: 420, flashes: [[230, 130]] as [number, number][] },
+  { nala: 20, wall: 24, cam: 31, period: 460, flashes: [[200, 14], [262, 130]] as [number, number][] },
+];
+export const photo: Act = {
+  id: 'lko07-photo',
+  w: 34,
+  advice: 'Outside the studio a photographer is taking the crowd’s picture, and a posing group won’t part for a stroller, or for a rusher. When his flash goes they are dazzled for a moment: run through them then. The second photographer fires a short test flash first: wait for the real one.',
+  cps: [15.5],
   paint: (g, c) => {
-    SAAMNE.forEach((a, k) => {
-      g.pit(c.x + a - 6, c.x + a - 5);
-      // the last alcove's sill is cracked: it's a block of its own (see build)
-      if (k < SAAMNE.length - 1) g.fill(c.x + a, c.x + a + 1, 13, 13, '=');
-    });
+    for (const p of PHOTO) g.pit(c.x + p.nala, c.x + p.nala + 1);
   },
   build: (w, c) => {
     const x = c.x;
-    arcade(w, x, x + 51);
-    SAAMNE.forEach((a, k) => {
-      nala(w, x + a - 6, x + a - 5, 'lko-saamne');
+    arcade(w, x, x + 33);
+    const still = pace(w);
+    PHOTO.forEach((P, k) => {
+      nala(w, x + P.nala, x + P.nala + 1, 'lko-nala');
+      const S = { t0: -1, blind: 0, test: false };
+      w.flags[c.f('g' + k)] = S;
+      const ph = (w2: World) => (S.t0 < 0 ? -1 : (w2.tick - S.t0) % P.period);
+      const wall = w.add(new Block(c.X(P.wall), FLOOR - 30, px(4), 30, () => {}, 0));
+      const cam = c.X(P.cam) + 8;
       w.add(
-        new Art((ctx) => {
-          // the alcove: a niche in the colonnade with a stone sill
-          ctx.fillStyle = 'rgba(70,50,35,0.55)';
-          ctx.fillRect(c.X(a) - 2, px(13) - 34, 36, 34);
-          ctx.fillStyle = '#D8C6A2';
-          ctx.fillRect(c.X(a) - 3, px(13), 38, 4);
-        }, -1),
-      );
-      const G = { x: c.X(a + 14), on: false, done: false };
-      w.flags[c.f('g' + k)] = G;
-      const body = w.add(new Block(G.x, FLOOR - 25, 44, 25, () => {}, 0));
-      body.set(false);
-      const banner = w.add(new Zone(G.x, px(11) + 2, 44, 10, 'lko-jhanda'));
-      banner.on = false;
-      w.add(
-        new Art((ctx) => {
-          if (!G.on) return;
-          for (let i = 0; i < 3; i++) gent(ctx, G.x + 8 + i * 14, FLOOR, 25, KURTA[(i + k) % KURTA.length], { face: -1, topi: i % 2 ? '#F5F0E6' : undefined, arms: i === 1 ? 1 : 0 });
-          ctx.fillStyle = '#C8A96B';
-          ctx.fillRect(G.x + 21, px(11) + 2, 2, FLOOR - 25 - px(11));
-          ctx.fillStyle = k % 2 ? '#5A8F7B' : '#C2485B';
-          ctx.fillRect(G.x + 2, px(11) + 2, 40, 10);
-          ctx.fillStyle = '#F5F1E8';
-          ctx.fillRect(G.x + 6, px(11) + 6, 32, 2);
+        new Art((ctx, w2) => {
+          const p = ph(w2);
+          const fl = P.flashes.find(([a, d]) => p >= a && p < a + d);
+          const up = p >= P.flashes[0][0] - 60;
+          for (let i = 0; i < 4; i++) {
+            gent(ctx, c.X(P.wall) + 8 + i * 16, FLOOR, 25, KURTA[(i + k + 1) % KURTA.length], { face: 1, arms: fl ? 1 : 0.3, topi: i % 2 ? '#F5F0E6' : undefined, dupatta: i === 1 ? '#C2485B' : undefined });
+          }
+          // the photographer under his black cloth, the box camera on its tripod
+          ctx.fillStyle = '#4E342E';
+          ctx.fillRect(cam - 10, FLOOR - 22, 2, 22);
+          ctx.fillRect(cam - 2, FLOOR - 22, 2, 22);
+          ctx.fillStyle = '#212121';
+          ctx.fillRect(cam - 14, FLOOR - (up ? 34 : 28), 14, 10);
+          ctx.fillStyle = '#1B1B1B';
+          ctx.fillRect(cam - 1, FLOOR - 32, 10, 18);
+          gent(ctx, cam + 6, FLOOR, 25, '#3E3A36', { face: -1, arms: up ? 1 : 0 });
+          if (fl) {
+            ctx.fillStyle = `rgba(255,255,240,${p - fl[0] < 8 ? 0.75 : 0.18})`;
+            ctx.fillRect(c.X(P.wall) - 40, FLOOR - 70, cam - c.X(P.wall) + 50, 70);
+          }
         }, 3),
       );
       w.onTick((w2) => {
-        if (G.done) return;
-        // the last group follows straight on after the one before: it's on its way while you shelter
-        const prev = k > 0 ? (w2.flags[c.f('g' + (k - 1))] as { done: boolean }) : null;
-        const due = k === SAAMNE.length - 1 ? !!prev?.done || w2.player.cx > c.X(a - 4) : w2.player.cx > c.X(a - 4);
-        if (!G.on && due) {
-          G.on = true;
-          body.set(true);
-          banner.on = true;
-        }
-        if (!G.on) return;
-        body.move(w2, -0.42, 0);
-        G.x = body.solid.x + body.solid.xr;
-        banner.x = G.x;
-        // they turn off into the lane before the nala
-        if (G.x < c.X(a - 9)) {
-          G.done = true;
-          G.on = false;
-          body.set(false);
-          banner.on = false;
+        const pl = w2.player;
+        if (S.t0 < 0 && pl.cx > c.X(P.nala - 4)) S.t0 = w2.tick;
+        const p = ph(w2);
+        const fl = P.flashes.find(([a, d]) => p >= a && p < a + d);
+        S.blind = fl ? fl[0] + fl[1] - p : 0;
+        S.test = !!fl && fl[1] < 30;
+        const inside = pl.x + pl.w > wall.x && pl.x < wall.x + px(4);
+        // dazzled, they don't see you slip between them; they close up again behind you
+        if (fl) wall.set(false);
+        else if (!inside) wall.set(true);
+        // caught among them when they can see again: shoved back out, the way you came
+        const caught = !fl && inside && pl.y + pl.h > FLOOR - 30;
+        const touch = caught || (wall.on && pl.x + pl.w >= wall.x - 1 && pl.x < wall.x && pl.y + pl.h > FLOOR - 30);
+        if (touch && !pl.stun) {
+          w2.flags.shoveCause = S.test || (k === 1 && p >= P.flashes[0][0] && p < P.flashes[1][0]) ? 'lko-photo-test' : still() ? 'lko-photo' : 'lko-photo-jaldi';
+          if (caught) pl.x = wall.x - pl.w - 2;
+          pl.vx = -180;
+          pl.vy = -170;
+          pl.onGround = false;
+          pl.coyoteT = 0;
+          pl.launched = true;
+          pl.stun = 40;
+          w2.sfx('thud', wall.x, FLOOR - 10);
         }
       });
     });
-    // the cracked sill of the last alcove: it gives way under you
-    const la = SAAMNE[SAAMNE.length - 1];
-    let stood = 0;
-    const sill = w.add(
-      new Block(c.X(la), px(13), 32, 4, (ctx, b) => {
-        if (!b.on) return;
-        ctx.fillStyle = '#D8C6A2';
-        ctx.fillRect(b.x - 3, b.y, 38, 4);
-        ctx.fillStyle = '#5A4632';
-        ctx.fillRect(b.x + 12, b.y, 1.5, 4);
-        ctx.fillRect(b.x + 20, b.y + 1, 1.2, 3);
-      }, 1),
-    );
-    sill.solid.oneWay = true;
-    w.flags[c.f('sill')] = sill;
-    w.onTick((w2) => {
-      if (!sill.on) return;
-      stood = on(w2, sill.solid) ? stood + 1 : 0;
-      if (stood > 20) {
-        sill.set(false);
-        w2.flags.shoveCause = 'lko-saamne-taak';
-        w2.sfx('collapse', sill.x + 16, px(13));
-      }
-    });
-    sign(w, x + 0.4, 10.4, 3.4, 'SAAMNE', 'shop', null, 'ganj');
+    sign(w, x + 0.4, 10.4, 3.4, 'PHOTO', 'shop', null, 'studio');
   },
 };
 
-export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, saamne, chowk] };
+export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, photo, chowk] };
 export const meta07 = { family: 'pace-sets-crowd-shape', betrayals: ['pace-crowd', 'ladder-block'], ending: 'lko-darban' } as StageMeta;

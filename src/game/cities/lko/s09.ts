@@ -234,7 +234,7 @@ export const hawa: Act = {
   id: 'lko09-hawa',
   w: 58,
   advice: 'Now the flyer is behind you, and his flag has two faces, red and white. The birds ahead go by the face turned towards them, the one you can’t see: the flag you see is the opposite of their order. Read the tip where the cloth curls over: that’s their colour. Cross while you see white.',
-  cps: [9.5, 20.5, 32.5, 44.5],
+  cps: [7.5, 19.5, 31.5, 43.5],
   paint: (g, c) => {
     const x = c.x;
     g.pit(x + 0, x + 57, 15);
@@ -283,7 +283,7 @@ export const jhande: Act = {
   id: 'lko09-jhande',
   w: 46,
   advice: 'Two flyers now, one behind you and one far ahead, and one flock. It obeys the flag nearer to you (watch where it circles): the one behind you for the first half of the way, the one ahead once you’re over the middle of the middle roof. Cross on the nearer flag’s red.',
-  cps: [20, 31.5],
+  cps: [18.5, 30.5],
   paint: (g, c) => {
     const x = c.x;
     g.pit(x, x + 45, 15);
@@ -374,7 +374,6 @@ export const gumbad: Act = {
   id: 'lko09-gumbad',
   w: 30,
   advice: 'A dome seems bigger the farther you stand from it, and its terrace with it: from far away the terrace is far above your jump, and walk right up and it shrinks into the pool. Stand on the inlaid paving line in front of each dome and jump from there: it keeps the size it had when you left the ground. The last one is the reflection in the tank, and works the other way round: it sinks as you step back. Its line is right at the edge.',
-  cps: [11.5],
   paint: (g, c) => {
     for (const d of GUMBAD) g.pit(c.x + d, c.x + d + 4);
   },

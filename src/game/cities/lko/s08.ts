@@ -317,7 +317,8 @@ export const chaupar: Act = {
   id: 'lko08-chausar',
   w: 44,
   advice: 'A pachisi court over the well, in two halves with a stone chabutra between. Each throw of the cowries (count the dark mouths) lights that many squares ahead of yours; only lit squares and your own hold, and they go dark at the next throw. Never hop past the lit ones, and never on to the courtier’s square: wait on yours for a throw that takes you past him.',
-  cps: [1.5, 20.5],
+  cp0: false,
+  cps: [-2, 20.5],
   paint: (g, c) => {
     g.pit(c.x + 4, c.x + 38, 15);
     // the chabutra between the two halves of the court: calm stone

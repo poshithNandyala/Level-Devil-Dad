@@ -209,7 +209,7 @@ export const tatkar: Act = {
   id: 'lko06-tatkar',
   w: 34,
   advice: 'Now she dances tatkar to and fro along the stage, and the boards just in front of her feet ring with her steps. Go where she isn’t tapping: wait for her patch to come towards you, hop clean over it, and keep off the red strips.',
-  cps: [21, 26.5],
+  cps: [18],
   build: (w, c) => {
     const x = c.x;
     boards(w, x, x + 33);

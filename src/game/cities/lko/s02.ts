@@ -334,7 +334,7 @@ export const takrar: Act = {
         if (still() === 0) {
           shove(w2, p, body, G, dx);
           set('gone', w2);
-        } else if (age > 700) {
+        } else if (age > 560) {
           // he gives up: 'Accha, pehle aap', and goes through himself
           body.set(false);
           w2.say('Pehle aap? Accha, pehle aap. | After you? Fine, after you.', dx + 16, FLOOR - 34, 2.4, 'npc');
@@ -371,83 +371,65 @@ function shove(w: World, p: World['player'], body: Block, G: Who, dx: number) {
   w.say('Nahin nahin, pehle aap! | No no, after you!', dx + 16, FLOOR - 34, 2, 'npc');
 }
 
-// ================================================================ act 3: dakiya, the men in a hurry
-/** The postman comes up the lane behind you on his cycle, ringing, and the milkman right behind him. Men
- *  in a hurry don't bow back: stand still in the lane (a bow) and he rides straight into you. Step up on to
- *  the chabutra at the side and let them by, both of them. */
-export const dakiya: Act = {
-  id: 'lko02-dakiya',
-  w: 22,
-  advice: 'Two cycles come up the lane behind you, ringing: the postman, and the milkman right behind him. Men in a hurry don’t bow back. Don’t stand in the lane, and don’t run on to the shut gate: step up on to the chabutra at the side and let them by, both of them; the chowkidar opens the gate for the postman.',
+// ================================================================ act 3: aadaab, the greeting you return
+/** Along the lane the gentlemen on their chabutras greet you as you come up: "Aadaab". A greeting must be
+ *  returned: stop for a short bow, then go on. Walk past without one and he steps out, offended, and
+ *  shoves you on into the nala; bow on and on, as in the stand-off, and he insists: you first, into it. */
+const AADAAB = [6, 16];
+export const aadaab: Act = {
+  id: 'lko02-aadaab',
+  w: 24,
+  advice: 'Along the lane the gentlemen on their chabutras greet you as you come up: “Aadaab”. Return it with a short bow: stop a moment, then go on and hop the nala. Walk past without bowing and he shoves you in; bow on and on, as at the stand-off, and he insists you go first, into it.',
   paint: (g, c) => {
-    g.fill(c.x + 9, c.x + 10, 14, 14, '#');
+    for (const n of AADAAB) g.pit(c.x + n + 2, c.x + n + 3);
   },
   build: (w, c) => {
-    const x = c.x;
     const still = stillness(w);
-    const R = [
-      { x: c.X(-60), cloth: '#B8860B', cause: 'lko-dakiya' },
-      { x: c.X(-70), cloth: '#F2EEE4', cause: 'lko-dakiya-doosra' },
-    ].map((r) => ({ ...r, z: w.add(new Zone(r.x - 10, FLOOR - 13, 20, 13, r.cause)) }));
-    const S = { go: false };
-    w.flags[c.f('riders')] = R;
-    // the haveli gate at the lane's end: the chowkidar opens it when he hears the postman's bell
-    const gate = w.add(
-      new Block(c.X(18), FLOOR - 64, 16, 64, (ctx, b) => {
-        if (!b.on) return;
-        ctx.fillStyle = '#6D4C41';
-        ctx.fillRect(b.x, b.y, 16, 64);
-        ctx.fillStyle = '#A1887F';
-        for (let k = 0; k < 4; k++) ctx.fillRect(b.x + 2, b.y + 6 + k * 15, 12, 2);
-      }, 2),
-    );
-    R.forEach((r) => (r.z.on = false));
-    w.onTick((w2) => {
-      if (!S.go && w2.player.cx > c.X(2)) {
-        S.go = true;
-        R.forEach((r) => (r.z.on = true));
-        w2.sfx('click', c.X(2), FLOOR - 20);
-      }
-      if (!S.go) return;
-      for (const r of R) {
-        if (r.x < c.X(40)) r.x += 3;
-        else r.z.on = false;
-        r.z.x = r.x - 10;
-        // stood still in his way (a bow), or stepped down in front of the one behind
-        if (r === R[0]) r.z.hazard.cause = w2.player.cx > c.X(11) ? 'lko-dakiya-aage' : still() > 30 ? 'lko-dakiya' : 'lko-dakiya-aage';
-      }
-      if (gate.on && R[0].x > c.X(12)) gate.set(false);
-    });
-    w.add(
-      new Art((ctx, w2) => {
-        // they come into the lane from far behind, out of sight, when the bell rings
-        if (!S.go) return;
-        for (const r of R) {
-          ctx.strokeStyle = '#2B2B2B';
-          ctx.lineWidth = 1.5;
-          for (const wx of [r.x - 7, r.x + 7]) {
-            ctx.beginPath();
-            ctx.arc(wx, FLOOR - 5, 5, 0, Math.PI * 2);
-            ctx.stroke();
-          }
-          ctx.beginPath();
-          ctx.moveTo(r.x - 7, FLOOR - 5);
-          ctx.lineTo(r.x, FLOOR - 12);
-          ctx.lineTo(r.x + 7, FLOOR - 5);
-          ctx.moveTo(r.x, FLOOR - 12);
-          ctx.lineTo(r.x + 6, FLOOR - 14);
-          ctx.stroke();
-          gent(ctx, r.x - 1, FLOOR - 9, 20, r.cloth, { face: 1, arms: 0.6, skin: '#9C6B48', topi: r === R[0] ? '#8B5A2B' : undefined });
-          if (S.go && (w2.tick >> 4) % 2 === 0) {
-            ctx.fillStyle = '#FFE082';
-            ctx.fillRect(r.x + 6, FLOOR - 18, 2, 2);
-          }
+    bowIcon(w, still);
+    AADAAB.forEach((n, i) => {
+      const S = { s: 'wait', t: 0, push: 0 };
+      w.flags[c.f('g' + i)] = S;
+      const G: Who = { x: c.X(n) + 8, face: -1, bow: 0, cloth: SHERWANI[(i + 1) % SHERWANI.length], hop: 0, y: FLOOR - 10 };
+      w.add(
+        new Art((ctx) => {
+          // his chabutra, the raised stone seat by his door
+          ctx.fillStyle = '#C8B48E';
+          ctx.fillRect(c.X(n) - 6, FLOOR - 10, 28, 10);
+          drawWho(ctx, G);
+        }, 3),
+      );
+      const pit = w.add(new Zone(c.X(n + 2) + 1, FLOOR + 16, px(2) - 2, 30, 'lko-aadaab'));
+      const shove = (w2: World, cause: string) => {
+        const p = w2.player;
+        pit.hazard.cause = cause;
+        S.s = 'done';
+        S.push = 45;
+        p.stun = 50;
+        G.bow = 0.3;
+      };
+      w.onTick((w2) => {
+        const p = w2.player;
+        const age = w2.tick - S.t;
+        // a firm, polite shove: he walks you on, over the edge
+        if (S.push > 0) (S.push--, (p.vx = 200));
+        if (S.s === 'wait' && p.cx > c.X(n - 4)) {
+          S.s = 'bowed';
+          S.t = w2.tick;
+          w2.say('Aadaab! | Respectful greetings!', c.X(n) + 8, FLOOR - 44, 1.6, 'npc');
+        } else if (S.s === 'bowed') {
+          G.bow = Math.min(1, age / 16);
+          if (still() > 30) S.s = 'ok';
+          else if (p.cx > c.X(n) - 4) shove(w2, 'lko-aadaab');
+        } else if (S.s === 'ok') {
+          G.bow = Math.max(0, G.bow - 0.04);
+          if (still() > 240) shove(w2, 'lko-aadaab-zyada');
+          else if (p.cx > c.X(n + 1)) S.s = 'done';
         }
-      }, 3),
-    );
-    sign(w, x + 4.2, 10.4, 3.4, 'DAKIYA', 'shop', null, 'chabutra');
+      });
+    });
+    sign(w, c.x + 0.4, 10.4, 3.4, 'AADAAB', 'shop', null, 'chabutra');
   },
 };
 
-export const s02 = { room: pehleRoom, acts: [gali, takrar, dakiya] };
+export const s02 = { room: pehleRoom, acts: [gali, takrar, aadaab] };
 export const meta02 = { family: 'politeness-bow-sets-order', betrayals: ['bow-order'], ending: 'lko-kiwad' } as StageMeta;

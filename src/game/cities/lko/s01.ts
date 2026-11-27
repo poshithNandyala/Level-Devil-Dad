@@ -211,7 +211,7 @@ export const s01 = () =>
         g.pit(38, 50, 15);
       },
       extra: (w) => chowkBolts(w),
-      cps: [15.5, 36.5, 60.5, 78, 92],
+      cps: [15.5, 35, 60.5, 78, 92],
     }),
     meta: { family: 'sold-bolt-hooked-out-sideways', betrayals: ['B3', 'bolt-unrolls-curtain'], ending: 'lko-gomti-ghat' } as StageMeta,
   });

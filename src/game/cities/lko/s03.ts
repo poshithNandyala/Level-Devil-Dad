@@ -319,19 +319,19 @@ export const adda: Act = {
       const age = w2.tick - H.t;
       // knocked off the next flower by the hoop coming over: the hoop's doing, not the vat's
       vat.hazard.cause = w2.tick - moved < 90 && !p.isRiding(hoop.solid) ? 'lko-adda' : 'lko-kunda';
-      if (age === 170) {
+      if (age === 140) {
         H.moving = 1;
         moved = w2.tick;
         w2.sfx('whoosh', hoop.x + 24, FLOOR - 10);
       }
-      if (age > 170 && age <= 182) hoop.move(w2, 0, -1.5);
-      else if (age > 182 && age <= 200) hoop.move(w2, (sx(H.k + 1) - sx(H.k)) / 18, 0);
-      else if (age === 201) {
+      if (age > 140 && age <= 152) hoop.move(w2, 0, -1.5);
+      else if (age > 152 && age <= 170) hoop.move(w2, (sx(H.k + 1) - sx(H.k)) / 18, 0);
+      else if (age === 171) {
         // the clamp: whoever is standing where it comes down, and not in it, is caught
         const zx = sx(H.k + 1);
         if (!p.isRiding(hoop.solid) && p.x + p.w > zx && p.x < zx + 48 && p.y + p.h > FLOOR - 20 && p.y + p.h <= FLOOR + 1) w2.die('lko-adda');
-      } else if (age > 201 && age <= 206) hoop.move(w2, 0, 18 / 5);
-      else if (age > 206) {
+      } else if (age > 171 && age <= 176) hoop.move(w2, 0, 18 / 5);
+      else if (age > 176) {
         hoop.solid.x = sx(H.k + 1);
         hoop.solid.y = FLOOR;
         H.k++;
