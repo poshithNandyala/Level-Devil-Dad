@@ -44,14 +44,11 @@ const tourStart = (): Step[] => [
   { hold: 'R', until: (w) => w.player.onGround && w.player.y > 220, max: 400 },
 ];
 const boy = (w: World) => w.entities.find((e) => e instanceof Carrier) as Carrier;
-const inGhat = (w: World) => w.player.onGround && w.player.y > 250 && w.player.x > px(74) && w.player.x < px(80);
-/** down into the ghat, wait for the boy to walk over and a few steps on, climb out the far side */
-const ghatRun = (): Step[] => [
-  { hold: 'R', until: inGhat, max: 700, note: 'walk down into the ghat' },
-  { hold: '', until: (w) => boy(w).x < px(74) - 6 || boy(w).stopped, max: 1500, note: 'let him walk over, and a few steps past' },
-  { hold: 'R', until: (w) => w.player.x >= px(79) - 2, max: 200 },
-  { hold: 'R', jump: 14, ticks: 14, note: 'climb out of the ghat' },
-  { hold: 'R', until: ground, max: 200 },
+/** to the promenade well back from the bench, wait till he sets his tray down there to pour, and walk past him */
+const benchWait = (): Step[] => [
+  { hold: 'R', until: X(76), max: 700, note: 'well back from the bench' },
+  { hold: '', until: (w) => boy(w).pouring, max: 1500, note: 'wait till he sets his tray down at the bench' },
+  { hold: 'R', until: X(84), max: 300, note: 'past him while he pours' },
 ];
 // ------------------------------------------------------------------ DIS-02: the sandbars
 const fields = (w: World) => (w.flags.sand ?? []) as SandField[];
@@ -455,7 +452,7 @@ function actDeaths(S: Record<string, Step[]>) {
 
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   void lengthen;
-  S['DIS-01'] = [...tourStart(), ...ghatRun(), ...tourEnd()];
+  S['DIS-01'] = [...tourStart(), ...benchWait(), ...tourEnd()];
   S['DIS-02'] = [
     { hold: 'R', until: X(6.3), max: 400 },
     { hold: 'R', jump: 14, ticks: 14, note: 'on to the first bar' },
@@ -543,7 +540,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   // run and jump from bar to bar: the next one isn't there yet
   'DIS-02': { steps: [{ hold: 'R', until: X(6.3), max: 400 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 14, ticks: 22 }))], cause: 'dis-luit' },
   // down into the ghat and straight out again, then run at him
-  'DIS-01': { steps: [...tourStart(), { hold: 'R', until: inGhat, max: 700 }, { hold: 'R', until: (w) => w.player.x >= px(79) - 2, max: 200 }, { hold: 'R', jump: 14, ticks: 14, note: 'out at once' }, { hold: 'R', until: done, max: 900 }], cause: 'dis-spill' },
+  'DIS-01': { steps: [...tourStart(), { hold: 'R', until: done, max: 1500 }], cause: 'dis-spill' },
 };
 
 /** the obvious correction after the first death, which dies too (at least 5 of 10). */
@@ -579,7 +576,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   // the obvious correction: wait on every bar for the next one. The narrowing bar goes out from under the right end
   'DIS-02': { steps: [...dis02Start, { hold: 'R', until: X(19.0), max: 200 }, { hold: '', until: done, max: 1500 }], cause: 'dis-luit' },
   // hop clean over him instead: the tray tips on to where you land
-  'DIS-01': { steps: [...tourStart(), { hold: 'R', until: (w) => w.player.x >= px(66), max: 600 }, { hold: 'R', until: (w) => boy(w).x - w.player.x < 38, max: 900 }, { hold: 'R', jump: 30, ticks: 30, long: true, note: 'over him' }, { hold: 'R', until: done, max: 900 }], cause: 'dis-spill' },
+  'DIS-01': { steps: [...tourStart(), { hold: 'R', until: (w) => w.player.x >= px(66), max: 600 }, { hold: 'R', until: (w) => boy(w).x - w.player.x < 38, max: 900 }, { hold: 'R', jump: 30, ticks: 30, long: true, note: 'over him' }, { hold: 'R', until: done, max: 900 }], cause: 'dis-pool' },
 };
 
 /** more scripted first-timer deaths and 'like last time' moves. */
@@ -598,15 +595,21 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'DIS-01': [
     {
       what: 'steps off the deck as the second boy comes: his tray',
-      steps: [...tourStart(), ...ghatRun(), ...hop(94 - 1.6, 'up on the deck'), { hold: 'R', until: done, max: 900 }],
+      steps: [...tourStart(), ...benchWait(), ...hop(94 - 1.6, 'up on the deck'), { hold: 'R', until: done, max: 900 }],
       cause: 'dis-spill',
     },
     {
-      what: 'climbs out of the ghat the moment the boy is overhead: the tray swings back',
-      steps: [...tourStart(), { hold: 'R', until: inGhat, max: 700 }, { hold: '', until: (w) => boy(w).x < px(79), max: 1500 }, { hold: 'R', until: (w) => w.player.x >= px(79) - 2, max: 200 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 900 }],
+      what: 'goes past him before he has stopped at the bench: his tray swings out in front of him',
+      steps: [...tourStart(), { hold: 'R', until: X(76), max: 700 }, { hold: '', until: (w) => boy(w).x < px(83), max: 1500 }, { hold: 'R', until: done, max: 900 }],
+      cause: 'dis-spill',
+    },
+    {
+      what: 'waits on where he stood to watch him pour: he picks the tray up and walks on into him',
+      steps: [...tourStart(), { hold: 'R', until: X(76), max: 700 }, { hold: '', until: done, max: 2400 }],
       cause: 'dis-spill',
     },
   ],
+
   'DIS-03': [
     { what: 'follows her too close on the wet path and slides into her basket', steps: [{ policy: follow(0), until: and(ground, X(31.4)), max: 4000 }, { policy: follow(1, 34), until: done, max: 4000 }], cause: 'dis-basket' },
   ],
@@ -617,7 +620,6 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 /** Rooms and acts with only one play: their one trap is the whole room, so the second wrong move meets the same trap.
  *  It stays as a scripted death and is not counted as a FIX. */
 export const ONE_PLAY: Record<string, string> = {
-  'DIS-01': 'the ghat has one hazard, the tea boy’s tray: touching him, hopping him and climbing out early all meet it',
   'DIS-02': 'the sandbars have one hazard, the river under a bar that is not there: every wrong move is a wrong bar',
   'DIS-03': 'the tea row has one hazard, the plucker’s basket: too close, too early or over her all meet it',
   'DIS-06': 'the retreating bank has one hazard, the slab clock: slow and stopping both lose to it',
@@ -631,7 +633,7 @@ export const ONE_PLAY: Record<string, string> = {
 };
 /** acts whose obvious fix is the stage's FIX play (a different trap from the stage's NAIVE) */
 const STAGE_FIX: Record<string, true> = { 'dis07-bordoisila': true, 'dis10-tug': true };
-for (const id of ['DIS-01', 'DIS-02', 'DIS-03', 'DIS-06']) {
+for (const id of ['DIS-02', 'DIS-03', 'DIS-06']) {
   (mistakes[id] ??= []).push({ what: `second scripted death, same trap (one play: ${ONE_PLAY[id]})`, ...fix[id] });
   delete fix[id];
 }

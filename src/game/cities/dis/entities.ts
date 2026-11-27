@@ -96,6 +96,13 @@ export class Carrier extends Entity {
   walking = false;
   stopped = false;
   hazard: Hazard;
+  poolHazard: Hazard;
+  /** ticks left at the bench he is pouring at (0: walking) */
+  pourLeft = 0;
+  private poured = 0;
+  get pouring() {
+    return this.pourLeft > 0;
+  }
   /** spill pools (px ranges) and the tick each began */
   pools: { x0: number; x1: number; t0: number }[] = [];
   private spilledAt = -999;
@@ -106,6 +113,9 @@ export class Carrier extends Entity {
     readonly speed = 56,
     /** the ghat he walks over (px): while he is over it and just past it he swings the tray right back behind him, off the steps */
     readonly ghat: [number, number] = [0, 0],
+    /** benches (px) where he stops and sets the tray down to pour for `pourTicks`: then he and his tray are harmless */
+    readonly pours: number[] = [],
+    readonly pourTicks = 300,
   ) {
     super();
     this.x = x0;
@@ -115,12 +125,16 @@ export class Carrier extends Entity {
       active: true,
       cause: 'dis-spill',
       hits(x, y, w, h) {
-        if (!self.alive || self.stopped) return false;
+        if (!self.alive || self.stopped || self.pouring) return false;
         if (overlapXYWH(x, y, w, h, { x: self.x - 5, y: GROUND - 28, w: 10, h: 28 })) return true;
-        const t = self.tray();
-        if (overlapXYWH(x, y, w, h, t)) return true;
-        return self.pools.some((p) => overlapXYWH(x, y, w, h, { x: p.x0, y: GROUND - 8, w: p.x1 - p.x0, h: 8 }));
+        return overlapXYWH(x, y, w, h, self.tray());
       },
+    };
+    // the tea he spills when you hop him is its own trap: a hot pool where you land
+    this.poolHazard = {
+      active: true,
+      cause: 'dis-pool',
+      hits: (x, y, w, h) => self.alive && self.pools.some((p) => overlapXYWH(x, y, w, h, { x: p.x0, y: GROUND - 8, w: p.x1 - p.x0, h: 8 })),
     };
   }
   /** swing phase: 1 = tray out front (towards where he walks), -1 = swung behind him */
@@ -128,6 +142,7 @@ export class Carrier extends Entity {
     return Math.cos(((w.tick - 0) * DT * Math.PI * 2) / 1.8);
   }
   private lastSwing = 1;
+  private poolAdded = false;
   /** swung right back behind him (to the right) as he passes the ghat */
   get back() {
     return this.walking && !this.stopped && this.x <= this.ghat[1] && this.x >= this.ghat[0] - 48;
@@ -140,7 +155,20 @@ export class Carrier extends Entity {
   update(w: World) {
     if (!this.walking && w.player.cx >= this.from) this.walking = true;
     this.lastSwing = this.swing(w);
-    if (this.walking && !this.stopped) {
+    if (!this.poolAdded) {
+      this.poolAdded = true;
+      w.hazards.push(this.poolHazard);
+    }
+    if (this.pourLeft > 0) {
+      this.pourLeft--;
+      if (this.pourLeft === 0) w.say('Chah! | Tea!', this.x, GROUND - 40, 1.2, 'npc');
+    } else if (this.walking && !this.stopped && this.poured < this.pours.length && this.x <= this.pours[this.poured]) {
+      this.pourLeft = this.pourTicks;
+      this.poured++;
+      w.sfx('creak', this.x, GROUND - 20);
+      w.say('Lal chah, gur logot? | Black tea, with jaggery?', this.x, GROUND - 40, 1.8, 'npc');
+    }
+    if (this.walking && !this.stopped && !this.pouring) {
       this.x -= this.speed * DT;
       if (this.x <= this.stop) {
         this.stopped = true;
@@ -150,7 +178,7 @@ export class Carrier extends Entity {
     if (this.stopped) return;
     const p = w.player;
     // clean over the top of him: the tray tips and the tea lands where he will
-    if (w.state === 'play' && !p.onGround && p.y + p.h < GROUND - 28 && Math.abs(p.cx - this.x) < 20 && w.tick - this.spilledAt > 240) {
+    if (w.state === 'play' && !this.pouring && !p.onGround && p.y + p.h < GROUND - 28 && Math.abs(p.cx - this.x) < 20 && w.tick - this.spilledAt > 240) {
       this.spilledAt = w.tick;
       this.pools.push({ x0: this.x + 8, x1: this.x + 70, t0: w.tick });
       w.sfx('splash', this.x, GROUND);
@@ -181,7 +209,7 @@ export class Carrier extends Entity {
     person(ctx, x, GROUND - 28, 28, '#FDF0D5', '#B9855A', { cap: '#C1121F', arms: 0 });
     // the tray and its glasses
     const tb = this.tray();
-    const t = this.stopped ? { x: x - 14, y: GROUND - 12, w: 12, h: 8 } : this.back ? { x: tb.x + tb.w - 12, y: GROUND - 28, w: 12, h: 8 } : tb;
+    const t = this.stopped || this.pouring ? { x: x - 14, y: GROUND - 12, w: 12, h: 8 } : this.back ? { x: tb.x + tb.w - 12, y: GROUND - 28, w: 12, h: 8 } : tb;
     if (this.back) {
       // the long swing: a blur of tea along the arc behind him
       ctx.fillStyle = 'rgba(155,45,31,0.35)';

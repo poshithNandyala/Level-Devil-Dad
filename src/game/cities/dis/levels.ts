@@ -27,7 +27,8 @@ import { Carrier, Decor, River, SandField, levelPost, river, sand, type Span } f
 const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
 
 // ================================================================== DIS-01: Nomoskar Guwahati (the tour)
-const ghat = { x0: 74, x1: 79 };
+/** the bench (tile) on the promenade where the tea boy stops to pour */
+const bench = 80;
 const tourLevel = () =>
   tour({
     id: 'DIS-01',
@@ -64,26 +65,21 @@ const tourLevel = () =>
     ],
     things: [],
     par: 34,
-    hint: 'A boy walks the promenade with a tray of hot lal chah, and the tray swings on his arm. Touch him, or hop clean over him (the tray tips and the tea spreads over where you land), and you are scalded. There is a ghat, a step down to the river, in the middle of the promenade: climb down into it and let him walk over your head. Climb out only once he is a few steps past: as he crosses the ghat he swings the tray right back behind him, over the steps. A second boy comes from Fancy Bazar once you are up on the deck: stay up there until he has set his tray down.',
+    hint: 'A boy walks the promenade towards you with a tray of hot lal chah, and the tray swings out in front of him. Touch him or his tray and you are scalded; hop clean over him and the tray tips, and the tea spreads where you land. He stops at the bench to pour, and sets the tray down: wait well back from the bench till he does, then walk past him while he pours. A second boy comes from Fancy Bazar once you are up on the deck: stay up there until he has set his tray down.',
     cps: [27.5, 50.5, 58.5, 75, 82.5, 99.6],
-    paint: (g) => {
-      g.pit(ghat.x0, ghat.x1, 15);
-      g.fill(ghat.x0, ghat.x1, 17, 17, '#');
-    },
     extra: (w) => {
-      w.add(new Carrier(px(92), px(60), px(62), 34, [px(ghat.x0), px(ghat.x1 + 1)]));
+      // he walks at you along the promenade, and pours at the bench (tray set down) before walking on
+      w.add(new Carrier(px(92), px(60), px(62), 34, [0, 0], [px(bench) + 8], 300));
       w.add(
         new Decor((ctx) => {
-          // the ghat: stone steps down to the water
-          ctx.fillStyle = '#8D7B68';
-          ctx.fillRect(px(ghat.x0), px(16), px(ghat.x1 - ghat.x0 + 1), 16);
-          ctx.fillStyle = 'rgba(70,110,120,0.55)';
-          ctx.fillRect(px(ghat.x0), px(16) + 8, px(ghat.x1 - ghat.x0 + 1), 8);
-          ctx.fillStyle = '#6A5846';
-          for (let i = 0; i < 3; i++) ctx.fillRect(px(ghat.x0) + i * 6, px(15) + i * 8, 6, 8);
+          // the bench where the tea boy stops to pour
+          ctx.fillStyle = '#7A5A22';
+          ctx.fillRect(px(bench) - 4, px(15) - 12, 30, 4);
+          ctx.fillRect(px(bench) - 2, px(15) - 8, 3, 8);
+          ctx.fillRect(px(bench) + 21, px(15) - 8, 3, 8);
         }, -3),
       );
-      sign(w, 71.2, 10.6, 3.4, 'GHAT', 'green', null, 'river side');
+      sign(w, bench - 0.8, 10.6, 3.4, 'CHAH', 'shop', null, 'tea at the bench');
       // the second boy, from Fancy Bazar, with the evening's chah: he comes once you are up on the deck, and sets his tray
       // down at its foot. The deck is the shelter; step off before he has stopped and the tray is in your face.
       teaBoy(w, 108, 97, 100.5, [0, 0], 18);
