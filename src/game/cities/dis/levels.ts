@@ -38,7 +38,7 @@ import { majChar3, majGhat, majPitha, gorhKohora, luitGhat, gamChar, gamGhat, ga
 import { Bank, type BankDef } from './bank';
 import { Cloth, Host, gam, machan, pitDanger } from './gamosa';
 import { Hedge, Plucker, Sprinkler } from './pluck';
-import { Carrier, Danger, Decor, GROUND, River, SandField, levelPost, river, sand, type Span } from './entities';
+import { Carrier, Danger, Decor, GROUND, River, SandField, levelPost, recause, river, sand, type Span } from './entities';
 
 const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
 
@@ -543,13 +543,30 @@ function luitRoom(): LevelDef {
     name: 'Luit',
     nameEn: 'The river',
     tagline: 'The Brahmaputra, once more, with everything it has taught you. This time the level post is on the far bank.',
-    hint: 'Everything on the river is as before, in a new order. The sandbars move at the siren (new bars first, yours last, a narrowing bar keeps its left end), but the level post is across on the far bank this time, so you have to remember the rule: wait where you are until the next bar is up. Then the pan, the husori gate, the bank. At the very end the way over the water is the plucker’s own path.',
+    hint: 'The level post is on the far bank this time, and on this side of it the river does things the other way round: when the siren goes, the bar in front of you goes under FIRST, and the next one comes up only after it. Wait on the bank at the siren, not on the bar, and go when the new bar is up. A bar the post keeps is still safe to wait on. Then the dhol (he slows down), the tug of war (the teams changed ends) and the Talatal steps (they fall from the bottom). At the very end the way over the water is the plucker’s own path: go in front of her.',
     par: 40,
-    map: Grid.ground(15).pit(8, 27).put(1, 14, '@').put(30, 14, 'E').rows(),
+    map: Grid.ground(15).pit(8, 26).put(1, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      river(w, 8, 28);
-      const f = sand(w, S2.room, [px(10) - 4, px(16) - 4]);
+      // fix round 1 (QA F5): the finale breaks 02's order. Your bar sinks first, the new one rises after: wait on the bank.
+      const water = new River(px(8), px(27));
+      w.add(water);
+      const f = sand(
+        w,
+        [
+          [[9, 13], null, null],
+          [null, [10, 15], [10, 15]],
+          [null, null, [18, 24]],
+        ],
+        [px(7), px(11)],
+      );
+      f.flip = true;
+      // the death names what killed: on the sinking bar, or in the water before the new one was up
+      let stood = false;
+      w.onTick((w2) => {
+        if (w2.standing(f.bars[0].slab.solid)) stood = true;
+        water.hazard.cause = stood ? 'dis-ulta' : 'dis-agot';
+      });
       levelPost(w, f, 29.4, 3);
       sign(w, 3.6, 10.4, 3.4, 'LUIT', 'shop', null, 'the post is over there');
       rival(w, 4, 15, 1, tara(8));
@@ -708,15 +725,33 @@ const runUp = (a: Act, s: number): Act => ({
   build: a.build && ((w, c) => a.build!(w, { ...c, x: c.x + s })),
 });
 
+/** fix round 1 (QA F4, law 9): the act's deaths get causes of their own (see recause) */
+const own = (a: Act, map: Record<string, string>): Act => ({
+  ...a,
+  build: (w, c) => {
+    a.build?.(w, c);
+    recause(w, c.x, c.x + a.w, map);
+  },
+});
+
+/** as own, from `from` tiles into the act to its end */
+const ownFrom = (a: Act, from: number, map: Record<string, string>): Act => ({
+  ...a,
+  build: (w, c) => {
+    a.build?.(w, c);
+    recause(w, c.x + from, c.x + a.w, map);
+  },
+});
+
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), shape: 'tour', meta: { family: 'carrier-spills-on-contact', betrayals: ['carrier-spill'], ending: 'dis-tea-tray' } },
   longStage({ base: charRoom(), acts: [chapori, charHorn], twist: 'dis-hut-shut', par: 36, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
   longStage({ base: teaRoom(), acts: [bagan], cps: [12], twist: 'dis-muga-reel', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-muga-reel' } }),
   longStage({ base: talatalRoom(), acts: [talatalBatah], twist: 'dis-laru-plate', par: 34, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } /* repo allocation.json label; v3 names this slot collapsing-stair-penultimate-rises (the integrator lands it) */ }),
-  longStage({ base: gamosaRoom(), acts: [atithi, gamSanko, gamFeast, gamKaath, gamMachan], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
-  longStage({ base: majuliRoom(), acts: [majuliWake, majuliTraps, majuliFlag], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
-  longStage({ base: husoriRoom(), acts: [runUp(husDhol, 3), husRope, husGoru, husTekeli, husCard, husCart, chowk, husPepa], cps: [16], twist: 'dis-uruka-net', par: 90, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
-  longStage({ base: gorhRoom(), acts: [gorhJeep, gorhDuiJeep, gorhBogoli, runUp(gorhBagori, 3)], twist: 'dis-watch-tower', par: 74, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
-  longStage({ base: rangGharRoom(), acts: [rangTug, kaidhara, rangSluice, rangTunnels], twist: 'dis-royal-seat', par: 36, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
-  longStage({ base: luitRoom(), acts: [runUp(luitDhol, 3), luitTug, luitTalatal], twist: 'dis-post-bank', par: 63, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
+  longStage({ base: gamosaRoom(), acts: [atithi, own(gamSanko, { 'dis-pit': 'dis-sanko-pit' }), gamFeast, gamKaath, own(gamMachan, { 'dis-luit': 'dis-machan-luit' })], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
+  longStage({ base: majuliRoom(), acts: [own(majuliWake, { 'dis-bank': 'dis-wake-bank' }), majuliTraps, majuliFlag], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
+  longStage({ base: husoriRoom(), acts: [runUp(husDhol, 3), husRope, husGoru, husTekeli, own(husCard, { 'dis-gate': 'dis-card-gate' }), own(husCart, { 'dis-pukhuri': 'dis-cart-pukhuri' }), chowk, own(husPepa, { 'dis-gate': 'dis-pepa-gate' })], cps: [16], twist: 'dis-uruka-net', par: 90, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
+  longStage({ base: gorhRoom(), acts: [gorhJeep, gorhDuiJeep, gorhBogoli, ownFrom(runUp(gorhBagori, 3), 14, { 'dis-gorh': 'dis-gorh-adha' })], twist: 'dis-watch-tower', par: 74, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
+  longStage({ base: rangGharRoom(), acts: [rangTug, kaidhara, own(rangSluice, { 'dis-roof': 'dis-sluice-tel' }), rangTunnels], twist: 'dis-royal-seat', par: 36, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
+  longStage({ base: luitRoom(), acts: [own(runUp(luitDhol, 3), { 'dis-pukhuri': 'dis-pukhuri-lahe', 'dis-dhol-sink': 'dis-dhol-lahe' }), own(luitTug, { 'dis-khaal': 'dis-khaal-ulta', 'dis-rope': 'dis-rope-ulta' }), own(luitTalatal, { 'dis-doba': 'dis-doba-ulta', 'dis-talatal': 'dis-talatal-ulta' })], twist: 'dis-post-bank', par: 63, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
 ];

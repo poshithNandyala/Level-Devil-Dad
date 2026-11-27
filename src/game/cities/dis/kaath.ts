@@ -122,7 +122,7 @@ export const gamKaath: Act = {
     w.add(new SlidingSplit(px(x + 18), -2));
     const ditch = new Danger({ x: px(x + 22), y: GROUND + 4, w: px(2), h: 80 }, 'dis-japi-gat');
     w.add(ditch);
-    w.onTick((w2) => (ditch.hazard.cause = gam(w2).n >= BLIND_AT ? 'dis-gamosa' : 'dis-japi-gat'));
+    w.onTick((w2) => (ditch.hazard.cause = gam(w2).n >= BLIND_AT ? 'dis-kaath-gamosa' : 'dis-japi-gat'));
     for (const k of [26, 28]) w.add(new Host(px(x + k) + 8, GROUND, 'take'));
     onPass(w, px(x + 4), (w2) => tara(w2, 'Jump, Dad! | Jump, Dad!', 2));
   },

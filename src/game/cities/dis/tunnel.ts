@@ -97,7 +97,7 @@ class OilBalls extends Entity {
   }
   setup(w: World) {
     const n = Math.ceil((this.x1 - this.x0) / (1.6 * this.every)) + 1;
-    for (let i = 0; i < n; i++) this.balls.push(w.add(new Danger({ x: this.x1, y: this.top - 10, w: 10, h: 10 }, 'dis-roof')) as Danger);
+    for (let i = 0; i < n; i++) this.balls.push(w.add(new Danger({ x: this.x1, y: this.top - 10, w: 10, h: 10 }, 'dis-tel-gola')) as Danger);
   }
   update(w: World) {
     const span = 1.6 * this.every * this.balls.length;

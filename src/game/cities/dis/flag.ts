@@ -87,9 +87,9 @@ export const majuliFlag: Act = {
     onPass(w, px(x + 0.5), (w2) => (gam(w2).n = 0));
     // the welcome on the ghat steps: two on, the third would blind you
     for (const k of [5, 7]) w.add(new Host(px(x + k) + 8, GROUND, 'give'));
-    const water = new River(px(x + 14), px(x + 25), GROUND + 10, 'dis-luit');
+    const water = new River(px(x + 14), px(x + 25), GROUND + 10, 'dis-flag-luit');
     w.add(water);
-    w.onTick((w2) => (water.hazard.cause = gam(w2).n >= BLIND_AT ? 'dis-gamosa' : 'dis-luit'));
+    w.onTick((w2) => (water.hazard.cause = gam(w2).n >= BLIND_AT ? 'dis-ghat-gamosa' : 'dis-flag-luit'));
     // the gangplank over the water: it does not move
     w.solids.push(new Solid(px(x + 15), GROUND, px(7.5), 6));
     const man = new GhatMan(px(x + 16), px(x + 19) + 8, px(x + 23.5));

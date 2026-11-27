@@ -334,7 +334,9 @@ export const gorhBagori: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    const a = charge(w, { trig: px(x + 2), c0: x + 11, c1: x + 24, start: x - 4, plume: x + 24, delay: 170, rest: 40 });
+    // fix round 1: a longer rest halfway (40 -> 200 ticks), so getting off the hay at the halfway stop walks into the
+    // grass it has not flattened yet (the old door used to give this play its death)
+    const a = charge(w, { trig: px(x + 2), c0: x + 11, c1: x + 24, start: x - 4, plume: x + 24, delay: 170, rest: 200 });
     const b = charge(w, { trig: Infinity, c0: x + 25, c1: x + 38, start: x + 24, plume: x + 39, delay: 70, rest: 90 });
     w.onTick(() => {
       if (a.phase === 'gone' && b.phase === 'wait') {

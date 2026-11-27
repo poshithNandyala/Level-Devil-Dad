@@ -64,7 +64,7 @@ export const charHorn: Act = {
     const x = c.x;
     // under the long bar's far end, the water it narrows away from; beyond it the river proper
     w.add(new River(px(x + 2), px(x + 12), GROUND + 10, 'dis-char-sink'));
-    w.add(new River(px(x + 12), px(x + 20)));
+    w.add(new River(px(x + 12), px(x + 20), GROUND + 10, 'dis-bhutbhuti'));
     const long = sand(w, [[[x + 3, x + 12], [x + 3, x + 8]]], []);
     const next = sand(w, [[null, [x + 11, x + 18]]], []);
     levelPost(w, next, x + 0.6, 2);

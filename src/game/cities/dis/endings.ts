@@ -1,7 +1,7 @@
 // Dispur's door endings, one per stage 02-10, each a new idea. Kinds start with 'dis-'.
 import { World } from '../../world';
 import { lock } from '../../levels/endkit';
-import { px, river, Decor, GROUND, levelPost } from './entities';
+import { px, recause, river, Decor, GROUND, levelPost } from './entities';
 import { PathBars, Plucker } from './pluck';
 import { roller, checkpoint } from '../../levels/kit';
 import { Host, gam, machan } from './gamosa';
@@ -217,6 +217,8 @@ export const endings: Record<DisEndingKind, Ending> = {
       levelPost(w, { level: 2, e: -1 } as never, D - 1.8, 3);
       w.flags.twist = 'post';
       checkpoint(w, D - 38); // on the bank where you wait for the plucker, 5 tiles back from the water
+      // fix round 1 (QA F4): this door's deaths name its own break of 03, not 03's advice
+      recause(w, D - 45, D + 2, { 'dis-basket': 'dis-basket-ulta', 'dis-luit': 'dis-path-agot' });
     },
   },
   // ================================================================ DIS-09: the royal seat

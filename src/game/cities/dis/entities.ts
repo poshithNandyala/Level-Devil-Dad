@@ -335,9 +335,12 @@ export class SandField extends Entity {
     b.slab.span(r[0], r[1]);
   }
   /** the tick window in which this kind of change happens */
+  /** fix round 1 (the finale's break of 02): the order turned round, the bar that goes sinks first and the new one
+   *  comes up after it */
+  flip = false;
   private win(from: Span, to: Span): [number, number] {
-    if (!from && to) return [90, 130];
-    if (from && !to) return [330, 390];
+    if (!from && to) return this.flip ? [330, 390] : [90, 130];
+    if (from && !to) return this.flip ? [90, 130] : [330, 390];
     return [210, 270];
   }
   /** is level `l` (0-based) the one the river will be at, once the change in progress is over? */
@@ -474,6 +477,22 @@ export function levelPost(w: World, field: SandField, tx: number, rows: number) 
 }
 
 /** a river between tile columns c0 and c1 (the pit is painted by the stage; this is the water and the deadly part) */
+/** fix round 1 (QA F4, law 9): a cause of its own inside one act. While Dad is between tile columns c0 and c1, a death
+ *  to a cause in `map` is reported as the mapped cause, so a callback or a reused hazard gets a line that names what
+ *  killed him there instead of its home stage's advice. Wraps this world's own die(); no shared code changes. */
+export function recause(w: World, c0: number, c1: number, map: Record<string, string>) {
+  const rules = (w.flags.recause ??= []) as { x0: number; x1: number; map: Record<string, string> }[];
+  if (rules.length === 0) {
+    const die = w.die.bind(w);
+    w.die = (cause, who) => {
+      const cx = w.player.cx;
+      const r = rules.find((q) => cx >= q.x0 && cx < q.x1 && q.map[cause]);
+      die(r ? r.map[cause] : cause, who);
+    };
+  }
+  rules.push({ x0: px(c0), x1: px(c1), map });
+}
+
 export function river(w: World, c0: number, c1: number, cause = 'dis-luit') {
   w.add(new River(px(c0), px(c1), GROUND + 10, cause));
 }
