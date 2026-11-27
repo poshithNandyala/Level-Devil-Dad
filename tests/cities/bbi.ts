@@ -231,6 +231,38 @@ const curlStair: Policy = (w, m) => {
 };
 
 // ------------------------------------------------------------------ BBI-05
+/** lag-aware boarding (QA fix round 2, F6): press on the distance to the cart, not a tile, so a late press still
+ *  leaves the ground before Dad's toe touches its side (a side touch starts it without him); in the air steer for
+ *  its middle; done once he stands on it */
+type Mach = { rig: { x: number; y: number; w: number; h: number; rides: (w: World) => boolean } };
+const cartAhead = (w: World) => ((w.flags.bbi5m ?? []) as Mach[]).find((m) => m.rig.w === 24 && m.rig.h === 12 && m.rig.x + m.rig.w > w.player.x - 4);
+const boardCart = (note: string): Step => ({
+  note,
+  max: 600,
+  long: true,
+  policy: (w) => {
+    const p = w.player;
+    const c = cartAhead(w);
+    if (!c) return { move: 'R', jump: false };
+    if (p.onGround) return { move: 'R', jump: c.rig.x - (p.x + p.w) < 34 };
+    const d = c.rig.x + 12 - p.cx;
+    return { move: d > 3 ? 'R' : d < -3 ? 'L' : '', jump: p.vy < 0 };
+  },
+  until: (w) => !!cartAhead(w)?.rig.rides(w),
+});
+/** a lag-aware hop on to a low platform ahead at [x0, x0 + ww): press on the distance to it, steer for its middle in the air */
+const landOn = (x0: number, ww: number, until: (w: World) => boolean, note: string): Step => ({
+  note,
+  max: 600,
+  long: true,
+  policy: (w) => {
+    const p = w.player;
+    if (p.onGround) return { move: 'R', jump: x0 - (p.x + p.w) < 34 };
+    const d = x0 + ww / 2 - p.cx;
+    return { move: d > 3 ? 'R' : d < -3 ? 'L' : '', jump: p.vy < 0 };
+  },
+  until,
+});
 const room05 = (): Step[] => [...hop(11.2, 'run and jump the channel, over the still mill', 14), { hold: 'R', until: X(31.5), max: 600 }];
 const act05a = (x: number): Step[] => [
   ...hop(x + 0.7, 'up on the straw', 15),
@@ -649,13 +681,26 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'keep moving and jump the trough', cause: 'bbi-kunda', steps: (x) => [passTorch(x + 5, torchOn('bbi4a', 2.0, 0.6, 0.2), 'the first torch'), { hold: 'R', until: X(x + 9.2), max: 300 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 400 }] },
   ],
   'bbi05-dhenki': [
-    { what: 'jump the pit, then use the stone as a stair', cause: 'bbi-sila', steps: (x) => [...act05a(x).slice(0, 5), { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 16.75) - 14, max: 300 }, { hold: 'R', jump: 5, ticks: 14, note: 'up the stone, still walking' }, { hold: '', until: done, max: 900 }] },
+    { what: 'jump the pit, then use the stone as a stair', cause: 'bbi-sila', steps: (x) => [...act05a(x).slice(0, 5), {
+        // lag-aware (QA fix round 2): press on the distance to the stone, walk until the play is over
+        note: 'up the stone',
+        long: true,
+        max: 600,
+        policy: (w) => {
+          const p = w.player;
+          const mid = px(x + 16.75) + 10 - (p.x + p.w / 2);
+          // in the air or up on the slab: steer for its middle, so the press lag only moves the take-off
+          if (!p.onGround || p.y + p.h < 238) return { move: mid > 2 ? 'R' : mid < -2 ? 'L' : '', jump: !p.onGround && p.vy < 0 };
+          return { move: 'R', jump: mid <= 30 };
+        },
+        until: (w) => w.state !== 'play',
+      }] },
   ],
   'bbi05-khala': [
     walkOn('bbi-jaanta', 'walk on into the yard'),
-    { what: 'jump the mill, then climb over the cart', cause: 'crushed', steps: (x) => [...hop(x + 3.2, 'over the mill', 14), { hold: 'R', until: X(x + 12.2), max: 400 }, { hold: 'R', jump: 9, ticks: 9 }, { hold: 'R', until: done, max: 900 }] },
+    { what: 'jump the mill, then climb over the cart', cause: 'crushed', steps: (x) => [...hop(x + 3.2, 'over the mill', 14), { hold: 'R', until: X(x + 9), max: 400 }, boardCart('up on to the cart'), { hold: 'R', until: done, max: 900, note: 'and over it' }] },
   ],
-  'bbi05-gadi': [{ what: 'climb on to the cart', cause: 'bbi-gadi', steps: (x) => [{ hold: 'R', until: X(x + 6.75), max: 400 }, { hold: 'R', jump: 6, ticks: 22, note: 'up on to it, still walking' }, { hold: '', until: done, max: 900 }] }],
+  'bbi05-gadi': [{ what: 'climb on to the cart', cause: 'bbi-gadi', steps: () => [boardCart('up on to the cart'), { hold: '', until: done, max: 900 }] }],
   'bbi06-sidhi': [walkOn('bbi-ranga')],
   'bbi07-bandha': [
     walkOn('bbi-nacha'),
@@ -676,15 +721,21 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'jump once the pounder lies flat', cause: 'bbi-sinha', steps: (x) => [{ hold: '', until: ground, max: 300 }, ...hop(x + 4.1, 'up on the straw', 15), { hold: 'R', until: X(x + 6.6), max: 300 }, { hold: '', until: (w) => goat(w).dir > 0 && !goat(w).up && goat(w).x > px(x + 12), max: 2400 }, { hold: 'R', until: X(x + 6.9), max: 300 }, { hold: 'R', jump: 15, ticks: 15 }, { hold: 'R', until: done, max: 600 }] },
   ],
   'bbi05-thaka': [
-    { what: 'touch nothing: go under the stone between sweeps', cause: 'bbi-pathara', steps: (x) => [...hop(x + 2.9, 'over the plate, touching nothing', 12), { hold: 'R', until: X(x + 6.0), max: 400 }, { hold: '', until: (w) => th(w).y < 240 - 26, max: 900 }, { hold: 'R', until: done, max: 600 }] },
+    { what: 'touch nothing: go under the stone between sweeps', cause: 'bbi-pathara', steps: (x) => [
+      // lag-aware (QA fix round 2): stop well short, jump from standing once still, so a late press only moves the take-off back from the plate
+      { hold: 'R', until: X(x + 2.0), max: 400 },
+      { hold: '', until: (w) => w.player.onGround && Math.abs(w.player.vx) < 1, max: 200, note: 'stop short of the plate' },
+      { hold: 'R', jump: 40, ticks: 40, note: 'a full jump over the plate, touching nothing' },
+      { hold: 'R', until: ground, max: 300 },
+      { hold: 'R', until: X(x + 6.0), max: 400 }, { hold: '', until: (w) => th(w).y < 240 - 26, max: 900 }, { hold: 'R', until: done, max: 600 }] },
     { what: 'stop it the moment you reach the plate', cause: 'bbi-pani', steps: (x) => [{ hold: 'R', until: X(x + 2.6), max: 400 }, { hold: '', until: (w) => th(w).y > 240 - 17, max: 900 }, { hold: 'R', until: (w) => th(w).frozen >= 0, max: 200 }, { hold: '', until: done, max: 600 }] },
   ],
   'bbi05-ganna': [
-    { what: 'start the mill and ride it over, as before', cause: 'bbi-ganna', steps: (x) => [{ hold: 'R', until: X(x + 1.4), max: 300 }, leap(() => px(x + 4) + 8, 'on to the far half', () => true, 5), { hold: '', until: (w) => (w.flags.bbi5gm as { started: number }).started >= 0, max: 200 }, { hold: '', until: (w) => w.player.onGround && w.player.x > px(x + 13), max: 400 }, { hold: 'R', until: done, max: 600 }] },
-    { what: 'knock the belt off, then jump the channel yourself', cause: 'bbi-dhan', steps: (x) => [{ hold: 'R', until: X(x + 0.05), max: 300 }, { hold: '', jump: 10, until: (w) => !gn(w).belt, max: 200 }, { hold: '', until: (w) => w.player.onGround && w.player.vy >= 0, max: 200 }, { hold: '', ticks: 6 }, leap(() => px(x + 4) + 8, 'on to the mill', () => true, 5), { hold: 'R', until: X(x + 5.4), max: 300 }, { hold: 'R', jump: 15, ticks: 15 }, { hold: 'R', until: done, max: 600 }] },
+    { what: 'start the mill and ride it over, as before', cause: 'bbi-ganna', steps: (x) => [...gannaRun(x).slice(4, 7), { hold: '', until: (w) => w.player.onGround && w.player.x > px(x + 13), max: 400 }, { hold: 'R', until: done, max: 600 }] },
+    { what: 'knock the belt off, then jump the channel yourself', cause: 'bbi-dhan', steps: (x) => [{ hold: 'R', until: X(x + 0.05), max: 300 }, { hold: '', jump: 10, until: (w) => !gn(w).belt, max: 200 }, { hold: '', until: (w) => w.player.onGround && w.player.vy >= 0, max: 200 }, { hold: '', ticks: 6 }, ...gannaRun(x).slice(4, 6), { hold: 'R', until: X(x + 5.4), max: 300 }, { hold: 'R', jump: 15, ticks: 15 }, { hold: 'R', until: done, max: 600 }] },
   ],
   'bbi05-mama': [
-    { what: 'ride the water lift, as before', cause: 'bbi-mama', steps: (x) => [...hop(x + 9.2, 'over the treadle, touching nothing', 10), { hold: '', until: ground, max: 200 }, ...tendaRun('bbi5mm', 5)(x + 8).slice(0, 3), stayOn(() => px(x + 16) - 14, done, 'and up', 1500)] },
+    { what: 'ride the water lift, as before', cause: 'bbi-mama', steps: (x) => [{ hold: 'R', until: X(x + 8), max: 400 }, leap(() => px(x + 12.5), 'over the treadle, braking for the strip before the well', () => true, 4), landOn(px(x + 16) - 27, 26, (w) => (w.flags.bbi5mm as { started: number }).started >= 0, 'on to the bucket'), stayOn(() => px(x + 16) - 14, done, 'and up', 1500)] },
     { what: 'start the grinder and wait by it to see what he does', cause: 'bbi-dhakka', steps: (x) => [{ hold: 'R', until: (w) => (w.flags.bbi5ma as { decoy: boolean }).decoy, max: 400 }, { hold: '', until: done, max: 1500 }] },
   ],
   'bbi05-patra': [
@@ -926,7 +977,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'BBI-01': { steps: [...pastG1(), ...tourTail().slice(0, 18), ...hop(72.2, 'jump the drain at its lip, as before'), { hold: 'R', until: done, max: 900 }], cause: 'bbi-nala-lip' },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
-  'BBI-05': [{ what: 'climb on the cart and ride it', steps: [...room05(), ...act05a(32), { hold: 'R', until: X(58 + 6.9), max: 400 }, { hold: 'R', jump: 8, ticks: 22, note: 'up on the cart, still walking' }, { hold: '', until: done, max: 900 }], cause: 'bbi-gadi' }],
+  'BBI-05': [{ what: 'climb on the cart and ride it', steps: [...room05(), ...act05a(32), boardCart('up on the cart'), { hold: '', until: done, max: 900 }], cause: 'bbi-gadi' }],
   'BBI-04': [{ what: 'stop and wait for the torch, then go', steps: [{ hold: 'R', until: X(6.4), max: 300 }, { hold: '', until: (w) => !r4on(w, 0) && (w.tick - t0of(w, 'bbi4r')) / 120 > 1.0, max: 600 }, { hold: 'R', until: done, max: 600 }], cause: 'bbi-jhala' }],
   'BBI-03': [{ what: 'wait on the third parasol’s cut-out', steps: [...room03().slice(0, 7), stayOn(cut3(2), done, 'wait for the next customer', 1500)], cause: 'bbi-peeled' }],
   'BBI-01': [{ what: 'keep walking past him while he faces the road, as Tara says', steps: [...tourHead(), { hold: '', until: (w) => g1Road(w), max: 900, note: 'he turns to the road' }, { hold: 'R', until: done, max: 900 }], cause: 'bbi-nala' }],
