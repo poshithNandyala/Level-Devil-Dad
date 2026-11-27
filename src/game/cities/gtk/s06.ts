@@ -194,6 +194,58 @@ export const act2: Act = {
   },
 };
 
+/** act 3: the switchback. The road ends at the hillside; its stair up is at the far end, past a taxi stand, and the
+ *  loop above runs back the way you came, to another stair up at its far end, and only the top loop goes on */
+export const STAND3 = { period: 3.6, out: 0.8 };
+export const act3: Act = {
+  id: 'gtk06-ulta',
+  w: 36,
+  advice: 'The road ends at the hillside. Get past the taxi stand while the taxi is in, up the stair at the end, then along the loop above back the way you came (yes, back), up the next stair, and on along the top loop over the hill.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 31, x + 35, 6, 17, '#');
+    g.fill(x + 25, x + 28, 13, 13, '=');
+    g.fill(x + 27, x + 30, 11, 11, '=');
+    g.fill(x + 2, x + 30, 10, 10, '=');
+    g.fill(x + 2, x + 2, 9, 9, '#');
+    g.fill(x + 5, x + 10, 8, 8, '=');
+    g.fill(x + 0, x + 7, 6, 6, '=');
+    g.fill(x - 6, x + 35, 5, 5, '=');
+  },
+  build: (w, c) => {
+    standTaxi(w, c.X(14), c.X(9.5), FL, c.X(2), 'gtk6u', STAND3);
+    decor(w, -3, (ctx) => {
+      box(ctx, c.X(13), px(12), px(6), 3, '#2E86AB');
+      box(ctx, c.X(13), px(12), 2, px(3), '#4E5A62');
+      box(ctx, c.X(19) - 2, px(12), 2, px(3), '#4E5A62');
+    });
+    stairArt(w, [
+      [c.x + 25, 13],
+      [c.x + 27, 11],
+      [c.x + 6, 8],
+      [c.x + 4, 6],
+    ]);
+    sign(w, c.x + 20, 6.4, 3.6, 'UPPER RD', 'green', 'left', 'this way');
+  },
+};
+/** act 4: the stair up comes out at the top among the taxis: wait on the step below the top while one backs out */
+export const act4: Act = {
+  id: 'gtk06-adda',
+  w: 30,
+  advice: 'This stair goes up, and comes out at a taxi stand on the road above. Wait on the step below the top while the taxi backs out across it; when it has pulled back in, up and past it.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 4, x + 5, 14, 17, '#');
+    g.fill(x + 6, x + 7, 13, 17, '#');
+    g.fill(x + 8, x + 9, 12, 17, '#');
+    g.fill(x + 10, x + 29, 11, 17, '#');
+  },
+  build: (w, c) => {
+    standTaxi(w, c.X(15), c.X(10.1), px(11), c.X(2), 'gtk6a', STAND2);
+    sign(w, c.x + 1, 9.4, 3.6, 'TAXI STAND', 'green', 'up', 'seedhi');
+  },
+};
+
 /** door: the roof's water tank overflows down the house front, over the doorway, and the gush shoves you back */
 export const TANK = { period: 3.0, on: 1.1 };
 export const ending: Ending = {

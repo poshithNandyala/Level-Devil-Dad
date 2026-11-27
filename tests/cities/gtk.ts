@@ -10,7 +10,7 @@ import { VENT, type Steamer } from '../../src/game/cities/gtk/s02';
 import type { Bag } from '../../src/game/cities/gtk/s03';
 import { FLOORS } from '../../src/game/cities/gtk/s04';
 import type { Rule } from '../../src/game/cities/gtk/s05';
-import { TANK, STAND2 } from '../../src/game/cities/gtk/s06';
+import { TANK, STAND2, STAND3 } from '../../src/game/cities/gtk/s06';
 import type { Cloud } from '../../src/game/cities/gtk/s07';
 import { DOCK } from '../../src/game/cities/gtk/s08';
 import type { Yak } from '../../src/game/cities/gtk/s09';
@@ -364,7 +364,7 @@ function stairUp(): (w: World) => Out {
     const p = w.player;
     if (p.onGround) {
       const fr = Math.round((p.y + p.h) / 16);
-      for (const tx of [Math.floor((p.x + p.w + 3) / 16)])
+      for (const tx of [Math.floor((p.x + p.w + 3) / 16), Math.floor((p.x + p.w / 2) / 16)])
         for (let ty = fr - 2; ty <= fr - 1; ty++)
           if (w.tileAt(tx, ty) === 3) {
             jt = 10;
@@ -388,6 +388,51 @@ const act06b = (x: number): Step[] => [
   { hold: 'R', until: and(ground, X(x + 8.2), (w) => w.player.y + w.player.h <= 209), max: 600, note: 'down to the last step' },
   { hold: '', until: (w) => { const st = w.flags.gtk6m as { t0: number }; if (st.t0 < 0) return false; const u = cyc(w, st.t0, STAND2.period); return u >= STAND2.out * 2 + 0.02 && u < STAND2.out * 2 + 0.25; }, max: 900, note: 'wait while the taxi backs out and in' },
   { hold: 'R', until: and(ground, X(x + 29)), max: 600, note: 'down and past the stand' },
+];
+/** walk left, hopping up any one-way step just ahead and above (a stair going up to the left) */
+function stairUpLeft(): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'L', jump: true };
+    }
+    const p = w.player;
+    if (p.onGround) {
+      const fr = Math.round((p.y + p.h) / 16);
+      const tx = Math.floor((p.x - 3) / 16);
+      for (let ty = fr - 2; ty <= fr - 1; ty++)
+        if (w.tileAt(tx, ty) === 3) {
+          jt = 10;
+          return { move: 'L', jump: true };
+        }
+    }
+    return go('L');
+  };
+}
+const parked = (key: string, cfg: { period: number; out: number }) => (w: World) => {
+  const st = w.flags[key] as { t0: number };
+  if (st.t0 < 0) return false;
+  const u = cyc(w, st.t0, cfg.period);
+  return u >= cfg.out * 2 + 0.02 && u < cfg.out * 2 + 0.25;
+};
+const act06c = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 7.5), max: 600 },
+  { hold: '', until: parked('gtk6u', STAND3), max: 900, note: 'wait for the taxi to pull back in' },
+  { policy: stairUp(), until: (w) => w.player.onGround && w.player.y + w.player.h <= 160 && w.player.y + w.player.h >= 158, max: 900, note: 'past the stand, up the stair at the end' },
+  { policy: stairUpLeft(), until: (w) => w.player.onGround && w.player.y + w.player.h <= 80, max: 1500, note: 'back along the loop above, up the next stair' },
+  { hold: 'R', until: X(x + 36.2), max: 900, note: 'along the top loop, over the hill' },
+  { hold: 'R', until: ground, max: 300 },
+];
+const act06d = (x: number): Step[] => [
+  { policy: stepper(), until: and(ground, X(x + 8.2), (w) => w.player.y + w.player.h <= 193), max: 900, note: 'up to the step below the top' },
+  { hold: '', until: parked('gtk6a', STAND2), max: 900, note: 'wait while the taxi backs out over the top step' },
+  { policy: stepper(), until: and(ground, X(x + 29)), max: 600, note: 'up and past it' },
 ];
 /** the tank: wait short of the gush till it stops, then walk in */
 const tankPolicy: Policy = (w, _m, d) => {
@@ -898,6 +943,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk05-chabutra': act05c,
   'gtk06-chhat': act06,
   'gtk06-modh': act06b,
+  'gtk06-ulta': act06c,
+  'gtk06-adda': act06d,
   'gtk07-thau': act07a,
   'gtk07-chitra': act07b,
   'gtk07-ghumti': act07c,
