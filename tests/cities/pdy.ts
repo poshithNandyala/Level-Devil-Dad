@@ -431,6 +431,9 @@ function yellowWall(S: Record<string, Step[]>) {
   S['PDY-03'] = [...room, ...r.slice(8)];
 }
 
+// PDY-07 stays as shipped (route and room): three human-timing passes (round 1 and 2) reached 12t 63%, 80% and 68%,
+// none 90%; the attempts are written up in reports/cities/pdy/EXTEND-2.md.
+
 const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) => {
   tour01(S);
   rockBeach(S);
