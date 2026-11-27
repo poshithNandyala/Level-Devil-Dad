@@ -34,5 +34,6 @@ export const causeLines: Record<string, string[]> = {
   'shl-truedrop': ['This time the drop told the truth: the rain came down just past it.', 'A lone drop by the pine here means rain a moment later, just ahead of it. Stop at the drop, go when the rain ends.'],
   'shl-liar': ['Her mark lies: it was painted too high, and the sheet under it was still full.', 'Read the sheet, not the paint: cross her only when the sheet is narrow.'],
   'shl-stump': ['The frozen stalactite’s stump grew up and shut the pair on you.', 'A bump freezes only the top; the stump keeps rising. Bump, then go through at once.'],
+  'shl-wet': ['You bumped the wet one, and it shed three drips at once on to you.', 'A glistening stalactite is wet through: a bump does not freeze it. Pass it on its own count, hands off.'],
   'shl-lintel': ['The low lintel caught your knup.', 'A low arch or a half-door needs the knup off: jump at the hook before it. A tall arch does not.'],
 };

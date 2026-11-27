@@ -16,6 +16,7 @@ import { knupState, hook, lowBar, drips, branchArt } from './s04';
 import { root, gorge } from './s06';
 import { market, arch, row, TOP, type Pitch } from './s09';
 import { tower, river } from './s03';
+import { stal, cave, type Stal } from './s07';
 import { SWAY } from './s03';
 
 /** the drop by the pine at column c tells the truth here: rain comes down on cols c..c+4 a third of a second later */
@@ -326,6 +327,23 @@ export const actSpan: Act = {
     arch(w, st, c.x + 19);
     swayOver(w, 'shl10s', pitches);
     sign(w, c.x + 36, 10.4, 3, 'REST STALLS', 'shop', null, 'jadoh on the span');
+  },
+};
+
+/** act 4 (07's break): a wet stalactite glistens; a bump sheds three drips at once instead of freezing it. Pass it on its own count. */
+export const actWet: Act = {
+  id: 'shl10-wet',
+  w: 30,
+  advice: 'A cave mouth with two stalactites. The first glistens: it is wet through, and a bump on it does not freeze it, it sheds three drips at once. Pass it on its own slow count without touching it, then wait for the quick second one to break.',
+  cps: [1],
+  paint: () => {},
+  build: (w, c) => {
+    const list: Stal[] = [];
+    w.flags.shl10c = list;
+    cave(w, c.x + 4, c.x + 27);
+    stal(w, list, c.x + 12, { g0: 64, step: 8, period: 1.2, shut: 2.0, phase: 0, from: c.x + 1, startGap: 40, wet: true });
+    stal(w, list, c.x + 20, { g0: 52, step: 10, period: 0.5, shut: 1.4, phase: 0, from: c.x + 1, startGap: 22 });
+    sign(w, c.x + 2, 10.4, 3, 'IT GLISTENS', 'shop', null, 'wet through');
   },
 };
 

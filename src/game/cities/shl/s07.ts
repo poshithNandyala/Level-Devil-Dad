@@ -21,14 +21,14 @@ export interface Stal {
   /** gap between the tip and the floor, px */
   gap: number;
   closed: (w: World) => boolean;
-  s: { period: number; step: number; g0: number; shut: number; freeze: number; lastDrip: number; shutAt: number; stump: number };
+  s: { period: number; step: number; g0: number; shut: number; freeze: number; lastDrip: number; shutAt: number; stump: number; bumpAt?: number };
 }
 
 /**
  * A stalactite over column c: starts `g0` px off the floor, grows `step` px at every drip (`period` s), is a wall for
  * `shut` s once it meets the floor, then breaks and starts again. A head bump freezes its growth for 3 s.
  */
-export function stal(w: World, list: Stal[], c: number, o: { g0: number; step: number; period: number; shut?: number; phase?: number; from?: number; startGap?: number; minGap?: number; pairStep?: number; pillar?: boolean }) {
+export function stal(w: World, list: Stal[], c: number, o: { g0: number; step: number; period: number; shut?: number; phase?: number; from?: number; startGap?: number; minGap?: number; pairStep?: number; pillar?: boolean; wet?: boolean }) {
   const s = { period: o.period, step: o.step, g0: o.g0, shut: o.shut ?? 2.0, freeze: 0, lastDrip: -1, shutAt: -1, stump: 6 };
   const st: Stal = { c, gap: o.startGap ?? o.g0, closed: () => st.gap < FIT, s };
   list.push(st);
@@ -82,17 +82,27 @@ export function stal(w: World, list: Stal[], c: number, o: { g0: number; step: n
             if (r.hazard) r.hazard.cause = inside ? (o.pairStep && st.s.freeze > 0 ? 'shl-stump' : 'shl-maw') : 'shl-shut';
           }
         }
-        // a head bump while open freezes it for 3 s
-        if (inside && st.gap >= FIT && p.y <= FL - st.gap + 2 && p.vy < 0 && st.s.freeze <= 0) {
-          st.s.freeze = 360;
-          w2.sfx('bonk', r.x + 8, FL - st.gap);
+        // a head bump while open freezes it for 3 s; a wet one (it glistens) sheds three drips at once instead
+        if (inside && st.gap >= FIT && p.y <= FL - st.gap + 2 && p.vy < 0 && st.s.freeze <= 0 && w2.tick - (st.s.bumpAt ?? -99) > 30) {
+          st.s.bumpAt = w2.tick;
+          if (o.wet) {
+            st.gap = Math.max(0, st.gap - 3 * st.s.step);
+            w2.sfx('splash', r.x + 8, FL - st.gap);
+            if (st.gap < FIT) {
+              st.s.shutAt = w2.tick;
+              if (r.hazard) r.hazard.cause = 'shl-wet';
+            }
+          } else {
+            st.s.freeze = 360;
+            w2.sfx('bonk', r.x + 8, FL - st.gap);
+          }
         }
         if (!inside && r.hazard && st.gap < FIT) r.hazard.cause = 'shl-shut';
       },
       paint: (ctx, r, w2) => {
         const tipY = FL - st.gap;
         // the stalactite: a pale tapering cone from the cave roof to the tip
-        ctx.fillStyle = st.s.freeze > 0 ? '#D9E4DC' : '#C9D3CC';
+        ctx.fillStyle = st.s.freeze > 0 ? '#D9E4DC' : o.wet ? '#B7D4E6' : '#C9D3CC';
         ctx.beginPath();
         ctx.moveTo(r.x - 2, 70);
         ctx.lineTo(r.x + 18, 70);
@@ -100,6 +110,7 @@ export function stal(w: World, list: Stal[], c: number, o: { g0: number; step: n
         ctx.closePath();
         ctx.fill();
         box(ctx, r.x + 6, tipY - 6, 4, 6, '#AEBBB3');
+        if (o.wet) for (let i = 0; i < 3; i++) box(ctx, r.x + 5 + i * 3, 90 + ((w2.tick * 2 + i * 37) % Math.max(1, tipY - 96)), 1, 4, 'rgba(255,255,255,0.8)');
         // the stump on the floor (a pair's stump grows), or the pool it drips into
         if (o.minGap !== undefined) {
           box(ctx, r.x - 6, FL - 3, 28, 3, 'rgba(120,200,210,0.8)');
