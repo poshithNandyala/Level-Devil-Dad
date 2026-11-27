@@ -173,9 +173,9 @@ bpl02-jheel bpl03-shelters bpl04-karchob bpl05-mehfil bpl06-chowk bpl07-karkhana
 rpr02-khet rpr03-chowk rpr04-kothi rpr05-mela rpr06-jungle rpr07-saal rpr08-dussehra
 rnc02-galli rnc03-maidan rnc04-seedhi rnc05-kharkai rnc06-ghariya rnc07-chattan rnc08-ghagh
 ccu02-depot ccu03-dokan ccu04-thak ccu04-thak2 ccu05-uthon ccu05-lane ccu05-pratima ccu05-ghat ccu05-ghatpar
-ccu06-points ccu06-duiline ccu07-girder ccu07-dui ccu07-sandhya ccu07-ulto ccu07-bhor ccu07-dupur ccu07-raat ccu07-pylon
-ccu08-rok ccu08-tokta ccu08-gali ccu08-duur ccu09-sinri ccu09-toran ccu09-chala ccu09-uthan ccu09-uthan2 ccu09-uthan3
-ccu09-uthan4 ccu10-bus ccu10-tram ccu10-rok ccu10-kumor ccu10-setu ccu10-phera ccu10-shesh
+ccu06-points ccu06-duiline ccu07-girder ccu07-dui ccu07-sandhya ccu07-ulto ccu07-pylon
+ccu08-rok ccu08-tokta ccu08-gali ccu09-sinri ccu09-toran ccu09-chala ccu09-uthan ccu09-uthan2
+ccu10-bus ccu10-tram ccu10-rok ccu10-kumor ccu10-setu ccu10-phera
 
 ## Door endings (ENDINGS: one stage each)
 Check the advice lines in endings*.ts too: an idea counts as used even under a new name (e.g. catching
