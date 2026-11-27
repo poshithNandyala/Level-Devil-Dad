@@ -11,6 +11,8 @@ import type { Fall } from '../../src/game/cities/shl/s05';
 import type { RootSet } from '../../src/game/cities/shl/s06';
 import type { Stal } from '../../src/game/cities/shl/s07';
 import { FIT } from '../../src/game/cities/shl/s07';
+import type { TankState } from '../../src/game/cities/shl/s08';
+import { SPOUT_FOR } from '../../src/game/cities/shl/s08';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -315,6 +317,34 @@ const room07 = (): Step[] => [{ policy: caveWalk('shl7', 22), until: and(ground,
 const act07 = (x: number): Step[] => [{ policy: galleryRun(x), until: and(ground, X(x + 33)), max: 5000, note: 'wait for the first to break, then run the gallery' }, { hold: 'R', until: X(x + 34), max: 300 }];
 const columnPolicy: Policy = (w) => caveWalk('shl7')(w);
 
+// ------------------------------------------------------------------ SHL-08
+/** walk to a column and stand there until the tank is full and its spout (if any) has finished, then walk on */
+function tankWait(key: string, standCol: number, spout = true): (w: World) => Out {
+  return (w) => {
+    const st = w.flags[key] as TankState;
+    const p = w.player;
+    const ready = st.fullAt >= 0 && (!spout || (w.tick - st.fullAt) / 120 >= SPOUT_FOR + 0.15);
+    if (ready) return go('R');
+    if (p.cx < px(standCol) - 3) return go('R');
+    if (p.cx > px(standCol) + 3) return go('L');
+    return go('');
+  };
+}
+const tankFull = (key: string) => (w: World) => (w.flags[key] as TankState).fullAt >= 0;
+const room08 = (): Step[] => [{ policy: tankWait('shl8', 3.5), until: and(ground, X(22)), max: 3000, note: 'stand out of reach; the cloud goes home and the tank fills; let the spout finish' }, { hold: 'R', until: X(29), max: 400 }];
+const act08a = (x: number): Step[] => [{ policy: tankWait('shl8a', x + 16.5), until: and(ground, X(x + 25)), max: 3000, note: 'under the roof, past the hole' }, { hold: 'R', until: X(x + 29), max: 400 }];
+const act08b = (x: number): Step[] => [{ policy: tankWait('shl8b', x + 20.5), until: and(ground, X(x + 28)), max: 3000, note: 'well in under the roof, so the cloud rains on it' }, { hold: 'R', until: X(x + 31), max: 400 }];
+const act08c = (x: number): Step[] => [{ policy: tankWait('shl8c', x + 20.5), until: and(ground, X(x + 28)), max: 3000, note: 'under the roof, not under the bucket' }, { hold: 'R', until: X(x + 31), max: 400 }];
+const act08d = (x: number): Step[] => [
+  { policy: tankWait('shl8d', x + 12.5), until: and(ground, tankFull('shl8d'), (w) => (w.tick - (w.flags.shl8d as TankState).fullAt) / 120 >= SPOUT_FOR + 0.15), max: 3000, note: 'the first tank from under its roof; let its spout finish' },
+  { policy: tankWait('shl8e', x + 30.5), until: and(ground, X(x + 40)), max: 3000, note: 'the second from under its roof' },
+  { hold: 'R', until: X(x + 43), max: 400 },
+];
+const tapPolicy: Policy = (w, _m, d) => {
+  const D = Math.round(d.x / 16);
+  return tankWait('shl8e2', D - 11, false)(w);
+};
+
 // ------------------------------------------------------------------ tables
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['SHL-01'] = tourRoute();
@@ -330,7 +360,9 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('SHL-06', 0, []);
   S['SHL-07'] = room07();
   lengthen('SHL-07', 0, []);
-  for (const n of [8, 9, 10]) {
+  S['SHL-08'] = room08();
+  lengthen('SHL-08', 0, []);
+  for (const n of [9, 10]) {
     S[`SHL-${String(n).padStart(2, '0')}`] = [{ hold: 'R', until: done, max: 1200, note: 'not built yet' }];
   }
 }
@@ -345,6 +377,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-05': { steps: runOn, cause: 'shl-um' },
   'SHL-06': { steps: [...offRock, { hold: 'R', until: X(11.6), max: 600 }, { hold: 'R', jump: 22, ticks: 22, note: 'jump the gorge' }, { hold: 'R', until: done, max: 900 }], cause: 'shl-gorge' },
   'SHL-07': { steps: runOn, cause: 'shl-shut' },
+  'SHL-08': { steps: runOn, cause: 'shl-soaked' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-01': { steps: [...upTo(21), { hold: 'R', until: X(64), max: 600 }, { hold: '', until: done, max: 1500, note: 'stand outside the cloud and wait' }], cause: 'shl-lyoh' },
@@ -357,9 +390,10 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-05': { steps: [{ policy: dryWalk('shl5'), until: done, max: 4000, note: 'wait for the bed to run dry, then go' }], cause: 'shl-wah' },
   'SHL-06': { steps: [...offRock, ...atHook(8.5, 'the first guide: the short root'), { hold: '', until: and(ground, rootFull('shl6', 0, 12 * 16)), max: 1200, note: 'wait for it' }, { hold: 'R', until: done, max: 1500, note: 'across, into the spray' }], cause: 'shl-spray' },
   'SHL-07': { steps: [{ hold: 'R', until: X(14.4), max: 600, note: 'stop under the quick one to count its drips' }, { hold: '', until: done, max: 1500 }], cause: 'shl-maw' },
+  'SHL-08': { steps: [{ policy: tankWait('shl8', 3.5, false), until: done, max: 3000, note: 'stand out of reach, and go the moment the gate lifts' }], cause: 'shl-spout' },
 };
-const ROOMS: Record<string, () => Step[]> = { 'SHL-02': room02, 'SHL-03': room03, 'SHL-04': room04, 'SHL-05': room05, 'SHL-06': room06, 'SHL-07': room07 };
-const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'], 'SHL-05': ['shl05-ar', 'shl05-pung'], 'SHL-06': ['shl06-sprout', 'shl06-kiang'], 'SHL-07': ['shl07-krem'] };
+const ROOMS: Record<string, () => Step[]> = { 'SHL-02': room02, 'SHL-03': room03, 'SHL-04': room04, 'SHL-05': room05, 'SHL-06': room06, 'SHL-07': room07, 'SHL-08': room08 };
+const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'], 'SHL-05': ['shl05-ar', 'shl05-pung'], 'SHL-06': ['shl06-sprout', 'shl06-kiang'], 'SHL-07': ['shl07-krem'], 'SHL-08': ['shl08-roof', 'shl08-pull', 'shl08-bucket', 'shl08-two'] };
 const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
 const prefix = (id: string, act: string): Step[] => [...ROOMS[id](), ...ACT_ORDER[id].slice(0, ACT_ORDER[id].indexOf(act)).flatMap((a) => actRoutes[a](actX0(id, a)))];
 /** the stage up to the act (route), then `steps` played from the act's first column; built when the test runs */
@@ -416,8 +450,22 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'SHL-07': [
     inAct('SHL-07', 'shl07-krem', 'stop under the fourth stalactite of the gallery to count', (x) => [{ policy: galleryRun(x), until: X(x + 16.2), max: 3000 }, { hold: '', until: done, max: 1500 }], 'shl-maw'),
   ],
+  'SHL-08': [
+    inAct('SHL-08', 'shl08-roof', 'walk to the gate and wait for it', () => runOn, 'shl-soaked'),
+    inAct('SHL-08', 'shl08-roof', 'stand under the near end of the roof (the hole)', (x) => [{ policy: tankWait('shl8a', x + 12.5), until: done, max: 3000 }], 'shl-leak'),
+    inAct('SHL-08', 'shl08-pull', 'stand out of reach, as in the room', (x) => [{ hold: 'R', until: X(x + 6), max: 900 }, { hold: '', ticks: 900 }, { hold: 'R', until: done, max: 3000, note: 'nothing filled: on to the gate' }], 'shl-soaked'),
+    inAct('SHL-08', 'shl08-pull', 'stand under the roof’s edge', (x) => [{ policy: tankWait('shl8b', x + 16.5), until: done, max: 3000 }], 'shl-runoff'),
+    inAct('SHL-08', 'shl08-bucket', 'walk to the gate and wait', () => runOn, 'shl-soaked'),
+    inAct('SHL-08', 'shl08-bucket', 'stand on the one out-of-reach spot, under the bucket', (x) => [{ policy: tankWait('shl8c', x + 4.8), until: done, max: 3000 }], 'shl-bucket'),
+    inAct('SHL-08', 'shl08-two', 'walk to the gate and wait', () => runOn, 'shl-soaked'),
+    inAct('SHL-08', 'shl08-two', 'run for the second roof the moment the first tank fills', (x) => [{ policy: tankWait('shl8d', x + 12.5, false), until: done, max: 3000 }], 'shl-spout'),
+  ],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'shl08-roof': act08a,
+  'shl08-pull': act08b,
+  'shl08-bucket': act08c,
+  'shl08-two': act08d,
   'shl07-krem': act07,
   'shl06-sprout': act06,
   'shl06-kiang': act06b,
@@ -437,6 +485,7 @@ const endingPolicies: Record<string, Policy> = {
   'shl-pool': poolPolicy,
   'shl-rootdoor': rootdoorPolicy,
   'shl-column': columnPolicy,
+  'shl-tap': tapPolicy,
 };
 
 export const test: CityTests = {
@@ -446,5 +495,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['SHL-02', 'SHL-03', 'SHL-04', 'SHL-05', 'SHL-06', 'SHL-07'],
+  fair: ['SHL-02', 'SHL-03', 'SHL-04', 'SHL-05', 'SHL-06', 'SHL-07', 'SHL-08'],
 };

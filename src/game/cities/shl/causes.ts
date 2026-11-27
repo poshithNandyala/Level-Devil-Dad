@@ -21,5 +21,10 @@ export const causeLines: Record<string, string[]> = {
   'shl-jri': ['The guide you walked into grew a root straight across the path, into you.', 'Every guide you touch grows a root. Hop over a guide you do not want.'],
   'shl-maw': ['The stalactite came down to its stump with you under it.', 'Every drip is a step down. Count them: pass while there is room, or wait for it to meet the floor and break.'],
   'shl-shut': ['You walked into a stalactite that had met its stump.', 'A shut one is a wall for a moment, then it breaks and starts again from the top: wait for the break.'],
+  'shl-soaked': ['Sohra’s rain soaked you through: the cloud follows whoever is under its reach.', 'The tank fills only while the rain falls into its gutter. Stand out of the cloud’s reach, or under the tank’s roof, and let the gauge fill.'],
+  'shl-leak': ['You stood under the hole in the roof.', 'The roof keeps you dry and feeds the tank, except under its hole: stand under the whole part.'],
+  'shl-runoff': ['The roof’s edge shed its sheet on to you.', 'While rain is on the roof, its lower edge pours: stand well in under the roof, not at its edge.'],
+  'shl-bucket': ['The full bucket came down on you.', 'The bucket drops where it hangs when it fills. Fill it from under the tank’s roof, not from under the bucket.'],
+  'shl-spout': ['The spout poured across the path as the tank filled.', 'When the gauge fills the spout runs for a moment: let it finish before you walk through the gate.'],
   'shl-lintel': ['The low lintel caught your knup.', 'A low arch or a half-door needs the knup off: jump at the hook before it. A tall arch does not.'],
 };
