@@ -126,7 +126,7 @@ const dhulai: Act = {
 const galiyara: Act = {
   id: 'lko10-galiyara',
   w: 34,
-  advice: 'The maze again: walk over the drain through the first arch (a hop takes you up into the hooks), and jump through the second, over the well, up to the gallery. On the gallery the floor is bells under covers: keep walking, don’t stop.',
+  advice: 'The maze again: walk over the drain through the first arch (a hop takes you up into the hooks), and jump through the second, over the well, up to the gallery. Then along the gallery to the far end.',
   cps: [1.5],
   paint: (g, c) => {
     const x = c.x;
@@ -141,28 +141,6 @@ const galiyara: Act = {
     hooks(w, x + 8, x + 11, px(9));
     arch(w, c.X(14) + 8, FLOOR, { x: c.X(16) + 8, y: px(12) }, c.f('a2'));
     well(w, x + 15, x + 33);
-    // the gallery's bells: a dancer down at the end of it spins along the gallery to any bow
-    const d = new Dancer(w, c.X(31) + 8, 210, 'lko-tehzeeb', px(12));
-    const still = stillness(w);
-    let rung = false;
-    w.onTick((w2) => {
-      const p = w2.player;
-      const onIt = p.onGround && Math.abs(p.y + p.h - px(12)) < 2 && p.cx > c.X(17) && p.cx < c.X(30);
-      if (onIt && still() > 30 && !rung) {
-        rung = true;
-        d.call(w2, p.cx, 'lko-tehzeeb');
-      }
-      if (!onIt) rung = false;
-    });
-    w.add(
-      new Art((ctx) => {
-        ctx.fillStyle = '#F5F1E8';
-        ctx.fillRect(c.X(17), px(12) - 2, px(13), 4);
-        ctx.fillStyle = '#E8C547';
-        for (let xx = c.X(17) + 2; xx < c.X(30); xx += 6) ctx.fillRect(xx, px(12) + 2, 2, 1.5);
-      }, 1),
-    );
-    w.flags[c.f('dancer')] = d;
   },
 };
 
@@ -223,24 +201,13 @@ const darbar: Act = {
     sign(w, x + 0.4, 10.4, 3.4, 'DARBAR', 'shop', null, 'pehle aap');
   },
 };
-/** The slow procession again, now along a floor sewn with bells under chikan covers. Strolling behind them
- *  means pausing, and a pause long enough to be a bow rings the bells and brings the dancer. */
-const JULUS10 = [12, 24, 36, 46];
+/** The slow procession again, as in 07: a plain callback (DECISIONS W2: the covered-bells break is kept for
+ *  jawab and tasveer only). */
 const julusBells: Act = {
   ...julus,
   id: 'lko10-julus',
   cps: [19.5, 31.5, 41.5],
-  advice: 'The slow procession again, but between the nalas the floor is bells under chikan covers. Behind them on the covers pause only for a blink (a pause long enough to be a bow rings the bells and the dancer spins to you); do your waiting on the plain boards in front of each nala.',
-  build: (w, c) => {
-    julus.build!(w, c);
-    const d = new Dancer(w, c.X(56) + 8, 210, 'lko-tehzeeb');
-    let from = 2;
-    for (const n of JULUS10) {
-      // five plain boards before each nala: room to wait, and to come back to
-      covered(w, c.x + from, c.x + n - 6, d, 40);
-      from = n + 2;
-    }
-  },
+  advice: 'The slow procession again, going your way: walk behind them at their pace, and wait at each nala until they are over it.',
 };
 /** The photograph again, but the street in front of the posing group is bells under chikan covers. Photo
  *  taught: wait right by the group for the flash. Here that spot is a cover, and a wait there is a bow
