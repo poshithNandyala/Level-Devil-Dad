@@ -2,7 +2,10 @@
 import type { CityModule } from '../module';
 import { lines } from './lines';
 import { levels } from './levels';
-import { endings } from './endings';
+import { endings as shipped } from './endings';
+import { encoreEndings } from './encores';
+
+const endings = { ...shipped, ...encoreEndings };
 import { causeLines } from './causes';
 import { skin } from './skin';
 import { course } from './course';

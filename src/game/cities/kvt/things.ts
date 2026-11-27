@@ -3,7 +3,7 @@ import type { ThingDraw } from '../../../render/art/things';
 
 declare module '../../../render/art/things' {
   interface ModuleThingKinds {
-    tuna: true;
+    'kvt-tuna': true;
   }
 }
 
@@ -23,5 +23,5 @@ const tuna: ThingDraw = (ctx, x, y, w, h, o) => {
 };
 
 export const things = {
-  tuna: { size: [14, 8] as [number, number], draw: tuna },
+  'kvt-tuna': { size: [14, 8] as [number, number], draw: tuna },
 };
