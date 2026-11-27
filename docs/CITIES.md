@@ -1,7 +1,7 @@
 # Cities: what's done, what's next
 
 The journey runs south to north through every state and UT capital (36 chapters, `CHAPTERS` in
-`src/game/cities.ts`, pins in `src/map/india-data.ts`). **16 done (130 stages), 20 to go.**
+`src/game/cities.ts`, pins in `src/map/india-data.ts`). **17 done (142 stages), 19 to go.**
 The 15 cities done before the modules have 8 stages: 01 is a welcome tour, 02–08 are long stages (a room + an act + a door
 ending), harder each time; 08 is the finale and may call back to its own city's ideas (never another city's).
 **Every new city has 10 stages** (01 tour, 02–10 long stages, 10 the finale), built as a module:
@@ -36,10 +36,10 @@ How to use this file:
 | 14 | RPR | Raipur | Chhattisgarh | Central | Chhattisgarhi + English | done |
 | 15 | RNC | Ranchi | Jharkhand | Central | Nagpuri (Sadri) + Hindi + English | done |
 | 16 | PAT | Patna | Bihar | Central | Magahi / Bhojpuri + Hindi + English | done (10 stages, v0.17.0) |
-| 17 | LKO | Lucknow | Uttar Pradesh | Central | Lakhnavi Hindustani (Urdu-rich) + Awadhi + English | to do |
+| 17 | LKO | Lucknow | Uttar Pradesh | Central | Lakhnavi Hindustani (Urdu-rich) + Awadhi + English | done (10 stages, v0.17.5) |
 | 18 | BBI | Bhubaneswar | Odisha | East | Odia + Hindi + English | to do |
 | 19 | CCU | Kolkata | West Bengal | East | Bengali + Hindi + English | to do |
-| 20 | SVP | Sri Vijaya Puram (bonus) | Andaman & Nicobar Islands | East | Andaman Hindi + Bengali/Tamil/Telugu + English | to do |
+| 20 | SVP | Sri Vijaya Puram (bonus) | Andaman & Nicobar Islands | East | Andaman Hindi + Bengali/Tamil/Telugu + English | done (10 stages, v0.17.3) |
 | 21 | GTK | Gangtok | Sikkim | East | Nepali + Hindi + English | to do |
 | 22 | DIS | Dispur (Guwahati) | Assam | Northeast | Assamese + Hindi + English | built on city/dis (10 stages), waiting for QA; notes in docs/cities/DIS.md |
 | 23 | SHL | Shillong | Meghalaya | Northeast | Khasi + English | to do |
@@ -93,14 +93,16 @@ song lyrics. Affectionate teasing locals would proudly share; never mean.
 
 | Stage | Name (meaning) | What it is | Act | Door ending |
 | --- | --- | --- | --- | --- |
-| KVT-01 | Swagatham, Billam (Welcome to Kavaratti) | Welcome tour past landmarks while the guide tells you real things about the city. Coral sand, a glass-clear lagoon and boats that run on a timetable. As you cross the jetty, a green turtle nest on the beach below hatches: never step on a baby, and they spread wider than any jump. Stop on the jetty till every one is in the water. | — | — |
-| KVT-02 | Odam Gone (The boat’s gone) | The boat waits for the tide, never for your jump. The last two planks by the boat go too, if you stand there waiting for it. | `kvt02-glass` | `loading` |
-| KVT-03 | Supari Light (Lighthouse on the island) | The lighthouse beam builds your bridge. For a moment. | `kvt03-faith` | `reflection` |
-| KVT-04 | Agatti Airstrip | One runway, one flight a day, and the whole island watching. *Scene: Agatti.* | `kvt04-tailwind` | `glider` |
-| KVT-05 | Minicoy Tuna | Pole-and-line tuna fishing: the fish come out of the sea and fly over your head. *Scene: Minicoy.* | `kvt05-lift` | `trapdoor` |
-| KVT-06 | Phar Mungal (Diving the reef) | India’s scuba school. The fish are friendly. The reef is not. *Scene: Kavaratti lagoon.* | `kvt06-air`, `kvt06-eels` | `safetystop` |
-| KVT-07 | Thengu Kayaru (Up the palm) | Coconut country: every islander can climb a palm. Can Dad? | `kvt07-crabs`, `kvt07-bend` | `pushoff` |
-| KVT-08 | Billam Ottam (Running on the lagoon) | Run fast enough and the lagoon holds you up. Stop, and it doesn’t. *Scene: Bangaram lagoon.* The sandbar is only there at low tide: stop on it and it goes under. | `kvt08-weed`, `kvt08-dolphins` | `footsteps` |
+| KVT-01 | Swagatham, Billam (Welcome to Kavaratti) | Welcome tour past landmarks while the guide tells you real things about the city. Coral sand, a glass-clear lagoon and boats that run on a timetable. As you cross the jetty, a green turtle nest on the beach below hatches: never step on a baby, and they spread wider than any jump. Stop on the jetty till every one is in the water. Then the coral step out to the boat: the tide is dropping, and it shrinks from three tiles to its one-tile top as you come down the beach; wait at the water's edge, then hop on to the top and off. | — | — |
+| KVT-02 | Odam Gone (The boat’s gone) | The boat waits for the tide, never for your jump. The last two planks by the boat go too, if you stand there waiting for it. | `kvt02-glass` | `kvt-loading` |
+| KVT-03 | Supari Light (Lighthouse on the island) | The lighthouse beam builds your bridge. For a moment. | `kvt03-faith` | `kvt-reflection` |
+| KVT-04 | Agatti Airstrip | One runway, one flight a day, and the whole island watching. *Scene: Agatti.* | `kvt04-tailwind` | `kvt-glider` |
+| KVT-05 | Minicoy Tuna | Pole-and-line tuna fishing: the fish come out of the sea and fly over your head. *Scene: Minicoy.* | `kvt05-lift` | `kvt-trapdoor` |
+| KVT-06 | Phar Mungal (Diving the reef) | India’s scuba school. The fish are friendly. The reef is not. *Scene: Kavaratti lagoon.* | `kvt06-air`, `kvt06-eels` | `kvt-safetystop` |
+| KVT-07 | Thengu Kayaru (Up the palm) | Coconut country: every islander can climb a palm. Can Dad? | `kvt07-crabs`, `kvt07-bend` | `kvt-pushoff` |
+| KVT-08 | Billam Ottam (Running on the lagoon) | Run fast enough and the lagoon holds you up. Stop, and it doesn’t. *Scene: Bangaram lagoon.* The sandbar is only there at low tide: stop on it and it goes under. | `kvt08-weed`, `kvt08-dolphins` | `kvt-footsteps` |
+| KVT-09 | Kalpeni Kadalkara (Kalpeni Storm Bank) | A cyclone threw a hill of coral rubble up on the shore, and it still moves: every landing on it slides you one tile towards the lagoon. Land near a step's lagoon edge and the slide takes you over it and the rubble you brought down carries you into the water: walk to the far end of each step, then a tap up. Under the jagged beach-rock lip a full leap hits it; near the top the steps narrow to two tiles; over the summit the lagoon is on the other side, so walk off each step (a hop down slides you off the far edge); then the sea wall (land deep on the heap in the first break, jump the loose block in the second whole) a shelf of shingle under a low lip that carries you under it if you let it slide you off (land short, never jump), and a ridge of three heaps, wide, narrow and wider, with water on both sides (land in the middle); the crest's two storm cuts want a long jump well past them. *Scene: Kalpeni.* | `kvt09-pavizham`, `kvt09-kodumudi`, `kvt09-kadalbhitti`, `kvt09-ozhukku`, `kvt09-varambu`, `kvt09-murivu` | `kvt-buried-door` |
+| KVT-10 | Neerali Kuzhi (Octopus Hole) | One coral head is an octopus, the colour of the coral; its den is the dark hole with shells round it, and solid. Jump the octopus, stand on the den. Then a bare dark hole that goes right through, and an octopus that crawls to another head and turns its colour as you come; then every KVT idea comes back and breaks the rule it taught: a rotten plank that is the way down (jump it and the far planks go), an octopus on the rubble's far tile, a turtle nest behind you, tuna high then low, a crab in the coconut crown, morays that strike twice, a headwind, a dolphin under a jagged arch, the lighthouse beam taking steps away, the incoming tide (heads that sink while you move on them, not when you stop), a reef that rises only for a jumper, a boat that is not coming back; last the tour's coral steps shrinking with the tide, and between them a hole with eyes in it (a moray). Closing stage. *Scene: Kavaratti lagoon.* | `kvt10-midden`, `kvt10-palaka`, `kvt10-kallu`, `kvt10-aama`, `kvt10-choora`, `kvt10-thengu`, `kvt10-irandu`, `kvt10-kaattu`, `kvt10-kamaanam`, `kvt10-nizhal`, `kvt10-veliyettam`, `kvt10-paaru`, `kvt10-kotta`, `kvt10-thoni`, `kvt10-irakkam` | `kvt-sand-arm` |
 
 ### CHN · Chennai, Tamil Nadu
 

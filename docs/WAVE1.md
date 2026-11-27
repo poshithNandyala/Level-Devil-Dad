@@ -591,3 +591,30 @@ Thiruvananthapuram's extend pass: stages 09 and 10 after the old finale (ids kep
 keys under the `tvm-` prefix, and every checkpoint moved where it passes the three-play respawn check (idle,
 run, tap jump at lag 0, 6 and 12). It passed independent QA at 2e7eba9 after five fix rounds
 (ldd-inbox/reports/cities/tvm/QA/). TVM is off the modules-test allow-list, so it now gets every strict check.
+
+## v0.17.4: Kavaratti, ten stages
+Kavaratti's hardness pass: a tour bite (the coral step out to the boat shrinks with the tide), two new stages
+(09 Kalpeni Kadalkara, storm rubble that slides you a tile towards the lagoon on every landing; 10 Neerali
+Kuzhi, an octopus the colour of the coral, whose finale acts each break a rule an earlier KVT stage taught),
+its keys under the `kvt-` prefix, a seventh-death line, and checkpoints that pass the three-play respawn check.
+It passed QA round 4 at b66b2bf. Fix round 4 cut `kvt10-kannadi` (KVT-08's "keep moving" again); QA round 4
+cut `kvt10-kotta` (stay in the basket past a rotten landing to the very end): that thought, "the ride is not
+over at the first place you could get off", is Gangtok's yak that stops for photos on thin ice, committed
+earlier, so Gangtok keeps it. KVT-10 is 86.7 s, honestly under the 90 s floor; KVT-09 is 42.6 s (ruled final).
+Fair at N=80: every stage 100 at 6 ticks and at least 96 at 12 (KVT-08 96); worst replay from a checkpoint to a
+death 7.18 s; 1920 respawn checks on KVT-10, no death for idle, a short run or a tap jump. KVT is off the
+modules-test allow-list. Design notes: `docs/cities/KVT.md`.
+
+## v0.17.5: Lucknow, ten stages
+Lucknow (LKO, Uttar Pradesh) is the second city built as a module: ten stages in `src/game/cities/lko/`, routes in
+`tests/cities/lko.ts`. 01 the tour (Chowk's cloth bolts sold out from under you, a bolt unrolling across the road),
+02 Pehle Aap (the bow sets who goes through first), 03 Chhapa (the print washes, the stitch stays), 04 Makhan Malai
+(the malai facing the low sun sinks), 05 Galouti (squash the heap flat to hop under the seekh), 06 Kathak (the
+ghungroo strips call the dancer), 07 Hazratganj (rush and the strollers close ranks), 08 Bhool Bhulaiya (how you
+enter an arch sets the floor you come out on), 09 Kabootarbazi (the flyer's flag steers the flock), 10 Lakhnavi
+Tehzeeb (bells under chikan covers: a bow rings them). It passed QA round 5 at 1f7ee36 after eight fix rounds
+(ldd-inbox/reports/cities/lko/). Fix round 6 made six doors plain (each re-asked its own room) and cut 13 acts;
+round 7 cut `lko10-darbar` and `lko10-jawab` and kept one trap in `lko07-shaam`; round 8 gave every place its own
+death cause so the line is true for the play that died. Lengths under the floors are honest and ruled final: 05
+42.9 s, 06 37.3 s, 07 49.9 s, 08 37.1 s, 09 61.0 s, 10 24.5 s. Fair at N=80: 100 at 6 and 12 ticks on all ten;
+worst replay from a checkpoint to a death 7.46 s. Design notes: `docs/cities/LKO.md`.
