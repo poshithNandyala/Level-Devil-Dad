@@ -15,5 +15,7 @@ export const causeLines: Record<string, string[]> = {
   'dis-gutter': ['Gola! The upper eave is the gutter, and its ball rolled down it into you.', 'The pavilion’s side only leads to the gutter. Stay on the roof: stop on each grip pad, take a run, and leap the rib and the oil.'],
   'dis-net': ['Uruka! The fishers pulled the net in from under you.', 'Cross the net at a run the moment they start pulling; it slides away from your end first.'],
   'dis-pukhuri': ['Dhol! The plank sank on the beat, and you went into the pond.', 'Hop one plank on every beat of the dhol. When his arms go faster the beat has quickened: hop at once, every time.'],
+  'dis-umananda': ['Umananda! The ferry’s wake flooded the flats over you.', 'When the wake comes in, get up on the ledge just above the red flood mark on the rock, and wait till the water has gone back down.'],
+  'dis-langur': ['Bandar! The golden langur on the top of the rock swatted you off.', 'The top is the langurs’ rock. Wait on the ledge just above the flood mark: the water never comes higher than that.'],
   'dis-reel': ['Muga! You were reeled in with the cocoon.', 'Ride the cocoon up, and step off on to the verandah while it waits at the top.'],
 };
