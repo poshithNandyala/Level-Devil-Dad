@@ -330,6 +330,7 @@ const raasta: Act = {
         } else G.s = 'gone';
       }
     });
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Pehle aap? Accha, pehle aap. | After you? Fine, after you.', 2.2));
     sign(w, x + 0.4, 10.4, 3.4, 'RAASTA', 'shop', null, 'pehle aap');
   },
 };
