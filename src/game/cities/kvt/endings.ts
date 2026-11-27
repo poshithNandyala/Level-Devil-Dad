@@ -99,7 +99,7 @@ export class Kayak extends Entity {
   }
 }
 
-export type KvtEndingKind = 'reflection' | 'glider' | 'trapdoor' | 'footsteps' | 'pushoff' | 'safetystop' | 'loading';
+export type KvtEndingKind = 'kvt-reflection' | 'kvt-glider' | 'kvt-trapdoor' | 'kvt-footsteps' | 'kvt-pushoff' | 'kvt-safetystop' | 'kvt-loading';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<KvtEndingKind, true> {}
@@ -107,7 +107,7 @@ declare module '../../levels/endings' {
 
 export const endings: Record<KvtEndingKind, Ending> = {
   /** There's no door on the jetty. There's one in the water: its reflection. Dive into it. */
-  reflection: {
+  'kvt-reflection': {
     advice: 'No door on the jetty? Look in the water: jump right into the door’s reflection. Anywhere else, you drown.',
     paint: (g, D) => void g.pit(D - 4, D + 4),
     build(w, d) {
@@ -170,8 +170,9 @@ export const endings: Record<KvtEndingKind, Ending> = {
   },
 
   /** The door is across the bay from the cliff. Grab the paraglider and float over; mind the gulls. */
-  glider: {
-    space: 16,
+  'kvt-glider': {
+    // (the checkpoint before the cliff sits out of a tap-jump's reach of the wing)
+    space: 19,
     advice: 'Grab the paraglider at the cliff edge, then jump off: it floats you over the bay. Go just after a gull has flown past.',
     paint: (g, D) => void g.pit(D - 12, D - 1),
     build(w, d) {
@@ -227,7 +228,7 @@ export const endings: Record<KvtEndingKind, Ending> = {
   },
 
   /** The exit is a hatch in the pier floor. Walking over it does nothing: land on it. */
-  trapdoor: {
+  'kvt-trapdoor': {
     advice: 'The exit is the hatch in the floor: walking over it does nothing, so jump and land on it.',
     build(w, d) {
       d.hidden = true;
@@ -266,7 +267,7 @@ export const endings: Record<KvtEndingKind, Ending> = {
   },
   /** Low tide: the reef flat in front of the door is full of urchins hiding in the weed. Old Koya knows
    *  the way: step only in his footprints, before the water fills them. */
-  footsteps: {
+  'kvt-footsteps': {
     space: 16,
     advice: 'The reef flat is full of hidden urchins. Follow the old fisherman and hop only into his footprints, before the tide fills them in.',
     build(w, d) {
@@ -361,7 +362,7 @@ export const endings: Record<KvtEndingKind, Ending> = {
   },
 
   /** The door is on a sandbar across the water. There's a kayak on the beach. Don't jump: push. */
-  pushoff: {
+  'kvt-pushoff': {
     space: 14,
     advice: 'Too far to jump to the sandbar: walk into the kayak to push it down the beach, hop in as it floats off, and step out at the door.',
     paint: (g, D) => void g.pit(D - 7, D - 2),
@@ -385,7 +386,7 @@ export const endings: Record<KvtEndingKind, Ending> = {
   // ================================================================ Kavaratti
   /** India's scuba school: no shooting straight up. Hang by the knot on the line with the instructor
    *  for three seconds (the safety stop) before you surface at the dive boat. */
-  safetystop: {
+  'kvt-safetystop': {
     space: 16,
     advice: 'Divers never shoot straight up: hang by the knot on the line, next to the instructor, for three seconds. Then surface at the boat and climb aboard.',
     paint: (g, D) => {
@@ -496,7 +497,7 @@ export const endings: Record<KvtEndingKind, Ending> = {
   // ================================================================ Kavaratti
   /** Island internet: the bridge to the door is a progress bar. It loads slower than you walk,
    *  sticks at 99%, and then the connection drops. */
-  loading: {
+  'kvt-loading': {
     space: 12,
     advice: 'The bridge is still loading: walk behind the bar, never past its end, and jump the last bit at 99% before the connection drops.',
     paint: (g, D) => void g.pit(D - 7, D - 1),
