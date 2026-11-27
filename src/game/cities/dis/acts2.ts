@@ -420,7 +420,7 @@ export const luitGamosa: Act = {
   id: 'dis10-gamosa',
   w: 30,
   advice: 'Guests at the last houses: four givers in a row and then a pit. Take two, then clear the third and the fourth in one long running jump: a little hop over the third lands you in the fourth one’s arms, and the cloth hides the pit.',
-  cps: [1.5],
+  cps: [1.0], // before the stall's reset at 1.2: no checkpoint just past a trigger
   paint: (g, c) => {
     g.pit(c.x + 22, c.x + 23);
   },

@@ -369,7 +369,7 @@ const weave = (hop = true): NonNullable<Step['policy']> => (w) => {
   return { move: '', jump: false };
 };
 type Play = (x: number) => Step[];
-const ACT_DEATHS: { act: string; stage: string; naive: [Play, string, string]; fix: [Play, string, string] }[] = [];
+const ACT_DEATHS: { act: string; stage: string; naive: [Play, string, string]; fix?: [Play, string, string] }[] = [];
 const die = (x: number): Step[] => [{ hold: 'R', until: done, max: 6000 }];
 void die;
 const runHop: Play = () => [...Array.from({ length: 40 }, (): Step => ({ hold: 'R', jump: 14, ticks: 22 }))];
@@ -403,10 +403,14 @@ const changNaive: Play = (x) => [{ hold: 'R', until: X(x + 10.4), max: 600 }, { 
 const changFix = (edge: number): Play => (x) => [{ policy: changClimb(x + edge, true), until: done, max: 4000 }];
 const roofNaive: Play = () => [{ policy: ribHop(7), until: done, max: 4000 }];
 const roofFix: Play = () => [{ policy: ribHop(16), until: done, max: 4000 }];
-const act = (a: string, stage: string, naive: [Play, string, string], fix: [Play, string, string]) => ACT_DEATHS.push({ act: a, stage, naive, fix });
+const act = (a: string, stage: string, naive: [Play, string, string], fix?: [Play, string, string]) => ACT_DEATHS.push({ act: a, stage, naive, fix });
+// acts with one play (see ONE_PLAY): one scripted death, walking straight on into the act's trap
+const runOn: Play = () => [{ hold: 'R', until: done, max: 3000 }];
+for (const [a, stage, cause] of [['dis05-biya', 'DIS-05', 'dis-gamosa'], ['dis05-atithi', 'DIS-05', 'dis-gamosa'], ['dis06-majuli', 'DIS-06', 'dis-bank'], ['dis06-chapori', 'DIS-06', 'dis-bank'], ['dis07-ghar', 'DIS-07', 'dis-gate'], ['dis07-chowk', 'DIS-07', 'dis-gate'], ['dis08-kaziranga', 'DIS-08', 'dis-beel']]) act(a, stage, [runOn, cause, 'walks straight on into it']);
+for (const a of ['dis09-chaal', 'dis09-dhal']) act(a, 'DIS-09', [() => [{ policy: ribHop(7), until: done, max: 4000 }], 'dis-roof', 'stops on the oil before the rib']);
 act('dis06-chang', 'DIS-06', [changNaive, 'dis-bank', 'jumps at the stilt house'], [changFix(11), 'dis-bank', 'up the ladder, then walks off the house into the river']);
-act('dis07-dhol', 'DIS-07', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholHop(110), until: (w) => done(w) || w.player.cx > px(x + 36), max: 6000 }, { hold: '', until: done, max: 900 }], 'dis-pukhuri', 'keeps the first tempo after the dhol quickens']);
-act('dis10-dhol', 'DIS-10', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholTempo(x, 84), until: done, max: 6000 }], 'dis-pukhuri', 'hops on the quick tempo from 07 after the drummer has slowed']);
+act('dis07-dhol', 'DIS-07', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholHop(110), until: (w) => done(w) || w.player.cx > px(x + 36), max: 6000 }, { hold: '', until: done, max: 900 }], 'dis-dhol-sink', 'keeps the first tempo after the dhol quickens']);
+act('dis10-dhol', 'DIS-10', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholTempo(x, 84), until: done, max: 6000 }], 'dis-dhol-sink', 'hops on the quick tempo from 07 after the drummer has slowed: the next plank is not up, he comes down on his own as it sinks']);
 act('dis09-tug', 'DIS-09', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => tug(w).phase(w.tick).taut, max: 900, note: 'wait till it is taut' }, { hold: 'R', until: done, max: 900 }], 'dis-rope', 'goes the moment the rope is taut, whoever is winning']);
 act('dis05-taat', 'DIS-05', [(x) => [{ hold: 'R', until: X(x + 9.2), max: 600 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 900 }], 'dis-taat', 'takes a run and jumps the ditch: lands on the warp threads'], [(x) => [{ policy: weave(false), until: done, max: 2400 }], 'dis-shuttle', 'waits on the cloth by its edge without hopping']);
 act('dis07-bordoisila', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-bordoisila', 'walks on into the storm'], [(x) => [{ hold: 'R', until: X(x + 13), max: 600 }, { hold: '', brace: true, until: done, max: 900 }], 'dis-hail', 'holds on against the wind in the open']);
@@ -448,13 +452,20 @@ function doorDeaths(S: Record<string, Step[]>) {
 function actDeaths(S: Record<string, Step[]>) {
   for (const d of ACT_DEATHS) {
     const route = S[d.stage];
-    const i = route.findIndex((s) => s.note === `act:${d.act}`);
+    const i = route.findIndex((s) => s.note === `act:${d.act}` || (s as { actMark?: string }).actMark === d.act);
     if (i < 0) throw new Error(`no act marker for ${d.act}`);
     const def = LEVELS.find((l) => l.id === d.stage)!;
     const x = def.parts!.find((p) => p.kind === d.act)!.x0;
     const pre = route.slice(0, i);
     (mistakes[d.stage] ??= []).push({ what: `${d.act}: ${d.naive[2]}`, steps: [...pre, ...d.naive[0](x)], cause: d.naive[1] });
-    (mistakes[d.stage] ??= []).push({ what: `${d.act} (fix): ${d.fix[2]}`, steps: [...pre, ...d.fix[0](x)], cause: d.fix[1] });
+    if (!d.fix) continue;
+    // the stage's FIX play is an act's obvious fix where the room's own second play meets the same trap (ONE_PLAY)
+    if (STAGE_FIX[d.act]) {
+      fix[d.stage] = { steps: [...pre, ...d.fix[0](x)], cause: d.fix[1] };
+      continue;
+    }
+    const label = ONE_PLAY[d.act] ? 'second scripted death, same trap' : 'fix';
+    (mistakes[d.stage] ??= []).push({ what: `${d.act} (${label}): ${d.fix[2]}`, steps: [...pre, ...d.fix[0](x)], cause: d.fix[1] });
   }
 }
 
@@ -619,6 +630,32 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     { what: 'waits on the first bar for ever: it sinks once the next one is up', steps: [{ hold: 'R', until: X(6.3), max: 400 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: done, max: 1500 }], cause: 'dis-luit' },
   ],
 };
+/** Rooms and acts with only one play: their one trap is the whole room, so the second wrong move meets the same trap.
+ *  It stays as a scripted death and is not counted as a FIX. */
+export const ONE_PLAY: Record<string, string> = {
+  'DIS-01': 'the ghat has one hazard, the tea boy’s tray: touching him, hopping him and climbing out early all meet it',
+  'DIS-02': 'the sandbars have one hazard, the river under a bar that is not there: every wrong move is a wrong bar',
+  'DIS-03': 'the tea row has one hazard, the plucker’s basket: too close, too early or over her all meet it',
+  'DIS-06': 'the retreating bank has one hazard, the slab clock: slow and stopping both lose to it',
+  'dis06-chang': 'the stilt house stands in the same river as the bank: missing the ladder and walking off the house both drop into it',
+  'dis08-bagori': 'the rhino’s charge is the act’s only hazard: staying on the bank and leaving the hay early both stand in its line',
+  'dis05-biya': 'the wedding gamosas are the act: the only trap is walking blind into the pit under them',
+  'dis05-atithi': 'the guest-house givers have one trap, three gamosas over your feet at the pit',
+  'dis06-majuli': 'the island bank has one trap, the river behind the slab clock',
+  'dis06-chapori': 'the chapori slabs have one trap, the river where a slab has gone',
+  'dis07-ghar': 'the husori yard has one trap, the gate’s bamboo stakes when the group is not at it',
+  'dis07-chowk': 'the chowk gates have one trap, the stakes: early, late and out of the ring all meet them',
+  'dis08-kaziranga': 'the tall grass has one trap, no floor where no rhino has flattened it',
+  'dis09-chaal': 'the roof has one trap, the ball down the oil: every stop off a grip pad meets it',
+  'dis09-dhal': 'the steep roof has one trap, the ball down the oil, as the first roof',
+  'dis10-gamosa': 'the callback has one trap, the blinding gamosa at the pit: walking into the givers and taking the fourth one both blind you',
+};
+/** acts whose obvious fix is the stage's FIX play (a different trap from the stage's NAIVE) */
+const STAGE_FIX: Record<string, true> = { 'dis05-taat': true, 'dis07-bordoisila': true, 'dis10-tug': true };
+for (const id of ['DIS-01', 'DIS-02', 'DIS-03', 'DIS-06']) {
+  (mistakes[id] ??= []).push({ what: `second scripted death, same trap (one play: ${ONE_PLAY[id]})`, ...fix[id] });
+  delete fix[id];
+}
 
 /** a route for each act, by act id ('dis02-...'). */
 /** an act route that marks where it starts, so the act's own death plays can start from there */
@@ -838,6 +875,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: and(ground, X(x + 38)), max: 300 },
   ],
 };
+// acts without a mark step: tag their first step (no extra tick), so their scripted deaths can start where they start
+for (const [id, f] of Object.entries(actRoutes)) actRoutes[id] = (x) => { const st = f(x); if (st[0] && st[0].note !== `act:${id}`) (st[0] as { actMark?: string }).actMark = id; return st; };
 
 /** a policy for each door ending, by kind ('dis-...'). */
 const endingPolicies: Record<string, Policy> = {

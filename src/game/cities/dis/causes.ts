@@ -15,6 +15,7 @@ export const causeLines: Record<string, string[]> = {
   'dis-gutter': ['Gola! The upper eave is the gutter, and its ball rolled down it into you.', 'The pavilion’s side only leads to the gutter. Stay on the roof: stop on each grip pad, take a run, and leap the rib and the oil.'],
   'dis-net': ['Uruka! The fishers pulled the net in from under you.', 'Cross the net at a run the moment they start pulling; it slides away from your end first.'],
   'dis-pukhuri': ['Dhol! The plank sank on the beat, and you went into the pond.', 'Hop one plank on every beat of the dhol. When his arms go faster the beat has quickened: hop at once, every time.'],
+  'dis-dhol-sink': ['Dhol! You stayed too long: the plank sank under your feet.', 'Each plank sinks a moment after the next one rises. Hop on the beat he plays now, not later and not on the beat you remember.'],
   'dis-khaal': ['Khaal! The rope was slack, and you went into the ditch.', 'The rope is a floor only while the teams are pulling it taut. Wait at the edge for the referee’s flag.'],
   'dis-rope': ['Rosi! The winning team pulled the rope out from under you.', 'The taut rope slides toward the team that is winning. Get on only when the far team’s red flag is up, and cross at once.'],
   'dis-taat': ['Taat! The warp threads are not a floor yet.', 'Only the woven cloth holds you. Wait on it by its edge while it grows.'],

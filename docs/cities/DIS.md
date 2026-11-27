@@ -40,9 +40,9 @@ Cut: `dis05-char`, `dis05-husori`, `dis05-ghat`; `dis06-chapori3`, `dis06-ghat`,
 | --- | --- | --- | --- | --- |
 | `dis05-taat` | DIS-05 | The host weaves your gamosa across a ditch: the cloth is the floor and grows with each pass; the shuttle flies along it at ankle height. | jump the ditch: `dis-taat`; wait on the cloth without hopping: `dis-shuttle` | "Olop! / A little!" |
 | `dis07-bordoisila` | DIS-07 | Bordoisila, the April storm: the wind blows toward the pond, the hail follows; shelter under the bhoral (granary on stilts). The shelter beat. | walk on: `dis-bordoisila`; brace in the open: `dis-hail` | "Roba! / Stop!" |
-| `dis07-dhol` | DIS-07 | The Bihu dhol: pond planks rise on each beat, the one behind sinks; the beat quickens. The momentum beat. | run across: `dis-pukhuri`; keep the first tempo: `dis-pukhuri` (later) | "Lahe lahe, Dad? / Slowly slowly, Dad?" (a lie) |
+| `dis07-dhol` | DIS-07 | The Bihu dhol: pond planks rise on each beat, the one behind sinks; the beat quickens. The momentum beat. | run across: `dis-pukhuri`; keep the first tempo: `dis-dhol-sink` (the plank sinks under you) | "Lahe lahe, Dad? / Slowly slowly, Dad?" (a lie) |
 | `dis09-tug` | DIS-09 | The royal games in the Rang Ghar courtyard (bible idea 10): a tug-of-war rope is the floor over a ditch only while taut, and it drifts toward the winning team (referee's flag). | run on: `dis-khaal`; go as soon as it is taut: `dis-rope` | "Bhal, Dad! / Good, Dad!" (a lie) |
-| `dis10-dhol` | DIS-10 | Callback to 07, broken: the tired drummer's beat slows. | run across: `dis-pukhuri`; keep 07's quick tempo: `dis-pukhuri` (later) | "Akou ebar? / Once again?" |
+| `dis10-dhol` | DIS-10 | Callback to 07, broken: the tired drummer's beat slows. | run across: `dis-pukhuri`; keep 07's quick tempo: `dis-dhol-sink` | "Akou ebar? / Once again?" |
 | `dis10-bordoisila` | DIS-10 | Callback to 07, broken: the old bhoral falls in the wind; jump the channel on the gust before the hail. | jump before the wind: `dis-bordoisila`; shelter under the bhoral: `dis-bhoral` | "Roba! / Stop!" |
 | `dis10-tug` | DIS-10 | Callback to 09, broken: the teams have changed ends, so the red flag now means the rope is coming back. | run on: `dis-khaal`; go on red as in 09: `dis-rope` | "Moi najanu! / I don't know!" |
 
@@ -51,8 +51,14 @@ Kept from pass 1 because they are in their home stage: `dis05-biya`, `dis05-atit
 `dis08-jeep`, `dis08-bagori` (rhino), `dis09-chaal`, `dis09-dhal` (roof), `dis10-gamosa` (the finale's gamosa
 callback: a little hop over a giver lands you in the next one's arms).
 
+One play: a room or act whose only trap is the whole room has one play. Its second wrong move meets the same trap, so it
+is kept as a scripted death and is not counted as a FIX. The reasons are in `ONE_PLAY` in `tests/cities/dis.ts`:
+rooms 01, 02, 03, 06; acts `dis05-biya`, `dis05-atithi`, `dis06-majuli`, `dis06-chapori`, `dis06-chang`, `dis07-ghar`,
+`dis07-chowk`, `dis08-kaziranga`, `dis08-bagori`, `dis09-chaal`, `dis09-dhal`, `dis10-gamosa`. Every other act's
+obvious fix dies to a different trap with its own cause.
+
 Replay: the husori singers in 07 walk faster (56 px/s) and stay shorter at each gate (140 ticks; the ritual gate
-120 + 240); the muga reel's cycle is 470 ticks; calm checkpoints before the reel (03) and on the plucker's bank (10).
+120 + 240); the muga reel's cycle is 470 ticks; calm checkpoints before the reel (03) and on the plucker's bank (10); the `dis10-gamosa` checkpoint sits before the stall's reset, not just past it.
 
 ## Fairness (`LDD_N=80 npm run fair -- DIS`)
 

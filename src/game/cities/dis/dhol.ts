@@ -51,12 +51,15 @@ export class DholPlanks extends Entity {
       w.sfx('drum', this.drumX, GROUND - 20);
     }
     const since = w.tick - this.lastBeat;
+    // a plank that sinks under Dad's feet is its own trap (he waited too long on it), not a missed gap
+    const under = this.planks.find((s) => s.collidable && w.player.isRiding(s));
     this.planks.forEach((s, i) => {
       const up = (i + this.beat) % 2 === 0;
       const wasUp = (i + this.beat - 1) % 2 === 0 && this.beat > 0;
       // the last plank is the far bank's step: it stays up once reached
       s.collidable = up || (wasUp && since < this.grace) || (i === this.planks.length - 1 && this.beat >= i);
     });
+    if (under && !under.collidable) w.die('dis-dhol-sink');
   }
   draw(ctx: CanvasRenderingContext2D, w: World) {
     for (const s of this.planks) {
