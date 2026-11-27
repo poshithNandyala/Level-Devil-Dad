@@ -420,6 +420,8 @@ export const dakiya: Act = {
     });
     w.add(
       new Art((ctx, w2) => {
+        // they come into the lane from far behind, out of sight, when the bell rings
+        if (!S.go) return;
         for (const r of R) {
           ctx.strokeStyle = '#2B2B2B';
           ctx.lineWidth = 1.5;
