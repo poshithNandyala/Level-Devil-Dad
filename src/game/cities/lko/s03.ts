@@ -174,9 +174,10 @@ function chhapaRoom(): LevelDef {
  *  whistles a beat after you step on his print: cross it without stopping. */
 export const kunda: Act = {
   id: 'lko03-kunda',
+  cp0: false,
   w: 40,
   advice: 'Three more vats, and here the print is the only way across: each washer whistles a moment after you step on his print. Run each one without stopping, on to the white flower at the far end. The jali in the middle of the second goes with the print: don’t stop on it.',
-  cps: [12.5, 25.5],
+  cps: [-2, 10.3, 23.3],
   paint: (g, c) => {
     g.pit(c.x + 3, c.x + 9).pit(c.x + 15, c.x + 22).pit(c.x + 28, c.x + 35);
   },

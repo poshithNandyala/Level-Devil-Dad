@@ -321,21 +321,21 @@ function drawSquare(ctx: Ctx, b: Block, i: number, w: World, S: { lit: Set<numbe
 
 export const chaupar: Act = {
   id: 'lko08-chausar',
-  w: 44,
+  w: 46,
   advice: 'A pachisi court over the well, in two halves with a stone chabutra between. Each throw of the cowries (count the dark mouths) lights that many squares ahead of yours; only lit squares and your own hold, and they go dark at the next throw. Never hop past the lit ones, and never on to the courtier’s square: wait on yours for a throw that takes you past him.',
   cp0: false,
   cps: [-2, 20.5],
   paint: (g, c) => {
-    g.pit(c.x + 4, c.x + 38, 15);
+    g.pit(c.x + 4, c.x + 40, 15);
     // the chabutra between the two halves of the court: calm stone
-    g.fill(c.x + 19, c.x + 22, 13, 17, '#');
+    g.fill(c.x + 19, c.x + 24, 13, 17, '#');
   },
   build: (w, c) => {
     const x = c.x;
     well(w, x + 4, x + 18);
-    well(w, x + 23, x + 38);
+    well(w, x + 25, x + 40);
     chausar(w, x + 5, 5, c.f('court'));
-    chausar(w, x + 24, 5, c.f('court2'), 200, { off: 2 });
+    chausar(w, x + 26, 5, c.f('court2'), 200, { off: 2 });
     sign(w, x + 0.4, 10.4, 3.4, 'CHAUSAR', 'shop', null, 'pachisi');
   },
 };
@@ -440,6 +440,8 @@ export const wapas: Act = {
  *  from up there an arch is only a floor. */
 export const upar: Act = {
   id: 'lko08-upar',
+  cp0: false,
+  cps: [-3],
   w: 26,
   advice: 'The beamless vault: arches standing in the well, and nothing over them but their stone tops. Jump at one and it takes you up into the hooks; walk on and the floor ends. Go up through the first arch to the high ledge, then come down on to the arch tops from above, and hop top to top.',
   paint: (g, c) => {

@@ -191,9 +191,10 @@ export const tawa2: Act = {
  *  it squashes flat from your feet forwards, a tile at a time: a lane low enough to walk under the skewers. */
 export const lane: Act = {
   id: 'lko05-lane',
+  cp0: false,
   w: 34,
   advice: 'Under the lowest rack there’s no room to hop: one long slab of galouti. Stand at its start and it squashes flat from your feet forwards, a tile at a time. Walk the flat lane right behind the squash, and don’t jump. Linger and the thin lane burns.',
-  cps: [1.5],
+  cps: [-2, 1.5],
   build: (w, c) => {
     const x = c.x;
     tawa(w, x + 3, x + 24);

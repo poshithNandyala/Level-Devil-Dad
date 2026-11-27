@@ -302,26 +302,26 @@ export const sam: Ending = {
 /** The full performance: she spins the length of the stage and back without stopping, and the floor is
  *  hers. The musicians' takhts are the only place out of her way. Ring a strip and she turns back at once,
  *  towards the sound. */
-const MEHFIL = [6, 14, 22, 30, 38];
+const MEHFIL = [6, 16, 26, 36, 46];
 export const mehfil: Act = {
   id: 'lko06-mehfil',
-  w: 48,
+  w: 58,
   advice: 'The full performance: she spins the length of the stage and back, end to end, and the floor is hers. Wait up on a takht till she has spun past beneath you, going away, then cross to the next takht, over the red strip. Ring a strip and she turns straight back towards you.',
-  cps: [1, 6.6, 14.6, 22.6, 30.6],
+  cps: [1, 6.6, 16.6, 26.6, 36.6, 46.6],
   paint: (g, c) => {
-    for (const t of MEHFIL) g.fill(c.x + t, c.x + t + 3, 13, 13, '=');
+    for (const t of MEHFIL) g.fill(c.x + t, c.x + t + 5, 13, 13, '=');
   },
   build: (w, c) => {
     const x = c.x;
-    boards(w, x, x + 47);
-    const D = { x: c.X(44), v: -1.0, go: false, lo: c.X(4) + 8, hi: c.X(44) };
+    boards(w, x, x + 57);
+    const D = { x: c.X(54), v: -1.5, go: false, lo: c.X(4) + 8, hi: c.X(54) };
     w.flags[c.f('d')] = D;
     const z = w.add(new Zone(D.x - 9, FLOOR - 28, 18, 28, 'lko-mehfil'));
     const look = { x: D.x, s: 'out', floor: FLOOR } as unknown as Dancer;
     w.add(new Art((ctx, w2) => drawDancer(ctx, look, w2), 3));
     strips(
       w,
-      MEHFIL.slice(0, -1).map((t) => [x + t + 5, x + t + 5] as [number, number]),
+      MEHFIL.slice(0, -1).map((t) => [x + t + 7, x + t + 7] as [number, number]),
       (w2, sx) => {
         D.v = (sx > D.x ? 1 : -1) * Math.abs(D.v);
         w2.sfx('bells', sx, FLOOR - 4);
@@ -343,11 +343,11 @@ export const mehfil: Act = {
       new Art((ctx) => {
         for (const t of MEHFIL) {
           ctx.fillStyle = '#F5F1E8';
-          ctx.fillRect(c.X(t), px(13), px(4), 4);
+          ctx.fillRect(c.X(t), px(13), px(6), 4);
           ctx.fillStyle = '#6D4C33';
-          ctx.fillRect(c.X(t), px(13) + 4, px(4), 3);
+          ctx.fillRect(c.X(t), px(13) + 4, px(6), 3);
           ctx.fillRect(c.X(t) + 2, px(13) + 7, 3, FLOOR - px(13) - 7);
-          ctx.fillRect(c.X(t) + 59, px(13) + 7, 3, FLOOR - px(13) - 7);
+          ctx.fillRect(c.X(t) + 91, px(13) + 7, 3, FLOOR - px(13) - 7);
         }
       }, 1),
     );
