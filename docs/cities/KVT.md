@@ -15,10 +15,10 @@ Notes for the integrator (MECHANICS.md, WAVE1.md, CITIES.md). Branch `city/kvt`.
   long jump well past each storm cut. `RubbleBank` in `kvt/encores.ts`.
   Round 2 (route 60.2 s, `lives: 'act'`, 8 calm checkpoints): `kvt09-kadalbhitti` the sea wall, whose first
   break is a heap you land deep on and whose second is one loose block you must jump whole;
-  `kvt09-irangal` a second way down, walk off the 3-tile steps and hop over the 1-tile ones;
+  `kvt09-irangal` a second way down, walk off the 3-tile steps and hop over the 1-tile ones (walk off every step and the slide takes you into the four-tile lagoon at the bottom);
   `kvt09-varambu` a ridge of heaps with water on both sides, land in the middle (deep slides you off the far
   side; `RubbleBank.ridge`); `kvt09-kuzhi` a storm-water hollow, walk off each step going down and land deep
-  coming up. `kvt09-pavizham`, `kvt09-kodumudi` and `kvt09-murivu` are longer (7 steps, 8 up and 8 down,
+  coming up (hop down and the two-tile bottom step slides you into the pool). `kvt09-pavizham`, `kvt09-kodumudi` and `kvt09-murivu` are longer (7 steps, 8 up and 8 down,
   3 cuts). `RubbleBank` gained `dir` (the slide goes either way) and `ridge`.
   Door `kvt-buried-door`: the door is buried under a heap of storm rubble; every landing on the heap slides it
   (and you) a tile towards the lagoon: three hops clear the door, a fourth tips the heap and you into the water.
@@ -69,6 +69,6 @@ Death causes `pinched stung bitten hatchling` → `kvt-pinched kvt-stung kvt-bit
 | KVT-05 | 100 | 100 | 81 | 100 |
 | KVT-06 | 100 | 100 | 80 | 100 |
 | KVT-07 | 100 | 100 | 100 | 100 |
-| KVT-08 | 94 | 95 | 74 | 95 (dolphins) |
-| KVT-09 | 100 | 100 | 76 | 100 |
-| KVT-10 | 100 | 100 | 76 | 100 |
+| KVT-08 | 100 | 96 | 76 | 96 (dolphins) |
+| KVT-09 | 100 | 100 | 100 | 100 |
+| KVT-10 | 100 | 100 | 98 | 100 |
