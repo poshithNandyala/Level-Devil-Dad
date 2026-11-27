@@ -196,6 +196,21 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     if (k < 0) throw new Error("CHN-04: no step 'do not stop here'");
     R[k] = { hold: 'R', until: and(ground, X(16.2)), note: 'do not stop here' };
   }
+  // 05 (human timing, route only): hop the kites a quarter second ahead instead of 0.13 s, in the room and on the last
+  // stretch both ways (the shared dodge was too late for a press 12 ticks behind)
+  {
+    const R = S['CHN-05'];
+    const a = R.findIndex((st) => st.note === 'hop the kites; the first EXIT is a mirage');
+    const b = R.findIndex((st) => st.note === 'past the shade of the tree... another mirage');
+    if (a < 0 || b < 0) throw new Error('CHN-05: route notes not found');
+    const dx = (w: World) => w.level.doorX! * 16;
+    S['CHN-05'] = [
+      runHopping(X(32), 0.25, 'hop the kites; the first EXIT is a mirage'),
+      ...R.slice(a + 1, b),
+      runHopping((w) => w.player.onGround && w.player.x >= dx(w) + 32, 0.25, 'past the shade of the tree... another mirage'),
+      runHopping(done, 0.25, 'the real door was in the shade behind you', 'L'),
+    ];
+  }
   // 06 (human timing, route only): the shipped route's third hop usually flew clean over the third garland on to the
   // road at 18, and then hopped again ("off the drain") from the road, which with a late press landed in the gap at 21.
   // Now: hop off the drain only if still on a garland; on the road, stop and wait for the crowd where you are
@@ -333,8 +348,8 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 
 const groupOf = (w: World, letter: string) => w.entities.find((e: any) => e.letter === letter) as any;
 
-/** a ball rolling at Dad along the ground will reach him within `lead` seconds (the bouncer flies over his head and
- *  is not counted: "stay down for the bouncer") */
+/** something flying or rolling at Dad at his height (from either side) will reach him within `lead` seconds (the
+ *  bouncer flies over his head and is not counted: "stay down for the bouncer") */
 const ballIn = (w: World, lead: number) => {
   const p = w.player;
   for (const e of w.entities as any[]) {
@@ -342,31 +357,35 @@ const ballIn = (w: World, lead: number) => {
     const ew = e.w ?? 12,
       eh = e.h ?? 12;
     if (e.y + eh < p.y - 6 || e.y > p.y + p.h + 2) continue;
-    const ahead = e.x - (p.x + p.w);
+    const ahead = e.x - (p.x + p.w),
+      behind = p.x - (e.x + ew);
     if (e.vx < 0 && ahead > -4) {
       const closing = -e.vx + Math.max(0, p.vx);
       if (closing > 20 && ahead / closing <= lead) return true;
+    } else if (e.vx > 0 && behind > -4) {
+      const closing = e.vx + Math.max(0, -p.vx);
+      if (closing > 20 && behind / closing <= lead) return true;
     }
   }
   return false;
 };
-/** run right and hop every ball that will arrive within `lead` s (the shared dodge waits till 0.13 s, too late for a
- *  press 12 ticks behind against balls at 200-320 px/s) */
-const runHopping = (to: number, lead: number, note: string): Step => {
+/** walk `dir` and hop everything that will arrive within `lead` s (the shared dodge waits till 0.13 s, too late for a
+ *  press 12 ticks behind against balls at 200-320 px/s or kites at 210) */
+const runHopping = (until: (w: World) => boolean, lead: number, note: string, dir: 'L' | 'R' = 'R'): Step => {
   let hold = 0;
   return {
     policy: (w) => {
       if (hold > 0) {
         hold--;
-        return { move: 'R', jump: true };
+        return { move: dir, jump: true };
       }
       if (w.player.onGround && ballIn(w, lead)) {
         hold = 11;
-        return { move: 'R', jump: true };
+        return { move: dir, jump: true };
       }
-      return { move: 'R', jump: false };
+      return { move: dir, jump: false };
     },
-    until: X(to),
+    until,
     max: 1500,
     note,
   };
@@ -374,7 +393,19 @@ const runHopping = (to: number, lead: number, note: string): Step => {
 
 const actRoutes: Record<string, (x: number, p: any) => Step[]> = {
   // CHN-04's act (round 2, human timing): the same run, hopping each ground ball 0.25 s ahead instead of 0.13
-  'chn04-cricket': (x) => [runHopping(x + 36, 0.25, 'hop the balls on the ground, stay down for the bouncer')],
+  'chn04-cricket': (x) => [runHopping(X(x + 36), 0.25, 'hop the balls on the ground, stay down for the bouncer')],
+  // CHN-05's act (round 2): the second hole moved a tile on (15), so its take-off is at 14.2 (was 13.2)
+  'chn05-heat': (x) => [
+    runHopping(X(x + 4.2), 0.25, 'the last kite from the beach'),
+    { hold: 'R', jump: 12, ticks: 12, note: 'the first shimmer is a hole' },
+    { hold: 'R', until: and(ground, X(x + 14.2)), max: 400, note: 'walk across the black patch' },
+    { hold: 'R', jump: 12, ticks: 12, note: 'the shimmer after it' },
+    { hold: 'R', until: and(ground, X(x + 20.2)), max: 400 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'onto the big black patch' },
+    { hold: 'R', until: and(ground, X(x + 26.2)), max: 400 },
+    { hold: 'R', jump: 12, ticks: 12 },
+    { hold: 'R', until: and(ground, X(x + 34)), max: 400 },
+  ],
   // CHN-07's act, re-timed for human play (round 2): the shipped route waited for the second stone wherever the long
   // jump happened to land, which with a late jump was on the pit's edge; now Dad settles in the middle of the trigger
   // band (cx 16.5..19.2), hops on to the (now 3-wide) fallen stone from 17.9, and leaves it with a long jump

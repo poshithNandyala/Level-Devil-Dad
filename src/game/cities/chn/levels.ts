@@ -166,13 +166,18 @@ const heatFloor: Act = {
   id: 'chn05-heat',
   w: 34,
   advice: 'In this heat the shimmering road is a hole, and the black patch is only shade: jump the shimmer, walk the shade.',
+  // round 2: the act's hidden checkpoint is on the road after the first hole (7.5), not at the act's first column,
+  // which the route crosses in the air hopping the last beach kite (the capture then landed over the first hole);
+  // and the second hole is a tile further on (15, was 14), so a hop from that checkpoint lands short of it
+  cp0: false,
+  cps: [7.5],
   paint: (g, c) => {
-    for (const t of [5, 14, 21, 27]) g.pit(c.x + t, c.x + t + 1);
+    for (const t of [5, 15, 21, 27]) g.pit(c.x + t, c.x + t + 1);
   },
   build: (w, c) => {
     const { X } = c;
     const th = { top: '#B4483F', body: '#7B2C2C' };
-    for (const t of [5, 14, 21, 27]) w.add(new Shimmer(X(t), px(G), px(2), th.top, th.body));
+    for (const t of [5, 15, 21, 27]) w.add(new Shimmer(X(t), px(G), px(2), th.top, th.body));
     w.add(new Decal(X(12), px(G), px(2), 10));
     w.add(new Decal(X(23), px(G), px(4), 10));
     onPass(w, X(9), (w2) => w2.guide('Kuzhi! Andha karuppu kuzhi-ya thaandu! | A hole! Jump that black hole!'));
@@ -535,8 +540,10 @@ export const levels = (): LevelDef[] => [
         if (w.state !== 'play') return;
         // only along the open beach: in the room, and on the last stretch to the door
         const px0 = w.player.x;
-        // (dx - 5, not dx - 8: the door's hidden checkpoint at dx - 9.5 must be calm for a short run from it)
-        if (px0 < px(30) || px0 > px(dx - 5)) {
+        // (dx - 5, not dx - 8: the door's hidden checkpoint at dx - 9.5 must be calm for a short run from it; and
+        // never at a dad who has not left the spawn yet: round 2, the first kite used to arrive 2.8 s in on anyone
+        // still standing there)
+        if ((px0 < px(30) && px0 > px(5.5)) || px0 > px(dx - 5)) {
           if (seen) shot(w, 'kite', px0 - 300, 222, 210, 0, 0, 'hit');
           else shot(w, 'kite', Math.min(px0 + 330, w.W + 16), 222, -210, 0, 0, 'hit');
         }
