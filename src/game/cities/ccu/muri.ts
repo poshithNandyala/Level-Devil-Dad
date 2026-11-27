@@ -29,6 +29,8 @@ export interface TinSpec {
   every?: number;
   /** from which shake (1-based) a chilli comes up where Dad last landed (0: never) */
   chilliFrom?: number;
+  /** after this many shakes the jhalmuri is mixed: he sets the tin down on his counter and it stays still */
+  setDown?: number;
 }
 
 export class Tin extends Entity {
@@ -67,10 +69,14 @@ export class Tin extends Entity {
   clock(w: World) {
     return this.t0 < 0 ? -Infinity : (w.tick - this.t0) / 120;
   }
+  /** has he set the tin down by clock time `c` */
+  isDown(c: number) {
+    return !!this.o.setDown && c >= 0 && Math.floor(c / this.every) >= this.o.setDown;
+  }
   /** is the tin being shaken now, or about to be (the seller lifting it: the tell) */
   phase(w: World): 'calm' | 'tell' | 'shake' {
     const c = this.clock(w);
-    if (c < 0) return 'calm';
+    if (c < 0 || this.isDown(c)) return 'calm';
     const k = c % this.every;
     if (k < 0.55) return 'tell';
     if (k < 1.55) return 'shake';
@@ -79,7 +85,7 @@ export class Tin extends Entity {
   /** seconds until the next tell starts */
   untilTell(w: World) {
     const c = this.clock(w);
-    if (c === -Infinity) return Infinity;
+    if (c === -Infinity || this.isDown(c + this.every)) return Infinity;
     if (c < 0) return -c;
     return this.every - (c % this.every);
   }

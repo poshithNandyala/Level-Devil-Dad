@@ -219,9 +219,10 @@ function howrahRoom(): LevelDef {
       w.add(new Girders(0, px(32)));
       road(w, px(6), px(28));
       // fix 4: taken as the tall porter brings you over the pylon step, so a leap off him past it still counts
-      checkpoint(w, 28.3);
-      const p1 = w.add(new Porter({ x: px(5), v: 40, h: SHORT, rests: [[px(21), 3]], go: (w2, me) => w2.player.isRiding(me.load) }));
-      w.add(new Porter({ x: px(-2.5), v: 60, h: TALL, rests: [[px(30.5), Infinity]], go: walking(p1) }));
+      checkpoint(w, 24);
+      // fix 5: the two going your way a quarter quicker, so the room's longest replay is under 7.5 s
+      const p1 = w.add(new Porter({ x: px(5), v: 50, h: SHORT, rests: [[px(21), 3]], go: (w2, me) => w2.player.isRiding(me.load) }));
+      w.add(new Porter({ x: px(-2.5), v: 75, h: TALL, rests: [[px(30.5), Infinity]], go: walking(p1) }));
       w.add(new Porter({ x: px(23), v: -45, h: TALL - 1, go: walking(p1), off: px(6) }));
       w.add(new ChaiBoard(px(21)));
       w.add(new ChaiBoard(px(30.5), true));
@@ -235,11 +236,11 @@ function howrahRoom(): LevelDef {
 
 /** CCU-07 act 1 (fix 3: one span of the room's relay, from pylon to pylon): the tall porter from the pylon
  *  step, and the short one overtaking under him before his chai stop */
-const girder = relayHalf('ccu07-girder', [58, 84], true, 'From the pylon step, on to the tall porter’s load. His chai stop is ahead on the road: a short porter comes up from behind, faster, and passes under you. Walk off the front of your load on to his as he goes by, and ride him to the next pylon.', [-3]);
+const girder = relayHalf('ccu07-girder', [58, 84], true, 'From the pylon step, on to the tall porter’s load. His chai stop is ahead on the road: a short porter comes up from behind, faster, and passes under you. Walk off the front of your load on to his as he goes by, and ride him to the next pylon.', [-0.5]);
 
 /** CCU-07 act 2 (fix 3: one span): two streams. A tall load comes the other way over your head while you ride a
  *  short one; the tall porter going your way overtakes. Hop up to him, but never while an oncoming load is over you */
-const dui = relayHalf('ccu07-dui', [58, 92], false, 'Two streams now. You ride a short porter, and a tall load comes the other way, over your head: harmless, unless you jump into it. A tall porter going your way overtakes before the CHA board: hop up on to his load, but only when no oncoming load is over you.', [-0.5]);
+const dui = relayHalf('ccu07-dui', [66, 100], false, 'Two streams now. You ride a short porter, and a tall load comes the other way, over your head: harmless, unless you jump into it. A tall porter going your way overtakes before the CHA board: hop up on to his load, but only when no oncoming load is over you.', [-0.5]);
 
 
 /** CCU-07 long acts: a relay of three porters over a long span of road. `v` are the speeds of the first,
@@ -281,7 +282,7 @@ const jowar: Act = {
   w: 40,
   // the start is under the front once it's coming: the checkpoint is up the ghat steps past it
   cp0: false,
-  cps: [1.2, 36],
+  cps: [1.2, 3.5, 36],
   advice: 'The low causeway along the river, and the bore’s front is coming up behind you: everything it has passed is under water. Don’t stop. Hop each drain short (they’re close together) and keep running till you’re up the ghat steps at the end.',
   paint: (g, c) => {
     const x = c.x;
@@ -290,7 +291,7 @@ const jowar: Act = {
   },
   build: (w, c) => {
     for (const d of [8, 12, 18, 24]) pool(w, c.x + d, c.x + d + 2, 16, { colors: NALA, cause: 'ccu-nala' });
-    const front = w.add(new Front(c.X(-2), c.X(33), 80));
+    const front = w.add(new Front(c.X(-2), c.X(33), 100));
     onPass(w, c.X(10.2), (w2) => {
       if (front.t0 < 0) front.t0 = w2.tick + 60;
     });
@@ -363,7 +364,7 @@ const pylon: Act = {
     road(w, c.X(25), c.X(40));
     const p5 = w.add(new Porter({ x: c.X(8.8), v: 45, h: SHORT, rests: [[c.X(15), 3]], go: (w2, me) => w2.player.isRiding(me.load) }));
     w.add(new Porter({ x: c.X(-3), v: 55, h: TALL, kind: 'books', rests: [[c.X(18.8), Infinity]], go: (w2) => w2.player.onGround && w2.player.cx > c.X(2) && w2.player.cx < c.X(8), off: Infinity }));
-    w.add(new Porter({ x: c.X(11), v: 55, h: TALL, kind: 'sack', rests: [[c.X(40.8), Infinity]], go: (w2) => w2.player.onGround && w2.player.cx > c.X(18) && w2.player.cx < c.X(25), off: Infinity }));
+    w.add(new Porter({ x: c.X(11), v: 70, h: TALL, kind: 'sack', rests: [[c.X(40.8), Infinity]], go: (w2) => w2.player.onGround && w2.player.cx > c.X(18) && w2.player.cx < c.X(25), off: Infinity }));
     w.add(new ChaiBoard(c.X(15)));
     w.add(new ChaiBoard(c.X(3), true));
   },
@@ -590,11 +591,11 @@ function muriRoom(): LevelDef {
     name: 'Jhalmuri',
     nameEn: 'The shaken tin',
     tagline: 'Every Kolkata street corner has a jhalmuri man: puffed rice, peanuts, onion, chilli and mustard oil, tossed in a big tin and shaken.',
-    hint: 'The tin is the floor, and the muri holds you up, until he shakes it: then the light muri sinks and the big pieces come up. Watch him lift the tin: that’s the shake coming. Be on a peanut when it comes, never on the muri. And from the second shake, a green chilli comes up right where you last landed: as he shakes, hop on to the next peanut.',
+    hint: 'The tin is the floor, and the muri holds you up, until he shakes it: then the light muri sinks and the big pieces come up. Watch him lift the tin: that’s the shake coming. Be on a peanut when it comes, never on the muri. And from the second shake, a green chilli comes up right where you last landed: as he shakes, hop on to the next peanut. Two shakes and it’s mixed: he sets the tin down on his counter, and it keeps still.',
     par: 14,
     map: Grid.ground(15).pit(6, 25).put(1, 14, '@').rows(),
     build(w: World) {
-      const tin = w.add(new Tin({ x0: px(6), x1: px(26), nuts: [8, 10.5, 13, 15.5, 18, 20.5, 23].map((c) => px(c)), every: 3.4, chilliFrom: 2 }));
+      const tin = w.add(new Tin({ x0: px(6), x1: px(26), nuts: [8, 10.5, 13, 15.5, 18, 20.5, 23].map((c) => px(c)), every: 3.4, chilliFrom: 2, setDown: 2 }));
       w.flags.tin = tin;
       // the seller starts shaking as Dad comes up to his tin
       onPass(w, px(3), (w2) => {
@@ -730,13 +731,13 @@ const dui3: Act = {
   // on the pavement before the tin: a run or a hop from here never reaches the muri
   cp0: false,
   cps: [-0.2],
-  advice: 'The next seller’s tin is wider and his hand is quicker, and his peanuts are further apart. Same rules: wait on the rim for his first shake, be on a peanut for every shake, and hop on as the chilli comes up under you.',
+  advice: 'The next seller’s tin is wider and his hand is quicker, and his peanuts are further apart. Same rules: wait on the rim for his first shake, be on a peanut for every shake, and hop on as the chilli comes up under you. After his second shake he sets it down too.',
   paint: (g, c) => {
     g.pit(c.x + 3, c.x + 26);
   },
   build: (w, c) => {
     const x = c.x;
-    const tin = w.add(new Tin({ x0: c.X(3), x1: c.X(27), nuts: [5, 8, 11, 14, 17, 20, 23].map((k) => c.X(k)), every: 3.0, chilliFrom: 2 }));
+    const tin = w.add(new Tin({ x0: c.X(3), x1: c.X(27), nuts: [5, 8, 11, 14, 17, 20, 23].map((k) => c.X(k)), every: 3.0, chilliFrom: 2, setDown: 2 }));
     w.flags.tinB = tin;
     onPass(w, c.X(0.5), (w2) => {
       if (tin.t0 < 0) tin.t0 = w2.tick + 60;

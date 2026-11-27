@@ -180,7 +180,7 @@ export const endings: Record<CcuEndingKind, Ending> = {
       w.add(new Road(px(D + 1), px(D + 7), () => 'ccu-gaari'));
       const beam = { x: px(D + 2), y: FLOOR_Y - 92, w: px(3), h: 26 };
       // the last porter into the station, from the ghat steps
-      const porter = w.add(new Porter({ x: px(D - 30), v: 50, h: TALL, go: (w2: World) => w2.player.cx > px(D - 27), off: Infinity }));
+      const porter = w.add(new Porter({ x: px(D - 30), v: 70, h: TALL, go: (w2: World) => w2.player.cx > px(D - 27), off: Infinity }));
       w.flags.arch = { D, beam, porter };
       w.flags.twist = 'arch';
       w.add(

@@ -181,8 +181,8 @@ const ahead = (w: World, v: number, h: number) => porters(w).find((p) => p.o.v =
 function howrahRoom(): Step[] {
   return [
     { hold: 'R', until: (w) => w.player.cx >= px(5) - 1, max: 300 },
-    hopUp((w) => porters(w).find((p) => p.o.v === 40), 'up on the first load'),
-    hopUp((w) => ahead(w, 60, 54), 'up on the tall porter’s load as he comes past, before the CHA board'),
+    hopUp((w) => porters(w).find((p) => p.o.v === 50), 'up on the first load'),
+    hopUp((w) => ahead(w, 75, 54), 'up on the tall porter’s load as he comes past, before the CHA board'),
     { hold: '', until: (w) => w.player.cx > px(29), max: 1800 },
     { hold: 'R', until: (w) => w.player.onGround && !riding(w), max: 200, note: 'off on to the pylon' },
   ];
@@ -519,7 +519,8 @@ const hornRoute = (x: number, bad?: 'centre' | 'hop'): Step[] => {
   const H = (w: World) => w.flags.horn as { p1: Porter; p2: Porter; h: { tellAt: number } };
   // up the pylon step and on to the first load, the relay's own way
   const head: Step[] = [relayRoute(x, [50, 50, 50], true)[0], walk(x + 7.4, 'along the long pylon step'), ...hopTo(px(x + 10), 10, 'up on the first porter')];
-  if (bad === 'centre') return [...head, { hold: '', until: done, max: 1500, note: 'stand in the middle of the load' }];
+  // fix 5: kept in the middle by a policy, so a late key at lag 12 can't leave him on the back third
+  if (bad === 'centre') return [...head, { policy: (w) => go(w.player.onGround && w.player.cx < H(w).p1.load.x + H(w).p1.load.w * 0.55 ? 'R' : ''), until: done, max: 1500, note: 'stand in the middle of the load' }];
   const back = (): Step => ({ hold: 'L', until: (w) => w.player.x <= H(w).p1.load.x + 3, max: 90, note: 'to the back of the load' });
   if (bad === 'hop') return [...head, back(), { hold: '', until: (w) => H(w).h.tellAt >= 0, max: 1500, note: 'wait for the horn' }, { hold: 'R', jump: 10, ticks: 30, note: 'hop to the porter in front on the horn' }, { hold: '', until: done, max: 400 }];
   return [
@@ -563,7 +564,7 @@ const PYL = (x: number): Step[] => [
   { hold: '', until: (w) => w.player.cx > px(x + 17.8), max: 1800, note: 'ride him to the mid-span pylon' },
   { hold: 'R', until: (w) => w.player.onGround && !riding(w), max: 200, note: 'off on to its step' },
   walk(x + 19.4),
-  hopUp((w) => ahead(w, 55, 54), 'and up on the next tall porter as he comes by'),
+  hopUp((w) => ahead(w, 70, 54), 'and up on the next tall porter as he comes by'),
   { hold: '', until: X(x + 39.4), max: 1800, note: 'ride him on to the causeway' },
 ];
 
@@ -718,11 +719,13 @@ function thakRoute(flag: string, x: number): Step[] {
 /** the obvious play per stage, and the cause it must die of */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-01': { steps: [...tourRun('onto').slice(0, 3), { hold: 'R', until: done, max: 600, note: 'walk straight on across the Maidan’s chalk river' }], cause: 'ccu-kumir' },
-  'CCU-04': { steps: boiRoute(false), cause: 'ccu-boi' },
+  // fix 5: steered on to the pointed stack, so a late key at lag still lands on it, not in the drain short of it
+  'CCU-04': { steps: [walk(4.6), steerHop(px(8), 12, 'up on the first stack'), { policy: (w) => go(toward(w, px(8.4), 2)), until: (w) => w.player.onGround && Math.abs(w.player.cx - px(8.4)) < 3 && Math.abs(w.player.vx) < 1, max: 120, note: 'to its front edge' }, steerHop(px(10.6), 12, 'on to the pointed one-book stack'), { hold: '', until: done, max: 300 }], cause: 'ccu-boi' },
   'CCU-05': { steps: [...kumartuliRoute(600)], cause: 'ccu-murti' },
   'CCU-03': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk across the muri' }], cause: 'ccu-muri' },
   'CCU-10': { steps: [finaleRoom()[0], finaleRoom()[1], { hold: '', until: done, max: 2400, note: 'ride the single bundle across' }], cause: 'ccu-boi' },
-  'CCU-09': { steps: [...pandalStart(), steerHop(px(14), 10, 'on to the third bamboo'), { hold: '', until: done, max: 300 }], cause: 'ccu-bansh' },
+  // fix 5: short hops at the third bamboo, under the new panel, from wherever he lands, till the stakes take him (at lag a single hop bounced back on to the second bamboo and stalled)
+  'CCU-09': { steps: [...pandalStart(), { policy: (w) => ({ move: 'R', jump: w.player.onGround }), until: done, max: 600, note: 'short hops on at the third bamboo, under the new panel' }], cause: 'ccu-bansh' },
   'CCU-08': { steps: [walk(2.6), ...hopTo(px(5), 12, 'up on the rok'), walk(14.2), { hold: '', until: done, max: 1200, note: 'stop to listen to the old men' }], cause: 'ccu-adda' },
   'CCU-07': { steps: [howrahRoom()[0], howrahRoom()[1], { hold: '', until: done, max: 3000, note: 'ride him all the way' }], cause: 'ccu-cha' },
   'CCU-06': {
@@ -761,15 +764,15 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   ],
   'CCU-09': [{ what: 'resting on the new panel at the top of the staircase', steps: [...pandalRoute(), steerHop(px(35), 10, 'bamboo'), steerHop(px(38), 10, 'up'), steerHop(px(41), 10, 'up'), steerHop(px(45), 30, 'high', true), steerHop(px(49), 10, 'on to the new panel'), { hold: '', until: done, max: 300 }], cause: 'crushed' }],
   'CCU-08': [
-    { what: 'waiting by the second adda for the water to stop', steps: [...addaRoute(), walk(32 + 24.5), { hold: '', until: done, max: 1500 }], cause: 'ccu-dhowa' },
+    { what: 'hopping the water, then stopping among the second adda’s old men', steps: [...addaRoute(), { policy: hopWater(), until: and(ground, X(32 + 24.5)), max: 1800, note: 'hop the water as taught' }, { hold: '', until: done, max: 1500, note: 'and stop to listen at the second adda' }], cause: 'ccu-adda' },
   ],
   'CCU-05': [
   ],
 
   'CCU-07': [
-    { what: 'stopping at the second drain on the causeway', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [58, 92, 0], false, 32.6), ...hornRoute(98), ...boardRoute(134), ...PYL(174), ...jowarRoute(214, 'stop')], cause: 'ccu-baan' },
-    { what: 'a long jump at the first drain on the causeway', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [58, 92, 0], false, 32.6), ...hornRoute(98), ...boardRoute(134), ...PYL(174), ...jowarRoute(214, 'long')], cause: 'ccu-nala' },
-    { what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [58, 92, 0], false, 32.6), ...hornRoute(98), ...boardRoute(134), walk(174 + 3.9), ...hopTo(px(180.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 174, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
+    { what: 'stopping at the second drain on the causeway', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [66, 100, 0], false, 32.6), ...hornRoute(98), ...boardRoute(134), ...PYL(174), ...jowarRoute(214, 'stop')], cause: 'ccu-baan' },
+    { what: 'a long jump at the first drain on the causeway', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [66, 100, 0], false, 32.6), ...hornRoute(98), ...boardRoute(134), ...PYL(174), ...jowarRoute(214, 'long')], cause: 'ccu-nala' },
+    { what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [66, 100, 0], false, 32.6), ...hornRoute(98), ...boardRoute(134), walk(174 + 3.9), ...hopTo(px(180.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 174, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
   'CCU-02': [
     {
       what: 'stepping off backwards on the crawl',
@@ -840,7 +843,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     steerHop(px(x + 25.5), 16, 'down on to the deck'),
     walk(x + 29.4),
   ],
-  'ccu07-dui': (x) => relayRoute(x, [58, 92, 0], false, 32.6),
+  'ccu07-dui': (x) => relayRoute(x, [66, 100, 0], false, 32.6),
   'ccu05-ghat': (x) => [
     steerHop(px(x + 1.8), 12, 'up on the first'),
     steerHop(px(x + 4.8), 12, 'the next, up'),
@@ -931,8 +934,10 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 // Every act's own NAIVE and FIX (B4 of the first QA round): the act's route up to a step, then the obvious
 // wrong move there. Positions are the acts' columns in each stage, in order.
 {
-  const ROOM: Record<string, () => Step[]> = { 'CCU-05': () => kumartuliRoute(), 'CCU-06': () => S06(), 'CCU-07': () => howrahRoom(), 'CCU-08': () => addaRoute(), 'CCU-09': () => pandalRoute(), 'CCU-10': () => finaleRoom() };
+  const ROOM: Record<string, () => Step[]> = { 'CCU-03': () => [crossTin('tin', px(27)), walk(30)], 'CCU-04': () => boiRoute(true), 'CCU-05': () => kumartuliRoute(), 'CCU-06': () => S06(), 'CCU-07': () => howrahRoom(), 'CCU-08': () => addaRoute(), 'CCU-09': () => pandalRoute(), 'CCU-10': () => finaleRoom() };
   const AT: Record<string, [string, number][]> = {
+    'CCU-03': [['ccu03-dokan', 32]],
+    'CCU-04': [['ccu04-thak', 32]],
     'CCU-05': [['ccu05-lane', 32], ['ccu05-ghat', 66]],
     'CCU-06': [['ccu06-points', 32], ['ccu06-duiline', 80]],
     'CCU-07': [['ccu07-girder', 32], ['ccu07-dui', 65], ['ccu07-horn', 98], ['ccu07-board', 134], ['ccu07-pylon', 174], ['ccu07-jowar', 214]],
@@ -955,16 +960,20 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   act('CCU-05', 'ccu05-lane', 1, 'stay', 'resting on the first figure in the lane', 'ccu-murti');
   act('CCU-05', 'ccu05-ghat', 1, 'stay', 'waiting on the first figure while they finish in order', 'ccu-murti');
   act('CCU-05', 'ccu05-ghat', 1, 'jump', 'a long jump off the first figure by the ghat', 'ccu-ganga');
+  act('CCU-03', 'ccu03-dokan', 0, 'walk', 'walking straight on across the second tin’s muri', 'ccu-muri');
+  (mistakes['CCU-03'] ??= []).push({ what: 'staying on a peanut in the second tin as the chilli comes up', steps: [crossTin('tin', px(27)), walk(30), { ...crossTin('tinB', px(32 + 28), { stay: true }), until: done }], cause: 'ccu-lonka' });
+  act('CCU-04', 'ccu04-thak', 2, 'jump', 'a long jump from the pavement once the pile is three high', 'ccu-kada');
   act('CCU-06', 'ccu06-points', 0, 'jump', 'jumping off the step into the dug-up road before the island', 'ccu-khod');
+  act('CCU-06', 'ccu06-points', 1, 'stay', 'staying on the step at the island, the points set for the other line', 'ccu-points');
   act('CCU-07', 'ccu07-girder', 4, 'stay', 'staying on the tall porter from the pylon', 'ccu-cha');
   act('CCU-07', 'ccu07-girder', 0, 'jump', 'jumping off the pylon at the first load', 'ccu-gaari');
   act('CCU-07', 'ccu07-dui', 2, 'stay', 'staying on the short porter of the two streams', 'ccu-cha');
   act('CCU-07', 'ccu07-dui', 0, 'jump', 'a long jump off the pylon into the two streams', 'ccu-gaari');
   (mistakes['CCU-07'] ??= []).push(
-    { what: 'standing in the middle of the load when the horn goes', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [58, 92, 0], false, 32.6), ...hornRoute(98, 'centre')], cause: 'ccu-parapet' },
-    { what: 'switching to the short porter before the board, as taught', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [58, 92, 0], false, 32.6), ...hornRoute(98), ...boardRoute(134, 'switch')], cause: 'ccu-cha' },
-    { what: 'jumping off the short porter just before his board', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [58, 92, 0], false, 32.6), ...hornRoute(98), ...boardRoute(134, 'back')], cause: 'ccu-gaari' },
-    { what: 'hopping to the porter in front on the horn', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [58, 92, 0], false, 32.6), ...hornRoute(98, 'hop')], cause: 'ccu-gaari' },
+    { what: 'standing in the middle of the load when the horn goes', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [66, 100, 0], false, 32.6), ...hornRoute(98, 'centre')], cause: 'ccu-parapet' },
+    { what: 'switching to the short porter before the board, as taught', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [66, 100, 0], false, 32.6), ...hornRoute(98), ...boardRoute(134, 'switch')], cause: 'ccu-cha' },
+    { what: 'jumping off the short porter just before his board', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [66, 100, 0], false, 32.6), ...hornRoute(98), ...boardRoute(134, 'back')], cause: 'ccu-gaari' },
+    { what: 'hopping to the porter in front on the horn', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [66, 100, 0], false, 32.6), ...hornRoute(98, 'hop')], cause: 'ccu-gaari' },
   );
   act('CCU-07', 'ccu07-pylon', 1, 'jump', 'jumping off the second pylon rather than wait', 'ccu-gaari');
   act('CCU-09', 'ccu09-sinri', 0, 'jump', 'a long jump at the cloth staircase', 'ccu-bansh');
