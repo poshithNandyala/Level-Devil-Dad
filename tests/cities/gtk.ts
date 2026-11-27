@@ -978,7 +978,7 @@ function actDeaths() {
       until: done,
       max: 5000,
     },
-  ], 'gtk-hiun');
+  ], 'gtk-photo');
   actDeath('GTK-09', r9, 'gtk09-barf', 'stay off the lake ice: walk the snow', () => blind(), 'gtk-hiun');
   actDeath('GTK-09', r9, 'gtk09-chattan', 'walk across the shore', () => blind(), 'gtk-hiun');
   actDeath('GTK-09', r9, 'gtk09-chattan', 'ride it to the end, as on the first yak', (x) => [{ policy: yakRide('gtk9b', { at: px(x + 24) }), until: done, max: 5000 }], 'gtk-hiun');
