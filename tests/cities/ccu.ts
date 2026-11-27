@@ -14,6 +14,7 @@ import type { Tin } from '../../src/game/cities/ccu/muri';
 import { Figure, type BigFigure } from '../../src/game/cities/ccu/kumartuli';
 import type { Adda, TeaSeller, Wash } from '../../src/game/cities/ccu/adda';
 import type { ClothPanel } from '../../src/game/cities/ccu/pandal';
+import type { Kumir } from '../../src/game/cities/ccu/kumir';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -32,10 +33,12 @@ const hopAt = (at: number, ticks: number, note: string): Step[] => [{ hold: 'R',
 // ------------------------------------------------------------------ CCU-01: the tour
 const ferryOf = (w: World) => w.entities.find((e: any) => e.ferry) as unknown as Thing;
 /** the welcome tour, piece by piece; at the parked thela `thela` says how it's passed */
-function tourRun(thela: 'off' | 'onto' | 'long'): Step[] {
+/** wait on the bank of a kumir-danga chalk river till the kumir covers his eyes */
+const kumirWait = (k: string): Step => ({ hold: '', until: (w) => (w.flags[k] as Kumir).state === 'count', max: 1200, note: 'wait on the bank till the kumir counts' });
+function tourRun(thela: 'off' | 'onto' | 'long', kumir = true): Step[] {
   const steps: Step[] = [];
   for (const s of COURSES.CCU) {
-    if (s.k === 'ditch') steps.push(...hopAt(s.x - 1.6, 12, 'the kerb ditch'));
+    if (s.k === 'ditch') steps.push(...hopAt(s.x - 1.6, 12, 'the kerb ditch'), ...(kumir ? [walk(15), kumirWait('kumirA')] : []));
     else if (s.k === 'steps') for (let i = 0; i < s.n; i++) steps.push(...hopAt(s.x + i * s.run - 1.3, 12, 'a Maidan step'));
     else if (s.k === 'posts') for (let i = 0; i < s.n; i++) steps.push(...hopAt(s.x + 3 * i - 1.4, 12, 'a post'));
     else if (s.k === 'parked') {
@@ -70,7 +73,7 @@ function tourRun(thela: 'off' | 'onto' | 'long'): Step[] {
       );
     }
   }
-  steps.push(walk(TOUR.deck[0] - 1.6), { hold: 'R', jump: 12, ticks: 12, note: 'up on the deck' }, { hold: 'R', until: ground, max: 200 }, { hold: 'R', until: done, max: 900 });
+  steps.push(walk(TOUR.deck[0] - 1.6), { hold: 'R', jump: 12, ticks: 12, note: 'up on the deck' }, { hold: 'R', until: ground, max: 200 }, walk(98.6), kumirWait('kumirB'), { hold: 'R', until: done, max: 900 });
   return steps;
 }
 
@@ -580,6 +583,10 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** more scripted first-timer deaths and 'like last time' moves */
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'CCU-01': [
+    { what: 'walking straight on across the Maidan’s chalk river', steps: [...tourRun('onto').slice(0, 3), { hold: 'R', until: done, max: 600 }], cause: 'ccu-kumir' },
+    { what: 'a long jump off the deck over the chalk river by the door', steps: [...tourRun('onto').slice(0, -2), { hold: 'R', jump: 34, ticks: 34, long: true, note: 'jump it' }, { hold: 'R', until: done, max: 600 }], cause: 'ccu-kumir' },
+  ],
   'CCU-06': [
     { what: 'staying on the step at the double-line island', steps: [...S06(), ...ACT06(32), { hold: '', until: done, max: 3000, note: 'stay on the step' }], cause: 'ccu-dui' },
     { what: 'climbing on to the roof for the double junction', steps: [...S06(), ...ACT06(32), { hold: '', jump: 10, ticks: 30, note: 'up on to the roof' }, { hold: '', until: done, max: 3000 }], cause: 'ccu-dando' },

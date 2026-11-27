@@ -18,6 +18,7 @@ import { BookPorter, ChaiBoard, Girders, Pointer, Porter, Road, SHORT, TALL } fr
 import { Adda, House, TeaSeller, Wash } from './adda';
 import { ClothPanel, Decorator, Skeleton, Stakes } from './pandal';
 import { Tin } from './muri';
+import { Kumir } from './kumir';
 import { BigFigure, Figure, Ghat } from './kumartuli';
 import type { Act } from '../../levels/acts';
 
@@ -1094,16 +1095,20 @@ export const levels = (): LevelDef[] => [
         ['lamp', 106, {}],
       ],
       things: [],
-      hint: 'A walk round town: jump the kerb ditch, climb the Maidan steps, hop the tram-stop posts and the parked thela. Past the thela there’s a tram rail in the road. Jump on to it and your foot drops into the groove: the rail steers you along its line, no turning, no jumping, straight into the rail-works trench. Walk on to the rail instead (up on the thela, and walk off it), then jump the trench. At Esplanade, ride the little tram across.',
+      hint: 'A walk round town: jump the kerb ditch, climb the Maidan steps, hop the tram-stop posts and the parked thela. Past the thela there’s a tram rail in the road. Jump on to it and your foot drops into the groove: the rail steers you along its line, no turning, no jumping, straight into the rail-works trench. Walk on to the rail instead (up on the thela, and walk off it), then jump the trench. At Esplanade, ride the little tram across. And the children’s chalk rivers on the Maidan and by the door are kumir-danga: the kumir in the middle catches anyone on his water. Wait on the bank till he shuts his eyes and counts, then run straight across.',
       paint: (g) => {
         g.pit(70, 71);
       },
       extra: (w) => {
         feet(w);
         w.add(new Rail(px(62), px(70), px(72)));
+        // kumir-danga: a chalk river too wide to jump, safe only while the kumir counts
+        w.flags.kumirA = w.add(new Kumir(px(16), px(23.6), 4.5, 2.6));
+        w.flags.kumirB = w.add(new Kumir(px(101.5), px(110.8), 6.5, 2.6));
+        sign(w, 100.2, 10.4, 3.2, 'KUMIR-DANGA', 'green', null, 'chalk river');
         onPass(w, px(56), (w2) => w2.guide('Tram! Ei je, shunun! | The tram line! Excuse me, listen!', (w3) => w3.player.cx < px(70)));
       },
-      cps: [16.5, 42, 57, 75, 97],
+      cps: [15, 42, 57, 75, 97],
     }),
     meta: meta('rail-groove-sticks-foot', ['groove-catch'], 'ccu-esplanade-tram-shuttle'),
   },
