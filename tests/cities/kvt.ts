@@ -710,12 +710,28 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   naive['KVT-07'] = { steps: swapAt(S['KVT-07'], 'wait for the crab to head down low', 1, []), cause: 'kvt-pinched' };
   // wait for the crab, then leap on from low down on the bare trunk, where you grabbed it: short of the crown
   fix['KVT-07'] = { steps: [...upTo(S['KVT-07'], 'climb high, above the crab'), { hold: 'R', until: (w) => w.player.gripS >= 0.3, max: 300 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 600 }], cause: 'splash' };
+  // the urchins were on the bottom: so swim over them, straight on, without waiting for the jellyfish
+  fix['KVT-06'] = {
+    steps: [
+      { hold: 'R', until: (w) => w.player.swimming, max: 300 },
+      { policy: swimTo([{ x: 190, y: 236, tx: 6 }, { x: 270, y: 236, tx: 6 }, { x: 300, y: 200, tx: 6, ty: 6 }, { x: 420, y: 200, tx: 6, ty: 6 }, { x: 475, y: 100, tx: 4, ty: 4 }]), until: done, max: 1500 },
+    ],
+    cause: 'kvt-stung',
+  };
   // flat out across the lagoon, into the rock
   naive['KVT-08'] = { steps: [{ hold: 'R', until: done, max: 1500 }], cause: 'splash' };
   // hop the rock and keep running flat out: the seaweed beds after the beach slow you down, and down you go
   fix['KVT-08'] = { steps: [...upTo(S['KVT-08'], 'flat out, hopping every seaweed bed'), { hold: 'R', until: done, max: 900 }], cause: 'splash' };
 
   // ---------------------------------------------------------------- more first-timer mistakes, 03 to 07
+  mistakes['KVT-06'] = [
+    { what: 'under the reef roof, swim straight on without going up into the air pocket', steps: [...upTo(S['KVT-06'], 'breathe in the pocket, go over the turtle, come up at the far end'), { policy: swimTo([{ x: px(40 + 10), y: 236, tx: 8 }, { x: px(40 + 35.2), y: 221, tx: 6 }]), until: done, max: 2000 }], cause: 'drowned' },
+    { what: 'swim through the moray alley in a straight line', steps: [...upTo(S['KVT-06'], 'over the floor eels, under the roof one, through the middle of the pair'), { policy: swimTo([{ x: px(84 + 10), y: 240, tx: 8 }, { x: px(84 + 31), y: 240, tx: 6 }]), until: done, max: 2000 }], cause: 'kvt-bitten' },
+  ];
+  mistakes['KVT-07'] = [
+    { what: 'climb high on the bare trunk and stay there, out of the crab’s way', steps: [...upTo(S['KVT-07'], 'leap for the next crown'), { hold: '', until: done, max: 1500 }], cause: 'kvt-pinched' },
+    { what: 'climb the bare trunk only a little and wait for the crab to pass', steps: [...upTo(S['KVT-07'], 'climb high, above the crab'), { hold: '', until: done, max: 1500 }], cause: 'kvt-pinched' },
+  ];
   mistakes['KVT-03'] = [{ what: 'hop on to the first step of light before the beam reaches it', steps: [{ hold: 'R', until: X(6.1), max: 300 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 600 }], cause: 'splash' }];
   mistakes['KVT-04'] = [{ what: 'walk on into the propellers without waiting for them to pause', steps: [...upTo(S['KVT-04'], 'wait for the propellers to pause'), { hold: 'R', until: done, max: 600 }], cause: 'spikes' }];
   mistakes['KVT-05'] = [{ what: 'wait for the boat at the very end of the pier, in the tuna’s way', steps: [{ hold: 'R', until: X(7.0), max: 300 }, { hold: '', until: (w) => thingOf(w, 'odam').x >= px(15), max: 900 }, { hold: 'R', until: X(9.2), max: 200 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 400 }], cause: 'hit' }];
