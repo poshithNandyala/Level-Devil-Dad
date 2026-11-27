@@ -3,11 +3,8 @@ import type { Ending } from '../../levels/endkit';
 import { timberStack } from './s02';
 import { boardBridge } from './s03';
 import { jettyGuard } from './s04';
-import { noteDoor } from './s05';
-import { boughDoor } from './s06';
-import { ticketWindow } from './s07';
+import { noteDoor, boughDoor, ticketWindow, frameDoor } from './doors';
 import { gutterRiver } from './s08';
-import { frameDoor } from './s09';
 import { dweepGate } from './s10';
 
 export type SvpEndingKind = 'svp-timber-stack' | 'svp-board-bridge' | 'svp-jetty-guard' | 'svp-note-door' | 'svp-bough-door' | 'svp-ticket-window' | 'svp-gutter-river' | 'svp-frame-door' | 'svp-dweep-gate';

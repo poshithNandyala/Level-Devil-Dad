@@ -248,18 +248,3 @@ export const sanjh: Act = {
     mud(w, px(x + 26), px(x + 34), 'svp-kichad2');
   },
 };
-
-// ================================================================== the door on the bough
-export const boughDoor: Ending = {
-  space: 12,
-  advice: 'The door is hung on the last bough, and the bough bobs with the flock: down while they sit on it, up when the horn sends them off. Hop on while it’s low, and the door goes up and down with you.',
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    const flock = new Flock(px(D - 9), [px(D - 4), px(D + 3)], 7);
-    w.add(flock);
-    const b = new Bough(flock, px(D - 4), px(D + 3), FLOOR - 22, FLOOR - 70).install(w);
-    d.follow = () => ({ x: px(D) - 4, y: b.plat.y - 32 });
-    w.flags.twist = 'bough';
-    w.flags.boughdoor = { flock, b };
-  },
-};

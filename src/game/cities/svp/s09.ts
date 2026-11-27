@@ -332,21 +332,3 @@ export const jadBreak: Act = {
     for (const a of [29, 35]) new Crumbler(px(x + a), FLOOR, px(4), 7, 'green', 8).install(w);
   },
 };
-
-// ================================================================== the door
-export const frameDoor: Ending = {
-  space: 17,
-  advice: 'The door stands in what is left of the ballroom’s doorframe, up on the old floor, and the way up is a stair of brick and root. Take the roots: the brick steps go as soon as you land.',
-  paint: (g, D) => {
-    g.fill(D - 3, D + 3, 11, 14, '#');
-    g.put(D, 14, '.');
-    g.put(D, 10, 'E');
-  },
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    // up the stair of roots to the old floor where the door stands; the brick step at the foot of it is not a step
-    new Root(px(D - 12), FLOOR - 28, 64).install(w);
-    new Root(px(D - 8), FLOOR - 52, 64).install(w);
-    w.flags.twist = 'frame';
-  },
-};

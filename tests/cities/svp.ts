@@ -376,6 +376,22 @@ function atAct(id: string, act: string, then: (x: number) => Step[]): Step[] {
   }
   throw new Error(`${id} has no act ${act}`);
 }
+/** the stage played properly up to its door, then `then(D)`: for the plays that must die at the door */
+function atDoor(id: string, then: (D: number) => Step[]): Step[] {
+  const def = LEVELS.find((l) => l.id === id)!;
+  const out: Step[] = [...ROOM[id]];
+  for (const p of def.parts ?? []) out.push(...actRoutes[p.kind](p.x0));
+  return [...out, ...then((def as unknown as { doorX: number }).doorX)];
+}
+function doorDeath(id: string, what: string, cause: string, then: (D: number) => Step[]) {
+  (mistakes[id] ??= []).push({
+    what,
+    cause,
+    get steps() {
+      return atDoor(id, then);
+    },
+  });
+}
 /** a death that must happen in an added act: the NAIVE play and the obvious FIX of it */
 /** acts taken out of the stages after the uniqueness probe (docs: LENGTH.md): their routes and files stay, one line in levels.ts puts them back */
 const RETIRED = new Set(['svp06-lehar', 'svp07-khula', 'svp07-uthao', 'svp08-bazaar', 'svp09-hauz', 'svp05-rassi', 'svp10-rassi', 'svp07-teesra']);
@@ -716,6 +732,7 @@ const greyJump = (a: number, b: number): Step[] => [
   { hold: 'R', jump: 16, ticks: 16, long: true, note: 'jump the green one' },
   { hold: 'R', until: and(ground, X(b)), max: 600, note: 'on the next grey root' },
 ];
+const doorHopper = hopEdges();
 const doorGaps = crossGaps((w) => w.flags.doorPatrol as { cx: number }, 56);
 /** a policy for each door ending, by kind */
 const endingPolicies: Record<string, Policy> = {
@@ -725,11 +742,15 @@ const endingPolicies: Record<string, Policy> = {
     if (h.carrying) return go(toward(w, counter, 3));
     return go('R');
   },
-  'svp-frame-door'(w, _m, d) {
+  'svp-frame-door'(w, m, d) {
     const D = Math.round(d.x / 16);
-    if (w.player.cx > px(D - 3)) return go(toward(w, d.x + 8, 1) || 'R');
-    const k = ((w.flags as any).framePolicy ??= rootsPolicy([D - 12, D - 8], px(D - 3), '', () => false));
-    return k.policy(w);
+    const p = w.player;
+    if (p.cx > px(D - 4)) return go(toward(w, d.x + 8, 1) || 'R');
+    if (p.onGround && p.cx >= px(D - 5) - 10 && p.cx < px(D - 4)) {
+      m.hold = 30;
+      return { move: 'R', jump: true };
+    }
+    return go('R');
   },
   'svp-gutter-river'(w, m, d) {
     const D = Math.round(d.x / 16);
@@ -753,27 +774,27 @@ const endingPolicies: Record<string, Policy> = {
     if (clear) return go('R');
     return streetPolicy(w);
   },
-  'svp-ticket-window'(w, _m, d) {
-    const k = w.flags.window as { lk: { open: boolean } };
+  'svp-ticket-window'(w, m, d) {
+    const k = w.flags.window as { lk: { open: boolean }; bx: number };
     if (k.lk.open) return go(toward(w, d.x + 8, 1) || 'R');
-    return go(toward(w, d.x - 70, 3));
+    if (Math.abs(w.player.cx - k.bx) > 4) return go(toward(w, k.bx, 3));
+    if (w.player.onGround) {
+      m.hold = 14;
+      return { move: '', jump: true };
+    }
+    return go('');
   },
   'svp-bough-door'(w, m, d) {
-    const { flock, b } = w.flags.boughdoor as { flock: Flock; b: Bough };
+    const D = Math.round(d.x / 16);
     const p = w.player;
-    if (m.hold > 0) return { move: 'R', jump: true };
-    if (!p.onGround && p.cx > b.x0 - 24) return go('R');
-    if (w.standing(b.plat.solid)) return go(toward(w, d.x + 8, 1) || 'R');
-    if (flock.weight >= 0.95 && p.onGround && p.cx > b.x0 - 24) {
-      m.hold = 12;
+    if (p.onGround && p.cx >= px(D - 8) - 14 && p.cx < px(D - 8)) {
+      m.hold = 8;
       return { move: 'R', jump: true };
     }
-    return go(toward(w, b.x0 - 15, 2));
+    return go('R');
   },
-  'svp-note-door'(w, _m, d) {
-    const vp = w.flags.notedoor as Viewpoint;
-    if (vp.everAligned) return go(toward(w, d.x + 8, 1) || 'R');
-    return go(toward(w, vp.spot, 2));
+  'svp-note-door'(w) {
+    return doorHopper.policy!(w) as Out;
   },
   'svp-jetty-guard'(w) {
     const h = w.flags.guard as Herd;
@@ -951,6 +972,17 @@ actDeath('SVP-07', 'svp07-bus', 'over the bus and on down the lane ahead of it',
   { hold: 'R', jump: 14, until: (w) => w.standing(bus0(w).plat.solid), max: 300, note: 'up on to the roof' },
   { hold: 'R', until: (w) => w.player.onGround && w.player.y + w.player.h > FLOOR_Y - 2 && w.player.cx > px(x + 14), max: 600, note: 'along the roof and down off its nose' },
   { hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'on down the lane ahead of it' },
+]);
+doorDeath('SVP-05', 'hop all the way along the turtle’s beach', 'svp-kachua', () => [...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 14, ticks: 30, note: 'hop on, as the whole stage taught' }))]);
+doorDeath('SVP-06', 'a full jump over the creek under the wasps’ nest', 'svp-bhaunra', (D) => [
+  { hold: 'R', until: and(ground, X(D - 9.4)), max: 900, note: 'to the edge of the creek' },
+  { hold: 'R', jump: 30, ticks: 30, long: true, note: 'a full jump: it bangs the bough' },
+  { hold: 'R', until: (w) => w.state !== 'play', max: 600 },
+]);
+doorDeath('SVP-09', 'a tap of the jump at the ditch before the wall', 'svp-eent5', (D) => [
+  { hold: 'R', until: and(ground, X(D - 6.4)), max: 900, note: 'to the edge of the ditch' },
+  { hold: 'R', jump: 6, ticks: 6, note: 'a tap' },
+  { hold: 'R', until: (w) => w.state !== 'play', max: 600 },
 ]);
 actDeath('SVP-09', 'svp09-pul', 'hop along every root, the grey one too', 'svp-grey', (x) => [rootsPolicy([x + 7, x + 13], px(x + 18.5), 'root to root, then the grey one too', (w) => w.state !== 'play')]);
 actDeath('SVP-09', 'svp09-pul', 'the first creek by the green roots, then across the brick of the second', 'svp-eent2', (x) => [

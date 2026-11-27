@@ -337,36 +337,3 @@ export const ooncha: Act = {
     (w.flags.eyes ??= []).push(ev);
   },
 };
-
-// ================================================================== the door that exists only on the note
-export const noteDoor: Ending = {
-  space: 12,
-  advice: 'The door is drawn in dashes in front of the last bench and there is nothing there to open. It exists only on the note: stand on the footprints without moving for a moment, and the door is there.',
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    d.hidden = true;
-    const vp = new Viewpoint(px(D - 6) + 8, [], 9999, px(D - 6) + 30);
-    w.add(vp);
-    w.flags.twist = 'note';
-    w.flags.notedoor = vp;
-    w.onTick((w2) => {
-      if (vp.everAligned && d.hidden) {
-        d.hidden = false;
-        w2.flags.twist = 'open';
-        w2.emit('fx', d.x + 8, d.y + 16, { kind: 'sparkle' });
-      }
-    });
-    w.add(
-      new Fx(null, (ctx) => {
-        if (!d.hidden) return;
-        ctx.strokeStyle = 'rgba(244,236,214,0.75)';
-        ctx.lineWidth = 1.4;
-        ctx.setLineDash([4, 3]);
-        ctx.strokeRect(d.x + 1.5, d.y + 1.5, 13, 30);
-        ctx.setLineDash([]);
-        ctx.fillStyle = 'rgba(244,236,214,0.7)';
-        text(ctx, '?', d.x + 8, d.y + 16, 8, 'rgba(244,236,214,0.8)', '');
-      }, 3),
-    );
-  },
-};
