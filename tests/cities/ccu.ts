@@ -11,7 +11,7 @@ import type { Stack } from '../../src/game/cities/ccu/books';
 import type { Tram } from '../../src/game/cities/ccu/tram';
 import { BookPorter, Porter } from '../../src/game/cities/ccu/porters';
 import type { Tin } from '../../src/game/cities/ccu/muri';
-import type { Bore } from '../../src/game/cities/ccu/baan';
+import type { Bore, Ebb } from '../../src/game/cities/ccu/baan';
 import type { DhakFrame } from '../../src/game/cities/ccu/pandal';
 import { Figure, type BigFigure, type Straw } from '../../src/game/cities/ccu/kumartuli';
 import type { Adda, TeaSeller, Wash } from '../../src/game/cities/ccu/adda';
@@ -553,6 +553,21 @@ const baanRoute = (x: number): Step[] => [
   walk(x + 27.2, 'down the jetty steps'),
 ];
 
+// ------------------------------------------------------------------ CCU-10 the front coming back
+const phireRoute = (x: number, bad?: 'run' | 'back'): Step[] => {
+  const E = (w: World) => w.flags.phire as Ebb;
+  const head: Step[] = [walk(x + 4.4), steerHop(px(x + 7.8), 10, 'over the drain')];
+  if (bad === 'run') return [...head, { hold: 'R', until: done, max: 600, note: 'keep running ahead, as on the bridge' }];
+  if (bad === 'back') return [...head, { hold: '', until: (w) => E(w).running, max: 120 }, { hold: 'L', until: done, max: 600, note: 'turn and run from it' }];
+  return [
+    ...head,
+    steerHop(px(x + 11), 30, 'up on the refuge'),
+    { hold: '', until: (w) => E(w).past(px(x + 10)), max: 900, note: 'let it go by under you' },
+    steerHop(px(x + 14.5), 10, 'down off the refuge'),
+    walk(x + 29.4),
+  ];
+};
+
 // ------------------------------------------------------------------ CCU-10 the canopy hauled up for good
 const chhadRoute = (x: number, bad?: 'under' | 'jump'): Step[] => {
   const F = (w: World) => w.flags.chhad as DhakFrame;
@@ -775,6 +790,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'ccu10-rok': (x) => [walk(x + 3.6), steerHop(px(x + 7), 12, 'up on the rok'), { policy: hopWater(), until: and(ground, X(x + 31)), max: 1800, note: 'through the adda, hopping the water' }, walk(x + 33.4)],
   'ccu10-khola': (x) => kholaRoute(x),
   'ccu10-chhad': (x) => chhadRoute(x),
+  'ccu10-phire': (x) => phireRoute(x),
   'ccu10-kumor': (x) => [
     steerHop(px(x + 1.8), 12, 'up on the first'),
     steerHop(px(x + 4.8), 12, 'up, and on at once'),
@@ -898,16 +914,18 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 
 // CCU-10's and CCU-07's later spans: staying on a porter past his CHA board
 {
-  const to174 = (): Step[] => [...finaleRoom(), ...actRoutes['ccu10-bus'](32), ...actRoutes['ccu10-tram'](72), ...chhadRoute(116), ...actRoutes['ccu10-rok'](142), ...actRoutes['ccu10-kumor'](176)];
+  const to174 = (): Step[] => [...finaleRoom(), ...actRoutes['ccu10-bus'](32), ...actRoutes['ccu10-tram'](72), ...chhadRoute(116), ...phireRoute(142), ...actRoutes['ccu10-rok'](172), ...actRoutes['ccu10-kumor'](206)];
   const to116 = (): Step[] => [...finaleRoom(), ...actRoutes['ccu10-bus'](32), ...actRoutes['ccu10-tram'](72)];
-  const to206 = (): Step[] => [...to174(), ...actRoutes['ccu10-khola'](200)];
+  const to206 = (): Step[] => [...to174(), ...actRoutes['ccu10-khola'](230)];
   (mistakes['CCU-10'] ??= []).push(
+    { what: 'running on ahead of the front coming back', steps: [...to116(), ...chhadRoute(116), ...phireRoute(142, 'run')], cause: 'ccu-baan' },
+    { what: 'turning to run back from the front', steps: [...to116(), ...chhadRoute(116), ...phireRoute(142, 'back')], cause: 'ccu-nala' },
     { what: 'running under the canopy as it goes up', steps: [...to116(), ...chhadRoute(116, 'under')], cause: 'crushed' },
     { what: 'a full jump at the gallery from the bamboo', steps: [...to116(), ...chhadRoute(116, 'jump')], cause: 'ccu-bansh' },
-    { what: 'landing on a cloth top in the pandal being taken down', steps: [...to174(), ...kholaRoute(200).slice(0, 2), steerHop(px(200 + 5.5), 30, 'up on to the cloth top, as in the pandal', true), { hold: '', until: done, max: 400 }], cause: 'ccu-bansh' },
-    { what: 'waiting on the bamboo under the roof frame', steps: [...to174(), ...kholaRoute(200, 2)], cause: 'crushed' },
-    { what: 'staying on the first porter back over the bridge', steps: [...to206(), ...relayRoute(232, [45, 63, 83], true).slice(0, 4), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
-    { what: 'staying on the short porter back over the bridge', steps: [...to206(), ...relayRoute(232, [45, 63, 83], true).slice(0, 6), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
+    { what: 'landing on a cloth top in the pandal being taken down', steps: [...to174(), ...kholaRoute(230).slice(0, 2), steerHop(px(230 + 5.5), 30, 'up on to the cloth top, as in the pandal', true), { hold: '', until: done, max: 400 }], cause: 'ccu-bansh' },
+    { what: 'waiting on the bamboo under the roof frame', steps: [...to174(), ...kholaRoute(230, 2)], cause: 'crushed' },
+    { what: 'staying on the first porter back over the bridge', steps: [...to206(), ...relayRoute(262, [45, 63, 83], true).slice(0, 4), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
+    { what: 'staying on the short porter back over the bridge', steps: [...to206(), ...relayRoute(262, [45, 63, 83], true).slice(0, 6), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
   );
 }
 

@@ -19,7 +19,7 @@ import { Adda, Crowd, House, TeaSeller, Wash } from './adda';
 import { ClothPanel, Decorator, DhakFrame, Lowered, Skeleton, Stakes } from './pandal';
 import { Tin } from './muri';
 import { Kumir } from './kumir';
-import { Bore, Front } from './baan';
+import { Bore, Ebb, Front } from './baan';
 import { BigFigure, Figure, Ghat, Potter, Straw } from './kumartuli';
 import type { Act } from '../../levels/acts';
 
@@ -946,6 +946,28 @@ const rok10: Act = {
   },
 };
 
+/** CCU-10 act: the bore's front again (CCU-07's causeway), and its rule broken. 07 taught: keep running ahead
+ *  of it. Here it comes back down the river at you, faster than anyone runs: get up on the refuge and let it
+ *  go by under you */
+const phire: Act = {
+  id: 'ccu10-phire',
+  w: 30,
+  advice: 'The causeway again, but the front is coming back down the river this time, straight at you and faster than you can run. Don’t run from it: get up on the refuge and let it go by under you.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 5, x + 6).fill(x + 10, x + 12, 12, 14, '#');
+  },
+  build: (w, c) => {
+    pool(w, c.x + 5, c.x + 7, 16, { colors: NALA, cause: 'ccu-nala' });
+    const ebb = w.add(new Ebb(c.X(34), c.X(-2), 150, px(5)));
+    onPass(w, c.X(8), (w2) => {
+      if (ebb.t0 < 0) ebb.t0 = w2.tick + 12;
+    });
+    sign(w, c.x + 0.3, 10.4, 3.4, 'CAUSEWAY', 'green', null, 'tide turning');
+    w.flags.phire = ebb;
+  },
+};
+
 /** CCU-10 act: the canopy again (CCU-09's dhak), and its rule broken. 09 taught: wait, and run under it as it
  *  goes up. Now they are hauling it up for good, level with the gallery: get on top of it while it's down,
  *  ride it up, step across. Under it there's no way through, and it comes down again */
@@ -1316,5 +1338,5 @@ export const levels = (): LevelDef[] => [
   longStage({ base: howrahRoom(), par: 120, acts: [girder, dui, sandhya, ulto, jowar, baan, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 46, acts: [rok, tokta, gali, phuchka], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
   longStage({ base: pandalRoom(), par: 56, acts: [sinri, toran, chala, dhak, uthan, uthan2], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
-  longStage({ base: finaleRoom(), par: 94, acts: [bus10, tram10, chhad, rok10, kumor10, khola, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
+  longStage({ base: finaleRoom(), par: 94, acts: [bus10, tram10, chhad, phire, rok10, kumor10, khola, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];
