@@ -644,8 +644,8 @@ actRoutes['lko08-upar'] = (x) => [
   runTo(x + 25, 300),
 ];
 actRoutes['lko08-roshandan'] = (x) => [
-  walkTo(x + 4.3, 300),
-  hops([x + 4.3, x + 7.6, x + 8.5, x + 12.6, x + 13.5, x + 17.6, x + 18.5, x + 22.6, x + 25], 'down-lit patch to down-lit patch'),
+  hop(x + 5, x + 7.4, 'off the gallery on to the first down-lit patch'),
+  hops([x + 7.6, x + 8.5, x + 12.6, x + 13.5, x + 17.6, x + 18.5, x + 22.6, x + 25], 'down-lit patch to down-lit patch'),
 ];
 actRoutes['lko08-mehrab'] = (x) => [runTo(x + 12, 400, 'on foot through the vault arch'), hop(x + 14.6, x + 17, 'at a jump through the next, up past the well', 30), runTo(x + 29.5, 300)];
 
@@ -1079,7 +1079,7 @@ mistakes['LKO-05'].push(
 );
 
 mistakes['LKO-08'].push(
-  { what: 'in the dark, walking on to the next patch of light', steps: [...through('LKO-08', room08, 6), walkTo(actX('LKO-08', 6) + 4.3, 300), hops([actX('LKO-08', 6) + 4.3, actX('LKO-08', 6) + 7.6]), { hold: 'R', until: done, max: 400 }], cause: 'lko-roshandan' },
+  { what: 'in the dark, walking on to the next patch of light', steps: [...through('LKO-08', room08, 6), hop(actX('LKO-08', 6) + 5, actX('LKO-08', 6) + 7.4), hops([actX('LKO-08', 6) + 7.6]), { hold: 'R', until: done, max: 400 }], cause: 'lko-roshandan' },
   { what: 'in the dark, keeping off the light and walking on', steps: [...through('LKO-08', room08, 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-kuan' },
 );
 
