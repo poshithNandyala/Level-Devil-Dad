@@ -218,6 +218,8 @@ export const lane: Act = {
  *  under his kafgir. Wait off the slab till he has pressed it all flat, then walk the lane. */
 export const ulta: Act = {
   id: 'lko05-ulta',
+  cp0: false,
+  cps: [-2],
   w: 28,
   advice: 'Here the cook presses the slab himself, from his end, with his big iron kafgir: the squash comes at you. Don’t stand on the slab to squash it: wait on the ground before it till he has pressed it all flat and lifted his kafgir, then walk the lane.',
   build: (w, c) => {
