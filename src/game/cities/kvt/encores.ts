@@ -12,6 +12,7 @@ import { FLOOR, Paint, npc, tara as taraSays } from '../../levels/endkit';
 import type { Ending } from '../../levels/endkit';
 import { CoralStep } from './tide';
 import { Eel } from './levels';
+import { Thing } from '../../entities/traps';
 
 export type KvtEncoreEndingKind = 'kvt-buried-door' | 'kvt-sand-arm';
 declare module '../../levels/endings' {
@@ -640,7 +641,106 @@ const tideHoles: Act = {
   },
 };
 
-export const kvt10 = { room: octopusRoom, acts: [midden, tideHoles] };
+/** KVT-10 act, KVT-02 turned over: the jetty ends at the pier head, a wall. The rotten plank you learnt to jump
+ *  is the way on: stand on it and it drops you to the boat catwalk underneath, which runs under the wall. */
+const plank: Act = {
+  id: 'kvt10-palaka',
+  w: 34,
+  advice: 'The jetty ends at a wall. The rotten plank is the way on this time: stand on it and it drops you on to the catwalk underneath, which goes under the wall.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 1, x + 2, 13, 17, '#');
+    g.pit(x + 3, x + 31);
+    g.fill(x + 7, x + 31, 14, 14, '#');
+    g.fill(x + 16, x + 17, 0, 10, '#');
+  },
+  build: (w, c) => {
+    const { X } = c;
+    pool(w, c.x + 3, c.x + 32, 15.3, { colors: LAGOON });
+    for (const [tx, wd] of [[3, 6], [11, 5]] as const) {
+      const t = new Thing('jetty', X(tx), px(11), { w: px(wd) });
+      w.add(t);
+    }
+    const rotten = w.add(new Thing('jetty', X(9), px(11), { w: px(2) }));
+    rotten.tint = '#5D4037';
+    let gone = false;
+    w.when(
+      (w2) => !gone && w2.standing(rotten.solid),
+      (w2) => {
+        gone = true;
+        w2.sfx('crack', rotten.cx, rotten.y);
+        rotten.fall(w2, { delay: 0.06, land: false });
+        w2.flags[c.f('dropped')] = 1;
+      },
+    );
+    sign(w, c.x + 12, 11 - 4.4, 3.4, 'PIER HEAD', 'warn', null, 'no way through');
+    onPass(w, X(5), (w2) => taraSays(w2, 'Aa palaka chaadi kadakku! | Jump that plank!', 2.4));
+  },
+};
+
+/** a coral head in the incoming tide: stay on it a moment and the water comes over it (it comes back up later) */
+export class SinkStep extends Entity {
+  solid: Solid;
+  private on = 0;
+  private under = 0;
+  constructor(
+    tx: number,
+    readonly top: number,
+    readonly wTiles = 3,
+  ) {
+    super();
+    this.layer = 1;
+    this.solid = new Solid(px(tx), px(top), px(wTiles), px(18 - top));
+  }
+  update(w: World) {
+    if (this.under > 0) {
+      this.under--;
+      if (this.under === 0) {
+        const p = w.player;
+        if (this.solid.overlaps(p.x, p.y, p.w, p.h)) this.under = 1;
+        else this.solid.collidable = true;
+      }
+      return;
+    }
+    this.on = w.standing(this.solid) ? this.on + 1 : 0;
+    if (this.on >= 84) {
+      this.solid.collidable = false;
+      this.under = 240;
+      this.on = 0;
+      w.sfx('splash', this.solid.x + 24, this.solid.y);
+      w.emit('fx', this.solid.x + 24, this.solid.y + 6, { kind: 'splash' });
+    }
+  }
+  draw(ctx: CanvasRenderingContext2D) {
+    const s = this.solid;
+    const sunk = !s.collidable;
+    coralBlock(ctx, s.x, s.y + (sunk ? 14 : 0), s.w, sunk ? '#7FA8B0' : '#E9A898', sunk ? '#4F7F88' : '#C98B7B');
+    if (!sunk && this.on > 30) {
+      ctx.fillStyle = 'rgba(200,240,255,0.7)';
+      ctx.fillRect(s.x, s.y - 1 + (84 - this.on) / 20, s.w, 2);
+    }
+  }
+}
+
+/** KVT-10 act, the tour turned over: the tide is coming in now. The coral heads don't shrink; they go under if you
+ *  stand on one. The tour taught you to wait on the top before the hop off: here you never stop. */
+const risingTide: Act = {
+  id: 'kvt10-veliyettam',
+  w: 24,
+  advice: 'The tide is coming in now: the coral heads don’t shrink, they go under if you stop on one. Hop from head to head without stopping.',
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 18);
+  },
+  build: (w, c) => {
+    const { X } = c;
+    pool(w, c.x + 3, c.x + 19, 15.3, { colors: LAGOON });
+    for (const tx of [4, 9, 14]) w.add(new SinkStep(c.x + tx, 14));
+    sign(w, c.x + 0.4, G - 4.4, 3.4, 'HIGH TIDE', 'wood', null, 'coming in');
+    onPass(w, X(1), (w2) => taraSays(w2, 'Oro padiyilum nilkku, sookshichu! | Stop on each one, carefully!', 2.4));
+  },
+};
+
+export const kvt10 = { room: octopusRoom, acts: [midden, plank, risingTide, tideHoles] };
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {
