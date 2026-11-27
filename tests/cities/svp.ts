@@ -583,7 +583,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'svp05-choona': (x) => [...caveBeat(0, x + 10.6, 12, x + 14.2, x + 16.8, x + 32), ...caveBeat(1, x + 39.4, 20, x + 45.2, x + 46.8, x + 61)],
   'svp05-rassi': (x) => [...ropeCross(0, x + 4, x + 29), ...ropeCross(1, x + 27, x + 57)],
   'svp10-rassi': (x) => actRoutes['svp05-rassi'](x),
-  'svp10-nali': (x) => actRoutes['svp09-nali'](x),
+  'svp10-nali': (x) => [{ hold: 'R', until: and(ground, X(x + 62.5)), max: 1500, note: 'straight along the sand, under every arch: tonight under is free' }],
   'svp07-teesra': (x) => [
     hopUntil(and(ground, X(x + 12.5)), 'across the luggage, no stopping'),
     { hold: 'R', until: inTrench, max: 600, note: 'into the trench' },
@@ -905,10 +905,11 @@ actDeath('SVP-09', 'svp09-nali', 'one arch over, one under, then under both in t
   ...overArch(x + 8),
   { hold: 'R', until: (w) => w.state !== 'play', max: 2400, note: 'and on under the arches, as the first stretch allowed' },
 ]);
-actDeath('SVP-10', 'svp10-nali', 'walk under both arches, the easy way', 'svp-nali', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 1500, note: 'along the sand, under the arches' }]);
-actDeath('SVP-10', 'svp10-nali', 'one arch over, one under, then under both in the next stretch', 'svp-nali2', (x) => [
-  ...overArch(x + 8),
-  { hold: 'R', until: (w) => w.state !== 'play', max: 2400, note: 'and on under the arches, as the first stretch allowed' },
+actDeath('SVP-10', 'svp10-nali', 'over both arches, as the reef taught', 'svp-nali', (x) => [...overArch(x + 8), ...overArch(x + 19), { hold: 'R', until: (w) => w.state !== 'play', max: 1500, note: 'on along the sand' }]);
+actDeath('SVP-10', 'svp10-nali', 'under in the first stretch, then over the arches of the second', 'svp-nali2', (x) => [
+  { hold: 'R', until: and(ground, X(x + 34.5)), max: 1500, note: 'under both arches of the first stretch' },
+  ...overArch(x + 40),
+  { hold: 'R', until: (w) => w.state !== 'play', max: 1500, note: 'and on' },
 ]);
 // ---- 10: the callbacks that break their rules
 const arrowAtLast = (w: World) => ({ cx: (patrols(w)[0] as unknown as { gaps: number[] }).gaps[0] + 96 });

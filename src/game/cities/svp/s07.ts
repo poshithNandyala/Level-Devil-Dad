@@ -55,7 +55,7 @@ export class Crowd extends Entity {
     super();
     this.layer = 3;
     this.x = x0;
-    this.hurt = low ? new Hurt(x0, FLOOR - 24, width, 25, cause, null) : new Hurt(x0, FLOOR - 52, width, 53, cause, null);
+    this.hurt = low ? new Hurt(x0, FLOOR - 28, width, 29, cause, null) : new Hurt(x0, FLOOR - 52, width, 53, cause, null);
     this.hurt.on = false;
   }
   go() {

@@ -16,7 +16,7 @@ import { nala, buildNala } from './s03';
 import { Herd, ghatTied } from './s04';
 import { jadBreak } from './s09';
 import { lashedHall } from './s07';
-import { nali } from './nali';
+import { nali, buildNali } from './nali';
 import { FLOOR } from '../../levels/endkit';
 
 // ================================================================== the room: the mill, with the deer's food
@@ -53,7 +53,12 @@ export const nadi: Act = { ...nala, id: 'svp10-nadi', advice: 'The crocodile’s
 export const jadFin: Act = jadBreak;
 export const samanFin: Act = lashedHall;
 
-export const naliFin: Act = { ...nali, id: 'svp10-nali', advice: 'The reef at the island’s edge: the hose lies where you went. Over an arch costs nothing, under one bends it and uses line: one arch under is all the first pontoon can spare, and the second has no spare at all.' };
+export const naliFin: Act = {
+  ...nali,
+  id: 'svp10-nali',
+  advice: 'The reef at the island’s edge, and the sea walk has turned round: tonight the hose is fed the other way, and a bend over an arch costs the line while under it is free. Walk under every arch. The old way, over the top, runs the hose out.',
+  build: (w, c) => buildNali(w, c.x, true),
+};
 
 export const ghatFin: Act = ghatTied;
 

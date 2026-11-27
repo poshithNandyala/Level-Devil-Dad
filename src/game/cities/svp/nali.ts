@@ -15,6 +15,8 @@ const SLACK = 30;
 export interface Arch {
   x0: number;
   x1: number;
+  /** the hose has been taken across this arch (over or under) */
+  crossed?: boolean;
   /** the top of the arch, px (y) */
   top: number;
   /** the hose runs under it now */
@@ -34,6 +36,8 @@ export class Hose extends Entity {
     readonly len: number,
     arches: [number, number][],
     readonly cause = 'svp-nali',
+    /** the finale's break: over an arch costs the line, under it is free */
+    readonly inv = false,
   ) {
     super();
     this.layer = 6;
@@ -41,7 +45,7 @@ export class Hose extends Entity {
   }
   /** how much of the hose Dad has used at his place now */
   usedAt(cx: number) {
-    return Math.max(0, Math.min(cx, this.span[1]) - this.ax) + this.arches.filter((a) => a.under).length * K;
+    return Math.max(0, Math.min(cx, this.span[1]) - this.ax) + this.arches.filter((a) => (this.inv ? a.crossed && !a.under : a.under)).length * K;
   }
   /** the hose is taut: within a step of its end */
   get taut() {
@@ -58,9 +62,15 @@ export class Hose extends Entity {
     if (this.prevX < 0) this.prevX = cx;
     for (const a of this.arches) {
       // crossing the arch's far edge going right: under it if on the floor, over it if on its top
-      if (this.prevX < a.x1 && cx >= a.x1) a.under = p.y + p.h > a.top + 12;
+      if (this.prevX < a.x1 && cx >= a.x1) {
+        a.under = p.y + p.h > a.top + 12;
+        a.crossed = true;
+      }
       // and back the other way: the hose comes off the arch
-      if (this.prevX > a.x0 && cx <= a.x0) a.under = false;
+      if (this.prevX > a.x0 && cx <= a.x0) {
+        a.under = false;
+        a.crossed = false;
+      }
     }
     this.prevX = cx;
     this.used = this.usedAt(cx);
@@ -122,31 +132,31 @@ function arch(ctx: Ctx, a: Arch) {
 }
 
 /** SVP-09's second act: two stretches of the reef, each with its own pontoon and two coral arches */
+export function buildNali(w: World, x: number, inv: boolean) {
+  const walk1 = px(x + 31) - px(x + 3);
+  const h1 = new Hose(px(x + 3), [px(x + 3), px(x + 31)], walk1 + K + SLACK, [
+    [px(x + 8), px(x + 13)],
+    [px(x + 19), px(x + 24)],
+  ], 'svp-nali', inv);
+  const walk2 = px(x + 61) - px(x + 34);
+  const h2 = new Hose(px(x + 34), [px(x + 34), px(x + 61)], walk2 + SLACK, [
+    [px(x + 40), px(x + 45)],
+    [px(x + 51), px(x + 56)],
+  ], 'svp-nali2', inv);
+  for (const h of [h1, h2]) {
+    w.add(h);
+    w.add(new Fx(null, (ctx) => h.arches.forEach((a) => arch(ctx, a)), 2));
+    for (const a of h.arches) w.add(new Plat(a.x0, a.top, a.x1 - a.x0, 8, () => {}));
+  }
+  (w.flags.hoses ??= []).push(h1, h2);
+}
+
 export const nali: Act = {
   id: 'svp09-nali',
   w: 64,
   advice: 'The sea walk on the reef: a heavy helmet, an air hose from the pontoon above, and coral arches across the path. The hose lies where you went: over the top of an arch costs nothing, but through the opening under one it bends, and the bend uses up a length of hose. When the hose goes taut and white it pulls you off your feet. In the first stretch you can afford one arch underneath. The second pontoon is on a shorter hose: no spare for a bend.',
   cps: [30.5],
-  build: (w, c) => {
-    const x = c.x;
-    // the pontoons float over each stretch's start; each hose is long enough for the walk plus one arch's worth of bend
-    const walk1 = px(x + 31) - px(x + 3);
-    const h1 = new Hose(px(x + 3), [px(x + 3), px(x + 31)], walk1 + K + SLACK, [
-      [px(x + 8), px(x + 13)],
-      [px(x + 19), px(x + 24)],
-    ]);
-    const walk2 = px(x + 61) - px(x + 34);
-    const h2 = new Hose(px(x + 34), [px(x + 34), px(x + 61)], walk2 + SLACK, [
-      [px(x + 40), px(x + 45)],
-      [px(x + 51), px(x + 56)],
-    ], 'svp-nali2');
-    for (const h of [h1, h2]) {
-      w.add(h);
-      w.add(new Fx(null, (ctx) => h.arches.forEach((a) => arch(ctx, a)), 2));
-      for (const a of h.arches) w.add(new Plat(a.x0, a.top, a.x1 - a.x0, 8, () => {}));
-    }
-    (w.flags.hoses ??= []).push(h1, h2);
-  },
+  build: (w, c) => buildNali(w, c.x, false),
 };
 
 // ================================================================== the weight belt: from where you let go, straight up
