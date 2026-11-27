@@ -359,10 +359,11 @@ const weave = (hop = true): NonNullable<Step['policy']> => (w) => {
   const l = (w.flags.loom as Loom[])[0];
   const p = w.player;
   if (l.done) return { move: 'R', jump: false };
-  const near = l.shuttle.on && Math.abs(l.shuttle.box.x + 5 - p.cx) < 30;
+  const sx = l.shuttle.box.x + 5;
+  const near = l.shuttle.on && Math.abs(sx - p.cx) < 44;
   if (!p.onGround) return { move: '', jump: true };
   if (hop && near) return { move: '', jump: true };
-  if (p.cx < l.x0 - 20) return { move: 'R', jump: false };
+  if (p.cx < l.x0 - 20) return { move: !l.shuttle.on && p.cx < l.x0 - 26 ? 'R' : '', jump: false };
   const edge = l.x0 + l.cloth.w;
   if (l.cloth.w > 0 && p.cx < edge - 16 && !l.shuttle.on) return { move: 'R', jump: false };
   return { move: '', jump: false };
@@ -407,7 +408,7 @@ act('dis06-chang', 'DIS-06', [changNaive, 'dis-bank', 'jumps at the stilt house'
 act('dis07-dhol', 'DIS-07', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholHop(110), until: (w) => done(w) || w.player.cx > px(x + 36), max: 6000 }, { hold: '', until: done, max: 900 }], 'dis-pukhuri', 'keeps the first tempo after the dhol quickens']);
 act('dis10-dhol', 'DIS-10', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholTempo(x, 84), until: done, max: 6000 }], 'dis-pukhuri', 'hops on the quick tempo from 07 after the drummer has slowed']);
 act('dis09-tug', 'DIS-09', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => tug(w).phase(w.tick).taut, max: 900, note: 'wait till it is taut' }, { hold: 'R', until: done, max: 900 }], 'dis-rope', 'goes the moment the rope is taut, whoever is winning']);
-act('dis05-taat', 'DIS-05', [(x) => [{ hold: 'R', until: X(x + 5.2), max: 600 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 900 }], 'dis-taat', 'takes a run and jumps the ditch: lands on the warp threads'], [(x) => [{ policy: weave(false), until: done, max: 2400 }], 'dis-shuttle', 'waits on the cloth by its edge without hopping']);
+act('dis05-taat', 'DIS-05', [(x) => [{ hold: 'R', until: X(x + 9.2), max: 600 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 900 }], 'dis-taat', 'takes a run and jumps the ditch: lands on the warp threads'], [(x) => [{ policy: weave(false), until: done, max: 2400 }], 'dis-shuttle', 'waits on the cloth by its edge without hopping']);
 act('dis07-bordoisila', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-bordoisila', 'walks on into the storm'], [(x) => [{ hold: 'R', until: X(x + 13), max: 600 }, { hold: '', brace: true, until: done, max: 900 }], 'dis-hail', 'holds on against the wind in the open']);
 act('dis10-tug', 'DIS-10', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir < 0 && p.t < 6; }, max: 2400 }, { hold: 'R', until: done, max: 900 }], 'dis-rope', 'goes on the red flag, as in 09: red is the near team now']);
 act('dis10-bordoisila', 'DIS-10', [(x) => [...hopR(x + 11.3, 'jumps the channel before the wind', 14), { hold: 'R', until: done, max: 600 }], 'dis-bordoisila', 'jumps the channel before the wind comes'], [(x) => [{ hold: 'R', until: X(x + 6.2), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-bhoral', 'shelters under the bhoral, as in 07']);
@@ -743,7 +744,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir > 0 && p.t < 6; }, max: 2400, note: 'wait for the far team’s red flag' },
     { hold: 'R', until: and(ground, X(x + 32)), max: 600, note: 'across on the rope at once' },
   ]),
-  'dis05-taat': mark('dis05-taat', (x) => [{ policy: weave(), until: and(ground, X(x + 24)), max: 3000, note: 'on the cloth by its edge, a hop over the shuttle each pass' }]),
+  'dis05-taat': mark('dis05-taat', (x) => [{ policy: weave(), until: and(ground, X(x + 28)), max: 3000, note: 'on the cloth by its edge, a hop over the shuttle each pass' }]),
   'dis07-bordoisila': mark('dis07-bordoisila', (x) => [
     { hold: 'R', until: X(x + 8.6), max: 600, note: 'under the bhoral before the storm' },
     { hold: '', until: (w) => (w.flags.storm as Bordoisila[])[0].over, max: 900, note: 'till Bordoisila has passed' },

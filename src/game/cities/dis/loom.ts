@@ -23,7 +23,7 @@ export class Loom extends Entity {
     readonly x1: number,
     readonly trig: number,
     readonly grow = 32,
-    readonly fly = 40,
+    readonly fly = 80,
     readonly rest = 40,
   ) {
     super();
@@ -51,10 +51,12 @@ export class Loom extends Entity {
     const width = Math.min(this.x1 - this.x0, (pass + 1) * this.grow);
     this.cloth.w = width;
     this.cloth.collidable = width > 0;
+    // the shuttle starts from the weaver's hand, a little behind the cloth, so it is seen coming
+    const from = this.x0 - 56;
     const end = this.x0 + width - 10;
-    if (t < this.fly) this.sx = this.x0 + ((end - this.x0) * t) / this.fly;
-    else if (t < 2 * this.fly) this.sx = end - ((end - this.x0) * (t - this.fly)) / this.fly;
-    else this.sx = this.x0;
+    if (t < this.fly) this.sx = from + ((end - from) * t) / this.fly;
+    else if (t < 2 * this.fly) this.sx = end - ((end - from) * (t - this.fly)) / this.fly;
+    else this.sx = from;
     this.shuttle.on = t < 2 * this.fly;
     this.shuttle.box.x = Math.round(this.sx);
   }
@@ -81,28 +83,28 @@ export class Loom extends Entity {
       ctx.fillRect(this.shuttle.box.x, GROUND - 6, 10, 5);
     }
     const beat = this.started >= 0 && !this.done && (w.tick - this.started) % (2 * this.fly + this.rest) >= 2 * this.fly;
-    person(ctx, this.x0 - 14, GROUND - 24, 24, '#F4EFE2', '#B9855A', { arms: beat ? 6 : 3 });
+    person(ctx, this.x0 - 66, GROUND - 24, 24, '#F4EFE2', '#B9855A', { arms: beat ? 6 : 3 });
     ctx.fillStyle = '#8D6B2E';
-    ctx.fillRect(this.x0 - 4, GROUND - 26, 3, 26);
+    ctx.fillRect(this.x0 - 58, GROUND - 26, 3, 26);
   }
 }
 
 /** DIS-05 act: the loom. Its lie: the floor is the cloth, so stand on it; the truth: hop the shuttle on every pass. */
 export const taat: Act = {
   id: 'dis05-taat',
-  w: 26,
+  w: 30,
   advice: 'The host is weaving your gamosa on her loom across the ditch: the cloth is the floor, and it grows a little with each pass of the shuttle. Stand on the cloth by its edge, and hop the shuttle every time it flies along at your ankles.',
-  cps: [1.5, 23.5],
+  cps: [1.5, 27.5],
   paint: (g, c) => {
-    g.pit(c.x + 6, c.x + 19);
+    g.pit(c.x + 10, c.x + 23);
   },
   build: (w, c) => {
     const x = c.x;
-    const l = w.add(new Loom(px(x + 6), px(x + 20), px(x + 3)));
+    const l = w.add(new Loom(px(x + 10), px(x + 24), px(x + 3)));
     w.add(l.shuttle);
     w.solids.push(l.cloth);
     (w.flags.loom ??= []).push(l);
     onPass(w, px(x + 2), (w2) => tara(w2, 'Olop! | A little!', 2.4));
-    w.add(new Danger({ x: px(x + 6), y: GROUND + 12, w: px(14), h: 40 }, 'dis-taat'));
+    w.add(new Danger({ x: px(x + 10), y: GROUND + 12, w: px(14), h: 40 }, 'dis-taat'));
   },
 };

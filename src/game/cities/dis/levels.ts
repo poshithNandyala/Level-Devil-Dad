@@ -66,7 +66,7 @@ const tourLevel = () =>
     things: [],
     par: 34,
     hint: 'A boy walks the promenade with a tray of hot lal chah, and the tray swings on his arm. Touch him, or hop clean over him (the tray tips and the tea spreads over where you land), and you are scalded. There is a ghat, a step down to the river, in the middle of the promenade: climb down into it and let him walk over your head. Climb out only once he is a few steps past: as he crosses the ghat he swings the tray right back behind him, over the steps. A second boy comes from Fancy Bazar once you are up on the deck: stay up there until he has set his tray down.',
-    cps: [27.5, 50.5, 58.5, 82.5, 99.6],
+    cps: [27.5, 50.5, 58.5, 76.5, 82.5, 99.6],
     paint: (g) => {
       g.pit(ghat.x0, ghat.x1, 15);
       g.fill(ghat.x0, ghat.x1, 17, 17, '#');
