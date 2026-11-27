@@ -1300,6 +1300,6 @@ export const levels = (): LevelDef[] => [
   longStage({ base: poleRoom(), par: 82, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 111, acts: [girder, dui, horn, board, pylon, jowar], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 19, acts: [rok], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
-  longStage({ base: pandalRoom(), par: 62, acts: [sinri, toran, chala, dhak, uthan, line], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
-  longStage({ base: finaleRoom(), par: 127, acts: [bus10, tram10, chhad, phire, pherot, kumor10, khola, kumir10, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
+  longStage({ base: pandalRoom(), par: 62, acts: [sinri, dhak, uthan, line], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
+  longStage({ base: finaleRoom(), par: 127, acts: [bus10, chhad, phire, pherot, kumor10, khola, kumir10, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];
