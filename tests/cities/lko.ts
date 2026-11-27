@@ -625,6 +625,7 @@ actRoutes['lko08-roshandan'] = (x) => [
   hop(x + 5, x + 7.4, 'off the gallery on to the first down-lit patch'),
   hops([x + 7.6, x + 8.5, x + 12.6, x + 13.5, x + 17.6, x + 18.5, x + 22.6, x + 25], 'down-lit patch to down-lit patch'),
 ];
+actRoutes['lko08-toota'] = (x) => [runTo(x + 1, 300), hop(x + 1.6, x + 5.5, 'at a jump through the whole arch, though the floor goes on', 30), runTo(x + 29.5, 400, 'along the gallery and down off its end')];
 actRoutes['lko08-mehrab'] = (x) => [runTo(x + 12, 400, 'on foot through the vault arch'), hop(x + 14.6, x + 17, 'at a jump through the next, up past the well', 30), runTo(x + 29.5, 300)];
 
 const R_lko09_hawa = (id: string) => (x: number): Step[] => {
@@ -899,8 +900,8 @@ mistakes['LKO-08'] = [
     ],
     cause: 'lko-goti',
   },
-  { what: 'in the vault, hopping the drain into the arch', steps: [...through('LKO-08', room08, 3), runTo(actX('LKO-08', 3) + 1, 300), hop(actX('LKO-08', 3) + 3, actX('LKO-08', 3) + 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-mehrab' },
-  { what: 'hopping the crack into the last arch', steps: [...through('LKO-08', room08, 3), ...actRoutes0('lko08-mehrab', actX('LKO-08', 3)), ...actRoutes0('lko08-utar', actX('LKO-08', 4)), ...actRoutes0('lko08-wapas', actX('LKO-08', 5)), ...actRoutes0('lko08-roshandan', actX('LKO-08', 6)), runTo(doorX('LKO-08') - 8.5, 300), hop(doorX('LKO-08') - 6, doorX('LKO-08') - 2), { hold: 'R', until: done, max: 400 }], cause: 'lko-bhool' },
+  { what: 'in the vault, hopping the drain into the arch', steps: [...through('LKO-08', room08, 4), runTo(actX('LKO-08', 4) + 1, 300), hop(actX('LKO-08', 4) + 3, actX('LKO-08', 4) + 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-mehrab' },
+  { what: 'hopping the crack into the last arch', steps: [...through('LKO-08', room08, 4), ...actRoutes0('lko08-mehrab', actX('LKO-08', 4)), ...actRoutes0('lko08-utar', actX('LKO-08', 5)), ...actRoutes0('lko08-wapas', actX('LKO-08', 6)), ...actRoutes0('lko08-roshandan', actX('LKO-08', 7)), runTo(doorX('LKO-08') - 8.5, 300), hop(doorX('LKO-08') - 6, doorX('LKO-08') - 2), { hold: 'R', until: done, max: 400 }], cause: 'lko-bhool' },
 ];
 /** the room's route and the routes of the stage's first n acts */
 function through(id: string, room: Step[], n: number): Step[] {
@@ -949,8 +950,8 @@ mistakes['LKO-05'].push(
 mistakes['LKO-08'].push(
   { what: 'in the minaret, walking through the second arch', steps: [...through('LKO-08', room08, 2), hop(actX('LKO-08', 2) + 3, actX('LKO-08', 2) + 6), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
   { what: 'in the minaret, jumping through every arch', steps: [...through('LKO-08', room08, 2), hop(actX('LKO-08', 2) + 3, actX('LKO-08', 2) + 6), hop(actX('LKO-08', 2) + 9, actX('LKO-08', 2) + 12), hop(actX('LKO-08', 2) + 16, actX('LKO-08', 2) + 18), until(done, 400)], cause: 'lko-bhool' },
-  { what: 'jumping through the hanging arch up close, as everywhere', steps: [...through('LKO-08', room08, 4), walkTo(actX('LKO-08', 4) + 3.5, 300), hop(actX('LKO-08', 4) + 8, actX('LKO-08', 4) + 10, '', 6), until(done, 400)], cause: 'lko-bhool' },
-  { what: 'walking through the hanging arch', steps: [...through('LKO-08', room08, 4), walkTo(actX('LKO-08', 4) + 3.5, 300), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
+  { what: 'jumping through the hanging arch up close, as everywhere', steps: [...through('LKO-08', room08, 5), walkTo(actX('LKO-08', 5) + 3.5, 300), hop(actX('LKO-08', 5) + 8, actX('LKO-08', 5) + 10, '', 6), until(done, 400)], cause: 'lko-bhool' },
+  { what: 'walking through the hanging arch', steps: [...through('LKO-08', room08, 5), walkTo(actX('LKO-08', 5) + 3.5, 300), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
 );
 mistakes['LKO-09'].push(
   { what: 'two flags: watching the one behind you the whole way, as on the last roofs', steps: [...through('LKO-09', room09, 2), ...R_lko09_jhande(redOf('a'))(actX('LKO-09', 2)), until(done, 600)], cause: 'lko-jhanda-aage' },
@@ -993,7 +994,7 @@ mistakes['LKO-07'].push(
   { what: 'at the chauraha, rushing the strollers', steps: [...through('LKO-07', room07, 4), walkTo(actX('LKO-07', 4) + 3, 300), hop(actX('LKO-07', 4) + 5, actX('LKO-07', 4) + 7.3), { hold: 'R', until: done, max: 900 }], cause: 'lko-ganj' },
   { what: 'at the chauraha, pausing again under the awnings once they part', steps: [...through('LKO-07', room07, 4), walkTo(actX('LKO-07', 4) + 3, 300), hop(actX('LKO-07', 4) + 5, actX('LKO-07', 4) + 7.3), pause(), runTo(actX('LKO-07', 4) + 14, 400), pause(), until(done, 600)], cause: 'lko-shamiyana' },
 );
-mistakes['LKO-08'].push({ what: 'in the vault, walking on through the well arch too', steps: [...through('LKO-08', room08, 3), runTo(actX('LKO-08', 3) + 12, 400), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' });
+mistakes['LKO-08'].push({ what: 'in the vault, walking on through the well arch too', steps: [...through('LKO-08', room08, 4), runTo(actX('LKO-08', 4) + 12, 400), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' });
 mistakes['LKO-10'].push(
   { what: 'the wash line again, walking straight over it', steps: [...room10, { hold: 'R', until: done, max: 900 }], cause: 'lko-chhapa' },
   { what: 'the heaps again, on the sunny right tiles', steps: [...room10, ...actRoutes0('lko10-dhulai', actX('LKO-10', 0)).slice(0, 5), hops([actX('LKO-10', 0) + 24, actX('LKO-10', 0) + 27]), until(done, 600)], cause: 'lko-malai' },
@@ -1011,8 +1012,8 @@ mistakes['LKO-07'].push(
 );
 
 mistakes['LKO-08'].push(
-  { what: 'on the gallery, jumping on through its arch, as everywhere', steps: [...through('LKO-08', room08, 5), hop(actX('LKO-08', 5) + 2, actX('LKO-08', 5) + 4.5), hop(actX('LKO-08', 5) + 10, actX('LKO-08', 5) + 13), until(done, 400)], cause: 'lko-bhool' },
-  { what: 'on the gallery, walking off its end, as at the hanging arch', steps: [...through('LKO-08', room08, 5), hop(actX('LKO-08', 5) + 2, actX('LKO-08', 5) + 4.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
+  { what: 'on the gallery, jumping on through its arch, as everywhere', steps: [...through('LKO-08', room08, 6), hop(actX('LKO-08', 6) + 2, actX('LKO-08', 6) + 4.5), hop(actX('LKO-08', 6) + 10, actX('LKO-08', 6) + 13), until(done, 400)], cause: 'lko-bhool' },
+  { what: 'on the gallery, walking off its end, as at the hanging arch', steps: [...through('LKO-08', room08, 6), hop(actX('LKO-08', 6) + 2, actX('LKO-08', 6) + 4.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
 );
 
 mistakes['LKO-10'].push(
@@ -1038,8 +1039,8 @@ mistakes['LKO-05'].push(
 );
 
 mistakes['LKO-08'].push(
-  { what: 'in the dark, walking on to the next patch of light', steps: [...through('LKO-08', room08, 6), hop(actX('LKO-08', 6) + 5, actX('LKO-08', 6) + 7.4), hops([actX('LKO-08', 6) + 7.6]), { hold: 'R', until: done, max: 400 }], cause: 'lko-roshandan' },
-  { what: 'in the dark, keeping off the light and walking on', steps: [...through('LKO-08', room08, 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-kuan' },
+  { what: 'in the dark, walking on to the next patch of light', steps: [...through('LKO-08', room08, 7), hop(actX('LKO-08', 7) + 5, actX('LKO-08', 7) + 7.4), hops([actX('LKO-08', 7) + 7.6]), { hold: 'R', until: done, max: 400 }], cause: 'lko-roshandan' },
+  { what: 'in the dark, keeping off the light and walking on', steps: [...through('LKO-08', room08, 7), { hold: 'R', until: done, max: 400 }], cause: 'lko-kuan' },
 );
 
 mistakes['LKO-10'].push(
@@ -1060,6 +1061,11 @@ mistakes['LKO-10'].push(
 mistakes['LKO-10'].push(
   { what: 'the lantern: waiting on a heap’s shady left tile, as the low sun taught', steps: [...through('LKO-10', room10, 7), walkTo(actX('LKO-10', 7) + 3.6, 300), hops([actX('LKO-10', 7) + 3.6, actX('LKO-10', 7) + 6, actX('LKO-10', 7) + 9]), until(done, 900)], cause: 'lko-chirag' },
   { what: 'the lantern: once he has passed, keeping to the left tiles', steps: [...through('LKO-10', room10, 7), walkTo(actX('LKO-10', 7) + 3.6, 300), until(lampPast(actX('LKO-10', 7), 6), 900), hops([actX('LKO-10', 7) + 3.6, actX('LKO-10', 7) + 6]), until(done, 600)], cause: 'lko-malai' },
+);
+
+mistakes['LKO-08'].push(
+  { what: 'the broken arch: walking the whole one, jumping the one at the floor’s end, as the maze taught', steps: [...through('LKO-08', room08, 3), runTo(actX('LKO-08', 3) + 5.4, 300), hop(actX('LKO-08', 3) + 6.2, actX('LKO-08', 3) + 10, '', 30), until(done, 600)], cause: 'lko-toota' },
+  { what: 'the broken arch: walking on through both', steps: [...through('LKO-08', room08, 3), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
 );
 
 export const test: CityTests = {

@@ -193,6 +193,58 @@ const mehrab: Act = {
   },
 };
 
+// ================================================================ act: toota, the broken arch
+/** An arch must be whole to lift you. The arch at the end of this floor has lost its crown: it is only a
+ *  doorway, and a jump through it lifts no one, out over the well. Take the lift at the whole arch before
+ *  it, though the floor goes on past that one. */
+const toota: Act = {
+  id: 'lko08-toota',
+  w: 30,
+  advice: 'An arch must be whole to lift you. The one at the end of this floor has lost its crown: it is only a doorway, and a jump through it takes you nowhere but out over the well. Jump through the whole arch before it, though the floor goes on past that one, and walk the gallery.',
+  cps: [16.5],
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 9, x + 24, 15);
+    g.fill(x + 5, x + 26, 11, 11, '=');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    mazeWall(w, x, x + 29, [11, 15]);
+    arch(w, c.X(3) + 8, FLOOR, { x: c.X(5) + 8, y: px(11) }, c.f('a1'));
+    const wz = well(w, x + 9, x + 24);
+    const bx = c.X(7) + 8;
+    let prev = w.player.cx;
+    w.onTick((w2) => {
+      const p = w2.player;
+      // a jump through the crownless arch: you were counting on a lift it cannot give
+      if (prev < bx && p.cx >= bx && !p.onGround) wz.hazard.cause = 'lko-toota';
+      prev = p.cx;
+    });
+    w.add(
+      new Art((ctx) => {
+        // the broken arch: both piers, but the cusped crown has fallen; its stones lie on the floor
+        ctx.fillStyle = '#E9DCC4';
+        ctx.fillRect(bx - 14, px(12) + 4, 5, FLOOR - px(12) - 4);
+        ctx.fillRect(bx + 9, px(12) + 10, 5, FLOOR - px(12) - 10);
+        ctx.strokeStyle = '#B9A47E';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(bx - 9, FLOOR);
+        ctx.lineTo(bx - 9, px(12) + 8);
+        ctx.quadraticCurveTo(bx - 8, px(12) + 4, bx - 5, px(12) + 6);
+        ctx.moveTo(bx + 9, FLOOR);
+        ctx.lineTo(bx + 9, px(12) + 14);
+        ctx.stroke();
+        ctx.fillStyle = '#D6C6A6';
+        ctx.fillRect(bx - 22, FLOOR - 4, 6, 4);
+        ctx.fillRect(bx - 30, FLOOR - 3, 5, 3);
+        ctx.fillRect(bx - 18, FLOOR - 6, 4, 2);
+      }, 4),
+    );
+    sign(w, x + 0.4, 10.4, 3.2, 'TOOTA', 'shop', null, 'mehrab');
+  },
+};
+
 // ================================================================ the door: the 489th doorway
 /** The gallery runs on over the well to one last arch at its end, and the door is down below it, beyond the
  *  well. Walk through the last arch and off the end of the gallery, and you drop to the door. Hop through
@@ -538,5 +590,5 @@ export const roshandan: Act = {
   },
 };
 
-export const s08 = { room: bhoolRoom, acts: [chaupar, upar, minar, mehrab, utar, wapas, roshandan] };
+export const s08 = { room: bhoolRoom, acts: [chaupar, upar, minar, toota, mehrab, utar, wapas, roshandan] };
 export const meta08 = { family: 'entry-height-routes-level', betrayals: ['enter-height'], ending: 'lko-489' } as StageMeta;
