@@ -16,6 +16,7 @@ import { exitTwist } from '../../levels/twists';
 import { PongalPot } from '../../entities/tamil';
 import { MURUKKU_META, kannu, karandi, murukkuRoom, ruchi, thenkuzhal, varisai } from './murukku';
 import { SPENCER_META, kaanal, keezhe, moodal, pattarai, spencerRoom } from './spencer';
+import { sundalBite } from './sundal';
 
 // Chennai: share autos, plastic water pots, a flooding subway, filter kaapi
 // poured in long arcs, and a sun that makes doors appear. Chennai Tamil + English.
@@ -127,6 +128,10 @@ const gullyCricket: Act = {
   id: 'chn04-cricket',
   w: 36,
   advice: 'Gully cricket: hop the balls along the ground, but stay down for the bouncer, it flies at head height.',
+  // the hidden checkpoint sits back in the room's tail: from the act's own first column a short run reaches the
+  // first bowl's trigger, and the ball takes a dad who stands there (the lag-captured sweep)
+  cp0: false,
+  cps: [-3.5],
   build: (w, c) => {
     const { X } = c;
     const bowl = (at: number, fn: (w2: World) => void) => onPass(w, X(at), fn);
@@ -309,10 +314,7 @@ export const levels = (): LevelDef[] => [
       "Madras-oda pudhu peyar Chennai! | Madras became Chennai in 1996.",
       "Seri machi, ippo dhaan real game! | Okay buddy, now the real game starts!",
     ],
-    shouts: [
-      [21, "Kaapi! Degree kaapi! | Coffee! Strong filter coffee!"],
-      [82, "Sundal! Sooda sundal! | Sundal! Hot sundal!"],
-    ],
+    shouts: [[21, "Kaapi! Degree kaapi! | Coffee! Strong filter coffee!"]],
     ride: "shareauto",
     item: "kaapi",
     signs: [[8, "CENTRAL", "station"], [55, "MARINA", "beach"], [102, "FORT ST. GEORGE", "1644"]],
@@ -321,13 +323,19 @@ export const levels = (): LevelDef[] => [
       ["stall", 20, { label: 'KAAPI' }],
       ["kudamrow", 34, {}],
       ["palm", 62, { h: 82, lean: 5 }],
-      ["stall", 82.5, { label: 'SUNDAL' }],
       ["lamp", 106, {}],
     ],
     things: [["lighthouse", 60]],
-    hint: 'Near the end, a Pongal pot boils over across the road. When it starts to bubble, back off a step or two: the spill runs further than where you stood, and the foam shoots up over the pot. When it stops steaming, walk on.',
+    hint: 'On the promenade a sundal cart steams over the path each time the vendor lifts the lid, on a steady beat. The beat lies once: as you come up he lifts it again right after shutting it. Watch his hand, not the lid: it goes to the handle before every lift; cross when the lid is shut and his hand is down. Near the end, a Pongal pot boils over across the road. When it starts to bubble, back off a step or two: the spill runs further than where you stood, and the foam shoots up over the pot. When it stops steaming, walk on.',
+    // hidden checkpoints: the sweep wants each one clear of anything a short run or a hop from it reaches (a hop
+    // captured mid-jump carries 6+ tiles), so the one after the posts sits between the last two posts (the vendor
+    // lifts the lid at 73, steam from 76) and the one after the wall is taken in the wall hop at 79 (the pot's
+    // trigger is 86.8)
+    cps: [17.5, 29.5, 57.5, 68.5, 79],
     extra: (w) => {
-      PongalPot.place(w, { tx: 88, groundTy: 15, triggerTx: 85.5, reach: 3.5 });
+      sundalBite(w, 76);
+      // trigger 86.8 and reach 2.6 (was 85.5 / 3.5): the spill still runs a tile past where you stood
+      PongalPot.place(w, { tx: 88, groundTy: 15, triggerTx: 86.8, reach: 2.6 });
       prop(w, 'palm', 91, 15, { h: 70, lean: -4 }, -8);
     },
   }),
@@ -517,7 +525,8 @@ export const levels = (): LevelDef[] => [
         if (w.state !== 'play') return;
         // only along the open beach: in the room, and on the last stretch to the door
         const px0 = w.player.x;
-        if (px0 < px(30) || px0 > px(dx - 8)) {
+        // (dx - 5, not dx - 8: the door's hidden checkpoint at dx - 9.5 must be calm for a short run from it)
+        if (px0 < px(30) || px0 > px(dx - 5)) {
           if (seen) shot(w, 'kite', px0 - 300, 222, 210, 0, 0, 'hit');
           else shot(w, 'kite', Math.min(px0 + 330, w.W + 16), 222, -210, 0, 0, 'hit');
         }

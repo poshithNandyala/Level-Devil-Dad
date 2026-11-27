@@ -8,6 +8,7 @@ import { type Step, X, and, done, ground } from '../runner';
 import type { CityTests } from '../city-tests';
 import { ladleOf, murukkuOf, pressOf } from '../../src/game/cities/chn/murukku';
 import { escalatorOf, stepUnder } from '../../src/game/cities/chn/spencer';
+import { sundalOf } from '../../src/game/cities/chn/sundal';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -86,7 +87,41 @@ const spencerRoom = (): Step[] => [
   walk(31.5),
 ];
 
+// ------------------------------------------------------------------ CHN-01: the tour, with the sundal cart
+/** the lid is shut, the vendor's hand is down, and the shut is young enough to cross on (not the short one: its
+ *  hand goes up at 0.1 s, so this is never true during it) */
+const sundalSafe = (w: World) => {
+  const c = sundalOf(w);
+  if (!c || c.lid !== 'shut' || c.hand(w)) return false;
+  const t = c.since(w);
+  return t >= 0.12 && t <= 0.5;
+};
+const sundalShut = (w: World) => sundalOf(w)?.lid === 'shut';
+/** the shared tour route up to the wall's approach, the sundal cart's own steps, then the rest */
+function tour01(S: Record<string, Step[]>) {
+  const R = S['CHN-01'];
+  const wall = R.findIndex((st) => st.note === 'a low wall');
+  if (wall < 1) throw new Error("CHN-01: no step 'a low wall'");
+  const before = R.slice(0, wall - 1);
+  // the pot's trigger moved 1.3 tiles nearer the pot: back off a little longer (40 ticks, was 30)
+  const after = R.slice(wall - 1).map((st) => (st.note === 'it bubbles: back off' ? { ...st, ticks: 40 } : st));
+  const upTo: Step = { hold: 'R', until: X(74.2), max: 900, note: 'up to the sundal cart: the vendor lifts the lid' };
+  S['CHN-01'] = [before, [upTo, until(sundalSafe, 'lid shut, hand down: go', 900)], after].flat();
+  // the obvious play: walk on like past the posts, into the steam he has just lifted the lid off
+  naive['CHN-01'] = { steps: [...before, die], cause: 'chn-sundal' };
+  // the obvious fix: go the moment it shuts (Tara's line): the shut after the lift is the short one
+  fix['CHN-01'] = { steps: [...before, upTo, until(sundalShut, 'it shut: go', 900), die], cause: 'chn-sundal' };
+  mistakes['CHN-01'] = [
+    { what: 'wait for the hand to go up, then go (the lift follows the hand)', steps: [...before, upTo, until((w) => !!sundalOf(w)?.hand(w), 'hand up', 900), die], cause: 'chn-sundal' },
+    { what: 'hop the cart like the parked auto', steps: [...before, ...hopAt(74.6, 14, 'hop the cart'), die], cause: 'chn-sundal' },
+  ];
+  // the pot (the old FIX): stand where it bubbles
+  const bubble = S['CHN-01'].findIndex((st) => st.note === 'it bubbles: back off');
+  if (bubble > 0) mistakes['CHN-01'].push({ what: 'stand where the pot bubbles', steps: [...S['CHN-01'].slice(0, bubble), stay], cause: 'burnt' });
+}
+
 const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) => {
+  tour01(S);
   S['CHN-09'] = murukkuRoom();
   lengthen('CHN-09', 0, []);
   S['CHN-10'] = spencerRoom();
