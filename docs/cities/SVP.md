@@ -8,7 +8,7 @@ Sound: one music loop (104 bpm), no new SFX names.
 | # | Id | Name | Family [betrayal] | Ending key | Shape |
 |---|---|---|---|---|---|
 | 01 | SVP-01 | Namaste SVP | lane-sheet-flow-push [sheet-flow] | svp-lane-sun (meta only) | tour |
-<!-- route times in seconds (bot), fix round 2: 01 30.1, 02 25.8, 03 29.1, 04 20.6, 05 31.0, 06 19.7, 07 30.9, 08 86.8, 09 27.0, 10 57.9 -->
+<!-- route times in seconds (bot), fix round 3: 01 30.1, 02 25.8, 03 29.1, 04 20.6, 05 25.6, 06 19.1, 07 30.4, 08 86.8, 09 21.4, 10 50.6 -->
 
 | 02 | SVP-02 | Aari | cut-floor-saw-carriage [cut-floor] | svp-timber-stack | short |
 | 03 | SVP-03 | Magarmachh | warning-board-arrow-turns [honest-moving-sign] | svp-board-bridge | short |
@@ -85,3 +85,9 @@ Foods: svp-machhli, svp-fishstick, svp-kela, svp-lobster, svp-padauk.
 - 05: `svp05-dekho` is one view (the bench three tiles before the footprints) with a second trap (`svp-nazar3`, standing on the footprints too long). Choona's second wall is the stage's labelled momentum beat.
 - 09: `svp09-pul` is two creeks, with the grey root as its NAIVE (`svp-grey`).
 - Four new doors (`doors.ts`): 05 sleeping turtle (do not hop), 06 wasps' nest over the creek (hop low), 07 harbour bell (hop up under it), 09 old wall (hold the jump).
+
+## Fix round 3 (QA FAIL-2)
+
+- The doors of 05, 06, 07 and 09 are plain doors (`doors.ts`): the four ideas tried in round 2 each matched a registry row, and no unbuilt candidate passed the gate for these stages. The ending ids stay.
+- `svp05-dekho` and `svp10-saman` are cut. `svp09-pul` is one creek, with the grey root as its only trap (`svp-grey`). 09's stage FIX is now `svp09-nali`'s walk under both arches.
+- `svp10-nadi`'s still crocodile shows its ridged back and two yellow eyes at the surface, and its death line (`svp-magar4`) names it.
