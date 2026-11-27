@@ -252,7 +252,8 @@ export const endings: Record<PdyEndingKind, Ending> = {
 
   /** Miroir: near the door the whole picture turns into its mirror image. Your buttons don't. */
   'pdy-mirror': {
-    space: 11,
+    // (round 2: 11 -> 12, so the door's checkpoint stays 4.5 tiles before the first spike row, which moved a tile out)
+    space: 12,
     advice: 'Near the door the screen turns into its mirror image, but right is still right: trust your thumbs, not your eyes, and jump both spike rows.',
     build(w, d) {
       // (round 2: the first row moved a tile out, 7 -> 8 tiles before the door, so the landing between the rows
