@@ -16,7 +16,7 @@ import { Customer, Muck, Stack, Stall } from './books';
 import { Junction, OtherTram, Points, Tram } from './tram';
 import { BookPorter, ChaiBoard, Girders, Pointer, Porter, Road, SHORT, TALL } from './porters';
 import { Adda, House, TeaSeller, Wash } from './adda';
-import { ClothPanel, Decorator, Lowered, Skeleton, Stakes } from './pandal';
+import { ClothPanel, Decorator, DhakFrame, Lowered, Skeleton, Stakes } from './pandal';
 import { Tin } from './muri';
 import { Kumir } from './kumir';
 import { Bore } from './baan';
@@ -132,7 +132,7 @@ const duiLine: Act = {
   id: 'ccu06-duiline',
   w: 48,
   cp0: false,
-  cps: [23.5],
+  cps: [6, 23.5],
   advice: 'Two more junctions: stay on the step. At the island stop a tram on the other line comes past, right by the step: get off on to the island, let it go by, and hop back on before yours leaves.',
   paint: (g, c) => {
     g.pit(c.x, c.x + 19).pit(c.x + 26, c.x + 47);
@@ -162,7 +162,8 @@ const points: Act = {
   id: 'ccu06-points',
   w: 48,
   cp0: false,
-  cps: [1, 8],
+  // calm checkpoints on the island and on the straight-line tram's step
+  cps: [1, 8, 22, 38],
   advice: 'At the island stop, look at the pointsman: his lever is set for the other line, and this tram turns off there, step and all. Get off at the island and wait. The next tram comes along the straight line: hop on its step and stay on it through the second junction.',
   paint: (g, c) => {
     g.pit(c.x, c.x + 3).pit(c.x + 10, c.x + 47);
@@ -1075,6 +1076,28 @@ const gali = brokenRok('ccu08-gali', 34, [[6, 12, 13, 20, 32]], 55, 'A lane brok
 const setu10a = relay('ccu10-setu', [45, 63, 83], true, 'Howrah Bridge again: tall porter, short one under you before his CHA board, tall one over you before the next, never jumping into a load coming the other way.');
 
 
+/** CCU-09 act: the canopy. Over a long stretch of lashed bamboo they let the canopy frame down on the
+ *  dhak's beat to tie it, and haul it up again: wait on the bamboo before it, and run under it as it goes up */
+const dhak: Act = {
+  id: 'ccu09-dhak',
+  w: 24,
+  advice: 'The canopy: over the long lashed bamboo they let its frame right down on each beat of the dhak, then haul it up. Wait on the bamboo before it, and the moment it starts going up, run under it in one go.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 1, x + 1, 13, 14, '#').fill(x + 2, x + 3, 12, 12, '=').fill(x + 6, x + 14, 12, 12, '#').fill(x + 17, x + 18, 12, 12, '=').fill(x + 20, x + 21, 13, 14, '#');
+  },
+  build: (w, c) => {
+    w.add(new Skeleton(c.X(1), c.X(21)));
+    w.add(new Stakes(c.X(2), c.X(20)));
+    const frame = w.add(new DhakFrame(c.X(6), px(9), px(6), px(12) - 2));
+    onPass(w, c.X(1), (w2) => {
+      if (frame.t0 < 0) frame.t0 = w2.tick + 60;
+    });
+    sign(w, c.x + 0.2, 10.4, 3.2, 'DHAK', 'green', null, 'on the beat');
+    w.flags.dhak = frame;
+  },
+};
+
 /** CCU-09 lift acts: up the inside of the pandal to its gallery. A panel already tied is your step; stand
  *  on it and they tie the next one on above it (slowly: the decorator climbs up with the cloth), lifting
  *  you to the next bamboo. At the top, under the roof frame, they tie one more: off before that. */
@@ -1175,6 +1198,6 @@ export const levels = (): LevelDef[] => [
   longStage({ base: poleRoom(), par: 85, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 111, acts: [girder, dui, sandhya, ulto, baan, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 61, acts: [rok, tokta, gali], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
-  longStage({ base: pandalRoom(), par: 50, acts: [sinri, toran, chala, uthan, uthan2], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
+  longStage({ base: pandalRoom(), par: 50, acts: [sinri, toran, chala, dhak, uthan, uthan2], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
   longStage({ base: finaleRoom(), par: 109, acts: [bus10, tram10, rok10, kumor10, bisarjan, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];

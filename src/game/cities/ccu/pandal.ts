@@ -215,3 +215,54 @@ export class Lowered extends Entity {
     ctx.fillRect(s.x, s.y + 6, s.w, 2);
   }
 }
+
+/** CCU-09: the canopy frame they let down on the dhak's beat to tie it, and haul up again. Under it at the
+ *  beat there is no room for anyone */
+export class DhakFrame extends Entity {
+  solid: Solid;
+  t0 = -1;
+  constructor(
+    x: number,
+    wd: number,
+    readonly up: number,
+    readonly down: number,
+    /** the beat (s): it drops at the start of each, stays down `hold` s, and is hauled up again */
+    readonly every = 2.8,
+    readonly hold = 0.5,
+  ) {
+    super();
+    this.layer = 1;
+    this.solid = new Solid(x, up, wd, 12);
+    this.solid.velX = 0;
+  }
+  /** seconds into the current beat (-1: not drumming yet) */
+  beatT(w: World) {
+    return this.t0 < 0 || w.tick < this.t0 ? -1 : ((w.tick - this.t0) / 120) % this.every;
+  }
+  /** is it on its way up (or up), so the bamboo under it is clear for the rest of this beat */
+  rising(w: World) {
+    const t = this.beatT(w);
+    return t >= 0.25 + this.hold;
+  }
+  update(w: World) {
+    const t = this.beatT(w);
+    if (t < 0) return;
+    const span = this.down - this.up;
+    const f = t < 0.25 ? t / 0.25 : t < 0.25 + this.hold ? 1 : t < 0.5 + this.hold ? 1 - (t - 0.25 - this.hold) / 0.25 : 0;
+    const y = Math.round(this.up + span * f);
+    if (y !== this.solid.y) this.solid.moveBy(w, 0, y - this.solid.y);
+    if (t < 1 / 120) w.sfx('thud', this.solid.x + this.solid.w / 2, this.solid.y);
+  }
+  draw(ctx: CanvasRenderingContext2D) {
+    const s = this.solid;
+    ctx.fillStyle = '#8D6E63';
+    for (let x = s.x; x < s.x + s.w; x += 24) ctx.fillRect(x + 4, 0, 2, s.y);
+    ctx.fillStyle = '#C9A66B';
+    ctx.fillRect(s.x, s.y, s.w, 4);
+    const [a, b] = CLOTH[1];
+    ctx.fillStyle = a;
+    ctx.fillRect(s.x, s.y + 4, s.w, s.h - 4);
+    ctx.fillStyle = b;
+    ctx.fillRect(s.x, s.y + 8, s.w, 2);
+  }
+}

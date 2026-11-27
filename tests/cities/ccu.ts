@@ -12,6 +12,7 @@ import type { Tram } from '../../src/game/cities/ccu/tram';
 import { BookPorter, Porter } from '../../src/game/cities/ccu/porters';
 import type { Tin } from '../../src/game/cities/ccu/muri';
 import type { Bore } from '../../src/game/cities/ccu/baan';
+import type { DhakFrame } from '../../src/game/cities/ccu/pandal';
 import { Figure, type BigFigure } from '../../src/game/cities/ccu/kumartuli';
 import type { Adda, TeaSeller, Wash } from '../../src/game/cities/ccu/adda';
 import type { ClothPanel } from '../../src/game/cities/ccu/pandal';
@@ -521,6 +522,24 @@ const bisarjanRoute = (x: number, stopAt = 0): Step[] => {
   ];
 };
 
+// ------------------------------------------------------------------ CCU-09 the canopy on the dhak's beat
+const dhakRoute = (x: number, bad?: 'walk'): Step[] => {
+  const head: Step[] = [steerHop(px(x + 1.5), 12, 'up on the block'), steerHop(px(x + 2.6), 12, 'on to the bamboo before the canopy')];
+  const beat: Step = { hold: '', until: (w) => (w.flags.dhak as DhakFrame).rising(w) && (w.flags.dhak as DhakFrame).beatT(w) < 0.8, max: 900, note: 'wait for the beat, and for the frame to start going up' };
+  if (bad === 'walk') return [...head, beat, { hold: 'R', until: X(x + 3.2), max: 120 }, steerHop(px(x + 7), 12, 'down on to the lashed bamboo'), { hold: 'R', until: X(x + 9), max: 120 }, { hold: '', until: done, max: 900, note: 'and wait under the canopy for the beat to pass' }];
+  return [
+    ...head,
+    beat,
+    { hold: 'R', until: X(x + 3.2), max: 120 },
+    steerHop(px(x + 7), 12, 'down on to the lashed bamboo'),
+    { hold: 'R', until: and(ground, X(x + 14.4)), max: 300, note: 'run under it in one go' },
+    steerHop(px(x + 17.6), 12, 'across to the bamboo'),
+    { hold: 'R', until: X(x + 18.3), max: 120 },
+    steerHop(px(x + 20.6), 10, 'on to the block'),
+    walk(x + 23.4, 'down to the pandal floor'),
+  ];
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['CCU-01'] = tourRun('onto');
   S['CCU-02'] = [...ride(px(25), px(28.5), 'past the first “aaste” (over the drain), off on the second'), walk(30)];
@@ -759,6 +778,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: '', until: (w) => (w.flags.tram10 as Tram).state === 'stop' && w.player.cx > px(x + 22), max: 2400, note: 'through the junction on the step' },
     { hold: 'R', until: and(ground, X(x + 43.5)), max: 600, note: 'off at the island, before the points' },
   ],
+  'ccu09-dhak': (x) => dhakRoute(x),
   'ccu09-chala': (x) => [
     steerHop(px(x + 3), 10, 'on to the bamboo: the wide panel goes up'),
     steerHop(px(x + 7.5), 34, 'a full jump on to the wide cloth', true),
@@ -817,10 +837,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 
 // CCU-09's lift acts: the obvious plays there
 {
-  const toLift = (): Step[] => [...pandalRoute(), ...actRoutes['ccu09-sinri'](32), ...actRoutes['ccu09-toran'](62), ...actRoutes['ccu09-chala'](88)];
+  const toLift = (): Step[] => [...pandalRoute(), ...actRoutes['ccu09-sinri'](32), ...actRoutes['ccu09-toran'](62), ...actRoutes['ccu09-chala'](88), ...dhakRoute(128)];
   mistakes['CCU-09'].push(
-    { what: 'jumping for the high bamboo before the lift', steps: [...toLift(), ...liftRoute('ccu09-uthan', 128, 'early')], cause: 'ccu-bansh' },
-    { what: 'resting on the lifted panel under the roof frame', steps: [...toLift(), ...liftRoute('ccu09-uthan', 128, 'stay')], cause: 'crushed' },
+    { what: 'waiting under the canopy for the beat to pass', steps: [...toLift().slice(0, -dhakRoute(128).length), ...dhakRoute(128, 'walk')], cause: 'crushed' },
+    { what: 'jumping for the high bamboo before the lift', steps: [...toLift(), ...liftRoute('ccu09-uthan', 152, 'early')], cause: 'ccu-bansh' },
+    { what: 'resting on the lifted panel under the roof frame', steps: [...toLift(), ...liftRoute('ccu09-uthan', 152, 'stay')], cause: 'crushed' },
   );
 }
 
