@@ -8,7 +8,7 @@ Sound: one music loop (104 bpm), no new SFX names.
 | # | Id | Name | Family [betrayal] | Ending key | Shape |
 |---|---|---|---|---|---|
 | 01 | SVP-01 | Namaste SVP | lane-sheet-flow-push [sheet-flow] | svp-lane-sun (meta only) | tour |
-<!-- route times in seconds (bot): 01 30.1, 02 25.8, 03 26.1, 04 25.8, 05 63.5, 06 36.1, 07 58.9, 08 41.3, 09 24.9, 10 98.6 -->
+<!-- route times in seconds (bot): 01 30.1, 02 25.8, 03 26.1, 04 20.6, 05 54.1, 06 21.2, 07 38.4, 08 44.0, 09 28.8, 10 87.7 -->
 
 | 02 | SVP-02 | Aari | cut-floor-saw-carriage [cut-floor] | svp-timber-stack | short |
 | 03 | SVP-03 | Magarmachh | warning-board-arrow-turns [honest-moving-sign] | svp-board-bridge | short |
@@ -37,7 +37,7 @@ Shapes: the engine allows only tour, short, long, marathon, wtf. Standard stages
 
 ### Length pass: acts added to reach the clear-time floors
 
-**Probe pass update:** five of the acts below (`svp06-lehar`, `svp07-khula`, `svp07-uthao`, `svp08-bazaar`, `svp09-hauz`) are taken out of the stages: each is the same experience as an idea that already ships (see `ldd-inbox/reports/cities/svp/LENGTH.md`). Their files stay and one line in `levels.ts` puts them back. Stages 06 to 09 are back at their round-1 lengths (36.1, 58.9, 41.3, 24.9 s). The rope and the caves (SVP's reserves) and the rope callback in the finale stay.
+**Probe pass update:** five of the acts below (`svp06-lehar`, `svp07-khula`, `svp07-uthao`, `svp08-bazaar`, `svp09-hauz`) are taken out of the stages: each is the same experience as an idea that already ships (see `ldd-inbox/reports/cities/svp/LENGTH.md`). Their files stay and one line in `levels.ts` puts them back. Round 2 then shortened rides, waits and halls so every replay after a death is 8 s or less, so stage times are now 06 21.2, 07 38.4, 08 44.0, 09 28.8 s (see LENGTH-2.md). The rope and the caves (SVP's reserves) and the rope callback in the finale stay.
 
 Each added act is a new rule in its own file, with its own cause line, a NAIVE and a FIX death in `tests/cities/svp.ts` (`actDeath`), and a route. The stage's `meta.betrayals` stays as allocated (the allocation test pins it); the extra betrayal types below are listed here and in BUILD.md for the integrator.
 
@@ -50,9 +50,12 @@ Each added act is a new rule in its own file, with its own cause line, a NAIVE a
 | 07 | `svp07-uthao` | `uthao.ts` | Godown lifts: four short lifts (two up to the roof, two down), a ledge with a hidden checkpoint between each, each stops for two seconds and then overruns the shaft. A moving walkway on the roof carries you to a gap too wide to jump from standing: a jump from it keeps its speed (the momentum beat). |
 | 08 | `svp08-bazaar` | `kadhai.ts` | Fish-fry stalls (spit-side): the counter is a wall to climb, the pan spits over one half at a time, the cook turns to the half that is next. Stand on the other half and change in the rest. Under a covered market, so the rain is not the question. |
 | 09 | `svp09-hauz` | `hauz.ts` | Drained pools (rising water): a pipe starts to run when you walk in. Get on the raft: it rises with the water and you step across at the top of the wall. The floor is drowning. |
+| 08 | `svp08-deewar` | `s08.ts` (`Block`) | Rain shadow: pick the shelter by its height, since the dry strip is as wide as the building is tall. |
+| 09 | `svp09-nali` | `nali.ts` (`Hose`) | Air hose: it lies over or under each coral arch, and under costs line. Stretch 2 has no spare. |
 | 10 | `svp10-rassi` | `s10.ts` | Callback to the mooring rope. |
+| 10 | `svp10-nali` | `s10.ts` | Callback to the air hose. |
 
-New cause keys: svp-rassi, svp-chuna, svp-lehar, svp-khula, svp-uthao, svp-tel, svp-hauz.
+New cause keys: svp-rassi, svp-chuna, svp-lehar, svp-khula, svp-uthao, svp-tel, svp-hauz, svp-nali, plus second-trap keys svp-magar2, hiran2, kichad2, eent2, rassi2, chuna2, baarish2, nali2.
 
 ## Causes and things
 
@@ -61,10 +64,10 @@ Foods: svp-machhli, svp-fishstick, svp-kela, svp-lobster, svp-padauk.
 
 ## Fairness
 
-`LDD_N=80 npm run fair -- SVP`: every stage 100% at quick and average lag, every stretch 100%. At relaxed lag (18t): 06 and 09 are 80%, 10 is 93%, the rest 100%. Output: `ldd-inbox/reports/cities/svp/fair-N80.txt`.
+`LDD_N=80 npm run fair -- SVP`: every stage 100% at quick and average lag, every stretch 100%. At relaxed lag (18t): 06 and 09 are 80%, 10 is 93%, the rest 100%. Output: `ldd-inbox/reports/cities/svp/fair-N80-4.txt`.
 
 ## Notes for WAVE1 and MECHANICS
 
-- The act ids are `svp02-chirai`, `svp03-nala`, `svp04-ghat`, `svp05-dekho`, `svp06-sanjh`, `svp07-ghat`, `svp07-doosra`, `svp07-teesra`, `svp08-gali`, `svp09-pul`, `svp05-rassi`, `svp05-choona`, `svp06-lehar`, `svp07-khula`, `svp07-uthao`, `svp08-bazaar`, `svp09-hauz`, `svp10-rassi`, `svp10-nadi`, `svp10-jad`, `svp10-saman`, `svp10-ghat`.
+- The act ids are `svp02-chirai`, `svp03-nala`, `svp04-ghat`, `svp05-dekho`, `svp06-sanjh`, `svp07-ghat`, `svp07-doosra`, `svp07-teesra`, `svp08-gali`, `svp09-pul`, `svp05-rassi`, `svp05-choona`, `svp06-lehar`, `svp07-khula`, `svp07-uthao`, `svp08-bazaar`, `svp09-hauz`, `svp08-deewar`, `svp09-nali`, `svp10-rassi`, `svp10-nali`, `svp10-nadi`, `svp10-jad`, `svp10-saman`, `svp10-ghat`.
 - Cellular Jail is a far silhouette in the backdrop only, with no gag.
 - Intro lines are plain Hindi and need a native check. Tara's intros are lies; the only truthful Tara line is stage 08 ("Awning ke neeche raho"), and that is only partly true.
