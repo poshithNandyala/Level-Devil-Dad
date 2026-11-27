@@ -24,7 +24,7 @@ export class Crumbler extends Entity {
     y: number,
     w: number,
     h: number,
-    readonly kind: 'brick' | 'dead',
+    readonly kind: 'brick' | 'dead' | 'green',
     readonly delay = 30,
   ) {
     super();
@@ -79,6 +79,18 @@ export class Crumbler extends Entity {
         }
       }
       ctx.stroke();
+    } else if (this.kind === 'green') {
+      // the finale's turned-round root: green and leafy, with the leaves going yellow, and nothing under it
+      ctx.fillStyle = '#6A7A3A';
+      ctx.fillRect(x, q.y + 2, q.w, q.h - 2);
+      ctx.fillStyle = '#7A5232';
+      ctx.fillRect(x, q.y + 4, q.w, 3);
+      ctx.fillStyle = '#B8C03A';
+      for (let c = x + 4; c < x + q.w - 3; c += 9) {
+        ctx.beginPath();
+        ctx.ellipse(c, q.y + 1, 4.6, 2.4, -0.5, 0, TAU);
+        ctx.fill();
+      }
     } else {
       // a dead root: grey, bare, no leaves
       ctx.fillStyle = '#8D8678';
@@ -244,18 +256,18 @@ export function jadRoom(): LevelDef {
 // ================================================================== the act
 export const pul: Act = {
   id: 'svp09-pul',
-  w: 112,
+  w: 115,
   advice: 'Not every root is alive. A dead root is grey and bare, with no leaves, and it crumbles like brick: only the green ones hold. Take the green ones, and skip the grey ones between them. The middle green one swings. Then the roots make a stair up and down, and a long cellar with more swinging ones.',
-  cps: [21.5, 47, 74, 93.5],
+  cps: [24.5, 49, 77, 96.5],
   paint: (g, c) => {
-    g.pit(c.x + 3, c.x + 19);
-    g.pit(c.x + 28, c.x + 44);
-    g.pit(c.x + 51, c.x + 70);
-    g.pit(c.x + 79, c.x + 90);
-    g.pit(c.x + 97, c.x + 107);
+    g.pit(c.x + 6, c.x + 22);
+    g.pit(c.x + 31, c.x + 47);
+    g.pit(c.x + 54, c.x + 73);
+    g.pit(c.x + 82, c.x + 93);
+    g.pit(c.x + 100, c.x + 110);
   },
   build: (w, c) => {
-    const x = c.x;
+    const x = c.x + 3;
     cellar(w, x + 3, x + 19, 4, 30, 'svp-eent2');
     cellar(w, x + 28, x + 44, 4, 30, 'svp-eent2');
     cellar(w, x + 51, x + 70, 4, 30, 'svp-eent2');
@@ -284,6 +296,52 @@ export const pul: Act = {
     new Root(px(x + 80), y, 64).install(w);
     new Root(px(x + 104), y, 64).install(w);
     (w.flags.swingers ??= []).push(sw, sw2, sw3, sw4);
+  },
+};
+
+// ================================================================== the finale's break: the grey root holds
+/** a grey root, dry-rooted in a stub of brick: it holds */
+function greyHolds(w: World, x: number, wd: number) {
+  w.add(
+    new Plat(px(x), FLOOR, px(wd), 20, (ctx, q) => {
+      ctx.fillStyle = '#6B3A2A';
+      ctx.fillRect(q.x + 4, q.y + 8, q.w - 8, q.h - 8);
+      ctx.fillStyle = '#8D8678';
+      ctx.fillRect(q.x, q.y, q.w, 8);
+      ctx.fillStyle = '#B5AE9C';
+      ctx.fillRect(q.x, q.y, q.w, 2);
+      ctx.strokeStyle = '#6B655A';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let c = 4; c < q.w - 3; c += 9) {
+        ctx.moveTo(q.x + c, q.y + 1);
+        ctx.lineTo(q.x + c + 3, q.y + 8);
+      }
+      ctx.stroke();
+    }),
+  );
+}
+
+/** the cellar again, with its rule turned round: the grey roots hold and the green ones go the moment you land */
+export const jadBreak: Act = {
+  id: 'svp10-jad',
+  w: 52,
+  advice: 'The ruined cellar again, and the roots have turned: the green ones were fed by the old rain and have rotted through, and they go the moment you land. The grey ones are dry-rooted in a stub of brick, and they hold. Jump from grey to grey.',
+  cps: [28],
+  paint: (g, c) => {
+    g.pit(c.x + 9, c.x + 25);
+    g.pit(c.x + 32, c.x + 48);
+  },
+  build: (w, c) => {
+    const x = c.x + 6;
+    cellar(w, x + 3, x + 19, 4, 30, 'svp-eent3');
+    cellar(w, x + 26, x + 42, 4, 30, 'svp-eent4');
+    // the first creek: grey, a green one in the way, grey, a green one in the way, grey
+    for (const [a, b] of [[3, 3], [9, 3], [15, 5]]) greyHolds(w, x + a, b);
+    for (const a of [6, 12]) new Crumbler(px(x + a), FLOOR, px(3), 7, 'green', 8).install(w);
+    // the second creek is longer between its grey roots, and the grey ones are narrower
+    for (const [a, b] of [[26, 3], [33, 2], [39, 4]]) greyHolds(w, x + a, b);
+    for (const a of [29, 35]) new Crumbler(px(x + a), FLOOR, px(4), 7, 'green', 8).install(w);
   },
 };
 

@@ -95,6 +95,8 @@ export class Herd extends Entity {
     /** the deer don't go past this x (px) */
     readonly limit: number,
     readonly cause = 'svp-hiran',
+    /** the deer are tied up: they do not follow and they do not lean */
+    readonly tied = false,
   ) {
     super();
     this.layer = 2;
@@ -138,6 +140,7 @@ export class Herd extends Entity {
     }
     for (const d of this.deer) {
       if (d.mode === 'sleep') continue;
+      if (this.tied) continue;
       const tg = this.target(d.i, w);
       if (tg === null) continue;
       const dx = Math.min(tg, this.limit) - d.x;
@@ -173,7 +176,20 @@ export class Herd extends Entity {
         }
       }
     }
-    for (const d of this.deer) deerArt(ctx, d.x, FLOOR, d.dir, d.mode, w.tick + d.i * 7, d.i % 2 === 0);
+    for (const d of this.deer) {
+      deerArt(ctx, d.x, FLOOR, d.dir, d.mode, w.tick + d.i * 7, d.i % 2 === 0);
+      if (this.tied) {
+        // tied to a peg by a short rope
+        ctx.strokeStyle = '#E8DDB5';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(d.x + 9, FLOOR - 12);
+        ctx.lineTo(d.x + 18, FLOOR - 3);
+        ctx.stroke();
+        ctx.fillStyle = '#4A3A2A';
+        ctx.fillRect(d.x + 17, FLOOR - 7, 3, 7);
+      }
+    }
     // the fritter in Dad's hand, or on the ground
     const p = w.player;
     ctx.fillStyle = '#E3A93A';
@@ -205,6 +221,8 @@ export class LateBoat extends Entity {
     readonly R0: number,
     readonly waitS: number,
     readonly goS: number,
+    /** the boatman wants a fritter for the fare: the deck is only there for someone who is carrying one */
+    readonly fare = false,
   ) {
     super();
     this.layer = 1;
@@ -241,6 +259,12 @@ export class LateBoat extends Entity {
     else if (t < this.waitS + this.goS + 1.6 + this.goS) x = this.L0 + (this.R0 - this.L0) * ease((t - this.waitS - this.goS - 1.6) / this.goS);
     else x = this.R0;
     this.docked = Math.abs(x - this.L0) < 1 && t < this.waitS + this.goS + 1.6 - 0.2;
+    if (this.fare && !w.standing(s)) {
+      s.collidable = this.herd.carrying;
+      const p = w.player;
+      // no fritter in hand and on the deck's place: the fall is the boatman's
+      if (!this.herd.carrying && p.cx > s.x - 4 && p.cx < s.x + 44 && p.y + p.h > FLOOR - 6) this.herd.lastNudge = w.tick;
+    }
     const dx = Math.round(x) - s.x;
     // the true speed, not the pixel steps it is drawn in, so a hop off the boat carries the right momentum
     s.velX = (x - this.prevX) / DT;
@@ -313,6 +337,28 @@ export const ghat: Act = {
     (w.flags.boats ??= []).push(boat);
     w.add(new Fx(null, (ctx, w2) => pitWater(ctx, x0, x1, w2), 5));
     sign(w, c.x + 6, 10.4, 3.6, 'JETTY 2', 'shop', null, 'ship');
+  },
+};
+
+// ================================================================== the finale's break: the deer are tied
+/** the last landing with the deer tied to pegs: they do not follow and do not lean, and the boatman wants the fritter for the fare */
+export const ghatTied: Act = {
+  id: 'svp10-ghat',
+  w: 34,
+  advice: 'The last landing, and tonight the deer are tied to pegs: they will not follow the fritter and they will not lean on you. The boatman wants a fritter for the fare, and his deck is only there for someone who has one in hand. Carry it aboard.',
+  cps: [1],
+  paint: (g, c) => {
+    g.pit(c.x + 17, c.x + 22);
+  },
+  build: (w, c) => {
+    const x0 = px(c.x + 17),
+      x1 = px(c.x + 23);
+    const herd = new Herd([px(c.x + 1) + 6, px(c.x + 2) + 6, px(c.x + 3) + 6], [{ x: px(c.x + 9) + 8, used: false }], [x0, x1], x0 - 8, 'svp-hiran3', true).install(w);
+    const boat = new LateBoat(herd, x0, x1 - 40, 2.0, 1.4, true).install(w);
+    (w.flags.herds ??= []).push(herd);
+    (w.flags.boats ??= []).push(boat);
+    w.add(new Fx(null, (ctx, w2) => pitWater(ctx, x0, x1, w2), 5));
+    sign(w, c.x + 11.5, 10.4, 4.2, 'FARE: 1 FRITTER', 'shop', null, 'ship');
   },
 };
 

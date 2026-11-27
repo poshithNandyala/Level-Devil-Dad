@@ -1,7 +1,10 @@
 /** Tara's line for each new death cause ('svp-...'): [what happened, how to beat it] */
 export const causeLines: Record<string, string[]> = {
   'svp-kichad2': ['Kichad! The branch springs back with the parrots gone, and the next creek was mud too.', 'Each creek has its own flock and its own horn: be on its branch when it lifts, not before.'],
+  'svp-magar3': ['Magarmachh! The board was never turned: its arrow pointed away from a crocodile that was right under you.', 'Nobody has turned the board since the crocodile moved. The ripples on the water are where it is: cross a gap when they are somewhere else.'],
+  'svp-magar4': ['Magarmachh! You read the ripples at the first gaps and then went back to the board.', 'The board is still stuck. Keep reading the ripples, all the way along the logs.'],
   'svp-magar2': ['Magarmachh! It was under the log the arrow pointed away from.', 'The arrow follows the crocodile under the logs: cross a gap only while the arrow points somewhere else.'],
+  'svp-hiran3': ['Hiran! The boatman’s deck was not there for a hand with no fritter in it.', 'The deer are tied tonight, so there is nothing to put the fritter down for: the boatman wants it for the fare. Carry it aboard.'],
   'svp-hiran2': ['Hiran! At the second landing the herd was on you too.', 'The stall is three tiles from the edge here: put the fritter down at the stall, not at the edge.'],
   'svp-kichad': ['Kichad! The piece you stood on was the piece they cut.', 'Stand on the end that stays: the boarding end of the first log, the middle of the second.'],
   'svp-aari': ['Aari! You were standing where the saw cuts.', 'The blade cuts at one line of the log. Keep a plank away from it.'],
@@ -10,6 +13,7 @@ export const causeLines: Record<string, string[]> = {
   'svp-hiran': ['Hiran! The herd nudged you off the edge.', 'The deer follow the food. Put it down well back from the pit, then wait for the boat.'],
   'svp-nazar': ['Nazar! The ledge was only a picture from the bench.', 'Stand on the footprints without moving, and the view lines up. Then run, it only holds a few seconds.'],
   'svp-saman': ['Saman! They all stood up and took the floor with them.', 'Don’t wait on the luggage: when the ship is called it goes. Cross, and get into the trench.'],
+  'svp-bheed2': ['Bheed! You came down when the crowd had gone by, and the same crowd was coming back.', 'The storm has turned the whole hall round: the crowd goes to the ship and comes back. Stay up on the tall stack for both.'],
   'svp-bheed': ['Bheed! The whole hall ran for the ship, and you were in the way.', 'Down in the trench while they run for the ship, and out again behind them.'],
   'svp-jahaz': ['Jahaz! You got on the first ship, and it sailed.', 'The first ship is the crowd’s. Wait for the second, and step over to it when it docks.'],
   'svp-nali': ['Nali! The hose ran out under the second arch.', 'The hose lies where you went. Under an arch it bends and uses up line: go over at least one arch in a stretch.'],
@@ -17,6 +21,8 @@ export const causeLines: Record<string, string[]> = {
   'svp-baarish2': ['Baarish! The building was too short for its rain shadow to hold you.', 'A building keeps off a strip of road as wide as it is tall: pick the taller one, and stand in its shadow.'],
   'svp-baarish': ['Baarish! The rain came in hard from the other side.', 'Only the lee end of an awning is dry: the end the wind blows towards. When the cloud bank shows on the other horizon, change ends.'],
   'svp-nala': ['Nala! The gutter runs like a river while it rains.', 'Cross the gutter in the lull, when it has drained.'],
+  'svp-eent3': ['Eent! The green root went the moment you landed on it.', 'The cellar has turned round: green roots rot through and go, grey ones are dry-rooted in brick and hold. Jump from grey to grey.'],
+  'svp-eent4': ['Eent! The second creek has green roots between its grey ones too, and a wider gap to jump.', 'Same rule, a longer jump: keep to the grey roots, and take a run at the wider gap.'],
   'svp-eent2': ['Eent! The brick of the cellar floor went under you, a moment after you landed.', 'The cellar is brick all the way across: only the green roots over it hold, and the middle one swings.'],
   'svp-eent': ['Eent! The brick gave way under you.', 'Brick crumbles a moment after you land on it. Roots hold, and a dead grey root is no better than brick.'],
   'svp-baha': ['Baha! The sheet of rain water carried you back into the drain.', 'Wait under the awning until the sun is out: the cloud has two lobes, and the lull between them is not the end.'],

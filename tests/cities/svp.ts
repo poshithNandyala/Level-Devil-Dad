@@ -364,7 +364,7 @@ function atAct(id: string, act: string, then: (x: number) => Step[]): Step[] {
 }
 /** a death that must happen in an added act: the NAIVE play and the obvious FIX of it */
 /** acts taken out of the stages after the uniqueness probe (docs: LENGTH.md): their routes and files stay, one line in levels.ts puts them back */
-const RETIRED = new Set(['svp06-lehar', 'svp07-khula', 'svp07-uthao', 'svp08-bazaar', 'svp09-hauz']);
+const RETIRED = new Set(['svp06-lehar', 'svp07-khula', 'svp07-uthao', 'svp08-bazaar', 'svp09-hauz', 'svp05-rassi', 'svp10-rassi']);
 function actDeath(id: string, act: string, what: string, cause: string, then: (x: number) => Step[]) {
   if (RETIRED.has(act)) return;
   (mistakes[id] ??= []).push({
@@ -380,7 +380,7 @@ function actDeath(id: string, act: string, what: string, cause: string, then: (x
 /** a route for each act, by act id */
 const patrols = (w: World) => (w.flags.patrols ?? []) as { cx: number; heading: number }[];
 /** along the logs: wait well back from each gap, and go when the crocodile is a gap or more away from it */
-function crossGaps(): Step {
+function crossGaps(get: (w: World) => { cx: number } = (w) => patrols(w)[0], margin = 86): Step {
   let W: World | null = null;
   let jt = 0;
   let committed = false;
@@ -405,8 +405,8 @@ function crossGaps(): Step {
         }
       if (d < 0) return go('R');
       const gapX = p.x + p.w + d + 8;
-      const c = patrols(w)[0];
-      const safe = Math.abs(c.cx - gapX) >= 86;
+      const c = get(w);
+      const safe = Math.abs(c.cx - gapX) >= margin;
       if (safe) committed = true;
       if (committed) {
         if (d <= 22) {
@@ -578,10 +578,32 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: and(ground, X(x + 47)), max: 600 },
   ],
   'svp10-nadi': (x) => actRoutes['svp03-nala'](x),
-  'svp10-jad': (x) => actRoutes['svp09-pul'](x),
-  'svp10-saman': (x) => actRoutes['svp07-doosra'](x),
-  'svp10-ghat': (x) => actRoutes['svp04-ghat'](x),
-  'svp09-pul': (x) => [
+  'svp10-jad': (x0) => [
+    ...greyJump(x0 + 6 + 2, x0 + 6 + 9),
+    ...greyJump(x0 + 6 + 8, x0 + 6 + 15),
+    { hold: 'R', until: and(ground, X(x0 + 6 + 22)), max: 900, note: 'along the long grey root to the ground' },
+    ...greyJump(x0 + 6 + 28, x0 + 6 + 33),
+    ...greyJump(x0 + 6 + 34, x0 + 6 + 39),
+    { hold: 'R', until: and(ground, X(x0 + 6 + 44.5)), max: 900, note: 'on to the ground' },
+  ],
+  'svp10-saman': (x) => [
+    hopUntil(and(ground, X(x + 12.5)), 'across the lashed luggage, no stopping'),
+    { hold: 'R', until: and(ground, X(x + 20)), max: 600, note: 'along the pier to the stacks' },
+    { hold: 'R', jump: 14, until: (w) => w.player.onGround && w.player.y + w.player.h < 255 && w.player.x >= px(x + 21), max: 300, note: 'up the low stack' },
+    { hold: 'R', jump: 14, until: (w) => w.player.onGround && w.player.y + w.player.h <= 241 - 28 && w.player.x >= px(x + 24), max: 300, note: 'up the tall stack' },
+    { hold: '', until: (w) => ((w.flags.backs as Crowd[])[0]).done, max: 4000, note: 'on the tall stack through the crowd going and the crowd coming back' },
+    { hold: 'R', until: and(ground, X(x + 30)), max: 600, note: 'down off the stack' },
+    { hold: 'R', until: and(ground, X(x + 47)), max: 900 },
+  ],
+  'svp10-ghat': (x) => [
+    { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall, a fritter in hand' },
+    { hold: 'R', until: X(x + 15.2), max: 600, note: 'on to the edge: the deer are tied' },
+    { policy: (w) => (boatA(w).docked ? go('R') : pace(w)), until: (w) => boatA(w).docked && w.standing(boatA(w).boat.solid), max: 1800, note: 'pace about with the fritter until the boat is in, then step on' },
+    { hold: '', until: (w) => boatA(w).boat.x >= boatA(w).R0 - 1, max: 900, note: 'ride it across' },
+    { hold: 'R', until: and(ground, X(x + 24)), max: 400, note: 'off on to the far bank' },
+    { hold: 'R', until: and(ground, X(x + 33.5)), max: 600 },
+  ],
+  'svp09-pul': (x0) => ((x) => [
     rootsPolicy([x + 4, x + 10, x + 17], px(x + 20), 'the green roots, skipping the grey step', and(ground, (w) => w.player.x >= px(x + 20) + 2)),
     { hold: 'R', until: and(ground, X(x + 22.5)), max: 300 },
     rootsPolicy([x + 29, x + 35, x + 41], px(x + 45), 'the second creek of ruin', and(ground, (w) => w.player.x >= px(x + 45) + 2), 74, 26),
@@ -592,7 +614,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: and(ground, X(x + 94.5)), max: 300, note: 'across the sound floor in the middle' },
     rootsPolicy([x + 98, x + 104], px(x + 108), 'the second half of the long cellar', and(ground, (w) => w.player.x >= px(x + 108) + 2), 60, 24),
     { hold: 'R', until: and(ground, X(x + 110)), max: 300 },
-  ],
+  ])(x0 + 3),
   'svp08-gali': () => [streetUntil(6, 'the longer street, awning to awning')],
   'svp08-deewar': () => [streetUntil(9, 'the tall buildings, not the short ones'), { policy: streetPolicy, until: (w) => !wx(w).raining && wx(w).left > 9000, max: 4000, note: 'in the shadow of the tall one until both rains have gone' }],
   'svp07-ghat': (x) => [
@@ -648,6 +670,15 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   ],
 };
 
+/** back and forth a few steps at a time, not standing still (standing still puts the fritter down) */
+const pace = (w: World): Out => go(Math.floor(w.tick / 24) % 2 ? 'L' : 'R');
+/** from the end of a grey root at tile `a`: a jump to the grey root at tile `b` */
+const greyJump = (a: number, b: number): Step[] => [
+  { hold: 'R', until: and(ground, X(a + 0.4)), max: 900, note: 'to the end of the grey root' },
+  { hold: 'R', jump: 16, ticks: 16, long: true, note: 'jump the green one' },
+  { hold: 'R', until: and(ground, X(b)), max: 600, note: 'on the next grey root' },
+];
+const doorGaps = crossGaps((w) => w.flags.doorPatrol as { cx: number }, 56);
 /** a policy for each door ending, by kind */
 const endingPolicies: Record<string, Policy> = {
   'svp-dweep-gate'(w) {
@@ -709,9 +740,8 @@ const endingPolicies: Record<string, Policy> = {
     return h.carrying ? go('') : go('R');
   },
   'svp-board-bridge'(w, _m, d) {
-    const b = w.flags.bridge as { state: string; x0: number };
-    if (b.state === 'down') return go(toward(w, d.x + 8, 1) || 'R');
-    return go(toward(w, b.x0 - 8, 2));
+    if (w.player.cx > d.x - 36) return go(toward(w, d.x + 8, 1) || 'R');
+    return doorGaps.policy!(w) as Out;
   },
   'svp-timber-stack'(w, _m, d) {
     const st = w.flags.stack as { zone: { x: number; w: number } };
@@ -775,17 +805,14 @@ later('SVP-04', 'svp04-ghat', 'svp-hiran2', (x) => [
   { hold: 'R', until: X(x + 15.5), max: 600 },
   ...Array.from({ length: 40 }, (): Step => ({ hold: '', jump: 8, ticks: 40, note: 'hopping at the edge to keep warm' })),
 ]);
-later('SVP-05', 'svp05-rassi', 'svp-rassi', (x) => [
-  { hold: 'R', until: X(x + 9.4), max: 600 },
-  { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'jump for the boat from the edge' },
-]);
+later('SVP-05', 'svp05-choona', 'svp-chuna', () => [hopUntil((w) => w.state !== 'play', 'hop the rock, the drain, on')]);
 later('SVP-06', 'svp06-sanjh', 'svp-kichad2', (x) => [
   { hold: 'R', until: X(x + 3.4), max: 600 },
   { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'jump for the next cliff, no branch' },
 ]);
 // 10: the second attempt gets through the mill with the food put down, and dies at the creek (a different trap from the blade)
 fix['SVP-10'] = {
-  cause: 'svp-magar2',
+  cause: 'svp-magar3',
   get steps() {
     return atAct('SVP-10', 'svp10-nadi', () => [hopUntil((w) => w.state !== 'play', 'hop the logs without reading the arrow')]);
   },
@@ -795,13 +822,7 @@ fix['SVP-10'] = {
   cause: 'svp-aari',
   steps: [{ hold: 'R', until: (w) => herd0(w).carrying, max: 600 }, putDown(herd0, 'put it down'), board((w) => hall(w, -1), 'on to the log'), { policy: (w) => go(toward(w, hall(w, -1).L + 48, 2)), until: (w) => w.state !== 'play', max: 2400, note: 'the middle of the log' }],
 });
-actDeath('SVP-10', 'svp10-jad', 'walk the brick floor of the cellar', 'svp-eent2', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'across the brick' }]);
 actDeath('SVP-10', 'svp10-saman', 'sit down on the luggage like everyone', 'svp-bheed', (x) => [hopUntil(and(ground, X(x + 11.5)), 'on to the luggage'), { hold: '', until: (w) => w.state !== 'play', max: 2400, note: 'wait for the ship' }]);
-actDeath('SVP-10', 'svp10-ghat', 'carry the food to the edge and hop there waiting for the boat', 'svp-hiran2', (x) => [
-  { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },
-  { hold: 'R', until: X(x + 15.5), max: 600 },
-  ...Array.from({ length: 40 }, (): Step => ({ hold: '', jump: 8, ticks: 40, note: 'hopping at the edge to keep warm' })),
-]);
 
 // ------------------------------------------------------------------ the plays that must die in an added act
 actDeath('SVP-07', 'svp07-uthao', 'ride the lift up and stay aboard past the last stop', 'svp-uthao', () => [
@@ -839,6 +860,39 @@ actDeath('SVP-10', 'svp10-nali', 'walk under both arches, the easy way', 'svp-na
 actDeath('SVP-10', 'svp10-nali', 'one arch over, one under, then under both in the next stretch', 'svp-nali2', (x) => [
   ...overArch(x + 8),
   { hold: 'R', until: (w) => w.state !== 'play', max: 2400, note: 'and on under the arches, as the first stretch allowed' },
+]);
+// ---- 10: the callbacks that break their rules
+const arrowAtLast = (w: World) => ({ cx: (patrols(w)[0] as unknown as { gaps: number[] }).gaps[3] });
+actDeath('SVP-10', 'svp10-nadi', 'trust the board: its arrow is on the last gap, so the first gaps look safe', 'svp-magar3', () => [{ ...crossGaps(arrowAtLast), until: (w) => w.state !== 'play', max: 3600, note: 'along the logs by the stuck arrow' }]);
+actDeath('SVP-10', 'svp10-nadi', 'the ripples for the first two gaps, then back to the board', 'svp-magar4', (x) => [
+  { ...crossGaps(), until: (w) => w.player.x > px(x + 15.5) && w.player.onGround, max: 3600, note: 'the first two gaps by the ripples' },
+  { ...crossGaps(arrowAtLast), until: (w) => w.state !== 'play', max: 3600, note: 'then by the board again' },
+]);
+actDeath('SVP-10', 'svp10-jad', 'along the green roots, as the cellar taught', 'svp-eent3', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'along the green roots' }]);
+actDeath('SVP-10', 'svp10-jad', 'the first creek by the grey roots, the second by the green', 'svp-eent4', (x) => [
+  ...actRoutes['svp10-jad'](x).slice(0, 7),
+  { hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'and on along the green roots' },
+]);
+actDeath('SVP-10', 'svp10-saman', 'wait in the open on the pier: there is no trench tonight', 'svp-bheed', (x) => [
+  hopUntil(and(ground, X(x + 12.5)), 'across the lashed luggage'),
+  { hold: 'R', until: and(ground, X(x + 20)), max: 600, note: 'along the pier' },
+  { hold: '', until: (w) => w.state !== 'play', max: 3000, note: 'wait there for the crowd' },
+]);
+actDeath('SVP-10', 'svp10-saman', 'up on the tall stack for the first crowd, down at once, and out into the one coming back', 'svp-bheed2', (x) => [
+  ...actRoutes['svp10-saman'](x).slice(0, 4),
+  { hold: '', until: (w) => ((w.flags.halls as Hall[])[0]).crowd.done, max: 4000, note: 'the first crowd has gone by' },
+  { hold: 'R', until: and(ground, X(x + 29.5)), max: 600, note: 'down off the stack' },
+  { hold: '', until: (w) => w.state !== 'play', max: 3000, note: 'and wait there: it is over' },
+]);
+actDeath('SVP-10', 'svp10-ghat', 'put the fritter down at the stall, as before, and take the boat', 'svp-hiran3', (x) => [
+  { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },
+  putDown(herdA, 'put it down'),
+  ...boatRide(herdA, boatA, px(x + 17), px(x + 24)),
+]);
+actDeath('SVP-10', 'svp10-ghat', 'carry the fritter to the edge and step off while the boat is away', 'fell', (x) => [
+  { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },
+  { hold: 'R', until: X(x + 15.2), max: 600, note: 'to the edge' },
+  { policy: (w) => (boatA(w).boat.x >= boatA(w).R0 - 1 ? go('R') : pace(w)), until: (w) => w.state !== 'play', max: 1800, note: 'pace about, and walk off when the boat has gone back across' },
 ]);
 actDeath('SVP-08', 'svp08-deewar', 'shelter against the first building you come to, the short shop', 'svp-baarish', () => [
   { policy: (w) => go(toward(w, (wx(w).awnings[7] as unknown as { bx: number; bw: number }).bx + 40, 2)), until: (w) => w.state !== 'play', max: 3000, note: 'in the shadow of the short shop' },

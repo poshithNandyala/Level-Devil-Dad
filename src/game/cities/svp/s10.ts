@@ -12,11 +12,10 @@ import { Grid } from '../../levels/grid';
 import { lines as L, X } from './lines';
 import { px } from './kit';
 import { SawHall } from './s02';
-import { nala } from './s03';
-import { Herd, ghat } from './s04';
-import { pul } from './s09';
-import { doosra } from './s07';
-import { rassi } from './rassi';
+import { nala, buildNala } from './s03';
+import { Herd, ghatTied } from './s04';
+import { jadBreak } from './s09';
+import { lashedHall } from './s07';
 import { nali } from './nali';
 import { FLOOR } from '../../levels/endkit';
 
@@ -50,15 +49,13 @@ export function dweepRoom(): LevelDef {
 }
 
 /** the island's other places, as acts of the finale: the same ideas, one after another */
-export const nadi: Act = { ...nala, id: 'svp10-nadi', advice: 'The crocodile’s creek: the board’s arrow shows where it is under the logs. Cross a gap when the arrow is pointing at another one.' };
-export const jadFin: Act = { ...pul, id: 'svp10-jad', advice: 'The ruined cellar: green roots hold, grey roots and brick do not, and the middle green root swings.' };
-export const samanFin: Act = { ...doosra, id: 'svp10-saman', advice: 'The luggage hall: the luggage is the floor until the real call, the crowd comes from the quay end, and the trench is the place to be.' };
-
-export const rassiFin: Act = { ...rassi, id: 'svp10-rassi', advice: 'The quay, with the boats tied up on the far banks: the rope answers to hops by its bollard, and every hop brings the boat in a little. When it is alongside, step on.' };
+export const nadi: Act = { ...nala, id: 'svp10-nadi', advice: 'The crocodile’s creek again, and the board has been left as it was: nobody has turned its arrow since the crocodile moved. Look at the water instead: the ripples are where the crocodile is.', build: (w, c) => buildNala(w, c.x, true) };
+export const jadFin: Act = jadBreak;
+export const samanFin: Act = lashedHall;
 
 export const naliFin: Act = { ...nali, id: 'svp10-nali', advice: 'The reef at the island’s edge: the hose lies where you went. Over an arch costs nothing, under one bends it and uses line: one arch under is all the first pontoon can spare, and the second has no spare at all.' };
 
-export const ghatFin: Act = { ...ghat, id: 'svp10-ghat', advice: 'The last landing: the stall is by the edge, the herd follows the food, and the boat is late. Put the food down where you are and wait for the boat.' };
+export const ghatFin: Act = ghatTied;
 
 // ================================================================== the door: the island’s gate
 export const dweepGate: Ending = {

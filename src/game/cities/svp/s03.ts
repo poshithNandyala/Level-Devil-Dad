@@ -5,7 +5,6 @@
 // The door: the board at the pit folds down into a bridge for someone who stands by it.
 import { Entity, type LevelDef, type World } from '../../world';
 import { DT } from '../../constants';
-import { overlapXYWH } from '../../constants';
 import { door, rival, collectible } from '../../levels/kit';
 import type { Act } from '../../levels/acts';
 import type { Ending } from '../../levels/endkit';
@@ -251,16 +250,25 @@ class Patrol extends Entity {
   started = false;
   moving = false;
   hurt: Hurt;
+  private cause0: string;
   private now = 0;
   constructor(
     readonly x0: number,
     readonly x1: number,
     readonly gaps: number[],
+    /** where it goes and rests (the gaps by default); only the gaps are deadly */
+    readonly stops: number[] = gaps,
+    /** it wakes when Dad is past this x */
+    readonly startX = x0 + 16,
+    cause = 'svp-magar2',
+    /** the cause of the last two gaps */
+    readonly cause2 = cause,
   ) {
     super();
     this.layer = 5;
-    this.cx = gaps[0];
-    this.hurt = new Hurt(0, FLOOR - 40, 22, 48, 'svp-magar2', null);
+    this.cx = stops[0];
+    this.cause0 = cause;
+    this.hurt = new Hurt(0, FLOOR - 40, 22, 48, cause, null);
     this.hurt.on = false;
   }
   aim() {
@@ -268,13 +276,13 @@ class Patrol extends Entity {
   }
   /** px/s toward its next gap, 0 while it rests */
   get heading() {
-    return this.rest > 0 ? 0 : Math.sign(this.gaps[this.idx] - this.cx);
+    return this.rest > 0 ? 0 : Math.sign(this.stops[this.idx] - this.cx);
   }
   update(w: World) {
     this.now = w.tick;
     const p = w.player;
     if (!this.started) {
-      if (p.cx > this.x0 + 16 && p.cx < this.x1) {
+      if (p.cx > this.startX && p.cx < this.x1) {
         this.started = true;
         this.rest = 150;
       } else return;
@@ -283,14 +291,14 @@ class Patrol extends Entity {
       this.rest--;
       if (this.rest === 0) {
         let n = this.idx + this.dir;
-        if (n < 0 || n >= this.gaps.length) {
+        if (n < 0 || n >= this.stops.length) {
           this.dir = (-this.dir) as 1 | -1;
           n = this.idx + this.dir;
         }
         this.idx = n;
       }
     } else {
-      const t = this.gaps[this.idx];
+      const t = this.stops[this.idx];
       const step = 34 * DT;
       if (Math.abs(t - this.cx) <= step) {
         this.cx = t;
@@ -299,6 +307,7 @@ class Patrol extends Entity {
     }
     const gx = this.gaps.find((g) => Math.abs(g - this.cx) < 10);
     const inWater = Math.abs(p.cx - this.cx) < 18 && p.y + p.h > FLOOR + 14;
+    this.hurt.cause = gx !== undefined && this.gaps.indexOf(gx) >= 2 ? this.cause2 : this.cause0;
     this.hurt.on = gx !== undefined || inWater;
     if (this.hurt.on) this.lunge = w.tick;
     this.hurt.x = inWater ? this.cx - 11 : (gx ?? this.cx) - 8;
@@ -315,147 +324,114 @@ class Patrol extends Entity {
   }
 }
 
-export const nala: Act = {
-  id: 'svp03-nala',
-  w: 36,
-  advice: 'A longer creek, and this time the crocodile is already in the water, strolling to and fro under the logs. The board’s arrow shows where it is. It comes up through a gap to whoever is jumping it: cross a gap when the arrow is pointing at another one.',
-  cps: [9.6, 15.6, 21.6],
-  paint: (g, c) => {
-    g.pit(c.x + 3, c.x + 33).fill(c.x + 3, c.x + 33, 17, 17, '#');
-  },
-  build: (w, c) => {
-    const x = c.x;
-    const spans: [number, number][] = [
-      [x + 3, x + 8],
-      [x + 9, x + 14],
-      [x + 15, x + 20],
-      [x + 21, x + 26],
-      [x + 27, x + 34],
-    ];
-    const logs: Plat[] = spans.map(([a, b]) => {
-      const p = new Plat(px(a), FLOOR, px(b - a), 12, (ctx, q) => {
+/** the long creek; `stale` is the finale's break: the board is not turned any more, read the ripples */
+export function buildNala(w: World, x: number, stale: boolean) {
+  const spans: [number, number][] = [
+    [x + 3, x + 8],
+    [x + 9, x + 14],
+    [x + 15, x + 20],
+    [x + 21, x + 26],
+    [x + 27, x + 34],
+  ];
+  for (const [a, b] of spans) {
+    w.add(
+      new Plat(px(a), FLOOR, px(b - a), 12, (ctx, q) => {
         ctx.fillStyle = '#7A3E1D';
         ctx.fillRect(q.x, q.y, q.w, q.h);
         ctx.fillStyle = '#A8683A';
         ctx.fillRect(q.x, q.y, q.w, 4);
         ctx.fillStyle = 'rgba(0,0,0,0.25)';
         ctx.fillRect(q.x, q.y + q.h - 2, q.w, 2);
-      });
-      w.add(p);
-      return p;
-    });
-    void logs;
-    const gaps = [x + 8.5, x + 14.5, x + 20.5, x + 26.5].map(px);
-    const pat = new Patrol(px(x + 3), px(x + 34), gaps);
-    w.add(pat);
-    w.add(pat.hurt);
-    (w.flags.patrols ??= []).push(pat);
-    w.add(new Board(px(x + 0.6), px(10.6), () => pat.aim()));
-    w.add(
-      new Fx(null, (ctx, w2) => {
-        const g = ctx.createLinearGradient(0, FLOOR + 6, 0, FLOOR + 32);
-        g.addColorStop(0, 'rgba(70,170,190,0.55)');
-        g.addColorStop(1, 'rgba(18,90,110,0.8)');
-        ctx.fillStyle = g;
-        ctx.fillRect(px(x + 3), FLOOR + 6, px(31), 26);
-        void w2;
-      }, 6),
+      }),
     );
+  }
+  const gaps = [x + 8.5, x + 14.5, x + 20.5, x + 26.5].map(px);
+  const pat = new Patrol(px(x + 3), px(x + 34), gaps, gaps, px(x + 3) + 16, stale ? 'svp-magar3' : 'svp-magar2', stale ? 'svp-magar4' : 'svp-magar2');
+  w.add(pat);
+  w.add(pat.hurt);
+  (w.flags.patrols ??= []).push(pat);
+  // the stale board points at the last gap and stays there: nobody turned it
+  const stuck = { x: gaps[3], y: FLOOR + 14 };
+  w.add(new Board(px(x + 0.6), px(10.6), () => (stale ? stuck : pat.aim())));
+  w.add(
+    new Fx(null, (ctx, w2) => {
+      const g = ctx.createLinearGradient(0, FLOOR + 6, 0, FLOOR + 32);
+      g.addColorStop(0, 'rgba(70,170,190,0.55)');
+      g.addColorStop(1, 'rgba(18,90,110,0.8)');
+      ctx.fillStyle = g;
+      ctx.fillRect(px(x + 3), FLOOR + 6, px(31), 26);
+      if (stale && pat.started) {
+        // the ripples follow the crocodile: rings on the water over it
+        ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+        ctx.lineWidth = 1;
+        for (let k = 0; k < 3; k++) {
+          const r = 5 + (((w2.tick >> 1) + k * 9) % 27);
+          ctx.globalAlpha = 1 - r / 34;
+          ctx.beginPath();
+          ctx.ellipse(pat.cx, FLOOR + 8, r, r * 0.28, 0, 0, TAU);
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+      }
+    }, 6),
+  );
+}
+
+export const nala: Act = {
+  id: 'svp03-nala',
+  w: 36,
+  advice: 'A longer creek, and this time the crocodile is already in the water, strolling to and fro under the logs. The board’s arrow shows where it is. It comes up through a gap to whoever is jumping it: cross a gap when the arrow is pointing at another one.',
+  cps: [9.1, 15.1, 21.1],
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 33).fill(c.x + 3, c.x + 33, 17, 17, '#');
   },
+  build: (w, c) => buildNala(w, c.x, false),
 };
 
-// ================================================================== the door: the board that folds into a bridge
+// ================================================================== the door: the board's arrow and the door's log
+// Round 3 (allocation v3, DECISIONS I4): the old door folded the board into a bridge for someone standing by it, and
+// that is Kolkata's "stand still so a bridge is made for you". Now the door is 03's own rule: the croc is under the
+// door's logs, the board's arrow points at the log it is under, and the gap is safe when the arrow points away.
 export const boardBridge: Ending = {
-  space: 16,
+  space: 18,
   after: 4,
-  advice: 'A pit of crocodile water sits in front of the door, too wide to jump. The board at its edge folds down into a bridge for someone who stands right by it for a moment: don’t run at the pit.',
+  advice: 'The door is across the creek on two logs with one gap between, and the crocodile is under them. The board by the creek has its arrow on whichever log the crocodile is under: jump the gap when the arrow points away from it.',
   paint: (g, D) => {
-    g.pit(D - 11, D - 3).fill(D - 11, D - 3, 17, 17, '#');
+    g.pit(D - 13, D - 3).fill(D - 13, D - 3, 17, 17, '#');
   },
   build(w, d) {
     const D = Math.round(d.x / 16);
-    const x0 = px(D - 11),
-      x1 = px(D - 2);
-    const hurt = new Hurt(x0, FLOOR + 8, x1 - x0, 24, 'svp-magar', null);
-    w.add(hurt);
-    const bridge = new Plat(x0, FLOOR, x1 - x0, 12, (ctx, q) => {
-      ctx.fillStyle = '#F4ECD6';
-      ctx.fillRect(q.x, q.y, q.w, q.h);
-      ctx.strokeStyle = '#C0392B';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(q.x + 1, q.y + 1, q.w - 2, q.h - 2);
-      text(ctx, 'MAGARMACHH   CROCODILE', q.x + q.w / 2, q.y + 6, 6.5, '#8A1F14', '');
-    });
-    bridge.solid.collidable = false;
-    bridge.visible = false;
-    w.add(bridge);
-    let still = 0;
-    let angle = 0;
-    let state: 'up' | 'fold' | 'down' = 'up';
+    const spans: [number, number][] = [
+      [D - 13, D - 8],
+      [D - 7, D - 2],
+    ];
+    for (const [a, b] of spans) {
+      w.add(
+        new Plat(px(a), FLOOR, px(b - a), 12, (ctx, q) => {
+          ctx.fillStyle = '#7A3E1D';
+          ctx.fillRect(q.x, q.y, q.w, q.h);
+          ctx.fillStyle = '#A8683A';
+          ctx.fillRect(q.x, q.y, q.w, 4);
+          ctx.fillStyle = 'rgba(0,0,0,0.25)';
+          ctx.fillRect(q.x, q.y + q.h - 2, q.w, 2);
+        }),
+      );
+    }
+    const gap = px(D - 7.5);
+    const pat = new Patrol(px(D - 13), px(D - 2), [gap], [gap, px(D - 12), gap, px(D - 3.5)], px(D - 15.5));
+    w.add(pat);
+    w.add(pat.hurt);
+    w.add(new Board(px(D - 17), px(10.6), () => pat.aim()));
+    w.flags.doorPatrol = pat;
     w.flags.twist = 'pit';
-    w.flags.bridge = { get state() { return state; }, x0 };
-    w.onTick((w2) => {
-      const p = w2.player;
-      if (state === 'up') {
-        const by = p.cx > x0 - 22 && p.cx < x0 + 4 && p.onGround && Math.abs(p.vx) < 3;
-        still = by ? still + 1 : 0;
-        if (still > 70) {
-          state = 'fold';
-          w2.sfx('slide', x0, FLOOR);
-        }
-      } else if (state === 'fold') {
-        angle = Math.min(1, angle + 0.03);
-        if (angle >= 1) {
-          state = 'down';
-          bridge.show();
-          bridge.visible = false;
-          w2.flags.twist = 'bridge';
-        }
-      }
-    });
     w.add(
-      new Fx(null, (ctx, w2) => {
+      new Fx(null, (ctx) => {
         const g = ctx.createLinearGradient(0, FLOOR + 6, 0, FLOOR + 32);
         g.addColorStop(0, 'rgba(70,170,190,0.55)');
         g.addColorStop(1, 'rgba(18,90,110,0.8)');
         ctx.fillStyle = g;
-        ctx.fillRect(x0, FLOOR + 6, x1 - x0, 26);
-        for (let k = 0; k < 3; k++) crocBody(ctx, x0 + 24 + k * 38 + ((w2.tick >> 4) % 3), FLOOR + 14, 30, 1, 0.1);
-        ctx.fillStyle = 'rgba(70,170,190,0.55)';
-        ctx.fillRect(x0, FLOOR + 14, x1 - x0, 18);
-        // the board: upright by the edge, folding down across the pit
-        const bx = x0 - 18;
-        if (state === 'up') {
-          ctx.fillStyle = '#4A3A2A';
-          ctx.fillRect(bx + 4, FLOOR - 30, 3, 30);
-          ctx.fillStyle = '#F4ECD6';
-          ctx.fillRect(bx - 6, FLOOR - 52, 40, 22);
-          ctx.strokeStyle = '#C0392B';
-          ctx.lineWidth = 2;
-          ctx.strokeRect(bx - 5, FLOOR - 51, 38, 20);
-          text(ctx, 'MAGARMACHH', bx + 14, FLOOR - 45, 6, '#8A1F14', '');
-          text(ctx, 'CROCODILE', bx + 14, FLOOR - 36, 6, '#3A1E12', '');
-        } else if (state === 'fold') {
-          ctx.save();
-          ctx.translate(x0, FLOOR);
-          ctx.rotate(-Math.PI / 2 + angle * (Math.PI / 2));
-          ctx.fillStyle = '#F4ECD6';
-          ctx.fillRect(0, -6, x1 - x0, 12);
-          ctx.strokeStyle = '#C0392B';
-          ctx.lineWidth = 2;
-          ctx.strokeRect(1, -5, x1 - x0 - 2, 10);
-          ctx.restore();
-        } else {
-          ctx.fillStyle = '#F4ECD6';
-          ctx.fillRect(x0, FLOOR, x1 - x0, 12);
-          ctx.strokeStyle = '#C0392B';
-          ctx.lineWidth = 2;
-          ctx.strokeRect(x0 + 1, FLOOR + 1, x1 - x0 - 2, 10);
-          text(ctx, 'MAGARMACHH   CROCODILE', (x0 + x1) / 2, FLOOR + 6, 6.5, '#8A1F14', '');
-        }
-        void w2;
+        ctx.fillRect(px(D - 13), FLOOR + 6, px(11), 26);
       }, 6),
     );
-    void overlapXYWH;
   },
 };

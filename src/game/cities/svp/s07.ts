@@ -48,11 +48,14 @@ export class Crowd extends Entity {
     readonly x1: number,
     readonly speed = 150,
     readonly width = 72,
+    cause = 'svp-bheed',
+    /** only the legs and the bags sweep: whoever is up on a tall stack is over them */
+    low = false,
   ) {
     super();
     this.layer = 3;
     this.x = x0;
-    this.hurt = new Hurt(x0, FLOOR - 52, width, 53, 'svp-bheed', null);
+    this.hurt = low ? new Hurt(x0, FLOOR - 24, width, 25, cause, null) : new Hurt(x0, FLOOR - 52, width, 53, cause, null);
     this.hurt.on = false;
   }
   go() {
@@ -101,6 +104,8 @@ export class Hall extends Entity {
     /** a false alarm first: the call that is not the call */
     readonly alarmAfter = 0,
     readonly seatsOn: number[] = [],
+    /** lashed down for the storm: the luggage stays after the call */
+    readonly lashed = false,
   ) {
     super();
     this.layer = 1;
@@ -153,10 +158,11 @@ export class Hall extends Entity {
     }
     if (t >= this.callAfter) {
       this.called = true;
-      for (const p of this.stacks) {
-        p.hide();
-        w.emit('fx', p.x + p.w / 2, p.y + 6, { kind: 'poof', w: p.w, h: p.h });
-      }
+      if (!this.lashed)
+        for (const p of this.stacks) {
+          p.hide();
+          w.emit('fx', p.x + p.w / 2, p.y + 6, { kind: 'poof', w: p.w, h: p.h });
+        }
       w.sfx('thud', this.gapX[0], FLOOR - 40);
       w.say('BHOOOONG!', this.gapX[0] + 40, FLOOR - 90, 1.6, 'npc');
       this.crowd.go();
@@ -455,6 +461,56 @@ export const teesra: Act = {
         ctx.lineWidth = 1;
         ctx.strokeRect(bx + 0.5, FLOOR - 81.5, 63, 17);
         text(ctx, 'WRONG SHIP', bx + 32, FLOOR - 73, 7, '#F2A33A', '');
+      }, 3),
+    );
+  },
+};
+
+// ================================================================== the finale's break of the halls: the luggage is lashed down
+/** the luggage is lashed for the storm: it stays after the call, there is no trench, and the crowd goes by under a tall stack */
+export const lashedHall: Act = {
+  id: 'svp10-saman',
+  w: 48,
+  advice: 'The luggage hall again, but the storm is coming and every bag is lashed down with rope: it stays after the call. There is no trench tonight. The crowd still runs for the ship, and then comes back: look for a stack that is tall enough to be over them.',
+  cps: [],
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 4, x + 11);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const crowd = new Crowd(px(x + 42), px(x + 13), 250, 72, 'svp-bheed', true);
+    const back = new Crowd(px(x + 13), px(x + 44), 250, 72, 'svp-bheed2', true);
+    const hall = new Hall(
+      [
+        { x: px(x + 4), w: px(3), h: 16 },
+        { x: px(x + 7), w: px(5), h: 24 },
+        { x: px(x + 21), w: px(3), h: 16 },
+        { x: px(x + 24), w: px(4), h: 32 },
+      ],
+      300,
+      crowd,
+      [px(x + 4), px(x + 12)],
+      0,
+      [px(x + 38) + 8, px(x + 39) + 8, px(x + 40) + 8, px(x + 41) + 8],
+      true,
+    ).install(w);
+    w.add(back);
+    w.add(back.hurt);
+    crowd.onArrive = (w2) => w2.after(1.6, () => back.go());
+    (w.flags.halls ??= []).push(hall);
+    (w.flags.backs ??= []).push(back);
+    w.add(
+      new Fx(null, (ctx) => {
+        // the rope lashings over the tall stack
+        ctx.strokeStyle = '#E8DDB5';
+        ctx.lineWidth = 1.2;
+        for (const sx of [px(x + 24) + 8, px(x + 24) + 30, px(x + 24) + 52]) {
+          ctx.beginPath();
+          ctx.moveTo(sx, FLOOR - 32);
+          ctx.lineTo(sx, FLOOR);
+          ctx.stroke();
+        }
       }, 3),
     );
   },
