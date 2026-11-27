@@ -2,7 +2,7 @@
 // with their acts and door endings.
 import { Entity, type Hazard, type LevelDef, type World } from '../../world';
 import { lines as L } from './lines';
-import { collectible, door, px, rival, sign, prop } from '../../levels/kit';
+import { collectible, door, px, rival, shot, sign, prop } from '../../levels/kit';
 import { type Act, G, pool } from '../../levels/acts';
 import { onPass } from '../../levels/trolls';
 import { DT } from '../../constants';
@@ -765,7 +765,36 @@ const rubbleOctopus: Act = {
   },
 };
 
-export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, risingTide, tideHoles] };
+/** KVT-10 act, KVT-05 turned over: the tuna boat flings its catch along the pier again, but higher, over a
+ *  standing dad's head. Hopping them, as in Minicoy, meets them. Walk under them; hop the gaps in the pier just
+ *  after a fish has gone over. */
+const highTuna: Act = {
+  id: 'kvt10-choora',
+  w: 34,
+  advice: 'The tuna fly higher here, right over your head while you walk: don’t hop them, that is where they are. Hop the gaps in the pier just after one has gone over.',
+  paint: (g, c) => {
+    for (const t of [10, 18, 26]) g.pit(c.x + t, c.x + t);
+  },
+  build: (w, c) => {
+    const { X } = c;
+    for (const t of [10, 18, 26]) pool(w, c.x + t, c.x + t + 1, 15.3, { colors: LAGOON });
+    let on = false;
+    const fling = () => {
+      if (w.state !== 'play') return;
+      if (w.player.x < X(33)) shot(w, 'kvt-tuna', X(34), FLOOR - 34, -170, 0, 0, 'hit');
+      w.after(1.3, fling);
+    };
+    onPass(w, X(1), () => {
+      if (on) return;
+      on = true;
+      fling();
+    });
+    sign(w, c.x + 0.4, G - 4.4, 3.4, 'TUNA', 'wood', null, 'mind your head');
+    onPass(w, X(2), (w2) => taraSays(w2, 'Meen varunnu, chaadu! | Fish coming, jump!', 2.4));
+  },
+};
+
+export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, highTuna, risingTide, tideHoles] };
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {

@@ -163,6 +163,18 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...stepUp(x + 16),
     { hold: 'R', until: and(ground, X(x + 30)), max: 600 },
   ],
+  'kvt10-choora': (x) => {
+    /** no tuna on its way within a second of reaching Dad */
+    const clear = (w: World) => !w.entities.some((e: any) => e.kind === 'kvt-tuna' && e.alive && e.x > w.player.x - 12 && e.x - w.player.x < 130);
+    const gap = (t: number, note: string): Step[] => [
+      { hold: 'R', until: X(x + t - 1.3), max: 400, note },
+      { hold: '', until: still, max: 60 },
+      { hold: '', until: clear, max: 400 },
+      { hold: 'R', jump: 10, ticks: 24 },
+      { hold: '', until: ground, max: 200 },
+    ];
+    return [...gap(10, 'walk under the tuna; hop the gap once one has gone over'), ...gap(18, 'the next gap'), ...gap(26, 'and the last'), { hold: 'R', until: X(x + 34), max: 400 }];
+  },
   'kvt10-veliyettam': (x) => [...hop(x + 1.6, 12, 'from head to head, never stopping'), ...hop(x + 6.6, 12, 'the next head'), ...hop(x + 11.6, 12, 'the next'), ...hop(x + 16.6, 12, 'and the shore'), { hold: 'R', until: X(x + 24), max: 300 }],
   'kvt10-irakkam': (x) => {
     const tide = (i: number) => (w: World) => (w.flags['kvt10-irakkam:tide'] as boolean[])[i] && still(w);
@@ -716,7 +728,15 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   fix['KVT-10'] = { steps: [...upTo(S['KVT-10'], 'the far side of the bare hole: it goes right through'), ...hop(32 + 7.0, 12, 'into the dark hole'), dies], cause: 'splash' };
   mistakes['KVT-10'] = [
     { what: 'land on the pink head: it was yellow a moment ago', steps: [...upTo(S['KVT-10'], 'over the pink one: that pink moved'), ...hop(32 + 22.6, 12, 'on to the pink head'), dies], cause: 'kvt-octopus' },
-    { what: 'stop on the first coral head in the incoming tide, as on the tour', steps: [...upTo(S['KVT-10'], 'from head to head, never stopping'), ...hop(130 + 1.6, 12, 'on to the first head', true), { hold: '', until: done, max: 400 }], cause: 'splash' },
+    {
+      what: 'hop the tuna as they come, as in Minicoy',
+      steps: [
+        ...upTo(S['KVT-10'], 'walk under the tuna; hop the gap once one has gone over'),
+        { policy: (w) => ({ move: 'R', jump: w.player.onGround && w.entities.some((e: any) => e.kind === 'kvt-tuna' && e.alive && e.x - w.player.x > 0 && e.x - w.player.x < 40) }), until: done, max: 900 },
+      ],
+      cause: 'hit',
+    },
+    { what: 'stop on the first coral head in the incoming tide, as on the tour', steps: [...upTo(S['KVT-10'], 'from head to head, never stopping'), ...hop(164 + 1.6, 12, 'on to the first head', true), { hold: '', until: done, max: 400 }], cause: 'splash' },
     { what: 'run straight over the hole with eyes', steps: [...upTo(S['KVT-10'], 'the hole with eyes: let the moray lunge and go back in'), { hold: 'R', until: done, max: 300 }], cause: 'kvt-bitten' },
     { what: 'walk into the door', steps: [...upTo(S['KVT-10'], 'the door: kvt-sand-arm'), { hold: 'R', until: done, max: 900 }], cause: 'kvt-octopus' },
   ];
