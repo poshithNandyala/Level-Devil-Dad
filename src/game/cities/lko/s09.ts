@@ -122,7 +122,9 @@ export class Flock {
 export function drawFlyer(w: World, f: Flyer) {
   w.add(
     new Art((ctx, w2) => {
-      const seen = f.seen(w2);
+      // the two-faced flag swings round in the wind every 1.5 s and for a moment shows its far face whole
+      const swing = f.twoSided && w2.tick % 180 > 140;
+      const seen = swing ? (f.seen(w2) === 'red' ? 'white' : 'red') : f.seen(w2);
       const back = seen === 'red' ? 'white' : 'red';
       const col = (c: string) => (c === 'red' ? '#C62828' : '#FAFAFA');
       gent(ctx, f.x, f.feet, 25, '#EDE6D8', { face: -1, arms: 1, skin: '#9C6B48' });
@@ -141,12 +143,13 @@ export function drawFlyer(w: World, f: Flyer) {
       ctx.lineWidth = 0.8;
       ctx.stroke();
       if (f.twoSided) {
-        // the other face shows only where the cloth curls over at its tip
+        // the other face shows where the cloth curls over at its tip: a big curl, and the whole far face
+        // when the wind swings it round
         ctx.fillStyle = col(back);
         ctx.beginPath();
         ctx.moveTo(f.x - 30, f.feet - 61 + wave);
-        ctx.lineTo(f.x - 34, f.feet - 57 + wave);
-        ctx.lineTo(f.x - 34, f.feet - 50 + wave);
+        ctx.lineTo(f.x - 38, f.feet - 56 + wave);
+        ctx.lineTo(f.x - 38, f.feet - 49 + wave);
         ctx.lineTo(f.x - 30, f.feet - 47 + wave);
         ctx.closePath();
         ctx.fill();
@@ -245,7 +248,7 @@ export const hawa: Act = {
     roofs(w, [roofOf(x, x + 5, 14), ...rs], c.X(0), c.X(58));
     const f = new Flyer(c.X(1) + 8, px(14), [['white', 1.6], ['red', 2.4]], c.X(2.5), true);
     drawFlyer(w, f);
-    const fl = new Flock(w, rs, f, { x: c.X(30), y: px(4) });
+    const fl = new Flock(w, rs, f, { x: c.X(30), y: px(4) }, 'lko-hawa');
     w.flags[c.f('k')] = { f, fl };
   },
 };
@@ -306,20 +309,21 @@ export const chhatri: Ending = {
  *  farther you stand from it, and so does its terrace: from far away the terrace is high above your jump;
  *  walk up to it and it shrinks into the water. Only from the paving line (the inlaid strip) is it your size.
  *  The dome keeps the size it had when you left the ground. */
-const GUMBAD = [5, 13, 21, 29, 37, 45];
+const GUMBAD = [5, 13, 21];
 export const gumbad: Act = {
   id: 'lko09-gumbad',
-  w: 54,
-  advice: 'A dome seems bigger the farther you stand from it, and its terrace with it: from far away the terrace is far above your jump, and walk right up and it shrinks into the pool. Stand on the inlaid paving line in front of each dome and jump from there: it keeps the size it had when you left the ground.',
-  cps: [27.5],
+  w: 30,
+  advice: 'A dome seems bigger the farther you stand from it, and its terrace with it: from far away the terrace is far above your jump, and walk right up and it shrinks into the pool. Stand on the inlaid paving line in front of each dome and jump from there: it keeps the size it had when you left the ground. The last one is the reflection in the tank, and works the other way round: it sinks as you step back. Its line is right at the edge.',
+  cps: [11.5],
   paint: (g, c) => {
     for (const d of GUMBAD) g.pit(c.x + d, c.x + d + 4);
   },
   build: (w, c) => {
     const x = c.x;
     const domes = GUMBAD.map((d, k) => {
+      const aks = k === GUMBAD.length - 1;
       const x0 = c.X(d + 1),
-        line = x0 - 38;
+        line = aks ? x0 - 21 : x0 - 38;
       const S = { y: FLOOR - 24, line };
       const b = w.add(
         new Block(x0, S.y, 48, 6, (ctx, bb) => {
@@ -342,7 +346,10 @@ export const gumbad: Act = {
         const d = x0 - (p.x + p.w);
         if (d < -4 || d > 140) return;
         let y = FLOOR - 24;
-        if (d > 46) y = FLOOR - 24 - (d - 46) * 1.1;
+        if (aks) {
+          // the reflection: it shrinks into the tank as you step back from it
+          if (d > 26) y = FLOOR - 24 + (d - 26) * 3;
+        } else if (d > 46) y = FLOOR - 24 - (d - 46) * 1.1;
         else if (d < 22) y = FLOOR - 24 + (22 - d) * 3;
         b.set(y < FLOOR + 4);
         b.solid.y = Math.round(y);
@@ -370,6 +377,7 @@ export const gumbad: Act = {
       w.add(new Zone(c.X(d) + 1, FLOOR + 14, px(5) - 2, 30, 'lko-gumbad'));
     }
     sign(w, x + 0.2, 10.4, 3.4, 'BAGH', 'shop', null, 'gumbad');
+    sign(w, x + 18.6, 10.4, 2.6, 'AKS', 'shop', null, 'reflection');
   },
 };
 

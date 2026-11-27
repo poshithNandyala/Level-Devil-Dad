@@ -221,14 +221,18 @@ export const doorway489: Ending = {
  *  the board too: land on his square and he knocks you off. */
 const CHAUSAR_THROWS = [2, 1, 3, 1, 2, 3, 1, 2, 2, 3, 1, 2];
 const CHAUSAR_PIECE = [5, 5, 6, 6, 3, 3, 7, 8, 8, 2, 2, 2];
-export function chausar(w: World, c0: number, n: number, key: string, period = 200) {
+export function chausar(w: World, c0: number, n: number, key: string, period = 200, o: { bow?: boolean; well?: Zone } = {}) {
   const sq = Array.from({ length: n }, (_, i) => w.add(new Block(px(c0 + 3 * i), px(13), 32, 8, (ctx, b, w2) => drawSquare(ctx, b, i, w2, S), 2)));
   const S = { t0: -1, k: -1, cur: -1, lit: new Set<number>(), piece: -1, n: 0 };
   w.flags[key] = S;
   const piece = w.add(new Zone(0, px(13) - 26, 20, 26, 'lko-goti'));
   piece.on = false;
+  // the finale's courtier: when he stands two ahead he bows you on to the square between, 'pehle aap', and
+  // that square, lit and empty, is the loose stone
+  const bowed = { i: -1 };
+  w.flags[key + ':bowed'] = bowed;
   const update = () => {
-    sq.forEach((b, i) => b.set(i === S.cur || S.lit.has(i)));
+    sq.forEach((b, i) => b.set((i === S.cur || S.lit.has(i)) && i !== bowed.i));
   };
   update();
   w.onTick((w2) => {
@@ -245,6 +249,12 @@ export function chausar(w: World, c0: number, n: number, key: string, period = 2
       S.piece = CHAUSAR_PIECE[k % CHAUSAR_PIECE.length];
       if (S.piece <= S.cur) S.piece = S.cur + 2;
       if (S.piece >= n - 1) S.piece = -1;
+      bowed.i = -1;
+      if (o.bow && S.piece === S.cur + 2) {
+        bowed.i = S.cur + 1;
+        S.lit.add(bowed.i);
+        w2.say('Pehle aap, janab! | After you, sir!', px(c0 + 3 * S.piece) + 16, px(13) - 34, 1.8, 'npc');
+      }
       S.lit = new Set(Array.from({ length: S.n }, (_, j) => S.cur + 1 + j).filter((j) => j < n));
       // the courtier's square always holds (he's standing on it)
       if (S.piece < n) S.lit.add(S.piece);
@@ -252,6 +262,7 @@ export function chausar(w: World, c0: number, n: number, key: string, period = 2
       update();
     }
     piece.on = S.piece >= 0 && S.piece < n;
+    if (o.well) o.well.hazard.cause = bowed.i >= 0 && Math.abs(w2.player.cx - (px(c0 + 3 * bowed.i) + 16)) < 24 ? 'lko-goti-pehle' : 'lko-kuan';
     if (piece.on) piece.x = px(c0 + 3 * S.piece) + 6;
   });
   w.add(
@@ -285,6 +296,14 @@ function drawSquare(ctx: Ctx, b: Block, i: number, w: World, S: { lit: Set<numbe
   ctx.strokeStyle = solid ? '#5A3E2B' : 'rgba(243,238,230,0.5)';
   ctx.lineWidth = 1;
   ctx.strokeRect(x + 0.5, y + 0.5, 31, 7);
+  if (S.lit.has(i) && i !== S.cur && !solid) {
+    // the square he bowed you on to: lit like the rest, a crack across it, nothing under the light
+    ctx.fillStyle = i % 2 ? 'rgba(194,72,91,0.85)' : 'rgba(243,238,230,0.85)';
+    ctx.fillRect(x, y, 32, 8);
+    ctx.fillStyle = 'rgba(60,40,30,0.8)';
+    ctx.fillRect(x + 15, y, 1.5, 8);
+    ctx.fillRect(x + 9, y + 3, 12, 1);
+  }
   if (solid && S.lit.has(i) && i !== S.cur) {
     ctx.fillStyle = 'rgba(255,230,120,0.6)';
     ctx.fillRect(x + 4, y + 2, 24, 2);

@@ -169,15 +169,15 @@ function galoutiRoom(): LevelDef {
 // ================================================================ act 1: thin ones and thick ones
 /** Some heaps were squashed flat already by the last customer: they're thin from the start. Hop off a thin
  *  one at once; wait on a thick one till it squashes. */
-const TAWA2 = 'FTFTTFTFFTFTTFFT';
+const TAWA2 = 'FTFTTF';
 export const tawa2: Act = {
   id: 'lko05-tawa',
-  w: 54,
+  w: 24,
   advice: 'Down the long tawa some kebabs are already flat, squashed by the last customer: they’re thin, and the heat comes through fast. Hop off a flat one at once; on a full heap, wait till it squashes, then hop.',
   build: (w, c) => {
     const x = c.x;
-    tawa(w, x + 2, x + 49);
-    seekhRack(w, x + 2, x + 49, 70);
+    tawa(w, x + 2, x + 19);
+    seekhRack(w, x + 2, x + 19, 70);
     const plan: [number, boolean][] = [...TAWA2].map((k, i) => [x + 3 + 3 * i, k === 'T']);
     w.flags[c.f('kebabs')] = plan.map(([cc, thin]) => w.add(new Galouti(px(cc), thin, 40, thin ? 45 : 120)));
     sign(w, x + 0.2, 10.4, 3.2, 'TAWA', 'shop', null, 'aminabad');
@@ -288,22 +288,38 @@ export const sheermal: Ending = {
  *  full heap, and a hop off it still finds the skewers. Wait for the second squash. */
 export class DoubleGalouti extends Galouti {
   stage = 0;
-  constructor(x: number) {
+  constructor(
+    x: number,
+    readonly extra = 1,
+  ) {
     super(x, false, 40, 120, 2);
-    const dy = 10;
+    this.lvl = extra > 1 ? 5 : 10;
+    const dy = this.lvl * extra;
     this.solid.y -= dy;
     this.solid.h += dy;
   }
+  lvl: number;
+  draw(ctx: Ctx, w: World) {
+    super.draw(ctx, w);
+    // one little kebab on top for every squash still to come
+    if (this.flat) return;
+    for (let k = 0; k < this.extra - this.stage; k++) {
+      ctx.fillStyle = k % 2 ? '#6E3F25' : '#5D3420';
+      ctx.beginPath();
+      ctx.ellipse(this.x + 10 + k * 12, this.y - 2, 5, 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
   update(w: World) {
-    if (this.stage === 0) {
+    if (this.stage < this.extra) {
       const here = on(w, this.solid);
       this.stand = here ? this.stand + 1 : 0;
       if (this.stand > this.squash) {
-        // the top kebab squashes into the one below: a full heap again
-        this.stage = 1;
+        // the top kebab squashes into the one below: a full heap (or still a double) again
+        this.stage++;
         this.stand = 0;
-        this.solid.h -= 10;
-        this.move(w, 0, 10);
+        this.solid.h -= this.lvl;
+        this.move(w, 0, this.lvl);
         w.sfx('thud', this.x + 8, this.y);
       }
       return;
@@ -311,17 +327,17 @@ export class DoubleGalouti extends Galouti {
     super.update(w);
   }
 }
-const DUM = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36];
+const DUM = [3, 6, 9, 12, 15];
 export const dum: Act = {
   id: 'lko05-dum',
-  w: 42,
-  advice: 'At the end of the stall the heaps are piled two high. One squash only takes the top kebab off, and a hop off a full heap still finds the skewers: wait for the second squash, then hop at once.',
+  w: 22,
+  advice: 'At the end of the stall the heaps are piled two high. One squash only takes the top kebab off, and a hop off a full heap still finds the skewers: wait for the second squash, then hop at once. The last heap is piled three high: count the squashes.',
   cps: [0.5],
   build: (w, c) => {
     const x = c.x;
-    tawa(w, x + 2, x + 38);
-    seekhRack(w, x + 2, x + 38, 70);
-    w.flags[c.f("kebabs")] = DUM.map((d, i) => w.add(i === 0 ? new Galouti(px(x + d)) : new DoubleGalouti(px(x + d))));
+    tawa(w, x + 2, x + 17);
+    seekhRack(w, x + 2, x + 17, 70);
+    w.flags[c.f('kebabs')] = DUM.map((d, i) => w.add(i === 0 ? new Galouti(px(x + d)) : new DoubleGalouti(px(x + d), i === DUM.length - 1 ? 2 : 1)));
     sign(w, x + 0.2, 10.4, 3.2, 'DUM', 'shop', null, 'galouti');
   },
 };

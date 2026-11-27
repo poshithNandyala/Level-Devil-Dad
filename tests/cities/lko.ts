@@ -324,15 +324,15 @@ actRoutes['lko04-chowk'] = R_lko04_chowk('lko04-chowk');
 
 const R_lko05_tawa = (id: string) => (x: number): Step[] => {
   const k = `${id}:kebabs`;
-  const cols = [...Array.from({ length: 15 }, (_, i) => 6 + 3 * i), 50.5];
-  return [runTo(x + 0.5, 300), hops([x + 3, ...cols.map((c, i) => [x + c, kflat(k, i)] as [number, (w: World) => boolean])], 'thin ones at once, thick ones once squashed'), runTo(x + 53.5, 300)];
+  const cols = [...Array.from({ length: 5 }, (_, i) => 6 + 3 * i), 20.5];
+  return [runTo(x + 0.5, 300), hops([x + 3, ...cols.map((c, i) => [x + c, kflat(k, i)] as [number, (w: World) => boolean])], 'thin ones at once, thick ones once squashed'), runTo(x + 23.5, 300)];
 };
 actRoutes['lko05-tawa'] = R_lko05_tawa('lko05-tawa');
-const DUM = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36];
+const DUM = [3, 6, 9, 12, 15];
 actRoutes['lko05-dum'] = (x) => {
   const k = 'lko05-dum:kebabs';
-  const cols = [...DUM.slice(1).map((d) => d + 0.1), 39.5];
-  return [runTo(x + 0.5, 300), hops([x + 3, ...cols.map((c, i) => [x + c, kflat(k, i)] as [number, (w: World) => boolean])], 'wait for both squashes, then hop'), runTo(x + 41, 300)];
+  const cols = [...DUM.slice(1).map((d) => d + 0.1), 19.5];
+  return [runTo(x + 0.5, 300), hops([x + 3, ...cols.map((c, i) => [x + c, kflat(k, i)] as [number, (w: World) => boolean])], 'wait for every squash, then hop'), runTo(x + 21, 300)];
 };
 const R_lko05_lane = (id: string) => (x: number): Step[] => [
   runTo(x + 1.2, 300),
@@ -450,7 +450,7 @@ const R_lko07_chauraha = (id: string) => (x: number): Step[] => [walkTo(x + 3, 3
 actRoutes['lko07-chauraha'] = R_lko07_chauraha('lko07-chauraha');
 
 type Court = { t0: number; k: number; cur: number; lit: Set<number>; piece: number; n: number };
-const R_lko08_chausar = (id: string, c0off = 5, n = 10, period = 200, mindPiece = true) => (x: number): Step[] => {
+const R_lko08_chausar = (id: string, c0off = 5, n = 10, period = 200, mindPiece = true, mindBow = true) => (x: number): Step[] => {
   let jt = 0,
     tgt = -1;
   let W: World | null = null;
@@ -481,7 +481,8 @@ const R_lko08_chausar = (id: string, c0off = 5, n = 10, period = 200, mindPiece 
           jt = 12;
           return { move: 'R', jump: true };
         }
-        if (S.lit.has(nxt) && (!mindPiece || S.piece !== nxt) && left > 75) {
+        const bowed = (w.flags[`${id}:court:bowed`] as { i: number } | undefined)?.i ?? -1;
+        if (S.lit.has(nxt) && (!mindPiece || S.piece !== nxt) && (!mindBow || bowed !== nxt) && left > 75) {
           tgt = nxt;
           jt = 12;
           return { move: 'R', jump: true };
@@ -505,7 +506,7 @@ const R_lko09_hawa = (id: string) => (x: number): Step[] => {
   ];
 };
 actRoutes['lko09-hawa'] = (x) => [stroll(x + 3, 'up on to the roofs'), ...R_lko09_hawa('lko09-hawa')(x)];
-const GUMBAD = [5, 13, 21, 29, 37, 45];
+const GUMBAD = [5, 13, 21];
 /** stand where the dome is your size (its terrace 24 px up), then jump on to it */
 const domeJump = (id: string, k: number, d: number, x: number): Step => {
   let jt = 0;
@@ -528,7 +529,7 @@ const domeJump = (id: string, k: number, d: number, x: number): Step => {
         jt = 12;
         return { move: 'R', jump: true };
       }
-      return go(toward(w, px(x + d - 2) + 8, 2));
+      return go(toward(w, px(x + d - (k === 2 ? 1 : 2)) + 8, 2));
     },
     until: (w) => w.player.onGround && w.player.y + w.player.h < FLOOR_Y - 10,
     max: 900,
@@ -537,8 +538,8 @@ const domeJump = (id: string, k: number, d: number, x: number): Step => {
 };
 const FLOOR_Y = 240;
 const R_lko09_gumbad = () => (x: number): Step[] => [
-  ...GUMBAD.flatMap((d, k) => [walkTo(x + d - 2, 400, 'to the red paving line'), domeJump('lko09-gumbad', k, d, x), hops([x + d + 3.1, x + d + 6], 'off the far side, on to the paving')]),
-  runTo(x + 53, 300),
+  ...GUMBAD.flatMap((d, k) => [walkTo(x + d - (k === 2 ? 1 : 2), 400, 'to the red paving line'), domeJump('lko09-gumbad', k, d, x), hops([x + d + 3.1, x + d + 6], 'off the far side, on to the paving')]),
+  runTo(x + 29, 300),
 ];
 actRoutes['lko09-gumbad'] = R_lko09_gumbad();
 
@@ -554,18 +555,57 @@ actRoutes['lko10-dhulai'] = (x) => {
     runTo(x + 35.5, 300),
   ];
 };
-actRoutes['lko10-tawa'] = R_lko05_tawa('lko10-tawa');
-actRoutes['lko10-tatkar'] = R_lko06_tatkar('lko10-tatkar');
-actRoutes['lko10-julus'] = R_lko07_julus('lko10-julus');
-actRoutes['lko10-hawa'] = (x) => [stroll(x + 3, 'up on to the roofs'), ...R_lko09_hawa('lko10-hawa')(x)];
-actRoutes['lko10-chausar'] = R_lko08_chausar('lko10-chausar');
-actRoutes['lko10-kunda'] = R_lko03_kunda('lko10-kunda');
-actRoutes['lko10-gali'] = (x) => [
-  runTo(x + 4.2, 300, 'the man behind offers the way'),
-  until((w) => w.flags['lko10-gali:man']?.s === 'done', 900, 'stand still: he goes first'),
-  hop(x + 12, x + 15),
-  runTo(x + 28.5),
-];
+actRoutes['lko10-darbar'] = R_lko08_chausar('lko10-darbar');
+/** behind the procession over the covered bells: blink-pauses only on the covers, real waits on plain boards */
+const R_lko10_julus = (id: string) => (x: number): Step[] => {
+  let jt = 0,
+    still = 0;
+  let W: World | null = null;
+  const plain = (cx: number) => JN.some((n) => cx >= px(x + n - 3) && cx < px(x + n)) || cx < px(x + 2);
+  return [
+    {
+      policy: (w) => {
+        if (W !== w) {
+          W = w;
+          jt = 0;
+          still = 0;
+        }
+        const G = w.flags[`${id}:g`] as { x: number };
+        const p = w.player;
+        if (jt > 0) {
+          jt--;
+          return { move: 'R', jump: true };
+        }
+        if (!p.onGround) return go('R');
+        const gap = G.x - (p.x + p.w);
+        const nx = JN.map((n) => px(x + n)).find((n0) => n0 >= p.x + p.w - 2 && n0 - (p.x + p.w) < 14);
+        if (nx !== undefined) {
+          if (G.x - (nx + 32) > 60) {
+            jt = 12;
+            return { move: 'R', jump: true };
+          }
+          return go('');
+        }
+        if (gap >= 30) {
+          still = 0;
+          return go('R');
+        }
+        if (plain(p.cx)) return go('');
+        // on the covers: a blink of a pause, then a step
+        still++;
+        if (still > 18) {
+          if (still > 24) still = 0;
+          return go('R');
+        }
+        return go('');
+      },
+      until: and(ground, X(x + 57)),
+      max: 6000,
+      note: 'behind the procession, only blink-pauses on the covered bells',
+    },
+  ];
+};
+actRoutes['lko10-julus'] = R_lko10_julus('lko10-julus');
 actRoutes['lko10-galiyara'] = (x) => [runTo(x + 12, 400, 'walk over the drain, through the first arch'), hop(x + 14.6, x + 17, 'at a jump through the second', 30), runTo(x + 34.5, 600, 'along the gallery without stopping')];
 
 const endingPolicies: Record<string, Policy> = {
@@ -727,15 +767,21 @@ fix['LKO-09'] = {
     hops([7, 13, 19].flatMap((a) => [[actX('LKO-09', 1) + a + 0.6, redSeen('lko09-hawa:k')] as [number, (w: World) => boolean], actX('LKO-09', 1) + a + 3.1]), 'watch the flag, as learned: go on the red you see'),
     until(done, 600),
   ],
-  cause: 'lko-kabootar',
+  cause: 'lko-hawa',
 };
 mistakes['LKO-09'] = [
+  { what: 'jumping for the reflection from the usual distance', steps: [...room09, ...R_lko09_gumbad()(actX('LKO-09', 0)).slice(0, 6), walkTo(actX('LKO-09', 0) + 19, 300), { hold: 'R', jump: 12, ticks: 60 }, until(done, 300)], cause: 'lko-gumbad' },
   { what: 'walking up to the white dome', steps: [...room09, { hold: 'R', until: done, max: 900 }], cause: 'lko-gumbad' },
   { what: 'jumping for the dome from far back, where it looked big', steps: [...room09, walkTo(actX('LKO-09', 0) + 2.2, 300), { hold: 'R', jump: 14, ticks: 60 }, until(done, 300)], cause: 'lko-gumbad' },
 ];
 const DK = (i: number) => (w: World) => (w.flags['lko05-dum:kebabs'] ?? [])[i]?.stage === 1;
 mistakes['LKO-05'] = [
   { what: 'on the double heaps, hopping on after one squash, as learned', steps: [...through('LKO-05', room05, 2), runTo(actX('LKO-05', 2) + 0.5, 300), hops([actX('LKO-05', 2) + 3, [actX('LKO-05', 2) + 6.1, kflat('lko05-dum:kebabs', 0)], [actX('LKO-05', 2) + 9.1, DK(1)]]), until(done, 300)], cause: 'lko-seekh' },
+  {
+    what: 'on the triple heap, hopping off after two squashes',
+    steps: [...through('LKO-05', room05, 2), runTo(actX('LKO-05', 2) + 0.5, 300), hops([actX('LKO-05', 2) + 3, ...[6, 9, 12, 15].map((d, i) => [actX('LKO-05', 2) + d + 0.1, kflat('lko05-dum:kebabs', i)] as [number, (w: World) => boolean]), [actX('LKO-05', 2) + 19.5, (w: World) => (w.flags['lko05-dum:kebabs'] ?? [])[4]?.stage === 2]]), until(done, 300)],
+    cause: 'lko-seekh',
+  },
   { what: 'on the double heaps, hopping straight on', steps: [...through('LKO-05', room05, 2), runTo(actX('LKO-05', 2) + 0.5, 300), hops([actX('LKO-05', 2) + 3, actX('LKO-05', 2) + 6.1, actX('LKO-05', 2) + 9.1]), until(done, 300)], cause: 'lko-seekh' },
 ];
 mistakes['LKO-06'] = [
@@ -747,10 +793,10 @@ mistakes['LKO-06'] = [
   },
 ];
 mistakes['LKO-10'] = [
-  { what: 'stopping on the gallery’s covered bells', steps: [...through('LKO-10', room10, 8), runTo(actX('LKO-10', 8) + 12, 400), hop(actX('LKO-10', 8) + 14.6, actX('LKO-10', 8) + 17, '', 30), runTo(actX('LKO-10', 8) + 22, 300), until(done, 500)], cause: 'lko-tehzeeb' },
-  { what: 'bowing to the last door from right in front of it', steps: [...through('LKO-10', room10, 9), walkTo(doorX('LKO-10') - 1.5, 600), until(done, 600)], cause: 'lko-tehzeeb' },
-  { what: 'the procession again: rushing up behind it', steps: [...through('LKO-10', room10, 3), hop(actX('LKO-10', 3) + 12, actX('LKO-10', 3) + 14.5), { hold: 'R', until: done, max: 1200 }], cause: 'lko-julus' },
-  { what: 'the court again: hopping on square after square', steps: [...through('LKO-10', room10, 6), walkTo(actX('LKO-10', 6) + 3.2, 300), hops([0, 1, 2, 3, 4, 5].map((i) => actX('LKO-10', 6) + 5 + 3 * i + 0.5)), until(done, 300)], cause: 'lko-kuan' },
+  { what: 'stopping on the gallery’s covered bells', steps: [...through('LKO-10', room10, 3), runTo(actX('LKO-10', 3) + 12, 400), hop(actX('LKO-10', 3) + 14.6, actX('LKO-10', 3) + 17, '', 30), runTo(actX('LKO-10', 3) + 22, 300), until(done, 500)], cause: 'lko-tehzeeb' },
+  { what: 'bowing to the last door from right in front of it', steps: [...through('LKO-10', room10, 4), walkTo(doorX('LKO-10') - 1.5, 600), until(done, 600)], cause: 'lko-tehzeeb' },
+  { what: 'the court again: taking the square the courtier bows you on to', steps: [...through('LKO-10', room10, 1), ...R_lko08_chausar('lko10-darbar', 5, 10, 200, true, false)(actX('LKO-10', 1)), until(done, 600)], cause: 'lko-goti-pehle' },
+  { what: 'the procession over the bells: waiting behind them on a cover, as learned', steps: [...through('LKO-10', room10, 2), walkTo(actX('LKO-10', 2) + 5, 300, 'up behind them, and wait on the cover'), until(done, 600)], cause: 'lko-tehzeeb' },
 ];
 
 export const test: CityTests = {
