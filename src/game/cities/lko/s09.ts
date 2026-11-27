@@ -527,5 +527,86 @@ export const seeti: Act = {
   },
 };
 
-export const s09 = { room: kabootarRoom, acts: [gumbad, hawa, jhande, seeti] };
+// ================================================================ act: girah, the tumblers
+/** This flyer's flock has tumblers in it: at the start of every red, a few birds drop at the roof ahead,
+ *  rolling over backwards, and then recover and climb. A tumble is not a landing. Wait it out, as birds
+ *  coming down taught you, and the red is gone before you cross; go through the tumble, early in the red. */
+const GIRAH: [number, number][] = [
+  [6, 13],
+  [12, 12],
+  [18, 13],
+];
+const TUMBLE = 1.15;
+export const girah: Act = {
+  id: 'lko09-girah',
+  w: 32,
+  cp0: false,
+  advice: 'This flock has tumblers in it: at the start of every red a few birds drop at the roof ahead, rolling over backwards, then climb again. A tumble is not a landing. Cross early in the red, through the tumble: wait for it to clear and the red is gone.',
+  cps: [-2, 6.2, 12.2, 18.2, 24.4],
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x, x + 31, 15);
+    g.fill(x, x + 4, 14, 17, '#');
+    GIRAH.forEach(([a, r]) => g.fill(x + a, x + a + 3, r, 17, '#'));
+    g.fill(x + 24, x + 31, 14, 17, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const rs = GIRAH.map(([a, r]) => roofOf(x + a, x + a + 3, r));
+    const end = roofOf(x + 24, x + 31, 14);
+    roofs(w, [roofOf(x, x + 4, 14), ...rs, end], c.X(0), c.X(32));
+    const f = new Flyer(c.X(1) + 8, px(14), [['red', 1.4], ['white', 1.8]], c.X(1.5));
+    drawFlyer(w, f);
+    const fl = new Flock(w, [...rs, end], f, { x: c.X(16), y: px(4) }, 'lko-girah');
+    w.flags[c.f('k')] = { f, fl };
+    // when you left the ground: in the red after the tumble had cleared (you waited it out), or in the white
+    let left: 'tumble-late' | 'white' | 'ok' = 'ok';
+    let was = true;
+    const tumbling = (w2: World) => {
+      const o = f.order(w2);
+      return f.t0 >= 0 && o.c === 'red' && 1.4 - o.left < TUMBLE;
+    };
+    w.flags[c.f('tumbling')] = tumbling;
+    w.onTick((w2) => {
+      const p = w2.player;
+      if (was && !p.onGround && p.cx > c.X(2)) {
+        const o = f.order(w2);
+        left = o.c === 'white' ? 'white' : tumbling(w2) ? 'ok' : 'tumble-late';
+      }
+      was = p.onGround;
+      fl.z.hazard.cause = left === 'white' ? 'lko-kabootar' : 'lko-girah';
+    });
+    w.add(
+      new Art((ctx, w2) => {
+        // the tumblers: three birds rolling down at the roof ahead of you and climbing away again
+        if (!tumbling(w2)) return;
+        const o = f.order(w2);
+        const t = (1.4 - o.left) / TUMBLE;
+        const p = w2.player;
+        const r = [...rs, end].find((q) => q.x0 > p.x + p.w - 2) ?? end;
+        const cx = (r.x0 + r.x1) / 2;
+        const dy = Math.sin(Math.PI * t) * (r.top - 30 - px(4));
+        for (let i = 0; i < 3; i++) {
+          const a = t * 14 + i;
+          const bx = cx - 12 + i * 12,
+            by = px(4) + dy - i * 4;
+          ctx.save();
+          ctx.translate(bx, by);
+          ctx.rotate(a);
+          ctx.fillStyle = '#8E9AA6';
+          ctx.beginPath();
+          ctx.ellipse(0, 0, 3.4, 2.3, 0, 0, TAU);
+          ctx.fill();
+          ctx.fillStyle = '#5E6A75';
+          ctx.fillRect(-4, -1, 3, 2);
+          ctx.restore();
+        }
+      }, 5),
+    );
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Bas zara sa! | Just a little!', 2.2));
+    sign(w, x + 0.2, 9.4, 3, 'GIRAH', 'shop', null, 'kalabaaz');
+  },
+};
+
+export const s09 = { room: kabootarRoom, acts: [gumbad, hawa, jhande, seeti, girah] };
 export const meta09 = { family: 'flag-colour-steers-flock', betrayals: ['flag-signal'], ending: 'lko-chhatri' } as StageMeta;

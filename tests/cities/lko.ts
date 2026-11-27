@@ -680,6 +680,13 @@ actRoutes['lko09-seeti'] = (x) => [
   hops([x + 15.6, x + 18.6, x + 22.8, x + 24.6, x + 29.6], 'over the far roof'),
   runTo(x + 35, 300),
 ];
+const tumbling = (w: World) => !!(w.flags['lko09-girah:tumbling'] as ((w: World) => boolean) | undefined)?.(w);
+const girahGo = (w: World) => tumbling(w) && redNow('lko09-girah:k', 0.65)(w);
+actRoutes['lko09-girah'] = (x) => [
+  walkTo(x + 3.4, 300),
+  hops([[x + 6.6, girahGo], x + 9.1, [x + 12.6, girahGo], x + 15.1, [x + 18.6, girahGo], x + 21.1, [x + 25, girahGo]], 'through the tumble, early in the red'),
+  runTo(x + 31, 300),
+];
 const GUMBAD = [5, 13, 21];
 /** stand where the dome is your size (its terrace 24 px up), then jump on to it */
 const domeJump = (id: string, k: number, d: number, x: number): Step => {
@@ -1095,6 +1102,11 @@ mistakes['LKO-08'].push(
 mistakes['LKO-10'].push(
   { what: 'the strollers again: through the gap once they part, as on the Ganj', steps: [...through('LKO-10', room10, 5), walkTo(actX('LKO-10', 5) + 2.5, 300), hop(actX('LKO-10', 5) + 4, actX('LKO-10', 5) + 6.5), pause(), walkTo(actX('LKO-10', 5) + 12.2, 300), until((w) => (w.flags['lko10-raasta:g'] as { s: string }).s === 'bow', 600), { hold: 'R', until: done, max: 600 }], cause: 'lko-pehle' },
   { what: 'the strollers again: rushing them', steps: [...through('LKO-10', room10, 5), walkTo(actX('LKO-10', 5) + 2.5, 300), hop(actX('LKO-10', 5) + 4, actX('LKO-10', 5) + 6.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-ganj' },
+);
+
+mistakes['LKO-09'].push(
+  { what: 'the tumblers: waiting for the falling birds to clear, as birds coming down taught', steps: [...through('LKO-09', room09, 4), walkTo(actX('LKO-09', 4) + 3.4, 300), until(tumbling, 900), until((w) => !tumbling(w), 300), hops([actX('LKO-09', 4) + 3.4, actX('LKO-09', 4) + 6.6]), until(done, 600)], cause: 'lko-girah' },
+  { what: 'the tumblers: crossing on the white, taking the landing for a tumble', steps: [...through('LKO-09', room09, 4), walkTo(actX('LKO-09', 4) + 3.4, 300), until((w) => { const o = (w.flags['lko09-girah:k']?.f as Fl | undefined)?.order(w); return !!o && o.c === 'white' && o.left < 1.4; }, 900), hops([actX('LKO-09', 4) + 3.4, actX('LKO-09', 4) + 6.6]), until(done, 600)], cause: 'lko-kabootar' },
 );
 
 export const test: CityTests = {
