@@ -23,6 +23,7 @@ import { majuliFlag } from './flag';
 import { gorhBogoli } from './egret';
 import { rangTunnels } from './tunnel';
 import { charHorn } from './horn';
+import { talatalBatah } from './batah';
 import { onPass } from '../../levels/trolls';
 import { tour } from '../../levels/tour';
 import { longStage } from '../../levels/chunks';
@@ -711,7 +712,7 @@ export const levels = (): LevelDef[] => [
   { ...tourLevel(), shape: 'tour', meta: { family: 'carrier-spills-on-contact', betrayals: ['carrier-spill'], ending: 'dis-tea-tray' } },
   longStage({ base: charRoom(), acts: [chapori, charHorn], twist: 'dis-hut-shut', par: 36, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
   longStage({ base: teaRoom(), acts: [bagan], cps: [12], twist: 'dis-muga-reel', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-muga-reel' } }),
-  longStage({ base: talatalRoom(), acts: [], twist: 'dis-laru-plate', par: 34, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } /* repo allocation.json label; v3 names this slot collapsing-stair-penultimate-rises (the integrator lands it) */ }),
+  longStage({ base: talatalRoom(), acts: [talatalBatah], twist: 'dis-laru-plate', par: 34, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } /* repo allocation.json label; v3 names this slot collapsing-stair-penultimate-rises (the integrator lands it) */ }),
   longStage({ base: gamosaRoom(), acts: [atithi, gamSanko, gamFeast, gamKaath, gamMachan], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
   longStage({ base: majuliRoom(), acts: [majuliWake, majuliTraps, majuliFlag], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
   longStage({ base: husoriRoom(), acts: [runUp(bordoisila, 3), runUp(husDhol, 3), husRope, husGoru, husTekeli, husCard, husCart, chowk, husPepa], cps: [16], twist: 'dis-uruka-net', par: 90, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
