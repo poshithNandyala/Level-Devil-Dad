@@ -105,17 +105,17 @@ export const husDhol: Act = {
  *  ("when his arms go faster, so must you") is broken. Hop on the beat, never on the tempo you have learned. */
 export const luitDhol: Act = {
   id: 'dis10-dhol',
-  w: 38,
+  w: 32,
   advice: 'The dhol player again, at the river’s edge, at the end of a long Bihu night. He is tired: after a few beats his arms slow down. Hop only when the next plank has come up, never on the beat you remember.',
-  cps: [1.5, 34.5],
+  cps: [1.5, 28.5],
   paint: (g, c) => {
-    g.pit(c.x + 4, c.x + 33);
+    g.pit(c.x + 4, c.x + 27);
   },
   build: (w, c) => {
     const x = c.x;
-    river(w, x + 4, x + 34, 'dis-pukhuri');
+    river(w, x + 4, x + 28, 'dis-pukhuri');
     const xs: number[] = [];
-    for (let i = 0; i < 10; i++) xs.push(px(x + 4.5 + i * 3));
+    for (let i = 0; i < 8; i++) xs.push(px(x + 4.5 + i * 3));
     const d = w.add(new DholPlanks(xs, 32, px(x + 3), 84, 156, 4, 30, px(x + 1.5)));
     w.solids.push(...d.planks);
     (w.flags.dhol ??= []).push(d);

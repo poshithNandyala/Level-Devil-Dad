@@ -264,7 +264,7 @@ export const endings: Record<DisEndingKind, Ending> = {
     build(w: World, d) {
       const D = Math.round(d.x / 16);
       river(w, D - 33, D - 3);
-      const p = w.add(new Plucker(px(D - 26), px(D - 37), [], px(D - 3), 30));
+      const p = w.add(new Plucker(px(D - 26), px(D - 37), [], px(D - 3), 42));
       (w.flags.pluckers ??= []).push(p);
       const starts = [D - 32, D - 28, D - 24, D - 20, D - 16, D - 12, D - 8];
       const pb = w.add(new PathBars(starts, 4, p, 640));
@@ -272,6 +272,7 @@ export const endings: Record<DisEndingKind, Ending> = {
       levelPost(w, { level: 2, e: -1 } as never, D - 1.8, 3);
       w.flags.twist = 'post';
       checkpoint(w, D - 36); // on the bank where you wait for the plucker
+      checkpoint(w, D - 18); // halfway along her path: the bars behind her stay up for seconds
     },
   },
   // ================================================================ DIS-09: the royal seat

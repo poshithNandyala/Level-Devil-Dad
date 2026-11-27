@@ -737,7 +737,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   ],
   'dis07-ghar': (x) => [{ policy: atTheGate(1), until: and(ground, X(x + 61)), max: 6000, note: 'gate by gate with the singers' }],
   'dis07-dhol': mark('dis07-dhol', (x) => [{ policy: dholHop(), until: and(ground, X(x + 36)), max: 6000, note: 'one plank on every beat of the dhol' }]),
-  'dis10-dhol': mark('dis10-dhol', (x) => [{ policy: dholHop(), until: and(ground, X(x + 36)), max: 6000, note: 'one plank on every beat, slow or fast' }]),
+  'dis10-dhol': mark('dis10-dhol', (x) => [{ policy: dholHop(), until: and(ground, X(x + 30)), max: 6000, note: 'one plank on every beat, slow or fast' }]),
   'dis09-tug': mark('dis09-tug', (x) => [
     { hold: 'R', until: X(x + 10.9), max: 600, note: 'to the edge of the ditch' },
     { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir > 0 && p.t < 6; }, max: 2400, note: 'wait for the far team’s red flag' },

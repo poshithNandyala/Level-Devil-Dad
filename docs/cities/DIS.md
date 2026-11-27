@@ -20,38 +20,39 @@ Language: only lines the city bible marks VERIFIED (Omniglot Assamese), "Local |
 | DIS-10 | Luit (finale, marathon, lives: act) | finale-level-post-far-bank [level-post-far-bank] | Callbacks only to DIS: the char sandbars again, but the level post stands on the far bank (you must remember the rule). | `dis10-tawa` (the pitha pan over the river), `dis10-bagan` (tea rows and the plucker), `dis10-gate` (husori gate with the host's ritual), `dis10-bank` (Majuli's slabs). | `dis-post-bank`: the level post on the far bank, and the only way over the water is the plucker's path: a bar rises under each of her steps and goes a few seconds later. Follow behind her and keep up. |
 
 New death causes (all in `causes.ts`): `dis-spill`, `dis-luit`, `dis-basket`, `dis-tawa`, `dis-roll`, `dis-laru`,
-`dis-gamosa`, `dis-bank`, `dis-gate`, `dis-beel`, `dis-gorh`, `dis-roof`, `dis-gutter`, `dis-reel`, `dis-net`.
+`dis-gamosa`, `dis-bank`, `dis-gate`, `dis-beel`, `dis-gorh`, `dis-roof`, `dis-gutter`, `dis-reel`, `dis-net`,
+`dis-pukhuri`, `dis-bordoisila`, `dis-hail`, `dis-bhoral`, `dis-khaal`, `dis-rope`, `dis-taat`, `dis-shuttle`.
 
 Hidden items (`things.ts`): `dis-chah` (lal chah), `dis-japi`, `dis-paat` (two leaves and a bud), `dis-pitha`,
 `dis-gamosa`, `dis-tenga` (masor tenga), `dis-pepa`, `dis-laru`.
 
-## Length pass (acts added after the first build)
+## Length, round 2: every idea in its home stage
 
-Floors from the conductor, measured as the scripted route's time: 01 25-35 s, 02-04 25-45 s, 05 06 08 09 >= 60 s,
-07 >= 120 s, 10 >= 90 s. Every added act is one of DIS's own ideas used in a stage that had not used it yet, after a
-plain stretch of road, and has its own obvious play and obvious fix that die inside it (recorded as MISTAKES:
-`<act>: ...` and `<act> (fix): ...`).
+Rule: an idea lives in its home stage and may come back once, in the finale, as a callback that breaks the rule it
+taught. The first length pass reused ideas across stages; round 2 cut every reuse and added new rules instead.
 
-| Stage | Added acts (in order) | Idea it borrows | Its own death plays |
-| --- | --- | --- | --- |
-| DIS-01 | (tour) second tea boy from Fancy Bazar; the deck is the shelter | tea boy | step off the deck before he has set the tray down |
-| DIS-02 | (river slowed: new bars 0.75-1.1 s after the siren, narrowing 1.75-2.25 s, sinking 2.75-3.25 s) | | |
-| DIS-04 | `dis04-bhogali` gets a fourth crepe, each poured a little after the last | pitha | |
-| DIS-05 | `dis05-char`, `dis05-husori`, `dis05-ghat` | sandbars with a taker on a bar; husori yards with givers; the tea boy's ghat | run-jump bars / wait on a narrowing bar's right end; run at the gate / take both yard givers; straight out of the ghat / hop the boy |
-| DIS-06 | `dis06-chang`, `dis06-chapori3`, `dis06-ghat`, `dis06-char`, `dis06-pitha`, `dis06-chang2` | stilt house ladder in the water; sandbars; tea boy; bank into sandbars; Bhogali pitha pan; ladder behind a slab bank | jump at the house / walk off its roof; run-jump / narrowing bar; ghat x2; run at the pan / wait on a crepe; run the slabs early / wait on a slab |
-| DIS-07 | `dis07-paar` (momentum beat), `dis07-ghat` (shelter beat), `dis07-lane` | Majuli's bank; tea boy; three more gates, the last with the host's ritual | stop at the edge / stop on a slab; ghat x2; run at the gate / go before the host has finished |
-| DIS-08 | `dis08-jeep`, `dis08-bagori`, `dis08-kohora` | the jeep moves: the rhino stops halfway at one jeep, then charges on at a second; from behind with the haystack | walk into the grass / wait at the edge where the second jeep is; stay on the bank / leave the hay when it stops halfway |
-| DIS-09 | `dis09-bihu` (before the roof), `dis09-chaal3` | Rongali Bihu at Rang Ghar: husori gates; a steeper roof | run at the gate / go before the gamosas are done; hop the ribs / a bigger hop from a standstill |
-| DIS-10 | `dis10-char`, `dis10-gorh`, `dis10-ghat`, `dis10-chang`, `dis10-gamosa` | finale callbacks: sandbars, rhino, tea boy, stilt house, gamosa (four givers, clear the last two in one jump) | run-jump / narrowing bar; grass / edge; ghat x2; house x2; walk into every giver / a little hop into the fourth |
+Cut: `dis05-char`, `dis05-husori`, `dis05-ghat`; `dis06-chapori3`, `dis06-ghat`, `dis06-char`, `dis06-pitha`,
+`dis06-chang2`; `dis07-paar`, `dis07-ghat`, `dis07-lane`; `dis08-kohora` (a copy of `dis08-jeep`); `dis09-bihu`,
+`dis09-chaal3`; `dis10-tawa`, `dis10-char`, `dis10-bagan`, `dis10-gorh`, `dis10-gate`, `dis10-ghat`, `dis10-chang`,
+`dis10-bank`.
 
-Other changes in the pass: the husori group leaves the lane seven tiles after its last house (it used to walk on for
-ever and pile up at the door); calm checkpoints three tiles before every gate where you wait for the singers; the
-river water drawn darker so it never reads as a sandbar.
+| Act | Stage | Rule (home) | Obvious play / obvious fix (cause) | Tara's line |
+| --- | --- | --- | --- | --- |
+| `dis05-taat` | DIS-05 | The host weaves your gamosa across a ditch: the cloth is the floor and grows with each pass; the shuttle flies along it at ankle height. | jump the ditch: `dis-taat`; wait on the cloth without hopping: `dis-shuttle` | "Olop! / A little!" |
+| `dis07-bordoisila` | DIS-07 | Bordoisila, the April storm: the wind blows toward the pond, the hail follows; shelter under the bhoral (granary on stilts). The shelter beat. | walk on: `dis-bordoisila`; brace in the open: `dis-hail` | "Roba! / Stop!" |
+| `dis07-dhol` | DIS-07 | The Bihu dhol: pond planks rise on each beat, the one behind sinks; the beat quickens. The momentum beat. | run across: `dis-pukhuri`; keep the first tempo: `dis-pukhuri` (later) | "Lahe lahe, Dad? / Slowly slowly, Dad?" (a lie) |
+| `dis09-tug` | DIS-09 | The royal games in the Rang Ghar courtyard (bible idea 10): a tug-of-war rope is the floor over a ditch only while taut, and it drifts toward the winning team (referee's flag). | run on: `dis-khaal`; go as soon as it is taut: `dis-rope` | "Bhal, Dad! / Good, Dad!" (a lie) |
+| `dis10-dhol` | DIS-10 | Callback to 07, broken: the tired drummer's beat slows. | run across: `dis-pukhuri`; keep 07's quick tempo: `dis-pukhuri` (later) | "Akou ebar? / Once again?" |
+| `dis10-bordoisila` | DIS-10 | Callback to 07, broken: the old bhoral falls in the wind; jump the channel on the gust before the hail. | jump before the wind: `dis-bordoisila`; shelter under the bhoral: `dis-bhoral` | "Roba! / Stop!" |
+| `dis10-tug` | DIS-10 | Callback to 09, broken: the teams have changed ends, so the red flag now means the rope is coming back. | run on: `dis-khaal`; go on red as in 09: `dis-rope` | "Moi najanu! / I don't know!" |
 
-Second pass: DIS-09 gets the A2 beat "climb the pavilion side": one-way steps up the side to an upper eave over the
-oil. That is the FIX play (NAIVE hops the ribs and dies to `dis-roof`; FIX climbs the side, and standing on the eave
-releases a ball that rolls down it: `dis-gutter`). Door endings: 03 and 07 no longer read "locked until"; only 02
-(`dis-hut-shut`) and 05 (`dis-gamosa-latch`) keep that shape. DIS-07 par 186 -> 170.
+Kept from pass 1 because they are in their home stage: `dis05-biya`, `dis05-atithi` (gamosa), `dis06-majuli`,
+`dis06-chang`, `dis06-chapori` (bank, one stilt house), `dis07-ghar`, `dis07-chowk` (husori), `dis08-kaziranga`,
+`dis08-jeep`, `dis08-bagori` (rhino), `dis09-chaal`, `dis09-dhal` (roof), `dis10-gamosa` (the finale's gamosa
+callback: a little hop over a giver lands you in the next one's arms).
+
+Replay: the husori singers in 07 walk faster (56 px/s) and stay shorter at each gate (140 ticks; the ritual gate
+120 + 240); the muga reel's cycle is 470 ticks; calm checkpoints before the reel (03) and on the plucker's bank (10).
 
 ## Fairness (`LDD_N=80 npm run fair -- DIS`)
 
