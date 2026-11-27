@@ -4,7 +4,7 @@
 // and the city's stage files. After a change on purpose: npm run refreeze -- PDY (docs/CITY-MODULE.md).
 import type { World } from '../../src/game/world';
 import { Door } from '../../src/game/entities/basics';
-import { type Step, X, and, done, ground } from '../runner';
+import { type Step, X, and, done, ground, quiet } from '../runner';
 import type { CityTests } from '../city-tests';
 
 type Move = 'L' | 'R' | '';
@@ -304,8 +304,28 @@ function tour01(S: Record<string, Step[]>) {
   ];
 }
 
+/** PDY-02, a person's timing (stage unchanged): hop each blowhole only when it stays quiet 0.9 s, not 0.55 */
+function rockBeach(S: Record<string, Step[]>) {
+  // hop from the middle of each rock, not its edge: a person lets go of right a moment late after a jump,
+  // and from the edge that moment walks you off the next rock into the sea
+  const need = 0.8;
+  /** stand at tile x `at` (a step back if the landing overran it), then hop when blowhole `i` stays quiet */
+  const hop = (i: number, at: number, ticks = 12): Step[] => [
+    { policy: (w) => go(toward(w, px(at) + 5, 3)), until: (w) => w.player.onGround && Math.abs(w.player.cx - px(at) - 5) <= 4, max: 300, note: 'to the middle of the rock' },
+    { hold: '', until: and(ground, quiet(i, need)), max: 600, note: i === 3 ? 'wait for the second sneeze' : undefined },
+    // jump first, lean right a moment later: a direction pressed with the jump is let go late, and that walks you off the next rock
+    { hold: '', jump: ticks, ticks: 3 },
+    { hold: 'R', until: ground, max: 200 },
+    { hold: '', ticks: 2 },
+  ];
+  const room: Step[] = [...hop(0, 8.2), ...hop(1, 12.2), ...hop(2, 16.2), ...hop(3, 20.2, 14)];
+  // (the shared long run keeps the room's first 12 steps; the walk on, the act and the door follow)
+  S['PDY-02'] = [...room, ...S['PDY-02'].slice(12)];
+}
+
 const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) => {
   tour01(S);
+  rockBeach(S);
   S['PDY-09'] = petanqueRoom();
   lengthen('PDY-09', 0, []);
   S['PDY-10'] = mimosaRoom();
