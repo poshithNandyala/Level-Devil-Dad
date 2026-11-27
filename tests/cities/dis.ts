@@ -388,9 +388,8 @@ const roofFix: Play = () => [{ policy: ribHop(16), until: done, max: 4000 }];
 const act = (a: string, stage: string, naive: [Play, string, string], fix?: [Play, string, string]) => ACT_DEATHS.push({ act: a, stage, naive, fix });
 // acts with one play (see ONE_PLAY): one scripted death, walking straight on into the act's trap
 const runOn: Play = () => [{ hold: 'R', until: done, max: 3000 }];
-for (const [a, stage, cause] of [['dis05-atithi', 'DIS-05', 'dis-gamosa'], ['dis06-chapori', 'DIS-06', 'dis-bank'], ['dis07-chowk', 'DIS-07', 'dis-gate']]) act(a, stage, [runOn, cause, 'walks straight on into it']);
+for (const [a, stage, cause] of [['dis05-atithi', 'DIS-05', 'dis-gamosa'], ['dis07-chowk', 'DIS-07', 'dis-gate']]) act(a, stage, [runOn, cause, 'walks straight on into it']);
 for (const a of ['dis09-chaal']) act(a, 'DIS-09', [() => [{ policy: ribHop(7), until: done, max: 4000 }], 'dis-roof', 'stops on the oil before the rib']);
-act('dis06-chang', 'DIS-06', [changNaive, 'dis-bank', 'jumps at the stilt house'], [changFix(11), 'dis-bank', 'up the ladder, then walks off the house into the river']);
 act('dis07-dhol', 'DIS-07', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholHop(110), until: (w) => done(w) || w.player.cx > px(x + 36), max: 6000 }, { hold: '', until: done, max: 900 }], 'dis-dhol-sink', 'keeps the first tempo after the dhol quickens']);
 act('dis10-dhol', 'DIS-10', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholTempo(x, 84), until: done, max: 6000 }], 'dis-dhol-sink', 'hops on the quick tempo from 07 after the drummer has slowed: the next plank is not up, he comes down on his own as it sinks']);
 act('dis09-tug', 'DIS-09', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => tug(w).phase(w.tick).taut, max: 900, note: 'wait till it is taut' }, { hold: 'R', until: done, max: 900 }], 'dis-rope', 'goes the moment the rope is taut, whoever is winning']);
@@ -477,9 +476,15 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   S['DIS-05'] = gamosaSet(0, 18);
   lengthen('DIS-05', 0, []);
   S['DIS-06'] = [
-    { hold: 'R', until: X(12.6), max: 600, note: 'at a run to the edge' },
-    { hold: 'R', jump: 14, ticks: 14, note: 'over the channel on to the first slab' },
-    { hold: 'R', until: and(ground, X(28)), max: 600, note: 'on across the slabs without stopping' },
+    { hold: 'R', until: X(12.2), max: 600, note: 'to the bank, back from the edge' },
+    { hold: '', until: (w) => banks(w)[0].slabs[1].solid.collidable, max: 900, note: 'wait for the sand step behind the first spur' },
+    { hold: 'R', until: X(12.8), max: 100 },
+    { hold: 'R', jump: 20, ticks: 20, long: true, note: 'over the slab and the spur on to the step' },
+    { hold: 'R', until: ground, max: 200 },
+    { hold: '', until: (w) => banks(w)[0].slabs[3].solid.collidable, max: 900, note: 'wait for the step behind the second spur' },
+    { hold: 'R', until: X(18.3), max: 300 },
+    { hold: 'R', jump: 20, ticks: 20, long: true, note: 'over the slab and the spur on to the step' },
+    { hold: 'R', until: and(ground, X(28)), max: 600 },
   ];
   lengthen('DIS-06', 0, []);
   S['DIS-07'] = [{ policy: atTheGate(0), until: and(ground, X(28)), max: 3000, note: 'wait for the singers at the gate, inside the ring, and through with them' }];
@@ -530,7 +535,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   // run at the gate: the stakes
   'DIS-07': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'dis-gate' },
   // stop at the edge to have a look: by the time you jump, the near slab has gone
-  'DIS-06': { steps: [{ hold: 'R', until: X(12.6), max: 600 }, { hold: '', ticks: 190 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 900 }], cause: 'dis-bank' },
+  'DIS-06': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'dis-porcupine' },
   // straight through every host, under the platform: three gamosas, and the pit is under the cloth
   'DIS-05': { steps: [{ hold: 'R', until: done, max: 900 }], cause: 'dis-gamosa' },
   // run at it: the next crepe isn't poured yet
@@ -568,7 +573,8 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   // wait right at the edge of the grass for the strip: the rhino stops at the dust, which is right there
   'DIS-08': { steps: [{ hold: 'R', until: X(7.2), max: 600 }, { hold: '', until: done, max: 1500 }], cause: 'dis-gorh' },
   // go at once, but stop on the first slab to think: it is gone beneath you
-  'DIS-06': { steps: [{ hold: 'R', until: X(12.6), max: 600 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: done, max: 1500 }], cause: 'dis-bank' },
+  // wait for the silt on the near slab (in front of the spur): the river takes it
+  'DIS-06': { steps: [{ hold: 'R', until: X(13.6), max: 600 }, { hold: '', until: done, max: 900 }], cause: 'dis-bank' },
   // wait on the first shiny crepe and stay: it dulls, sets, and is rolled with you in it
   'DIS-04': { steps: [{ hold: 'R', until: X(6.3), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: done, max: 1500 }], cause: 'dis-roll' },
   // hop over her to get ahead: pinned against the hedge when she picks
@@ -622,18 +628,15 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 export const ONE_PLAY: Record<string, string> = {
   'DIS-02': 'the sandbars have one hazard, the river under a bar that is not there: every wrong move is a wrong bar',
   'DIS-03': 'the tea row has one hazard, the plucker’s basket: too close, too early or over her all meet it',
-  'DIS-06': 'the retreating bank has one hazard, the slab clock: slow and stopping both lose to it',
-  'dis06-chang': 'the stilt house stands in the same river as the bank: missing the ladder and walking off the house both drop into it',
   'dis08-bagori': 'the rhino’s charge is the act’s only hazard: staying on the bank and leaving the hay early both stand in its line',
   'dis05-atithi': 'the guest-house givers have one trap, three gamosas over your feet at the pit',
-  'dis06-chapori': 'the chapori slabs have one trap, the river where a slab has gone',
   'dis07-chowk': 'the chowk gates have one trap, the stakes: early, late and out of the ring all meet them',
   'dis09-chaal': 'the roof has one trap, the ball down the oil: every stop off a grip pad meets it',
   'dis10-gamosa': 'the callback has one trap, the blinding gamosa at the pit: walking into the givers and taking the fourth one both blind you',
 };
 /** acts whose obvious fix is the stage's FIX play (a different trap from the stage's NAIVE) */
 const STAGE_FIX: Record<string, true> = { 'dis07-bordoisila': true, 'dis10-tug': true };
-for (const id of ['DIS-02', 'DIS-03', 'DIS-06']) {
+for (const id of ['DIS-02', 'DIS-03']) {
   (mistakes[id] ??= []).push({ what: `second scripted death, same trap (one play: ${ONE_PLAY[id]})`, ...fix[id] });
   delete fix[id];
 }

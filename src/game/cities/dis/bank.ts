@@ -12,6 +12,8 @@ export interface BankDef {
   w: number;
   /** ticks after the trigger at which the river takes it (Infinity: never) */
   t: number;
+  /** silt: the slab is not there at first and builds up at `t` (behind a spur, where the current slows) */
+  grow?: boolean;
 }
 
 export class Bank extends Entity {
@@ -48,11 +50,21 @@ export class Bank extends Entity {
     if (this.started >= 0 && p.cx < this.reset && w.state === 'play') this.started = -1;
     const c = this.clock(w);
     this.slabs.forEach((s, i) => {
-      s.solid.collidable = c < 0 || c < this.defs[i].t;
+      const d = this.defs[i];
+      s.solid.collidable = d.grow ? c >= d.t : c < 0 || c < d.t;
     });
   }
   private paint(ctx: CanvasRenderingContext2D, sl: Slab, w: World, d: BankDef) {
     const c = this.clock(w);
+    if (d.grow) {
+      // silt building up: a faint sandy shoal under the water, then the step itself
+      const k = c < 0 ? 0 : Math.min(1, Math.max(0, (c - d.t + 90) / 90));
+      ctx.fillStyle = '#D9C49A';
+      ctx.globalAlpha = 0.25 + 0.75 * k;
+      ctx.fillRect(sl.solid.x, GROUND + 14 - 14 * k, sl.solid.w, 18 + 14 * k);
+      ctx.globalAlpha = 1;
+      return;
+    }
     const gone = c >= 0 && c >= d.t;
     const x = sl.solid.x;
     const ww = sl.solid.w;

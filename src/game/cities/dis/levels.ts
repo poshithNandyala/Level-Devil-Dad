@@ -22,7 +22,7 @@ import { majChar3, majGhat, majPitha, gorhKohora, luitGhat, gamChar, gamGhat, ga
 import { Bank, type BankDef } from './bank';
 import { Cloth, Host, gam, machan, pitDanger } from './gamosa';
 import { Hedge, Plucker, Sprinkler } from './pluck';
-import { Carrier, Decor, River, SandField, levelPost, river, sand, type Span } from './entities';
+import { Carrier, Danger, Decor, GROUND, River, SandField, levelPost, river, sand, type Span } from './entities';
 
 const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
 
@@ -362,40 +362,61 @@ function majuliRoom(): LevelDef {
     index: 6,
     name: 'Majuli ka Paar',
     nameEn: 'Across from Majuli',
-    tagline: 'Majuli is the biggest river island in the world, and the river takes a little of its bank every year. Today it takes it by the slab.',
-    hint: 'Nobody is floating: the river is eating the island, a slab at a time, from the water’s edge inland: the slab nearest the water goes first, so the far bank keeps getting farther. The bank starts going the moment you set out, and cracks and a dark wet line show a slab seconds before it goes. Cross at a run: don’t stop at the edge, don’t wait on a slab, and keep moving across the slabs.',
+    tagline: 'Majuli is the biggest river island in the world, and the river takes a little of its bank every year. The villagers’ bamboo spurs give a little back.',
+    hint: 'The current runs left to right (see the lines on the water). The river takes the bank on the upstream side of each bamboo spur early, and lays silt on its downstream side: a sand step builds up there. Never stand on a slab in front of a spur, and never on the spur itself (it is only poles). Wait on the bank till the step behind the first spur is up, jump over the slab and the spur on to it, and do the same at the second spur.',
     par: 22,
     map: Grid.ground(15).pit(13, 26).put(1, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      bank(w, [{ x: 15, w: 4, t: 240 }, { x: 19, w: 4, t: 380 }, { x: 23, w: 4, t: 520 }], 5, 3, 13, 27);
+      // upstream of each spur the slab goes early; downstream the silt builds a step that stays
+      bank(w, [{ x: 13, w: 2, t: 150 }, { x: 15.6, w: 3.4, t: 220, grow: true }, { x: 19, w: 2, t: 330 }, { x: 21.6, w: 4.4, t: 420, grow: true }], 5, 3, 13, 27);
+      for (const sx of [15, 21]) spur(w, sx);
+      currents(w, 13, 26);
       sign(w, 8.2, 10.4, 3.4, 'MAJULI', 'shop', null, 'ferry ghat');
       rival(w, 3, 15, 1, tara(4));
-      onPass(w, px(4), (w2) => taraSays(w2, 'Lahe lahe, Dad. | Slowly, slowly, Dad.', 2.4));
-      collectible(w, 'dis-tenga', 20.5, 10.4);
+      onPass(w, px(4), (w2) => taraSays(w2, 'Porcupine-r pisofale thiya diya. | Stand behind the porcupine.', 2.6));
+      collectible(w, 'dis-tenga', 17.6, 11.6);
     },
   };
 }
 
+/** a bamboo "porcupine" spur in the water at column x: a star of poles, no floor (standing on it, you slip through) */
+function spur(w: World, x: number) {
+  w.add(new Danger({ x: px(x), y: GROUND + 2, w: px(0.6), h: 20 }, 'dis-porcupine'));
+  w.add(
+    new Decor((ctx) => {
+      ctx.strokeStyle = '#8D6B2E';
+      ctx.lineWidth = 2;
+      const cx = px(x) + 5;
+      for (const [dx, dy] of [[-8, -12], [8, -12], [0, -16], [-10, 4], [10, 4]]) {
+        ctx.beginPath();
+        ctx.moveTo(cx, GROUND + 6);
+        ctx.lineTo(cx + dx, GROUND + 6 + dy);
+        ctx.stroke();
+      }
+    }, 2),
+  );
+}
 
-/** DIS-06 act 2: a wide channel, five slabs, and a dry bar to rest on in the middle (the shelter). */
-const chapori6: Act = {
-  id: 'dis06-chapori',
-  w: 46,
-  advice: 'A wide channel with a rock in the middle that the river never takes: run the first three slabs, stop on the rock and get your breath, and the second stretch starts going only when you step off the rock.',
-  cps: [1.5, 18.5],
-  paint: (g, c) => {
-    const x = c.x;
-    g.pit(x + 3, x + 16);
-    g.pit(x + 21, x + 38);
-  },
-  build: (w, c) => {
-    const x = c.x;
-    bank(w, [{ x: x + 4, w: 4, t: 230 }, { x: x + 8, w: 4, t: 320 }, { x: x + 12, w: 5, t: 410 }], x + 0.6, x - 4, x + 3, x + 17);
-    bank(w, [{ x: x + 23, w: 4, t: 230 }, { x: x + 28, w: 4, t: 320 }, { x: x + 33, w: 4, t: 410 }], x + 20.4, x + 17, x + 21, x + 39);
-    sign(w, x + 17.6, 10.4, 3.2, 'SHILA', 'shop', null, 'the rock');
-  },
-};
+/** the current drawn on the water: short lines drifting right (downstream), so which side of a spur is which can be read */
+function currents(w: World, c0: number, c1: number) {
+  w.add(
+    new Decor((ctx, w2) => {
+      ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 8; i++) {
+        const x = px(c0) + ((w2.tick * 0.6 + i * 40) % px(c1 - c0));
+        ctx.beginPath();
+        ctx.moveTo(x, GROUND + 20 + (i % 3) * 6);
+        ctx.lineTo(x + 10, GROUND + 20 + (i % 3) * 6);
+        ctx.lineTo(x + 7, GROUND + 17 + (i % 3) * 6);
+        ctx.stroke();
+      }
+    }, 2),
+  );
+}
+
+
 
 // ================================================================== DIS-07: Husori (the carollers, marathon)
 function husoriRoom(): LevelDef {
@@ -640,7 +661,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: teaRoom(), acts: [bagan], cps: [14.5], twist: 'dis-muga-reel', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-muga-reel' } }),
   longStage({ base: pithaRoom(), acts: [runUp(bhogali, 3)], twist: 'dis-laru-plate', par: 34, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
   longStage({ base: gamosaRoom(), acts: [atithi], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
-  longStage({ base: majuliRoom(), acts: [majChang, chapori6], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
+  longStage({ base: majuliRoom(), acts: [], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'silt-behind-the-spur', betrayals: ['spur-silt'], ending: 'dis-tea-ladder' } }),
   longStage({ base: husoriRoom(), acts: [bordoisila, runUp(husDhol, 3), chowk], cps: [16], twist: 'dis-uruka-net', par: 90, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
   longStage({ base: gorhRoom(), acts: [gorhJeep, runUp(gorhBagori, 3)], twist: 'dis-watch-tower', par: 74, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
   longStage({ base: rangGharRoom(), acts: [rangTug, kaidhara], twist: 'dis-royal-seat', par: 36, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
