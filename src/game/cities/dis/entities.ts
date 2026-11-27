@@ -248,8 +248,8 @@ interface FieldBar {
 /**
  * A stretch of braided river with sandbars. A bar is where its span says for the current water level. The level goes up a
  * mark when the siren sounds, and the siren sounds when Dad stands on the ground at its trigger column (so nothing depends
- * on how long anyone dawdled). From the siren: new bars grow first (ticks 60-100), a bar that keeps its place but narrows
- * does so later (150-210), and bars that are gone sink last (230-290). Ghost outlines of the bars to come show from the siren.
+ * on how long anyone dawdled). From the siren: new bars grow first (ticks 90-130), a bar that keeps its place but narrows
+ * does so later (210-270), and bars that are gone sink last (330-390). Ghost outlines of the bars to come show from the siren.
  * `auto`: after the last trigger the level goes round and round on its own, every `auto` ticks (the finale's river).
  */
 export class SandField extends Entity {
@@ -308,9 +308,9 @@ export class SandField extends Entity {
   }
   /** the tick window in which this kind of change happens */
   private win(from: Span, to: Span): [number, number] {
-    if (!from && to) return [60, 100];
-    if (from && !to) return [230, 290];
-    return [150, 210];
+    if (!from && to) return [90, 130];
+    if (from && !to) return [330, 390];
+    return [210, 270];
   }
   /** is level `l` (0-based) the one the river will be at, once the change in progress is over? */
   get next() {
@@ -337,7 +337,7 @@ export class SandField extends Entity {
         const k = smoothstep((this.e - t0) / (t1 - t0));
         this.place(b, this.rangeAt(b, lv, this.period > 0 && lv >= this.spans.length - 1 ? this.period - 1 : nl, k));
       }
-      if (this.e >= 290) {
+      if (this.e >= 390) {
         this.level = this.period > 0 && lv >= this.spans.length - 1 ? this.period - 1 : lv + 1;
         this.e = -1;
         this.afterLevel?.(this.level);
@@ -397,8 +397,8 @@ export class SandField extends Entity {
     for (const b of this.bars) {
       const to = b.spans[nl];
       const from = b.spans[lv];
-      if (to && !from && this.e < 80) ctx.strokeRect(px(to[0]) + 1, GROUND + 3, px(to[1] - to[0]) - 2, 12);
-      if (from && !to && this.e > 60 && this.e < 230 && (w.tick >> 3) % 2) {
+      if (to && !from && this.e < 110) ctx.strokeRect(px(to[0]) + 1, GROUND + 3, px(to[1] - to[0]) - 2, 12);
+      if (from && !to && this.e > 90 && this.e < 330 && (w.tick >> 3) % 2) {
         ctx.setLineDash([]);
         ctx.fillStyle = 'rgba(193,18,31,0.55)';
         ctx.fillRect(b.slab.solid.x, GROUND + 2, b.slab.solid.w, 3);
@@ -431,7 +431,7 @@ export function levelPost(w: World, field: SandField, tx: number, rows: number) 
         ctx.textAlign = 'left';
         ctx.fillText(String(m + 1), x - 6, yy - 1.5);
       }
-      const cur = field.level + (field.e >= 60 ? Math.min(1, (field.e - 60) / 120) : 0);
+      const cur = field.level + (field.e >= 90 ? Math.min(1, (field.e - 90) / 180) : 0);
       const wy = top + 34 - cur * 11;
       ctx.fillStyle = 'rgba(70,110,120,0.7)';
       ctx.fillRect(x - 8, wy, 20, top + 42 - wy);

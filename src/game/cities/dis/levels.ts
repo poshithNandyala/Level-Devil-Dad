@@ -15,6 +15,7 @@ import { Pan } from './pitha';
 import { husori } from './husori';
 import { charge } from './gorh';
 import { roof, type RoofSection } from './rangghar';
+import { majChar3, majGhat, majPitha, gorhKohora, luitGhat, gamChar, gamGhat, gamHusori, gorhBagori, gorhJeep, husGhat, husLane, husPaar, luitChang, luitChar, luitGamosa, luitGorh, majChang, majChang2, majChar, rangBihu, rangWide, teaBoy } from './acts2';
 import { Bank, type BankDef } from './bank';
 import { Cloth, Host, gam, machan, pitDanger } from './gamosa';
 import { Hedge, Plucker, Sprinkler } from './pluck';
@@ -60,14 +61,14 @@ const tourLevel = () =>
     ],
     things: [],
     par: 24,
-    hint: 'A boy walks the promenade with a tray of hot lal chah, and the tray swings on his arm. Touch him, or hop clean over him (the tray tips and the tea spreads over where you land), and you are scalded. There is a ghat, a step down to the river, in the middle of the promenade: climb down into it and let him walk over your head. Climb out only once he is a few steps past: as he crosses the ghat he swings the tray right back behind him, over the steps.',
-    cps: [27.5, 50.5, 58.5],
+    hint: 'A boy walks the promenade with a tray of hot lal chah, and the tray swings on his arm. Touch him, or hop clean over him (the tray tips and the tea spreads over where you land), and you are scalded. There is a ghat, a step down to the river, in the middle of the promenade: climb down into it and let him walk over your head. Climb out only once he is a few steps past: as he crosses the ghat he swings the tray right back behind him, over the steps. A second boy comes from Fancy Bazar once you are up on the deck: stay up there until he has set his tray down.',
+    cps: [27.5, 50.5, 58.5, 99.6],
     paint: (g) => {
       g.pit(ghat.x0, ghat.x1, 15);
       g.fill(ghat.x0, ghat.x1, 17, 17, '#');
     },
     extra: (w) => {
-      w.add(new Carrier(px(92), px(60), px(62), 56, [px(ghat.x0), px(ghat.x1 + 1)]));
+      w.add(new Carrier(px(92), px(60), px(62), 40, [px(ghat.x0), px(ghat.x1 + 1)]));
       w.add(
         new Decor((ctx) => {
           // the ghat: stone steps down to the water
@@ -80,6 +81,9 @@ const tourLevel = () =>
         }, -3),
       );
       sign(w, 71.2, 10.6, 3.4, 'GHAT', 'green', null, 'river side');
+      // the second boy, from Fancy Bazar, with the evening's chah: he comes once you are up on the deck, and sets his tray
+      // down at its foot. The deck is the shelter; step off before he has stopped and the tray is in your face.
+      teaBoy(w, 118, 97, 100.5, [0, 0], 36);
       // Tara urges you on as the boy comes (a lie: stepping out now meets the tray)
       onPass(w, px(66), (w2) => taraSays(w2, 'Bhal, Dad! | Good, Dad!', 2));
       onPass(w, px(58), (w2) => w2.guide('Lahe lahe, Dad? | Slowly slowly, Dad?', (w3) => w3.info.deaths > 0));
@@ -299,22 +303,23 @@ const tawa: Act = {
 /** DIS-04 act 2: the cook works from the far end: the crepe nearest you is poured last. */
 const bhogali: Act = {
   id: 'dis04-bhogali',
-  w: 30,
+  w: 37,
   advice: 'Another pan, and a slow cook: each crepe is poured only a little after the one before it. Wait on the bank until the near one is freshly poured, then wait on each crepe until the next one shines, and only then hop.',
   cps: [1.5],
   paint: (g, c) => {
-    g.pit(c.x + 3, c.x + 24);
+    g.pit(c.x + 3, c.x + 31);
   },
   build: (w, c) => {
     const x = c.x;
     pitha(
       w,
       x + 3,
-      x + 24,
+      x + 31,
       [
         { x: x + 4, w: 4, o: 0 },
-        { x: x + 11, w: 4, o: 540 },
-        { x: x + 18, w: 4, o: 440 },
+        { x: x + 11, w: 4, o: 500 },
+        { x: x + 18, w: 4, o: 360 },
+        { x: x + 25, w: 4, o: 220 },
       ],
       x + 1,
       { period: 640, liquid: 320 },
@@ -790,10 +795,10 @@ export const levels = (): LevelDef[] => [
   longStage({ base: charRoom(), acts: [chapori, dhar], twist: 'dis-hut-shut', par: 30, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
   longStage({ base: teaRoom(), acts: [bagan], twist: 'dis-tea-chest', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-tea-chest' } }),
   longStage({ base: pithaRoom(), acts: [tawa, bhogali], twist: 'dis-laru-plate', par: 32, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
-  longStage({ base: gamosaRoom(), acts: [biya, atithi], twist: 'dis-gamosa-latch', par: 26, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
-  longStage({ base: majuliRoom(), acts: [majuli, chapori6], twist: 'dis-tea-ladder', par: 26, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
-  longStage({ base: husoriRoom(), acts: [ghar, chowk], twist: 'dis-gamosa-door', par: 120, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-gamosa-door' } }),
-  longStage({ base: gorhRoom(), acts: [kaziranga], twist: 'dis-watch-tower', par: 40, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
-  longStage({ base: rangGharRoom(), acts: [kaidhara, dhal], twist: 'dis-royal-seat', par: 26, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
-  longStage({ base: luitRoom(), acts: [luitTawa, luitBagan, luitGate, luitBank], twist: 'dis-post-bank', par: 80, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
+  longStage({ base: gamosaRoom(), acts: [biya, gamChar, gamHusori, gamGhat, atithi], twist: 'dis-gamosa-latch', par: 26, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
+  longStage({ base: majuliRoom(), acts: [majuli, majChang, majChar3, chapori6, majGhat, majChar, majPitha, majChang2], twist: 'dis-tea-ladder', par: 26, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
+  longStage({ base: husoriRoom(), acts: [ghar, husPaar, husGhat, chowk, husLane], twist: 'dis-gamosa-door', par: 120, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-gamosa-door' } }),
+  longStage({ base: gorhRoom(), acts: [kaziranga, gorhJeep, gorhBagori, gorhKohora], twist: 'dis-watch-tower', par: 40, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
+  longStage({ base: rangGharRoom(), acts: [rangBihu, kaidhara, rangWide, dhal], twist: 'dis-royal-seat', par: 26, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
+  longStage({ base: luitRoom(), acts: [luitTawa, luitChar, luitBagan, luitGorh, luitGate, luitGhat, luitChang, luitBank, luitGamosa], twist: 'dis-post-bank', par: 80, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
 ];
