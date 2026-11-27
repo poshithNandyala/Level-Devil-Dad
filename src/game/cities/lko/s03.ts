@@ -310,16 +310,19 @@ export const adda: Act = {
       }, 2),
     );
     const sx = (k: number) => c.X(ADDA[k]);
+    let onHoop = -999;
     w.onTick((w2) => {
       const p = w2.player;
+      if (p.isRiding(hoop.solid)) onHoop = w2.tick;
+      // knocked off the next flower by the hoop coming over: the hoop's doing, not the vat's. Off the hoop: the
+      // hoop's line. Into the vat without the hoop (back from the dyer's, say): only the vat
+      vat.hazard.cause = w2.tick - moved < 90 && !p.isRiding(hoop.solid) ? 'lko-adda' : w2.tick - onHoop < 90 ? 'lko-kunda' : 'lko-vat';
       if (!H.go && p.onGround && p.isRiding(hoop.solid)) {
         H.go = true;
         H.t = w2.tick;
       }
       if (!H.go || H.k >= ADDA.length - 1) return;
       const age = w2.tick - H.t;
-      // knocked off the next flower by the hoop coming over: the hoop's doing, not the vat's
-      vat.hazard.cause = w2.tick - moved < 90 && !p.isRiding(hoop.solid) ? 'lko-adda' : 'lko-kunda';
       if (age === 155) {
         H.moving = 1;
         moved = w2.tick;

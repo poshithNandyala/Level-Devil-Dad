@@ -53,6 +53,26 @@ The table below is the build history. Since fix round 6 these parts are gone fro
 | LKO-09 | 100% | 100% | 76% | 100% |
 | LKO-10 | 100% | 100% | 80% | 100% |
 
-## Clear times (scripted route, after fix round 3)
+## Clear times (scripted route, final by QA round 4's pre-ruling)
 
-01 14.2 s · 02 25.3 · 03 25.2 · 04 26.4 · 05 39.3 · 06 37.4 · 07 70.7 · 08 34.1 · 09 55.4 · 10 58.4. What changed and why the long stages stop short of their floors: `/local/home/saiposh/personal/ldd-inbox/reports/cities/lko/FIX-3.md`.
+01 14.2 s · 02 20.2 · 03 25.2 · 04 10.7 · 05 42.9 · 06 37.3 · 07 49.9 · 08 37.1 · 09 61.0 · 10 24.5. Why the long stages stop short of their floors: the reports in ldd-inbox (`reports/cities/lko/FIX-3.md` to `FIX-7.md`); `darbar` and `jawab` were cut from 10, and `shaam` keeps one trap (rulings).
+
+## Fix round 8 (QA FAIL-4: every death line true for the play that died)
+
+Each place now has its own cause, so the line always names what this play did, and never advises the act's other fatal move:
+`lko-chowk` (04's single cups: only the kulhad stack's shadow holds), `lko-tawa-khali` and `lko-ghee-tawa` (the bare tawa),
+`lko-seekh-lane`, `lko-seekh-ulta`, `lko-seekh-bhara`, `lko-seekh-ghee`, `lko-seekh-charkhi` (each rack's own skewers),
+`lko-rang-vat` (the dyer's vat), `lko-vat` (into the karigar's rinse vat without ever riding his hoop, e.g. backing
+off from the dyer's), `lko-dukaan-nala` (the nala in front of the shop), `lko-upar`, `lko-toota-kuan`, `lko-utar`
+(each vault's own well, saying what that act asks), `lko-guru-aage` and `lko-seedha-aage` (a red strip ahead, apart
+from turning back on to one), `lko-girah-der` (the red ran out before you were across). Lines rewritten to be true
+for every play: `lko-kuan`, `lko-wapas`, `lko-bhool`, `lko-andhera`, `lko-goti-andhera`, `lko-guru`, `lko-julus-nala`,
+`lko-photo-test`, `lko-nala`.
+`lko08-wapas` has its own second death now: the well runs on past the gallery's end and the vault comes low over
+it, so walking (or jumping) off the end is a fall into wapas's own well (`lko-wapas`).
+
+Checks (QA round 5, lag 0/6/12): the six-play generic probe (walk, short hop, long jump, wait 4 s then walk, hop every
+0.3 s, back off) from every part's start, 846 plays: every line true for its play. Scripted NAIVE, FIX and MISTAKES: each
+dies in its own cause at every lag except the two pre-ruled lag-12 cases (`dukaan` m8, `tasveer` m0). Lag-captured
+sweep at lag 0/6/11/12 x idle 0/37/120/251: no death for idle, run or tap jump; worst replay 7.46 s (04 m0, lag 6).
+Strict cpsafe 10/10; fair at N=80 100/100 at 6t/12t on all ten; walk-4.5 clear (nearest +4.7 tiles).

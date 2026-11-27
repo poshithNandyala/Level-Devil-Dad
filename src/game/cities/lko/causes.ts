@@ -47,6 +47,7 @@ export const causeLines: Record<string, string[]> = {
   'lko-balti': ['You waited on the white for a second wash: this dhobi’s second move is his bucket.', 'At the door: flower, flower, in, before he throws.'],
   'lko-adda': ['You waited on the next flower, and that is where the karigar clamped his hoop down.', 'Ride inside the hoop: it carries you from flower to flower.'],
   'lko-kunda': ['Off the hoop’s taut muslin and into the rinse vat.', 'Stand inside the hoop and let it carry you; step off only at the far side.'],
+  'lko-vat': ['You went into the karigar’s rinse vat.', 'Cross the vat inside his hoop: it carries you from flower to flower.'],
   'lko-rang-vat': ['You went off the near flowers into the rangrez’s vat of neel.', 'Wait on the near flowers; cross the far half in one go the moment it comes up.'],
   'lko-dhakkan': ['He lifted his shiny lid: now the light comes from the other side, on to your tile.', 'When the lid goes up, move to the other tile of the heap.'],
   'lko-jhanda-peeche': ['The flock obeys the nearer flag, and that was still the one behind you.', 'Till the middle roof, cross on the red of the flag behind you.'],

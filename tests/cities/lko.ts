@@ -846,7 +846,7 @@ mistakes['LKO-04'] = [
   {
     what: 'waiting at the start of the lane while the shadows shrink',
     steps: [...room04, runTo(actX('LKO-04') + 1.5), runTo(actX('LKO-04') + 2.3), { hold: '', ticks: 700 }, hops([actX('LKO-04') + 4, actX('LKO-04') + 6]), until(done, 300)],
-    cause: 'lko-malai',
+    cause: 'lko-chowk',
   },
 ];
 
