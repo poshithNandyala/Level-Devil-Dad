@@ -19,6 +19,7 @@ export const causeLines: Record<string, string[]> = {
   'gtk-khachar': ['The mule train came down the track, and you were standing in it.', 'Walk to the bells, and past them, before the mules move off.'],
   'gtk-chiplo': ['Soaked through, and the wet slope took your feet.', 'When the rain starts, look for where it drips in a line: a roof is up there in the cloud.'],
   'gtk-bijuli': ['Struck on the open ridge: the storm was right overhead.', 'Count from the flash to the thunder: cross only when the count runs long.'],
+  'gtk-chhajja': ['Head first into a balcony the cloud was hiding.', 'Where it drips in a line, a balcony is over the hole: hop low.'],
   'gtk-nadi': ['The yak never turns back: it walked on into the river, and you with it.', 'Get off on the real bank as it walks over it.'],
   'gtk-photo': ['Off the yak for the photo, and the shore it stopped on is thin ice.', 'The photo stop is on the thin shore: stay on its back till the far bank.'],
 };

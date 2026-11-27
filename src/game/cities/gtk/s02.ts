@@ -28,7 +28,8 @@ export interface SteamCfg {
 // round 4: the cook works about a quarter quicker, so a wait on the stack replays in under 7.5 s
 export const ROOM_CFG: SteamCfg = { period: 3.8, liftAt: 1.15, liftT: 0.6, hold: 0.8, carryT: 0.45, lowerT: 0.45, lidAt: 2.55, lidT: 0.65 };
 /** the act's cook has no time to stop at the top: the tier goes round at once */
-export const ACT_CFG: SteamCfg = { period: 4.6, liftAt: 1.4, liftT: 0.9, hold: 0, carryT: 0.6, lowerT: 0.6, lidAt: 2.6, lidT: 0.9 };
+// round 5: the finale's cooks work a quarter quicker too, so a wait on the stack replays in under 7.5 s
+export const ACT_CFG: SteamCfg = { period: 3.4, liftAt: 1.0, liftT: 0.65, hold: 0, carryT: 0.45, lowerT: 0.45, lidAt: 1.9, lidT: 0.65 };
 
 export interface Steamer {
   t0: number;

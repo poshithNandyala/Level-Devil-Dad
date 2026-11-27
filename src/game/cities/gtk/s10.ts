@@ -215,7 +215,7 @@ export const act7 = inspectorAct(
 /** the finale's ropeway breaks 08's middle-station change: tonight your cabin goes through to the viewpoint deck,
  *  and the other one that waits at the middle drops away down the valley line the moment yours comes in. Stay on
  *  yours past the middle, and off on the deck: it goes on up into its shed */
-export const TAR10 = { wait: 0.8, toMid: 2.4, atMid: 1.0, toDeck: 2.2, atDeck: 2.0, up: 0.6, bDrop: 0.5 };
+export const TAR10 = { wait: 0.5, toMid: 1.8, atMid: 0.8, toDeck: 1.6, atDeck: 1.4, up: 0.5, bDrop: 0.4 };
 const lerp10 = (a: number, b: number, k: number) => a + (b - a) * Math.max(0, Math.min(1, k));
 export const act8: Act = {
   id: 'gtk10-tar',

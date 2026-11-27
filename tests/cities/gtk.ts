@@ -291,6 +291,7 @@ const act07o = (x: number): Step[] => [
   { hold: '', until: (w) => storm(w) >= 4.8, max: 900, note: 'count each flash: the third runs long' },
   { policy: gapJumper(), until: X(x + 21.5), max: 900, note: 'cross the ridge, jump where the rope stops' },
 ];
+const act07p = (x: number): Step[] => [{ policy: gapJumper({ low: true }), until: X(x + 27.5), max: 900, note: 'hop low over each hole under a drip line' }];
 const act03 = (x: number): Step[] => [{ policy: bagHop('gtk3a'), until: and(ground, X(x + 26)), max: 2400, note: 'cloth to cloth, ahead of the inspector' }, { hold: 'R', until: X(x + 30), max: 300 }];
 /** the jhola stall: jump up for the bag on the hook, then in */
 const jholaPolicy: Policy = (w, _m, d) => {
@@ -558,7 +559,7 @@ const tankPolicy: Policy = (w, _m, d) => {
 
 // ------------------------------------------------------------------ GTK-07
 /** walk right along the road, jumping every hole in it (read off the map: the route knows where they are) */
-function gapJumper(o: { skipPainted?: boolean } = {}): (w: World) => Out {
+function gapJumper(o: { skipPainted?: boolean; low?: boolean; full?: boolean } = {}): (w: World) => Out {
   let W: World | null = null;
   let jt = 0;
   return (w) => {
@@ -575,7 +576,8 @@ function gapJumper(o: { skipPainted?: boolean } = {}): (w: World) => Out {
       const fr = Math.round((p.y + p.h) / 16);
       const tx = Math.floor((p.x + p.w + 14) / 16);
       if (!w.isSolidTile(w.tileAt(tx, fr)) && !w.isSolidTile(w.tileAt(tx, fr + 1))) {
-        jt = 15;
+        // low: a tap, released at once (the shortest jump still clears two tiles)
+        jt = o.low ? 1 : o.full ? 45 : 15;
         return { move: 'R', jump: true };
       }
       // up a step in the road
@@ -1049,6 +1051,8 @@ function actDeaths() {
   actDeath('GTK-07', room07(), 'gtk07-paani', 'stand still in the open till it passes', (x) => [{ hold: 'R', until: X(x + 3.5), max: 600 }, { hold: '', until: done, max: 900 }], 'gtk-chiplo');
   actDeath('GTK-07', room07(), 'gtk07-bijuli', 'it has just struck: go now', (x) => [{ hold: 'R', until: X(x + 4), max: 600 }, { hold: '', until: (w) => storm(w) >= 0.75, max: 600 }, { policy: gapJumper(), until: done, max: 900 }], 'gtk-bijuli');
   actDeath('GTK-07', room07(), 'gtk07-bijuli', 'shelter till the storm has passed', (x) => [{ hold: 'R', until: X(x + 4), max: 600 }, { hold: '', until: done, max: 1200 }], 'gtk-badal');
+  actDeath('GTK-07', room07(), 'gtk07-chhajja', 'jump the holes as everywhere in the cloud, a good big jump', () => [{ policy: gapJumper({ full: true }), until: done, max: 900 }], 'gtk-chhajja');
+  actDeath('GTK-07', room07(), 'gtk07-chhajja', 'no jumping under the balconies: walk it', () => blind(), 'gtk-khaai');
   actDeath('GTK-03', r3, 'gtk03-kalam', 'wait till he’s done, then go', () => [{ policy: bagHop('gtk3k', { every: true, gate: kalamGate(1, 'wrote') }), until: done, max: 3000 }], 'gtk-jhora');
   actDeath('GTK-03', r3, 'gtk03-kalam', 'on to the bag in front of him, and wait there for him to finish', () => [{ policy: bagHop('gtk3k', { every: true, gate: kalamGate(2, 'wrote') }), until: done, max: 3000 }], 'gtk-polythene');
   actDeath('GTK-03', r3, 'gtk03-ulto', 'on to every bag', () => [{ policy: bagHop('gtk3b', { every: true, dwell: 0.3 }), until: done, max: 3000 }], 'gtk-polythene');
@@ -1171,6 +1175,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk07-ghanti': act07m,
   'gtk07-paani': act07n,
   'gtk07-bijuli': act07o,
+  'gtk07-chhajja': act07p,
   'gtk03-jaldi': (x: number): Step[] => [{ policy: bagHop('gtk3c'), until: and(ground, X(x + 26)), max: 2400, note: 'no stopping, ahead of him' }, { hold: 'R', until: X(x + 30), max: 300 }],
   'gtk04-ghar': act04,
   'gtk04-upar': act04b,

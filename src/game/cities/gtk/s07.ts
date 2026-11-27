@@ -522,6 +522,38 @@ export const act15: Act = {
   },
 };
 
+/** F487 fog-hides-ceiling: the lane past the old houses, the road broken where the rope stops, and over each hole a
+ *  balcony the cloud hides. Its drip line on the road gives it away. A full jump puts your head into the balcony's
+ *  iron; a low hop clears the hole and not the balcony */
+export const CHHAJJA = { gaps: [[6, 7], [13, 14], [20, 21]] as [number, number][] };
+export const act16: Act = {
+  id: 'gtk07-chhajja',
+  w: 28,
+  advice: 'The lane past the old houses. Where the rope stops the road is broken, as ever; but here it drips in a line on the road either side of each hole: a balcony is over it, hidden in the cloud. Hop low over those holes. A full jump puts your head into the balcony.',
+  paint: (g, c) => {
+    for (const [a, b] of CHHAJJA.gaps) g.pit(c.x + a, c.x + b);
+  },
+  build: (w, c) => {
+    const gaps = CHHAJJA.gaps.map(([a, b]) => [c.x + a, c.x + b] as [number, number]);
+    fog(w, c.x + 2, c.x + 27, null);
+    drops(w, gaps, 'gtk-khaai');
+    rope(w, c.x + 1, c.x + 27, gaps);
+    for (const [a, b] of gaps) {
+      const x0 = px(a) - 20,
+        x1 = px(b + 1) + 20;
+      // the balcony's underside: wrought iron, just above where a low hop's head reaches
+      w.add(new Rig(x0, FL - 72, x1 - x0, 10, { layer: 1, cause: 'gtk-chhajja', inset: 0, paint: (ctx, r) => box(ctx, r.x, r.y, r.w, r.h, '#4A4A44') }));
+      decor(w, 3, (ctx, w2) => {
+        for (const ex of [x0, x1 - 2])
+          for (let k = 0; k < 3; k++) box(ctx, ex, FL - 6 - (((w2.tick >> 1) + k * 11) % 30), 2, 3, 'rgba(210,225,235,0.9)');
+        box(ctx, x0 - 1, FL - 2, 3, 2, '#9DB8C9');
+        box(ctx, x1 - 2, FL - 2, 3, 2, '#9DB8C9');
+      });
+    }
+    sign(w, c.x + 0.4, 8.6, 3.6, 'OLD LANE', 'green', null, 'balconies');
+  },
+};
+
 /** door: up the hillside in thick cloud; the rope's posts climb with the hidden steps, the only guide to them */
 export const ending: Ending = {
   space: 12,
