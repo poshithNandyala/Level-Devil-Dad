@@ -578,3 +578,10 @@ also recorded as a "like last time" mistake.
 - Tried and dropped: a gust through TVM-05's gatehouse that would carry the dad who stops between the gates
   under the hidden one. Wind pushes a stopped dad only as far as the zone reaches and then he stops dead,
   and starting it early carried a runner past the hidden gate instead of into it.
+
+## v0.17.0: Patna, the first city built as a module
+Patna (PAT, Bihar) is the first city since the modularization: ten stages (01 the tour, 02-10 long stages,
+07 the marathon, 10 the finale), all in `src/game/cities/pat/` with its routes in `tests/cities/pat.ts`. It
+passed independent QA at c5e4950 after four failed rounds (reports in ldd-inbox/reports/cities/pat/QA/).
+PAT-05 runs 52.9 s, under the 60 s floor, accepted as an honest number (QA round 4): every act that took it
+past 60 s repeated a shipped decision. Design notes: `docs/cities/PAT.md`.
