@@ -445,7 +445,7 @@ export const act14: Act = {
 /** F488 count-flash-to-thunder: a storm over the open ridge. Count from the flash to the thunder: while it is
  *  short the storm is overhead and the next bolt hits the ridge; when a count runs long, cross. Wait for the
  *  storm to pass altogether and the cloud comes down on the shelter, which stands on the kerb's edge */
-export const BIJULI = { flashes: [[0.3, 0.4], [1.4, 0.6], [3.8, 3.0]] as [number, number][], strike: 1.5, cloud: 6.2, ridge: [8, 15] as [number, number], gap: [11, 12] as [number, number] };
+export const BIJULI = { flashes: [[0.3, 0.4], [1.4, 0.6], [3.0, 3.0]] as [number, number][], strike: 1.5, cloud: 5.4, ridge: [8, 15] as [number, number], gap: [11, 12] as [number, number] };
 export const act15: Act = {
   id: 'gtk07-bijuli',
   w: 22,

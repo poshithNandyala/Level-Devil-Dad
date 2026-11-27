@@ -215,7 +215,7 @@ export const act7 = inspectorAct(
 /** the finale's ropeway breaks 08's middle-station change: tonight your cabin goes through to the viewpoint deck,
  *  and the other one that waits at the middle drops away down the valley line the moment yours comes in. Stay on
  *  yours past the middle, and off on the deck: it goes on up into its shed */
-export const TAR10 = { wait: 0.5, toMid: 1.8, atMid: 0.8, toDeck: 1.6, atDeck: 1.4, up: 0.5, bDrop: 0.4 };
+export const TAR10 = { wait: 1.0, toMid: 1.8, atMid: 0.8, toDeck: 1.6, atDeck: 1.4, up: 0.5, bDrop: 0.4 };
 const lerp10 = (a: number, b: number, k: number) => a + (b - a) * Math.max(0, Math.min(1, k));
 export const act8: Act = {
   id: 'gtk10-tar',
@@ -224,7 +224,8 @@ export const act8: Act = {
   paint: (g, c) => {
     const x = c.x;
     g.pit(x, x + 33);
-    g.fill(x, x + 4, 15, 17, '#');
+    // a deck long enough that a run and a jump off the end of the last house lands on it
+    g.fill(x, x + 6, 15, 17, '#');
     g.fill(x + 29, x + 33, 9, 17, '#');
   },
   build: (w, c) => {
@@ -235,7 +236,7 @@ export const act8: Act = {
       if (st.t0 < 0) st.t0 = w2.tick;
     });
     const t = (w2: World) => (st.t0 < 0 ? 0 : (w2.tick - st.t0) / 120);
-    const a0 = { x: c.X(5), y: px(15) },
+    const a0 = { x: c.X(7), y: px(15) },
       am = { x: c.X(17) - 40, y: px(12) },
       ad = { x: c.X(29) - 40, y: px(9) };
     const aAt = (u: number) => {

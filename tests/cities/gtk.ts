@@ -288,7 +288,7 @@ const act07n = (x: number): Step[] => [
 const storm = (w: World) => { const st = w.flags.gtk7b2 as { t0: number }; return st.t0 < 0 ? -1 : (w.tick - st.t0) / 120; };
 const act07o = (x: number): Step[] => [
   { hold: 'R', until: X(x + 4), max: 600, note: 'into the shelter' },
-  { hold: '', until: (w) => storm(w) >= 4.8, max: 900, note: 'count each flash: the third runs long' },
+  { hold: '', until: (w) => storm(w) >= 4.0, max: 900, note: 'count each flash: the third runs long' },
   { policy: gapJumper(), until: X(x + 21.5), max: 900, note: 'cross the ridge, jump where the rope stops' },
 ];
 const act07p = (x: number): Step[] => [{ policy: gapJumper({ low: true }), until: X(x + 27.5), max: 900, note: 'hop low over each hole under a drip line' }];

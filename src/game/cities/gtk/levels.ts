@@ -64,7 +64,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: room04(), acts: withIntros([act04, act04b, act04c]), twist: 'gtk-lift-counts-down', par: 34, shape: 'long', meta: meta04 }),
   longStage({ base: room05(), acts: withIntros([act05a, { ...act05b, cps: [1.5, 19.5] }, { ...act05e, cps: [16.5] }, act05c, act05f, act05g]), twist: 'gtk-taxi-meter', par: 74, shape: 'wtf', meta: meta05 }),
   longStage({ base: room06(), acts: withIntros([act06, act06b, { ...act06c, cps: [22, 33] }, act06d, act06f, act06i]), twist: 'gtk-tank-overflow', par: 53, shape: 'long', meta: meta06 }),
-  longStage({ base: room07(), acts: withIntros([act07a, act07b, act07c, act07m, act07g, act07n, act07p, act07o, { ...act07j, cps: [30] }, act07l]), twist: 'gtk-rope-climbs-to-door', par: 99, shape: 'marathon', lives: 'act', meta: meta07 }),
+  longStage({ base: room07(), acts: withIntros([act07a, act07b, act07c, act07m, act07g, { ...act07n, cps: [14] }, act07p, { ...act07o, cps: [17.5] }, { ...act07j, cps: [30] }, act07l]), twist: 'gtk-rope-climbs-to-door', par: 99, shape: 'marathon', lives: 'act', meta: meta07 }),
   longStage({ base: room08(), acts: withIntros([act08f, act08]), twist: 'gtk-cabin-both-doors', par: 71, shape: 'wtf', meta: meta08 }),
   longStage({ base: room09(), cps: [26.5], acts: withIntros([act09, { ...act09c, cps: [23.5] }, { ...act09d, cps: [19.5] }, act09b]), twist: 'gtk-gate-yak-snowbank', par: 94, shape: 'long', meta: meta09 }),
   longStage({ base: room10(), acts: withIntros([act10a, act10b, act10c, act10d, act10e, act10g, act10j, { ...act10h, cps: [31] }, { ...act10i, cps: [21.5] }, { ...act10k, cps: [26] }, act10l]), twist: 'gtk-viewpoint-second-floor', par: 123, shape: 'marathon', lives: 'act', meta: meta10 }),
