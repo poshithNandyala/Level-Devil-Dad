@@ -218,7 +218,7 @@ pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound p
   counts is the one left when the porter has finished (`pat06-ginti`); 10 callbacks: the coaching hoardings with the
   cart's three sacks naming the narrowing bell (`pat10-roll`) and the shared tempo with sacks as riders (`pat10-tempo`).
 
-## SHL (Shillong, Meghalaya): ideas used (module city, 6 of 10 stages built, branch `city/shl`)
+## SHL (Shillong, Meghalaya): ideas used (module city, 7 of 10 stages built, branch `city/shl`)
 - **01 Kumno, Shillong!** at the view point a first drop falls by a pine well short of the cloud and means nothing;
   the rain falls only under the cloud shape, on a beat, and the cloud drifts over anyone who stands near it waiting:
   run under it right after it has emptied (`shl-slap`, `shl-lyoh`).
@@ -243,5 +243,9 @@ pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound p
   `shl-spray`); acts: stand on the tip of a root you grew and it sprouts the next span (`shl06-sprout`); a guide in the
   path grows a root across it at head height, hop the guide (`shl06-kiang`, `shl-jri`); door: one guide, one root to
   the ledge (`shl-rootdoor`).
-- **07-10** not built in round 1: Mawsmai drip-growth pairs (marathon), Wettest Desert cloud meter (HWIK), Eight-Day
-  Market day cycle (tough), Down Seven Hundred finale (callbacks breaking 01-09).
+- **07 Mawsmai (marathon, core only)** stalactites grow a step towards the floor at every drip you hear; one that meets
+  its stump is a wall for a moment, then breaks and starts again from the top; pass while there is room, a head bump
+  freezes one for a few drips (`shl-maw`, `shl-shut`); act: the gallery, seven dripping together, wait for the break then
+  run them all (`shl07-krem`, the labelled momentum beat); door: the slowest one over the door's arch (`shl-column`).
+- **08-10** not built in round 1: Wettest Desert cloud meter (HWIK), Eight-Day Market day cycle (tough), Down Seven
+  Hundred finale (callbacks breaking 01-09).
