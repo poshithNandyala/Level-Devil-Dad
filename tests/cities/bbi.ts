@@ -754,6 +754,7 @@ const DEATHS: Record<string, Death[]> = {
   'bbi07-dweepa': [
     walkOn('bbi-nacha'),
     { what: 'leave the plinth for the second troupe’s first pose', cause: 'bbi-nacha', steps: (x) => [...crossTroupe('bbi7i0', x, 4, 6, 'bridge'), { hold: '', until: (w) => tr(w, 'bbi7i1').pose === 'tower' && tr(w, 'bbi7i1').into > 0.3, max: 1500 }, { hold: 'R', until: done, max: 900 }] },
+    { what: 'rest on the second bridge too', cause: 'bbi-thrown', steps: (x) => [...crossTroupe('bbi7i0', x, 4, 6, 'bridge'), waitFor((w) => tr(w, 'bbi7i1').pose === 'bridge' && tr(w, 'bbi7i1').into > 0.35, 'the whole second bridge', 2400), { hold: 'R', until: X(x + 15), max: 300 }, { hold: '', until: done, max: 900 }] },
   ],
   'bbi07-stambha': [walkOn('bbi-nacha')],
   'bbi07-dhol': [walkOn('bbi-nacha')],
