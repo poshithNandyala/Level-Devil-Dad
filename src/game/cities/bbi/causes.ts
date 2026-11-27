@@ -27,6 +27,8 @@ export const causeLines: Record<string, string[]> = {
   'bbi-dhakka': ['Uncle shoved you off his grinder, Dad, into the well.', 'Start the grinder and step off it at once: he only wants it stopped.'],
   'bbi-kua': ['Into the ditch, Dad: the stone was up, so there was nothing to cross on.', 'Stop the sweep low: the stone rests on both rims as a bridge.'],
   'bbi-adha': ['Half the bridge got up first, Dad: the near half was the older one.', 'When the near drummer stops first, step on to his half at once and walk: the far half lands under your next step.'],
+  'bbi-ulta-gadi': ['Rolled under, Dad: you walked against the turn.', 'When the bridge shivers, turn round and walk towards the drummer: ride the turn back.'],
+  'bbi-gadi-tala': ['Rolled under, Dad: they turned over with you standing on top.', 'Don’t stand still on a rolling bridge: walk the way it turns, towards the drummer.'],
   'bbi-rangapani': ['Into the dye gutter, Dad: that parasol was shut.', 'A parasol only opens when a customer comes to its shop. Wait for it.'],
   'bbi-silk': ['The silk is slippery: you slid off the edge.', 'Stand on the cut-out sewn on top, and nowhere else.'],
   'bbi-peeled': ['He sold the cut-out you were standing on!', 'On the third parasol, don’t wait: go on as soon as the next one opens.'],

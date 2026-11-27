@@ -38,6 +38,9 @@ export interface TroupeCfg {
   forecast?: boolean;
   /** the drummer sits at this column (world tiles) instead of on the troupe's own near bank */
   drumX?: number;
+  /** on these stops (by index in `poses`) a drum roll at `at` s into the pose turns the bridge over towards the
+   *  drummer for `dur` s: whoever is not walking with the turn is rolled under */
+  roll?: { stops: number[]; at: number; dur: number };
 }
 
 export interface TroupeSt {
@@ -86,7 +89,7 @@ function dancer(ctx: CanvasRenderingContext2D, x: number, y: number, k: number, 
 
 /** a troupe in the pit at columns c0..c0+n-1, its drummer on the left bank */
 export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) {
-  const st: TroupeSt & { t: number; decoyStopped?: boolean; decoyLeft?: number; next?: Pose } = { pose: null, into: 0, left: 0, stops: 0, t: -1 };
+  const st: TroupeSt & { t: number; decoyStopped?: boolean; decoyLeft?: number; next?: Pose; rolling?: boolean; rollSoon?: boolean } = { pose: null, into: 0, left: 0, stops: 0, t: -1 };
   (w.flags[key] as unknown) = st;
   const x0 = px(cfg.c0);
   const W = px(cfg.n);
@@ -103,6 +106,7 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
   body.setSolid(false);
   const shapes = { bridge: body };
   let was: Pose | null = null;
+  let rolled = false;
   w.add(
     new Rig(0, 0, 0, 0, {
       layer: 3,
@@ -138,7 +142,33 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
         const sol = body.solid!;
         if (!a.pose) {
           body.setSolid(false);
+          rolled = false;
           return;
+        }
+        // the roll: the line turns over towards the drummer; ride it his way or be rolled under
+        const ri = (((a.stops - 1) % cfg.poses.length) + cfg.poses.length) % cfg.poses.length;
+        st.rolling = !!cfg.roll && cfg.roll.stops.includes(ri) && a.into >= cfg.roll.at && a.into < cfg.roll.at + cfg.roll.dur;
+        st.rollSoon = !!cfg.roll && cfg.roll.stops.includes(ri) && a.into >= cfg.roll.at - 0.5 && a.into < cfg.roll.at;
+        if (rolled) {
+          body.setSolid(false);
+          return;
+        }
+        if (cfg.roll && cfg.roll.stops.includes(ri) && body.rides(w2)) {
+          const p = w2.player;
+          if (st.rolling && p.vx < -20) p.pushVx = -220;
+          // standing still, you go under as soon as the turn has begun; walking against it, when it ends
+          const standing = Math.abs(p.vx) < 20 && a.into >= cfg.roll.at + 0.25;
+          if (standing || a.into >= cfg.roll.at + cfg.roll.dur) {
+            if (p.vx > -40) {
+              w2.flags.bbiThrown = 1;
+              w2.flags.bbiThrownCause = p.vx > 20 ? 'bbi-ulta-gadi' : 'bbi-gadi-tala';
+              p.vy = -120;
+              p.onGround = false;
+              rolled = true;
+              body.setSolid(false);
+              return;
+            }
+          }
         }
         const [bx, by, bw, bh] = boxes[a.pose];
         // the bridge forms left to right as the dancers lie down, one after another
@@ -187,6 +217,7 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
           }
         } else if (a.pose === 'bridge') {
           const r = shapes.bridge;
+          if (st.rollSoon || st.rolling) for (let x = x0; x < x0 + r.w; x += 8) box(ctx, x + ((w2.tick >> 1) % 3) - 1, FL - 3, 4, 2, '#FFFFFF');
           for (let x = x0; x < x0 + r.w - 8; x += 16) dancer(ctx, x + 8, FL + 4, x / 16, true);
           for (let x = x0 + 4; x < x0 + r.w; x += 16) box(ctx, x, FL + 4, 3, 14, '#B07A4E');
         } else if (a.pose === 'tower') {
@@ -215,7 +246,8 @@ export function stagePit(w: World, c0: number, c1: number) {
   g.o.tick = (r, w2) => {
     const p = w2.player;
     if (p.onGround && p.y + p.h >= FL - 1 && !w2.flags.bbiThrownKeep) w2.flags.bbiThrown = 0;
-    r.hazard!.cause = w2.flags.bbiThrown ? 'bbi-thrown' : 'bbi-nacha';
+    if (!w2.flags.bbiThrown) w2.flags.bbiThrownCause = undefined;
+    r.hazard!.cause = w2.flags.bbiThrown ? ((w2.flags.bbiThrownCause as string | undefined) ?? 'bbi-thrown') : 'bbi-nacha';
   };
   w.add(
     new Rig(0, 0, 0, 0, {
@@ -605,6 +637,12 @@ export const act15: Act = {
     troupe(w, { c0: c.x + JODI.p2 + n, n, drum: 2.0, hold: 2.0, poses: ['bridge'], form: 0.2, drumX: c.x + JODI.p2 + 2 * n + 0.4 }, () => st2.t0, 'bbi7jd2f');
   },
 };
+
+/** act 16, gadiba (IDEAS-3 B1, pose-shapes family): the drummer sits on your bank, and on a drum roll (the bridge
+ *  shivers first) the line of boys turns over towards him: walk his way and you ride the turn back to the bank;
+ *  stand or walk on and you are rolled under. The next stop has no roll: cross on that one. */
+export const T07R: TroupeCfg[] = [{ c0: 4, n: 11, drum: 1.4, hold: 2.0, poses: ['bridge', 'bridge'], form: 0.25, roll: { stops: [0], at: 0.6, dur: 0.5 } }];
+export const act16 = troupeAct('bbi07-gadiba', 19, T07R, 'bbi7gd', 'On a drum roll (the bridge shivers first) this line of boys turns over towards the drummer on your bank. If it shivers under you, turn round and walk his way: you ride the turn back to the bank. The next stop has no roll: cross on that one.');
 
 /** ending: the last pose is a gate over the door; between poses the troupe whirls across the doorway */
 export const T07e: TroupeCfg = { c0: 0, n: 4, drum: 1.6, hold: 1.6, poses: ['gate'], form: 0.3, ground: true };
