@@ -512,17 +512,18 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       ...Array.from({ length: 4 }, (_, i): Step[] => [
         { hold: '', until: settled(), max: 200, ...(i === 0 ? { note: 'hop on the spot: each landing slides you on' } : {}) },
         { hold: '', jump: 6, ticks: 6 },
-        { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 },
+        { hold: '', until: or(landed(), done), max: 200 },
       ]).flat(),
       { hold: '', until: (w) => w.player.onGround && w.player.x > px(x + 12), max: 200, note: 'carried under the lip to the ledge' },
-      { hold: 'R', until: X(x + 17.8), max: 200, note: 'land on the far side of the heap: it carries you over' },
+      { hold: 'R', until: X(x + 17.9), max: 200, note: 'land on the far side of the heap: it carries you over' },
+      { hold: '', until: still, max: 60 },
       { hold: 'R', jump: 30, ticks: 50, long: true },
       { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 },
       // the heap slides you to its far edge; a hop on the spot, and the next slide carries you off under the lip
       ...Array.from({ length: 2 }, (): Step[] => [
         { hold: '', until: ((f) => (w: World) => f(w) || w.player.x > px(x + 23))(settled()), max: 200 },
         { hold: '', jump: 6, ticks: 6 },
-        { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 },
+        { hold: '', until: or(landed(), done), max: 200 },
       ]).flat(),
       { hold: '', until: (w) => (w.player.onGround && w.player.x > px(x + 26)) || w.state !== 'play', max: 300 },
       { hold: 'R', until: X(x + 33), max: 300 },
