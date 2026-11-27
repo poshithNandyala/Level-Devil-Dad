@@ -28,8 +28,8 @@ export interface Volley {
   speed?: number;
   /** a boule already lying on the gravel at this pitch column: the roller stops on it (a carreau) and the jack stays */
   shield?: number;
-  /** a second thrower at the other end, this many seconds after the first roller leaves: knocks the jack back */
-  second?: { knock: number; delay: number };
+  /** a second thrower at the other end, this many seconds after the first roller has run out: knocks the jack back */
+  second?: { knock: number; delay: number; speed?: number };
   /** the caller's shout */
   shout: string;
 }
@@ -177,8 +177,12 @@ export function boulodrome(w: World, c: PitchCfg) {
     const shout = v.shout;
     npc(w2, shout, v.from === 'L' ? X(c.x0) : X(c.x1), px(G - 4.2), 1.1);
     const shield = v.shield !== undefined ? w2.add(new Thing('pdy-boule', X(v.shield) - 6, FLOOR - 12, { solid: false, layer: 2 })) : null;
+    // how many boules this end throws, and how many have run out so far (a doublette is judged after both)
+    w2.flags[f('throws')] = v.second ? 2 : 1;
+    w2.flags[f('thrown')] = 0;
     w2.after(0.5, () =>
       roll(w2, v.from, v.knock, v.speed ?? 205, shield, (w3) => {
+        w3.flags[f('thrown')] = 1;
         const next = () => {
           w3.flags[f('final')] = jack.cx;
           w3.after(0.3, () => lob(w3));
@@ -187,7 +191,12 @@ export function boulodrome(w: World, c: PitchCfg) {
           const other = v.from === 'L' ? 'R' : 'L';
           w3.after(v.second.delay, () => {
             npc(w3, 'Et moi! | My turn!', other === 'L' ? X(c.x0) : X(c.x1), px(G - 4.2), 0.9);
-            w3.after(0.5, () => roll(w3, other, v.second!.knock, 205, null, () => next()));
+            w3.after(0.4, () =>
+              roll(w3, other, v.second!.knock, v.second!.speed ?? 205, null, (w4) => {
+                w4.flags[f('thrown')] = 2;
+                next();
+              }),
+            );
           });
         } else next();
       }),
@@ -248,7 +257,7 @@ export function petanqueRoom(): LevelDef {
 }
 
 /** an act of the boulodrome: a plain volley from the left (the room's rule) and then this end's twist */
-function pitchAct(id: string, name: string, advice: string, twist: Volley, o: { jack: number; shield?: number; guide?: string; sign: [string, string] }): Act {
+function pitchAct(id: string, name: string, advice: string, twist: Volley, o: { jack: number; shield?: number; guide?: string; sign: [string, string]; plain?: boolean }): Act {
   const stones = [9, 13, 17, 21, 25];
   return {
     id,
@@ -260,7 +269,8 @@ function pitchAct(id: string, name: string, advice: string, twist: Volley, o: { 
     },
     build: (w, c) => {
       const { X } = c;
-      boulodrome(w, { x0: 5, x1: 28, stones, jack: o.jack, trigger: 6, volleys: [{ from: 'L', knock: 1, shout: 'Tirez! | Shoot!' }, twist], X, f: c.f });
+      // the plain volley (the room's rule) first, then this end's twist; `plain: false` goes straight to the twist
+      boulodrome(w, { x0: 5, x1: 28, stones, jack: o.jack, trigger: 6, volleys: [...(o.plain === false ? [] : [{ from: 'L', knock: 1, shout: 'Tirez! | Shoot!' } as Volley]), twist], X, f: c.f });
       sign(w, c.x + 1.5, G - 4.4, 3.6, o.sign[0], 'wood', null, o.sign[1]);
       if (o.guide) onPass(w, X(3), (w2) => w2.guide(o.guide!));
       void name;
@@ -276,21 +286,19 @@ export const pointe = pitchAct(
   { from: 'R', knock: 1, shout: 'À moi! Pointe! | My turn! A point!' },
   { jack: 15.6, sign: ['LA POINTE', 'from the far end'] },
 );
-/** a boule lies on the gravel beside the cochonnet: the roller stops on it (a carreau), the cochonnet stays */
-export const carreau = pitchAct(
-  'pdy09-carreau',
-  'Carreau',
-  'A boule already lies just before the cochonnet: the roller hits it and stops dead there (a carreau), so the cochonnet never moves. Stand on the stone nearest where it already is.',
-  { from: 'L', knock: 0, shield: 14.9, shout: 'Carreau! | A carreau!' },
-  { jack: 14.75, sign: ['LE CARREAU', 'the lying boule'] },
-);
-/** two throwers: knocked on, then knocked straight back */
+/**
+ * two throwers in one end: the first knocks the cochonnet one stone on, the second (slower, from the far end)
+ * knocks it back past where it started, to the stone before. Only the sum of both moves is the answer: the
+ * stone the first knock made nearest dies, and so does the stone you started on.
+ * (round 2 re-lay: start 15.6 -> 265.6 after the first knock (stone 2) -> 185.6 after the second (stone 0);
+ * the plain volley is left out so the whole end fits the 7.5 s replay)
+ */
 export const doublette = pitchAct(
   'pdy09-doublette',
   'Doublette',
-  'Two throwers, one at each end: the first knocks the cochonnet on, the second knocks it back. Judge the nearest stone after both boules, not after the first.',
-  { from: 'L', knock: 1, second: { knock: 3, delay: 0.5 }, shout: 'Doublette! Tirez! | Doubles! Shoot!' },
-  { jack: 14.6, sign: ['DOUBLETTE', 'two throwers'] },
+  'Two throwers, one at each end: the first knocks the cochonnet one stone on, the second knocks it back hard, past where it started. Judge the nearest stone after both boules: not after the first, and not where it began.',
+  { from: 'L', knock: 1, second: { knock: 5, delay: 0.3, speed: 150 }, shout: 'Doublette! Tirez! | Doubles! Shoot!' },
+  { jack: 15.6, sign: ['DOUBLETTE', 'two throwers'], plain: false },
 );
 /** a mène nulle: the shot sends the cochonnet clean off the pitch, and a dead end spares no stone at all */
 export const meneNulle = pitchAct(

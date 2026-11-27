@@ -61,7 +61,7 @@ const nearestTo = (stones: number[], x: number) => stones.reduce((b, s, i) => (M
  * `o.fixed`: a dad who picks one stone and stays on it (the plays that die); `o.eager`: a dad who moves for
  * the next stone the moment the caller shouts, before the boule has passed him.
  */
-function pitch(f: string, nVolleys: number, note: string, o: { fixed?: number; eager?: number; beside?: boolean; untilDone?: boolean } = {}): Step {
+function pitch(f: string, nVolleys: number, note: string, o: { fixed?: number; eager?: number; beside?: boolean; judgeAfterBoth?: boolean; untilDone?: boolean } = {}): Step {
   let jt = 0,
     jm: Move = 'R',
     last = -1;
@@ -89,6 +89,9 @@ function pitch(f: string, nVolleys: number, note: string, o: { fixed?: number; e
       let target = gap ? stones[nearestTo(stones, p.cx)] + (p.cx >= stones[nearestTo(stones, p.cx)] ? 32 : -32) : stones[near];
       if (o.fixed !== undefined) target = stones[o.fixed];
       if (o.eager !== undefined && F(w, 'volley') === nVolleys - 1) target = stones[o.eager];
+      // a doublette, judged after both boules: stay on the stone you took until the second thrower's boule has
+      // passed you (the first knock is not the answer), then go to the nearest
+      if (o.judgeAfterBoth && F(w, 'throws') === 2 && (F(w, 'thrown') as number) < 2 && onStone && !(F(w, 'thrown') === 1 && roller && !coming)) target = stones[nearestTo(stones, p.cx)];
       // a boule rolling at you: the nearest stone, now (the stone you are on, if you are on one)
       if (coming && o.eager === undefined && !o.beside) target = stones[nearestTo(stones, p.cx)];
       // the misreading: "nearest the cochonnet" taken as standing beside it, down on the gravel
@@ -286,8 +289,8 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'pdy09-pointe': pitchAct('pdy09-pointe', 'the point from the far end knocks it back: the stone on your side of it'),
-  'pdy09-carreau': pitchAct('pdy09-carreau', 'the boule stops on the lying one: the cochonnet stays, so do you'),
-  'pdy09-doublette': pitchAct('pdy09-doublette', 'on, then hard back past the start: judge after both'),
+  // the doublette is one end with two throwers: stay on your stone through both boules, then the nearest
+  'pdy09-doublette': (x: number): Step[] => [pitch('pdy09-doublette', 1, 'on, then hard back past the start: judge after both', { judgeAfterBoth: true }), walkHop(x + 31.5, 'on')],
   'pdy09-tir': pitchAct('pdy09-tir', 'the hard shot knocks it three along'),
   'pdy09-mene': pitchAct('pdy09-mene', 'a dead end: the cochonnet is off, get down on the gravel'),
   'pdy10-thenga': thengaAct,
@@ -367,7 +370,6 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   const actStart = (id: string) => r9.findIndex((st) => st.note?.startsWith(ACT_NOTE[id]));
   const ACT_NOTE: Record<string, string> = {
     'pdy09-pointe': 'the point from the far end',
-    'pdy09-carreau': 'the boule stops on the lying one',
     'pdy09-doublette': 'on, then hard back',
     'pdy09-tir': 'the hard shot',
     'pdy09-mene': 'a dead end',
@@ -376,9 +378,9 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   mistakes['PDY-09'].push(
     { what: 'pointe A1: stay on the stone the first knock made nearest', steps: [...before('pdy09-pointe'), pitch('pdy09-pointe', 2, 'stay', { fixed: 2 })], cause: 'pdy-plomb' },
     { what: 'pointe A2: "nearest the cochonnet": get down and stand beside it on the gravel', steps: [...before('pdy09-pointe'), pitch('pdy09-pointe', 2, 'beside', { beside: true })], cause: 'pdy-boule' },
-    { what: 'carreau A1: move a stone on for the knock that never comes', steps: [...before('pdy09-carreau'), pitch('pdy09-carreau', 2, 'eager', { eager: 2 })], cause: 'pdy-plomb' },
-    { what: 'doublette A1: follow the first knock and stay', steps: [...before('pdy09-doublette'), pitch('pdy09-doublette', 2, 'stay', { fixed: 2 })], cause: 'pdy-plomb' },
-    { what: 'doublette A2: two throwers at the cochonnet: get down and stand beside it', steps: [...before('pdy09-doublette'), pitch('pdy09-doublette', 2, 'beside', { beside: true })], cause: 'pdy-boule' },
+    { what: 'doublette A1: follow the first knock and stay', steps: [...before('pdy09-doublette'), pitch('pdy09-doublette', 1, 'stay', { fixed: 2 })], cause: 'pdy-plomb' },
+    { what: 'doublette A2: two throwers at the cochonnet: get down and stand beside it', steps: [...before('pdy09-doublette'), pitch('pdy09-doublette', 1, 'beside', { beside: true })], cause: 'pdy-boule' },
+    { what: 'doublette A3: never move: stay on the stone you took at the shout', steps: [...before('pdy09-doublette'), pitch('pdy09-doublette', 1, 'stay', { fixed: 1 })], cause: 'pdy-plomb' },
     { what: 'tir A1: one stone on, as the point taught', steps: [...before('pdy09-tir'), pitch('pdy09-tir', 2, 'stay', { fixed: 1 })], cause: 'pdy-plomb' },
     { what: 'tir A2: the hard shot is coming: get down and stand beside the cochonnet', steps: [...before('pdy09-tir'), pitch('pdy09-tir', 2, 'beside', { beside: true })], cause: 'pdy-boule' },
     { what: 'mene A1: stay on the stone that was nearest when the cochonnet left', steps: [...before('pdy09-mene'), pitch('pdy09-mene', 2, 'stay', { fixed: 1 })], cause: 'pdy-plomb' },
