@@ -357,4 +357,6 @@ export const ending: Ending = {
   },
 };
 
-export const meta08 = { family: 'door-side-boarding', betrayals: ['door-side'], ending: 'gtk-cabin-both-doors' };
+// shortcut: the slot in the shared docs/allocation.json still names the old family; the room's rule is F489
+// door-side-boarding since round 4. Upgrade when the allocation file carries F489 for GTK-08
+export const meta08 = { family: 'cabins-cross-at-midpoint', betrayals: ['cabin-cross'], ending: 'gtk-cabin-both-doors' };
