@@ -394,7 +394,7 @@ function relayRoute(x: number, v: [number, number, number], tallFirst: boolean):
         return { move: toward(w, px(x + 2), 2), jump: true };
       }
       if (!p.onGround) return go(toward(w, px(x + 2), 2));
-      if (p.y + p.h > px(13) && p.cx > px(x) - 4) {
+      if (p.y + p.h > px(13) && p.cx > px(x) - 10) {
         hold = 10;
         return { move: 'R', jump: true };
       }
@@ -572,6 +572,9 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu10-setu': (x) => relayRoute(x, [45, 63, 83], true),
+  'ccu10-phera': (x) => relayRoute(x, [39, 57, 77], false),
+  'ccu10-shesh': (x) => relayRoute(x, [46, 64, 84], true),
   'ccu08-gali': (x) => brokenRoute('ccu08-gali', x, [[6, 12, 13, 20, 32], [40, 46, 47, 54, 66]], false),
   'ccu08-duur': (x) => brokenRoute('ccu08-duur', x, [[6, 12, 13, 21, 44]], false),
   'ccu05-pratima': (x) => carryRoute(x, 2, false),
@@ -621,7 +624,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     walkOnto(x + 15, 'walk off on to the dry one'),
     { hold: 'R', until: X(x + 16.2), max: 120 },
     steerHop(px(x + 20.8), 10, 'down on to the lane'),
-    walk(x + 23.4),
+    walk(x + 23),
   ],
   'ccu03-dokan': (x) => [crossTin('tinB', px(x + 28)), walk(x + 29.4)],
   'ccu04-thak': (x) => [
@@ -733,6 +736,21 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   );
 }
 
+
+// CCU-10's and CCU-07's later spans: staying on a porter past his CHA board
+{
+  const to174 = (): Step[] => [...finaleRoom(), ...actRoutes['ccu10-bus'](32), ...actRoutes['ccu10-tram'](72), ...actRoutes['ccu10-rok'](116), ...actRoutes['ccu10-kumor'](150)];
+  (mistakes['CCU-10'] ??= []).push(
+    { what: 'staying on the first porter back over the bridge', steps: [...to174(), ...relayRoute(174, [45, 63, 83], true).slice(0, 4), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
+    { what: 'staying on the short porter back over the bridge', steps: [...to174(), ...relayRoute(174, [45, 63, 83], true).slice(0, 6), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
+  );
+  const to244 = (): Step[] => [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [42, 60, 80], true), ...relayRoute(184, [41, 59, 79], false)];
+  mistakes['CCU-07'].push(
+    { what: 'staying on the first porter of the morning span', steps: [...to244(), ...relayRoute(244, [43, 61, 81], true).slice(0, 4), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
+    { what: 'staying on the tall porter of the midday span', steps: [...to244(), ...relayRoute(244, [43, 61, 81], true), ...relayRoute(304, [44, 60, 84], false).slice(0, 3), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
+  );
+}
+
 /** a policy for each door ending, by kind */
 const SETHOP = hopGaps();
 const endingPolicies: Record<string, Policy> = {
@@ -771,10 +789,6 @@ const endingPolicies: Record<string, Policy> = {
     const p = w.player;
     if (m.hold > 0) return { move: 'R', jump: true };
     const stand = px(k.D - 1) - 2;
-    if (w.flags.twist === 'low' && k.st.n === 2 && p.onGround && Math.abs(p.cx - stand) < 4 && k.st.left(w) > 0.5) {
-      m.hold = 10;
-      return { move: 'R', jump: true };
-    }
     if (!p.onGround) return go('R');
     if (k.st.n === 1 && !k.st.pointed) return go('R');
     return go(toward(w, stand, 2));

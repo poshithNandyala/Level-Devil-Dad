@@ -1000,6 +1000,12 @@ function brokenRok(id: string, w0: number, segs: [number, number, number, number
 const gali = brokenRok('ccu08-gali', 68, [[6, 12, 13, 20, 32], [40, 46, 47, 54, 66]], 55, 'A lane broken twice. Sit in the adda before each break and wait for the tea seller; his plank goes back up a few seconds after he’s gone by, so cross it right behind him, and sit again at the next.');
 const duur = brokenRok('ccu08-duur', 46, [[6, 12, 13, 21, 44]], 45, 'The tea seller is far off down this lane, and slow: sit in the adda and wait. He’ll come.');
 
+
+/** CCU-10 acts 5 and 6: back over Howrah Bridge, on the porters, both ways up */
+const setu10a = relay('ccu10-setu', [45, 63, 83], true, 'Howrah Bridge again: tall porter, short one under you before his CHA board, tall one over you before the next, never jumping into a load coming the other way.');
+const setu10c = relay('ccu10-shesh', [46, 64, 84], true, 'The last span before College Street: tall, short under you, tall over you, each before the CHA board.');
+const setu10b = relay('ccu10-phera', [39, 57, 77], false, 'And back the other way up: short porter, tall one overtaking, short one under you, each before the CHA board.');
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -1055,5 +1061,5 @@ export const levels = (): LevelDef[] => [
   longStage({ base: howrahRoom(), par: 160, acts: [girder, dui, sandhya, ulto, bhor, dupur, raat, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 80, acts: [rok, tokta, gali, duur], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
   longStage({ base: pandalRoom(), par: 24, acts: [sinri, toran, chala], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
-  longStage({ base: finaleRoom(), par: 68, acts: [bus10, tram10, rok10, kumor10], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
+  longStage({ base: finaleRoom(), par: 120, acts: [bus10, tram10, rok10, kumor10, setu10a, setu10b, setu10c], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];

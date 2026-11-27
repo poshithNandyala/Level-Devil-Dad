@@ -352,7 +352,7 @@ export const endings: Record<CcuEndingKind, Ending> = {
    *  piles it up again). Step in while it's low. */
   'ccu-stup': {
     space: 12,
-    advice: 'The door is standing on a pile of bundles out in the drain, and the customer is buying the pile down a bundle at a time. When it’s down to two, step across into the door before it goes any lower.',
+    advice: 'The door is standing on a pile of bundles out in the drain, and the customer is buying the pile down a bundle at a time. When it’s down to one, level with the pavement, walk straight across into the door before he buys that one too.',
     paint: (g, D) => {
       g.pit(D - 1, D + 2);
       g.put(D, 14, '.');
