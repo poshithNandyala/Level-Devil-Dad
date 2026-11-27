@@ -1062,10 +1062,7 @@ const endingPolicies: Record<string, Policy> = {
   },
   'dis-laru-plate'(w, m, d) {
     const p = w.player;
-    const pan = pans(w)[pans(w).length - 1];
     if (m.hold > 0) return { move: 'R', jump: true };
-    const f = crossPan(pans(w).length - 1)(w);
-    if (p.cx < pan.x1) return f;
     // on the plate: hop each laru ball as it comes
     const ball = w.entities.find((e: any) => e.kind === 'dis-laru' && e.alive && e.x > p.x && e.x - p.x < 64) as any;
     if (p.onGround && ball) {

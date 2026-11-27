@@ -93,15 +93,10 @@ export const endings: Record<DisEndingKind, Ending> = {
   'dis-laru-plate': {
     space: 30,
     after: 5,
-    advice: 'The door is on a plate of laru past the last crepe: hop on to the plate, and hop each laru ball the boy rolls down it at you. Jump over them; never wait on a matte crepe.',
-    paint: (g, D) => {
-      g.pit(D - 21, D - 5);
-    },
+    advice: 'The door is on a plate of laru: walk on to the plate, and hop each laru ball the boy rolls down it at you.',
     build(w: World, d) {
       const D = Math.round(d.x / 16);
-      const p = w.add(new Pan(px(D - 21), px(D - 4), [{ x: D - 19, w: 4, o: 0 }, { x: D - 14, w: 4, o: 400 }, { x: D - 9, w: 4, o: 200 }], px(D - 22), 600, 300));
-      p.setup(w);
-      (w.flags.pans ??= []).push(p);
+      // round 4 (ruling S1): the crepe pan is gone with the pitha room; the door keeps only its rolling laru
       let next = 0;
       w.add(
         new Decor(
