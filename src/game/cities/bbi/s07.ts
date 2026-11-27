@@ -705,6 +705,65 @@ export const act17: Act = {
   },
 };
 
+/** act 18, sajaghara (IDEAS-3 B2, the SHELTER beat): the dancers' dressing tent on the bank. It is safe while
+ *  they dance; at the drum's stop the spare boys spring up out of the pit mouth and leap into the tent. Wait in the
+ *  tent while the drum plays, and at the stop walk straight out of its flap on to the bridge, under their leap. */
+export const SAJA = { tent: [1, 3.5] as [number, number], c0: 6, n: 8, leap: 0.6 };
+export const act18: Act = {
+  id: 'bbi07-sajaghara',
+  w: 18,
+  advice: 'The dancers’ tent is safe while they dance, but at the drum’s stop the spare boys spring out of the pit mouth and leap into it. Wait inside while the drum plays, and at the stop walk straight out of the flap on to the bridge, under their leap. Not at the edge: that is where they come up.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + SAJA.c0, c.x + SAJA.c0 + SAJA.n - 1);
+  },
+  build: (w, c) => {
+    const st = { t0: -1 };
+    onPass(w, c.X(0.5), (w2) => (st.t0 = w2.tick));
+    stagePit(w, c.x + SAJA.c0, c.x + SAJA.c0 + SAJA.n - 1);
+    const { st: ts } = troupe(w, { c0: c.x + SAJA.c0, n: SAJA.n, drum: 1.5, hold: 1.8, poses: ['bridge'], form: 0.25 }, () => st.t0, 'bbi7sj');
+    const x0 = c.X(SAJA.c0) - 4;
+    const x1 = c.X(SAJA.tent[0] + 1.2);
+    const tentIn = (w2: World) => w2.player.cx < c.X(SAJA.tent[1]);
+    for (let k = 0; k < 3; k++) {
+      const delay = k * 0.08;
+      w.add(
+        new Rig(-999, FL - 14, 12, 14, {
+          cause: 'bbi-dauda',
+          inset: 2,
+          layer: 5,
+          tick: (r, w2) => {
+            r.x = -999;
+            if (ts.pose !== 'bridge') return;
+            const t = (ts.into - delay) / SAJA.leap;
+            if (t < 0 || t > 1) return;
+            r.x = x0 - (x0 - x1) * t;
+            r.y = FL - 14 - 50 * Math.sin(Math.PI * t);
+            r.hazard!.cause = tentIn(w2) ? 'bbi-saja' : 'bbi-dauda';
+          },
+          paint: (ctx, r) => {
+            if (r.x > -100) folk(ctx, r.x + 6, r.y + 14, 14, '#F4A261', { skirt: SKIRT[k % SKIRT.length], face: -1, arm: 1.2 });
+          },
+        }),
+      );
+    }
+    // the tent: cloth walls on the bank, its flap open towards the pit
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: -1,
+        paint: (ctx) => {
+          const tx = c.X(SAJA.tent[0]);
+          const tw = c.X(SAJA.tent[1]) - tx;
+          box(ctx, tx, FL - 44, tw, 4, '#B71C1C');
+          box(ctx, tx, FL - 40, 3, 40, '#F4D35E');
+          box(ctx, tx + 3, FL - 40, tw - 10, 40, 'rgba(183,28,28,0.35)');
+          box(ctx, tx + tw - 7, FL - 40, 4, 22, '#B71C1C');
+        },
+      }),
+    );
+  },
+};
+
 /** ending: the last pose is a gate over the door; between poses the troupe whirls across the doorway */
 export const T07e: TroupeCfg = { c0: 0, n: 4, drum: 1.6, hold: 1.6, poses: ['gate'], form: 0.3, ground: true };
 export const ending: Ending = {
