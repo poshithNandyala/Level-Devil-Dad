@@ -122,23 +122,49 @@ Every v3/v3.1 row assigned to DIS is now built (F453 stays withdrawn). New in ro
 | `dis08-bogoli` | 08 | F461 birds-up-means-charge | Cross while the egrets sit on the hidden rhino; wait at the edge while they are up; don't wait a whole round. | go with them up: `dis-bogoli`; a whole round: `dis-jui` |
 | `dis09-tunnels` | 09 | F462 portal-chain-backwards | Walk the chain of tunnel mouths: step, wait for the grate, step; on the last pier wait for the bridge. | the oiled beam: `dis-roof`; run on: `dis-vault` |
 
+## Fix round 1 (QA round 1 F1-F7): the current state
+
+This section supersedes the tables above where they differ.
+
+- **Doors (F1):** the 02 (`dis-hut-shut`), 03 (`dis-muga-reel`), 07 (`dis-uruka-net`), 08 (`dis-watch-tower`) and 09
+  (`dis-royal-seat`) doors are PLAIN: the road ends at the door and you walk in. Each re-asked an act or its room, and no
+  replacement passed the registry gate. The 04 laru plate, 05 gamosa latch, 06 tea ladder and 10 plucker's path stay.
+- **Cut (F2, F5):** `dis07-bordoisila` (a fixed wind made it shelter-and-wait, `dis06-wake`'s decision; S12's
+  fallback) and its callback `dis10-bordoisila`; `dis10-gamosa` (05's rule with new spacing). 07's stage FIX is now
+  the dhol's (`dis-dhol-sink`).
+- **The finale room (F5)** breaks 02: with the post on the far bank, the bar in front sinks first and the new one rises
+  after it (`SandField.flip`). Wait on the bank. Standing on the sinking bar: `dis-ulta`; jumping for the outline
+  before it is up: `dis-agot`.
+- **Lines (F4):** one cause per mistake. `recause()` (in `entities.ts`) gives an act's deaths their own cause while Dad
+  is inside the act, so a callback or a reused hazard names what killed him there. New: `dis-ulta`, `dis-agot`,
+  `dis-doba-ulta`, `dis-talatal-ulta`, `dis-pukhuri-lahe`, `dis-dhol-lahe`, `dis-khaal-ulta`, `dis-rope-ulta`,
+  `dis-basket-ulta`, `dis-path-agot`, `dis-card-gate`, `dis-pepa-gate`, `dis-cart-pukhuri`, `dis-sluice-tel`,
+  `dis-tel-gola`, `dis-flag-luit`, `dis-ghat-gamosa`, `dis-kaath-gamosa`, `dis-machan-luit`, `dis-sanko-pit`,
+  `dis-wake-bank`, `dis-bhutbhuti`, `dis-gorh-adha`. Dead lines (dheki, cold pan, crepes, reel, net, Bordoisila) are gone.
+- **Tells (F7):** 04 has a tile-high lantern whose flame stands straight over a still well and streams toward the one
+  that draws, and dust that pours down that well only; the gallery is a brick vault. 08's egrets are a flock of six
+  big birds.
+- **Checkpoints (F6):** 03's are only where you wait for the plucker (room 10, bagan 0.5 and 14.5).
+
 The SandField has a timed mode (`go(w, silent)`) for 02's horn act; nothing else uses it. The chaser in `kaath.ts` and the
 ghat man in `flag.ts` are DIS entities (givers that move).
 
 ## Fairness (`LDD_N=80 npm run fair -- DIS`)
 
-| Stage | quick / avg / relaxed | worst stretch at avg |
-| --- | --- | --- |
-| DIS-01 | Nomoskar Guwahati (tour) | carrier-spills-on-contact [carrier-spill] | Luit riverfront tour. A tea boy walks the promenade towards you with a tray of lal chah that swings out in front of him. Touch him or the tray: scalded (`dis-spill`). Hop clean over him: the tray tips and you land in the tea (`dis-pool`). He stops at a bench to pour and sets the tray down: wait well back from the bench, and walk past him while he pours. A second boy comes from Fancy Bazar once you are up on the deck; stay up until his tray is down. |
-| DIS-02 | 100 / 100 / 84 | 100 |
-| DIS-03 | 100 / 100 / 100 | 100 |
-| DIS-04 | Talatal | collapsing-stair-penultimate-rises (v3 F448; repo label set-crepe-rolls-you-up until the integrator lands v3) | Talatal Ghar's stair down falls step by step as you go down; the bottom step is gone (`dis-talatal`) and the landing goes once it is done (`dis-doba`). Stop on the step before the last: it rises back, and from its top hop to the far side. Door: the laru plate (hop the rolling laru). |
-| DIS-05 | 100 / 100 / 76 | 100 |
-| DIS-06 | Majuli ka Paar | silt-behind-the-spur | Majuli's bank and the bamboo spurs: the slab in front of each spur goes early (`dis-bank`), silt builds a step behind it; the spur is only poles (`dis-porcupine`). Acts: the ferry's wake (shelter in the spur's lee) and the fish traps on pulleys (leave a ringing trap). |
-| DIS-07 | 100 / 100 / 80 | 100 |
-| DIS-08 | 100 / 100 / 100 | 100 |
-| DIS-09 | 100 / 100 / 100 | 100 |
-| DIS-10 | 100 / 100 / 80 | 100 |
+Fix round 1 (`LDD_N=80`, lag 6 / 12 / 18 ticks; every stretch and door is 100% at 0-12 ticks):
+
+| Stage | 6t | 12t | 18t |
+| --- | --- | --- | --- |
+| DIS-01 | 100 | 100 | 100 |
+| DIS-02 | 100 | 100 | 84 |
+| DIS-03 | 100 | 100 | 100 |
+| DIS-04 | 100 | 100 | 100 |
+| DIS-05 | 100 | 100 | 76 |
+| DIS-06 | 100 | 100 | 76 |
+| DIS-07 | 100 | 100 | 80 |
+| DIS-08 | 100 | 100 | 100 |
+| DIS-09 | 100 | 100 | 100 |
+| DIS-10 | 100 | 100 | 76 |
 
 ## Look and sound
 
@@ -151,11 +177,11 @@ riverbank sand with tea-green tufts. Music: Bihu feel, 120 bpm, major pentatonic
 ## Notes for MECHANICS / WAVE1
 
 - A moving carrier who spills on contact or on being jumped, and swings his load behind him over the ghat (DIS-01).
-- Sandbars placed by a numbered level post; a siren raises it; new bars first, narrowing second, sinking last (DIS-02, DIS-10).
+- Sandbars placed by a numbered level post; a siren raises it; new bars first, narrowing second, sinking last (DIS-02). In the finale (DIS-10) the post is on the far bank and the order is turned round: the bar in front sinks first, the new one rises after.
 - Floor that is a crop, stepping down only when picked; a picker whose basket swings while she picks (DIS-03).
-- Crepes readable by shine: shiny holds, matte rolls you up (DIS-04).
+- A stair that falls step by step as you go down; the step before the last rises back (DIS-04, Talatal). The door is the laru plate: hop the rolling laru.
 - Gifts that blind: three gamosas hide your feet; give back by walking into a taker (DIS-05).
-- A bank eaten from the water inland on a clock from when you set out (DIS-06).
+- Bamboo spurs on an eroding bank: the slab in front of a spur goes early, silt builds a step behind it (DIS-06).
 - Gates that open only for a moving group with you inside its ring; the host's ritual delays one (DIS-07).
 - A charging animal that makes the only floor, charging at a visible-and-audible lure (DIS-08).
 - Oiled roof: push down the slope, ribs and grip pads, landing on oil drops a ball (DIS-09).
