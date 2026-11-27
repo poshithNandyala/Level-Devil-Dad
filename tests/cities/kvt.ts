@@ -227,6 +227,12 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: ground, max: 200 },
     { hold: 'R', until: X(x + 36), max: 300 },
   ],
+  'kvt10-kamaanam': (x) => [
+    { hold: 'R', until: X(x + 1.4), max: 300, note: 'wait on the sand for the dolphin' },
+    { hold: '', ticks: 6 },
+    { policy: rideDolphin(`kvt10-kamaanam:dolphins`, 0, px(x + 17), 0.86, 0.03), until: (w) => w.player.onGround && w.player.x >= px(x + 17) && Math.abs(w.player.vx) < 1, max: 1500, note: 'ride it over the top, under the arch, and step off coming down' },
+    { hold: 'R', until: X(x + 22), max: 200 },
+  ],
   'kvt10-veliyettam': (x) => [...hop(x + 1.6, 12, 'from head to head, never stopping'), ...hop(x + 6.6, 12, 'the next head'), ...hop(x + 11.6, 12, 'the next'), ...hop(x + 16.6, 12, 'and the shore'), { hold: 'R', until: X(x + 24), max: 300 }],
   'kvt10-irakkam': (x) => {
     const tide = (i: number) => (w: World) => (w.flags['kvt10-irakkam:tide'] as boolean[])[i] && still(w);
@@ -843,7 +849,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { what: 'climb right up on to the crown, as on the crab palms', steps: [...upTo(S['KVT-10'], 'climb only part way'), { hold: 'R', until: done, max: 900 }], cause: 'kvt-pinched' },
     { what: 'cross the moray hole once it has struck and slid back, as on the reef', steps: [...upTo(S['KVT-10'], 'bait the first moray, and wait for its second strike'), { hold: 'R', until: X(236 + 6.4), max: 300 }, { hold: '', until: (w) => w.entities.some((e) => e instanceof Eel && e.x === px(236 + 8) + 8 && e.strikes >= 1), max: 900 }, { hold: 'R', until: done, max: 300 }], cause: 'kvt-bitten' },
     { what: 'jump the inlet while the wind is calm, as at Agatti', steps: [...upTo(S['KVT-10'], 'to the edge: wait for the breeze'), { hold: 'R', until: X(262 + 3.7), max: 300 }, { hold: '', until: (w) => still(w) && !gustNOn(w, 0) && gustNLeft(w, 0) > 0.9, max: 900 }, { hold: 'R', jump: 30, ticks: 60 }, { hold: 'R', until: done, max: 300 }], cause: 'splash' },
-    { what: 'stop on the first coral head in the incoming tide, as on the tour', steps: [...upTo(S['KVT-10'], 'from head to head, never stopping'), ...hop(298 + 1.6, 12, 'on to the first head', true), { hold: '', until: done, max: 400 }], cause: 'splash' },
+    { what: 'jump off the dolphin at the top of its leap, as on the lagoon', steps: [...upTo(S['KVT-10'], 'ride it over the top, under the arch, and step off coming down'), { policy: rideDolphin(`kvt10-kamaanam:dolphins`, 0, px(298 + 17), 0.5, 0.06), until: done, max: 1500 }], cause: 'spikes' },
+    { what: 'stop on the first coral head in the incoming tide, as on the tour', steps: [...upTo(S['KVT-10'], 'from head to head, never stopping'), ...hop(320 + 1.6, 12, 'on to the first head', true), { hold: '', until: done, max: 400 }], cause: 'splash' },
     { what: 'run straight over the hole with eyes', steps: [...upTo(S['KVT-10'], 'the hole with eyes: let the moray lunge and go back in'), { hold: 'R', until: done, max: 300 }], cause: 'kvt-bitten' },
     { what: 'walk into the door', steps: [...upTo(S['KVT-10'], 'the door: kvt-sand-arm'), { hold: 'R', until: done, max: 900 }], cause: 'kvt-octopus' },
   ];

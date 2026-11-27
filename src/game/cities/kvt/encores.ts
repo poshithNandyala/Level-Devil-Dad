@@ -11,7 +11,7 @@ import { Solid } from '../../body';
 import { FLOOR, Paint, npc, tara as taraSays } from '../../levels/endkit';
 import type { Ending } from '../../levels/endkit';
 import { CoralStep } from './tide';
-import { Eel, PalmCrab, palm } from './levels';
+import { Dolphin, Eel, PalmCrab, palm } from './levels';
 import { Thing } from '../../entities/traps';
 import { Nest } from './entities';
 
@@ -919,7 +919,28 @@ const crownCrab: Act = {
   },
 };
 
-export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, risingTide, tideHoles] };
+/** KVT-10 act, KVT-08 turned over: you rode the dolphins and jumped off at the top of the leap. This one leaps
+ *  under a reef arch with a jagged underside: stay on its back until it is coming down, and step off at the end. */
+const archDolphin: Act = {
+  id: 'kvt10-kamaanam',
+  w: 22,
+  advice: 'The dolphin leaps under a reef arch, jagged underneath: jumping off at the top meets it. Ride it over the top and step off as it comes down to the far bank.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 3, x + 15);
+    g.fill(x + 8, x + 12, 6, 7, '#').fill(x + 8, x + 12, 8, 8, 'v');
+  },
+  build: (w, c) => {
+    const { X } = c;
+    pool(w, c.x + 3, c.x + 16, 15.3, { colors: LAGOON });
+    const d = w.add(new Dolphin(X(4), X(14.5), px(15) + 4, 70, 1.45, 3.4, 0));
+    w.flags[c.f('dolphins')] = [d];
+    sign(w, c.x + 0.2, G - 4.4, 3.4, 'ARCH', 'wood', null, 'mind your head');
+    onPass(w, X(1), (w2) => taraSays(w2, 'Mukalil ethumbol chaadu! | Jump off at the top!', 2.4));
+  },
+};
+
+export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, archDolphin, risingTide, tideHoles] };
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {
