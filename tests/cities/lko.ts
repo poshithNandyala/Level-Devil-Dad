@@ -928,7 +928,7 @@ mistakes['LKO-06'] = [
   { what: 'in the mehfil, crossing her floor', steps: [...through('LKO-06', room06, 1), walkTo(actX('LKO-06', 1) + 3.6, 300), hops([actX('LKO-06', 1) + 6.5, actX('LKO-06', 1) + 10.2]), until(done, 1200)], cause: 'lko-mehfil' },
   {
     what: 'in the mehfil, stepping down on to the red strip as she goes away',
-    steps: [...through('LKO-06', room06, 1), walkTo(actX('LKO-06', 1) + 3.6, 300), hops([actX('LKO-06', 1) + 6.5]), until((w) => w.flags['lko06-mehfil:d'].v > 0 && w.flags['lko06-mehfil:d'].x > px(actX('LKO-06', 1) + 30), 2400), hops([actX('LKO-06', 1) + 9.2, actX('LKO-06', 1) + 10.5, actX('LKO-06', 1) + 11.5]), until(done, 1200)],
+    steps: [...through('LKO-06', room06, 1), walkTo(actX('LKO-06', 1) + 3.6, 300), hops([actX('LKO-06', 1) + 6.5]), until((w) => w.flags['lko06-mehfil:d'].x > px(actX('LKO-06', 1) + 22), 2400), hops([actX('LKO-06', 1) + 9.2, actX('LKO-06', 1) + 10.5, actX('LKO-06', 1) + 11.5]), until(done, 1200)],
     cause: 'lko-ghungroo',
   },
 ];
