@@ -325,14 +325,16 @@ export const mehfil: Act = {
       (w2, sx) => {
         D.v = (sx > D.x ? 1 : -1) * Math.abs(D.v);
         w2.sfx('bells', sx, FLOOR - 4);
+        // she is coming to the bells you rang: that death has its own line (till she turns at an end)
+        z.hazard.cause = 'lko-ghungroo';
       },
     );
     w.onTick((w2) => {
       if (!D.go && w2.player.cx > c.X(1)) D.go = true;
       if (D.go) {
         D.x += D.v;
-        if (D.x < D.lo) D.v = Math.abs(D.v);
-        if (D.x > D.hi) D.v = -Math.abs(D.v);
+        if (D.x < D.lo) (D.v = Math.abs(D.v)), (z.hazard.cause = 'lko-mehfil');
+        if (D.x > D.hi) (D.v = -Math.abs(D.v)), (z.hazard.cause = 'lko-mehfil');
       }
       z.x = D.x - 9;
       (look as unknown as { x: number }).x = D.x;

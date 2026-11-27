@@ -455,7 +455,7 @@ export const julus: Act = {
     const x = c.x;
     arcade(w, x, x + 57);
     const strolling = pace(w);
-    for (const n of JULUS_NALAS) nala(w, x + n, x + n + 1, 'lko-julus');
+    for (const n of JULUS_NALAS) nala(w, x + n, x + n + 1, n === JULUS_NALAS[JULUS_NALAS.length - 1] ? 'lko-julus-nala' : 'lko-julus');
     const G = { x: c.X(6), go: false, hop: 0, shoved: -999 };
     w.flags[c.f('g')] = G;
     const body = w.add(new Block(G.x, FLOOR - 28, 52, 28, () => {}, 0));

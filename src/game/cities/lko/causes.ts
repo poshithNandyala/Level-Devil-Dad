@@ -43,6 +43,8 @@ export const causeLines: Record<string, string[]> = {
   'lko-dum-teen': ['The last heap was piled three high: two squashes left it full.', 'Count the little kebabs on top: wait till they are all gone.'],
   'lko-aks': ['That dome was the reflection in the water, and it sinks as you step back.', 'For the reflection, jump from closer, from its own line.'],
   'lko-saamne-taak': ['The last alcove’s sill was cracked: it gave way, and the group walked you into the nala.', 'Wait in the second alcove till both groups have passed.'],
+  'lko-ghungroo': ['You stepped on a red strip: she heard the bells and spun back to them.', 'Never touch a strip: hop over it, from takht to takht.'],
+  'lko-julus-nala': ['The fourth nala comes two steps early, off the rhythm of the first three.', 'Look for each nala; don’t count steps.'],
   'lko-hawa': ['The birds read the other face of the flag: you saw red, they saw white.', 'Here, go while YOU see white: the curl at the flag’s tip shows their colour.'],
   'lko-gumbad': ['The dome was a different size from where you jumped: too high, or shrunk into the pool.', 'Stand on the red paving line in front of it, and jump from there.'],
   'lko-mehfil': ['She spins the whole stage end to end, and you were on her floor.', 'Wait on a takht till she has spun past beneath you, going away, then cross to the next.'],
