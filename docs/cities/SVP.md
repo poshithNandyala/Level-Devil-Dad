@@ -8,6 +8,8 @@ Sound: one music loop (104 bpm), no new SFX names.
 | # | Id | Name | Family [betrayal] | Ending key | Shape |
 |---|---|---|---|---|---|
 | 01 | SVP-01 | Namaste SVP | lane-sheet-flow-push [sheet-flow] | svp-lane-sun (meta only) | tour |
+<!-- route times in seconds (bot): 01 30.1, 02 25.8, 03 26.1, 04 25.8, 05 63.5, 06 62.3, 07 122.5, 08 73.3, 09 61.9, 10 98.6 -->
+
 | 02 | SVP-02 | Aari | cut-floor-saw-carriage [cut-floor] | svp-timber-stack | short |
 | 03 | SVP-03 | Magarmachh | warning-board-arrow-turns [honest-moving-sign] | svp-board-bridge | short |
 | 04 | SVP-04 | Hiran | food-holder-followed-by-deer [carry-attracts] | svp-jetty-guard | short |
@@ -31,7 +33,24 @@ Shapes: the engine allows only tour, short, long, marathon, wtf. Standard stages
 - 07 `Hall`, `Crowd`, `Ship`: luggage stacks work as floor and then vanish. The crowd rushes the jetty. A trench is the shelter. The second ship is the real one.
 - 08 `Weather`: rain from the west, then from the east. Awnings shelter only on the lee end. Porches are the checkpoints. A gutter floods.
 - 09 `Crumbler`, `Root`: brick floor crumbles, swinging roots hold. Solids carry Dad at the true continuous speed.
-- 10 acts are wrapper objects of nala, pul, doosra and ghat. The door ending `svp-dweep-gate` reuses the stage 04 `Herd` guard logic under a new key (a callback).
+- 10 acts are wrapper objects of nala, pul, doosra, rassi and ghat. The door ending `svp-dweep-gate` reuses the stage 04 `Herd` guard logic under a new key (a callback).
+
+### Length pass: acts added to reach the clear-time floors
+
+Each added act is a new rule in its own file, with its own cause line, a NAIVE and a FIX death in `tests/cities/svp.ts` (`actDeath`), and a route. The stage's `meta.betrayals` stays as allocated (the allocation test pins it); the extra betrayal types below are listed here and in BUILD.md for the integrator.
+
+| Stage | Act id | File | Rule (betrayal type) |
+|---|---|---|---|
+| 05 | `svp05-rassi` | `rassi.ts` | Mooring rope (rope-throw, reserve R2): a hop beside the bollard is a pull on the rope, and each pull brings the tied-up boat in. The edge is no use. Then it poles across at a walking pace. |
+| 05 | `svp05-choona` | `choona.ts` | Limestone caves (knock-drip, reserve R1): a hop under a formation raps it, and it drips seven seconds on the floor ahead. Wet limestone slides you back into the drain. Hop, then wait on the dry side. |
+| 06 | `svp06-lehar` | `lehar.ts` | Swell: floats ride the swell a beat behind each other (go when the next is within a jump), then a barge that heaves on the same swell takes you across the bay. |
+| 07 | `svp07-khula` | `khula.ts` | Lift bridges: the deck lifts for a ship when the lights flash, with whoever is on it. Cross on the green. |
+| 07 | `svp07-uthao` | `uthao.ts` | Godown lifts: slow lifts stop at a floor with a balcony that goes nowhere, then at the last stop, then overrun. A moving walkway on the roof carries you to a gap too wide to jump from standing: a jump from it keeps its speed (the momentum beat). |
+| 08 | `svp08-bazaar` | `kadhai.ts` | Fish-fry stalls (spit-side): the counter is a wall to climb, the pan spits over one half at a time, the cook turns to the half that is next. Stand on the other half and change in the rest. Under a covered market, so the rain is not the question. |
+| 09 | `svp09-hauz` | `hauz.ts` | Drained pools (rising water): a pipe starts to run when you walk in. Get on the raft: it rises with the water and you step across at the top of the wall. The floor is drowning. |
+| 10 | `svp10-rassi` | `s10.ts` | Callback to the mooring rope. |
+
+New cause keys: svp-rassi, svp-chuna, svp-lehar, svp-khula, svp-uthao, svp-tel, svp-hauz.
 
 ## Causes and things
 
@@ -44,6 +63,6 @@ Foods: svp-machhli, svp-fishstick, svp-kela, svp-lobster, svp-padauk.
 
 ## Notes for WAVE1 and MECHANICS
 
-- The act ids are `svp02-chirai`, `svp03-nala`, `svp04-ghat`, `svp05-dekho`, `svp06-sanjh`, `svp07-ghat`, `svp07-doosra`, `svp07-teesra`, `svp08-gali`, `svp09-pul`, `svp10-nadi`, `svp10-jad`, `svp10-saman`, `svp10-ghat`.
+- The act ids are `svp02-chirai`, `svp03-nala`, `svp04-ghat`, `svp05-dekho`, `svp06-sanjh`, `svp07-ghat`, `svp07-doosra`, `svp07-teesra`, `svp08-gali`, `svp09-pul`, `svp05-rassi`, `svp05-choona`, `svp06-lehar`, `svp07-khula`, `svp07-uthao`, `svp08-bazaar`, `svp09-hauz`, `svp10-rassi`, `svp10-nadi`, `svp10-jad`, `svp10-saman`, `svp10-ghat`.
 - Cellular Jail is a far silhouette in the backdrop only, with no gag.
 - Intro lines are plain Hindi and need a native check. Tara's intros are lies; the only truthful Tara line is stage 08 ("Awning ke neeche raho"), and that is only partly true.

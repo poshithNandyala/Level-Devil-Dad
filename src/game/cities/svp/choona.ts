@@ -73,8 +73,17 @@ export class Formation extends Entity {
     const x = this.cx;
     const sh = w.tick - this.shake < 20 ? Math.sin((w.tick - this.shake) * 1.6) * 1.8 : 0;
     // the ceiling it hangs from
-    ctx.fillStyle = 'rgba(40,36,34,0.55)';
-    ctx.fillRect(x - this.reach - 20, FLOOR - 150, this.reach * 2 + 40, 34);
+    // a lump of cave roof, rough underneath, hanging over the path
+    const rx0 = x - this.reach - 24,
+      rx1 = x + this.reach + 24;
+    ctx.fillStyle = '#4A4540';
+    ctx.beginPath();
+    ctx.moveTo(rx0, FLOOR - 170);
+    ctx.lineTo(rx1, FLOOR - 170);
+    for (let xx = rx1; xx >= rx0; xx -= 12) ctx.lineTo(xx, FLOOR - 118 + ((xx * 7) % 9));
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    ctx.fillRect(rx0, FLOOR - 170, rx1 - rx0, 6);
     // the formation: a pale cone with a bead on its tip
     ctx.fillStyle = '#E4DCC4';
     ctx.beginPath();
