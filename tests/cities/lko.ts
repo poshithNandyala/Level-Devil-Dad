@@ -479,6 +479,17 @@ const R_lko06_mehfil = (id: string) => (x: number): Step[] => {
   return steps;
 };
 actRoutes['lko06-mehfil'] = R_lko06_mehfil('lko06-mehfil');
+const tihaiAt = (w: World) => (w.flags['lko06-tihai:at'] as ((w: World) => { n: number; k: number }) | undefined)?.(w) ?? { n: -1, k: -1 };
+const afterSam = (w: World) => { const a = tihaiAt(w); return a.n === 0 && a.k > 2 && a.k < 40; };
+actRoutes['lko06-tihai'] = (x) => [
+  walkTo(x + 2.6, 300, 'up to the stage: the first tihai starts'),
+  until(afterSam, 600, 'sam has rung'),
+  runTo(x + 9.2, 300, 'on to the first plain board'),
+  until(afterSam, 600, 'the next sam rings round us'),
+  runTo(x + 18.2, 300),
+  until(afterSam, 600),
+  runTo(x + 29.5, 300),
+]
 const awningDown = (id: string, k: number) => (w: World) => {
   const st = w.flags[`${id}:st`] as { t: number }[] | undefined;
   return !!st && st[k].t >= 0 && w.tick - st[k].t > 26;
@@ -970,10 +981,10 @@ mistakes['LKO-04'].push(
   { what: 'under the cloud: waiting on a cup, as on the heaps', steps: [...through('LKO-04', room04, 1), walkTo(actX('LKO-04', 1) + 2.4, 300), hops([[actX('LKO-04', 1) + 3.5, shaded(actX('LKO-04', 1), 4)]]), until(done, 600)], cause: 'lko-badal-peeche' },
 );
 mistakes['LKO-06'] = [
-  { what: 'in the mehfil, crossing her floor', steps: [...through('LKO-06', room06, 1), walkTo(actX('LKO-06', 1) + 3.6, 300), hops([actX('LKO-06', 1) + 6.5, actX('LKO-06', 1) + 12.2]), until(done, 1200)], cause: 'lko-mehfil' },
+  { what: 'in the mehfil, crossing her floor', steps: [...through('LKO-06', room06, 2), walkTo(actX('LKO-06', 2) + 3.6, 300), hops([actX('LKO-06', 2) + 6.5, actX('LKO-06', 2) + 12.2]), until(done, 1200)], cause: 'lko-mehfil' },
   {
     what: 'in the mehfil, stepping down on to the red strip as she goes away',
-    steps: [...through('LKO-06', room06, 1), walkTo(actX('LKO-06', 1) + 3.6, 300), hops([actX('LKO-06', 1) + 6.5]), until((w) => w.flags['lko06-mehfil:d'].x > px(actX('LKO-06', 1) + 22), 2400), hops([actX('LKO-06', 1) + 11.2, actX('LKO-06', 1) + 12.4, actX('LKO-06', 1) + 13.5]), until(done, 1200)],
+    steps: [...through('LKO-06', room06, 2), walkTo(actX('LKO-06', 2) + 3.6, 300), hops([actX('LKO-06', 2) + 6.5]), until((w) => w.flags['lko06-mehfil:d'].x > px(actX('LKO-06', 2) + 22), 2400), hops([actX('LKO-06', 2) + 11.2, actX('LKO-06', 2) + 12.4, actX('LKO-06', 2) + 13.5]), until(done, 1200)],
     cause: 'lko-ghungroo',
   },
 ];
@@ -1066,6 +1077,11 @@ mistakes['LKO-10'].push(
 mistakes['LKO-08'].push(
   { what: 'the broken arch: walking the whole one, jumping the one at the floor’s end, as the maze taught', steps: [...through('LKO-08', room08, 3), runTo(actX('LKO-08', 3) + 5.4, 300), hop(actX('LKO-08', 3) + 6.2, actX('LKO-08', 3) + 10, '', 30), until(done, 600)], cause: 'lko-toota' },
   { what: 'the broken arch: walking on through both', steps: [...through('LKO-08', room08, 3), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
+);
+
+mistakes['LKO-06'].push(
+  { what: 'the tihai: standing on a tied-up strip through the third phrase, as through the first two', steps: [...through('LKO-06', room06, 1), walkTo(actX('LKO-06', 1) + 6, 300), until(done, 900)], cause: 'lko-tihai' },
+  { what: 'the tihai: running the stage in one go', steps: [...through('LKO-06', room06, 1), { hold: 'R', until: done, max: 900 }], cause: 'lko-tihai' },
 );
 
 export const test: CityTests = {

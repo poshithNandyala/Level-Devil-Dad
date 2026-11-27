@@ -8,7 +8,7 @@ import { collectible, door, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
 import { Grid } from '../../levels/grid';
 import type { Act } from '../../levels/acts';
-import { Art, FLOOR, Zone, px, TAU, type Ctx } from './kit';
+import { Art, FLOOR, Zone, gent, px, TAU, type Ctx } from './kit';
 import { tara } from './s02';
 
 /** the dancer: poses at `home`; drawn to a sound, she spins along the floor to it, turns there, spins home */
@@ -355,5 +355,83 @@ export const mehfil: Act = {
   },
 };
 
-export const s06 = { room: kathakRoom, acts: [tatkar, mehfil] };
+// ================================================================ act: tihai, the phrase played three times
+/** The tabla plays a tihai: one phrase three times over, landing on sam. The grey strips have their bells
+ *  tied up in cloth and stay silent through the first two phrases; on the sam that ends the third, every bell
+ *  on the stage rings, tied or not, and she spins to it. Count the phrases; on the third, be on plain board. */
+const TIHAI = { first: 200, phrase: 80, cycle: 420, boards: [9, 18], bw: 4 };
+export const tihai: Act = {
+  id: 'lko06-tihai',
+  w: 30,
+  advice: 'The tabla plays a tihai: one phrase three times over, and the third lands on sam. The grey strips have their bells tied up and stay silent for the first two; on sam every bell on the stage rings, tied or not, and she spins to it. Count the three lamps on the tabla: when the third lights, be on plain board.',
+  cp0: false,
+  cps: [-2, 9.2, 18.2],
+  build: (w, c) => {
+    const x = c.x;
+    boards(w, x, x + 29);
+    const d = new Dancer(w, c.X(12) + 8, 420, 'lko-tihai');
+    let chase = -1;
+    const T = { t0: -1 };
+    w.flags[c.f('t')] = T;
+    const spans: [number, number][] = [];
+    let from = 4;
+    for (const b of TIHAI.boards) {
+      spans.push([x + from, x + b - 1]);
+      from = b + TIHAI.bw;
+    }
+    spans.push([x + from, x + 26]);
+    // which phrase is playing now (1-3), 0 in the rest after sam; and is this the tick of sam
+    const at = (w2: World) => {
+      if (T.t0 < 0) return { n: 0, sam: false, k: -1 };
+      const e = w2.tick - T.t0;
+      const k = e < TIHAI.first ? e - TIHAI.first + TIHAI.cycle : (e - TIHAI.first) % TIHAI.cycle;
+      const intoTihai = k - (TIHAI.cycle - 3 * TIHAI.phrase);
+      const n = intoTihai >= 0 ? 1 + Math.floor(intoTihai / TIHAI.phrase) : 0;
+      return { n, sam: e >= TIHAI.first && k === 0, k };
+    };
+    w.flags[c.f('at')] = at;
+    w.add(
+      new Art((ctx, w2) => {
+        for (const [c0, c1] of spans) {
+          const x0 = px(c0),
+            x1 = px(c1 + 1);
+          ctx.fillStyle = '#9E9890';
+          ctx.fillRect(x0, FLOOR - 1, x1 - x0, 5);
+          ctx.fillStyle = '#C9C2B6';
+          for (let xx = x0 + 3; xx < x1 - 1; xx += 6) ctx.fillRect(xx, FLOOR - 1, 3, 3);
+        }
+        // the tabla player at the back, and his three lamps: one lights for each phrase
+        const a = at(w2);
+        const tx = c.X(14) + 8;
+        gent(ctx, tx, px(9), 20, '#F2EEE4', { face: 1, arms: a.n ? 0.6 + 0.3 * Math.sin(w2.tick * 0.6) : 0.3, skin: '#9C6B48' });
+        for (let k = 0; k < 3; k++) {
+          ctx.fillStyle = a.n > k ? '#FFD54F' : '#5A5047';
+          ctx.beginPath();
+          ctx.arc(tx - 12 + k * 12, px(9) - 34, 3, 0, TAU);
+          ctx.fill();
+        }
+        ctx.fillStyle = '#6D4C33';
+        ctx.fillRect(tx - 16, px(9), 32, 4);
+      }, -1),
+    );
+    w.onTick((w2) => {
+      const p = w2.player;
+      if (T.t0 < 0 && p.cx > c.X(2)) T.t0 = w2.tick;
+      // sam is her fastest chakkar, and it comes to you: she follows you for a moment, not just the sound
+      if (w2.tick < chase && d.s === 'out') d.target = p.cx;
+      const a = at(w2);
+      if (!a.sam) return;
+      w2.sfx('bells', p.cx, FLOOR - 4);
+      w2.emit('shake', c.X(14), FLOOR, { amount: 1.5 });
+      const onStrip = p.onGround && p.y + p.h >= FLOOR - 1 && spans.some(([c0, c1]) => p.x + p.w > px(c0) + 2 && p.x < px(c1 + 1) - 2);
+      if (onStrip) {
+        d.call(w2, p.cx, 'lko-tihai');
+        chase = w2.tick + 45;
+      }
+    });
+    sign(w, x + 0.4, 10.4, 3.2, 'TIHAI', 'shop', null, 'dha');
+  },
+};
+
+export const s06 = { room: kathakRoom, acts: [tatkar, tihai, mehfil] };
 export const meta06 = { family: 'sound-draws-dancer-spin', betrayals: ['sound-draws'], ending: 'lko-sam' } as StageMeta;
