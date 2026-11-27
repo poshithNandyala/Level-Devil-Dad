@@ -14,6 +14,8 @@ import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
 import { exitTwist } from '../../levels/twists';
 import { PongalPot } from '../../entities/tamil';
+import { MURUKKU_META, kannu, karandi, murukkuRoom, ruchi, thenkuzhal, varisai } from './murukku';
+import { SPENCER_META, kaanal, keezhe, moodal, pattarai, spencerRoom } from './spencer';
 
 // Chennai: share autos, plastic water pots, a flooding subway, filter kaapi
 // poured in long arcs, and a sun that makes doors appear. Chennai Tamil + English.
@@ -130,17 +132,17 @@ const gullyCricket: Act = {
     const bowl = (at: number, fn: (w2: World) => void) => onPass(w, X(at), fn);
     bowl(2, (w2) => {
       say(w2, 'Over start! | Over starts!', X(9), G - 4);
-      roller(w2, 'ball', X(31), px(G) - 8, -200, { cause: 'hit' });
+      roller(w2, 'chn-ball', X(31), px(G) - 8, -200, { cause: 'hit' });
     });
-    bowl(10, (w2) => roller(w2, 'ball', X(34), px(G) - 8, -240, { cause: 'hit' }));
+    bowl(10, (w2) => roller(w2, 'chn-ball', X(34), px(G) - 8, -240, { cause: 'hit' }));
     bowl(18.5, (w2) => {
       say(w2, 'Bouncer! | Bouncer!', X(26), G - 4, 1);
       w2.sfx('whistle', X(28), px(G));
-      shot(w2, 'ball', X(33), 205, -270, 0, 0, 'hit');
+      shot(w2, 'chn-ball', X(33), 205, -270, 0, 0, 'hit');
     });
     bowl(26, (w2) => {
       say(w2, 'Yorker! | Yorker!', X(32), G - 4, 1);
-      roller(w2, 'ball', X(36) + 40, px(G) - 8, -320, { cause: 'hit' });
+      roller(w2, 'chn-ball', X(36) + 40, px(G) - 8, -320, { cause: 'hit' });
     });
     for (const [t, l] of [
       [0.6, 'GULLY XI'],
@@ -360,7 +362,7 @@ export const levels = (): LevelDef[] => [
           );
         },
       );
-      const lorry = thingOn(w, 'lorry', 21, 15, { h: 40 });
+      const lorry = thingOn(w, 'chn-lorry', 21, 15, { h: 40 });
       const spray = { period: 1.7, on: 0.9, phase: 0.4 };
       arc(w, px(21), 222, px(16), 236, 12, spray, 'rgba(120,190,230,0.95)', 'splash');
       lorry.look = 'leak';
@@ -370,7 +372,7 @@ export const levels = (): LevelDef[] => [
     },
   },
     par: 17,
-    twist: 'token',
+    twist: 'chn-token',
     acts: [queueTwo],
   }),
   longStage({
@@ -422,7 +424,7 @@ export const levels = (): LevelDef[] => [
     joinW: 12,
     waterTo: 34,
     par: 15,
-    twist: 'bull',
+    twist: 'chn-bull',
     acts: [floodFrogger],
   }),
   longStage({
@@ -464,7 +466,7 @@ export const levels = (): LevelDef[] => [
     },
   },
     par: 17,
-    twist: 'catch',
+    twist: 'chn-catch',
     acts: [gullyCricket],
   }),
   longStage({
@@ -485,8 +487,8 @@ export const levels = (): LevelDef[] => [
       prop(w, 'tree', 9, 15);
       prop(w, 'tree', dx, 15);
       // the first EXIT is a mirage; so is the one at the far end, just past the real (hidden) door
-      const mirage = thingOn(w, 'mirage', 28, 15, { solid: false, layer: -2 });
-      const mirage2 = thingOn(w, 'mirage', dx + 3, 15, { solid: false, layer: -2 });
+      const mirage = thingOn(w, 'chn-mirage', 28, 15, { solid: false, layer: -2 });
+      const mirage2 = thingOn(w, 'chn-mirage', dx + 3, 15, { solid: false, layer: -2 });
       let seen = false;
       w.when(
         (w2) => w2.player.x >= px(26.5),
@@ -586,7 +588,7 @@ export const levels = (): LevelDef[] => [
   },
     par: 15,
     acts: [ladi],
-    twist: 'rangoli',
+    twist: 'chn-rangoli',
   }),
   longStage({
     base: {
@@ -643,7 +645,7 @@ export const levels = (): LevelDef[] => [
   },
     par: 17,
     acts: [capstone],
-    twist: 'tips',
+    twist: 'chn-tips',
   }),
   longStage({
     base: {
@@ -683,7 +685,7 @@ export const levels = (): LevelDef[] => [
       let train: ReturnType<typeof rider> | null = null;
       w.onTick((w2) => {
         if (!train && w2.player.x >= px(4)) {
-          train = rider(w2, 'loco', -px(5), 12, 120, 5);
+          train = rider(w2, 'chn-loco', -px(5), 12, 120, 5);
           w2.say('Poo! Poo! | Toot! Toot!', px(2), px(9), 1.2, 'npc');
           w2.sfx('honk', 0, px(11));
         }
@@ -697,4 +699,7 @@ export const levels = (): LevelDef[] => [
     twist: 'sink',
     acts: [trainRoof],
   }),
+  // ------------------------------------------------------------------ encores (slots 9 and 10 of the allocation)
+  longStage({ base: murukkuRoom(), acts: [karandi, kannu, thenkuzhal, varisai, ruchi], twist: 'chn-fresh-curtain', par: 70, shape: 'long', meta: MURUKKU_META }),
+  longStage({ base: spencerRoom(), acts: [moodal, kaanal, keezhe, pattarai], lives: 'act', twist: 'chn-wet-floor-sign', par: 100, shape: 'long', meta: SPENCER_META }),
 ];

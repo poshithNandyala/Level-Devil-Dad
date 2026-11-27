@@ -4,10 +4,10 @@ import type { ThingDraw } from '../../../render/art/things';
 
 declare module '../../../render/art/things' {
   interface ModuleThingKinds {
-    lorry: true;
-    mirage: true;
-    loco: true;
-    ball: true;
+    'chn-lorry': true;
+    'chn-mirage': true;
+    'chn-loco': true;
+    'chn-ball': true;
   }
 }
 
@@ -70,8 +70,8 @@ const ball: ThingDraw = (ctx, x, y, w, h, o) => {
 };
 
 export const things = {
-  lorry: { size: [96, 44] as [number, number], draw: lorry },
-  mirage: { size: [16, 32] as [number, number], draw: mirage },
-  loco: { size: [56, 32] as [number, number], draw: loco },
-  ball: { size: [8, 8] as [number, number], draw: ball },
+  'chn-lorry': { size: [96, 44] as [number, number], draw: lorry },
+  'chn-mirage': { size: [16, 32] as [number, number], draw: mirage },
+  'chn-loco': { size: [56, 32] as [number, number], draw: loco },
+  'chn-ball': { size: [8, 8] as [number, number], draw: ball },
 };
