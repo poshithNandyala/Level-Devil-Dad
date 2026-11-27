@@ -15,7 +15,6 @@ import type { Charge } from '../../src/game/cities/dis/gorh';
 import type { DholPlanks } from '../../src/game/cities/dis/dhol';
 import type { Bordoisila } from '../../src/game/cities/dis/storm';
 import type { TugRope } from '../../src/game/cities/dis/tug';
-import type { Dheki } from '../../src/game/cities/dis/dheki';
 import type { TimeCard } from '../../src/game/cities/dis/card';
 import type { Stair } from '../../src/game/cities/dis/stair';
 import type { Trap, Wake } from '../../src/game/cities/dis/majuli';
@@ -353,16 +352,6 @@ const dholTempo = (x: number, every: number): NonNullable<Step['policy']> => {
     return { move: '', jump: false };
   };
 };
-const dk = (w: World, i: number) => (w.flags.dheki as Dheki[])[i];
-/** across dheki i at column c: on to the tail while she presses it, wait on the pedestal, over the mortar on the pestle.
- *  `second`: two women, so wait for the pestle's second, longer fall */
-const crossDheki = (c: number, i: number, second = false): Step[] => [
-  { hold: 'R', until: X(c - 1.2), max: 900 },
-  { hold: '', until: (w) => w.player.x >= px(c) - 4 || (dk(w, i).pressed(w) && (dk(w, i).t(w) < 0 || dk(w, i).t(w) < 60)), max: 900, note: 'wait till she has pressed the tail down' },
-  { hold: 'R', until: X(c + 3.1), max: 200, note: 'over the tail on to the pedestal' },
-  { hold: '', until: (w) => !dk(w, i).pressed(w) && (!second || dk(w, i).t(w) >= 250), max: 900, note: second ? 'let the quick fall go, wait for the second' : 'wait on the pedestal till the pestle drops' },
-  { hold: 'R', until: X(c + 8.1), max: 200, note: 'over the mortar on the pestle' },
-];
 const stairs = (w: World) => (w.flags.stair as Stair[]);
 /** up a run of one-tile brick steps: walk right and hop only when a riser is in front, until column `top` on the ground */
 const wallAhead = (w: World) => !!w.solidAt(w.player.x + w.player.w + 2, w.player.y + w.player.h - 10, 2, 6);
@@ -420,7 +409,6 @@ act('dis10-dhol', 'DIS-10', [() => [{ policy: () => ({ move: 'R', jump: true }),
 act('dis09-tug', 'DIS-09', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => tug(w).phase(w.tick).taut, max: 900, note: 'wait till it is taut' }, { hold: 'R', until: done, max: 900 }], 'dis-rope', 'goes the moment the rope is taut, whoever is winning']);
 /** more scripted deaths inside an act: [act, stage, play from the act's start, cause, what] */
 const ACT_MORE: [string, string, Play, string, string][] = [];
-ACT_MORE.push(['dis07-dheki', 'DIS-07', (x) => [...crossDheki(x + 6, 0), ...crossDheki(x + 14, 1), { hold: 'R', until: X(x + 24.6), max: 400 }, ...crossDheki(x + 29, 2), { hold: 'R', until: done, max: 600 }], 'dis-dheki', 'two women at the third dheki: goes on its first, quick fall, and the pestle is pressed up again under him']);
 act('dis10-talatal', 'DIS-10', [(x) => [...hopsUp(x + 2, 6), { hold: 'R', until: and(ground, X(x + 14.2)), max: 400 }, { hold: '', until: done, max: 900 }], 'dis-doba', 'stops on the step before the last to wait for it, as in 04']);
 act('dis07-card', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-gate', 'runs to the exit gate: it is shut before the card’s time'], [(x) => [{ hold: 'R', until: X(x + 25), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'dawdles on the road short of the gate: a corridor']);
 ACT_MORE.push(['dis07-card', 'DIS-07', (x) => [{ hold: 'R', until: X(x + 32), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'waits at the gate for the card: the deer cross there']);
@@ -428,7 +416,6 @@ act('dis05-feast', 'DIS-05', [(x) => [{ hold: 'R', until: X(x + 6.6), max: 600 }
 act('dis05-machan', 'DIS-05', [(x) => [{ policy: (w) => ({ move: floorAhead(w, 3) ? 'R' : '', jump: false }), until: and(ground, X(x + 16)), max: 1500 }, { hold: '', until: done, max: 900 }], 'dis-machan', 'waits on the last plank for one more: the drum rolls'], [() => [{ hold: 'R', until: done, max: 900 }], 'dis-luit', 'runs on ahead of the carpenter: the far end is not built']);
 act('dis06-wake', 'DIS-06', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-dhal', 'runs to outrun the wake'], [(x) => [{ hold: 'R', until: X(x + 6.3), max: 600 }, { hold: '', until: (w) => wakes(w)[0].running && w.player.cx - wakes(w)[0].x < 50, max: 600 }, { hold: '', jump: 14, ticks: 14, note: 'hops the wave' }, { hold: '', until: done, max: 600 }], 'dis-bank', 'waits for the wake on the undercut bank and hops it: the landing breaks the slab off']);
 act('dis06-traps', 'DIS-06', [(x) => [...onTrap(x, 0), { hold: '', until: done, max: 900 }], 'dis-dirru', 'stands on the first trap as on a floor: it rings and is hoisted'], [(x) => [...onTrap(x, 0), { hold: '', until: (w) => traps(w)[0].state(w) === 'ring', max: 900 }, ...onTrap(x, 1), { hold: '', until: done, max: 600 }], 'dis-tip', 'hops on at the ring to the next trap: it is still slack and tips']);
-act('dis07-dheki', 'DIS-07', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-dheki', 'runs and hops the mortar while the pestle is up'], [(x) => [{ hold: 'R', until: X(x + 7), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-dheki-tail', 'waits on the tail plank: she steps off and it flies up']);
 act('dis07-bordoisila', 'DIS-07', [(x) => [{ hold: 'R', until: X(x + 8.6), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-hail', 'shelters under the granary’s roof: the hail drives in on the wind'], [(x) => [{ hold: 'R', until: X(x + 14), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-bordoisila', 'runs on past the granary to get away from it: the wind takes him into the pond']);
 act('dis10-tug', 'DIS-10', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir < 0 && p.t < 6; }, max: 2400 }, { hold: 'R', until: done, max: 900 }], 'dis-rope', 'goes on the red flag, as in 09: red is the near team now']);
 act('dis10-bordoisila', 'DIS-10', [(x) => [...hopR(x + 11.3, 'jumps the channel before the wind', 14), { hold: 'R', until: done, max: 600 }], 'dis-bordoisila', 'jumps the channel before the wind comes'], [(x) => [{ hold: 'R', until: X(x + 6.2), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-bhoral', 'shelters under the bhoral, as in 07']);
@@ -836,13 +823,6 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...onTrap(x, 2),
     ...hopR(x + 16.2, 'on to the bank', 11),
     { hold: 'R', until: and(ground, X(x + 22)), max: 400 },
-  ]),
-  'dis07-dheki': mark('dis07-dheki', (x) => [
-    ...crossDheki(x + 6, 0),
-    ...crossDheki(x + 14, 1),
-    { hold: 'R', until: X(x + 24.6), max: 400 },
-    ...crossDheki(x + 29, 2, true),
-    { hold: 'R', until: and(ground, X(x + 37.5)), max: 400 },
   ]),
   'dis07-dhol': mark('dis07-dhol', (x) => [{ policy: dholHop(), until: and(ground, X(x + 33)), max: 6000, note: 'one plank on every beat of the dhol' }]),
   'dis10-dhol': mark('dis10-dhol', (x) => [{ policy: dholHop(), until: and(ground, X(x + 30)), max: 6000, note: 'one plank on every beat, slow or fast' }]),
