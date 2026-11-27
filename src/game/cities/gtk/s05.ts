@@ -281,8 +281,6 @@ export const kachraAct = (id: string, key: string, speed: number): Act => ({
   },
 });
 export const act2 = kachraAct('gtk05-kachra', 'gtk5r', ROUND.speed * 3);
-/** the last bin round of the evening, and a slower man: a longer wait by the full bin */
-export const act8 = kachraAct('gtk05-raat', 'gtk5q', 36);
 
 /** act 3: the high flower bed. The bench in front of it is the only step up, and someone has left a wrapper on
  *  the bench. Stand on it and you've picked it up: walk off the end, back to the bin, and up again */

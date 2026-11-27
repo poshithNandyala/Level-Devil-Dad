@@ -314,7 +314,6 @@ export const drifterAct = (id: string, PITS: [number, number][], speed: number, 
   },
 });
 export const act8 = drifterAct('gtk07-peeche', [[7, 8], [13, 14], [19, 20], [26, 27], [33, 34], [39, 40]], 52, 'gtk7h');
-export const act9 = drifterAct('gtk07-dheere', [[6, 7], [11, 12], [16, 17], [22, 23], [28, 29], [35, 36], [41, 42]], 46, 'gtk7i', 48);
 /** two tea stalls on one long stretch with the rope down: wait under each for the cloud to lift, look, go */
 export const SHELTERS = [1, 30];
 export const chaiAct = (id: string, PITS: [number, number][], CL: Cloud, key: string): Act => ({
@@ -350,11 +349,6 @@ export const chaiAct = (id: string, PITS: [number, number][], CL: Cloud, key: st
 export const act10 = chaiAct('gtk07-chiya', [[6, 7], [11, 12], [17, 18], [23, 24], [35, 36], [41, 42], [47, 48], [53, 54]], { t0: -1, thick: 5.2, clear: 1.6 }, 'gtk7j');
 export const act11 = drifterAct('gtk07-saath', [[6, 7], [12, 13], [18, 19], [25, 26], [31, 32], [38, 39]], 50, 'gtk7k', 44, true);
 export const act12 = ghumtiAct('gtk07-jaldi', [[4, 5], [8, 9], [13, 14], [18, 19], [23, 24], [28, 29], [33, 34], [37, 38]], { t0: -1, thick: 0, clear: 0, roll: 110 }, 'gtk7l');
-export const act13 = chaiAct('gtk07-thau2', [[5, 6], [10, 11], [15, 16], [21, 22], [25, 26], [36, 37], [42, 43], [48, 49], [54, 55]], { t0: -1, thick: 5.6, clear: 1.5 }, 'gtk7m');
-/** the second round, harder: a longer wait for a shorter lift, the mural over two holes in a row, a quicker cloud */
-export const act4 = thauAct('gtk07-chhaya', [[5, 6], [9, 10], [15, 16], [22, 23], [28, 29], [34, 35]], { t0: -1, thick: 4.8, clear: 1.4 }, 'gtk7d');
-export const act5 = chitraAct('gtk07-rang', [[6, 7], [11, 12], [20, 21], [27, 28]], { t0: -1, thick: 3.2, clear: 1.8 }, 'gtk7e');
-export const act6 = ghumtiAct('gtk07-bhaga', [[4, 5], [9, 10], [14, 15], [20, 21], [26, 27], [31, 32], [36, 37]], { t0: -1, thick: 0, clear: 0, roll: 104 }, 'gtk7f');
 /** door: up the hillside in thick cloud; the rope's posts climb with the hidden steps, the only guide to them */
 export const ending: Ending = {
   space: 12,

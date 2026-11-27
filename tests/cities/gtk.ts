@@ -10,7 +10,7 @@ import { VENT, type Steamer } from '../../src/game/cities/gtk/s02';
 import type { Bag } from '../../src/game/cities/gtk/s03';
 import { FLOORS, UP_FLOORS } from '../../src/game/cities/gtk/s04';
 import type { Rule } from '../../src/game/cities/gtk/s05';
-import { TANK, STAND2, STAND3, STAND5, STAND6, JEEP } from '../../src/game/cities/gtk/s06';
+import { TANK, STAND2, STAND3, STAND6 } from '../../src/game/cities/gtk/s06';
 import type { Cloud } from '../../src/game/cities/gtk/s07';
 import { DOCK } from '../../src/game/cities/gtk/s08';
 import type { Yak } from '../../src/game/cities/gtk/s09';
@@ -523,24 +523,6 @@ const act06d = (x: number): Step[] => [
   { hold: '', until: parked('gtk6a', STAND2), max: 900, note: 'wait while the taxi backs out over the top step' },
   { policy: stepper(), until: and(ground, X(x + 29)), max: 600, note: 'up and past it' },
 ];
-const act06e = (x: number): Step[] => [
-  { hold: 'R', until: and(ground, X(x + 6.2), (w) => w.player.y + w.player.h >= 207 && w.player.y + w.player.h <= 209), max: 600, note: 'down to the last step above the pocket' },
-  { hold: '', until: parked('gtk6n', STAND5), max: 900, note: 'wait out the taxi' },
-  { hold: 'R', until: and(ground, X(x + 24)), max: 600, note: 'across the pocket, down the second stair' },
-  { policy: stepper(), until: X(x + 33.5), max: 400 },
-];
-const act06g = (x: number): Step[] => [
-  { policy: stepper(), until: and(ground, X(x + 11)), max: 400 },
-  { policy: stairUpLeft(), until: (w) => w.player.onGround && w.player.y + w.player.h <= 144, max: 1200, note: 'back, and up the stair behind you' },
-  { hold: 'R', until: X(x + 34.2), max: 900, note: 'along the loop above, over the hill' },
-  { hold: 'R', until: ground, max: 300 },
-];
-const act06h = (x: number): Step[] => [
-  { hold: 'R', until: and(ground, X(x + 9.2), (w) => Math.abs(w.player.y + w.player.h - 208) <= 1), max: 900, note: 'down the stair to the last step' },
-  { hold: '', until: parked('gtk6s', JEEP), max: 1500, note: 'wait for the jeep to back in and pull out' },
-  { hold: 'R', until: and(ground, X(x + 22)), max: 600, note: 'down and past the stand' },
-  { policy: stepper(), until: X(x + 31.5), max: 400 },
-];
 const act06i = (x: number): Step[] => [{ policy: gapJumper(), until: and(ground, X(x + 31)), max: 1500, note: 'roof to roof down the hill, hopping each gap' }, { policy: stepper(), until: X(x + 35.5), max: 300 }];
 const bothParked = (w: World) => {
   const a = w.flags.gtk6p as { t0: number };
@@ -919,33 +901,34 @@ function upTo(id: string, room: Step[], actId: string): { steps: Step[]; x: numb
   }
   throw new Error(`${id}: no act ${actId}`);
 }
+/** which act each scripted act death belongs to (read by the GTK probe, tests/cities/gtk/probe.test.ts) */
+export const GTK_ACT_DEATHS: { id: string; act: string; m: object }[] = [];
 /** scripted deaths in an act: reach it by the route, then play `tail` there */
 function actDeath(id: string, room: Step[], actId: string, what: string, tail: (x: number) => Step[], cause: string) {
   const { steps, x } = upTo(id, room, actId);
-  (mistakes[id] ??= []).push({ what, steps: [...steps, ...tail(x)], cause });
+  const m = { what, steps: [...steps, ...tail(x)], cause };
+  (mistakes[id] ??= []).push(m);
+  GTK_ACT_DEATHS.push({ id, act: actId, m });
 }
 const blind = (): Step[] => [{ hold: 'R', until: done, max: 3000, note: 'just walk on' }];
 /** the lengthened stages' added acts each get a first-timer death and, where there is one, the obvious fix's */
 function actDeaths() {
   const r7 = room07();
   actDeath('GTK-07', r7, 'gtk07-peeche', 'catch the cloud up and walk on blind', (x) => [{ hold: 'R', until: X(x + 2), max: 300 }, ...blind()], 'gtk-badal');
-  actDeath('GTK-07', r7, 'gtk07-dheere', 'catch the cloud up and walk on blind', (x) => [{ hold: 'R', until: X(x + 2), max: 300 }, ...blind()], 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-chiya', 'no stop at the stall: straight on into the cloud', () => blind(), 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-chiya', 'wait once, then walk on blind past the second stall', (x) => [...chiyaRoute('gtk7j')(x).slice(0, 3), ...blind()], 'gtk-badal');
-  actDeath('GTK-07', r7, 'gtk07-thau2', 'no stop at the stall', () => blind(), 'gtk-badal');
-  actDeath('GTK-07', r7, 'gtk07-thau2', 'wait once, then walk on blind past the second stall', (x) => [...chiyaRoute('gtk7m')(x).slice(0, 3), ...blind()], 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-jaldi', 'walk, don’t jump: the holes are right there', () => blind(), 'gtk-badal');
   const r5 = room05();
   const on = (): Step[] => [{ policy: stepper(), until: done, max: 3000, note: 'straight on' }];
-  for (const id of ['gtk05-peeche', 'gtk05-do', 'gtk05-raat', 'gtk05-kachra'])
+  for (const id of ['gtk05-peeche', 'gtk05-do', 'gtk05-kachra'])
     actDeath('GTK-05', r5, id, 'straight on, wrapper in hand', on, 'gtk-jurmana');
   actDeath('GTK-05', r5, 'gtk05-chabutra', 'up on the bench and on to the bed', (x) => [{ hold: 'R', until: X(x + 3.1), max: 600 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: onBench, max: 200 }, ...on()], 'gtk-jurmana');
   actDeath('GTK-05', r5, 'gtk05-jhadu', 'behind the stroke, then on with what it brought you', (x) => [...act05g(x).slice(0, 2), ...on()], 'gtk-jurmana');
   actDeath('GTK-05', r5, 'gtk05-aarakshit', 'walk on past the sweeper', on, 'gtk-jhadu');
-  actDeath('GTK-05', r5, 'gtk05-aarakshit', 'up on the bench, as at the tour', (x) => [{ hold: 'R', until: X(x + 6.6), max: 600 }, { hold: 'R', jump: 10, ticks: 10, note: 'up on the reserved bench' }, { hold: '', until: done, max: 1200 }], 'gtk-jhadu');
+  actDeath('GTK-05', r5, 'gtk05-aarakshit', 'up on the bench, as at the tour', (x) => [{ hold: 'R', until: X(x + 6.6), max: 600 }, { hold: 'R', jump: 10, ticks: 10, note: 'up on the reserved bench' }, { hold: '', until: done, max: 1200 }], 'gtk-aarakshit');
   const r6 = room06();
   const straight = (): Step[] => [{ policy: stepper(), until: done, max: 3000, note: 'straight on' }];
-  for (const id of ['gtk06-modh', 'gtk06-ulta', 'gtk06-adda', 'gtk06-neeche', 'gtk06-sawari', 'gtk06-ghumao', 'gtk06-peeche'])
+  for (const id of ['gtk06-modh', 'gtk06-ulta', 'gtk06-adda'])
     actDeath('GTK-06', r6, id, 'straight on, past the stand', straight, 'gtk-taxi');
   actDeath('GTK-06', r6, 'gtk06-upar2', 'go as soon as the first taxi is in', (x) => [
     { policy: stepper(), until: and(ground, X(x + 8.2), (w) => w.player.y + w.player.h <= 193), max: 900 },
@@ -975,7 +958,6 @@ function actDeaths() {
   actDeath('GTK-08', r8, 'gtk08-upar', 'jump for the higher cabin before they meet', () => early('gtk8bc', 0), 'gtk-khaai');
   actDeath('GTK-08', r8, 'gtk08-badli', 'jump for the next cabin on the way', () => early('gtk8dc', 0), 'gtk-khaai');
   actDeath('GTK-08', r8, 'gtk08-badli', 'changed once, then jump again on the way to the second station', () => early('gtk8dc', 1), 'gtk-khaai');
-  actDeath('GTK-08', r8, 'gtk08-dobaar', 'changed once, then jump again on the way', () => early('gtk8ec', 1), 'gtk-khaai');
   actDeath('GTK-08', r8, 'gtk08-der', 'the far cabin isn’t there: jump for the station', () => [
     { policy: chain('gtk8fc'), until: (w) => { const c = (w.flags.gtk8fc as Rig[])[0]; return c.carries(w) && c.s.ph === 'mid'; }, max: 6000 },
     { hold: 'R', jump: 14, ticks: 14, note: 'jump across anyway' },
@@ -1021,8 +1003,15 @@ function actDeaths() {
   );
   actDeath('GTK-10', r10, 'gtk10-chauri', 'walk across the shore', () => blind(), 'gtk-hiun');
   actDeath('GTK-10', r10, 'gtk10-chauri', 'off the yak when it stops', () => [{ policy: yakRide('gtk10y', { offAtStop: true }), until: done, max: 3000 }], 'gtk-hiun');
+  actDeath('GTK-10', r10, 'gtk10-jhadu', 'walk on past the sweeper', () => [{ policy: stepper(), until: done, max: 2400 }], 'gtk-jhadu');
+  actDeath('GTK-10', r10, 'gtk10-jhadu', 'up on the bench at each sweeper, as at the first', (x) => [
+    { hold: 'R', until: X(x + 6.6), max: 600 },
+    { hold: 'R', jump: 10, ticks: 10 },
+    { policy: behindStroke(0, 'gtk10w'), until: X(x + 23.1), max: 1500 },
+    { hold: 'R', jump: 10, ticks: 10, note: 'up on the reserved bench' },
+    { hold: '', until: done, max: 1200 },
+  ], 'gtk-aarakshit');
   actDeath('GTK-10', r10, 'gtk10-stool', 'up on the stool and straight on to the steamer', () => [{ policy: rideTier('gtk10s2', true), until: done, max: 2400 }], 'gtk-jurmana');
-  actDeath('GTK-10', r10, 'gtk10-dhuaan', 'catch the cloud up and walk on blind', (x) => [{ hold: 'R', until: X(x + 2), max: 300 }, ...blind()], 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-saath', 'behind the cloud, the road looks whole: walk it', (x) => [{ hold: 'R', until: X(x + 2), max: 300 }, ...blind()], 'gtk-deewar');
 }
 
@@ -1095,7 +1084,6 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk04-beech': (x: number): Step[] => [{ policy: upHouseRoute(x + 3, 2), until: and(ground, X(x + 20)), max: 3000, note: 'two flights up, out' }, { hold: 'R', until: X(x + 26.5), max: 300 }],
   'gtk05-shaam': act05,
   'gtk05-kachra': act05b,
-  'gtk05-raat': act05b,
   'gtk05-chabutra': act05c,
   'gtk05-peeche': act05d,
   'gtk05-do': act05f,
@@ -1104,31 +1092,21 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk06-chhat': act06,
   'gtk06-modh': act06b,
   'gtk06-ulta': ultaRoute('gtk6u', STAND3),
-  'gtk06-ghumao': ultaRoute('gtk6g', { period: 5.2, out: 1.0 }),
   'gtk06-adda': act06d,
-  'gtk06-neeche': act06e,
   'gtk06-upar2': act06f,
-  'gtk06-peeche': act06g,
-  'gtk06-sawari': act06h,
   'gtk06-chhatein': act06i,
   'gtk07-thau': act07a,
   'gtk07-chitra': act07b,
   'gtk07-ghumti': act07c,
-  'gtk07-chhaya': thauRoute('gtk7d'),
-  'gtk07-rang': act07b,
-  'gtk07-bhaga': act07c,
   'gtk07-dagar': act07c,
   'gtk07-chiya': chiyaRoute('gtk7j'),
   'gtk07-saath': drifterRoute('gtk7k', 44),
   'gtk07-jaldi': act07c,
-  'gtk07-thau2': chiyaRoute('gtk7m'),
   'gtk07-peeche': drifterRoute('gtk7h', 44),
-  'gtk07-dheere': drifterRoute('gtk7i', 48),
   'gtk08-tar': act08,
   'gtk08-upar': act08b,
   'gtk08-badli': chainRoute('gtk8dc'),
   'gtk08-der': (x: number): Step[] => [{ policy: chain('gtk8fc'), until: and(ground, X(x + 30)), max: 6000, note: 'stay on the first time, change on the second trip' }, { hold: 'R', until: X(x + 33.5), max: 300 }],
-  'gtk08-dobaar': chainRoute('gtk8ec'),
   'gtk09-chamri': act09,
   'gtk09-chattan': act09b,
   'gtk09-dophoto': act09c,
@@ -1144,7 +1122,12 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk10-tar': act10h,
   'gtk10-chauri': act10i,
   'gtk10-stool': act10k,
-  'gtk10-dhuaan': drifterRoute('gtk10e', 42),
+  'gtk10-jhadu': (x: number): Step[] => [
+    { policy: stepper(), until: X(x + 1), max: 300 },
+    { policy: behindStroke(0, 'gtk10w'), until: X(x + 12.5), max: 1500, note: 'the first: behind his stroke (or up on his bench)' },
+    { policy: behindStroke(1, 'gtk10w'), until: X(x + 29), max: 1500, note: 'the second: not the reserved bench, behind his stroke' },
+    { policy: stepper(), until: X(x + 33.5), max: 600 },
+  ],
 };
 const endingPolicies: Record<string, Policy> = {
   'gtk-steam-vent': ventPolicy,

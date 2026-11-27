@@ -229,8 +229,6 @@ export const ultaAct = (id: string, key: string, cfg: { period: number; out: num
   },
 });
 export const act3 = ultaAct('gtk06-ulta', 'gtk6u', STAND3);
-/** act 10: one more switchback, its stand slower */
-export const act10 = ultaAct('gtk06-ghumao', 'gtk6g', { period: 5.2, out: 1.0 });
 /** act 4: the stair up comes out at the top among the taxis: wait on the step below the top while one backs out */
 export const act4: Act = {
   id: 'gtk06-adda',
@@ -249,33 +247,6 @@ export const act4: Act = {
   },
 };
 
-/** act 5: two loops down. The stair down lands in a taxi pocket again, but this time the road you want is the
- *  loop below that: wait out the taxi on the last step, cross the pocket, take the second stair down */
-export const STAND5 = { period: 3.4, out: 0.7 };
-export const act5: Act = {
-  id: 'gtk06-neeche',
-  w: 34,
-  advice: 'The road you want is two loops down. The first stair lands in a taxi pocket: wait on the last step while the taxi backs out, cross behind it as it pulls in, and take the second stair down at the far side.',
-  paint: (g, c) => {
-    const x = c.x;
-    g.fill(x, x + 33, 15, 15, '.');
-    g.fill(x, x + 3, 11, 17, '#');
-    g.fill(x + 4, x + 5, 12, 17, '#');
-    g.fill(x + 6, x + 7, 13, 17, '#');
-    g.fill(x + 8, x + 20, 14, 17, '#');
-    g.fill(x + 21, x + 22, 15, 17, '#');
-    g.fill(x + 23, x + 33, 16, 17, '#');
-  },
-  build: (w, c) => {
-    standTaxi(w, c.X(13), c.X(8.1), px(14), c.X(2), 'gtk6n', STAND5);
-    decor(w, -3, (ctx) => {
-      box(ctx, c.X(12), px(11), px(6), 3, '#2E86AB');
-      box(ctx, c.X(12), px(11), 2, px(3), '#4E5A62');
-      box(ctx, c.X(18) - 2, px(11), 2, px(3), '#4E5A62');
-    });
-    sign(w, c.x + 0.5, 7.4, 3.6, 'LOWER RD', 'green', 'down', '2 loops');
-  },
-};
 export const STAND6 = { period: 5.0, out: 0.7 };
 /** act 6: the loop above has its own taxi stand, and the stair up from it lands right in the taxis' way */
 export const act6: Act = {
@@ -296,60 +267,6 @@ export const act6: Act = {
   },
 };
 
-/** act 7: the stair up is behind you. The road runs on into a dead end at the hill; the way on starts back where
- *  you came in: up the stair there, then along the loop above, forwards, over the hill */
-export const act7: Act = {
-  id: 'gtk06-peeche',
-  w: 34,
-  advice: 'This road runs into the hillside. The way on is the stair up back near where you came in: go back, up it, and along the loop above, forwards, over the hill.',
-  paint: (g, c) => {
-    const x = c.x;
-    g.fill(x + 30, x + 33, 10, 17, '#');
-    g.fill(x + 3, x + 9, 13, 13, '=');
-    g.fill(x + 0, x + 5, 11, 11, '=');
-    g.fill(x - 8, x + 33, 9, 9, '=');
-  },
-  build: (w, c) => {
-    stairArt(w, [
-      [c.x + 3, 13],
-      [c.x + 1, 11],
-    ]);
-    // and the stand at the dead end, a taxi waiting to back out the moment you get there
-    standTaxi(w, c.X(26), c.X(20.5), FL, c.X(14), 'gtk6r', STAND5);
-    decor(w, -3, (ctx) => {
-      box(ctx, c.X(25), px(12), px(5), 3, '#2E86AB');
-    });
-    sign(w, c.x + 20, 5.2, 3.6, 'DEAD END', 'warn', null, 'taxi stand');
-  },
-};
-
-/** act 8: the share-jeep stand at the foot of a long stair down. A share jeep waits to fill up and then pulls
- *  out across the foot of the stair, and the next one backs straight in: wait on the step for the gap */
-export const JEEP = { period: 8.0, out: 1.4 };
-export const act8: Act = {
-  id: 'gtk06-sawari',
-  w: 32,
-  advice: 'The long stair down ends at the share-jeep stand: each jeep backs in across the foot of the stair, waits to fill, and pulls out again. Wait on the last step while it backs in and out; go as it pulls back in.',
-  paint: (g, c) => {
-    const x = c.x;
-    g.fill(x, x + 31, 15, 15, '.');
-    g.fill(x, x + 2, 9, 17, '#');
-    g.fill(x + 3, x + 4, 10, 17, '#');
-    g.fill(x + 5, x + 6, 11, 17, '#');
-    g.fill(x + 7, x + 8, 12, 17, '#');
-    g.fill(x + 9, x + 10, 13, 17, '#');
-    g.fill(x + 11, x + 31, 16, 17, '#');
-  },
-  build: (w, c) => {
-    standTaxi(w, c.X(16), c.X(11.1), px(16), c.X(1), 'gtk6s', JEEP);
-    decor(w, -3, (ctx) => {
-      box(ctx, c.X(15), px(13), px(6), 3, '#3E8E41');
-      box(ctx, c.X(15), px(13), 2, px(3), '#4E5A62');
-      box(ctx, c.X(21) - 2, px(13), 2, px(3), '#4E5A62');
-    });
-    sign(w, c.x + 13, 9.4, 4.2, 'SHARE JEEP', 'green', null, 'singtam, rangpo');
-  },
-};
 
 /** act 9: roofs all the way down the hill. Each house's flat roof is the next one's step; the stair up from each
  *  roof goes to a front door, and a jump off a doorstep on to the roof below is too far */

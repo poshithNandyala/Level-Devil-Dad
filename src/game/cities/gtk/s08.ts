@@ -208,7 +208,7 @@ export const act2 = spanAct(
 export const act5 = spanAct(
   'gtk08-der',
   'gtk8fc',
-  5,
+  9,
   9,
   px(8),
   px(8) - 6,
@@ -263,15 +263,6 @@ export const act3 = chainAct(
   [px(8), px(8)],
   ['#C0392B', '#3E8E41', '#2E86AB'],
   'This span has two middle stations and three shuttles. Change at the first station as they meet; the middle cabin then takes you on to the second station, where the last one comes to meet it a little later. Wait on its roof, and change again.',
-);
-export const act4 = chainAct(
-  'gtk08-dobaar',
-  'gtk8ec',
-  9,
-  5,
-  [px(8), px(6)],
-  ['#D4A017', '#8E6C8A', '#C0392B'],
-  'Two changes again, climbing all the way: up from the first cabin to the second at the first station, and up again to the third at the second.',
 );
 
 /** door: the far station. The exit is through a docked cabin: its doors open both sides at once, for a moment */

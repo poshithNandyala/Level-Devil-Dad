@@ -90,6 +90,7 @@ export function yak(w: World, x0: number, legs: Leg[], startX: number | 'mount',
       y.s.started = true;
     });
   (w.flags[key] ??= []).push(y);
+  ((w.flags.gtkYaks as Yak[] | undefined) ?? (w.flags.gtkYaks = [] as Yak[])).push(y);
   return y;
 }
 
@@ -101,6 +102,12 @@ export function thinShore(w: World, c0: number, c1: number) {
       cause: 'gtk-hiun',
       inset: 0,
       live: (_r, w2) => w2.player.onGround && w2.player.y + w2.player.h >= FL - 1,
+      // off a yak that is standing for its photo, beside it: the photo stop's own cause
+      tick: (r, w2) => {
+        const yaks = (w2.flags.gtkYaks as Yak[] | undefined) ?? [];
+        const by = yaks.some((y) => y.s.photo && Math.abs(y.x + y.w / 2 - w2.player.cx) < px(4));
+        if (r.hazard) r.hazard.cause = by ? 'gtk-photo' : 'gtk-hiun';
+      },
       paint: (ctx, r) => {
         box(ctx, r.x, r.y - 1, r.w, 4, '#E8F1F6');
         for (let x = r.x + 5; x < r.x + r.w; x += 19) {

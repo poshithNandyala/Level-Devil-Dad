@@ -18,6 +18,7 @@ import { spanAct } from './s08';
 import { thinShore, yak } from './s09';
 import { ACT_CFG, steamer } from './s02';
 import { bin, litter, mgRule } from './s05';
+import { bench, reserved, sweeper } from './s01';
 
 const DOORS: ('none' | 'exit' | 'drop' | 'water')[] = ['none', 'drop', 'none', 'exit', 'water'];
 
@@ -270,8 +271,21 @@ export const act11: Act = {
     sign(w, x + 14, 3.2, 4, 'MOMO', 'shop', null, 'one more plate');
   },
 };
-// and the cloud once more, drifting ahead, no rope
-export const act12 = drifterAct('gtk10-dhuaan', [[6, 7], [12, 13], [18, 19], [25, 26], [31, 32], [37, 38]], 48, 'gtk10e', 42);
+/** the tour's sweepers, last of all (01's callback): the first has a bench, the second a RESERVED one, whose owner
+ *  asks you off it in front of the broom. Bench at the first; behind the stroke at the second */
+export const act12: Act = {
+  id: 'gtk10-jhadu',
+  w: 34,
+  advice: 'MG Marg again, swept as on the first evening. The first sweeper has a bench: up on it while he strokes. The second bench has a RESERVED card, and its owner will ask you down in front of the broom: wait outside his stroke and walk through right behind it.',
+  build: (w, c) => {
+    const x = c.x;
+    sweeper(w, x + 9, 6, 'gtk10w');
+    bench(w, c.X(9) - 8, 40);
+    sweeper(w, x + 25, 6, 'gtk10w');
+    reserved(w, c.X(25) - 8, true);
+    sign(w, x + 15.5, 9.6, 4.4, 'MG MARG', 'green', null, 'swept again');
+  },
+};
 
 /** door: the viewpoint house in the cloud. Its doors are stacked up the front, G, 1, 2: the exit is two floors up */
 export const ending: Ending = {

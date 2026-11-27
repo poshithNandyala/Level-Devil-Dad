@@ -64,6 +64,8 @@ export function sweeper(w: World, c: number, lead = 7, key = 'gtk1', always = fa
         st.down = b.down;
         r.x = b.bx - 6;
         r.s.lift = b.lift;
+        const asked = w2.flags.gtkAsked as number | undefined;
+        if (r.hazard) r.hazard.cause = asked !== undefined && w2.tick - asked < 480 ? 'gtk-aarakshit' : 'gtk-jhadu';
       },
       paint: (ctx, r, w2) => {
         const lift = r.s.lift ?? 0;
@@ -149,6 +151,8 @@ export function reserved(w: World, x: number, card: boolean) {
             st.on = 0;
             st.off = 90;
             b.setSolid(false);
+            // a broom that takes Dad in the next 4 s (one stroke and more) took him because the owner asked him down: its own cause
+            w2.flags.gtkAsked = w2.tick;
             npc(w2, 'Maphi paun. | Excuse me.', x + 16, FL - 40, 1.2);
           }
         } else st.on = 0;
@@ -199,7 +203,7 @@ export function tourLevel(): LevelDef {
     ],
     things: [],
     par: 40,
-    cps: [32.5, 52.5, 83.5, 101.5],
+    cps: [30.5, 47.5, 79.5, 97.5],
     extra(w: World) {
       for (const [i, s] of SWEEPERS.entries()) {
         sweeper(w, s.c, 7, 'gtk1', i > 0);
