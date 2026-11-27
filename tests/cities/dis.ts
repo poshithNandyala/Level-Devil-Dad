@@ -309,8 +309,8 @@ const dholHop = (minWait = 0): NonNullable<Step['policy']> => {
       air = 0;
       tgt = -1;
     }
-    const d = (w.flags.dhol as DholPlanks[])[0];
     const p = w.player;
+    const d = (w.flags.dhol as DholPlanks[]).find((q) => p.cx < q.planks[q.planks.length - 1].x + 80)!;
     const i = d.planks.findIndex((s) => p.cx >= s.x - 2 && p.cx <= s.x + s.w + 2 && p.onGround);
     const n = d.planks[i + 1];
     if (!p.onGround) {
@@ -333,6 +333,21 @@ const dholHop = (minWait = 0): NonNullable<Step['policy']> => {
       return { move: 'R', jump: true };
     }
     return { move: p.cx < c - 3 ? 'R' : p.cx > c + 3 ? 'L' : '', jump: false };
+  };
+};
+/** a player hopping plank to plank on a counted tempo, whatever the planks do */
+const dholTempo = (x: number, every: number): NonNullable<Step['policy']> => {
+  let last = -1;
+  return (w) => {
+    const p = w.player;
+    if (p.cx < px(x + 4.2)) return { move: 'R', jump: p.cx > px(x + 3.6) && p.onGround };
+    if (!p.onGround) return { move: (p.cx - px(x + 4.5)) % 48 < 16 ? 'R' : '', jump: true };
+    if (last < 0) last = w.tick;
+    if (w.tick - last >= every) {
+      last = w.tick;
+      return { move: 'R', jump: true };
+    }
+    return { move: '', jump: false };
   };
 };
 type Play = (x: number) => Step[];
@@ -373,6 +388,7 @@ const roofFix: Play = () => [{ policy: ribHop(16), until: done, max: 4000 }];
 const act = (a: string, stage: string, naive: [Play, string, string], fix: [Play, string, string]) => ACT_DEATHS.push({ act: a, stage, naive, fix });
 act('dis06-chang', 'DIS-06', [changNaive, 'dis-bank', 'jumps at the stilt house'], [changFix(11), 'dis-bank', 'up the ladder, then walks off the house into the river']);
 act('dis07-dhol', 'DIS-07', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholHop(110), until: (w) => done(w) || w.player.cx > px(x + 36), max: 6000 }, { hold: '', until: done, max: 900 }], 'dis-pukhuri', 'keeps the first tempo after the dhol quickens']);
+act('dis10-dhol', 'DIS-10', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholTempo(x, 84), until: done, max: 6000 }], 'dis-pukhuri', 'hops on the quick tempo from 07 after the drummer has slowed']);
 act('dis08-jeep', 'DIS-08', [rhinoNaive, 'dis-beel', 'walks into the tall grass'], [rhinoFix, 'dis-gorh', 'waits at the edge of the grass, where the second jeep is']);
 act('dis08-bagori', 'DIS-08', [(x) => [{ hold: 'R', until: X(x + 2.4), max: 600 }, { hold: '', until: done, max: 2000 }], 'dis-gorh', 'stays on the bank: the rhino comes from behind'], [(x) => [{ hold: 'R', until: X(x + 1.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: '', until: (w) => charges(w).some((c) => c.d.c0 === x + 11 && c.phase === 'rest'), max: 2000 }, { hold: 'R', until: done, max: 2000 }], 'dis-gorh', 'off the hay as soon as the rhino stops halfway']);
 act('dis10-gamosa', 'DIS-10', [() => [{ hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'walks into every giver'], [(x) => [{ hold: 'R', until: X(x + 12.4), max: 600 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'a little hop over the third giver, into the fourth']);
@@ -699,6 +715,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   ],
   'dis07-ghar': (x) => [{ policy: atTheGate(1), until: and(ground, X(x + 61)), max: 6000, note: 'gate by gate with the singers' }],
   'dis07-dhol': mark('dis07-dhol', (x) => [{ policy: dholHop(), until: and(ground, X(x + 36)), max: 6000, note: 'one plank on every beat of the dhol' }]),
+  'dis10-dhol': mark('dis10-dhol', (x) => [{ policy: dholHop(), until: and(ground, X(x + 36)), max: 6000, note: 'one plank on every beat, slow or fast' }]),
   'dis07-chowk': (x) => [{ policy: atTheGate(2), until: and(ground, X(x + 73)), max: 7000, note: 'three gates, the middle one after the gamosas' }],
   'dis06-majuli': (x) => [
     { hold: 'R', until: X(x + 2.7), max: 600, note: 'run to the edge' },

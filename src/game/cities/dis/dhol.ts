@@ -97,3 +97,24 @@ export const husDhol: Act = {
     (w.flags.dhol ??= []).push(d);
   },
 };
+
+/** DIS-10 callback: the same dhol at the river's edge, but by now the drummer is tired and his beat SLOWS: the 07 lesson
+ *  ("when his arms go faster, so must you") is broken. Hop on the beat, never on the tempo you have learned. */
+export const luitDhol: Act = {
+  id: 'dis10-dhol',
+  w: 38,
+  advice: 'The dhol player again, at the river’s edge, at the end of a long Bihu night. He is tired: after a few beats his arms slow down. Hop only when the next plank has come up, never on the beat you remember.',
+  cps: [1.5, 34.5],
+  paint: (g, c) => {
+    g.pit(c.x + 4, c.x + 33);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    river(w, x + 4, x + 34, 'dis-pukhuri');
+    const xs: number[] = [];
+    for (let i = 0; i < 10; i++) xs.push(px(x + 4.5 + i * 3));
+    const d = w.add(new DholPlanks(xs, 32, px(x + 3), 84, 156, 4, 30, px(x + 1.5)));
+    w.solids.push(...d.planks);
+    (w.flags.dhol ??= []).push(d);
+  },
+};
