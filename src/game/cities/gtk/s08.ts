@@ -147,7 +147,7 @@ export const ACT_LINES: { a: Line; b: Line } = {
   a: { t0: -1, dwellEnd: 1.0, travel: 2.4, dwellMid: 1.2 },
   b: { t0: -1, dwellEnd: 1.0, travel: 2.4, dwellMid: 1.2 },
 };
-export function spanAct(id: string, key: string, start: number, end: number, midA: number, midB: number, colours: [string, string], advice: string, sub: string): Act {
+export function spanAct(id: string, key: string, start: number, end: number, midA: number, midB: number, colours: [string, string], advice: string, sub: string, late = false): Act {
   return {
     id,
     w: 34,
@@ -160,7 +160,8 @@ export function spanAct(id: string, key: string, start: number, end: number, mid
     },
     build: (w, c) => {
       const x = c.x;
-      const L = { a: { ...ACT_LINES.a }, b: { ...ACT_LINES.b } };
+      // a late far cabin waits out a whole turn at its end, so it only meets yours on your second trip up
+      const L = { a: { ...ACT_LINES.a }, b: { ...ACT_LINES.b, ...(late ? { dwellEnd: period(ACT_LINES.a) + ACT_LINES.a.dwellEnd } : {}) } };
       w.flags[key + 'l'] = L;
       onPass(w, c.X(1.5), (w2) => {
         L.a.t0 = L.b.t0 = w2.tick - 0.1 * 120;
@@ -200,6 +201,77 @@ export const act2 = spanAct(
   ['#D4A017', '#2E86AB'],
   'The last span climbs back up, and the far cabin stops above yours: ride out and jump up on to its roof while they’re together at the middle.',
   'last span',
+);
+
+/** a span where the far cabin is late: the first time you reach the middle it isn't there. Stay on, ride back
+ *  down to the deck and up again, and change on the second trip */
+export const act5 = spanAct(
+  'gtk08-der',
+  'gtk8fc',
+  5,
+  9,
+  px(8),
+  px(8) - 6,
+  ['#3E8E41', '#D4A017'],
+  'On this span the far cabin is late: the first time you reach the middle it isn’t there yet. Don’t jump for it: stay on, ride back to the deck and up again, and change when they stand together.',
+  'late cabin',
+  true,
+);
+
+/** a span with two middle stations and three shuttles: the first meets the middle one at the first station, and
+ *  the middle one meets the last at the second station, half a turn later. Two changes, and a wait between */
+export const CHAIN: Line = { t0: -1, dwellEnd: 1.4, travel: 2.4, dwellMid: 1.4 };
+export function chainAct(id: string, key: string, start: number, end: number, ys: [number, number], colours: [string, string, string], advice: string): Act {
+  return {
+    id,
+    w: 50,
+    advice,
+    paint: (g, c) => {
+      const x = c.x;
+      g.pit(x, x + 49);
+      g.fill(x, x + 4, start, 17, '#');
+      g.fill(x + 46, x + 49, end, 17, '#');
+    },
+    build: (w, c) => {
+      const x = c.x;
+      const A = { ...CHAIN },
+        B = { ...CHAIN },
+        C = { ...CHAIN };
+      w.flags[key + 'l'] = { A, B, C };
+      onPass(w, c.X(1.5), (w2) => {
+        A.t0 = B.t0 = w2.tick - 0.1 * 120;
+        // the last shuttle is at the second station when the middle one gets there: half a turn later
+        C.t0 = A.t0 - Math.round((CHAIN.dwellEnd + CHAIN.travel) * 120);
+      });
+      const [y1, y2] = ys;
+      stations(w, [c.X(5), px(start)], [c.X(17), y1 + 16], [c.X(33), y2 + 16], c.X(17));
+      stations(w, [c.X(17), y1], [c.X(33), y2 + 16], [c.X(46), px(end)], c.X(33));
+      cabin(w, A, c.X(5), px(start), c.X(17) - CAB.w, y1, colours[0], key);
+      cabin(w, B, c.X(33) - CAB.w, y2, c.X(17) + 4, y1 - 6, colours[1], key);
+      cabin(w, C, c.X(46) - CAB.w, px(end), c.X(33) + 4, y2 - 6, colours[2], key);
+      gullyBack(w, c.X(5), c.X(46), px(Math.min(start, end) - 1));
+      w.add(new Rig(c.X(0), FL + 20, px(50), 40, { cause: 'gtk-khaai', inset: 0 }));
+      sign(w, x + 0.4, start - 4.6, 3.6, 'TASHI', 'station', null, 'two changes');
+    },
+  };
+}
+export const act3 = chainAct(
+  'gtk08-badli',
+  'gtk8dc',
+  6,
+  9,
+  [px(8), px(8)],
+  ['#C0392B', '#3E8E41', '#2E86AB'],
+  'This span has two middle stations and three shuttles. Change at the first station as they meet; the middle cabin then takes you on to the second station, where the last one comes to meet it a little later. Wait on its roof, and change again.',
+);
+export const act4 = chainAct(
+  'gtk08-dobaar',
+  'gtk8ec',
+  9,
+  5,
+  [px(8), px(6)],
+  ['#D4A017', '#8E6C8A', '#C0392B'],
+  'Two changes again, climbing all the way: up from the first cabin to the second at the first station, and up again to the third at the second.',
 );
 
 /** door: the far station. The exit is through a docked cabin: its doors open both sides at once, for a moment */

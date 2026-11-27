@@ -519,6 +519,46 @@ function ropeway(key: string, o: { stay?: boolean; down?: boolean } = {}): (w: W
     return go('R');
   };
 }
+/** a chain of shuttles: board the first when it's in, and change to the next whenever it stands beside yours */
+function chain(key: string): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  let aim: Rig | null = null;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+      aim = null;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const cabs = w.flags[key] as Rig[];
+    const p = w.player;
+    if (!p.onGround) return go(aim && p.x >= aim.x + 6 ? '' : 'R');
+    aim = null;
+    const i = cabs.findIndex((c) => c.carries(w));
+    if (i < 0) {
+      const a = cabs[0];
+      if (p.x < a.x) return go(a.s.ph === 'end' && a.s.k === 0 ? 'R' : p.x + p.w < a.x - 6 ? 'R' : '');
+      return go('R');
+    }
+    const cur = cabs[i];
+    const next = cabs[i + 1];
+    if (!next) return go(cur.s.ph === 'end' ? 'R' : p.cx < cur.x + cur.w / 2 ? 'R' : '');
+    const gap = next.x - (cur.x + cur.w);
+    const still = (c: Rig) => Math.abs(c.solid?.velX ?? 0) < 1;
+    if (gap >= 0 && gap <= 10 && Math.abs(next.y - cur.y) <= 30 && still(cur) && still(next)) {
+      if (p.x + p.w < cur.x + cur.w - 3) return go('R');
+      aim = next;
+      jt = 9;
+      return { move: 'R', jump: true };
+    }
+    return go(p.cx < cur.x + cur.w / 2 ? 'R' : p.cx > cur.x + cur.w / 2 + 6 ? 'L' : '');
+  };
+}
+const chainRoute = (key: string) => (x: number): Step[] => [{ policy: chain(key), until: and(ground, X(x + 46.5)), max: 6000, note: 'two changes' }, { hold: 'R', until: X(x + 49.5), max: 300 }];
 const room08 = (): Step[] => [{ policy: ropeway('gtk8c'), until: and(ground, X(28)), max: 3000, note: 'ride up, cross at the middle, ride up to the far deck' }, { hold: 'R', until: X(29.5), max: 300 }];
 const act08 = (x: number): Step[] => [{ policy: ropeway('gtk8ac', { down: true }), until: and(ground, X(x + 30)), max: 3000, note: 'ride out, step down on to the lower cabin at the middle' }, { hold: 'R', until: X(x + 33.5), max: 300 }];
 const act08b = (x: number): Step[] => [{ policy: ropeway('gtk8bc'), until: and(ground, X(x + 30)), max: 3000, note: 'ride out, jump up on to the higher cabin at the middle' }, { hold: 'R', until: X(x + 33.5), max: 300 }];
@@ -725,6 +765,21 @@ function actDeaths() {
   actDeath('GTK-07', r7, 'gtk07-thau2', 'no stop at the stall', () => blind(), 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-thau2', 'wait once, then walk on blind past the second stall', (x) => [...chiyaRoute('gtk7m')(x).slice(0, 3), ...blind()], 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-jaldi', 'walk, don’t jump: the holes are right there', () => blind(), 'gtk-badal');
+  const r8 = room08();
+  const early = (key: string, i: number): Step[] => [
+    { policy: chain(key), until: (w) => { const c = (w.flags[key] as Rig[])[i]; return c.carries(w) && (c.s.ph === 'up' || c.s.ph === 'down') && c.s.k > 0.4 && c.s.k < 0.7; }, max: 6000 },
+    { hold: 'R', jump: 14, ticks: 14, note: 'jump for it now' },
+    { hold: 'R', until: done, max: 900 },
+  ];
+  actDeath('GTK-08', r8, 'gtk08-upar', 'jump for the higher cabin before they meet', () => early('gtk8bc', 0), 'gtk-khaai');
+  actDeath('GTK-08', r8, 'gtk08-badli', 'jump for the next cabin on the way', () => early('gtk8dc', 0), 'gtk-khaai');
+  actDeath('GTK-08', r8, 'gtk08-badli', 'changed once, then jump again on the way to the second station', () => early('gtk8dc', 1), 'gtk-khaai');
+  actDeath('GTK-08', r8, 'gtk08-dobaar', 'changed once, then jump again on the way', () => early('gtk8ec', 1), 'gtk-khaai');
+  actDeath('GTK-08', r8, 'gtk08-der', 'the far cabin isn’t there: jump for the station', () => [
+    { policy: chain('gtk8fc'), until: (w) => { const c = (w.flags.gtk8fc as Rig[])[0]; return c.carries(w) && c.s.ph === 'mid'; }, max: 6000 },
+    { hold: 'R', jump: 14, ticks: 14, note: 'jump across anyway' },
+    { hold: 'R', until: done, max: 900 },
+  ], 'gtk-khaai');
   const r10 = room10();
   actDeath('GTK-10', r10, 'gtk10-peechha', 'the bin ahead is full: jump the holes anyway', (x) => [{ policy: stepper(), until: X(x + 7.3), max: 900 }, { policy: gapJumper(), until: done, max: 2400 }], 'gtk-jurmana');
   actDeath('GTK-10', r10, 'gtk10-jhola', 'on to every bag', () => [{ policy: bagHop('gtk10j', { every: true, dwell: 0.3 }), until: done, max: 3000 }], 'gtk-polythene');
@@ -833,6 +888,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk07-dheere': drifterRoute('gtk7i', 48),
   'gtk08-tar': act08,
   'gtk08-upar': act08b,
+  'gtk08-badli': chainRoute('gtk8dc'),
+  'gtk08-der': (x: number): Step[] => [{ policy: chain('gtk8fc'), until: and(ground, X(x + 30)), max: 6000, note: 'stay on the first time, change on the second trip' }, { hold: 'R', until: X(x + 33.5), max: 300 }],
+  'gtk08-dobaar': chainRoute('gtk8ec'),
   'gtk09-chamri': act09,
   'gtk09-chattan': act09b,
   'gtk10-thela': act10a,
