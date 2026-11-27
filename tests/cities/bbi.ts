@@ -624,7 +624,17 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('BBI-09', 0, []);
   S['BBI-10'] = room10();
   lengthen('BBI-10', 0, []);
-  { const X0 = 144; fix['BBI-09'].steps = [...room09(), ...chAct('bbi9g', 8, 7)(32), ...act09b(56), ...chAct('bbi9h', 12, 9)(84), ...act09c(114), { hold: 'R', until: X(X0 + 1.3), max: 300 }, leap(() => px(X0 + 3) + 14, 'spoke 1'), { hold: '', ticks: 70, note: 'make sure of it' }, leap(() => px(X0 + 5.5) + 14, 'spoke 2'), { hold: '', ticks: 70 }, leap(() => px(X0 + 8) + 14, 'spoke 3'), { hold: '', until: done, max: 400 }]; }
+  {
+    // the full route up to the sinking spokes, then the careful climber who checks each spoke
+    const order: [string, number][] = [['bbi09-ghoda', 24], ['bbi09-udaya', 28], ['bbi09-ratha', 28], ['bbi09-ulta', 26], ['bbi09-surya', 30], ['bbi09-asta', 28], ['bbi09-chakra', 30]];
+    let X0 = 32;
+    const pre: Step[] = [...room09()];
+    for (const [id, wd] of order) {
+      pre.push(...actRoutes[id](X0));
+      X0 += wd;
+    }
+    fix['BBI-09'].steps = [...pre, { hold: 'R', until: X(X0 + 1.3), max: 300 }, leap(() => px(X0 + 3) + 14, 'spoke 1'), { hold: '', ticks: 70, note: 'make sure of it' }, leap(() => px(X0 + 5.5) + 14, 'spoke 2'), { hold: '', ticks: 70 }, leap(() => px(X0 + 8) + 14, 'spoke 3'), { hold: '', until: done, max: 400 }];
+  }
   fix['BBI-05'].steps = [...S['BBI-05'].slice(0, -1), { policy: (w) => verandahPolicy(w, fixMem(w), null as unknown as Door), until: done, max: 1500, note: 'up to the front door on the verandah' }];
   void lengthen;
 }
@@ -696,6 +706,33 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02
     { hold: 'R', until: and(ground, X(x + 18.4)), max: 400, note: 'across' },
     { hold: 'R', until: X(x + 20.5), max: 300 },
   ],
+  'bbi09-ulta': chAct('bbi9u', 9, 8),
+  'bbi09-udaya': (x) => {
+    const out: Step[] = [{ hold: 'R', until: X(x + 1.4), max: 300 }];
+    for (let k = 0; k < 8; k++) out.push(waitFor((w) => (w.flags.bbi9r.stood[k - 1] ?? w.flags.bbi9r.stood[-1] ?? 1e9) + 1.35 * 120 <= w.tick, `wait till spoke ${k + 1} is up`), leap(() => px(x + 3 + 2.5 * k) + 14, `spoke ${k + 1}`, () => true, 8));
+    out.push(leap(() => px(x + 26), 'on to the terrace'), { hold: 'R', until: and(ground, X(x + 27.4)), max: 300 });
+    return out;
+  },
+  'bbi09-asta': (x) => {
+    const out: Step[] = [
+      {
+        note: 'up on the raised bank',
+        max: 600,
+        long: true,
+        policy: (w) => {
+          const p = w.player;
+          const low = p.y + p.h > FLOOR_PX - 40;
+          if (p.onGround && low && p.x + p.w >= px(x) - 24) return { move: 'R', jump: true };
+          return { move: 'R', jump: !p.onGround && p.vy < 0 };
+        },
+        until: (w) => w.player.onGround && w.player.y + w.player.h <= FLOOR_PX - 47 && w.player.x >= px(x) - 4,
+      },
+      { hold: 'R', until: X(x + 1.0), max: 300 },
+    ];
+    for (let k = 0; k < 8; k++) out.push(waitFor((w) => (w.flags.bbi9s.stood[k - 1] ?? w.flags.bbi9s.stood[-1] ?? 1e9) + 1.35 * 120 <= w.tick, `wait till spoke ${k + 1} is up`), leap(() => px(x + 3 + 2.5 * k) + 14, `spoke ${k + 1}`, () => true, 8));
+    out.push(leap(() => px(x + 26), 'on to the far bank'), { hold: 'R', until: and(ground, X(x + 27.4)), max: 300 });
+    return out;
+  },
   'bbi10-mela': (x) => [...crossTroupe('bbi10m0', x, 3, 6, 'bridge'), ...crossTroupe('bbi10m1', x, 13, 7, 'wheel'), { hold: 'R', until: X(x + 23.5), max: 300 }],
 };
 const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy, 'bbi-pose-gate': gatePolicy, 'bbi-leaf-plate': platePolicy, 'bbi-horse-gap': horseGap, 'bbi-ribbon-snip': ribbonPolicy };

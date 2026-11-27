@@ -68,6 +68,8 @@ export interface ChariotCfg {
   any?: boolean;
   /** no horses on this one (the finale's plinth) */
   bare?: boolean;
+  /** a second after the slam the plinth sinks into the moat */
+  back?: boolean;
 }
 export interface ChariotSt {
   started: number;
@@ -83,7 +85,7 @@ export function chariot(w: World, cfg: ChariotCfg, key: string) {
   const x0 = px(cfg.c0);
   const L = px(cfg.len);
   const dist = px(cfg.stopAt) - (x0 + L);
-  const st = { started: -1, x: x0, v: 0, moving: false, stopped: false } as ChariotSt & { v: number; on: number };
+  const st = { started: -1, x: x0, v: 0, moving: false, stopped: false } as ChariotSt & { v: number; on: number; wait?: number; back?: boolean };
   st.on = 0;
   (w.flags[key] as unknown) = st;
   const plinth = w.add(
@@ -158,6 +160,16 @@ export function chariot(w: World, cfg: ChariotCfg, key: string) {
           // a jump off the sliding stone keeps none of its speed: it's a heavy, slow push
           plinth.solid!.velX = 0;
           horses.solid!.velX = 0;
+        }
+        // the one that sinks: a second after the slam the whole plinth settles into the moat
+        if (cfg.back && st.stopped && st.started >= 0) {
+          st.wait = (st.wait ?? 0) + 1;
+          if (st.wait > 120) {
+            st.back = true;
+            const y = Math.min(FL + 60, FL - 16 + ((st.wait - 120) / 120) * 90);
+            plinth.moveTo(w2, st.x, y);
+            horses.moveTo(w2, st.x + L - 48, y - 20);
+          }
         }
       },
       paint: (ctx) => wheelArt(ctx, px(cfg.hub) + 20, cfg.hubY + 3, 46),
@@ -317,6 +329,80 @@ export function chariotAct(id: string, len: number, slide: number, hubAt: number
 }
 export const act4 = chariotAct('bbi09-ghoda', 8, 7, 14, 'bbi9g', 'A short chariot and a short slide: the hub comes over almost at once. Be ready on the horses.');
 export const act5 = chariotAct('bbi09-surya', 12, 9, 21, 'bbi9h', 'The sun-temple’s great chariot: a long plinth and a long slide, the hub far along. Ride the horses until it comes over.');
+
+/** act 6, the one that sinks: a second after it slams the wall, this chariot's plinth settles into the moat.
+ *  From the hub go straight up on to the wall; don't step down on to the stone */
+export const act6: Act = {
+  id: 'bbi09-ulta',
+  w: 26,
+  advice: 'This chariot doesn’t stay: a second after it slams the wall its plinth sinks into the moat. From the hub, go straight up on to the wall; don’t step down on to the stone.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 19).fill(c.x + 20, c.x + 23, 11, 14, '#');
+  },
+  build: (w, c) => {
+    const ch = channel(w, c.x + 3, c.x + 19, 'bbi-khai', 'water');
+    const o = ch.o.tick;
+    ch.o.tick = (r, w2) => {
+      o?.(r, w2);
+      const k = w2.flags.bbi9u as { back?: boolean } | undefined;
+      r.hazard!.cause = k?.back ? 'bbi-ulta' : 'bbi-khai';
+    };
+    chariot(w, { c0: c.x + 3, len: 9, stopAt: c.x + 20, hub: c.x + 15, hubY: FL - 58, wait: 0.4, back: true }, 'bbi9u');
+    templeWall(w, c.x + 20, px(11));
+  },
+};
+
+/** act 7 and 8, the rising spokes: these spokes lie under the water and come up one at a time, each only once you
+ *  have stood on the one before. Climbing fast (as at the sinking spokes) drops you in */
+export function risingSpokes(id: string, dir: 1 | -1, key: string): Act {
+  const n = 8;
+  const top = dir > 0 ? 10 : 12;
+  return {
+    id,
+    w: 28,
+    advice: dir > 0 ? 'These spokes lie under the water and rise one at a time, each only after you have stood on the one before. Don’t hurry: wait on each until the next is up.' : 'Down to the far bank on rising spokes: each comes up only once you have stood on the one before. Wait for each.',
+    cps: [],
+    paint: (g, c) => {
+      g.pit(c.x + 2, c.x + 24);
+      if (dir > 0) g.fill(c.x + 25, c.x + 27, top, 14, '#');
+      else g.fill(c.x, c.x + 1, top, 14, '#');
+    },
+    build: (w, c) => {
+      channel(w, c.x + 2, c.x + 24, 'bbi-udaya', 'water');
+      const st = { stood: [] as number[] };
+      (w.flags[key] as unknown) = st;
+      for (let k = 0; k < n; k++) {
+        const x = c.X(3 + 2.5 * k);
+        const y0 = dir > 0 ? FL - 16 - 9 * k : FL - 54 + 5 * k;
+        w.add(
+          new Rig(x, FL + 30, 28, 6, {
+            solid: true,
+            layer: 3,
+            tick: (r, w2) => {
+              if (r.rides(w2) && st.stood[k] === undefined) st.stood[k] = w2.tick;
+              // spoke 1 rises as you reach the edge; each next one a second after you stood on the last
+              const prev = k === 0 ? (w2.player.x > c.X(1) ? (st.stood[-1] ??= w2.tick) : undefined) : st.stood[k - 1];
+              const up = prev !== undefined ? Math.min(1, Math.max(0, (w2.tick - prev) / 120 - 1.0) / 0.3) : 0;
+              r.s.up = up;
+              r.setSolid(up >= 1);
+              r.moveTo(w2, x, FL + 30 + (y0 - FL - 30) * up);
+            },
+            paint: (ctx, r) => {
+              if (r.s.up <= 0) return;
+              box(ctx, r.x, r.y, r.w, r.h, STONE);
+              box(ctx, r.x, r.y, r.w, 2, STONE_HI);
+              label(ctx, r.x + 14, r.y + 13, String(k + 1), '#FFF3D6', 7);
+            },
+          }),
+        );
+      }
+      w.add(new Rig(0, 0, 0, 0, { layer: -4, paint: (ctx) => wheelArt(ctx, c.X(13), FL - 20, 60, false) }));
+    },
+  };
+}
+export const act7 = risingSpokes('bbi09-udaya', 1, 'bbi9r');
+export const act8 = risingSpokes('bbi09-asta', -1, 'bbi9s');
 
 /** ending: the door between two stone horses on little plinths; step on a horse and the plinths slide together */
 export const ending: Ending = {
