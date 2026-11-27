@@ -973,7 +973,10 @@ export const act15: Act = {
         solid: true,
         layer: 3,
         tick: (r, w2) => {
-          if (!st.decoy && r.rides(w2) && st.at !== 'decoy') st.decoy = true;
+          // a step, not a brush: it starts once you have stood on it a moment (QA fix F6: a hop over it that
+          // clips it with a toe does not start it)
+          r.s.on = r.rides(w2) ? ((r.s.on as number | undefined) ?? 0) + 1 : 0;
+          if (!st.decoy && (r.s.on as number) > 15 && st.at !== 'decoy') st.decoy = true;
         },
         paint: (ctx, r, w2) => {
           box(ctx, r.x, r.y, r.w, r.h, '#6E4A2E');

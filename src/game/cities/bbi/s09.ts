@@ -413,7 +413,8 @@ export function risingSpokes(id: string, dir: 1 | -1, key: string, whole = false
             tick: (r, w2) => {
               if (r.rides(w2) && st.stood[k] === undefined) st.stood[k] = w2.tick;
               // spoke 1 rises as you reach the edge; each next one a second after you stood on the last
-              const prev = k === 0 ? (w2.player.x > c.X(1) ? (st.stood[-1] ??= w2.tick) : undefined) : st.stood[k - 1];
+              // (QA fix F6: it rises as you come within 1.5 tiles of the edge, so a late stop is not into the moat)
+              const prev = k === 0 ? (w2.player.x > c.X(0.5) ? (st.stood[-1] ??= w2.tick) : undefined) : st.stood[k - 1];
               if (whole && r.rides(w2)) st.onNext = true;
               let up = whole ? Math.min(1, Math.max(0, st.prog - 0.55 * (k + 1)) / 0.3) : prev !== undefined ? Math.min(1, Math.max(0, (w2.tick - prev) / 120 - 1.0) / 0.3) : 0;
               // three seconds after you stood on it, it goes back under

@@ -380,7 +380,7 @@ const onPad10 = (a: number, b: number): Step => ({
   note: 'settle on a pad',
 });
 const board10 = (): Step[] => [{ hold: 'R', until: X(3.4), max: 600 }, { hold: 'R', jump: 9, ticks: 9, note: 'up on the keeper' }, { hold: 'R', until: ground, max: 200 }];
-const hubJump = (c: (w: World) => ChSt, walk = true): Step => ({
+const hubJump = (c: (w: World) => ChSt, walk = true, at = 24): Step => ({
   note: 'when the hub is just ahead, jump up on to it',
   max: 900,
   long: true,
@@ -388,19 +388,19 @@ const hubJump = (c: (w: World) => ChSt, walk = true): Step => ({
     const p = w.player;
     const d = c(w).hub.x + 20 - p.cx;
     const ahead = c(w).hub.x - (p.x + p.w);
-    if (p.onGround) return ahead < 24 ? { move: 'R', jump: true } : go(walk && p.x + p.w < c(w).plinth.x + c(w).plinth.w - 4 && ahead > 30 ? 'R' : '');
+    if (p.onGround) return ahead < at ? { move: 'R', jump: true } : go(walk && p.x + p.w < c(w).plinth.x + c(w).plinth.w - 4 && ahead > at + 6 ? 'R' : '');
     return { move: d > 3 ? 'R' : d < -3 ? 'L' : '', jump: p.vy < 0 };
   },
   until: (w) => w.player.onGround && w.player.y + w.player.h <= c(w).hub.y + 1,
 });
 const room10 = (): Step[] => [
   ...board10(),
-  onPad10(34, 42),
+  onPad10(26, 34),
   waitFor((w) => k10(w).ball === 'gone' && k10(w).kx >= px(5) + px(9) + 7, 'ride the front pad across: the lob drops on the back pad'),
   { hold: 'R', jump: 8, ticks: 8, note: 'hop on to the plinth' },
   { hold: 'R', until: (w) => w.player.onGround && w.player.x >= px(18), max: 300, note: 'on the plinth' },
-  { hold: 'R', until: (w) => w.player.x + w.player.w >= c10(w).hub.x - 40, max: 400, note: 'to its front' },
-  hubJump(c10),
+  { hold: 'R', until: (w) => w.player.x + w.player.w >= c10(w).hub.x - 56, max: 400, note: 'to its front' },
+  hubJump(c10, true, 42),
   stayOn((w) => c10(w).hub.x + 20, (w) => c10(w).stopped, 'the plinth slams under the still hub'),
   leap(() => px(37.5), 'up on to the temple wall'),
   { hold: 'R', until: and(ground, X(43.5)), max: 400 },
@@ -597,13 +597,13 @@ const lFix = (k: string): Death => ({
 const cNaive = (len: number): Death => ({
   what: 'ride the chariot from its horses',
   cause: 'bbi-chakka',
-  steps: (x) => [...hop(x + 1.4, 'up on the plinth'), { hold: 'R', until: X(x + len - 1.3), max: 400 }, { hold: 'R', jump: 11, ticks: 11 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: done, max: 900 }],
+  steps: (x) => [...hop(x + 1.4, 'up on the plinth'), { hold: 'R', until: X(x + len - 1.9), max: 400, note: 'to the horses' }, { hold: 'R', jump: 11, ticks: 11, note: 'up on the horses' }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: done, max: 900, note: 'stand on the horses: it moves' }],
 });
 /** after the slam: jump off the moving plinth back to the bank before it gets to the wall */
 const cFix = (len: number, k: string): Death => ({
   what: 'jump back off the plinth before it slams',
   cause: 'bbi-khai',
-  steps: (x) => [...hop(x + 1.4, 'up on the plinth'), { hold: 'R', until: X(x + len - 1.3), max: 400 }, { hold: 'R', jump: 11, ticks: 11 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: (w) => chOf(w, k).started >= 0 && w.tick - chOf(w, k).started > 70, max: 600 }, { hold: 'L', jump: 15, ticks: 15 }, { hold: 'L', until: done, max: 600 }],
+  steps: (x) => [...hop(x + 1.4, 'up on the plinth'), { hold: 'R', until: X(x + len - 1.9), max: 400, note: 'to the horses' }, { hold: 'R', jump: 11, ticks: 11 }, { hold: 'R', until: ground, max: 200 }, { hold: '', until: (w) => chOf(w, k).started >= 0 && w.tick - chOf(w, k).started > 70, max: 600 }, { hold: 'L', jump: 15, ticks: 15 }, { hold: 'L', until: done, max: 600 }],
 });
 const bNaive = (left: number): Death => ({ what: 'walk across the settled rice', cause: 'bbi-pakhala', steps: (x) => [...hop(x + left - 1.6, 'up on the rim'), { hold: 'R', until: done, max: 900 }] });
 const bFix = (k: string, left: number, i: number): Death => ({
@@ -636,12 +636,12 @@ const pFix = (flag: string): Death => ({
 const spokesFix = (k: string, c0: number): Death => ({
   what: 'wait on each spoke to be sure of it',
   cause: 'bbi-dooba',
-  steps: (x) => [{ hold: 'R', until: X(x + 1.4), max: 300 }, waitFor((w) => ((w.flags[k] as { stood: number[] }).stood[-1] ?? 1e9) + 1.35 * 120 <= w.tick, 'spoke 1 up'), leap(() => px(x + c0) + 14, 'spoke 1', () => true, 8), { hold: '', until: done, max: 900 }],
+  steps: (x) => [{ hold: 'R', until: X(x + 0.6), max: 300 }, waitFor((w) => ((w.flags[k] as { stood: number[] }).stood[-1] ?? 1e9) + 1.35 * 120 <= w.tick, 'spoke 1 up'), leap(() => px(x + c0) + 14, 'spoke 1', () => true, 8), { hold: '', until: done, max: 900 }],
 });
 const spokesNaive = (): Death => ({
   what: 'climb the spokes fast, as at the sinking ones',
   cause: 'bbi-udaya',
-  steps: (x) => [{ hold: 'R', until: X(x + 1.4), max: 300 }, { hold: '', ticks: 170 }, leap(() => px(x + 3) + 14, 'spoke 1', () => true, 8), leap(() => px(x + 5.5) + 14, 'straight on to spoke 2', () => true, 8), { hold: 'R', until: done, max: 600 }],
+  steps: (x) => [{ hold: 'R', until: X(x + 0.6), max: 300 }, { hold: '', ticks: 170 }, leap(() => px(x + 3) + 14, 'spoke 1', () => true, 8), leap(() => px(x + 5.5) + 14, 'straight on to spoke 2', () => true, 8), { hold: 'R', until: done, max: 600 }],
 });
 const DEATHS: Record<string, Death[]> = {
   'bbi04-karkhana': [
@@ -763,7 +763,7 @@ const DEATHS: Record<string, Death[]> = {
   ],
   'bbi10-phinga': [
     { what: 'to the rim at once and ride the first, as before', cause: 'bbi-badi', steps: (x) => [{ hold: 'R', until: X(x + 2.6), max: 400 }, { hold: '', until: done, max: 1200 }] },
-    { what: 'wait back, then ride the first one in the water', cause: 'bbi-buda', steps: (x) => [{ hold: 'R', until: X(x + 1.3), max: 400 }, waitFor((w) => ph10(w).t0 >= 0 && (w.tick - ph10(w).t0) / 120 > 2.5 + 0.6, 'one lands in the water'), { hold: 'R', until: X(x + 2.6), max: 200 }, leap((w) => ph10(w).floats[2].x + 13, 'on to it'), { hold: '', until: done, max: 600 }] },
+    { what: 'wait back, then ride the first one in the water', cause: 'bbi-buda', steps: (x) => [{ hold: 'R', until: X(x + 1.3), max: 400 }, waitFor((w) => ph10(w).t0 >= 0 && (w.tick - ph10(w).t0) / 120 > 2.5 + 0.6, 'one lands in the water'), { hold: 'R', until: X(x + 2.0), max: 200 }, leap((w) => ph10(w).floats[2].x + 13, 'on to it'), { hold: '', until: done, max: 600 }] },
   ],
   'bbi10-tantu': [
     { what: 'snap the plain thread, as before', cause: 'bbi-ganthi', steps: (x) => [{ hold: 'R', until: X(x + 2.6), max: 400 }, { hold: '', until: (w) => Math.abs(w.player.vx) < 5, max: 120 }, { hold: '', jump: 12, ticks: 40 }, { hold: 'R', until: X(x + 3.6), max: 300 }, waitFor((w) => lm(w, 'bbi10tn').bridge && lm(w, 'bbi10tn').into > 0.08, 'the motif'), { hold: 'R', until: done, max: 600 }] },
@@ -786,7 +786,7 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'get on at the edge and wait for the stir to stop', cause: 'bbi-chamacha', steps: (x) => [{ hold: 'R', until: X(x + 3.0), max: 400 }, waitFor((w) => Math.cos(gh(w).th[0]) < -0.97, 'the near edge'), leap((w) => gh(w).rigs[0].x + 13, 'on at the slow edge'), stayOn((w) => gh(w).rigs[0].x + 13, done, 'and wait', 900)] },
   ],
   'bbi08-phinga': [
-    { what: 'stand at the rim and read his throws', cause: 'bbi-badi', steps: (x) => [{ hold: 'R', until: X(x + 2.8), max: 400 }, { hold: '', until: done, max: 1200 }] },
+    { what: 'stand at the rim and read his throws', cause: 'bbi-badi', steps: (x) => [{ hold: 'R', until: X(x + 2.2), max: 400 }, { hold: '', until: done, max: 1200 }] },
     { what: 'let the first go by, then ride the second', cause: 'bbi-buda', steps: (x) => [{ hold: 'R', until: X(x + 1.4), max: 400 }, waitFor((w) => ph(w).t0 >= 0 && (w.tick - ph(w).t0) / 120 > 2.2 + 0.6, 'the second lands'), leap((w) => ph(w).floats[1].x + 13, 'on to the second'), { hold: '', until: done, max: 600 }] },
   ],
   'bbi09-ratha': [cNaive(10), cFix(10, 'bbi9b')],
@@ -1258,7 +1258,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi07-sajaghara': sa
   'bbi10-tantu': tantu10Run,
   'bbi09-ulta': chAct('bbi9u', 9, 8),
   'bbi09-udaya': (x) => {
-    const out: Step[] = [{ hold: 'R', until: X(x + 1.4), max: 300 }];
+    const out: Step[] = [{ hold: 'R', until: X(x + 0.6), max: 300 }];
     for (let k = 0; k < 10; k++) out.push(waitFor((w) => (w.flags.bbi9r.stood[k - 1] ?? w.flags.bbi9r.stood[-1] ?? 1e9) + 1.35 * 120 <= w.tick, `wait till spoke ${k + 1} is up`), leap(() => px(x + 3 + 2.5 * k) + 14, `spoke ${k + 1}`, () => true, 8));
     out.push(leap(() => px(x + 31), 'on to the terrace'), { hold: 'R', until: and(ground, X(x + 37.4)), max: 400, note: 'run the bare terrace' });
     return out;
