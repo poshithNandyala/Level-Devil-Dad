@@ -313,7 +313,6 @@ export const drifterAct = (id: string, PITS: [number, number][], speed: number, 
     });
   },
 });
-export const act8 = drifterAct('gtk07-peeche', [[7, 8], [13, 14], [19, 20], [26, 27], [33, 34], [39, 40]], 52, 'gtk7h');
 /** two tea stalls on one long stretch with the rope down: wait under each for the cloud to lift, look, go */
 export const SHELTERS = [1, 30];
 export const chaiAct = (id: string, PITS: [number, number][], CL: Cloud, key: string): Act => ({
@@ -347,7 +346,6 @@ export const chaiAct = (id: string, PITS: [number, number][], CL: Cloud, key: st
   },
 });
 export const act10 = chaiAct('gtk07-chiya', [[6, 7], [11, 12], [17, 18], [23, 24], [35, 36], [41, 42], [47, 48], [53, 54]], { t0: -1, thick: 5.2, clear: 1.6 }, 'gtk7j');
-export const act11 = drifterAct('gtk07-saath', [[6, 7], [12, 13], [18, 19], [25, 26], [31, 32], [38, 39]], 50, 'gtk7k', 44, true);
 export const act12 = ghumtiAct('gtk07-jaldi', [[4, 5], [8, 9], [13, 14], [18, 19], [23, 24], [28, 29], [33, 34], [37, 38]], { t0: -1, thick: 0, clear: 0, roll: 110 }, 'gtk7l');
 /** door: up the hillside in thick cloud; the rope's posts climb with the hidden steps, the only guide to them */
 export const ending: Ending = {

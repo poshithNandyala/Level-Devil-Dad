@@ -203,7 +203,7 @@ export function tourLevel(): LevelDef {
     ],
     things: [],
     par: 40,
-    cps: [30.5, 47.5, 74.5, 94.5],
+    cps: [24.5, 47.5, 74.5, 94.5],
     extra(w: World) {
       for (const [i, s] of SWEEPERS.entries()) {
         sweeper(w, s.c, 7, 'gtk1', i > 0);

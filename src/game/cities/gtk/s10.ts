@@ -15,7 +15,7 @@ import { FLOORS, house, houseDecor } from './s04';
 import { fog, rope, drifterAct, type Cloud } from './s07';
 import { inspectorAct } from './s03';
 import { spanAct } from './s08';
-import { thinShore, yak } from './s09';
+import { bankLook, river, thinShore, yak } from './s09';
 import { ACT_CFG, steamer } from './s02';
 import { bin, litter, mgRule } from './s05';
 import { bench, reserved, sweeper } from './s01';
@@ -229,11 +229,16 @@ export const act8 = spanAct(
 export const act9: Act = {
   id: 'gtk10-chauri',
   w: 32,
-  advice: 'A yak by the little lake below the viewpoint: it stops for a photo on the thin ice. Stay on, and get off on the far bank before it turns back.',
+  advice: 'A yak by the little lake below the viewpoint: it stops for a photo on the thin ice. Stay on, and get off on the real bank as it crosses it, before it wades into the river.',
+  paint: (g, c) => {
+    g.pit(c.x + 29, c.x + 29);
+  },
   build: (w, c) => {
     // a bank 7 tiles wide at the start, wider than a tap-jump, so the act's checkpoint is calm
-    thinShore(w, c.x + 7.5, c.x + 25);
-    yak(w, c.X(4.5), [{ wait: 0.8 }, { to: c.X(13) }, { wait: 2.2, photo: true }, { to: c.X(26) }, { wait: 0.9 }, { to: c.X(4.5) }, { wait: 1.0 }], 'mount', 'gtk10y');
+    thinShore(w, c.x + 7.5, c.x + 23);
+    bankLook(w, c.x + 11, c.x + 16);
+    river(w, c.x + 29, c.x + 29);
+    yak(w, c.X(4.5), [{ wait: 0.8 }, { to: c.X(13) }, { wait: 2.2, photo: true }, { to: c.X(27) }, { sink: true }], 'mount', 'gtk10y');
   },
 };
 /** the last house in the cloud: three floors down again, the shop floor and all */

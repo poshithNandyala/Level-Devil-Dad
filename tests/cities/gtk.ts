@@ -722,17 +722,19 @@ const dockPolicy: Policy = (w, _m, d) => {
 // ------------------------------------------------------------------ GTK-09
 /** get on the yak, keep to the middle of its back, and get off: at the far bank (`at`, px), by a jump at the photo
  *  stop (`jumpAtPhoto`), or the moment it first stops (`offAtStop`, the obvious fix that dies) */
-function yakRide(key: string, o: { at?: number; jumpAt?: boolean; jumpAtPhoto?: boolean; offAtStop?: boolean; mountLeft?: number }): (w: World) => Out {
+function yakRide(key: string, o: { at?: number; jumpAt?: boolean; jumpAtPhoto?: boolean; offAtStop?: boolean; offAtPhoto?: boolean; offOver?: number; mountLeft?: number }): (w: World) => Out {
   let W: World | null = null;
   let jt = 0;
   let off = false;
   let rode = false;
+  let offDir: 'L' | 'R' = 'R';
   return (w) => {
     if (W !== w) {
       W = w;
       jt = 0;
       off = false;
       rode = false;
+      offDir = 'R';
     }
     if (jt > 0) {
       jt--;
@@ -744,7 +746,7 @@ function yakRide(key: string, o: { at?: number; jumpAt?: boolean; jumpAtPhoto?: 
     if (on) rode = true;
     if (off || (rode && !on && p.onGround)) {
       off = true;
-      return go('R');
+      return go(offDir);
     }
     if (!p.onGround) {
       if (rode && !on && off) return go('R');
@@ -760,6 +762,17 @@ function yakRide(key: string, o: { at?: number; jumpAt?: boolean; jumpAtPhoto?: 
     }
     const stopped = y.s.leg % 2 === 0 || 'wait' in ({} as any) ? !y.s.dir || y.s.t > 0 : false;
     if (o.offAtStop && y.s.t > 6) {
+      off = true;
+      return go('R');
+    }
+    if (o.offAtPhoto && y.s.photo && y.s.t > 10) {
+      // off its back, on the near side, where the stop looks like a bank
+      off = true;
+      offDir = 'L';
+      return go('L');
+    }
+    // off on the move, walking off its front as it crosses the real bank
+    if (o.offOver !== undefined && p.cx >= o.offOver + 8) {
       off = true;
       return go('R');
     }
@@ -781,7 +794,11 @@ function yakRide(key: string, o: { at?: number; jumpAt?: boolean; jumpAtPhoto?: 
     return go(p.cx < c - 4 ? 'R' : p.cx > c + 4 ? 'L' : '');
   };
 }
-const room09 = (): Step[] => [{ policy: yakRide('gtk9', { at: px(26) }), until: and(ground, X(28.5)), max: 4000, note: 'ride across, stay on for the photo, off on the far bank' }, { hold: 'R', until: X(30), max: 300 }];
+const offYak = (key: string) => (w: World) => w.player.onGround && !(w.flags[key] as Yak[])[0].carries(w);
+const room09 = (): Step[] => [
+  { policy: yakRide('gtk9', { offOver: px(23) }), until: and(offYak('gtk9'), X(24.5)), max: 4000, note: 'ride across, stay on for the photo, off on the real bank as it crosses it' },
+  { policy: gapJumper(), until: X(31), max: 600, note: 'over the river it wades into' },
+];
 const act09 = (x: number): Step[] => [{ policy: yakRide('gtk9a', { jumpAtPhoto: true }), until: and(ground, X(x + 25.5)), max: 4000, note: 'ride out, jump for the bank at the photo stop' }, { hold: 'R', until: X(x + 33), max: 300 }];
 /** the last yak: on, and as it passes under the first step, jump up on to it; then the stair and the snow road */
 function stepOff(x: number): (w: World) => Out {
@@ -815,7 +832,10 @@ const act09b = (x: number): Step[] => [
   { policy: climbAll(), until: and(ground, X(x + 20), (w) => w.player.y + w.player.h <= 129), max: 1200, note: 'up the stair' },
   { hold: 'R', until: X(x + 35.5), max: 600, note: 'along the snow road and down' },
 ];
-const act09c = (x: number): Step[] => [{ policy: yakRide('gtk9c', { at: px(x + 34) }), until: and(ground, X(x + 36.5)), max: 5000, note: 'stay on through both photos, off at the far bank' }, { hold: 'R', until: X(x + 39.5), max: 300 }];
+const act09c = (x: number): Step[] => [
+  { policy: yakRide('gtk9c', { offOver: px(x + 31) }), until: and(offYak('gtk9c'), X(x + 32.5)), max: 5000, note: 'stay on through both photos, off on the real bank' },
+  { policy: gapJumper(), until: X(x + 39.5), max: 600, note: 'over the river' },
+];
 const act09d = (x: number): Step[] => [
   { policy: yakRide('gtk9d', { at: px(x + 17) }), until: and(ground, X(x + 19.6)), max: 4000, note: 'off on to the lake ice' },
   { policy: yakRide('gtk9d2', { at: px(x + 35) }), until: and(ground, X(x + 37.6)), max: 4000, note: 'across the lake, on to the far yak, off past the far shore' },
@@ -868,7 +888,10 @@ const act10j = (x: number): Step[] => [
   { hold: 'R', until: X(x + 30.5), max: 300 },
 ];
 const act10h = (x: number): Step[] => [{ policy: ropeway('gtk10t'), until: and(ground, X(x + 30)), max: 3000, note: 'up the ropeway, jump across at the middle' }, { hold: 'R', until: X(x + 33.5), max: 300 }];
-const act10i = (x: number): Step[] => [{ policy: yakRide('gtk10y', { at: px(x + 26) }), until: and(ground, X(x + 28.5)), max: 4000, note: 'stay on for the photo, off on the far bank' }, { hold: 'R', until: X(x + 31.5), max: 300 }];
+const act10i = (x: number): Step[] => [
+  { policy: yakRide('gtk10y', { offOver: px(x + 24) }), until: and(offYak('gtk10y'), X(x + 25.5)), max: 4000, note: 'stay on for the photo, off on the real bank' },
+  { policy: gapJumper(), until: X(x + 31.5), max: 600, note: 'over the river' },
+];
 const act10k = (x: number): Step[] => [
   { policy: stepper(), until: (w) => w.player.onGround && held(w), max: 900, note: 'up on the stool: the wrapper is in your hand' },
   { hold: 'L', until: (w) => !held(w), max: 600, note: 'down to the bin beside it' },
@@ -914,7 +937,6 @@ const blind = (): Step[] => [{ hold: 'R', until: done, max: 3000, note: 'just wa
 /** the lengthened stages' added acts each get a first-timer death and, where there is one, the obvious fix's */
 function actDeaths() {
   const r7 = room07();
-  actDeath('GTK-07', r7, 'gtk07-peeche', 'catch the cloud up and walk on blind', (x) => [{ hold: 'R', until: X(x + 2), max: 300 }, ...blind()], 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-chiya', 'no stop at the stall: straight on into the cloud', () => blind(), 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-chiya', 'wait once, then walk on blind past the second stall', (x) => [...chiyaRoute('gtk7j')(x).slice(0, 3), ...blind()], 'gtk-badal');
   actDeath('GTK-07', r7, 'gtk07-jaldi', 'walk, don’t jump: the holes are right there', () => blind(), 'gtk-badal');
@@ -982,6 +1004,9 @@ function actDeaths() {
       max: 5000,
     },
   ], 'gtk-photo');
+  actDeath('GTK-09', r9, 'gtk09-dophoto', 'stay on past the bank, as through both photos', () => [{ policy: yakRide('gtk9c', {}), until: done, max: 5000 }], 'gtk-nadi');
+  actDeath('GTK-09', r9, 'gtk09-chamri', 'off when it stops for the photo', () => [{ policy: yakRide('gtk9a', { offAtPhoto: true }), until: done, max: 4000 }], 'gtk-photo');
+  actDeath('GTK-09', r9, 'gtk09-chamri', 'stay on, as on the first yak', () => [{ policy: yakRide('gtk9a', {}), until: done, max: 4000 }], 'gtk-nadi');
   actDeath('GTK-09', r9, 'gtk09-barf', 'stay off the lake ice: walk the snow', () => blind(), 'gtk-hiun');
   actDeath('GTK-09', r9, 'gtk09-chattan', 'walk across the shore', () => blind(), 'gtk-hiun');
   actDeath('GTK-09', r9, 'gtk09-chattan', 'ride it to the end, as on the first yak', (x) => [{ policy: yakRide('gtk9b', { at: px(x + 24) }), until: done, max: 5000 }], 'gtk-hiun');
@@ -1005,7 +1030,8 @@ function actDeaths() {
     'gtk-khaai',
   );
   actDeath('GTK-10', r10, 'gtk10-chauri', 'walk across the shore', () => blind(), 'gtk-hiun');
-  actDeath('GTK-10', r10, 'gtk10-chauri', 'off the yak when it stops', () => [{ policy: yakRide('gtk10y', { offAtStop: true }), until: done, max: 3000 }], 'gtk-hiun');
+  actDeath('GTK-10', r10, 'gtk10-chauri', 'off the yak when it stops for the photo', () => [{ policy: yakRide('gtk10y', { offAtPhoto: true }), until: done, max: 3000 }], 'gtk-photo');
+  actDeath('GTK-10', r10, 'gtk10-chauri', 'stay on past the bank', () => [{ policy: yakRide('gtk10y', {}), until: done, max: 3000 }], 'gtk-nadi');
   actDeath('GTK-10', r10, 'gtk10-jhadu', 'walk on past the sweeper', () => [{ policy: stepper(), until: done, max: 2400 }], 'gtk-jhadu');
   actDeath('GTK-10', r10, 'gtk10-jhadu', 'up on the bench at each sweeper, as at the first', (x) => [
     { hold: 'R', until: X(x + 6.6), max: 600 },
@@ -1015,7 +1041,6 @@ function actDeaths() {
     { hold: '', until: done, max: 1200 },
   ], 'gtk-aarakshit');
   actDeath('GTK-10', r10, 'gtk10-stool', 'up on the stool and straight on to the steamer', () => [{ policy: rideTier('gtk10s2', true), until: done, max: 2400 }], 'gtk-jurmana');
-  actDeath('GTK-07', r7, 'gtk07-saath', 'behind the cloud, the road looks whole: walk it', (x) => [{ hold: 'R', until: X(x + 2), max: 300 }, ...blind()], 'gtk-deewar');
 }
 
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
@@ -1043,7 +1068,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'GTK-10': { steps: [{ policy: stepper(), until: done, max: 2400, note: 'out of the first door, as Tara says' }], cause: 'gtk-galat-tala' },
-  'GTK-09': { steps: [{ hold: 'R', until: done, max: 900, note: 'the ice holds, surely: walk across' }], cause: 'gtk-hiun' },
+  'GTK-09': { steps: [{ policy: yakRide('gtk9', { offAtPhoto: true }), until: done, max: 3000, note: 'ride the yak, off when it stops, as Tara says' }], cause: 'gtk-photo' },
   'GTK-08': { steps: [{ policy: ropeway('gtk8c', { stay: true }), until: done, max: 3000, note: 'ride it all the way, as Tara says' }], cause: 'gtk-ropeway' },
   'GTK-07': { steps: [{ hold: 'R', until: done, max: 900, note: 'just run, as Tara says' }], cause: 'gtk-badal' },
   'GTK-06': { steps: [{ hold: 'R', until: done, max: 900, note: 'the shortcut stairs, down' }], cause: 'gtk-taxi' },
@@ -1058,7 +1083,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'GTK-10': { steps: [...room10(), { policy: stepper(), until: X(32 + 8.3), max: 900 }, { policy: rideTier('gtk10s', true), until: done, max: 2400, note: 'straight on to the steamer with the wrapper in hand' }], cause: 'gtk-jurmana' },
-  'GTK-09': { steps: [{ policy: yakRide('gtk9', { offAtStop: true }), until: done, max: 3000, note: 'ride the yak, off when it stops, as Tara says' }], cause: 'gtk-hiun' },
+  'GTK-09': { steps: [{ policy: yakRide('gtk9', {}), until: done, max: 4000, note: 'stay on past the photo, and on' }], cause: 'gtk-nadi' },
   'GTK-07': { steps: [...room07(), ...act07a(32), { hold: 'R', until: X(74), max: 300 }, waitClear('gtk7b'), { hold: 'R', until: done, max: 900, note: 'the cloud has lifted and the road looks whole: walk it' }], cause: 'gtk-deewar' },
   'GTK-06': {
     steps: [...room06(), { policy: stairUp(), until: (w) => w.player.x > px(32) && w.player.onGround && w.player.y + w.player.h <= 64, max: 900, note: 'up again: the stair up worked last time' }, { hold: 'R', until: X(39.2), max: 300 }, { hold: 'R', jump: 14, ticks: 14, note: 'and off it, over the gully' }, { hold: 'R', until: done, max: 600 }],
@@ -1101,9 +1126,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk07-ghumti': act07c,
   'gtk07-dagar': act07c,
   'gtk07-chiya': chiyaRoute('gtk7j'),
-  'gtk07-saath': drifterRoute('gtk7k', 44),
   'gtk07-jaldi': act07c,
-  'gtk07-peeche': drifterRoute('gtk7h', 44),
   'gtk08-tar': act08,
   'gtk08-upar': act08b,
   'gtk08-badli': chainRoute('gtk8dc'),

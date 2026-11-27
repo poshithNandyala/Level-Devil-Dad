@@ -16,5 +16,6 @@ export const causeLines: Record<string, string[]> = {
   'gtk-ropeway': ['Back into the shed with the cabin. Its eave took you off the roof.', 'Each cabin only goes to the middle and back: hop across when they meet.'],
   'gtk-hiun': ['Through the thin ice by the shore.', 'Stay on the yak over the shore, even when it stops for the photo.'],
   'gtk-aarakshit': ['That bench was reserved. Its owner asked you down, right in front of the broom.', 'Look for the RESERVED card: use a bench without one, or go behind the stroke.'],
+  'gtk-nadi': ['The yak never turns back: it walked on into the river, and you with it.', 'Get off on the real bank as it walks over it.'],
   'gtk-photo': ['Off the yak for the photo, and the shore it stopped on is thin ice.', 'The photo stop is on the thin shore: stay on its back till the far bank.'],
 };
