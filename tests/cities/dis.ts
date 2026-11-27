@@ -24,6 +24,7 @@ import type { Tekeli } from '../../src/game/cities/dis/tekeli';
 import type { RopeWalk } from '../../src/game/cities/dis/rope';
 import { GrassRhino } from '../../src/game/cities/dis/egret';
 import { Tunnels } from '../../src/game/cities/dis/tunnel';
+import { Bhutbhuti } from '../../src/game/cities/dis/horn';
 
 type Out = { move: 'L' | 'R' | ''; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
@@ -465,6 +466,7 @@ act('dis05-kaath', 'DIS-05', [(x) => [...hopR(x + 9.2, 'an ordinary hop over the
 act('dis06-flag', 'DIS-06', [(x) => [...hopR(x + 13.3, 'down on the gangplank', 8), ...hopR(x + 17.3, 'over the ghat man', 12), { hold: 'R', until: X(x + 21.6), max: 300 }, { hold: 'R', jump: 8, until: X(x + 23.4), max: 100, note: 'a hop to the flag' }, { hold: '', until: done, max: 300 }], 'dis-luit', 'hops to the flag over the water: the river'], [(x) => [...hopR(x + 13.3, 'down on the gangplank', 8), { hold: 'R', until: done, max: 600, note: 'along the plank to where the flag was' }], 'dis-gamosa', 'goes to where the flag was: the ghat man’s third gamosa, and blind he walks off the plank’s end']);
 act('dis08-bogoli', 'DIS-08', [() => [{ hold: 'R', until: done, max: 900 }], 'dis-bogoli', 'walks into the grass with the egrets up: the rhino is charging'], [(x) => [{ hold: 'R', until: X(x + 4.8), max: 600 }, { hold: '', until: (w) => rhinoOf(w).t > (2 * rhinoOf(w).up + rhinoOf(w).sit) * 120, max: 1200, note: 'waits for the egrets to go up once more and settle before trusting them' }, { hold: 'R', until: done, max: 900 }], 'dis-jui', 'waits a whole round of the egrets: the rangers’ burn has come back through the grass']);
 act('dis09-tunnels', 'DIS-09', [(x) => [{ hold: 'R', until: X(x + 0.1), max: 300 }, { hold: 'R', jump: 12, ticks: 12, note: 'up on the step' }, { hold: 'R', until: ground, max: 200 }, { hold: 'R', jump: 12, ticks: 12, note: 'up on the beam' }, { hold: 'R', until: done, max: 900 }], 'dis-roof', 'skips the tunnels and runs the oiled beam: the oil balls'], [(x) => [{ hold: 'R', until: X(x + 3.5), max: 600 }, ...throughMouth(-1), { hold: 'R', until: done, max: 300, note: 'runs on ahead' }], 'dis-vault', 'takes the first tunnel and runs on: the next grate is still down, off the pier into the vault']);
+act('dis02-bhutbhuti', 'DIS-02', [(x) => [...hopR(x + 1.4, 'on to the long bar', 12), { hold: 'R', until: X(x + 11.2), max: 300 }, { hold: '', until: (w) => ferryOf(w).blew, max: 600 }, { hold: 'R', jump: 12, ticks: 12, note: 'hops off on the horn' }, { hold: 'R', until: done, max: 600 }], 'dis-luit', 'hops off the bar’s far end on the ferry’s horn: no bar is there'], [(x) => [...hopR(x + 1.4, 'on to the long bar', 12), { hold: 'R', until: X(x + 11.2), max: 300 }, { hold: '', until: done, max: 900, note: 'waits out the horn at the far end without moving' }], 'dis-char-sink', 'waits out the horn at the bar’s far end without moving: it narrows under him']);
 act('dis05-machan', 'DIS-05', [(x) => [{ policy: (w) => ({ move: floorAhead(w, 3) ? 'R' : '', jump: false }), until: and(ground, X(x + 16)), max: 1500 }, { hold: '', until: done, max: 900 }], 'dis-machan', 'waits on the last plank for one more: the drum rolls'], [() => [{ hold: 'R', until: done, max: 900 }], 'dis-luit', 'runs on ahead of the carpenter: the far end is not built']);
 act('dis06-wake', 'DIS-06', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-dhal', 'runs to outrun the wake'], [(x) => [{ hold: 'R', until: X(x + 6.3), max: 600 }, { hold: '', until: (w) => wakes(w)[0].running && w.player.cx - wakes(w)[0].x < 50, max: 600 }, { hold: '', jump: 14, ticks: 14, note: 'hops the wave' }, { hold: '', until: done, max: 600 }], 'dis-bank', 'waits for the wake on the undercut bank and hops it: the landing breaks the slab off']);
 act('dis06-traps', 'DIS-06', [(x) => [...onTrap(x, 0), { hold: '', until: done, max: 900 }], 'dis-dirru', 'stands on the first trap as on a floor: it rings and is hoisted'], [(x) => [...onTrap(x, 0), { hold: '', until: (w) => traps(w)[0].state(w) === 'ring', max: 900 }, ...onTrap(x, 1), { hold: '', until: done, max: 600 }], 'dis-tip', 'hops on at the ring to the next trap: it is still slack and tips']);
@@ -767,6 +769,8 @@ const throughMouth = (i: number): Step[] => [
   { hold: '', until: (w) => tunnelsOf(w).at === i && tunnelsOf(w).open(w, i), max: 300, note: i < 0 ? '' : 'wait for the grate to lift' },
   { hold: 'R', until: (w) => tunnelsOf(w).at === i + 1, max: 200, note: 'in at the mouth' },
 ];
+const ferryOf = (w: World) => w.entities.find((e) => e instanceof Bhutbhuti) as Bhutbhuti;
+const nextBarUp = (w: World) => (w.flags.hornNext as SandField).bars[0].slab.solid.w >= px(6.9);
 const changsOf = (w: World) => (w.flags.changs ?? []) as { boy: { down: boolean }; rung: { solid: any } }[];
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'dis05-char': mark('dis05-char', (x) => [{ policy: crossSand(), until: and(ground, X(x + 41)), max: 4000, note: 'givers, the taker on the bar, the bars at the siren' }]),
@@ -932,6 +936,14 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...[-1, 0, 1, 2, 3, 4].flatMap(throughMouth),
     { hold: '', until: (w) => tunnelsOf(w).bridge.collidable, max: 600, note: 'on the last pier: wait for the plank bridge' },
     { hold: 'R', until: and(ground, X(x + 55)), max: 600 },
+  ]),
+  'dis02-bhutbhuti': mark('dis02-bhutbhuti', (x) => [
+    ...hopR(x + 1.4, 'on to the long bar', 12),
+    { hold: 'R', until: X(x + 6.8), max: 300, note: 'back from its far end: it narrows' },
+    { hold: '', until: nextBarUp, max: 900, note: 'the horn: the post does not move; stay. Then the siren, and the next bar comes up' },
+    ...hopR(x + 7.1, 'on to the new bar', 12),
+    ...hopR(x + 17.3, 'to the bank', 12),
+    { hold: 'R', until: and(ground, X(x + 23)), max: 300 },
   ]),
   'dis06-wake': mark('dis06-wake', (x) => [
     ...hopR(x + 8.9, 'over the spur into its lee', 12),

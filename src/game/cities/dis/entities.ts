@@ -373,10 +373,15 @@ export class SandField extends Entity {
     }
   }
   afterLevel?: (level: number) => void;
-  private start(w: World) {
+  private start(w: World, silent = false) {
     this.e = 0;
-    w.sfx('siren', w.player.cx, GROUND - 40);
+    if (!silent) w.sfx('siren', w.player.cx, GROUND - 40);
     this.onSiren?.(this.level + 1);
+  }
+  /** timed mode (round 5, F447): start the next change now, on the act's own clock instead of a trigger; `silent` for a
+   *  bar that narrows on 02's landing clock with no siren. A no-op while a change is running or at the last level. */
+  go(w: World, silent = false) {
+    if (this.e < 0 && this.level < this.spans[0].length - 1) this.start(w, silent);
   }
   onSiren?: (next: number) => void;
   private drawBar(ctx: CanvasRenderingContext2D, s: Slab, i: number, w: World) {
