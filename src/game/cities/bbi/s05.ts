@@ -1008,7 +1008,8 @@ export const act15: Act = {
             // anyone still standing at his grinder gets shoved off it: towards the well
             const p = w2.player;
             if (Math.abs(p.cx - (c.X(MAMA.decoy) + 16)) < 24 && p.onGround) {
-              p.vx = 240;
+              // short of the bucket, straight into the well (QA fix: not on to the lift for a whole ride)
+              p.vx = 150;
               p.vy = -180;
               p.onGround = false;
               p.launched = true;
