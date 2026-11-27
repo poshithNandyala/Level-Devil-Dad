@@ -10,7 +10,7 @@ import { onPass } from '../../levels/trolls';
 import { Grid } from '../../levels/grid';
 import type { Act } from '../../levels/acts';
 import { Art, FLOOR, gent, px, stillness, bowIcon, TAU } from './kit';
-import { archway, gentleman, looseStone, pehleDoorway, tara } from './s02';
+import { archway, looseStone, pehleDoorway, tara } from './s02';
 import { washLine } from './s03';
 import { Heap, karahi, shadows, type Light } from './s04';
 import { Dancer, makeGuru } from './s06';
@@ -47,7 +47,8 @@ export function covered(w: World, c0: number, c1: number, d: Dancer, need = 30) 
     const onIt = p.onGround && p.y + p.h >= FLOOR - 1 && p.x + p.w > x0 + 2 && p.x < x1 - 2;
     if (onIt && still() > need && !rung) {
       rung = true;
-      d.call(w2, p.cx, 'lko-tehzeeb');
+      // the bells ring for whoever set them under this cover: the dancer's own cause says which place it was
+      d.call(w2, p.cx);
     }
     if (!onIt) rung = false;
   });
@@ -67,7 +68,7 @@ function tehzeebRoom(): LevelDef {
     map: Grid.ground(15).pit(19, 20).put(1, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      const d = new Dancer(w, px(27) + 8);
+      const d = new Dancer(w, px(27) + 8, 210, 'lko-tehzeeb');
       w.flags.dancer10 = d;
       archway(w, 16, 2, 6);
       const hole = looseStone(w, 19, 2);
@@ -98,26 +99,6 @@ function tehzeebRoom(): LevelDef {
 // ================================================================ the door: tehzeeb
 
 // ================================================================ the callbacks, each one broken once
-/** The court again, but the courtier is a Lakhnavi too: when he stands two squares ahead he bows you on to
- *  the square between, 'pehle aap'. That square is lit and empty, and it's the loose stone. */
-const darbar: Act = {
-  id: 'lko10-darbar',
-  w: 46,
-  advice: 'The pachisi court again, in two halves with a chabutra between, and the courtier is a Lakhnavi too: when he bows you on to the square between you and him ("pehle aap"), it is lit and empty, and it is the loose stone. Wait on yours for the next throw.',
-  cps: [20.5],
-  paint: (g, c) => {
-    g.pit(c.x + 4, c.x + 36, 15);
-    g.fill(c.x + 19, c.x + 24, 13, 17, '#');
-  },
-  build: (w, c) => {
-    const x = c.x;
-    const wz = well(w, x + 4, x + 18);
-    const wz2 = well(w, x + 25, x + 36);
-    chausar(w, x + 5, 5, c.f('court'), 200, { bow: true, well: wz });
-    chausar(w, x + 26, 4, c.f('court2'), 200, { bow: true, well: wz2, off: 2 });
-    sign(w, x + 0.4, 10.4, 3.4, 'DARBAR', 'shop', null, 'pehle aap');
-  },
-};
 /** The photograph again, but the street in front of the posing group is bells under chikan covers. Photo
  *  taught: wait right by the group for the flash. Here that spot is a cover, and a wait there is a bow
  *  that rings the bells: wait three steps back on the plain board, and run the covers and the group in one
@@ -133,33 +114,11 @@ const tasveer: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    const d = new Dancer(w, c.X(22) + 8, 210, 'lko-tehzeeb');
+    const d = new Dancer(w, c.X(22) + 8, 210, 'lko-tasveer');
     covered(w, x + 10, x + 11, d, 30);
-    photoGroup(w, c, TASVEER, 0, c.f('g'), pace(w));
+    photoGroup(w, c, TASVEER, 0, c.f('g'), pace(w), { pause: 'lko-tasveer-jaldi', rush: 'lko-tasveer-jaldi' });
     w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Intezaar kis baat ka? | Waiting for what?', 2.2));
     sign(w, x + 0.4, 10.4, 3.4, 'TASVEER', 'shop', null, 'ghungroo');
-  },
-};
-/** The greeting again, but on the bell floor. Aadaab taught: stop where you are for one short bow. Here a
- *  stop on the covers rings the bells: step back off them to the plain board to return his greeting. */
-const jawab: Act = {
-  id: 'lko10-jawab',
-  w: 16,
-  advice: 'The greeting again, but he greets you when you are on the covered bells, and a bow there rings them. Step back to the plain board behind you to return his greeting with one short bow, then walk on over the covers without stopping and hop his drain.',
-  cps: [-1.5],
-  cp0: false,
-  paint: (g, c) => {
-    g.pit(c.x + 10, c.x + 11);
-  },
-  build: (w, c) => {
-    const x = c.x;
-    const d = new Dancer(w, c.X(15) + 8, 210, 'lko-tehzeeb');
-    covered(w, x + 3, x + 9, d, 20);
-    const still = stillness(w);
-    bowIcon(w, still);
-    gentleman(w, c, 8, 2, still, c.f('g'));
-    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Zehmat na kijiye. | Please don’t trouble yourself.', 2.2));
-    sign(w, x + 0.2, 10.4, 3, 'JAWAB', 'shop', null, 'aadaab');
   },
 };
 
@@ -242,6 +201,8 @@ const seedha = makeGuru(
   false,
   'The guru again, stamping as before, but tonight she dances for the guests and nobody mirrors her: a stamp swaps nothing. Keep pressing the way you were going, hop the red strips, and never stop on her floor.',
   'SEEDHA',
+  'lko-seedha',
+  'lko-seedha-ruka',
 );
 /** The hall door again, but tonight the maze stays put: the arch you saw is the arch. And the floor you
  *  come out on is bells under chikan covers, so 08's calm look round on arrival is a bow. Run on. */
@@ -251,9 +212,10 @@ const thahra = makeDarwaza(
   'The hall door again, but tonight the maze stays put: the arch you saw over the well’s edge is still there. And the floor past the door is bells under chikan covers: stop to look round, as in the maze, and that is a bow. Run on and jump the arch you saw.',
   'THAHRA',
   (w, c) => {
-    const d = new Dancer(w, c.X(17) + 8, 300, 'lko-tehzeeb');
+    const d = new Dancer(w, c.X(17) + 8, 300, 'lko-thahra-ruka');
     covered(w, c.x + 6, c.x + 16, d, 30);
   },
+  'lko-thahra',
 );
-export const s10 = { room: tehzeebRoom, acts: [darbar, tasveer, jawab, daana, seedha, thahra] };
+export const s10 = { room: tehzeebRoom, acts: [tasveer, daana, seedha, thahra] };
 export const meta10 = { family: 'finale-bow-meets-bells', betrayals: ['bow-vs-bells'], ending: 'lko-tehzeeb' } as StageMeta;

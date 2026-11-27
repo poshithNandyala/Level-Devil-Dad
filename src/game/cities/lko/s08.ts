@@ -224,18 +224,14 @@ const toota: Act = {
  *  the board too: land on his square and he knocks you off. */
 const CHAUSAR_THROWS = [2, 1, 3, 1, 2, 3, 1, 2, 2, 3, 1, 2];
 const CHAUSAR_PIECE = [5, 5, 6, 6, 3, 3, 7, 8, 8, 2, 2, 2];
-export function chausar(w: World, c0: number, n: number, key: string, period = 200, o: { bow?: boolean; well?: Zone; off?: number } = {}) {
+export function chausar(w: World, c0: number, n: number, key: string, period = 200, o: { off?: number } = {}) {
   const sq = Array.from({ length: n }, (_, i) => w.add(new Block(px(c0 + 3 * i), px(13), 32, 8, (ctx, b, w2) => drawSquare(ctx, b, i, w2, S), 2)));
   const S = { t0: -1, k: -1, cur: -1, lit: new Set<number>(), piece: -1, n: 0 };
   w.flags[key] = S;
   const piece = w.add(new Zone(0, px(13) - 26, 20, 26, 'lko-goti'));
   piece.on = false;
-  // the finale's courtier: when he stands two ahead he bows you on to the square between, 'pehle aap', and
-  // that square, lit and empty, is the loose stone
-  const bowed = { i: -1 };
-  w.flags[key + ':bowed'] = bowed;
   const update = () => {
-    sq.forEach((b, i) => b.set((i === S.cur || S.lit.has(i)) && i !== bowed.i));
+    sq.forEach((b, i) => b.set(i === S.cur || S.lit.has(i)));
   };
   update();
   w.onTick((w2) => {
@@ -252,12 +248,6 @@ export function chausar(w: World, c0: number, n: number, key: string, period = 2
       S.n = CHAUSAR_THROWS[(k + (o.off ?? 0)) % CHAUSAR_THROWS.length];
       if (S.piece <= S.cur) S.piece = S.cur + 2;
       if (S.piece >= n - 1) S.piece = -1;
-      bowed.i = -1;
-      if (o.bow && S.piece === S.cur + 2) {
-        bowed.i = S.cur + 1;
-        S.lit.add(bowed.i);
-        w2.say('Pehle aap, janab! | After you, sir!', px(c0 + 3 * S.piece) + 16, px(13) - 34, 1.8, 'npc');
-      }
       S.lit = new Set(Array.from({ length: S.n }, (_, j) => S.cur + 1 + j).filter((j) => j < n));
       // the courtier's square always holds (he's standing on it)
       if (S.piece < n) S.lit.add(S.piece);
@@ -265,7 +255,6 @@ export function chausar(w: World, c0: number, n: number, key: string, period = 2
       update();
     }
     piece.on = S.piece >= 0 && S.piece < n;
-    if (o.well) o.well.hazard.cause = bowed.i >= 0 && Math.abs(w2.player.cx - (px(c0 + 3 * bowed.i) + 16)) < 24 ? 'lko-goti-pehle' : 'lko-kuan';
     if (piece.on) piece.x = px(c0 + 3 * S.piece) + 6;
   });
   w.add(
@@ -327,8 +316,8 @@ export const chaupar: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    well(w, x + 4, x + 18);
-    well(w, x + 25, x + 40);
+    well(w, x + 4, x + 18, 'lko-goti-andhera');
+    well(w, x + 25, x + 40, 'lko-goti-andhera');
     chausar(w, x + 5, 5, c.f('court'));
     chausar(w, x + 26, 5, c.f('court2'), 200, { off: 2 });
     sign(w, x + 0.4, 10.4, 3.4, 'CHAUSAR', 'shop', null, 'pachisi');
@@ -387,7 +376,7 @@ export const wapas: Act = {
     mazeWall(w, x, x + 21, [7, 11, 15]);
     // and a plain arch at the end, back up to the gallery that leads to the door
     arch(w, c.X(19) + 8, FLOOR, { x: c.X(21) + 8, y: px(11) }, c.f('a3'));
-    well(w, x + 4, x + 15);
+    well(w, x + 4, x + 15, 'lko-wapas');
     arch(w, c.X(2) + 8, FLOOR, { x: c.X(4) + 8, y: px(11) }, c.f('a1'));
     arch(w, c.X(11) + 8, px(11), { x: c.X(13) + 8, y: px(7) }, c.f('a2'), null, { x: c.X(17) + 8, y: FLOOR });
     hooks(w, x + 12, x + 16, px(6), 'lko-bhool', false);
@@ -516,13 +505,13 @@ export const roshandan: Act = {
       }, 0),
     );
     // falling through an up-lit patch is its own death; anywhere else in the dark is the well
-    const zone = w.add(new Zone(c.X(0), fy + 24, px(26), 40, 'lko-kuan'));
+    const zone = w.add(new Zone(c.X(0), fy + 24, px(26), 40, 'lko-andhera'));
     let left = 0;
     w.onTick((w2) => {
       const p = w2.player;
       // where you stepped off decides it: into an up-lit patch, or into the dark
       if (p.onGround) left = (p.cx - c.X(0)) / 16;
-      zone.hazard.cause = ROSHAN.hole.some((h) => left >= h - 1 && left < h + 2) ? 'lko-roshandan' : 'lko-kuan';
+      zone.hazard.cause = ROSHAN.hole.some((h) => left >= h - 1 && left < h + 2) ? 'lko-roshandan' : 'lko-andhera';
     });
     w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Har darwaza ek jaisa hai. | Every doorway is alike.', 2.2));
   },
@@ -616,7 +605,7 @@ export const sargoshi: Act = {
  *  nearer now. Take the calm on arrival to look again. Hop over the door and nothing moves, but the arch you
  *  saw from out here lifts you only into the old lamp hooks. */
 const DARWAZA = { door: 4, out: 6.5, before: 17, after: 13 };
-export const makeDarwaza = (id: string, moves: boolean, advice: string, word: string, extra?: (w: World, c: Parameters<NonNullable<Act['build']>>[1]) => void): Act => ({
+export const makeDarwaza = (id: string, moves: boolean, advice: string, word: string, extra?: (w: World, c: Parameters<NonNullable<Act['build']>>[1]) => void, wellCause = 'lko-darwaza'): Act => ({
   id,
   w: 32,
   cp0: false,
@@ -631,7 +620,7 @@ export const makeDarwaza = (id: string, moves: boolean, advice: string, word: st
   build: (w, c) => {
     const x = c.x;
     mazeWall(w, x, x + 31, [7, 11, 15]);
-    well(w, x + 19, x + 31);
+    const wz = well(w, x + 19, x + 31, 'lko-kuan');
     hooks(w, x + 18, x + 21, px(7));
     const D = { warped: false };
     w.flags[c.f('d')] = D;
@@ -647,6 +636,13 @@ export const makeDarwaza = (id: string, moves: boolean, advice: string, word: st
       }
       // the one arch, wherever it stands now: at a jump it lifts you a floor (the old one: into the hooks)
       const ax = archAt();
+      // a jump at the place the arch stood before the door: that is this hall's own mistake. Walking on to
+      // the well's edge is the maze's old one (walk through, stay on your floor)
+      const old = c.X(DARWAZA.before) + 8;
+      if (moves && D.warped && prev < old && p.cx >= old && !p.onGround) wz.hazard.cause = wellCause;
+      // where the stay-put hall is concerned the mistake is a jump at the place the maze's arch moved to
+      const moved = c.X(DARWAZA.after) + 8;
+      if (!moves && D.warped && prev < moved && p.cx >= moved && !p.onGround) wz.hazard.cause = wellCause;
       if (prev < ax && p.cx >= ax && !p.onGround && p.y + p.h > FLOOR - 56) {
         const to = D.warped ? { x: (moves ? c.X(15) : c.X(19)) + 8, y: px(11) } : { x: c.X(19) + 8, y: px(7) };
         w2.warp(to.x - p.w / 2, to.y - p.h, 'blink');

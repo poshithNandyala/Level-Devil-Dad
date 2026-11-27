@@ -162,11 +162,8 @@ export const shaam: Act = {
   id: 'lko07-shaam',
   cp0: false,
   cps: [-2],
-  w: 54,
-  advice: 'Dusk: the shops let their awnings down. Most come down behind you, but the one that shivers on its rope is next, and it may be ahead of you: stop short of it until it is down, then walk over it. Past the last awning the strollers are out under the lamps: once the awnings are behind you, don’t rush them.',
-  paint: (g, c) => {
-    g.pit(c.x + 42, c.x + 43);
-  },
+  w: 46,
+  advice: 'Dusk: the shops let their awnings down. Most come down behind you, but the one that shivers on its rope is next, and it may be ahead of you: stop short of it until it is down, then walk over it.',
   build: (w, c) => {
     const x = c.x;
     arcade(w, x, x + 45);
@@ -217,9 +214,6 @@ export const shaam: Act = {
         if (S.t >= 0 && w2.tick - S.t > (SHAAM.early.includes(k) ? SHAAM.down : 12)) z.on = false;
       });
     });
-    // past the awnings: the evening strollers, and the drain they tut you back into if you rush them
-    nala(w, x + 42, x + 43);
-    strollers(w, x + 49, c.f('ganj'), 'lko-ganj', -210);
     sign(w, x + 0.2, 10.4, 3.2, 'SHAAM', 'shop', null, 'dusk');
   },
 };
@@ -441,7 +435,7 @@ const JULUS_NALAS = [12, 24, 36, 46];
 export type PhotoPlan = { nala: number; wall: number; cam: number; period: number; flashes: [number, number][] };
 /** a posing group (4 tiles at act column P.wall) and its photographer: solid, and shoving you back into the
  *  nala before it, except while his flash dazzles them */
-export function photoGroup(w: World, c: ActCtx, P: PhotoPlan, k: number, key: string, still: () => boolean) {
+export function photoGroup(w: World, c: ActCtx, P: PhotoPlan, k: number, key: string, still: () => boolean, causes = { pause: 'lko-photo', rush: 'lko-photo-jaldi' }) {
   nala(w, c.x + P.nala, c.x + P.nala + 1, 'lko-nala');
   const S = { t0: -1, blind: 0, test: false };
   w.flags[key] = S;
@@ -486,7 +480,7 @@ export function photoGroup(w: World, c: ActCtx, P: PhotoPlan, k: number, key: st
     const caught = !fl && inside && pl.y + pl.h > FLOOR - 30;
     const touch = caught || (wall.on && pl.x + pl.w >= wall.x - 1 && pl.x < wall.x && pl.y + pl.h > FLOOR - 30);
     if (touch && !pl.stun) {
-      w2.flags.shoveCause = S.test || (P.flashes.length > 1 && p >= P.flashes[0][0] && p < P.flashes[1][0]) ? 'lko-photo-test' : still() ? 'lko-photo' : 'lko-photo-jaldi';
+      w2.flags.shoveCause = S.test || (P.flashes.length > 1 && p >= P.flashes[0][0] && p < P.flashes[1][0]) ? 'lko-photo-test' : still() ? causes.pause : causes.rush;
       if (caught) pl.x = wall.x - pl.w - 2;
       pl.vx = -180;
       pl.vy = -170;
@@ -506,7 +500,9 @@ export function photoGroup(w: World, c: ActCtx, P: PhotoPlan, k: number, key: st
  *  But when his flash goes they are dazzled for a moment: that is the moment to run through them. The
  *  second photographer fires a short test flash first: wait for the real one. */
 const PHOTO: PhotoPlan[] = [
-  { nala: 6, wall: 12, cam: 19, period: 420, flashes: [[230, 130]] },
+  // fix round 7: the group stands two tiles nearer its nala, so whoever it shoves (a stroller's pause or a
+  // rush, at any timing) lands in the nala and not on the board behind it
+  { nala: 6, wall: 11, cam: 19, period: 420, flashes: [[230, 130]] },
   { nala: 20, wall: 25, cam: 31, period: 460, flashes: [[200, 14], [262, 130]] },
 ];
 export const photo: Act = {
@@ -584,7 +580,7 @@ export const dukaan: Act = {
     // waiting on the shop step for him to finish: the awning over it shivers, and comes down
     const aw = { t: -1, sh: -1, still: 0 };
     const z = w.add(
-      new Zone(c.X(0), FLOOR - 40, px(2), 40, 'lko-shamiyana', (ctx, _z, w2) => {
+      new Zone(c.X(0), FLOOR - 40, px(2), 40, 'lko-dukaan-ruka', (ctx, _z, w2) => {
         const k2 = aw.t < 0 ? 0 : Math.min(1, (w2.tick - aw.t) / 12);
         const jig = aw.sh >= 0 && aw.t < 0 ? Math.sin(w2.tick * 1.4) * 1.6 : 0;
         ctx.fillStyle = '#5A8F7B';

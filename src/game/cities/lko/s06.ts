@@ -316,7 +316,7 @@ const TIHAI = { first: 200, phrase: 80, cycle: 420, boards: [9, 18], bw: 4 };
  *  the next stamp they swap back. Every stamp is a change of state: press the other way, at once. Go back
  *  over a red strip and it rings; stand still on her floor and that's a bow, and she spins to you. */
 const GURU = { first: 70, every: 150, strips: [4, 9, 14, 19], from: 3, to: 23 };
-export const makeGuru = (id: string, flip: boolean, advice: string, word: string): Act => ({
+export const makeGuru = (id: string, flip: boolean, advice: string, word: string, stripCause = 'lko-ghungroo', stopCause = 'lko-guru-ruka'): Act => ({
   id,
   w: 28,
   cp0: false,
@@ -325,7 +325,7 @@ export const makeGuru = (id: string, flip: boolean, advice: string, word: string
   build: (w, c) => {
     const x = c.x;
     boards(w, x, x + 27);
-    const d = new Dancer(w, c.X(12) + 8, 420, 'lko-ghungroo');
+    const d = new Dancer(w, c.X(12) + 8, 420, stripCause);
     const G = { t0: -1, n: 0, last: -99 };
     let chase = -1;
     w.flags[c.f('g')] = G;
@@ -333,7 +333,7 @@ export const makeGuru = (id: string, flip: boolean, advice: string, word: string
       w,
       GURU.strips.map((s) => [x + s, x + s] as [number, number]),
       (w2, sx) => {
-        d.call(w2, sx, 'lko-ghungroo');
+        d.call(w2, sx, stripCause);
         chase = w2.tick + 90;
       },
     );
@@ -359,7 +359,7 @@ export const makeGuru = (id: string, flip: boolean, advice: string, word: string
         w2.flipUntil = -1;
       }
       if (inside && still() > 50) {
-        d.call(w2, p.cx, 'lko-chakkar');
+        d.call(w2, p.cx, stopCause);
         chase = w2.tick + 90;
       }
       // she spins to the sound and follows you for a moment
@@ -392,6 +392,8 @@ export const guru = makeGuru(
   true,
   'The guru’s rule: the student mirrors her. At every stamp of her foot your left and right swap, and at the next stamp they swap back. Each stamp is a change: press the other way at once. Go back over a red strip and it rings; stop still on her floor and that is a bow, and she spins to you.',
   'GURU',
+  'lko-guru',
+  'lko-guru-ruka',
 );
 
 export const s06 = { room: kathakRoom, acts: [tatkar, guru, mehfil] };
