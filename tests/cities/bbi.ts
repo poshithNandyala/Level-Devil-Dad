@@ -676,6 +676,23 @@ const spokesNaive = (): Death => ({
   steps: (x) => [{ hold: 'R', until: X(x + 1.4), max: 300 }, { hold: '', ticks: 170 }, leap(() => px(x + 3) + 14, 'spoke 1', () => true, 8), leap(() => px(x + 5.5) + 14, 'straight on to spoke 2', () => true, 8), { hold: 'R', until: done, max: 600 }],
 });
 const DEATHS: Record<string, Death[]> = {
+  'bbi04-karkhana': [
+    { what: 'stop under the first torch to look', cause: 'bbi-agni', steps: (x) => [{ hold: 'R', until: X(x + 4.6), max: 400 }, { hold: '', until: done, max: 900 }] },
+    { what: 'keep moving and jump the trough', cause: 'bbi-kunda', steps: (x) => [passTorch(x + 5, torchOn('bbi4a', 2.0, 0.6, 0.2), 'the first torch'), { hold: 'R', until: X(x + 9.2), max: 300 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 400 }] },
+  ],
+  'bbi05-dhenki': [
+    { what: 'jump the pit, then use the stone as a stair', cause: 'bbi-sila', steps: (x) => [...act05a(x).slice(0, 5), { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 16.75) - 14, max: 300 }, { hold: 'R', jump: 5, ticks: 5 }, { hold: '', until: done, max: 900 }] },
+  ],
+  'bbi05-khala': [
+    walkOn('bbi-jaanta', 'walk on into the yard'),
+    { what: 'jump the mill, then climb over the cart', cause: 'crushed', steps: (x) => [...hop(x + 3.2, 'over the mill', 14), { hold: 'R', until: X(x + 12.2), max: 400 }, { hold: 'R', jump: 9, ticks: 9 }, { hold: 'R', until: done, max: 900 }] },
+  ],
+  'bbi05-gadi': [{ what: 'climb on to the cart', cause: 'bbi-gadi', steps: (x) => [{ hold: 'R', until: X(x + 6.75), max: 400 }, { hold: 'R', jump: 6, ticks: 6 }, { hold: '', until: done, max: 900 }] }],
+  'bbi06-sidhi': [walkOn('bbi-ranga')],
+  'bbi07-bandha': [
+    walkOn('bbi-nacha'),
+    { what: 'take the second troupe’s bridge to the high bank', cause: 'bbi-thrown', steps: (x) => [...crossTroupe('bbi7b1', x, 3, 11, 'bridge'), { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 19) - 2, max: 400 }, waitFor((w) => tr(w, 'bbi7b2').pose === 'bridge', 'its bridge', 2400), { hold: 'R', until: done, max: 900 }] },
+  ],
   'bbi02-corner': [walkOn('bbi-ball')],
   'bbi02-chhal': [{ what: 'wait at the stopper for the ball to stop', cause: 'bbi-ball', steps: (x) => [{ hold: 'R', until: X(x + 12), max: 400 }, { hold: '', until: done, max: 900 }] }],
   'bbi02-dive': [kNaive('bbi2b'), kFix('bbi2b')],
@@ -706,10 +723,8 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'walk straight over both pits', cause: 'bbi-sadha', steps: () => [{ hold: 'R', until: done, max: 900 }] },
     { what: 'follow the panel beside the second pit', cause: 'bbi-chitra', steps: (x) => [{ hold: 'R', until: X(x + 10.6), max: 600 }, leap(() => px(x + 16), 'the plank its panel paints'), { hold: '', until: done, max: 300 }] },
   ],
-  'bbi06-sidhi': [walkOn('bbi-ranga')],
   'bbi07-mardala': [walkOn('bbi-nacha'), tFix('bbi7a1', 4, 6)],
   'bbi07-deepa': [walkOn('bbi-nacha'), { what: 'stand on the wheel', cause: 'bbi-deepa', steps: (x) => [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 4) - 2, max: 900 }, waitFor((w) => tr(w, 'bbi7l').pose === 'wheel', 'the wheel', 2400), leap(() => px(x + 8), 'on to its top'), { hold: '', until: done, max: 600 }] }],
-  'bbi07-bandha': [walkOn('bbi-nacha')],
   'bbi07-shrinkhala': [walkOn('bbi-nacha'), tFix('bbi7k0', 4, 6)],
   'bbi07-bagudi': [
     walkOn('bbi-bagudi'),
@@ -751,7 +766,7 @@ const DEATHS: Record<string, Death[]> = {
   'bbi10-ratha': [cNaive(11)],
   'bbi10-udaya': [spokesNaive()],
 };
-const ROOMS: Record<string, () => Step[]> = { 'BBI-02': room02, 'BBI-03': room03, 'BBI-05': room05, 'BBI-06': room06, 'BBI-07': room07, 'BBI-08': room08, 'BBI-09': room09, 'BBI-10': room10 };
+const ROOMS: Record<string, () => Step[]> = { 'BBI-02': room02, 'BBI-04': room04, 'BBI-03': room03, 'BBI-05': room05, 'BBI-06': room06, 'BBI-07': room07, 'BBI-08': room08, 'BBI-09': room09, 'BBI-10': room10 };
 /** for every act with deaths listed: the stage's route up to the act's start, then the death play */
 function actDeaths() {
   for (const [id, room] of Object.entries(ROOMS)) {
