@@ -344,6 +344,19 @@ actRoutes['lko02-dakiya'] = (x) => [
   until(ridersBy(2), 900, 'let both cycles by'),
   runTo(x + 21, 300),
 ];
+const rangPh = (w: World) => ((w.flags['lko03-rang:ph'] as ((w: World) => number) | undefined)?.(w) ?? -1);
+/** the far half has just come up out of the dye */
+const rangUp = (w: World) => {
+  const p = rangPh(w);
+  return p >= 0 && p < 40;
+};
+actRoutes['lko03-rang'] = (x) => [
+  walkTo(x + 2, 300),
+  hops([x + 4, x + 7, x + 10], 'on to the near flowers'),
+  until(rangUp, 900, 'wait till his half comes up out of the dye'),
+  hops([x + 10, x + 13, x + 16, x + 19.5], 'his half in one go'),
+  runTo(x + 23, 300),
+];
 const hoopK = (w: World) => (w.flags['lko03-adda:hoop'] as { k: number }).k;
 actRoutes['lko03-adda'] = (x) => [
   walkTo(x + 4.5, 400, 'into the hoop'),
@@ -778,8 +791,8 @@ mistakes['LKO-02'].push(
 );
 mistakes['LKO-03'] = [
   { what: 'stopping on the jali in the middle of the second vat', steps: [...room03, runTo(actX('LKO-03') + 1.5), runTo(actX('LKO-03') + 18.2), until(done, 400)], cause: 'lko-jali' },
-  { what: 'walking straight on to the door over the cloth', steps: [...through('LKO-03', room03, 2), runTo(doorX('LKO-03') - 9), { hold: 'R', until: done, max: 900 }], cause: 'lko-chhapa' },
-  { what: 'at the door, waiting on a white flower for the second wash, as the room taught', steps: [...through('LKO-03', room03, 2), runTo(doorX('LKO-03') - 9), hops([doorX('LKO-03') - 7.4, doorX('LKO-03') - 4]), until(done, 600)], cause: 'lko-balti' },
+  { what: 'walking straight on to the door over the cloth', steps: [...through('LKO-03', room03, 3), runTo(doorX('LKO-03') - 9), { hold: 'R', until: done, max: 900 }], cause: 'lko-chhapa' },
+  { what: 'at the door, waiting on a white flower for the second wash, as the room taught', steps: [...through('LKO-03', room03, 3), runTo(doorX('LKO-03') - 9), hops([doorX('LKO-03') - 7.4, doorX('LKO-03') - 4]), until(done, 600)], cause: 'lko-balti' },
   { what: 'on the frame, waiting on the next flower ahead', steps: [...through('LKO-03', room03, 1), walkTo(actX('LKO-03', 1) + 4.5, 400), hops([actX('LKO-03', 1) + 5.6, actX('LKO-03', 1) + 9]), until(done, 600)], cause: 'lko-adda' },
   { what: 'on the frame, walking on off the hoop', steps: [...through('LKO-03', room03, 1), { hold: 'R', until: done, max: 900 }], cause: 'lko-kunda' },
 ];
@@ -902,6 +915,10 @@ mistakes['LKO-02'].push(
   { what: 'the cycles: standing in the lane to bow, as learned', steps: [...through('LKO-02', room02, 2), walkTo(actX('LKO-02', 2) + 5, 300), until(done, 600)], cause: 'lko-dakiya' },
   { what: 'the cycles: stepping down once the postman is by', steps: [...through('LKO-02', room02, 2), walkTo(actX('LKO-02', 2) + 3, 300), hops([actX('LKO-02', 2) + 9.5]), until(ridersBy(1), 900), { hold: 'R', until: done, max: 600 }], cause: 'lko-dakiya-doosra' },
   { what: 'the cycles: running on ahead of them', steps: [...through('LKO-02', room02, 2), stroll(actX('LKO-02', 2) + 60), until(done, 300)], cause: 'lko-dakiya-aage' },
+);
+mistakes['LKO-03'].push(
+  { what: 'the dyer: waiting on a stitched flower in his half, as learned', steps: [...through('LKO-03', room03, 2), walkTo(actX('LKO-03', 2) + 2, 300), hops([actX('LKO-03', 2) + 4, actX('LKO-03', 2) + 7, actX('LKO-03', 2) + 10]), until(rangUp, 900), hops([actX('LKO-03', 2) + 10, actX('LKO-03', 2) + 13]), until(done, 900)], cause: 'lko-rang' },
+  { what: 'the dyer: hopping on to his half while it is under', steps: [...through('LKO-03', room03, 2), walkTo(actX('LKO-03', 2) + 2, 300), hops([actX('LKO-03', 2) + 4, actX('LKO-03', 2) + 7, actX('LKO-03', 2) + 10]), until((w) => rangPh(w) >= 262, 900), hops([actX('LKO-03', 2) + 10, actX('LKO-03', 2) + 13]), until(done, 600)], cause: 'lko-rang-kood' },
 );
 mistakes['LKO-04'].push(
   { what: 'under the cloud: hopping on before its shadow comes', steps: [...through('LKO-04', room04, 1), walkTo(actX('LKO-04', 1) + 2.4, 300), hops([actX('LKO-04', 1) + 3.5, actX('LKO-04', 1) + 6]), until(done, 300)], cause: 'lko-badal' },

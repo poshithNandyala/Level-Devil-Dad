@@ -344,5 +344,62 @@ export const adda: Act = {
   },
 };
 
-export const s03 = { room: chhapaRoom, acts: [kunda, adda] };
+// ================================================================ act 3: rang, the dyer's vat
+/** The rangrez's vat of neel. The far half of the muslin is on his rope: every few seconds he dips it, white
+ *  stitched flowers and all, into the dye. Stitched work holds, as learned, but not under the dye: wait on
+ *  the near half, and cross the far half in one go as soon as it comes up. */
+const RANG = { near: [4, 7, 10], far: [13, 16], period: 370, dip: 90 };
+export const rang: Act = {
+  id: 'lko03-rang',
+  w: 24,
+  advice: 'The far half of this muslin is on the rangrez’s rope: every few seconds he dips it, stitched flowers and all, into his vat of neel. Stitch holds, but not under the dye. Wait on the near flowers, and cross the far ones in one go the moment they come up.',
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 18);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const S = { t0: -1, lastRide: -999 };
+    const ph = (w2: World) => (S.t0 < 0 ? 0 : (w2.tick - S.t0) % RANG.period);
+    w.flags[c.f('ph')] = ph;
+    const vat = w.add(new Zone(c.X(3) + 1, FLOOR + 10, px(16) - 2, 40, 'lko-kunda'));
+    w.add(
+      new Art((ctx, w2) => {
+        const g = ctx.createLinearGradient(0, FLOOR, 0, FLOOR + 48);
+        g.addColorStop(0, '#3949AB');
+        g.addColorStop(1, '#1A237E');
+        ctx.fillStyle = g;
+        ctx.fillRect(c.X(3), FLOOR + 6, px(16), 42);
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        for (let xx = c.X(3) + ((w2.tick * 0.25) % 10); xx < c.X(19) - 3; xx += 10) ctx.fillRect(xx, FLOOR + 7, 4, 1);
+        // the rangrez on the far kerb with his rope, and the rope's line over the far half
+        const p = ph(w2);
+        const pulling = S.t0 >= 0 && p >= RANG.period - RANG.dip - 30;
+        gent(ctx, c.X(20) + 8, FLOOR, 24, '#5C6BC0', { face: -1, arms: pulling ? 1 : 0.3, skin: '#9C6B48' });
+        ctx.strokeStyle = '#8D6E63';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(c.X(20), FLOOR - 14);
+        ctx.lineTo(c.X(12), far[0].y);
+        ctx.stroke();
+      }, -4),
+    );
+    RANG.near.forEach((s) => w.add(new Cloth(c.X(s), 's')));
+    const far = RANG.far.map((s) => w.add(new Cloth(c.X(s), 's')));
+    w.onTick((w2) => {
+      const p = w2.player;
+      if (S.t0 < 0 && p.cx > c.X(1)) S.t0 = w2.tick;
+      const k = ph(w2) - (RANG.period - RANG.dip);
+      const want = S.t0 >= 0 && k >= 0 ? FLOOR + Math.sin((Math.PI * k) / RANG.dip) * 34 : FLOOR;
+      for (const b of far) {
+        if (far.some((f) => on(w2, f.solid))) S.lastRide = w2.tick;
+        b.move(w2, 0, want - b.y);
+      }
+      // carried down on the stitched flowers, or jumped into the dye
+      vat.hazard.cause = p.cx < c.X(12) ? 'lko-kunda' : w2.tick - S.lastRide < 60 ? 'lko-rang' : 'lko-rang-kood';
+    });
+    sign(w, x + 0.2, 10.4, 3, 'RANG', 'shop', null, 'neel');
+  },
+};
+
+export const s03 = { room: chhapaRoom, acts: [kunda, adda, rang] };
 export const meta03 = { family: 'print-washed-stitch-remains', betrayals: ['wash-remains'], ending: 'lko-balti' } as StageMeta;

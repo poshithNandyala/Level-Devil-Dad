@@ -37,6 +37,8 @@ export const causeLines: Record<string, string[]> = {
   'lko-dakiya': ['Men in a hurry don’t bow back: you stood in the lane and the postman rode into you.', 'Step up on to the chabutra at the side and let the cycles by.'],
   'lko-dakiya-aage': ['You ran on to the shut gate, and the postman’s cycle came up behind you.', 'Step up on to the chabutra at the side and let the cycles by.'],
   'lko-dakiya-doosra': ['There were two: the milkman was right behind the postman.', 'Stay on the chabutra till both cycles are by.'],
+  'lko-rang': ['Stitch holds, but not under the dye: the rangrez dipped his half of the muslin, and you with it.', 'Wait on the near flowers; cross his half in one go the moment it comes up.'],
+  'lko-rang-kood': ['You jumped for his half of the muslin while it was under the neel.', 'Wait till it comes up, then go at once.'],
   'lko-hawa': ['The birds read the other face of the flag: you saw red, they saw white.', 'Here, go while YOU see white: the curl at the flag’s tip shows their colour.'],
   'lko-gumbad': ['The dome was a different size from where you jumped: too high, or shrunk into the pool.', 'Stand on the red paving line in front of it, and jump from there.'],
   'lko-mehfil': ['She spins the whole stage end to end, and you were on her floor.', 'Wait on a takht till she has spun past beneath you, going away, then cross to the next.'],
