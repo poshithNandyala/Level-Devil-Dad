@@ -59,7 +59,7 @@ and five more finale breaks; replays brought under 7.5 s by the tester's lag-cap
 | 07 | 93.5 s | >= 120 (short) | 114 |
 | 08 | 46.6 s | >= 60 (short) | 60 |
 | 09 | 58.7 s | >= 60 (short) | 70 |
-| 10 | 89.0 s | >= 90 (short) | 106 |
+| 10 | 94.9 s | >= 90 | 114 |
 
 Acts whose first checkpoint sat near a pit start with four tiles of plain ground (`LEAD` in `levels.ts`), so every
 checkpoint passes the idle, run and tap-jump plays at lag 0, 6 and 12. The longest replay from a checkpoint to a
