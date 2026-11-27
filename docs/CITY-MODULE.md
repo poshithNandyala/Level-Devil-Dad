@@ -222,7 +222,11 @@ Tag each long stage's shape: `longStage({ ..., shape: 'long' | 'marathon' | 'wtf
   25 s (an act start gets one; add more with the act's `cps`). Replay to any trap is at most 8 s from the
   last checkpoint, at lag 0, 6 and 12 ticks. No checkpoint sits within 3.5 tiles past a trigger, and each
   is reached only after the previous hazard has run out at lag 12. Every checkpoint survives standing idle,
-  running then idling, and a tap jump then idling. Use as many checkpoints as this needs: the shared
+  running then idling, and a tap jump then idling. `tests/cpsafe.test.ts` plays each, from every checkpoint
+  of every stage: idle 4 s; wait 0, 6 or 12 ticks, run forward 0.3 s, idle to 4 s; wait 0, 6 or 12 ticks,
+  tap jump (6 ticks) running forward until he lands, idle to 4 s. Dad must be alive at the end of all seven
+  (cities still on the modules-test allow-list, and new cities named in `CPSAFE3_PENDING` in that test,
+  keep the old 1.5 s idle check until their pass or named fix round removes them). Use as many checkpoints as this needs: the shared
   checkpoint tests have no count limit (a 180 s marathon at one per 8 s is 23).
 - **Every act:** its FIX death differs from its NAIVE death in cause and tick, and no window is the same
   as one already passed once the first momentum beat is behind you.
