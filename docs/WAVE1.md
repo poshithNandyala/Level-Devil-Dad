@@ -631,3 +631,14 @@ the family act its own second death and every death a line true for the play. CH
 honestly under their floors. Fair at N=80: 100 at 6 and 12 ticks on 01, 09 and 10; worst replay 4.58 s. CHN is off the
 modules-test allow-list. Shared fixes in this merge: `tests/acts.ts` no longer throws on a stage with no next float, and
 the allocation's tour entry is `tour-chn-b5`. Design notes: `docs/cities/CHN.md`.
+
+## v0.17.7: Dispur, ten stages
+Dispur (DIS, Assam) is a module city: ten stages in `src/game/cities/dis/`, routes in `tests/cities/dis.ts`. 01 the
+tea boy's swinging tray on the Luit promenade, 02 Char (sandbars set by the level post), 03 the plucked tea hedge, 04
+Talatal's falling stair, 05 Gamosa (three gifts hide your feet), 06 Majuli's eroding bank, 07 Husori (the marathon:
+gates open only for the singers), 08 Gorh (the rhino's flattened strip is the only floor), 09 Rang Ghar's oiled roof,
+10 Luit (the finale's callbacks break their rules). It passed QA round 4 at 71ceb73 after three failed rounds. Fix
+round 4: four death lines no longer advise the act's other death, the gamosa pits tell a hop from a walk, and
+`dis08-bagori` is cut (its decision was the wake's and the bull's). Route times: 01 22.6, 02 21.9, 03 33.6, 04 11.2, 05
+32.0, 06 24.3, 07 88.3, 08 31.0, 09 34.6, 10 34.2 s; the ones under their floors are honest and ruled final. Fair at
+N=80: 100 at 6 and 12 ticks on all ten; worst replay 7.17 s (07). Design notes: `docs/cities/DIS.md`.

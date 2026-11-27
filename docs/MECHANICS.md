@@ -204,6 +204,47 @@ pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound p
   plaster display, once `chn10-pattarai` (stand a second and it crumbles: keep moving again), is now kaanal's second half
   and gives at a touch.
 
+## DIS (Dispur, Assam): ideas used (module city, 10 stages)
+- **01 Nomoskar Guwahati** a tea boy walks the promenade at you with a tray of lal chah swinging out in front: touch him
+  or the tray and you are scalded, hop clean over him and the tray tips where you land; wait back while he pours.
+- **02 Char** sandbars placed by a numbered level post: a siren raises it a mark, new bars rise first (dashed outline),
+  a bar that stays narrows second (keeps its left end), bars that go sink last. Acts: the farmer's hut bar never moves
+  (`dis02-chapori`); the bhutbhuti ferry's horn sounds like the siren but the post does not move (`dis02-bhutbhuti`).
+- **03 Duta Paat, Ekta Kuhi** tea hedges taller than a jump step down only once picked; follow the plucker, whose
+  basket swings all round her while she picks. Act: a sprinkler wets the path and you slide (`dis03-bagan`).
+- **04 Talatal** the cellar stair falls step by step behind you as you go down; the step before the last rises back.
+  Act: three stairwells, the lit one flooded, of the dark two only the one the lantern's flame streams toward goes
+  through (`dis04-batah`). Door `dis-laru-plate`: hop the rolling laru.
+- **05 Gamosa** every host who touches you puts a gamosa on you; at three the cloth hides your feet and the pit under
+  it; give one away by walking into a host in a red sash. Acts: one giver right before a pit, hop him (`dis05-atithi`);
+  a bamboo laid over the nala shows only by its shadow (`dis05-sanko`); the Uruka feast's banana leaves are the floor
+  and tip under a jump (`dis05-feast`); the japi-maker's bamboo splits slide the way their arrow shows when you jump at
+  them (`dis05-kaath`); keep up with the carpenter planking the machan before the drum roll (`dis05-machan`).
+- **06 Majuli ka Paar** bamboo spurs on an eroding bank: the slab upstream of a spur goes early, silt builds a step
+  behind it. Acts: shelter from the ferry's wake in the spur's lee (`dis06-wake`); fish traps on pulleys, a ringing one
+  is about to be hoisted, a slack one tips (`dis06-traps`); the ghat man moves his landing flag as the river rises
+  (`dis06-flag`). Door `dis-tea-ladder`.
+- **07 Husori** (marathon) bamboo gates open only for the husori group with you inside its ring. Acts: pond planks rise
+  on the dhol's quickening beat (`dis07-dhol`, the momentum beat); jute twisted into rope, still by the post, whipped in
+  the middle (`dis07-rope`); the Goru Bihu bull charges along the lane, get out of it sideways (`dis07-goru`); tekeli
+  bhonga, get to the side the crowd is not shouting (`dis07-tekeli`); the Kaziranga gate's timed card and the hog deer
+  corridors (`dis07-card`); the pitha trail on the singers' cart that rolls off over the pond (`dis07-cart`); the host's
+  gamosa ritual holds the middle gate (`dis07-chowk`); wait for the next group's pepa behind you (`dis07-pepa`).
+- **08 Gorh** no floor under the elephant grass but the strip a rhino flattens when it charges at a jeep's dust. Acts:
+  it stops halfway and charges on at a nearer jeep (`dis08-jeep`); it charges the nearer jeep, not the louder
+  (`dis08-duijeep`); egrets on a hidden rhino's back rise when it charges (`dis08-bogoli`).
+- **09 Rang Ghar** the oiled boat roof pushes you down; ribs and grip pads; landing on oil drops a laru from the gutter.
+  Acts: the tug-of-war rope is floor only while taut and drifts toward the winner (`dis09-tug`); the steepest oil
+  (`dis09-chaal`); Joysagar's sluice bell, wait out the flood on the embankment (`dis09-sluice`); tunnel mouths come up a
+  step behind on the next pier (`dis09-tunnels`).
+- **10 Luit** (finale) a plain bank with the level post on the far bank; callbacks that break their rule: the tired
+  drummer slows (`dis10-dhol`), the tug teams changed ends (`dis10-tug`), the stair falls from the bottom up with a low
+  cellar vault at its foot (`dis10-talatal`). Door `dis-post-bank`: the plucker's bars rise ahead of her, go in front.
+- **Plain doors:** `dis-hut-shut`, `dis-muga-reel`, `dis-uruka-net`, `dis-watch-tower`, `dis-royal-seat` (each re-asked
+  an act or its room). **Cut, and why:** `dis08-bagori` (a rhino from behind, get up on the hay: `dis06-wake`'s and
+  `dis07-goru`'s decision), `dis07-bordoisila` and `dis10-bordoisila` (shelter-and-wait), `dis10-gamosa` (05's rule
+  again), and the earlier length-round cuts listed in `docs/cities/DIS.md`.
+
 ## KVT (Kavaratti, Lakshadweep): ideas used (hardness pass, 10 stages)
 - **01 tour bite** the coral step out to the boat shrinks with the tide as you come down the beach (`CoralStep`).
 - **09 Kalpeni Kadalkara** storm rubble: every landing slides you a tile towards the lagoon (`RubbleBank`, with `dir`,
