@@ -23,4 +23,10 @@ export const causeLines: Record<string, string[]> = {
   'ita-rassi': ['That band was frayed: it snapped and the rope whipped you.', 'A frayed band (loose ends, twitching) is not a step. Hop over that pole to the next sound band.'],
   'ita-malba': ['The wall slumped into the hole, on to you.', 'Read the mortar above the brick you pull: only fresh pale mortar holds the course up. Under dry mortar, pull and step back.'],
   'ita-kaanta': ['The fort’s spikes: they ride on the top course, all the way down.', 'A slumped wall is a spiked stub. Never stand on it: pull it down to one brick and hop over.'],
+  // the finale's callbacks (ITA-10): each line names what killed you, and never the advice that killed
+  'ita-dher': ['The brick porter lost his load over the deep bay and came down into it, on top of you.', 'The deep bay is where a brick porter ends up. Stay on the deck short of it until he is in, then cross over the bricks.'],
+  'ita-peeth': ['His pile tipped as he cleared the bay: the bricks came off the back of his load, on to you.', 'The bricks fall behind him for a moment after the bay, and then they hold the gate open. Stay down in the bay until they have landed.'],
+  'ita-mehraab': ['You hopped the stub and landed under the arch: its loose brick came down on you.', 'Under the fort’s arch a stub is not for hopping. Pull it down too, step back, and walk under.'],
+  'ita-kapaat': ['The sluice gate dropped on you the moment the pour stopped.', 'This gate is held by the pour alone, and the water goes over its top, not through the gateway. Go through while it pours.'],
+  'ita-aakhri': ['You shook a tree already shaken: the harvester’s basket was on its last notch.', 'Every notch lit means the next shake drops it. The stair of baskets is already hung: climb it without a shake.'],
 };

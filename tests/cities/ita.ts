@@ -512,6 +512,58 @@ const room09 = (): Step[] => walls(['ita9a', 'ita9b', 'ita9c'], 29);
 const act09 = (x: number): Step[] => walls(['ita9d', 'ita9e', 'ita9f', 'ita9g'], x + 39.4);
 const gatePolicy9: Policy = (w) => wallPolicy('ita9h')(w);
 
+// ------------------------------------------------------------------ ITA-10 (the finale: every callback breaks its stage's rule)
+type HeapSt = { t: number; done: boolean };
+type ShedSt = { t: number; done: boolean };
+type Gate10St = { open: number; pourT: number };
+/** the room: stay on the deck short of the deep bay until the brick porter has gone into it, then cross over the bricks */
+const room10 = (): Step[] => [
+  { hold: 'R', until: X(12.2), max: 900, note: 'on to the deck, three tiles short of the deep bay' },
+  { hold: '', until: (w) => (w.flags.ita10 as HeapSt).done, max: 1200, note: 'the porter and his bricks go into the bay' },
+  { hold: 'R', until: X(29), max: 900, note: 'over the bricked-up bay' },
+];
+/** act A: into the shallow bay, stay down until the shed bricks have landed (they hold the gate), climb out and walk through */
+const act10a = (x: number): Step[] => [
+  { hold: 'R', until: (w) => w.player.x >= px(x + 9) && w.player.y > FL - 8, max: 900, note: 'into the shallow bay' },
+  { hold: '', until: (w) => (w.flags.ita10a as ShedSt).done, max: 1500, note: 'he passes over; the bricks come off his back and land' },
+  { hold: 'R', jump: 14, ticks: 14, note: 'climb out' },
+  { hold: 'R', until: and(ground, (w) => w.player.y <= FL - 13), max: 300 },
+  { hold: 'R', until: X(x + 26.4), max: 900, note: 'through the gate the bricks hold open' },
+];
+/** act B: pull the wall down brick by brick (step back from each slump) and walk under the arch; never hop */
+function wallPull(key: string): (w: World) => Out {
+  return (w) => {
+    const st = w.flags[key] as WallSt;
+    const p = w.player;
+    if (p.x > px(st.c) + 8 || st.bricks.length === 0 || st.hole) return go('R');
+    if (st.slumpT >= 0) return go('L');
+    return go('R');
+  };
+}
+const act10b = (x: number): Step[] => [{ policy: wallPull('ita10b'), until: (w) => w.player.x > px(x + 10) + 8, max: 2400, note: 'pull both bricks, walk under the arch' }, { hold: 'R', until: X(x + 21.4), max: 600 }];
+/** act C: pull the lever, cross the drained tank, and go through the sluice while it pours */
+const act10c = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 5), max: 900, note: 'to the lever' },
+  { hold: 'L', until: XL(x + 5.4), max: 300, note: 'under its handle' },
+  { hold: '', ticks: 18 },
+  { hold: '', jump: 20, ticks: 22, long: true, note: 'pull: the tank drains, the pour pushes the gate open' },
+  { hold: '', until: (w) => (w.flags.ita10c as PaddySt).tanks[0].level === 'low', max: 600, note: 'drained' },
+  { hold: 'R', until: (w) => w.player.x >= px(x + 10) - 12, max: 600, note: 'through the low tank' },
+  { hold: 'R', jump: 14, ticks: 14, note: 'up on to the bund' },
+  { hold: 'R', until: and(ground, (w) => w.player.y <= FL - 13), max: 300 },
+  { hold: 'R', until: X(x + 20.4), max: 900, note: 'under the pour and through while it runs' },
+];
+/** act D: no shake; up the hung baskets as they are */
+const act10d = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 14.6), max: 900, note: 'past the tree without a jump' },
+  ...[16, 18, 20].flatMap((c): Step[] => [
+    { hold: 'R', until: X(x + c - 1.6), max: 600 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'up a basket' },
+    { hold: 'R', until: ground, max: 200 },
+  ]),
+  { hold: 'R', until: and(ground, X(x + 28.6), (w) => w.player.y > 160), max: 900, note: 'off the far end of the terrace' },
+];
+
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-01': { steps: [...courseRoute(), ...hop(62.4, 'hop the fort wall like the others'), { hold: 'R', until: done, max: 900 }], cause: 'ita-ita' },
@@ -523,6 +575,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-07': { steps: [{ hold: 'R', until: done, max: 2400, note: 'push without stopping' }], cause: 'ita-dhuan' },
   'ITA-08': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-nadi' },
   'ITA-09': { steps: [{ hold: 'R', until: done, max: 2400, note: 'lean on every wall and walk into every hole' }], cause: 'ita-malba' },
+  'ITA-10': { steps: [...hopGaps([15]), { hold: 'R', until: done, max: 2400, note: 'run on along the one-lane deck, hopping the bay' }], cause: 'ita-bhaar' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-01': { steps: [...upTo(24), { hold: 'R', until: X(77.0), max: 600 }, { hold: 'R', jump: 16, ticks: 16, note: 'skip the first brick, as on the first wall' }, { hold: 'R', until: done, max: 900 }], cause: 'ita-pop' },
@@ -559,6 +612,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
     cause: 'ita-rassi',
   },
   'ITA-09': { steps: [{ policy: wallPolicy('ita9a'), until: (w) => w.player.x > px(8) + 8, max: 2400 }, { policy: wallPolicy('ita9b', true), until: done, max: 2400, note: 'pull the second wall down and climb the stub' }], cause: 'ita-kaanta' },
+  'ITA-10': { steps: [{ hold: 'R', until: (w) => w.player.x >= px(15) && w.player.y > FL - 8, max: 900, note: 'into the deep bay, as 02 taught' }, { hold: '', until: done, max: 1500, note: 'and wait for him to pass over' }], cause: 'ita-dher' },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
   'ITA-03': [{ what: 'wait on the young one’s back for the next to dip', steps: [{ policy: herdWalk('ita3'), until: (w) => w.player.x >= px(15), max: 3000 }, { hold: '', until: done, max: 1500 }], cause: 'ita-seeng' }],
@@ -593,6 +647,90 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     },
   ],
   'ITA-02': [{ what: 'wait in the deep bay for the first porter only, then run on', steps: [...hopGaps([12]), { hold: 'R', until: (w) => w.player.x >= px(18) && w.player.y > FL - 8, max: 900 }, { hold: '', until: (w) => (w.flags.ita2 as DeckSt).porters[0].x < px(18) - 34, max: 1500 }, { hold: 'R', jump: 16, ticks: 16 }, { hold: 'R', until: done, max: 1500 }], cause: 'ita-bhaar' }],
+  // the finale: for every act, the stage's own taught play (the break) and the plain run (two causes, two ticks)
+  'ITA-10': [
+    {
+      what: 'act A, as 02 taught: into the bay, climb out the moment he is past, run for the gate',
+      get steps(): Step[] {
+        const x = actX0('ITA-10', 'ita10-pul');
+        return [...room10(), { hold: 'R', until: (w) => w.player.x >= px(x + 9) && w.player.y > FL - 8, max: 900 }, { hold: '', until: (w) => (w.flags.ita10ad as DeckSt).porters[0].x < px(x + 9) - 34, max: 1500, note: 'he is past' }, { hold: 'R', jump: 16, ticks: 16, note: 'climb out behind him' }, { hold: 'R', until: done, max: 1500 }];
+      },
+      cause: 'ita-peeth',
+    },
+    {
+      what: 'act A, run on along the deck, hopping the bay',
+      get steps(): Step[] {
+        const x = actX0('ITA-10', 'ita10-pul');
+        return [...room10(), ...hopGaps([x + 9]), { hold: 'R', until: done, max: 2400 }];
+      },
+      cause: 'ita-bhaar',
+    },
+    {
+      what: 'act B, as 09 taught: pull once, step back, hop the spiked stub',
+      get steps(): Step[] {
+        const xa = actX0('ITA-10', 'ita10-pul');
+        return [...room10(), ...act10a(xa), { policy: wallPolicy('ita10b'), until: done, max: 2400 }];
+      },
+      cause: 'ita-mehraab',
+    },
+    {
+      what: 'act B, lean on the wall and walk into the hole as it slumps',
+      get steps(): Step[] {
+        const xa = actX0('ITA-10', 'ita10-pul');
+        return [...room10(), ...act10a(xa), { hold: 'R', until: done, max: 2400 }];
+      },
+      cause: 'ita-malba',
+    },
+    {
+      what: 'act C, as the 06 door taught: pull, cross, wait on the bund for the pour to stop, then go',
+      get steps(): Step[] {
+        const xa = actX0('ITA-10', 'ita10-pul');
+        const xb = actX0('ITA-10', 'ita10-mehraab');
+        const x = actX0('ITA-10', 'ita10-mori');
+        return [
+          ...room10(),
+          ...act10a(xa),
+          ...act10b(xb),
+          ...act10c(x).slice(0, 8),
+          { hold: 'R', until: X(x + 11.6), max: 600, note: 'to the bund before the gate' },
+          { hold: '', until: (w) => (w.flags.ita10cg as Gate10St).pourT >= 0 && (w.tick - (w.flags.ita10cg as Gate10St).pourT) / 120 >= 3.6, max: 900, note: 'wait for the pour to stop' },
+          { hold: 'R', until: done, max: 900, note: 'go through in the gap' },
+        ];
+      },
+      cause: 'ita-kapaat',
+    },
+    {
+      what: 'act C, run on into the full tank',
+      get steps(): Step[] {
+        const xa = actX0('ITA-10', 'ita10-pul');
+        const xb = actX0('ITA-10', 'ita10-mehraab');
+        return [...room10(), ...act10a(xa), ...act10b(xb), { hold: 'R', until: done, max: 2400 }];
+      },
+      cause: 'ita-doob',
+    },
+    {
+      what: 'act D, as 04 taught: shake the tree from its uphill side',
+      get steps(): Step[] {
+        const xa = actX0('ITA-10', 'ita10-pul');
+        const xb = actX0('ITA-10', 'ita10-mehraab');
+        const xc = actX0('ITA-10', 'ita10-mori');
+        const x = actX0('ITA-10', 'ita10-tokri');
+        return [...room10(), ...act10a(xa), ...act10b(xb), ...act10c(xc), ...shake(x + 6.2, 3), { hold: '', until: done, max: 600 }];
+      },
+      cause: 'ita-aakhri',
+    },
+    {
+      what: 'act D, run under the branch and jump for the oranges',
+      get steps(): Step[] {
+        const xa = actX0('ITA-10', 'ita10-pul');
+        const xb = actX0('ITA-10', 'ita10-mehraab');
+        const xc = actX0('ITA-10', 'ita10-mori');
+        const x = actX0('ITA-10', 'ita10-tokri');
+        return [...room10(), ...act10a(xa), ...act10b(xb), ...act10c(xc), { hold: 'R', until: X(x + 10.4), max: 900 }, { hold: 'R', jump: 12, ticks: 12, note: 'jump for the oranges' }, { hold: '', until: done, max: 600 }];
+      },
+      cause: 'ita-santra',
+    },
+  ],
 };
 const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
 const actRoutes: Record<string, (x: number) => Step[]> = {
@@ -606,6 +744,10 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'ita07-barf': act07b,
   'ita08-dhaara': act08,
   'ita09-deewar': act09,
+  'ita10-pul': act10a,
+  'ita10-mehraab': act10b,
+  'ita10-mori': act10c,
+  'ita10-tokri': act10d,
 };
 const endingPolicies: Record<string, Policy> = {
   'ita-phatak': gatePolicy,
@@ -636,6 +778,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('ITA-08', 0, []);
   S['ITA-09'] = room09();
   lengthen('ITA-09', 0, []);
+  S['ITA-10'] = room10();
+  lengthen('ITA-10', 0, []);
 }
 
 export const test: CityTests = {
@@ -645,5 +789,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['ITA-02', 'ITA-03', 'ITA-04', 'ITA-05', 'ITA-06', 'ITA-07', 'ITA-08', 'ITA-09'],
+  fair: ['ITA-02', 'ITA-03', 'ITA-04', 'ITA-05', 'ITA-06', 'ITA-07', 'ITA-08', 'ITA-09', 'ITA-10'],
 };

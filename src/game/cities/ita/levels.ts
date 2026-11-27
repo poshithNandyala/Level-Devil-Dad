@@ -1,11 +1,8 @@
 // Itanagar's ten stages: 01 the welcome tour, 02-10 long stages (room + acts + door ending), harder each time, 10 the
 // finale. Each built stage lives in its own file (s01.ts ..) with its allocation slot as `meta` (docs/allocation.json).
-// `levels` is a function (docs/CITY-MODULE.md). Slots not yet built are TODO placeholders (an empty room with a door).
-import { type LevelDef, type World } from '../../world';
-import { lines as L } from './lines';
-import { door, rival } from '../../levels/kit';
+// `levels` is a function (docs/CITY-MODULE.md).
+import type { LevelDef } from '../../world';
 import { longStage } from '../../levels/chunks';
-import { Grid } from '../../levels/grid';
 import { tourLevel, meta01 } from './s01';
 import { room as room02, act as act02, meta02 } from './s02';
 import { room as room03, act as act03, meta03 } from './s03';
@@ -15,27 +12,7 @@ import { room as room06, act as act06, meta06 } from './s06';
 import { room as room07, act as act07, actBarf as act07b, meta07 } from './s07';
 import { room as room08, act as act08, meta08 } from './s08';
 import { room as room09, act as act09, meta09 } from './s09';
-
-const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
-
-/** TODO placeholder room for stage `n`: replace with the real room (its own idea, sign, Tara, hidden item) */
-function todoRoom(n: number): LevelDef {
-  return {
-    id: `ITA-${String(n).padStart(2, '0')}`,
-    city: 'ITA',
-    index: n,
-    name: `TODO stage ${n}`,
-    nameEn: 'TODO',
-    tagline: 'TODO',
-    hint: 'TODO: what kills you and how to beat it.',
-    par: 30,
-    map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').rows(),
-    build(w: World) {
-      door(w);
-      rival(w, 3, 15, 1, tara(n - 2));
-    },
-  };
-}
+import { room as room10, actPul, actMehraab, actMori, actTokri, meta10 } from './s10';
 
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: meta01 },
@@ -47,5 +24,6 @@ export const levels = (): LevelDef[] => [
   longStage({ base: room07(), acts: [act07, act07b], twist: 'ita-tailgate', par: 150, shape: 'marathon', lives: 'act', meta: meta07 }),
   longStage({ base: room08(), acts: [act08], twist: 'ita-ghat', par: 30, shape: 'wtf', meta: meta08 }),
   longStage({ base: room09(), acts: [act09], twist: 'ita-darwaza', par: 60, shape: 'long', lives: 'act', meta: meta09 }),
-  longStage({ base: todoRoom(10), par: 30, shape: 'long' }), // ITA-10 TODO
+  // the finale: a plain door (the road ends at the door, walk in): no legal door idea was left to ITA, see docs/cities/ITA-10.md
+  longStage({ base: room10(), acts: [actPul, actMehraab, actMori, actTokri], par: 37, shape: 'long', lives: 'act', meta: meta10 }),
 ];
