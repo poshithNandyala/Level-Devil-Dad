@@ -6,8 +6,9 @@ import { ending as e04 } from './s04';
 import { ending as e05 } from './s05';
 import { ending as e06 } from './s06';
 import { ending as e07 } from './s07';
+import { ending as e08 } from './s08';
 
-export type KohEndingKind = 'koh-manch' | 'koh-dhila-patta' | 'koh-rim-lily' | 'koh-rocking-drum' | 'koh-skylight' | 'koh-garage-nose';
+export type KohEndingKind = 'koh-manch' | 'koh-dhila-patta' | 'koh-rim-lily' | 'koh-rocking-drum' | 'koh-skylight' | 'koh-garage-nose' | 'koh-kitchen-door';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<KohEndingKind, true> {}
@@ -20,4 +21,5 @@ export const endings: Record<KohEndingKind, Ending> = {
   'koh-rocking-drum': e05,
   'koh-skylight': e06,
   'koh-garage-nose': e07,
+  'koh-kitchen-door': e08,
 };

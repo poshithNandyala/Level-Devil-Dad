@@ -19,5 +19,8 @@ export const causeLines: Record<string, string[]> = {
   'koh-gaddha': ['The cart’s nose dropped into the pothole and threw you.', 'Stand at the back for a hole: the nose lifts and skims it. Take your place early, the cart only gets quicker.'],
   'koh-balli': ['The cart’s raised nose hit the low beam.', 'Stand at the front for a beam: the nose drops and ducks under it. After a wet patch your lean is mirrored for a second.'],
   'koh-dhalan': ['The scree took you down the lane.', 'The lane is loose on foot. Ride the cart from landing to landing.'],
+  'koh-kukur': ['The lane dog went for you.', 'He keeps off an open pot: hop once before him and the smell sends him back. He goes for a lidded one.'],
+  'koh-kag': ['A crow dived at you.', 'Crows keep off an open pot. Lidded, a crow dives at where a walker will be: stop under it and it lands ahead of you.'],
+  'koh-billi': ['The cat ran at the open pot and tripped you.', 'She loves axone. Stand still half a second before her wall so the lid is back on, then walk past her.'],
   'koh-dhol': ['The log rolled over you.', 'After a double shout the log climbs the bank. Step off at the first top and keep going; at the hut hop the drum as it rolls away.'],
 };
