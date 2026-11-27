@@ -28,11 +28,15 @@ export interface Stal {
  * A stalactite over column c: starts `g0` px off the floor, grows `step` px at every drip (`period` s), is a wall for
  * `shut` s once it meets the floor, then breaks and starts again. A head bump freezes its growth for 3 s.
  */
-export function stal(w: World, list: Stal[], c: number, o: { g0: number; step: number; period: number; shut?: number; phase?: number }) {
+export function stal(w: World, list: Stal[], c: number, o: { g0: number; step: number; period: number; shut?: number; phase?: number; from?: number; startGap?: number }) {
   const s = { period: o.period, step: o.step, g0: o.g0, shut: o.shut ?? 2.0, freeze: 0, lastDrip: -1, shutAt: -1 };
-  const st: Stal = { c, gap: o.g0, closed: () => st.gap < FIT, s };
+  const st: Stal = { c, gap: o.startGap ?? o.g0, closed: () => st.gap < FIT, s };
   list.push(st);
   const phase = o.phase ?? 0;
+  // the drip clock: the stage clock, or (with `from`) the moment Dad passes that column
+  const clk = { t0: o.from === undefined ? 0 : -1 };
+  if (o.from !== undefined) onPass(w, px(o.from), (w2) => (clk.t0 = w2.tick));
+  const tsec = (w2: World) => (clk.t0 < 0 ? -1 : (w2.tick - clk.t0) / 120);
   w.add(
     new Rig(px(c), 0, 16, FL, {
       layer: 3,
@@ -52,8 +56,9 @@ export function stal(w: World, list: Stal[], c: number, o: { g0: number; step: n
           return;
         }
         if (st.s.freeze > 0) st.s.freeze--;
+        if (tsec(w2) < 0) return;
         // the drip: one step of growth per period
-        const k = Math.floor((w2.tick / 120 + phase) / st.s.period);
+        const k = Math.floor((tsec(w2) + phase) / st.s.period);
         if (st.s.lastDrip < 0) st.s.lastDrip = k;
         if (k !== st.s.lastDrip) {
           st.s.lastDrip = k;
@@ -94,8 +99,8 @@ export function stal(w: World, list: Stal[], c: number, o: { g0: number; step: n
         ctx.closePath();
         ctx.fill();
         // the drip on its way down
-        if (st.gap >= FIT && st.s.shutAt < 0) {
-          const t = (((w2.tick / 120 + phase) % st.s.period) + st.s.period) % st.s.period;
+        if (st.gap >= FIT && st.s.shutAt < 0 && tsec(w2) >= 0) {
+          const t = (((tsec(w2) + phase) % st.s.period) + st.s.period) % st.s.period;
           const k = t / st.s.period;
           box(ctx, r.x + 7, tipY + (FL - tipY) * k, 2, 4, '#BFE0F0');
         }
@@ -152,7 +157,8 @@ export const act: Act = {
   build: (w, c) => {
     const list = w.flags.shl7 as Stal[];
     cave(w, c.x, c.x + 35);
-    for (let i = 0; i < 7; i++) stal(w, list, c.x + 6 + i * 3.5, { g0: 70, step: 10, period: 0.7, shut: 1.6, phase: 0.0 });
+    // the gallery's clock starts at its checkpoint, one drip from shutting: the break comes 2.3 s after it, every try
+    for (let i = 0; i < 7; i++) stal(w, list, c.x + 6 + i * 3.5, { g0: 70, step: 10, period: 0.7, shut: 1.6, phase: 0.0, from: c.x + 2, startGap: 20 });
     sign(w, c.x + 2, 10.4, 3, 'KREM', 'shop', null, 'the gallery');
   },
 };

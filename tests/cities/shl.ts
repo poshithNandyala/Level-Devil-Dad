@@ -60,10 +60,11 @@ const tourRoute = (): Step[] => [
 ];
 
 // ------------------------------------------------------------------ SHL-02
-type Cloud = { banks: { x: (w: World) => number; w: number; end: number }[]; beams: [number, number][]; lit: (w: World, i: number) => boolean; gap: [number, number]; sun?: { period: number; inFor: number; phase: number } };
+type Cloud = { banks: { x: (w: World) => number; w: number; end: number }[]; beams: [number, number][]; lit: (w: World, i: number) => boolean; gap: [number, number]; sun?: { period: number; inFor: number; phase: number; tsec?: (w: World) => number } };
 const sunLeft = (w: World, c: Cloud) => {
   if (!c.sun) return 99;
-  const k = (((w.tick / 120 + c.sun.phase) % c.sun.period) + c.sun.period) % c.sun.period;
+  const t = (c.sun.tsec ? c.sun.tsec(w) : w.tick / 120) + c.sun.phase;
+  const k = ((t % c.sun.period) + c.sun.period) % c.sun.period;
   return k >= c.sun.inFor ? c.sun.period - k : 0;
 };
 /** a beam is good to land on if its thick middle is under it now and stays for `hold` more tiles of drift */

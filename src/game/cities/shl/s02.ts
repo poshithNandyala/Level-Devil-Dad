@@ -29,16 +29,28 @@ export interface Sun {
   /** seconds per period the high cloud covers the sun (no beam lights anything) */
   inFor: number;
   phase: number;
+  /** the sun's clock in seconds (set by cloudGap when the gap has a `from` trigger; else the stage clock) */
+  tsec?: (w: World) => number;
 }
-export const sunOut = (w: World, sun: Sun) => cyc(w, sun.period, sun.phase) >= sun.inFor;
+const sunCyc = (w: World, sun: Sun) => {
+  const t = (sun.tsec ? sun.tsec(w) : w.tick / 120) + sun.phase;
+  return ((t % sun.period) + sun.period) % sun.period;
+};
+export const sunOut = (w: World, sun: Sun) => sunCyc(w, sun) >= sun.inFor;
 /** seconds the sun stays out from now (0 if it is in) */
-export const sunLeft = (w: World, sun: Sun) => (sunOut(w, sun) ? sun.period - cyc(w, sun.period, sun.phase) : 0);
+export const sunLeft = (w: World, sun: Sun) => (sunOut(w, sun) ? sun.period - sunCyc(w, sun) : 0);
 
-export function cloudGap(w: World, key: string, gap: [number, number], beams: [number, number][], o: { w: number; end: number; speed: number; span: number; phase: number; n: number; sun?: Sun }) {
+export function cloudGap(w: World, key: string, gap: [number, number], beams: [number, number][], o: { w: number; end: number; speed: number; span: number; phase: number; n: number; sun?: Sun; from?: number }) {
   const banks: Bank[] = [];
+  // the banks' clock: the stage clock, or (with `from`) the moment Dad passes that column, so the beat from a
+  // checkpoint there is the same on every try
+  const clk = { t0: o.from === undefined ? 0 : -1 };
+  if (o.from !== undefined) onPass(w, px(o.from), (w2) => (clk.t0 = w2.tick));
+  const tsec = (w2: World) => (clk.t0 < 0 ? 0 : (w2.tick - clk.t0) / 120);
+  if (o.sun && o.from !== undefined) o.sun.tsec = tsec;
   for (let k = 0; k < o.n; k++) {
     const off = (o.span / o.n) * k;
-    banks.push({ x: (w2) => ((((w2.tick / 120) * o.speed + o.phase + off) % o.span) + o.span) % o.span + gap[0] - o.w - 2, w: o.w, end: o.end });
+    banks.push({ x: (w2) => (((tsec(w2) * o.speed + o.phase + off) % o.span) + o.span) % o.span + gap[0] - o.w - 2, w: o.w, end: o.end });
   }
   const covered = (w2: World, b: [number, number]) => (!o.sun || sunOut(w2, o.sun)) && banks.some((bk) => bk.x(w2) + bk.end <= b[0] && bk.x(w2) + bk.w - bk.end >= b[1] + 1);
   const st = { banks, beams, lit: (w2: World, i: number) => covered(w2, beams[i]), gap, sun: o.sun };
@@ -91,7 +103,7 @@ export function cloudGap(w: World, key: string, gap: [number, number], beams: [n
         ctx.beginPath();
         ctx.arc(sx, 26, 12, 0, Math.PI * 2);
         ctx.fill();
-        const k = cyc(w2, o.sun.period, o.sun.phase) / o.sun.period;
+        const k = (((((o.sun.tsec ? o.sun.tsec(w2) : w2.tick / 120) + o.sun.phase) % o.sun.period) + o.sun.period) % o.sun.period) / o.sun.period;
         const hx = sx - 150 + 300 * k;
         cloudArt(ctx, hx - 44, hx + 44, 10, 30, 0.55);
       }
@@ -170,7 +182,7 @@ export const act: Act = {
     g.fill(c.x + 6, c.x + 24, 15, 17, '.');
   },
   build: (w, c) => {
-    cloudGap(w, 'shl2a', [c.x + 6, c.x + 24], [[c.x + 9, c.x + 11], [c.x + 14, c.x + 16], [c.x + 19, c.x + 21]], { w: 14, end: 2, speed: 1.875, span: 40, phase: 10, n: 2 });
+    cloudGap(w, 'shl2a', [c.x + 6, c.x + 24], [[c.x + 9, c.x + 11], [c.x + 14, c.x + 16], [c.x + 19, c.x + 21]], { w: 14, end: 2, speed: 1.875, span: 40, phase: 10, n: 2, from: c.x });
     sign(w, c.x + 2, 10.4, 3, 'SUN', 'shop', null, 'through the pines');
   },
 };
@@ -184,7 +196,7 @@ export const actSun: Act = {
     g.fill(c.x + 6, c.x + 20, 15, 17, '.');
   },
   build: (w, c) => {
-    cloudGap(w, 'shl2b', [c.x + 6, c.x + 20], [[c.x + 9, c.x + 11], [c.x + 15, c.x + 17]], { w: 20, end: 2, speed: 2.5, span: 44, phase: 14, n: 2, sun: { period: 12, inFor: 2.0, phase: 5 } });
+    cloudGap(w, 'shl2b', [c.x + 6, c.x + 20], [[c.x + 9, c.x + 11], [c.x + 15, c.x + 17]], { w: 20, end: 2, speed: 2.5, span: 44, phase: 14, n: 2, sun: { period: 12, inFor: 2.0, phase: 10.5 }, from: c.x });
     sign(w, c.x + 2, 10.4, 3, 'SUN', 'shop', null, 'behind a high cloud');
   },
 };
