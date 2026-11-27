@@ -340,13 +340,17 @@ export const act6: Act = {
  *  have stood on the one before. Climbing fast (as at the sinking spokes) drops you in */
 /** seconds a rising spoke holds you before it goes back under */
 const SINK = 3.0;
-export function risingSpokes(id: string, dir: 1 | -1, key: string): Act {
+/** `whole` (the finale's turn, law 7): the spokes rise one after another only while you wait on the bank; leave
+ *  it and the next one stops. Wait there for the whole stair, then climb it straight up. */
+export function risingSpokes(id: string, dir: 1 | -1, key: string, whole = false): Act {
   const n = 8;
   const top = dir > 0 ? 10 : 12;
   return {
     id,
     w: 28,
-    advice: dir > 0 ? 'These spokes lie under the water and rise one at a time, each only after you have stood on the one before. Don’t hurry: wait on each until the next is up, then go at once: three seconds on one and it goes back under.' : 'Down to the far bank on rising spokes: each comes up only once you have stood on the one before. Wait for each, and go the moment it is up.',
+    advice: whole
+      ? 'These spokes rise one after another only while you wait on the bank: step off it and the next one stops. Wait there until the whole stair is up, then climb it straight up: three seconds on one and it goes back under.'
+      : dir > 0 ? 'These spokes lie under the water and rise one at a time, each only after you have stood on the one before. Don’t hurry: wait on each until the next is up, then go at once: three seconds on one and it goes back under.' : 'Down to the far bank on rising spokes: each comes up only once you have stood on the one before. Wait for each, and go the moment it is up.',
     cps: [],
     paint: (g, c) => {
       g.pit(c.x + 2, c.x + 24);
@@ -355,12 +359,24 @@ export function risingSpokes(id: string, dir: 1 | -1, key: string): Act {
     },
     build: (w, c) => {
       const ch = channel(w, c.x + 2, c.x + 24, 'bbi-udaya', 'water');
-      const st = { stood: [] as number[], sunk: false };
+      const st = { stood: [] as number[], sunk: false, prog: 0, on: false, onNext: false };
       // a spoke you stay on too long goes back under: the death line says so
       ch.o.tick = (r) => {
         r.hazard!.cause = st.sunk ? 'bbi-dooba' : 'bbi-udaya';
       };
       (w.flags[key] as unknown) = st;
+      if (whole)
+        w.add(
+          new Rig(0, 0, 0, 0, {
+            tick: (_r, w2) => {
+              st.on = st.onNext;
+              st.onNext = false;
+              // it rises only while you wait on the bank: step off it, on to a spoke or into the air, and it stops
+              const p = w2.player;
+              if (p.x > c.X(1) && p.x < c.X(2) && p.onGround && !st.on) st.prog += 1 / 120;
+            },
+          }),
+        );
       for (let k = 0; k < n; k++) {
         const x = c.X(3 + 2.5 * k);
         const y0 = dir > 0 ? FL - 16 - 9 * k : FL - 48 + 4 * k;
@@ -372,7 +388,8 @@ export function risingSpokes(id: string, dir: 1 | -1, key: string): Act {
               if (r.rides(w2) && st.stood[k] === undefined) st.stood[k] = w2.tick;
               // spoke 1 rises as you reach the edge; each next one a second after you stood on the last
               const prev = k === 0 ? (w2.player.x > c.X(1) ? (st.stood[-1] ??= w2.tick) : undefined) : st.stood[k - 1];
-              let up = prev !== undefined ? Math.min(1, Math.max(0, (w2.tick - prev) / 120 - 1.0) / 0.3) : 0;
+              if (whole && r.rides(w2)) st.onNext = true;
+              let up = whole ? Math.min(1, Math.max(0, st.prog - 0.55 * (k + 1)) / 0.3) : prev !== undefined ? Math.min(1, Math.max(0, (w2.tick - prev) / 120 - 1.0) / 0.3) : 0;
               // three seconds after you stood on it, it goes back under
               if (st.stood[k] !== undefined && (w2.tick - st.stood[k]) / 120 > SINK) {
                 if (r.rides(w2)) st.sunk = true;

@@ -16,7 +16,7 @@ import { parasol } from './s03';
 import { patraAct } from './s05';
 import { loom, type LoomCfg } from './s06';
 import { bagudiAct, deepaAct, padaAct, stagePit, troupe, troupeAct, type TroupeCfg } from './s07';
-import { chariot, templeWall, type ChariotCfg } from './s09';
+import { chariot, risingSpokes, templeWall, type ChariotCfg } from './s09';
 
 export const C10: ChariotCfg = { c0: 18, len: 10, stopAt: 36, hub: 30, hubY: FL - 58, wait: 0.35, any: true, bare: true };
 export const K10 = { x0: 5, travel: 9, gap: [9, 35] as [number, number] };
@@ -91,7 +91,7 @@ export const act1: Act = {
  *  this drummer plays while they hold the pose and stops while they whirl, so going at the drum's stop, as the
  *  Raja night taught, is going into the whirl. */
 export const L10: LoomCfg = { c0: 3, n: 6, speeds: [3, 1, 4, 2, 4, 1], beat: 0.85, hold: 2.0, shuttle: [] };
-export const T10: TroupeCfg = { c0: 14, n: 9, drum: 1.4, hold: 1.5, poses: ['wheel', 'tower', 'bridge'], form: 0.3, rev: true };
+export const T10: TroupeCfg = { c0: 14, n: 9, drum: 1.4, hold: 1.5, poses: ['tower', 'bridge'], form: 0.3, rev: true };
 export const act2: Act = {
   id: 'bbi10-tana',
   w: 28,
@@ -135,6 +135,10 @@ export const act6 = padaAct('bbi10-pada', 'bbi10pd', true);
 /** act 7, bagudi turned round (law 7): the yard taught you to pass "it" back at the line; tonight the boys let
  *  "it" through and tackle anyone else, for a moment after the tag */
 export const act7 = bagudiAct('bbi10-bagudi', 'bbi10bg', true);
+
+/** act 8, the rising spokes turned round (law 7): Konark taught you to wait on each spoke for the next one. These
+ *  rise only while nobody stands on a spoke, so stepping on stops the stair: wait on the bank for all of it */
+export const act8 = risingSpokes('bbi10-udaya', 1, 'bbi10u', true);
 
 /** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */
 export const RIB = { period: 2.2, shut: 0.5, at: 9 };
