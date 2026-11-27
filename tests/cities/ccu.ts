@@ -799,17 +799,17 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'ccu05-lane': (x) => [
     steerHop(px(x + 1.8), 12, 'up on the first'),
     steerHop(px(x + 3.8), 10, 'up, and straight on (painted past the waist)'),
-    walkOnto(x + 5, 'walk down on to the dry one'),
+    walkOnto(x + 5, 'walk down on to the one just started'),
     { hold: 'R', until: X(x + 6.2), max: 120 },
     steerHop(px(x + 8.8), 12, 'across'),
     { hold: 'R', until: X(x + 9.2), max: 120 },
     steerHop(px(x + 11.8), 12, 'up'),
-    walkOnto(x + 13, 'walk down on to the dry one'),
+    walkOnto(x + 13, 'walk down on to the one just started'),
     walkOnto(x + 15, 'and down again, one step'),
     { hold: 'R', until: X(x + 16.2), max: 120 },
     steerHop(px(x + 18.8), 12, 'up on the one nearly done, and on'),
     steerHop(px(x + 21.8), 12, 'up'),
-    walkOnto(x + 23, 'walk down on to the dry one'),
+    walkOnto(x + 23, 'walk down on to the one just started'),
     { hold: 'R', until: X(x + 24.2), max: 120 },
     steerHop(px(x + 26.8), 12, 'across to the last'),
     { hold: 'R', until: X(x + 27.2), max: 120 },
@@ -984,7 +984,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     const steps = [...ROOM[stage](), ...list.slice(0, i).flatMap(([a, x]) => actRoutes[a](x)), ...actRoutes[id](list[i][1]).slice(0, k), ...MOVE[move]];
     (mistakes[stage] ??= []).push({ what, steps, cause });
   };
-  act('CCU-05', 'ccu05-lane', 1, 'jump', 'a jump down from the first figure in the lane', 'ccu-phata');
+  act('CCU-05', 'ccu05-lane', 1, 'jump', 'a long jump off the first figure in the lane, past the next', 'ccu-ganga');
   act('CCU-05', 'ccu05-lane', 1, 'stay', 'resting on the first figure in the lane', 'ccu-murti');
   act('CCU-05', 'ccu05-ghat', 1, 'stay', 'waiting on the first figure while they finish in order', 'ccu-murti');
   act('CCU-05', 'ccu05-ghat', 3, 'jump', 'a jump down off the dry one by the ghat', 'ccu-phata');

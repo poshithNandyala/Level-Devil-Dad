@@ -1072,13 +1072,14 @@ const kumor10: Act = {
 };
 
 
-/** CCU-05 act: the long lane to the ghat steps, every kind of figure mixed: read each one before you land */
+/** CCU-05 act: the long lane to the ghat steps, figures at every stage of paint: read each one's paint line before you land.
+ *  Recast per DECISIONS.md S4: no dry clay here (walk-down-never-jump is RNC-07's), only the paint-line clock */
 const lane: Act = {
   id: 'ccu05-lane',
   w: 34,
   cp0: false,
   cps: [-5],
-  advice: 'The long lane down to the river: every kind of figure, mixed. Read each one before you land: below the waist, stay; above it, go on at once; pale and dry, walk down on to it, never jump.',
+  advice: 'The long lane down to the river: every kind of figure, mixed. Read each one before you land: below the waist, stay; above it, go on at once; nearly done, step straight across. Every one here is being painted: watch the line, not the height.',
   paint: (g, c) => {
     g.pit(c.x, c.x + 29);
   },
@@ -1090,14 +1091,14 @@ const lane: Act = {
       [
         [x + 1, 2, 0.2, 0.08, 'woman'],
         [x + 3, 3, 0.7, 0.12, 'horse'],
-        [x + 5, 2, 0, 0, 'man'],
+        [x + 5, 2, 0.1, 0.05, 'man'],
         [x + 8, 2, 0.1, 0.08, 'horse'],
         [x + 11, 3, 0.4, 0.1, 'woman'],
-        [x + 13, 2, 0, 0, 'man'],
-        [x + 15, 1, 0, 0, 'horse'],
+        [x + 13, 2, 0.1, 0.05, 'man'],
+        [x + 15, 1, 0.1, 0.05, 'horse'],
         [x + 18, 2, 0.5, 0.08, 'man'],
         [x + 21, 3, 0.1, 0.08, 'woman'],
-        [x + 23, 2, 0, 0, 'horse'],
+        [x + 23, 2, 0.1, 0.05, 'horse'],
         [x + 26, 2, 0.3, 0.1, 'man'],
       ],
       c.X(0),
