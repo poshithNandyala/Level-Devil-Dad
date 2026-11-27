@@ -210,7 +210,9 @@ const bagan: Act = {
   id: 'dis03-bagan',
   w: 34,
   advice: 'A sprinkler runs over the path. While it sprays and for a little after, the path is wet and you slide: you cannot stop behind her. Wait before the pipe until it is dry again, then follow her as before.',
-  cps: [3.5, 14.5, 24.5],
+  // fix round 1 (QA F6): 3.5 -> 0.5 (she waits at x+5); the third (24.5) is gone: anywhere the route follows her, she is
+  // about 4 tiles ahead, so the only checkpoints 4.5+ tiles from a walking respawn are where you wait for her
+  cps: [0.5, 14.5],
   build: (w, c) => {
     const x = c.x;
     garden(w, [x + 18, x + 27], { x: px(x + 5), from: px(x), endX: px(x + 33) });
@@ -746,7 +748,7 @@ const ownFrom = (a: Act, from: number, map: Record<string, string>): Act => ({
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), shape: 'tour', meta: { family: 'carrier-spills-on-contact', betrayals: ['carrier-spill'], ending: 'dis-tea-tray' } },
   longStage({ base: charRoom(), acts: [chapori, charHorn], twist: 'dis-hut-shut', par: 36, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
-  longStage({ base: teaRoom(), acts: [bagan], cps: [12], twist: 'dis-muga-reel', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-muga-reel' } }),
+  longStage({ base: teaRoom(), acts: [bagan], cps: [10], twist: 'dis-muga-reel', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-muga-reel' } }),
   longStage({ base: talatalRoom(), acts: [talatalBatah], twist: 'dis-laru-plate', par: 34, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } /* repo allocation.json label; v3 names this slot collapsing-stair-penultimate-rises (the integrator lands it) */ }),
   longStage({ base: gamosaRoom(), acts: [atithi, own(gamSanko, { 'dis-pit': 'dis-sanko-pit' }), gamFeast, gamKaath, own(gamMachan, { 'dis-luit': 'dis-machan-luit' })], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
   longStage({ base: majuliRoom(), acts: [own(majuliWake, { 'dis-bank': 'dis-wake-bank' }), majuliTraps, majuliFlag], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
