@@ -324,7 +324,7 @@ export const act9: Act = {
     river(w, c.x + 19, c.x + 20);
     // the bank across the stream is 7 tiles: its checkpoint (+21.5) is clear of a tap-jump
     thinShore(w, c.x + 28, c.x + 34);
-    yak(w, c.X(4.5), [{ wait: 0.6 }, { to: c.X(9) }, { wait: 1.8, photo: true }, { to: c.X(16.5) }, { sink: true }], 'mount', 'gtk10y');
+    yak(w, c.X(4.5), [{ wait: 0.6 }, { to: c.X(9) }, { wait: 1.8, photo: true }, { to: c.X(16.5) }, { wait: 0.6 }, { sink: true }], 'mount', 'gtk10y');
     // the second yak stands on the far bank once it is there: the handler holds it for the next tourist
     yak(w, c.X(26.2), [{ wait: 0.6 }, { to: c.X(36) }, { wait: 9999 }], 'mount', 'gtk10y2');
   },

@@ -36,7 +36,12 @@ export function yak(w: World, x0: number, legs: Leg[], startX: number | 'mount',
         const leg = legs[s.leg % legs.length];
         s.photo = false;
         if ('sink' in leg) {
-          // into the river: forward and down, and the water takes whoever is still on its back
+          // into the river: forward and down, and the water takes whoever is still on its back. Once it is wading
+          // its back is no step: you can't get back on to it from the bank
+          if (!r.s.wading) {
+            r.s.wading = true;
+            if (!r.carries(w2)) r.setSolid(false);
+          }
           if (r.y < FL + 30) r.moveTo(w2, r.x + YAK.speed / 120, r.y + 0.5);
           return;
         }
@@ -183,7 +188,7 @@ export function room(): LevelDef {
       yak(
         w,
         px(2.5),
-        [{ wait: 0.6 }, { to: px(9) }, { wait: 1.6, photo: true }, { to: px(20.5) }, { sink: true }],
+        [{ wait: 0.6 }, { to: px(9) }, { wait: 1.6, photo: true }, { to: px(20.5) }, { wait: 0.6 }, { sink: true }],
         'mount',
         'gtk9',
       );
@@ -260,8 +265,8 @@ export const act3: Act = {
     // the bank across the stream is 7 tiles: its checkpoint (+23.5) is clear of a tap-jump
     thinShore(w, c.x + 31, c.x + 38);
     river(w, c.x + 44, c.x + 45);
-    yak(w, c.X(3), [{ wait: 0.5 }, { to: c.X(10) }, { wait: 1.8, photo: true }, { to: c.X(18.5) }, { sink: true }], 'mount', 'gtk9c');
-    yak(w, c.X(28.2), [{ wait: 0.5 }, { to: c.X(33) }, { wait: 1.8, photo: true }, { to: c.X(41) }, { sink: true }], 'mount', 'gtk9c2');
+    yak(w, c.X(3), [{ wait: 0.5 }, { to: c.X(10) }, { wait: 1.8, photo: true }, { to: c.X(18.5) }, { wait: 0.6 }, { sink: true }], 'mount', 'gtk9c');
+    yak(w, c.X(28.2), [{ wait: 0.5 }, { to: c.X(33) }, { wait: 1.8, photo: true }, { to: c.X(41) }, { wait: 0.6 }, { sink: true }], 'mount', 'gtk9c2');
     sign(w, c.x + 16, 8.6, 3.4, 'MORAINE', 'wood', null, 'firm ground');
     sign(w, c.x + 40, 8.6, 3.4, 'TSOMGO', 'wood', null, 'far bank');
   },
