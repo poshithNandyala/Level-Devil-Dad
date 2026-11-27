@@ -81,7 +81,7 @@ export function strollers(w: World, c: number, key: string, cause = 'lko-ganj', 
 }
 
 /** an open nala (drain) across the pavement, columns [c0, c1]: fall in and that's the evening over */
-export function nala(w: World, c0: number, c1: number, cause = 'lko-ganj') {
+export function nala(w: World, c0: number, c1: number, cause: string) {
   const x0 = px(c0),
     x1 = px(c1 + 1);
   w.add(
@@ -94,7 +94,11 @@ export function nala(w: World, c0: number, c1: number, cause = 'lko-ganj') {
   );
   const z = w.add(new Zone(x0 + 1, FLOOR + 16, x1 - x0 - 2, 30, cause));
   w.onTick((w2) => {
-    if (w2.flags.shoveCause) z.hazard.cause = w2.flags.shoveCause;
+    // a shove names the death only until you are back on your feet: a later walk into a nala is your own
+    // (staggering back in off the shove is still the shove's: a full second on your feet clears it)
+    if (!w2.player.onGround || w2.player.stun) w2.flags.shoveAir = w2.tick;
+    if (w2.tick - ((w2.flags.shoveAir as number | undefined) ?? 0) > 120) w2.flags.shoveCause = undefined;
+    z.hazard.cause = (w2.flags.shoveCause as string | undefined) ?? cause;
   });
   return z;
 }
@@ -143,7 +147,7 @@ function ganjRoom(): LevelDef {
     build(w: World) {
       door(w);
       arcade(w, 0, 31);
-      nala(w, 9, 10);
+      nala(w, 9, 10, 'lko-ganj');
       strollers(w, 17, 'ganj1', 'lko-ganj', -210);
       sign(w, 2.2, 10.4, 4.2, 'HAZRATGANJ', 'shop', null, 'ganjing');
       rival(w, 3, 15, 1, tara(5));
@@ -541,7 +545,7 @@ export const dukaan: Act = {
   build: (w, c) => {
     const x = c.x;
     arcade(w, x, x + 23);
-    nala(w, x + 2, x + 3);
+    nala(w, x + 2, x + 3, 'lko-dukaan-nala');
     const sx = c.X(9) + 8;
     let back = -99;
     w.add(

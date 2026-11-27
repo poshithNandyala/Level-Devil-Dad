@@ -202,6 +202,7 @@ const seedha = makeGuru(
   'The guru again, stamping as before, but tonight she dances for the guests and nobody mirrors her: a stamp swaps nothing. Keep pressing the way you were going, hop the red strips, and never stop on her floor.',
   'SEEDHA',
   'lko-seedha',
+  'lko-seedha-aage',
   'lko-seedha-ruka',
 );
 /** The hall door again, but tonight the maze stays put: the arch you saw is the arch. And the floor you

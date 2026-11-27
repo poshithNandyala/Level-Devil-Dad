@@ -362,7 +362,7 @@ export const rang: Act = {
     const S = { t0: -1, lastRide: -999 };
     const ph = (w2: World) => (S.t0 < 0 ? 0 : (w2.tick - S.t0) % RANG.period);
     w.flags[c.f('ph')] = ph;
-    const vat = w.add(new Zone(c.X(3) + 1, FLOOR + 10, px(16) - 2, 40, 'lko-kunda'));
+    const vat = w.add(new Zone(c.X(3) + 1, FLOOR + 10, px(16) - 2, 40, 'lko-rang-vat'));
     w.add(
       new Art((ctx, w2) => {
         const g = ctx.createLinearGradient(0, FLOOR, 0, FLOOR + 48);
@@ -396,7 +396,7 @@ export const rang: Act = {
         b.move(w2, 0, want - b.y);
       }
       // carried down on the stitched flowers, or jumped into the dye
-      vat.hazard.cause = p.cx < c.X(12) ? 'lko-kunda' : w2.tick - S.lastRide < 60 ? 'lko-rang' : 'lko-rang-kood';
+      vat.hazard.cause = p.cx < c.X(12) ? 'lko-rang-vat' : w2.tick - S.lastRide < 60 ? 'lko-rang' : 'lko-rang-kood';
     });
     sign(w, x + 0.2, 10.4, 3, 'RANG', 'shop', null, 'neel');
   },

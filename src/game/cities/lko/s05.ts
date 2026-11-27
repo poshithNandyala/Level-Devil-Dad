@@ -98,7 +98,9 @@ function drawKebab(ctx: Ctx, k: Galouti, w: World) {
 }
 
 /** the hot iron tawa from column c0 to c1: touch it and you're cooked */
-export function tawa(w: World, c0: number, c1: number) {
+/** the bare tawa under the heaps: touch it and you burn. Its own cause, apart from 'lko-tawa' (a flat heap
+ *  the tawa burned through), so a walk on to the bare metal is never told about flat galouti */
+export function tawa(w: World, c0: number, c1: number, cause = 'lko-tawa-khali') {
   const x0 = px(c0),
     x1 = px(c1 + 1);
   w.add(
@@ -113,11 +115,11 @@ export function tawa(w: World, c0: number, c1: number) {
       for (let x = x0 + 4, k = 0; x < x1 - 4; x += 9, k++) ctx.fillRect(x, FLOOR + 10 + ((k * 5 + (w2.tick >> 3)) % 4), 4, 3);
     }, -2),
   );
-  return w.add(new Zone(x0, FLOOR - 2, x1 - x0, 10, 'lko-tawa'));
+  return w.add(new Zone(x0, FLOOR - 2, x1 - x0, 10, cause));
 }
 
 /** the seekh rack hanging over the stall: skewers point down, their tips `low` px above the tawa */
-export function seekhRack(w: World, c0: number, c1: number, low: number) {
+export function seekhRack(w: World, c0: number, c1: number, low: number, cause = 'lko-seekh') {
   const x0 = px(c0),
     x1 = px(c1 + 1),
     tip = FLOOR - low;
@@ -137,7 +139,7 @@ export function seekhRack(w: World, c0: number, c1: number, low: number) {
       ctx.fillRect(x1 + 3, tip - 26, 3, FLOOR - tip + 26);
     }, 2),
   );
-  return w.add(new Zone(x0, tip - 22, x1 - x0, 22, 'lko-seekh'));
+  return w.add(new Zone(x0, tip - 22, x1 - x0, 22, cause));
 }
 
 // ================================================================ the room
@@ -198,7 +200,7 @@ export const lane: Act = {
   build: (w, c) => {
     const x = c.x;
     tawa(w, x + 3, x + 24);
-    seekhRack(w, x + 5, x + 24, 30);
+    seekhRack(w, x + 5, x + 24, 30, 'lko-seekh-lane');
     // the slab: one tile per piece, the first one squashes when you stand on it, each squashes the next
     const pcs = Array.from({ length: 22 }, (_, i) => w.add(new Galouti(px(x + 3 + i), false, i === 0 ? 40 : 1e9, 150)));
     w.flags[c.f('slab')] = pcs;
@@ -226,7 +228,7 @@ export const ulta: Act = {
   build: (w, c) => {
     const x = c.x;
     tawa(w, x + 2, x + 23);
-    seekhRack(w, x + 4, x + 23, 30);
+    seekhRack(w, x + 4, x + 23, 30, 'lko-seekh-ulta');
     const pcs = Array.from({ length: 22 }, (_, i) => w.add(new Galouti(px(x + 2 + i), false, 1e9, 90)));
     const K = { t0: -1, i: pcs.length, done: false, kx: px(x + 24) + 8 };
     w.flags[c.f('slab')] = pcs;
@@ -285,7 +287,7 @@ export const bhara: Act = {
     w.flags[c.f('rack')] = R;
     const x0 = px(x + 1.5),
       x1 = px(x + 10.5);
-    const z = w.add(new Zone(x0, FLOOR - R.tip - 22, x1 - x0, 22, 'lko-seekh'));
+    const z = w.add(new Zone(x0, FLOOR - R.tip - 22, x1 - x0, 22, 'lko-seekh-bhara'));
     const ph = (w2: World) => (R.t0 < 0 ? 0 : (w2.tick - R.t0) % R.period);
     w.flags[c.f('toLift')] = (w2: World) => (R.t0 < 0 ? 999 : R.period - R.up - ph(w2));
     w.flags[c.f('upNow')] = (w2: World) => {
@@ -393,8 +395,9 @@ export const ghee: Act = {
   advice: 'The cook walks his ladle of ghee down the row. These heaps are set: your weight flattens nothing. A heap under fresh ghee sizzles down nearly flat for a moment, then crusts back up full: hop while it sizzles, and don’t stand in the sizzle.',
   build: (w, c) => {
     const x = c.x;
-    tawa(w, x + 3, x + 13);
-    seekhRack(w, x + 3, x + 13, 72);
+    // these heaps never go flat, so a death on the tawa here is a landing on the bare tawa between them
+    tawa(w, x + 3, x + 13, 'lko-ghee-tawa');
+    seekhRack(w, x + 3, x + 13, 72, 'lko-seekh-ghee');
     const heaps = GHEE.map((d) => w.add(new GheeHeap(px(x + d))));
     w.flags[c.f('heaps')] = heaps;
     const L = { x: c.X(0), go: false };
@@ -580,7 +583,7 @@ export const charkhi: Act = {
     const x0 = px(x + 3),
       x1 = px(x + 15),
       tip = FLOOR - CHARKHI.tip;
-    const z = w.add(new Zone(x0, tip - 22, x1 - x0, 22, 'lko-seekh'));
+    const z = w.add(new Zone(x0, tip - 22, x1 - x0, 22, 'lko-seekh-charkhi'));
     w.onTick((w2) => {
       if (S.t0 < 0 && w2.player.cx > c.X(1)) S.t0 = w2.tick;
       // tips down, or still turning: the skewers are in the way of any hop

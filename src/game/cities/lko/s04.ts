@@ -119,7 +119,7 @@ export function shadows(w: World, heaps: Heap[]) {
 }
 
 /** the pit under the heaps: a wide iron karahi of simmering milk */
-export function karahi(w: World, c0: number, c1: number) {
+export function karahi(w: World, c0: number, c1: number, cause = 'lko-malai') {
   const x0 = px(c0),
     x1 = px(c1 + 1);
   w.add(
@@ -137,7 +137,7 @@ export function karahi(w: World, c0: number, c1: number) {
       }
     }, -5),
   );
-  return w.add(new Zone(x0, FLOOR + 16, x1 - x0, 40, 'lko-malai'));
+  return w.add(new Zone(x0, FLOOR + 16, x1 - x0, 40, cause));
 }
 
 /** the low sun, a red-gold disc at the end of the lane, and its warm haze */
@@ -269,7 +269,7 @@ const gali: Act = {
           ctx.fillRect(px(sc) - px(L), px(13) - 6, px(L), FLOOR - px(13) + 40);
         }, -4),
       );
-      karahi(w, sc - (s === 0 ? 11 : 12), sc - 1);
+      karahi(w, sc - (s === 0 ? 11 : 12), sc - 1, 'lko-chowk');
     });
     w.flags[c.f('len')] = len;
     sign(w, x + 0.2, 10.4, 3.2, 'KULHAD', 'shop', null, 'chowk');

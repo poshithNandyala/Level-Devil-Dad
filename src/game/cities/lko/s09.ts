@@ -547,6 +547,9 @@ export const girah: Act = {
     // when you left the ground: in the red after the tumble had cleared (you waited it out), or in the white
     let left: 'tumble-late' | 'white' | 'ok' = 'ok';
     let was = true;
+    // how long you stood on the roof before you set off: a long stand late in the red is waiting it out
+    let stood = 0;
+    let waited = false;
     const tumbling = (w2: World) => {
       const o = f.order(w2);
       return f.t0 >= 0 && o.c === 'red' && 1.4 - o.left < TUMBLE;
@@ -557,9 +560,11 @@ export const girah: Act = {
       if (was && !p.onGround && p.cx > c.X(2)) {
         const o = f.order(w2);
         left = o.c === 'white' ? 'white' : tumbling(w2) ? 'ok' : 'tumble-late';
+        waited = left === 'tumble-late' && stood >= 30;
       }
+      stood = p.onGround && Math.abs(p.vx) < 10 ? stood + 1 : 0;
       was = p.onGround;
-      fl.z.hazard.cause = left === 'white' ? 'lko-kabootar' : 'lko-girah';
+      fl.z.hazard.cause = left === 'white' ? 'lko-kabootar' : waited ? 'lko-girah' : 'lko-girah-der';
     });
     w.add(
       new Art((ctx, w2) => {

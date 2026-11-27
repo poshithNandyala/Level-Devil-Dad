@@ -181,7 +181,7 @@ const toota: Act = {
     const x = c.x;
     mazeWall(w, x, x + 29, [11, 15]);
     arch(w, c.X(3) + 8, FLOOR, { x: c.X(5) + 8, y: px(11) }, c.f('a1'));
-    const wz = well(w, x + 9, x + 24);
+    const wz = well(w, x + 9, x + 24, 'lko-toota-kuan');
     const bx = c.X(7) + 8;
     let prev = w.player.cx;
     w.onTick((w2) => {
@@ -346,7 +346,7 @@ export const utar: Act = {
   build: (w, c) => {
     const x = c.x;
     mazeWall(w, x, x + 23, [7, 11, 15]);
-    well(w, x, x + 17);
+    well(w, x, x + 17, 'lko-utar');
     arch(w, c.X(8) + 8, px(11), { x: c.X(10) + 8, y: px(7) }, c.f('a1'), { x: c.X(18) + 8, y: FLOOR });
     hooks(w, x + 9, x + 12, px(6), 'lko-bhool', false);
     arch(w, c.X(21) + 8, FLOOR, { x: c.X(23) + 8, y: px(11) }, c.f('a2'));
@@ -361,24 +361,26 @@ export const utar: Act = {
  *  of the well. */
 export const wapas: Act = {
   id: 'lko08-wapas',
-  w: 22,
+  w: 28,
   advice: 'Up through the first arch on to a gallery over the well, and the gallery goes nowhere: forward through its arch at a jump is the hook roof, and its end is over the well. Walk on past that arch, turn round, and jump back through it the other way: an arch taken backwards takes you a floor down, out past the well.',
-  cps: [17.5],
+  cps: [23.5],
   paint: (g, c) => {
     const x = c.x;
-    g.pit(x + 4, x + 15, 15);
+    // the well runs on well past the gallery's end, so walking (or jumping) off the end is a fall into it
+    g.pit(x + 4, x + 21, 15);
     g.fill(x + 3, x + 14, 11, 11, '=');
-    g.fill(x + 12, x + 16, 7, 7, '#');
-    g.fill(x + 20, x + 21, 11, 11, '=');
+    // the vault comes low over the gallery's end, so a jump off the end cannot carry over the well
+    g.fill(x + 12, x + 19, 7, 7, '#');
+    g.fill(x + 26, x + 27, 11, 11, '=');
   },
   build: (w, c) => {
     const x = c.x;
-    mazeWall(w, x, x + 21, [7, 11, 15]);
+    mazeWall(w, x, x + 27, [7, 11, 15]);
     // and a plain arch at the end, back up to the gallery that leads to the door
-    arch(w, c.X(19) + 8, FLOOR, { x: c.X(21) + 8, y: px(11) }, c.f('a3'));
-    well(w, x + 4, x + 15, 'lko-wapas');
+    arch(w, c.X(25) + 8, FLOOR, { x: c.X(27) + 8, y: px(11) }, c.f('a3'));
+    well(w, x + 4, x + 21, 'lko-wapas');
     arch(w, c.X(2) + 8, FLOOR, { x: c.X(4) + 8, y: px(11) }, c.f('a1'));
-    arch(w, c.X(11) + 8, px(11), { x: c.X(13) + 8, y: px(7) }, c.f('a2'), null, { x: c.X(17) + 8, y: FLOOR });
+    arch(w, c.X(11) + 8, px(11), { x: c.X(13) + 8, y: px(7) }, c.f('a2'), null, { x: c.X(23) + 8, y: FLOOR });
     hooks(w, x + 12, x + 16, px(6), 'lko-bhool', false);
     w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Har darwaza ek jaisa hai. | Every doorway is alike.', 2.2));
     sign(w, x + 0.2, 10.4, 3, 'WAPAS', 'shop', null, 'ulte paon');
@@ -406,7 +408,7 @@ export const upar: Act = {
   build: (w, c) => {
     const x = c.x;
     mazeWall(w, x, x + 25, [8, 10, 15]);
-    well(w, x + 8, x + 20);
+    well(w, x + 8, x + 20, 'lko-upar');
     arch(w, c.X(1) + 8, FLOOR, { x: c.X(4) + 8, y: px(8) }, c.f('a0'));
     for (const t of [9, 13, 17]) arch(w, c.X(t) + 16, FLOOR, { x: c.X(t) + 16, y: px(5) }, c.f('a' + t));
     hooks(w, x + 9, x + 19, px(4), 'lko-bhool', false);

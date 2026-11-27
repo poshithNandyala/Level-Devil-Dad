@@ -310,7 +310,7 @@ export const mehfil: Act = {
  *  the next stamp they swap back. Every stamp is a change of state: press the other way, at once. Go back
  *  over a red strip and it rings; stand still on her floor and that's a bow, and she spins to you. */
 const GURU = { first: 70, every: 150, strips: [4, 9, 14, 19], from: 3, to: 23 };
-export const makeGuru = (id: string, flip: boolean, advice: string, word: string, stripCause = 'lko-ghungroo', stopCause = 'lko-guru-ruka'): Act => ({
+export const makeGuru = (id: string, flip: boolean, advice: string, word: string, stripCause: string, aheadCause: string, stopCause: string): Act => ({
   id,
   w: 28,
   cp0: false,
@@ -327,7 +327,8 @@ export const makeGuru = (id: string, flip: boolean, advice: string, word: string
       w,
       GURU.strips.map((s) => [x + s, x + s] as [number, number]),
       (w2, sx) => {
-        d.call(w2, sx, stripCause);
+        // back on to a strip (moving left), or on to a strip ahead: two different mistakes, two lines
+        d.call(w2, sx, w2.player.vx < 0 ? stripCause : aheadCause);
         chase = w2.tick + 90;
       },
     );
@@ -387,6 +388,7 @@ export const guru = makeGuru(
   'The guru’s rule: the student mirrors her. At every stamp of her foot your left and right swap, and at the next stamp they swap back. Each stamp is a change: press the other way at once. Go back over a red strip and it rings; stop still on her floor and that is a bow, and she spins to you.',
   'GURU',
   'lko-guru',
+  'lko-guru-aage',
   'lko-guru-ruka',
 );
 

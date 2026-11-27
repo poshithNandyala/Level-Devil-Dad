@@ -641,12 +641,12 @@ actRoutes['lko08-utar'] = (x) => [
 ];
 actRoutes['lko08-wapas'] = (x) => [
   hop(x + 2, x + 4.5, 'at a jump through the first arch: up on to the gallery'),
-  walkTo(x + 13.4, 300, 'on foot past its arch'),
+  walkTo(x + 13, 300, 'on foot past its arch'),
   { policy: () => ({ move: 'L', jump: true }), ticks: 12, note: 'turn and jump back through it' },
   { hold: 'L', until: (w) => w.player.onGround, max: 200 },
-  walkTo(x + 17.6, 300, 'out past the well'),
-  hop(x + 19, x + 21, 'up through the plain arch to the gallery'),
-  runTo(x + 21.6, 200),
+  walkTo(x + 23.6, 300, 'out past the well'),
+  hop(x + 25, x + 27, 'up through the plain arch to the gallery'),
+  runTo(x + 27.6, 200),
 ];
 actRoutes['lko08-upar'] = (x) => [
   hop(x + 1, x + 3.5, 'at a jump through the first arch: up to the high ledge'),
@@ -902,21 +902,21 @@ mistakes['LKO-05'] = [];
 mistakes['LKO-05'].push(
   { what: 'down the long tawa, hopping straight off the first full heap', steps: [...room05, runTo(actX('LKO-05', 0) + 0.5, 300), hops([actX('LKO-05', 0) + 3, actX('LKO-05', 0) + 6]), until(done, 300)], cause: 'lko-seekh' },
   { what: 'down the long tawa, waiting on a flat one for it to squash, as on the full ones', steps: [...room05, runTo(actX('LKO-05', 0) + 0.5, 300), hops([actX('LKO-05', 0) + 3, [actX('LKO-05', 0) + 6, kflat('lko05-tawa:kebabs', 0)]]), until(done, 600)], cause: 'lko-tawa' },
-  { what: 'in the low lane, hopping, as on the heaps', steps: [...through('LKO-05', room05, 1), runTo(actX('LKO-05', 1) + 1.2, 300), hops([actX('LKO-05', 1) + 3]), until(kflat('lko05-lane:slab', 0), 300), hops([actX('LKO-05', 1) + 3, actX('LKO-05', 1) + 6]), until(done, 300)], cause: 'lko-seekh' },
+  { what: 'in the low lane, hopping, as on the heaps', steps: [...through('LKO-05', room05, 1), runTo(actX('LKO-05', 1) + 1.2, 300), hops([actX('LKO-05', 1) + 3]), until(kflat('lko05-lane:slab', 0), 300), hops([actX('LKO-05', 1) + 3, actX('LKO-05', 1) + 6]), until(done, 300)], cause: 'lko-seekh-lane' },
   { what: 'in the low lane, lingering on the squashed lane', steps: [...through('LKO-05', room05, 1), runTo(actX('LKO-05', 1) + 1.2, 300), hops([actX('LKO-05', 1) + 3]), until(kflat('lko05-lane:slab', 0), 300), walkTo(actX('LKO-05', 1) + 5, 300), until(done, 900)], cause: 'lko-tawa' },
   {
     what: 'under the half-hoisted rack: hopping off a full heap, as all along',
     steps: [...through('LKO-05', room05, 3), walkTo(actX('LKO-05', 3) + 0.9, 300), until(bharaUp(), 900), hops([actX('LKO-05', 3) + 1, actX('LKO-05', 3) + 3]), shuffle(actX('LKO-05', 3) + 3), hops([actX('LKO-05', 3) + 4, actX('LKO-05', 3) + 7]), shuffle(actX('LKO-05', 3) + 7), hops([actX('LKO-05', 3) + 8, actX('LKO-05', 3) + 11.5]), until(done, 400)],
-    cause: 'lko-seekh',
+    cause: 'lko-seekh-bhara',
   },
   { what: 'the cook’s slab: standing on its end to squash it, as learned', steps: [...through('LKO-05', room05, 2), walkTo(actX('LKO-05', 2) + 0.6, 300), hops([actX('LKO-05', 2) + 2.2], 'on to the slab'), until(done, 900)], cause: 'lko-kafgir' },
-  { what: 'the cook’s slab: walking up it to meet him', steps: [...through('LKO-05', room05, 2), walkTo(actX('LKO-05', 2) + 0.6, 300), hops([actX('LKO-05', 2) + 2.2]), { hold: 'R', until: done, max: 400 }], cause: 'lko-seekh' },
+  { what: 'the cook’s slab: walking up it to meet him', steps: [...through('LKO-05', room05, 2), walkTo(actX('LKO-05', 2) + 0.6, 300), hops([actX('LKO-05', 2) + 2.2]), { hold: 'R', until: done, max: 400 }], cause: 'lko-seekh-ulta' },
   { what: 'under the low rack: waiting for the heap to squash, as learned', steps: [...through('LKO-05', room05, 3), walkTo(actX('LKO-05', 3) + 0.9, 300), until(bharaUp(), 900), hops([actX('LKO-05', 3) + 1, actX('LKO-05', 3) + 3]), until(done, 900)], cause: 'lko-tawa' },
-  { what: 'under the low rack: hopping while it is down', steps: [...through('LKO-05', room05, 3), walkTo(actX('LKO-05', 3) + 0.9, 300), hops([actX('LKO-05', 3) + 1, actX('LKO-05', 3) + 3]), until(done, 600)], cause: 'lko-seekh' },
+  { what: 'under the low rack: hopping while it is down', steps: [...through('LKO-05', room05, 3), walkTo(actX('LKO-05', 3) + 0.9, 300), hops([actX('LKO-05', 3) + 1, actX('LKO-05', 3) + 3]), until(done, 600)], cause: 'lko-seekh-bhara' },
 );
 mistakes['LKO-08'].push(
   { what: 'jumping through the hanging arch up close, as everywhere', steps: [...through('LKO-08', room08, 3), walkTo(actX('LKO-08', 3) + 3.5, 300), hop(actX('LKO-08', 3) + 8, actX('LKO-08', 3) + 10, '', 6), until(done, 400)], cause: 'lko-bhool' },
-  { what: 'walking through the hanging arch', steps: [...through('LKO-08', room08, 3), walkTo(actX('LKO-08', 3) + 3.5, 300), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
+  { what: 'walking through the hanging arch', steps: [...through('LKO-08', room08, 3), walkTo(actX('LKO-08', 3) + 3.5, 300), { hold: 'R', until: done, max: 600 }], cause: 'lko-utar' },
 );
 mistakes['LKO-09'].push(
   { what: 'two flags: watching the one behind you the whole way, as on the last roofs', steps: [...through('LKO-09', room09, 2), ...R_lko09_jhande(redOf('a'))(actX('LKO-09', 2)), until(done, 600)], cause: 'lko-jhanda-aage' },
@@ -958,7 +958,7 @@ mistakes['LKO-07'].push(
 
 mistakes['LKO-08'].push(
   { what: 'on the gallery, jumping on through its arch, as everywhere', steps: [...through('LKO-08', room08, 4), hop(actX('LKO-08', 4) + 2, actX('LKO-08', 4) + 4.5), hop(actX('LKO-08', 4) + 10, actX('LKO-08', 4) + 13), until(done, 400)], cause: 'lko-bhool' },
-  { what: 'on the gallery, walking off its end and on through the next hall to its well, as at the hanging arch', steps: [...through('LKO-08', room08, 4), hop(actX('LKO-08', 4) + 2, actX('LKO-08', 4) + 4.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
+  { what: 'on the gallery, walking on past its arch and off its end, as at the hanging arch', steps: [...through('LKO-08', room08, 4), hop(actX('LKO-08', 4) + 2, actX('LKO-08', 4) + 4.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-wapas' },
 );
 
 mistakes['LKO-10'].push(
@@ -968,7 +968,7 @@ mistakes['LKO-10'].push(
 
 mistakes['LKO-08'].push(
   { what: 'in the vault, jumping at the first arch from the floor, as everywhere', steps: [...through('LKO-08', room08, 1), runTo(actX('LKO-08', 1) + 5, 300), hop(actX('LKO-08', 1) + 8, actX('LKO-08', 1) + 10, '', 6), until(done, 400)], cause: 'lko-bhool' },
-  { what: 'in the vault, walking on along the floor', steps: [...through('LKO-08', room08, 1), runTo(actX('LKO-08', 1) + 5, 300), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
+  { what: 'in the vault, walking on along the floor', steps: [...through('LKO-08', room08, 1), runTo(actX('LKO-08', 1) + 5, 300), { hold: 'R', until: done, max: 600 }], cause: 'lko-upar' },
 );
 
 mistakes['LKO-09'].push(
@@ -978,7 +978,7 @@ mistakes['LKO-09'].push(
 
 mistakes['LKO-05'].push(
   { what: 'under the ladle: waiting on a heap for it to squash, as all along', steps: [...through('LKO-05', room05, 4), runTo(actX('LKO-05', 4) + 0.6, 300), hops([actX('LKO-05', 4) + 3]), until(done, 900)], cause: 'lko-ghee' },
-  { what: 'under the ladle: hopping on from a crusted heap', steps: [...through('LKO-05', room05, 4), runTo(actX('LKO-05', 4) + 0.6, 300), hops([actX('LKO-05', 4) + 3, actX('LKO-05', 4) + 6]), until(done, 600)], cause: 'lko-seekh' },
+  { what: 'under the ladle: hopping on from a crusted heap', steps: [...through('LKO-05', room05, 4), runTo(actX('LKO-05', 4) + 0.6, 300), hops([actX('LKO-05', 4) + 3, actX('LKO-05', 4) + 6]), until(done, 600)], cause: 'lko-seekh-ghee' },
 );
 
 mistakes['LKO-08'].push(
@@ -1004,7 +1004,7 @@ mistakes['LKO-10'].push(
 
 mistakes['LKO-08'].push(
   { what: 'the broken arch: walking the whole one, jumping the one at the floor’s end, as the maze taught', steps: [...through('LKO-08', room08, 2), runTo(actX('LKO-08', 2) + 5.4, 300), hop(actX('LKO-08', 2) + 6.2, actX('LKO-08', 2) + 10, '', 30), until(done, 600)], cause: 'lko-toota' },
-  { what: 'the broken arch: walking on through both', steps: [...through('LKO-08', room08, 2), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
+  { what: 'the broken arch: walking on through both', steps: [...through('LKO-08', room08, 2), { hold: 'R', until: done, max: 600 }], cause: 'lko-toota-kuan' },
 );
 
 mistakes['LKO-06'].push(
@@ -1021,7 +1021,7 @@ mistakes['LKO-06'].push(
 );
 
 mistakes['LKO-05'].push(
-  { what: 'the turning skewers: waiting till they lie still before hopping, as with a still rack', steps: [...through('LKO-05', room05, 5), walkTo(actX('LKO-05', 5) + 0.8, 300), until(spit(48, 50), 600), { hold: 'R', jump: 12, ticks: 50 }, until(done, 400)], cause: 'lko-seekh' },
+  { what: 'the turning skewers: waiting till they lie still before hopping, as with a still rack', steps: [...through('LKO-05', room05, 5), walkTo(actX('LKO-05', 5) + 0.8, 300), until(spit(48, 50), 600), { hold: 'R', jump: 12, ticks: 50 }, until(done, 400)], cause: 'lko-seekh-charkhi' },
   { what: 'the turning skewers: staying on a heap till it all looks safe', steps: [...through('LKO-05', room05, 5), walkTo(actX('LKO-05', 5) + 1.8, 300), until(spit(2, 4), 600), { hold: 'R', jump: 12, ticks: 20 }, until(done, 600)], cause: 'lko-tawa' },
 );
 
