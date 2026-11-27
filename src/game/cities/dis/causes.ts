@@ -3,6 +3,8 @@ export const causeLines: Record<string, string[]> = {
   'dis-spill': ['Chah! The tea boy’s tray tipped hot lal chah on you.', 'Don’t touch him while he carries the tray. Wait back from the bench he stops at, and walk past him only while his tray is down and he is pouring.'],
   'dis-pool': ['Chah! You hopped him and landed in the tea he spilled.', 'Don’t hop the tea boy. Wait back from the bench until he has set his tray down to pour, then walk past him.'],
   'dis-porcupine': ['Bah! The spur is only bamboo poles: you slipped through into the river.', 'Don’t stand on the spur. Jump over it to the sand step on its downstream side, once the step is up.'],
+  'dis-dheki': ['Dheki! You went into the mortar, and the pestle came down.', 'Wait on the pedestal in the middle of the lever, and walk over the mortar only while the pestle lies in it. Where two women work, it falls twice: the first time only for a moment.'],
+  'dis-dheki-tail': ['Dheki! The tail flew up when she stepped off, and you went into the trench.', 'The tail is a plank only while she presses it. Cross it at once, on to the pedestal, and never wait on it.'],
   'dis-luit': ['Luit! The sandbar was not there, or it went out from under you.', 'Read the level post. When the siren goes the next bar comes up first, the bar you stand on goes last, and a bar that narrows keeps its left end. The hut never moves.'],
   'dis-basket': ['Tokari! The plucker’s basket swung into you.', 'Stay a few steps behind her and follow. Never hop over her, and when the path is wet wait before it: you can’t stop on it.'],
   'dis-tawa': ['Zui! You fell on the hot pan.', 'Hop only when the next crepe is poured and shiny.'],
