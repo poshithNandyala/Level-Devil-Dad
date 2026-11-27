@@ -531,6 +531,81 @@ export const aaru: Act = {
   },
 };
 
+/**
+ * PDY-07's waves, turned: the garden's lily tank by the sea wall. Waves come in threes, and the big third one
+ * runs over the leaves and folds them all at once; anyone up on a leaf when it comes (the "rock" you were taught
+ * to stand on) is taken with it (cause pdy-alai). Meet the big wave on the path, and cross on the bars it leaves.
+ */
+export const alai: Act = {
+  id: 'pdy10-alai',
+  w: 30,
+  advice: 'Waves come in threes here too, and the big one runs right over the leaves and folds them. Up on a leaf for it, like a rock, and it takes you. Stand on the path for the big one: it only wets your feet, and it leaves every leaf a bar. Then cross on the bars, before they open.',
+  cps: [29],
+  paint: (g, c) => {
+    thorns(g, c.x + 7, c.x + 12);
+    thorns(g, c.x + 17, c.x + 22);
+  },
+  build: (w, c) => {
+    const { X } = c;
+    const leaves = [new Mimosa(w, 'alai1', X(6), 128, 0.25, 4.0), new Mimosa(w, 'alai2', X(16), 128, 0.25, 4.0)];
+    pitFloor(w, X(7), X(13), 'pdy-mul');
+    pitFloor(w, X(17), X(23), 'splash');
+    sign(w, c.x + 1.5, G - 4.4, 3.4, 'ALAI', 'wood', null, 'the sea wall');
+    // the set: two small waves, then the big one, from the moment Dad is in the act
+    const P = 6.0;
+    let t0 = -1;
+    let bigAt = -1;
+    onPass(w, X(2), (w2) => {
+      t0 = w2.tick;
+      w2.flags[c.f('alai')] = 'small';
+    });
+    onPass(w, X(2.5), (w2) => w2.guide('Periya alai-kku paadhai-la nillu, Dad. Ilai mela illa. | Stand on the path for the big wave, Dad. Not on a leaf.'));
+    w.add(
+      new Paint((ctx, w2) => {
+        if (t0 < 0) return;
+        const k = ((w2.tick - t0) * DT) % P;
+        const big = k > 4.3 && k < 5.1;
+        const small = (k > 1.2 && k < 1.7) || (k > 2.7 && k < 3.2);
+        if (!big && !small) return;
+        ctx.fillStyle = big ? 'rgba(90,170,210,0.75)' : 'rgba(90,170,210,0.35)';
+        const h = big ? 22 : 8;
+        ctx.fillRect(X(5), LEAF_Y - h + 6, X(24) - X(5), h);
+      }, 3),
+    );
+    w.onTick((w2) => {
+      if (t0 < 0) return;
+      const k = ((w2.tick - t0) * DT) % P;
+      const cycle = Math.floor((w2.tick - t0) * DT / P);
+      if (k > 1.2 && k < 1.25 && w2.flags[c.f('alai')] !== 'small1-' + cycle) {
+        w2.flags[c.f('alai')] = 'small1-' + cycle;
+        w2.sfx('splash', X(6), LEAF_Y);
+      }
+      if (k > 2.7 && k < 2.75 && w2.flags[c.f('alai')] !== 'small2-' + cycle) {
+        w2.flags[c.f('alai')] = 'small2-' + cycle;
+        w2.sfx('splash', X(6), LEAF_Y);
+      }
+      if (k > 4.3 && bigAt !== cycle) {
+        bigAt = cycle;
+        w2.flags[c.f('alai')] = 'big';
+        w2.sfx('splash', X(14), LEAF_Y);
+        w2.emit('shake', X(14), LEAF_Y, { amount: 3 });
+        npc(w2, 'Periya alai! | The big one!', X(14), px(G - 5), 1);
+        for (const l of leaves) {
+          const on = w2.standing(l.thing.solid);
+          // every leaf is a bar after the wave, its count starting now
+          l.go(w2, l.state === 'shut' ? 'shut' : 'fold');
+          if (on) w2.die('pdy-alai');
+        }
+        // a dad over a pit at leaf height with nothing under him is in the wave too
+        const p = w2.player;
+        if (p.y + p.h <= LEAF_Y + 2 && p.y + p.h > LEAF_Y - 40 && ((p.cx > X(7) && p.cx < X(13)) || (p.cx > X(17) && p.cx < X(23)))) w2.die('pdy-alai');
+      }
+      if (k > 5.1 && w2.flags[c.f('alai')] === 'big') w2.flags[c.f('alai')] = 'passed';
+      w2.flags[c.f('until')] = k < 4.3 ? 4.3 - k : P - k + 4.3;
+    });
+  },
+};
+
 /** the garden lamp: the big leaf before the door sleeps shut in the dark (mimosa folds at night) and opens in the light */
 export const nightLeaf = {
   space: 16,

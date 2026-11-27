@@ -171,6 +171,24 @@ const aaruAct = (x: number): Step[] => {
   ];
 };
 
+/** cross a leaf that is already a bar: hop on from the path, run across, land on the path past the pit */
+const crossBar = (at: number, far: number, note: string): Step[] => [
+  { hold: '', ticks: 2 },
+  { hold: 'R', until: (w) => w.player.x + w.player.w >= px(at) - 3, max: 600, note },
+  { hold: 'R', jump: 8, ticks: 8, note: 'up on the bar' },
+  { hold: 'R', until: (w) => w.player.onGround && w.player.x >= px(far), max: 400, note: 'across, before it opens' },
+];
+const alaiAct = (x: number): Step[] => {
+  const f = (w: World) => w.flags['pdy10-alai:alai'] as string | undefined;
+  return [
+    { hold: 'R', until: X(x + 4.2), max: 600, note: 'to the edge of the tank, on the path' },
+    { hold: '', until: (w) => f(w) === 'passed', max: 1200, note: 'two small waves, then the big one: it folds every leaf' },
+    ...crossBar(x + 6, x + 13.3, 'to the first bar'),
+    ...crossBar(x + 16, x + 23.3, 'to the second bar'),
+    { hold: 'R', until: and(ground, X(x + 29.5)), max: 600 },
+  ];
+};
+
 // ------------------------------------------------------------------ the two doors
 const endingPolicies: Record<string, Policy> = {
   /**
@@ -323,6 +341,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'pdy09-mene': pitchAct('pdy09-mene', 'a dead end: the cochonnet is off, get down on the gravel'),
   'pdy10-thenga': thengaAct,
   'pdy10-aaru': aaruAct,
+  'pdy10-alai': alaiAct,
 };
 
 /** the tour's Promenade (tour-pdy-b20): the plywood square over the gap's last tile slides on as you jump for it */
@@ -484,6 +503,9 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { what: 'thenga A2: hop under the palm first, as at Paradise Beach, and wait for the nut; then on along the path', steps: [...r10.slice(0, at('up to the leaf under the palm')), { hold: 'R', until: X(32 + 5.4), max: 600 }, { hold: '', jump: 12, ticks: 12 }, { hold: '', ticks: 90 }, die], cause: 'pdy-mul' },
     { what: 'aaru A1: the bell: run, as at six o’clock', steps: [...r10.slice(0, at('the bell goes: up to the leaf, not along the road')), die], cause: 'pdy-mul' },
     { what: 'aaru A2: the bell: fold the leaf and wait on the path beside it', steps: [...r10.slice(0, at('let it fold: a bar') + 1), stay], cause: 'spikes' },
+    // the tank: A1 up on a leaf for the big wave, like the rock at Serenity; A2 run across the open leaf ahead of it
+    { what: 'alai A1: fold the first leaf and wait up on its bar for the big wave, as on a rock', steps: [...r10.slice(0, at('to the edge of the tank, on the path')), ...foldAndCross('alai1', 80 + 6, 80 + 13.3).slice(0, 6), { hold: 'R', until: (w) => w.player.onGround && w.player.x >= px(80 + 8), max: 200 }, stay], cause: 'pdy-alai' },
+    { what: 'alai A2: run for it across the open leaf before the big one', steps: [...r10.slice(0, at('to the edge of the tank, on the path')), { hold: 'R', until: X(80 + 4.4), max: 600 }, { hold: 'R', jump: 10, ticks: 10 }, die], cause: 'pdy-mul' },
     { what: 'door: cross the long leaf in the light, as Tara says', steps: [...r10.slice(0, at('the door: pdy-night-leaf')), { policy: inTheLight(), until: done, max: 2000 }], cause: 'splash' },
   );
 };
