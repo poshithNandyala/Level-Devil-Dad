@@ -26,5 +26,10 @@ export const causeLines: Record<string, string[]> = {
   'shl-runoff': ['The roof’s edge shed its sheet on to you.', 'While rain is on the roof, its lower edge pours: stand well in under the roof, not at its edge.'],
   'shl-bucket': ['The full bucket came down on you.', 'The bucket drops where it hangs when it fills. Fill it from under the tank’s roof, not from under the bucket.'],
   'shl-spout': ['The spout poured across the path as the tank filled.', 'When the gauge fills the spout runs for a moment: let it finish before you walk through the gate.'],
+  'shl-nala': ['Into the market drain.', 'The counters stand over the drain: hop on at the row’s start and off at its end.'],
+  'shl-closed': ['That stall is closed today: a cloth over a frame, no boards.', 'Every stall’s plate is the day it is closed. The board at the arch is the day: jump the stall whose plate is today.'],
+  'shl-shift': ['The day turned at the arch in the middle of the row, and that stall closed.', 'Each arch is a new day, even one standing in a row. Beyond it, read the plates with the next day in mind.'],
+  'shl-pack': ['The keeper had taken the boards off: sold out.', 'A stall with its boards leaning on the frame is closed, whatever its plate says. Jump it.'],
+  'shl-board': ['The board lied: a keeper had flipped it to yesterday.', 'The arches are the days, not the paint. Count the arches: this is the eighth day, and plate 8 is the frame.'],
   'shl-lintel': ['The low lintel caught your knup.', 'A low arch or a half-door needs the knup off: jump at the hook before it. A tall arch does not.'],
 };
