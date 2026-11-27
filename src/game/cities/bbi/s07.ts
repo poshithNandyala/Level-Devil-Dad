@@ -36,6 +36,8 @@ export interface TroupeCfg {
   /** the last stroke before each stop names the pose: a deep stroke (wide mark) ends in the bridge, a sharp one
    *  (thin high mark) in the tower */
   forecast?: boolean;
+  /** the drummer sits at this column (world tiles) instead of on the troupe's own near bank */
+  drumX?: number;
 }
 
 export interface TroupeSt {
@@ -161,7 +163,8 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
           box(ctx, dx + 1, FL - 14, 2, 7, '#5D3A1E');
           box(ctx, dx + 13, FL - 14, 2, 7, '#5D3A1E');
         };
-        if (cfg.rev) drummer(x0 - 22, 1, a.pose !== null, a.pose === null && a.left < 0.45);
+        if (cfg.drumX !== undefined) drummer(px(cfg.drumX), cfg.drumX > cfg.c0 ? -1 : 1, a.pose === null, a.pose !== null && a.left < 0.45);
+        else if (cfg.rev) drummer(x0 - 22, 1, a.pose !== null, a.pose === null && a.left < 0.45);
         else if (cfg.decoy === undefined) drummer(x0 - 22, 1, a.pose === null, a.pose !== null && a.left < 0.45);
         else {
           // the troupe's own drummer is across the pit; the one by you plays out of step
@@ -566,6 +569,42 @@ export const act13 = troupeAct('bbi07-dui-baja', 15, T07F, 'bbi7db', 'Two drumme
  *  from the moment they land, so you must commit on the stroke, before you can see the shape. */
 export const T07G: TroupeCfg[] = [{ c0: 4, n: 8, drum: 1.4, hold: 1.3, poses: ['tower', 'bridge', 'tower', 'tower', 'bridge'], form: 0.25, forecast: true }];
 export const act14 = troupeAct('bbi07-gum-ta', 16, T07G, 'bbi7gt', 'Listen to the mardala’s last stroke before it stops: a deep stroke (the wide mark over the drummer) ends in the bridge, a sharp one (the thin high mark) in the tower. This bridge only just lasts the walk: on a deep stroke, go as it stops, before you can see it; on a sharp one, stay.');
+
+/** act 15, jodi (IDEAS-3 B5, pose-shapes family): two troupes share each pit, half the bridge each, each on its own
+ *  drummer; the half whose drummer stopped first gets up first. In the first pit the far half is older: go as the
+ *  near half lands. In the second the near half is older: step on to it the moment it lands, though it ends in
+ *  mid-air, and walk; the far half lands under your next step. */
+export const JODI = { p1: 4, p2: 18, n: 5, drum: 1.4 };
+export const act15: Act = {
+  id: 'bbi07-jodi',
+  w: 32,
+  advice: 'Two troupes share each pit, half the bridge each, and the half whose drummer stopped first gets up first. Watch which drummer stops first. If it is the far one, go as the near half lands. If it is the near one, step on to his half the moment it lands, even though it ends in mid-air, and walk: the far half lands under your next step.',
+  cps: [14.5],
+  paint: (g, c) => {
+    g.pit(c.x + JODI.p1, c.x + JODI.p1 + 2 * JODI.n - 1).pit(c.x + JODI.p2, c.x + JODI.p2 + 2 * JODI.n - 1);
+  },
+  build: (w, c) => {
+    const st1 = { t0: -1 };
+    const st2 = { t0: -1 };
+    onPass(w, c.X(JODI.p1 - 2.5), (w2) => (st1.t0 = w2.tick));
+    onPass(w, c.X(JODI.p2 - 2.5), (w2) => (st2.t0 = w2.tick));
+    stagePit(w, c.x + JODI.p1, c.x + JODI.p1 + 2 * JODI.n - 1);
+    // the second pit names its own death: the older half got up under you
+    const g = channel(w, c.x + JODI.p2, c.x + JODI.p2 + 2 * JODI.n - 1, 'bbi-nacha', 'drain');
+    g.o.tick = (r, w2) => {
+      const p = w2.player;
+      if (p.onGround && p.y + p.h >= FL - 1) w2.flags.bbiThrown = 0;
+      r.hazard!.cause = w2.flags.bbiThrown ? 'bbi-adha' : 'bbi-nacha';
+    };
+    const n = JODI.n;
+    // pit 1: the far half stops first and holds longer; the near half lands second
+    troupe(w, { c0: c.x + JODI.p1, n, drum: 2.0, hold: 2.0, poses: ['bridge'], form: 0.2, drumX: c.x + JODI.p1 - 1.4 }, () => st1.t0, 'bbi7jd1n');
+    troupe(w, { c0: c.x + JODI.p1 + n, n, drum: 1.4, hold: 2.2, poses: ['bridge'], form: 0.2, drumX: c.x + JODI.p1 + 2 * n + 0.4 }, () => st1.t0, 'bbi7jd1f');
+    // pit 2: the near half stops first and holds only briefly; the far half lands second
+    troupe(w, { c0: c.x + JODI.p2, n, drum: 1.4, hold: 1.25, poses: ['bridge'], form: 0.2, drumX: c.x + JODI.p2 - 1.4 }, () => st2.t0, 'bbi7jd2n');
+    troupe(w, { c0: c.x + JODI.p2 + n, n, drum: 2.0, hold: 2.0, poses: ['bridge'], form: 0.2, drumX: c.x + JODI.p2 + 2 * n + 0.4 }, () => st2.t0, 'bbi7jd2f');
+  },
+};
 
 /** ending: the last pose is a gate over the door; between poses the troupe whirls across the doorway */
 export const T07e: TroupeCfg = { c0: 0, n: 4, drum: 1.6, hold: 1.6, poses: ['gate'], form: 0.3, ground: true };
