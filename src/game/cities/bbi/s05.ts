@@ -738,6 +738,77 @@ export function patraAct(id: string, key: string, old = false): Act {
 }
 export const act11 = patraAct('bbi05-patra', 'bbi5p');
 
+/** act 13, stop it yourself (idle-world family, the mirror of the water lift): someone left the well sweep
+ *  swinging, and nobody will stop it in Raja week. Its long stone counterweight sweeps the lane, too wide to
+ *  pass under in its short high moment. Stepping on its foot plate stops it where it is: stop it low and the
+ *  pole's far end tips the bucket over the plate. A2: stop it yourself. A3: stop it when the stone is at its top. */
+export const THAKA = { plate: [4, 5] as [number, number], beam: [7, 15] as [number, number], per: 2.0, hi: FL - 30, lo: FL - 14, spill: 0.5 };
+export const act13: Act = {
+  id: 'bbi05-thaka',
+  w: 20,
+  advice: 'Someone left the well sweep swinging, and in Raja week nobody will stop it. Its stone sweeps the lane, too wide to get under. Its foot plate stops it where it is: step on the plate when the stone is at its top, never when it is low, and walk under.',
+  cps: [],
+  paint: () => {},
+  build: (w, c) => {
+    village(w, c.x, c.x + 20);
+    const st = { t0: -1, frozen: -1 as number, y: THAKA.lo, spillT: -1, on: false };
+    w.flags.bbi5th = st;
+    onPass(w, c.X(0.5), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
+    const yAt = (t: number) => THAKA.lo + (THAKA.hi - THAKA.lo) * (0.5 - 0.5 * Math.cos((2 * Math.PI * t) / THAKA.per));
+    const plate = w.add(
+      new Rig(c.X(THAKA.plate[0]), FL - 3, px(THAKA.plate[1] - THAKA.plate[0] + 1), 3, {
+        solid: true,
+        layer: 2,
+        tick: (r, w2) => {
+          if (st.t0 < 0 || st.frozen >= 0) return;
+          if (r.rides(w2)) {
+            st.frozen = st.y;
+            // stopped low: the pole's far end comes up and tips the bucket over the plate
+            if (st.y > (THAKA.hi + THAKA.lo) / 2) st.spillT = w2.tick;
+          }
+        },
+        paint: (ctx, r) => box(ctx, r.x, r.y, r.w, r.h, '#6E4A2E'),
+      }),
+    );
+    void plate;
+    w.add(
+      new Rig(c.X(THAKA.beam[0]), THAKA.lo, px(THAKA.beam[1] - THAKA.beam[0] + 1), 10, {
+        cause: 'bbi-pathara',
+        inset: 2,
+        layer: 4,
+        tick: (r, w2) => {
+          if (st.t0 >= 0 && st.frozen < 0) st.y = yAt(since(w2, st.t0));
+          r.y = st.frozen >= 0 ? st.frozen : st.y;
+        },
+        paint: (ctx, r) => {
+          box(ctx, r.x, r.y, r.w, r.h, '#8C7B6B');
+          box(ctx, r.x, r.y, r.w, 2, '#A99887');
+          // the pole up to its post
+          ctx.strokeStyle = '#6E4A2E';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(r.x + r.w / 2, r.y);
+          ctx.lineTo(c.X(THAKA.plate[0]) + 8, FL - 60 - (r.y - THAKA.lo));
+          ctx.stroke();
+        },
+      }),
+    );
+    // the bucket's water over the plate, when it was stopped low
+    w.add(
+      new Rig(c.X(THAKA.plate[0]) - 4, FL - 60, px(THAKA.plate[1] - THAKA.plate[0] + 1) + 8, 60, {
+        cause: 'bbi-pani',
+        inset: 2,
+        layer: 5,
+        live: (_r, w2) => st.spillT >= 0 && since(w2, st.spillT) < THAKA.spill + 0.3,
+        paint: (ctx, r, w2) => {
+          box(ctx, r.x + 6, FL - 66, 12, 8, '#8D5A2B');
+          if (st.spillT >= 0 && since(w2, st.spillT) < THAKA.spill + 0.3) box(ctx, r.x + 4, r.y, r.w - 8, r.h, 'rgba(120,170,200,0.75)');
+        },
+      }),
+    );
+  },
+};
+
 /** ending: the house with podapitha on the verandah step; the front door up there is locked. The way in is
  *  below, behind the step. On the verandah, the grinding stone's roller starts when you land by it. */
 export const ending: Ending = {
