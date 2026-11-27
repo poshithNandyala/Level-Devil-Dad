@@ -132,9 +132,12 @@ This section supersedes the tables above where they differ.
 - **Cut (F2, F5):** `dis07-bordoisila` (a fixed wind made it shelter-and-wait, `dis06-wake`'s decision; S12's
   fallback) and its callback `dis10-bordoisila`; `dis10-gamosa` (05's rule with new spacing). 07's stage FIX is now
   the dhol's (`dis-dhol-sink`).
-- **The finale room (F5)** breaks 02: with the post on the far bank, the bar in front sinks first and the new one rises
-  after it (`SandField.flip`). Wait on the bank. Standing on the sinking bar: `dis-ulta`; jumping for the outline
-  before it is up: `dis-agot`.
+- **The finale room** is PLAIN (fix round 2, QA B2): round 1's break (the bar in front sinks first, wait on the bank)
+  was DIS-06's room rule, and no other break of 02 passed the gate. The bank runs to the first callback, with the
+  post standing at its far end; `SandField.flip`, `dis-ulta` and `dis-agot` are gone.
+- **Fix round 2:** every hazard an unscripted play reaches inside an act names what happened there (QA's generic
+  probe); `dis08-bagori`'s second play is running on ahead into the grass (`dis-bagori-beel`), and its halfway rest is
+  40 ticks again; `dis10-talatal` has a low cellar vault at the stair's foot (`dis-talatal-ulta`), its second play.
 - **Lines (F4):** one cause per mistake. `recause()` (in `entities.ts`) gives an act's deaths their own cause while Dad
   is inside the act, so a callback or a reused hazard names what killed him there. New: `dis-ulta`, `dis-agot`,
   `dis-doba-ulta`, `dis-talatal-ulta`, `dis-pukhuri-lahe`, `dis-dhol-lahe`, `dis-khaal-ulta`, `dis-rope-ulta`,
