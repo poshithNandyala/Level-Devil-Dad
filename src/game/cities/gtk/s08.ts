@@ -1,8 +1,6 @@
-// GTK-08 Ropeway (how would I know). The cable car over the valley: two cabins, and the middle station between
-// them, all in view from the start. You'd think a cabin goes end to end. Here each one is a shuttle: the lower
-// cabin goes up to the middle station and comes back; the upper one comes down to the middle and goes back up.
-// They meet at the middle, side by side, for a moment. Stay on yours and it takes you back into its shed. Hop
-// across to the other one while they're together.
+// GTK-08 Ropeway (how would I know). The cable car station at Deorali: you ride inside the cabin, and you board
+// from its door side. A cabin that comes in with its door facing away has no door and no step your side: walk round
+// the station over the footbridge to the far platform. The next cabin, door your side, goes back into the shed.
 import type { LevelDef, World } from '../../world';
 import type { Act } from '../../levels/acts';
 import type { Ending } from '../../levels/endkit';
@@ -89,54 +87,166 @@ function stations(w: World, lower: [number, number], mid: [number, number], uppe
   });
 }
 
-export const ROOM_LINES: { a: Line; b: Line } = {
-  a: { t0: -1, dwellEnd: 1.2, travel: 2.6, dwellMid: 1.6 },
-  b: { t0: -1, dwellEnd: 1.2, travel: 2.6, dwellMid: 1.6 },
+/** a boxed cabin Dad rides INSIDE: floor, roof and two walls move together. Its door is on one side; while
+ *  docked with the door open, that wall is gone and a step over the gap is out. `path(t)` gives the cabin's
+ *  floor-top (x, y) and whether the door is open, t seconds after the clock starts (before it: as at t = 0) */
+export const BOX = { w: 48, h: 32 };
+export type BoxAt = { x: number; y: number; open: boolean; side?: 'L' | 'R' };
+export function boxCabin(w: World, door: 'L' | 'R', path: (t: number) => BoxAt, clock: { t0: number }, colour: string, key: string, shedY?: number) {
+  const at = (w2: World) => path(clock.t0 < 0 ? 0 : (w2.tick - clock.t0) / 120);
+  const a0 = path(0);
+  // which side the door is on now (a cabin turns round on the wheel at the top station)
+  const sideOf = (q: BoxAt) => q.side ?? door;
+  const part = (dx: number, dy: number, wd: number, ht: number, wall?: 'L' | 'R', stepSide?: 'L' | 'R') => {
+    const r = w.add(
+      new Rig(a0.x + dx, a0.y + dy, wd, ht, {
+        solid: true,
+        layer: 2,
+        tick: (rr, w2) => {
+          const q = at(w2);
+          rr.moveTo(w2, q.x + dx, q.y + dy);
+          if (wall) rr.setSolid(!(q.open && sideOf(q) === wall));
+          if (stepSide) rr.setSolid(q.open && sideOf(q) === stepSide);
+        },
+      }),
+    );
+    if (wall) r.setSolid(!(a0.open && sideOf(a0) === wall));
+    if (stepSide) r.setSolid(a0.open && sideOf(a0) === stepSide);
+    return r;
+  };
+  const floor = part(0, 0, BOX.w, 4);
+  const roof = part(0, -BOX.h - 4, BOX.w, 4);
+  part(0, -BOX.h, 4, BOX.h, 'L');
+  part(BOX.w - 4, -BOX.h, 4, BOX.h, 'R');
+  // the step over the gap on the door side, out only while the door is open
+  part(-16, 0, 16, 4, undefined, 'L');
+  part(BOX.w, 0, 16, 4, undefined, 'R');
+  const body = w.add(
+    new Rig(a0.x, a0.y - BOX.h - 4, BOX.w, BOX.h + 8, {
+      layer: 1,
+      tick: (r, w2) => {
+        const q = at(w2);
+        r.x = q.x;
+        r.y = q.y - BOX.h - 4;
+        r.s.open = q.open;
+        r.s.side = sideOf(q);
+        // going down into the shed with Dad in it, or on its roof: the shed takes him
+        const sinking = q.y > (r.s.lastY ?? q.y);
+        r.s.lastY = q.y;
+        if (shedY !== undefined && sinking && q.y > shedY && (floor.carries(w2) || roof.carries(w2))) w2.die('gtk-ropeway');
+      },
+      paint: (ctx, r) => {
+        const x = r.x,
+          y = r.y;
+        box(ctx, x + BOX.w / 2 - 1, y - 14, 2, 14, '#4E5A62');
+        box(ctx, x + BOX.w / 2 - 5, y - 16, 10, 3, '#26323A');
+        box(ctx, x, y, BOX.w, 4, '#D9D4C7');
+        box(ctx, x, y + 4, BOX.w, BOX.h, colour);
+        box(ctx, x + 8, y + 8, BOX.w - 16, 10, 'rgba(191,215,234,0.55)');
+        box(ctx, x, y + BOX.h + 4, BOX.w, 4, '#26323A');
+        // the door side: an opening while open, a door panel with a yellow handle while shut; the blind side is plain
+        const sd = r.s.side ?? door;
+        const dx = sd === 'L' ? x : x + BOX.w - 6;
+        box(ctx, dx, y + 4, 6, BOX.h, r.s.open ? 'rgba(20,20,20,0.2)' : '#7A2A1F');
+        if (!r.s.open) box(ctx, sd === 'L' ? x + 2 : x + BOX.w - 4, y + 20, 2, 4, '#F4D35E');
+        if (r.s.open) box(ctx, sd === 'L' ? x - 16 : x + BOX.w, y + BOX.h + 4, 16, 4, '#8A8478');
+      },
+    }),
+  );
+  (w.flags[key] ??= []).push(body);
+  return body;
+}
+
+const lerp = (a: number, b: number, k: number) => a + (b - a) * Math.max(0, Math.min(1, k));
+export const DOORSIDE = { dwell: 4.6, rise: 0.9, across: 1.6, down: 0.9, next: 4.8, nextUp: 0.5, nextDwell: 1.4, nextDown: 0.6 };
+
+/** the door-side station: near platform (cols n0..n0+9), the bay (n0+11..n0+13), the far platform (n0+15..n0+19),
+ *  the footbridge over the bay, the top station at n0+28..n0+31. Cabin 1, door to the far platform, goes up the
+ *  line; cabin 2, door your side, comes up out of the shed and goes back down into it */
+export function doorSide(w: World, n0: number, key: string, D = DOORSIDE, swap = false) {
+  const clock = { t0: -1 };
+  w.flags[key] = clock;
+  onPass(w, px(n0 + 5.5), (w2) => {
+    if (clock.t0 < 0) clock.t0 = w2.tick;
+  });
+  // the top station's platform is higher, level with the next span's deck
+  const fy = px(10),
+    ty = px(6),
+    topY = px(2),
+    x1 = px(n0 + 11),
+    x2 = px(n0 + 24);
+  const up = (t: number): BoxAt => {
+    if (t < D.dwell) return { x: x1, y: fy, open: true };
+    let u = t - D.dwell;
+    if (u < D.rise) return { x: x1, y: lerp(fy, topY, u / D.rise), open: false };
+    u -= D.rise;
+    if (u < D.across) return { x: lerp(x1, x2, u / D.across), y: topY, open: false };
+    u -= D.across;
+    // round the wheel at the top: whichever side it boarded, it lets you out on the platform side
+    if (u < D.down) return { x: x2, y: lerp(topY, ty, u / D.down), open: false, side: 'R' };
+    return { x: x2, y: ty, open: true, side: 'R' };
+  };
+  // waiting below the gorge's floor, out of the way of anyone who falls
+  const below = fy + 160;
+  const shed = (t: number): BoxAt => {
+    if (t < D.next) return { x: x1, y: below, open: false };
+    let u = t - D.next;
+    if (u < D.nextUp) return { x: x1, y: lerp(below, fy, u / D.nextUp), open: false };
+    u -= D.nextUp;
+    if (u < D.nextDwell) return { x: x1, y: fy, open: true };
+    u -= D.nextDwell;
+    return { x: x1, y: lerp(fy, below, u / D.nextDown), open: false };
+  };
+  // swap: the cabin going up has its door on YOUR side, and the shed one comes in door away
+  boxCabin(w, swap ? 'L' : 'R', up, clock, '#C0392B', key + 'up');
+  boxCabin(w, swap ? 'R' : 'L', shed, clock, '#2E86AB', key + 'shed', fy + 20);
+  // the footbridge: three steps up from the near platform and the span over the bay (you can walk under them)
+  const plank = (ctx: CanvasRenderingContext2D, r: Rig) => box(ctx, r.x, r.y, r.w, 4, '#8A8478');
+  const fb: Rig[] = [];
+  for (let i = 0; i < 3; i++) fb.push(w.add(new Rig(px(n0 + 6 + i), fy - 16 * (i + 1), 16, 4, { solid: true, oneWay: true, layer: 3, paint: plank })));
+  fb.push(w.add(new Rig(px(n0 + 9), fy - 48, px(7), 4, { solid: true, oneWay: true, layer: 3, paint: plank })));
+  w.flags[key + 'fb'] = fb;
+  decor(w, -3, (ctx) => {
+    ctx.strokeStyle = '#26323A';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(x1 + BOX.w / 2, topY - 52);
+    ctx.lineTo(x2 + BOX.w / 2, topY - 52);
+    ctx.stroke();
+    // the shed under the bay, its dark mouth
+    box(ctx, x1 - 4, fy + 22, BOX.w + 8, 6, '#5E5A50');
+    box(ctx, x1, fy + 28, BOX.w, 60, '#2A2A26');
+  });
+  gullyBack(w, px(n0 + 10), px(n0 + 28), px(9));
+  w.add(new Rig(px(n0), FL + 20, px(32), 40, { cause: 'gtk-khaai', inset: 0 }));
+  return clock;
+}
+export const paintDoorSide = (g: Grid, n0: number) => {
+  g.pit(n0, n0 + 31);
+  g.fill(n0, n0 + 9, 10, 17, '#');
+  g.fill(n0 + 15, n0 + 19, 10, 17, '#');
+  g.fill(n0 + 28, n0 + 31, 6, 17, '#');
 };
 
 export function room(): LevelDef {
   const g = Grid.ground(15);
-  // the gorge under the line, the lower station deck (left) and the upper one (right)
-  g.pit(0, 31);
-  g.fill(0, 4, 12, 17, '#');
-  g.fill(27, 31, 6, 17, '#');
+  paintDoorSide(g, 0);
   return {
     id: 'GTK-08',
     city: 'GTK',
     index: 8,
     name: 'Ropeway',
     nameEn: 'The cable car',
-    tagline: 'The ropeway hangs over the valley, two cabins and a station in the middle. Every visitor rides it. Not every visitor gets across.',
-    hint: 'Each cabin only goes to the middle station and back: the lower one takes you up to the middle, then straight back down into its shed, and you on the roof under the eave. The upper cabin comes down to meet it. When they stop side by side at the middle, hop across to the upper cabin, and ride it up to the far deck.',
+    tagline: 'The ropeway station at Deorali: the cabins come in one after another. Every visitor rides one. Not every visitor gets in.',
+    hint: 'Board from the door side. A cabin that comes in with its door facing away from you has no door your side, and no step over the gap: walk round the station, over the footbridge, to the far platform, and get in through its door. The next cabin, with its door on your side, is the one going back into the shed.',
     par: 16,
-    map: g.put(1, 11, '@').put(30, 5, 'E').rows(),
+    map: g.put(1, 9, '@').put(30, 5, 'E').rows(),
     build(w: World) {
       door(w);
-      const L = { a: { ...ROOM_LINES.a }, b: { ...ROOM_LINES.b } };
-      w.flags.gtk8 = L;
-      // the clock starts as Dad comes on to the deck, so the cabin is in when he gets there
-      onPass(w, px(2), (w2) => {
-        L.a.t0 = L.b.t0 = w2.tick - 0.2 * 120;
-      });
-      const lower: [number, number] = [px(5), px(12)],
-        mid: [number, number] = [px(15) - CAB.w, px(9)],
-        midB: [number, number] = [px(16) + 2, px(9) - 6],
-        upper: [number, number] = [px(27) - CAB.w, px(6)];
-      stations(w, lower, [px(15.5), px(9)], [px(27), px(6)], px(15.5));
-      cabin(w, L.a, lower[0], lower[1], mid[0], mid[1], '#C0392B', 'gtk8c', { x0: px(3), x1: px(8) });
-      cabin(w, L.b, upper[0], upper[1], midB[0], midB[1], '#2E86AB', 'gtk8c');
-      decor(w, 3, (ctx) => {
-        // the lower station's shed: its eave over the dock
-        box(ctx, px(0), px(12) - 34, px(8) + 4, 6, '#5E5A50');
-        box(ctx, px(0), px(12) - 28, 4, 28, '#5E5A50');
-        box(ctx, px(27) - 4, px(6) - 34, px(5) + 4, 6, '#5E5A50');
-      });
-      gullyBack(w, px(5), px(27), px(7));
-      w.add(new Rig(px(0), FL + 20, px(32), 40, { cause: 'gtk-khaai', inset: 0 }));
-      sign(w, 0.4, 6.8, 4.2, 'ROPEWAY', 'station', null, 'deorali');
-      rival(w, 2, 12, 1, taraScript(8));
-      onPass(w, px(3), (w2) => tara(w2, 'Hajur! Stay on, Dad, all the way! | Yes! Stay on, Dad, all the way!', 2.4));
-      onPass(w, px(6), (w2) => npc(w2, 'Hajur! | Yes!', px(2), px(12) - 40, 1.0));
+      doorSide(w, 0, 'gtk8');
+      sign(w, 0.4, 5.8, 4.2, 'ROPEWAY', 'station', null, 'deorali');
+      rival(w, 2, 9, 1, taraScript(8));
+      onPass(w, px(3), (w2) => tara(w2, 'Hajur! Hop in, Dad, it’s right there! | Yes! Hop in, Dad, it’s right there!', 2.4));
       collectible(w, 'gtk-momo', 29.2, 2.6);
     },
   };
@@ -190,80 +300,18 @@ export const act = spanAct(
   'The second span: the cabins meet at the middle again, but the far cabin stops below yours. Ride the first one out, and step off its roof on to the lower one while they’re together. It takes you down to the far deck.',
   'second span',
 );
-/** the third span climbs again: the other cabin stops above yours, so it's a jump up while they're together */
-export const act2 = spanAct(
-  'gtk08-upar',
-  'gtk8bc',
-  12,
-  6,
-  px(9),
-  px(9) - 26,
-  ['#D4A017', '#2E86AB'],
-  'The last span climbs back up, and the far cabin stops above yours: ride out and jump up on to its roof while they’re together at the middle.',
-  'last span',
-);
-
-/** a span where the far cabin is late: the first time you reach the middle it isn't there. Stay on, ride back
- *  down to the deck and up again, and change on the second trip */
-export const act5 = spanAct(
-  'gtk08-der',
-  'gtk8fc',
-  9,
-  9,
-  px(8),
-  px(8) - 6,
-  ['#3E8E41', '#D4A017'],
-  'On this span the far cabin is late: the first time you reach the middle it isn’t there yet. Don’t jump for it: stay on, ride back to the deck and up again, and change when they stand together.',
-  'late cabin',
-  true,
-);
-
-/** a span with two middle stations and three shuttles: the first meets the middle one at the first station, and
- *  the middle one meets the last at the second station, half a turn later. Two changes, and a wait between */
-export const CHAIN: Line = { t0: -1, dwellEnd: 1.4, travel: 2.4, dwellMid: 1.4 };
-export function chainAct(id: string, key: string, start: number, end: number, ys: [number, number], colours: [string, string, string], advice: string): Act {
-  return {
-    id,
-    w: 50,
-    advice,
-    paint: (g, c) => {
-      const x = c.x;
-      g.pit(x, x + 49);
-      g.fill(x, x + 4, start, 17, '#');
-      g.fill(x + 46, x + 49, end, 17, '#');
-    },
-    build: (w, c) => {
-      const x = c.x;
-      const A = { ...CHAIN },
-        B = { ...CHAIN },
-        C = { ...CHAIN };
-      w.flags[key + 'l'] = { A, B, C };
-      onPass(w, c.X(1.5), (w2) => {
-        A.t0 = B.t0 = w2.tick - 0.1 * 120;
-        // the last shuttle is at the second station when the middle one gets there: half a turn later
-        C.t0 = A.t0 - Math.round((CHAIN.dwellEnd + CHAIN.travel) * 120);
-      });
-      const [y1, y2] = ys;
-      stations(w, [c.X(5), px(start)], [c.X(17), y1 + 16], [c.X(33), y2 + 16], c.X(17));
-      stations(w, [c.X(17), y1], [c.X(33), y2 + 16], [c.X(46), px(end)], c.X(33));
-      cabin(w, A, c.X(5), px(start), c.X(17) - CAB.w, y1, colours[0], key);
-      cabin(w, B, c.X(33) - CAB.w, y2, c.X(17) + 4, y1 - 6, colours[1], key);
-      cabin(w, C, c.X(46) - CAB.w, px(end), c.X(33) + 4, y2 - 6, colours[2], key);
-      gullyBack(w, c.X(5), c.X(46), px(Math.min(start, end) - 1));
-      w.add(new Rig(c.X(0), FL + 20, px(50), 40, { cause: 'gtk-khaai', inset: 0 }));
-      sign(w, x + 0.4, start - 4.6, 3.6, 'TASHI', 'station', null, 'two changes');
-    },
-  };
-}
-export const act3 = chainAct(
-  'gtk08-badli',
-  'gtk8dc',
-  6,
-  9,
-  [px(8), px(8)],
-  ['#C0392B', '#3E8E41', '#2E86AB'],
-  'This span has two middle stations and three shuttles. Change at the first station as they meet; the middle cabin then takes you on to the second station, where the last one comes to meet it a little later. Wait on its roof, and change again.',
-);
+/** act: the same station, the other way about. The cabin in the bay has its door on YOUR side this time: get in
+ *  from here. Walk round as in the first station and its blind side faces you; the next one is the shed's */
+export const act6: Act = {
+  id: 'gtk08-saamne',
+  w: 32,
+  advice: 'The next station: this time the cabin in the bay has its door on your side. Get in from here. Walk round to the far platform as before and you face its blind side; and the next cabin is the one going back into the shed.',
+  paint: (g, c) => paintDoorSide(g, c.x),
+  build: (w, c) => {
+    doorSide(w, c.x, 'gtk8s', DOORSIDE, true);
+    sign(w, c.x + 0.4, 5.8, 3.6, 'TASHI', 'station', null, 'door this side');
+  },
+};
 
 /** door: the far station. The exit is through a docked cabin: its doors open both sides at once, for a moment */
 export const DOCK = { period: 4.2, open: 2.0 };
@@ -309,4 +357,4 @@ export const ending: Ending = {
   },
 };
 
-export const meta08 = { family: 'cabins-cross-at-midpoint', betrayals: ['cabin-cross'], ending: 'gtk-cabin-both-doors' };
+export const meta08 = { family: 'door-side-boarding', betrayals: ['door-side'], ending: 'gtk-cabin-both-doors' };

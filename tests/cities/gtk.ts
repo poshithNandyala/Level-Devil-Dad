@@ -705,9 +705,82 @@ function chain(key: string): (w: World) => Out {
   };
 }
 const chainRoute = (key: string) => (x: number): Step[] => [{ policy: chain(key), until: and(ground, X(x + 46.5)), max: 6000, note: 'two changes' }, { hold: 'R', until: X(x + 49.5), max: 300 }];
-const room08 = (): Step[] => [{ policy: ropeway('gtk8c'), until: and(ground, X(28)), max: 3000, note: 'ride up, cross at the middle, ride up to the far deck' }, { hold: 'R', until: X(29.5), max: 300 }];
+/** the door-side station (n0 = its first column): `round` walks round over the footbridge to the far platform and
+ *  in by the far door; `here` gets in from the near platform; `next` waits on the platform it stands on for the
+ *  next cabin and gets into that one. Inside, wait for the top station, and out on its platform */
+function doorSide(key: string, n0: number, mode: 'round' | 'here' | 'next' | 'roundNext'): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  let phase = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+      phase = 0;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const p = w.player;
+    const feet = p.y + p.h;
+    const up = (w.flags[key + 'up'] as Rig[])[0];
+    const shed = (w.flags[key + 'shed'] as Rig[])[0];
+    const fb = w.flags[key + 'fb'] as Rig[];
+    const inCab = (c: Rig) => p.x >= c.x + 6 && p.x + p.w <= c.x + BOX8.w - 6 && feet <= c.y + c.h + 1 && feet >= c.y + c.h - 8;
+    const mid = (c: Rig) => {
+      const cx = c.x + BOX8.w / 2;
+      return go(p.cx < cx - 3 ? 'R' : p.cx > cx + 3 ? 'L' : '');
+    };
+    // inside a cabin: keep to its middle; out on the right once it is open at the top station
+    for (const c of [up, shed])
+      if (inCab(c) && phase >= 2) {
+        if (c === up && c.s.open && c.x > px(n0 + 20)) {
+          phase = 3;
+          return go('R');
+        }
+        return mid(c);
+      }
+    if (phase === 3) return go('R');
+    const round = mode === 'round' || mode === 'roundNext';
+    if (phase === 0) {
+      if (!round) {
+        // to the edge of the near platform
+        if (p.x + p.w < px(n0 + 9.6)) return go('R');
+        phase = 1;
+      } else {
+        // up the footbridge steps and over
+        if (p.onGround) {
+          const next = fb.find((r) => r.y < feet - 2 && p.x + p.w >= r.x - 12 && p.x <= r.x + r.w);
+          if (next && p.x + p.w >= next.x - 10) {
+            jt = 12;
+            return { move: 'R', jump: true };
+          }
+        }
+        if (p.x < px(n0 + 16.4)) return go('R');
+        if (p.onGround && feet >= px(10) - 1) phase = 1;
+        return go('');
+      }
+    }
+    if (phase === 1) {
+      const target = mode === 'here' || mode === 'round' ? up : shed;
+      if (mode === 'next' || mode === 'roundNext') {
+        // wait for the next cabin to be in, open
+        if (!(target.s.open && target.y + target.h - 4 >= px(10) - 1)) return go('');
+      }
+      phase = 2;
+    }
+    // walk into the target cabin (or its blind side): from the near platform right, from the far one left
+    const target = mode === 'here' || mode === 'round' ? up : shed;
+    const fromFar = round;
+    if (inCab(target)) return mid(target);
+    return go(fromFar ? 'L' : 'R');
+  };
+}
+const BOX8 = { w: 48 };
+const room08 = (): Step[] => [{ policy: doorSide('gtk8', 0, 'round'), until: and(ground, X(30)), max: 3000, note: 'round over the footbridge, in by the far door, out at the top' }];
+const act08s = (x: number): Step[] => [{ policy: doorSide('gtk8s', x, 'here'), until: and(ground, X(x + 30)), max: 3000, note: 'the door is this side: in from here' }, { hold: 'R', until: X(x + 31.5), max: 300 }];
 const act08 = (x: number): Step[] => [{ policy: ropeway('gtk8ac', { down: true }), until: and(ground, X(x + 30)), max: 3000, note: 'ride out, step down on to the lower cabin at the middle' }, { hold: 'R', until: X(x + 33.5), max: 300 }];
-const act08b = (x: number): Step[] => [{ policy: ropeway('gtk8bc'), until: and(ground, X(x + 30)), max: 3000, note: 'ride out, jump up on to the higher cabin at the middle' }, { hold: 'R', until: X(x + 33.5), max: 300 }];
 /** the docked cabin: wait till its doors open, then straight through */
 const dockPolicy: Policy = (w, _m, d) => {
   const st = w.flags.gtk8e as { t0: number };
@@ -980,14 +1053,8 @@ function actDeaths() {
     { hold: 'R', jump: 14, ticks: 14, note: 'jump for it now' },
     { hold: 'R', until: done, max: 900 },
   ];
-  actDeath('GTK-08', r8, 'gtk08-upar', 'jump for the higher cabin before they meet', () => early('gtk8bc', 0), 'gtk-khaai');
-  actDeath('GTK-08', r8, 'gtk08-badli', 'jump for the next cabin on the way', () => early('gtk8dc', 0), 'gtk-khaai');
-  actDeath('GTK-08', r8, 'gtk08-badli', 'changed once, then jump again on the way to the second station', () => early('gtk8dc', 1), 'gtk-khaai');
-  actDeath('GTK-08', r8, 'gtk08-der', 'the far cabin isn’t there: jump for the station', () => [
-    { policy: chain('gtk8fc'), until: (w) => { const c = (w.flags.gtk8fc as Rig[])[0]; return c.carries(w) && c.s.ph === 'mid'; }, max: 6000 },
-    { hold: 'R', jump: 14, ticks: 14, note: 'jump across anyway' },
-    { hold: 'R', until: done, max: 900 },
-  ], 'gtk-khaai');
+  actDeath('GTK-08', r8, 'gtk08-saamne', 'round to the far platform, as at the first station', (x) => [{ policy: doorSide('gtk8s', x, 'round'), until: done, max: 3000 }], 'gtk-khaai');
+  actDeath('GTK-08', r8, 'gtk08-saamne', 'round, then wait there for the next cabin', (x) => [{ policy: doorSide('gtk8s', x, 'roundNext'), until: done, max: 3000 }], 'gtk-ropeway');
   const r9 = room09();
   actDeath('GTK-09', r9, 'gtk09-dophoto', 'walk across the shore', () => blind(), 'gtk-hiun');
   actDeath('GTK-09', r9, 'gtk09-dophoto', 'stay on for one photo, off at the second: surely that’s the end', () => [
@@ -1069,7 +1136,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'GTK-10': { steps: [{ policy: stepper(), until: done, max: 2400, note: 'out of the first door, as Tara says' }], cause: 'gtk-galat-tala' },
   'GTK-09': { steps: [{ policy: yakRide('gtk9', { offAtPhoto: true }), until: done, max: 3000, note: 'ride the yak, off when it stops, as Tara says' }], cause: 'gtk-photo' },
-  'GTK-08': { steps: [{ policy: ropeway('gtk8c', { stay: true }), until: done, max: 3000, note: 'ride it all the way, as Tara says' }], cause: 'gtk-ropeway' },
+  'GTK-08': { steps: [{ hold: 'R', until: done, max: 900, note: 'hop in, as Tara says: straight at the cabin in the bay' }], cause: 'gtk-khaai' },
   'GTK-07': { steps: [{ hold: 'R', until: done, max: 900, note: 'just run, as Tara says' }], cause: 'gtk-badal' },
   'GTK-06': { steps: [{ hold: 'R', until: done, max: 900, note: 'the shortcut stairs, down' }], cause: 'gtk-taxi' },
   'GTK-05': { steps: [{ policy: stepper(), until: done, max: 1200, note: 'hop the flowers, as Tara says' }], cause: 'gtk-jurmana' },
@@ -1082,6 +1149,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  'GTK-08': { steps: [{ policy: doorSide('gtk8', 0, 'next'), until: done, max: 3000, note: 'no door this side: wait for the next cabin, and in by its door' }], cause: 'gtk-ropeway' },
   'GTK-10': { steps: [...room10(), { policy: stepper(), until: X(32 + 8.3), max: 900 }, { policy: rideTier('gtk10s', true), until: done, max: 2400, note: 'straight on to the steamer with the wrapper in hand' }], cause: 'gtk-jurmana' },
   'GTK-09': { steps: [{ policy: yakRide('gtk9', {}), until: done, max: 4000, note: 'stay on past the photo, and on' }], cause: 'gtk-nadi' },
   'GTK-07': { steps: [...room07(), ...act07a(32), { hold: 'R', until: X(74), max: 300 }, waitClear('gtk7b'), { hold: 'R', until: done, max: 900, note: 'the cloud has lifted and the road looks whole: walk it' }], cause: 'gtk-deewar' },
@@ -1128,9 +1196,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk07-chiya': chiyaRoute('gtk7j'),
   'gtk07-jaldi': act07c,
   'gtk08-tar': act08,
-  'gtk08-upar': act08b,
-  'gtk08-badli': chainRoute('gtk8dc'),
-  'gtk08-der': (x: number): Step[] => [{ policy: chain('gtk8fc'), until: and(ground, X(x + 30)), max: 6000, note: 'stay on the first time, change on the second trip' }, { hold: 'R', until: X(x + 33.5), max: 300 }],
+  'gtk08-saamne': act08s,
   'gtk09-chamri': act09,
   'gtk09-chattan': act09b,
   'gtk09-dophoto': act09c,
