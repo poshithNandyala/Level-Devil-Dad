@@ -74,6 +74,68 @@ export class Block extends Awning {
   }
 }
 
+/** a lean-to roof over a stall: it sheds its water down its slope, so the dry ground is under the HIGH end whichever way the rain comes */
+export class Slope extends Awning {
+  /** which end is the low one (the water runs off that way): 1 = right */
+  constructor(
+    x0: number,
+    x1: number,
+    readonly lowDir: Wind,
+    readonly cause = 'svp-chhajja',
+  ) {
+    super(x0, x1);
+    this.paint = (ctx, rain) => this.drawSlope(ctx, rain);
+  }
+  lee(): [number, number] {
+    return this.lowDir > 0 ? [this.x0, this.x0 + 44] : [this.x1 - 44, this.x1];
+  }
+  private drawSlope(ctx: Ctx, rain: boolean) {
+    const hi = FLOOR - 62,
+      lo = FLOOR - 36;
+    const lx = this.lowDir > 0 ? this.x1 : this.x0;
+    const hx = this.lowDir > 0 ? this.x0 : this.x1;
+    // the stall behind
+    ctx.fillStyle = 'rgba(58,30,18,0.35)';
+    ctx.fillRect(this.x0 + 4, FLOOR - 34, this.x1 - this.x0 - 8, 34);
+    // posts: tall at the high end, short at the low end
+    ctx.fillStyle = '#4A3A2A';
+    ctx.fillRect(hx - 1, hi, 2, FLOOR - hi);
+    ctx.fillRect(lx - 1, lo, 2, FLOOR - lo);
+    // the tin sheet, high to low
+    ctx.fillStyle = '#7C8A92';
+    ctx.beginPath();
+    ctx.moveTo(hx - this.lowDir * 4, hi - 2);
+    ctx.lineTo(lx + this.lowDir * 6, lo - 2);
+    ctx.lineTo(lx + this.lowDir * 6, lo + 4);
+    ctx.lineTo(hx - this.lowDir * 4, hi + 4);
+    ctx.fill();
+    ctx.strokeStyle = '#5A6770';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let k = 1; k < 8; k++) {
+      const u = k / 8;
+      const sx = hx + (lx - hx) * u;
+      ctx.moveTo(sx, hi + (lo - hi) * u - 2);
+      ctx.lineTo(sx, hi + (lo - hi) * u + 3);
+    }
+    ctx.stroke();
+    if (rain) {
+      // the run-off: a sheet pouring off the low end
+      ctx.strokeStyle = 'rgba(170,215,235,0.9)';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      for (let k = 0; k < 5; k++) {
+        const ox = lx + this.lowDir * (6 + k * 3);
+        ctx.moveTo(ox, lo + 4);
+        ctx.lineTo(ox + this.lowDir * 1.5, FLOOR);
+      }
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(70,170,190,0.5)';
+      ctx.fillRect(lx + this.lowDir * 4 - 14, FLOOR - 3, 28, 3);
+    }
+  }
+}
+
 /** the weather over the whole stage: it starts when Dad first comes near the street */
 export class Weather extends Entity {
   t = -1;
@@ -96,6 +158,11 @@ export class Weather extends Entity {
   readonly firsts: Record<number, number> = {};
   private first = FIRST_LULL;
   private fired = new Set<number>();
+  /** a covered market: the sky is not seen from in here, and the rain is heard on the tin before it comes: [x0, x1] px */
+  readonly covered: [number, number][] = [];
+  isCovered(cx: number) {
+    return this.covered.some(([a, b]) => cx >= a && cx <= b);
+  }
   constructor(readonly startX: number) {
     super();
     this.layer = 6;
@@ -156,7 +223,12 @@ export class Weather extends Entity {
     const p = w.player;
     const exposed = ph.rain && !this.dryAt(p.cx, ph.dir) && p.y + p.h > FLOOR - 70;
     this.wet = exposed ? this.wet + 1 : Math.max(0, this.wet - 3);
-    if (this.wet >= KILL) w.die(this.cause);
+    if (this.wet >= KILL) {
+      const sl = this.awnings.find((a) => a instanceof Slope && p.cx >= a.x0 - 10 && p.cx <= a.x1 + 10) as Slope | undefined;
+      w.die(sl ? sl.cause : this.cause);
+    }
+    // under the market's tin the next rain is heard on the side it comes from, a little before the awnings swing
+    if (!ph.rain && ph.age > 30 && ph.left < 9000 && this.isCovered(p.cx) && w.tick % 14 === 0) w.sfx('thud', p.cx + (ph.next > 0 ? -230 : 230), FLOOR - 60);
   }
   /** a running count for the board: ticks since the weather started */
   draw(ctx: Ctx, w: World) {
@@ -185,6 +257,7 @@ export class Weather extends Entity {
     if (this.t < 0) return;
     const ph = this.phaseAt(this.t);
     const c = w.player.cx;
+    const cov = this.isCovered(c);
     // the lee patches on the ground: where the rain does not reach
     if (ph.rain) {
       for (const a of this.awnings) {
@@ -200,12 +273,25 @@ export class Weather extends Entity {
         const k = (Math.floor(x) * 7919) % 53;
         if (this.dryAt(x + 0, ph.dir) && k % 1 === 0) continue;
         const y = 20 + ((this.now * 3.4 + k * 11) % (FLOOR - 24));
+        if (cov) continue;
         ctx.moveTo(x + (k % 4), y);
         ctx.lineTo(x + (k % 4) + ph.dir * 5, y + 9);
       }
       ctx.stroke();
       ctx.fillStyle = 'rgba(40,70,90,0.14)';
       ctx.fillRect(c - 300, 0, 600, FLOOR);
+    } else if (cov) {
+      // under the tin: no sky, only the first drops drumming on the sheets at the side the rain comes from
+      if (ph.age > 30 && ph.left < 9000) {
+        const side = ph.next > 0 ? -1 : 1;
+        ctx.fillStyle = 'rgba(230,240,250,0.85)';
+        for (let i = 0; i < 6; i++) {
+          const bx = c + side * 200 + side * ((i * 13 + (this.now >> 2) * 3) % 50);
+          const by = FLOOR - 104 + ((i * 7 + this.now) % 6);
+          ctx.fillRect(bx, by, 2, 2);
+          ctx.fillRect(bx + 3 * side, by - 3, 1.5, 1.5);
+        }
+      }
     } else {
       // the lull: the cloud bank and its slanting lines show on the horizon the next rain comes from
       const side = ph.next > 0 ? -1 : 1;
@@ -293,6 +379,60 @@ export const deewar: Act = {
     wx.firsts[px(x + 34.5)] = 220;
     // first street: a one-storey shop, then a four-storey house; second: a three-storey and a two-storey, close together
     for (const [bx, bw, h] of [[x + 9, 2, 1], [x + 17, 3, 4], [x + 38, 3, 3], [x + 47, 3, 2]] as const) wx.add(new Block(px(bx), px(bw), h));
+  },
+};
+
+// ================================================================== the act: the lean-to roofs
+export const chhajja: Act = {
+  id: 'svp08-chhajja',
+  w: 56,
+  advice: 'Lean-to roofs over the stalls, each sloping one way: the tin is high at one end and low at the other. Rain runs off a slope on its low side, whichever way the rain comes. Look at the slope before you look at the sky: the dry place is under the high end.',
+  cps: [28.5],
+  build: (w, c) => {
+    const x = c.x;
+    const wx = w.flags.weather as Weather;
+    wx.porches.push([px(x), px(x + 4)], [px(x + 24), px(x + 33)]);
+    wx.resets.push(px(x + 4), px(x + 34.5));
+    wx.causes[px(x + 34.5)] = 'svp-chhajja2';
+    wx.firsts[px(x + 4)] = 220;
+    wx.firsts[px(x + 34.5)] = 220;
+    // the first stall is high on the left, the second is high on the right
+    wx.add(new Slope(px(x + 10), px(x + 16), 1));
+    wx.add(new Slope(px(x + 40), px(x + 46), -1, 'svp-chhajja2'));
+  },
+};
+
+// ================================================================== the act: the covered market, where the rain is heard
+export const tin: Act = {
+  id: 'svp08-tin',
+  w: 56,
+  advice: 'The covered market, under one long tin roof: you cannot see the sky from in here. The rain is heard before it comes, drumming on the sheets at the side it comes from. Listen for the side, and be at the other end of the stall when it arrives.',
+  cps: [28.5],
+  build: (w, c) => {
+    const x = c.x;
+    const wx = w.flags.weather as Weather;
+    wx.porches.push([px(x), px(x + 4)], [px(x + 24), px(x + 33)]);
+    wx.resets.push(px(x + 4), px(x + 34.5));
+    wx.causes[px(x + 34.5)] = 'svp-baarish3';
+    wx.firsts[px(x + 4)] = 220;
+    wx.firsts[px(x + 34.5)] = 220;
+    wx.covered.push([px(x + 4), px(x + 54)]);
+    for (const [a, b] of [[x + 9, x + 14], [x + 18, x + 23], [x + 38, x + 43], [x + 47, x + 52]]) wx.add(new Awning(px(a), px(b)));
+    w.add(
+      new Fx(null, (ctx) => {
+        // the long tin roof overhead, with its ribs and its rivets
+        const x0 = px(x + 4),
+          x1 = px(x + 54);
+        ctx.fillStyle = '#586670';
+        ctx.fillRect(x0, 14, x1 - x0, 20);
+        ctx.fillStyle = '#7C8A92';
+        for (let rx = x0 + 6; rx < x1; rx += 22) ctx.fillRect(rx, 14, 3, 20);
+        ctx.fillStyle = '#3A464E';
+        ctx.fillRect(x0, 34, x1 - x0, 3);
+        ctx.fillStyle = '#4A3A2A';
+        for (const px0 of [x0 + 2, x1 - 4]) ctx.fillRect(px0, 34, 3, FLOOR - 34);
+      }, 7),
+    );
   },
 };
 

@@ -107,13 +107,18 @@ const ships = (w: World) => w.flags.ships as Ship[];
 
 // ------------------------------------------------------------------ SVP-08: the two monsoons
 const wx = (w: World) => w.flags.weather as Weather;
+/** the dry spot under the high end of the lean-to roof that is awning `idx` */
+const slopeSpot = (idx: number) => (w: World) => {
+  const [z0, z1] = wx(w).awnings[idx].lee(1);
+  return (z0 + z1) / 2;
+};
 /** along the street: in the lee of an awning for the rain that is coming, and over to the next one in the lull */
-function streetPolicy(w: World): Out {
+function streetPolicy(w: World, cap = Infinity): Out {
   const k = wx(w);
   const p = w.player;
   const cx = p.cx;
   if (k.t < 0) return go('R');
-  const aws = k.awnings.filter((a) => a.lee(1)[1] - a.lee(1)[0] >= 36).sort((a, b) => a.x0 - b.x0);
+  const aws = k.awnings.filter((a) => a.lee(1)[1] - a.lee(1)[0] >= 36 && a.x1 <= cap).sort((a, b) => a.x0 - b.x0);
   const inside = aws.find((a) => cx >= a.x0 - 6 && cx <= a.x1 + 6);
   const nextAw = aws.find((a) => a.x0 > cx + 4);
   const dirNow = k.raining ? k.dir : k.next;
@@ -129,7 +134,7 @@ function streetPolicy(w: World): Out {
   if (inside && nextAw && k.left < dist / 2.3 + 45) return go(toward(w, spot(inside), 2));
   return go(toward(w, spot(tgt), 2));
 }
-const streetUntil = (idx: number, note: string): Step => ({ policy: streetPolicy, until: (w) => !!wx(w).awnings[idx] && Math.abs(w.player.cx - (wx(w).awnings[idx].lee(wx(w).raining ? wx(w).dir : wx(w).next)[0] + 19)) < 4 && w.player.onGround, max: 6000, note });
+const streetUntil = (idx: number, note: string): Step => ({ policy: streetPolicy, until: (w) => { const a = wx(w).awnings[idx]; if (!a) return false; const [z0, z1] = a.lee(wx(w).raining ? wx(w).dir : wx(w).next); return Math.abs(w.player.cx - (z0 + z1) / 2) < 5 && w.player.onGround; }, max: 6000, note });
 
 // ------------------------------------------------------------------ SVP-09: the roots
 const allRoots = (w: World) => w.entities.filter((e) => e.constructor.name === 'Root') as unknown as Root[];
@@ -616,6 +621,17 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: and(ground, X(x + 110)), max: 300 },
   ])(x0 + 3),
   'svp08-gali': () => [streetUntil(6, 'the longer street, awning to awning')],
+  'svp08-chhajja': (x) => [
+    { hold: 'R', until: and(ground, X(x + 4.5)), max: 900, note: 'on along the road to the next street' },
+    { policy: (w) => go(toward(w, slopeSpot(11)(w), 2)), until: (w) => !wx(w).raining && wx(w).left > 9000 && w.player.cx < px(x + 30), max: 4000, note: 'under the high end of the first stall until both rains have gone' },
+    { policy: (w) => go(toward(w, slopeSpot(12)(w), 2)), until: (w) => !wx(w).raining && wx(w).left > 9000 && w.player.cx > px(x + 36), max: 4000, note: 'under the high end of the second stall until both rains have gone' },
+  ],
+  'svp08-tin': (x) => [
+    { hold: 'R', until: and(ground, X(x + 4.5)), max: 900, note: 'on along the road under the roof' },
+    { policy: (w) => streetPolicy(w, px(x + 30)), until: (w) => !wx(w).raining && wx(w).left > 9000 && w.player.cx < px(x + 30), max: 5000, note: 'under the tin, by the sound of the rain, till the first section is clear' },
+    { hold: 'R', until: (w) => w.player.cx >= px(x + 34.8) && w.player.onGround, max: 900, note: 'on to the second section' },
+    { policy: (w) => streetPolicy(w, px(x + 56)), until: (w) => !wx(w).raining && wx(w).left > 9000 && w.player.cx > px(x + 36), max: 5000, note: 'and the second, till both rains have gone' },
+  ],
   'svp08-deewar': () => [streetUntil(9, 'the tall buildings, not the short ones'), { policy: streetPolicy, until: (w) => !wx(w).raining && wx(w).left > 9000, max: 4000, note: 'in the shadow of the tall one until both rains have gone' }],
   'svp07-ghat': (x) => [
     { hold: 'R', until: and(ground, (w) => w.player.x >= px(x + 4)), max: 600, note: 'on along the pier to the quay' },
@@ -789,8 +805,9 @@ fix['SVP-08'] = {
     for (const p of def.parts ?? []) out.push(...actRoutes[p.kind](p.x0));
     return [
       ...out,
-      streetUntil(11, 'to the last awning, before the gutter'),
-      { hold: '', until: (w) => (w.flags.gutter as { flood: number }).flood > 0.5, max: 4000, note: 'wait there for the rain: the gutter fills' },
+      { hold: 'R', until: (w) => wx(w).left < 9000, max: 900, note: 'on to the last stretch, where the weather starts over' },
+      streetUntil(17, 'to the last awning, before the gutter'),
+      { hold: '', until: (w) => (w.flags.gutter as { flood: number }).flood > 0.5 && wx(w).raining, max: 4000, note: 'wait there for the rain: the gutter fills' },
       { hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'and cross it now, the awnings are dry' },
     ];
   },
@@ -893,6 +910,26 @@ actDeath('SVP-10', 'svp10-ghat', 'carry the fritter to the edge and step off whi
   { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },
   { hold: 'R', until: X(x + 15.2), max: 600, note: 'to the edge' },
   { policy: (w) => (boatA(w).boat.x >= boatA(w).R0 - 1 ? go('R') : pace(w)), until: (w) => w.state !== 'play', max: 1800, note: 'pace about, and walk off when the boat has gone back across' },
+]);
+/** the spot at the end of awning `idx` that the wind alone would give: the lee end (or, `against`, the windward end) */
+const windSpot = (idx: number, against = false) => (w: World) => {
+  const a = wx(w).awnings[idx] as unknown as { x0: number; x1: number };
+  const d = wx(w).raining ? wx(w).dir : wx(w).next;
+  return (d > 0) !== against ? a.x1 - 20 : a.x0 + 20;
+};
+const intoStreet = (x: number): Step => ({ hold: 'R', until: (w) => { return w.player.onGround && w.player.cx >= px(x + 4.5); }, max: 900, note: 'on along the road into the street' });
+actDeath('SVP-08', 'svp08-chhajja', 'to the lee end by the wind, as the awnings taught', 'svp-chhajja', (x) => [intoStreet(x), { policy: (w) => go(toward(w, windSpot(11)(w), 2)), until: (w) => w.state !== 'play', max: 3000, note: 'at the lee end of the first stall' }]);
+actDeath('SVP-08', 'svp08-chhajja', 'the high end of the first stall, then the lee end by the wind at the second', 'svp-chhajja2', (x) => [
+  intoStreet(x),
+  { policy: streetPolicy, until: (w) => !wx(w).raining && wx(w).left > 9000 && w.player.cx > px(x + 26), max: 5000, note: 'the first stall, by its slope' },
+  { policy: (w) => go(toward(w, windSpot(12)(w), 2)), until: (w) => w.state !== 'play', max: 4000, note: 'the lee end of the second stall' },
+]);
+actDeath('SVP-08', 'svp08-tin', 'stay at the end that was dry for the first rain, not listening', 'svp-baarish', (x) => [intoStreet(x), { policy: (w) => { return go(toward(w, (wx(w).awnings[13] as unknown as { x1: number }).x1 - 20, 2)); }, until: (w) => w.state !== 'play', max: 4000, note: 'where the first rain was dry' }]);
+actDeath('SVP-08', 'svp08-tin', 'by the sound at the first section, then toward the drumming at the second', 'svp-baarish3', (x) => [
+  intoStreet(x),
+  { policy: (w) => streetPolicy(w, px(x + 30)), until: (w) => !wx(w).raining && wx(w).left > 9000 && w.player.cx < px(x + 30), max: 5000, note: 'the first section, by the sound' },
+  { hold: 'R', until: (w) => w.player.cx >= px(x + 34.8) && w.player.onGround, max: 900, note: 'on to the second section' },
+  { policy: (w) => go(toward(w, windSpot(15, true)(w), 2)), until: (w) => w.state !== 'play', max: 4000, note: 'toward the drumming end of the second' },
 ]);
 actDeath('SVP-08', 'svp08-deewar', 'shelter against the first building you come to, the short shop', 'svp-baarish', () => [
   { policy: (w) => go(toward(w, (wx(w).awnings[7] as unknown as { bx: number; bw: number }).bx + 40, 2)), until: (w) => w.state !== 'play', max: 3000, note: 'in the shadow of the short shop' },
