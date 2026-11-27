@@ -720,7 +720,13 @@ const greyJump = (a: number, b: number): Step[] => [
 ];
 const doorGaps = crossGaps((w) => w.flags.doorPatrol as { cx: number }, 56);
 /** a policy for each door ending, by kind */
+/** the plain doors (05, 06, 07, 09): walk up to the door */
+const walkIn: Policy = (w, _m, d) => go(toward(w, d.x + 8, 1) || 'R');
 const endingPolicies: Record<string, Policy> = {
+  'svp-note-door': walkIn,
+  'svp-bough-door': walkIn,
+  'svp-ticket-window': walkIn,
+  'svp-frame-door': walkIn,
   'svp-dweep-gate'(w, _m, d) {
     const h = w.flags.guard as Herd;
     const counter = w.flags.counter as number;
