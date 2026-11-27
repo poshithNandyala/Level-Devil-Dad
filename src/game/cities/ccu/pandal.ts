@@ -177,3 +177,41 @@ export class Skeleton extends Entity {
     }
   }
 }
+
+/** CCU-10: after the festival the pandal comes down. A panel let down from the roof frame on to the bamboo
+ *  under it, a moment after Dad stands there: it squeezes whoever waits */
+export class Lowered extends Entity {
+  solid: Solid;
+  t = -1;
+  constructor(
+    x: number,
+    wd: number,
+    readonly from: number,
+    readonly to: number,
+    readonly hue = 0,
+  ) {
+    super();
+    this.layer = 1;
+    this.solid = new Solid(x, from, wd, 16);
+    this.solid.velX = 0;
+  }
+  /** let it down `delay` s from now */
+  lower(w: World, delay: number) {
+    if (this.t < 0) this.t = w.tick + Math.round(delay * 120);
+  }
+  update(w: World) {
+    if (this.t < 0 || w.tick < this.t || this.solid.y >= this.to) return;
+    this.solid.moveBy(w, 0, Math.min(1, this.to - this.solid.y));
+  }
+  draw(ctx: CanvasRenderingContext2D) {
+    const [a, b] = CLOTH[this.hue % CLOTH.length];
+    const s = this.solid;
+    ctx.fillStyle = '#C9A66B';
+    ctx.fillRect(s.x + 2, s.y - 40, 1, 40);
+    ctx.fillRect(s.x + s.w - 3, s.y - 40, 1, 40);
+    ctx.fillStyle = a;
+    ctx.fillRect(s.x, s.y, s.w, s.h);
+    ctx.fillStyle = b;
+    ctx.fillRect(s.x, s.y + 6, s.w, 2);
+  }
+}
