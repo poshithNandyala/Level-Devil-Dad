@@ -749,6 +749,10 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'wait for the bridge and walk under the lamps', cause: 'bbi-deepa', steps: (x) => [...onBridge('bbi10d', x + 4, x + 12.2, 'the bridge')] },
     { what: 'ride the wheel and stay on it', cause: 'bbi-thrown', steps: (x) => [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 4) - 2, max: 900 }, waitFor((w) => tr(w, 'bbi10d').pose === 'wheel' && tr(w, 'bbi10d').into < 0.2, 'the wheel', 2400), leap(() => px(x + 8), 'on to its top'), { hold: '', until: done, max: 900 }] },
   ],
+  'bbi10-patra': [
+    { what: 'wait for the soot, then step on the written leaves', cause: 'bbi-likhita', steps: (x) => [{ hold: 'R', until: X(x + 2.6), max: 400 }, { hold: '', until: (w) => soot(w, 'bbi10pt') >= 6, max: 1500 }, leap(() => px(x + 5), 'leaf 1'), leap(() => px(x + 7), 'leaf 2, written'), { hold: '', until: done, max: 600 }] },
+    walkOn('bbi-patra'),
+  ],
   'bbi10-chhata': [
     { what: 'wait on the first cut-out for a customer', cause: 'bbi-rangapani', steps: (x) => [{ hold: 'R', until: X(x + 0.4), max: 300 }, leap6(cut10(0), 'on to it'), stayOn(cut10(0), done, 'and wait', 1500)] },
     pFix('bbi10ps'),
@@ -854,10 +858,10 @@ const fixMem = (w: World) => {
   return fm.m;
 };
 /** the palm leaves: wait at the bank for the soot, then the written leaves only, jumping the blank ones */
-const soot = (w: World) => (w.flags.bbi5p as { soot: number }).soot;
-const patraRun = (x: number): Step[] => [
+const soot = (w: World, k = 'bbi5p') => (w.flags[k] as { soot: number }).soot;
+const patraRun = (x: number, k = 'bbi5p'): Step[] => [
   { hold: 'R', until: X(x + 2.6), max: 400 },
-  { hold: '', until: (w) => soot(w) >= 6, max: 1500, note: 'wait for the soot' },
+  { hold: '', until: (w) => soot(w, k) >= 6, max: 1500, note: 'wait for the soot' },
   leap(() => px(x + 5), 'leaf 1, written'),
   leap(() => px(x + 9), 'over the blank to leaf 3'),
   leap(() => px(x + 11), 'leaf 4'),
@@ -919,7 +923,7 @@ const sutraRun = (x: number): Step[] => [
   { hold: 'R', until: and(ground, X(x + 12.4)), max: 400 },
   { hold: 'R', until: X(x + 16.5), max: 300 },
 ];
-const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi10-deepa': (x) => [...crossTroupe('bbi10d', x, 4, 8, 'wheel'), { hold: 'R', until: X(x + 15.5), max: 300 }], 'bbi06-sutra': sutraRun, 'bbi07-dui-baja': (x) => [...crossTroupe('bbi7db0', x, 4, 7, 'bridge'), { hold: 'R', until: X(x + 14.5), max: 300 }], 'bbi07-pada': padaRun, 'bbi08-bhanwar': bhanwarRun, 'bbi05-chheli': chheliRun, 'bbi07-bagudi': bagudiRun, 'bbi06-patta': pattaRun, 'bbi05-patra': patraRun, 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi02-dive': act02b, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b,
+const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi10-patra': (x) => patraRun(x, 'bbi10pt'), 'bbi10-deepa': (x) => [...crossTroupe('bbi10d', x, 4, 8, 'wheel'), { hold: 'R', until: X(x + 15.5), max: 300 }], 'bbi06-sutra': sutraRun, 'bbi07-dui-baja': (x) => [...crossTroupe('bbi7db0', x, 4, 7, 'bridge'), { hold: 'R', until: X(x + 14.5), max: 300 }], 'bbi07-pada': padaRun, 'bbi08-bhanwar': bhanwarRun, 'bbi05-chheli': chheliRun, 'bbi07-bagudi': bagudiRun, 'bbi06-patta': pattaRun, 'bbi05-patra': (x) => patraRun(x), 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi02-dive': act02b, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b,
   'bbi09-ghoda': chAct('bbi9g', 8, 7),
   'bbi07-deepa': (x) => [...crossTroupe('bbi7l', x, 4, 8, 'bridge'), { hold: 'R', until: X(x + 15.5), max: 300 }],
   'bbi07-shrinkhala': (x) => [...onBridge('bbi7k0', x + 4, x + 22.2, 'on at the stop, then walk the whole chain'), { hold: 'R', until: X(x + 25.5), max: 300 }],

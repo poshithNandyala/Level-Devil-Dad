@@ -17,6 +17,7 @@ export const causeLines: Record<string, string[]> = {
   'bbi-bhanwar': ['Down the drain with the badi, Dad.', 'The water takes every badi to the hole: hop up on to the far rim just before yours goes down.'],
   'bbi-pada': ['The tower fell on you, Dad! Its top lands right on the edge.', 'Wait back by the scuffs, not at the edge, and go the moment it lands.'],
   'bbi-sutra': ['Through the undyed thread, Dad: there’s no patch on it.', 'Let the shuttle by, then hop the hole in the motif.'],
+  'bbi-likhita': ['That leaf had writing on it, Dad: an old one, worn through.', 'In the old manuscript the written leaves are the rotten ones: step on the blank.'],
   'bbi-rangapani': ['Into the dye gutter, Dad: that parasol was shut.', 'A parasol only opens when a customer comes to its shop. Wait for it.'],
   'bbi-silk': ['The silk is slippery: you slid off the edge.', 'Stand on the cut-out sewn on top, and nowhere else.'],
   'bbi-peeled': ['He sold the cut-out you were standing on!', 'On the third parasol, don’t wait: go on as soon as the next one opens.'],

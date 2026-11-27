@@ -663,24 +663,29 @@ export const act12: Act = {
  *  walks them rubbing soot into his stylus lines, and only behind him does the writing show. The written leaves
  *  hold; the blank ones are rotten and drop under Dad. A2: wait for the soot. A3: the marks are the safe ones. */
 export const PATRA = { c0: 4, n: 6, blank: [1, 4], delay: 0.5, v: 36 };
-export const act11: Act = {
-  id: 'bbi05-patra',
+/** `old`: an old manuscript (the finale's turn, law 7): the soot shows the worn lines, and the written leaves
+ *  are the rotten ones; the blank ones hold */
+export function patraAct(id: string, key: string, old = false): Act {
+  return {
+  id,
   w: 22,
-  advice: 'Palm leaves over the ditch, all alike. The scribe’s lines only show once his soot is rubbed in: wait for him to pass. The leaves he wrote on hold; the blank ones are rotten. Step on the written ones and jump the blank.',
+  advice: old
+    ? 'An old manuscript this time: the soot shows the worn lines, and the leaves with writing on are the rotten ones. Wait for the soot, then step only on the blank leaves.'
+    : 'Palm leaves over the ditch, all alike. The scribe’s lines only show once his soot is rubbed in: wait for him to pass. The leaves he wrote on hold; the blank ones are rotten. Step on the written ones and jump the blank.',
   cps: [],
   paint: (g, c) => {
     g.pit(c.x + PATRA.c0, c.x + PATRA.c0 + PATRA.n * 2 - 1);
   },
   build: (w, c) => {
-    village(w, c.x, c.x + 22);
+    if (!old) village(w, c.x, c.x + 22);
     const st = { t0: -1, x: c.X(PATRA.c0 - 1), soot: 0 };
-    w.flags.bbi5p = st;
+    w.flags[key] = st;
     onPass(w, c.X(2), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
     const ditch = channel(w, c.x + PATRA.c0, c.x + PATRA.c0 + PATRA.n * 2 - 1, 'bbi-patra', 'drain');
     // the cause is the leaf's: rotten before the soot showed it, or a blank leaf the soot left plain
     let last = -1;
     ditch.o.tick = (r) => {
-      r.hazard!.cause = last >= 0 && last < st.soot ? 'bbi-khali' : 'bbi-patra';
+      r.hazard!.cause = last >= 0 && last < st.soot ? (old ? 'bbi-likhita' : 'bbi-khali') : 'bbi-patra';
     };
     w.add(
       new Rig(0, 0, 0, 0, {
@@ -711,8 +716,9 @@ export const act11: Act = {
             if (!r.solid?.collidable) return;
             box(ctx, r.x + 1, r.y, r.w - 2, r.h, '#D9C08A');
             box(ctx, r.x + 1, r.y + r.h - 1, r.w - 2, 1, '#A88B52');
-            if (i < st.soot && !rotten) for (let k = 0; k < 3; k++) box(ctx, r.x + 4 + k * 9, r.y + 2, 6, 1, '#1A1A1A');
-            if (i < st.soot && rotten) box(ctx, r.x + 6, r.y + 2, r.w - 12, 2, '#BFB49A');
+            const written = old ? rotten : !rotten;
+            if (i < st.soot && written) for (let k = 0; k < 3; k++) box(ctx, r.x + 4 + k * 9, r.y + 2, 6, 1, old ? '#5A4A3A' : '#1A1A1A');
+            if (i < st.soot && !written) box(ctx, r.x + 6, r.y + 2, r.w - 12, 2, '#BFB49A');
           },
         }),
       );
@@ -729,6 +735,8 @@ export const act11: Act = {
     sign(w, c.x + 18, 10.4, 3.4, 'TALAPATRA', 'shop', null, 'D');
   },
 };
+}
+export const act11 = patraAct('bbi05-patra', 'bbi5p');
 
 /** ending: the house with podapitha on the verandah step; the front door up there is locked. The way in is
  *  below, behind the step. On the verandah, the grinding stone's roller starts when you land by it. */

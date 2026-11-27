@@ -13,6 +13,7 @@ import { Rig, box, folk } from './entities';
 import { FL, channel, cyc, since, taraScript } from './common';
 import { keeperOn } from './s02';
 import { parasol } from './s03';
+import { patraAct } from './s05';
 import { loom, type LoomCfg } from './s06';
 import { deepaAct, stagePit, troupe, type TroupeCfg } from './s07';
 import { chariot, templeWall, type ChariotCfg } from './s09';
@@ -117,6 +118,10 @@ export const act2: Act = {
  *  lamps, because the wheel's top put your head in them. Here they hang down to the bridge, and the wheel rides
  *  above them. */
 export const act3 = deepaAct('bbi10-deepa', 'bbi10d', true);
+
+/** act 4, the palm leaves turned round (law 7): an old manuscript, where the soot shows the worn lines and the
+ *  written leaves are the rotten ones */
+export const act4 = patraAct('bbi10-patra', 'bbi10pt', true);
 
 /** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */
 export const RIB = { period: 2.2, shut: 0.5, at: 9 };
