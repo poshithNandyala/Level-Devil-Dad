@@ -265,7 +265,7 @@ it.runIf(!!process.env.LDD_GTKPROBE)('replay', () => {
       let prev = 0, longest = 0;
       for (const [, t] of cps) (longest = Math.max(longest, t - prev)), (prev = t);
       longest = Math.max(longest, r.w.tick - prev);
-      const per = [...worst].sort((a, b) => a[0] - b[0]).filter(([, v]) => v.back > 7.5).map(([cp, v]) => `cp${cp}=${v.back.toFixed(2)}`).join(' ');
+      const per = [...worst].sort((a, b) => a[0] - b[0]).filter(([, v]) => v.back > 7.5).map(([cp, v]) => `cp${cp}=${v.back.toFixed(2)} (${v.what})`).join('; ');
       out.push(`${id} | ${lag} | ${(r.w.tick / 120).toFixed(1)}s | ${cps.length} cps | longest ${(longest / 120).toFixed(1)}s | max replay ${mx.toFixed(2)}s ${mxw} | over7.5: ${per || 'none'} | calm fails: ${idleBad.join('; ') || 'none'} | hot: ${caps.join('; ') || 'none'}`);
       if (process.env.LDD_CPS) out.push(`   cps: ` + cps.map(([c, t, x]: number[]) => `cp${c}@${(t / 120).toFixed(1)}s x${x}`).join(' '));
     }
