@@ -591,5 +591,80 @@ export const photo: Act = {
   },
 };
 
-export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, photo, chowk] };
+// ================================================================ act 6: kohra, the fog
+/** A winter fog rolls up the Ganj from behind, slower than a stroll. Inside it the nalas can't be seen.
+ *  Gentlemen on their chabutras greet you as you pass ("Aadaab"): stop to return it, as 02 taught, and
+ *  the fog catches you and hides the next nala. In the fog, greetings wait: stroll on past them. */
+const KOHRA = { greet: [8, 26, 42], nalas: [12, 30, 46], crowd: [20, 38] };
+export const kohra: Act = {
+  id: 'lko07-kohra',
+  w: 54,
+  advice: 'A winter fog rolls up the Ganj from behind you, slower than a stroll, and inside it the nalas can’t be seen. The gentlemen on their chabutras greet you: don’t stop to return it here, or the fog catches you and hides the next nala. Stroll on past them: pause before each group of strollers, then go.',
+  paint: (g, c) => {
+    for (const n of KOHRA.nalas) g.pit(c.x + n, c.x + n + 1);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    arcade(w, x, x + 53);
+    const F = { x: c.X(-8), go: false };
+    w.flags[c.f('fog')] = F;
+    for (const n of KOHRA.nalas) {
+      const x0 = c.X(n),
+        x1 = c.X(n + 2);
+      w.add(
+        new Art((ctx) => {
+          ctx.fillStyle = '#3B3A36';
+          ctx.fillRect(x0, FLOOR, x1 - x0, 48);
+          ctx.fillStyle = '#5B6B4E';
+          ctx.fillRect(x0, FLOOR + 30, x1 - x0, 18);
+        }, -4),
+      );
+      const z = w.add(new Zone(x0 + 1, FLOOR + 16, x1 - x0 - 2, 30, 'lko-nala'));
+      w.onTick((w2) => {
+        // shoved back by strollers, or walked into a nala the fog had hidden
+        z.hazard.cause = w2.flags.shoveCause ?? (F.x > x1 ? 'lko-kohra' : 'lko-nala');
+      });
+    }
+    for (const k of KOHRA.crowd) strollers(w, x + k, c.f('crowd' + k), 'lko-ganj', -210);
+    KOHRA.greet.forEach((n, i) => {
+      let said = false;
+      w.add(
+        new Art((ctx) => {
+          ctx.fillStyle = '#C8B48E';
+          ctx.fillRect(c.X(n) - 6, FLOOR - 10, 28, 10);
+          gent(ctx, c.X(n) + 8, FLOOR - 10, 24, KURTA[(i + 2) % KURTA.length], { face: -1, bow: said ? 0.6 : 0, topi: '#F5F0E6' });
+        }, 3),
+      );
+      w.when(
+        (w2) => w2.player.cx > c.X(n - 4),
+        (w2) => {
+          said = true;
+          w2.say('Aadaab! | Respectful greetings!', c.X(n) + 8, FLOOR - 44, 1.6, 'npc');
+        },
+      );
+    });
+    w.onTick((w2) => {
+      if (!F.go && w2.player.cx > c.X(1)) F.go = true;
+      if (F.go && F.x < c.X(54)) F.x += 0.8;
+    });
+    w.add(
+      new Art((ctx) => {
+        // the fog bank: thick behind its front, a soft edge
+        if (!F.go) return;
+        const x0 = c.X(-30);
+        ctx.fillStyle = 'rgba(232,232,236,0.92)';
+        ctx.fillRect(x0, 0, F.x - 24 - x0, FLOOR + 60);
+        const g = ctx.createLinearGradient(F.x - 24, 0, F.x + 8, 0);
+        g.addColorStop(0, 'rgba(232,232,236,0.92)');
+        g.addColorStop(1, 'rgba(232,232,236,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(F.x - 24, 0, 32, FLOOR + 60);
+      }, 6),
+    );
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Shukriya, aage chaliye. | Thank you, go ahead.', 2.2));
+    sign(w, x + 0.4, 10.4, 3.4, 'KOHRA', 'shop', null, 'ganj');
+  },
+};
+
+export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, photo, kohra, chowk] };
 export const meta07 = { family: 'pace-sets-crowd-shape', betrayals: ['pace-crowd', 'ladder-block'], ending: 'lko-darban' } as StageMeta;
