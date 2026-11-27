@@ -369,7 +369,6 @@ export const ghatSte: Act = {
   w: 34,
   advice: 'The crowd boards the first ship at the quay, and the first ship sails off with whoever walked on it. The second ship comes in after, and its deck is the way across: wait for it to dock, then step over.',
   cps: [18],
-  cp0: false,
   paint: (g, c) => {
     g.pit(c.x + 6, c.x + 14);
   },

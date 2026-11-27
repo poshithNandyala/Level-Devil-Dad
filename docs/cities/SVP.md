@@ -8,7 +8,7 @@ Sound: one music loop (104 bpm), no new SFX names.
 | # | Id | Name | Family [betrayal] | Ending key | Shape |
 |---|---|---|---|---|---|
 | 01 | SVP-01 | Namaste SVP | lane-sheet-flow-push [sheet-flow] | svp-lane-sun (meta only) | tour |
-<!-- route times in seconds (bot): 01 30.1, 02 25.8, 03 26.1, 04 25.8, 05 63.5, 06 62.3, 07 122.5, 08 73.3, 09 61.9, 10 98.6 -->
+<!-- route times in seconds (bot): 01 30.1, 02 25.8, 03 26.1, 04 25.8, 05 63.5, 06 36.1, 07 58.9, 08 41.3, 09 24.9, 10 98.6 -->
 
 | 02 | SVP-02 | Aari | cut-floor-saw-carriage [cut-floor] | svp-timber-stack | short |
 | 03 | SVP-03 | Magarmachh | warning-board-arrow-turns [honest-moving-sign] | svp-board-bridge | short |
@@ -36,6 +36,8 @@ Shapes: the engine allows only tour, short, long, marathon, wtf. Standard stages
 - 10 acts are wrapper objects of nala, pul, doosra, rassi and ghat. The door ending `svp-dweep-gate` reuses the stage 04 `Herd` guard logic under a new key (a callback).
 
 ### Length pass: acts added to reach the clear-time floors
+
+**Probe pass update:** five of the acts below (`svp06-lehar`, `svp07-khula`, `svp07-uthao`, `svp08-bazaar`, `svp09-hauz`) are taken out of the stages: each is the same experience as an idea that already ships (see `ldd-inbox/reports/cities/svp/LENGTH.md`). Their files stay and one line in `levels.ts` puts them back. Stages 06 to 09 are back at their round-1 lengths (36.1, 58.9, 41.3, 24.9 s). The rope and the caves (SVP's reserves) and the rope callback in the finale stay.
 
 Each added act is a new rule in its own file, with its own cause line, a NAIVE and a FIX death in `tests/cities/svp.ts` (`actDeath`), and a route. The stage's `meta.betrayals` stays as allocated (the allocation test pins it); the extra betrayal types below are listed here and in BUILD.md for the integrator.
 
