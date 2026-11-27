@@ -824,7 +824,7 @@ export function ghungurAct(id: string, key: string, tied = false): Act {
     const spot = (col: number, when: 'lit' | 'dark', bells = when === 'dark', live = true) =>
       w.add(
         // a boy spinning low on the floor (the dancers' bhuin chakkar): knee high, so a hop clears him
-        new Rig(c.X(col), FL - 16, 16, 16, {
+        new Rig(c.X(col), FL - 10, 16, 10, {
           cause: 'bbi-nacha',
           inset: 2,
           layer: 4,

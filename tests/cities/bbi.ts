@@ -1108,7 +1108,7 @@ const kachhaRun = (x: number): Step[] => [
   { hold: 'R', until: X(x + 28.5), max: 300 },
 ];
 /** the ghungur: in the dark, jump each ringing spot (7, 12, 17), walk the quiet floor between */
-const ghungurRun = (x: number): Step[] => [...hop(x + 4.6, 'over the bells at 7', 24), ...hop(x + 10.6, 'over the bells at 13', 24), ...hop(x + 16.6, 'over the bells at 19', 24), { hold: 'R', until: X(x + 25.5), max: 300 }];
+const ghungurRun = (x: number): Step[] => [...hop(x + 4.6, 'over the bells at 7'), ...hop(x + 10.6, 'over the bells at 13'), ...hop(x + 16.6, 'over the bells at 19'), { hold: 'R', until: X(x + 25.5), max: 300 }];
 /** the finale's chariot: on to the hub that rides the stone, then up on to the still rim before the slam */
 const chakraRun = (x: number): Step[] => [
   ...hop(x + 1.4, 'up on the plinth'),
@@ -1144,7 +1144,7 @@ const tantu10Run = (x: number): Step[] => [
   { hold: 'R', until: X(x + 17.5), max: 300 },
 ];
 /** the finale's ghungur: jump the quiet spots (9.5, 14.5), walk under the bells */
-const ghungur10Run = (x: number): Step[] => [...hop(x + 7.6, 'over the quiet spot', 24), ...hop(x + 13.6, 'over the quiet spot', 24), { hold: 'R', until: X(x + 25.5), max: 300 }];
+const ghungur10Run = (x: number): Step[] => [...hop(x + 7.6, 'over the quiet spot'), ...hop(x + 13.6, 'over the quiet spot'), { hold: 'R', until: X(x + 25.5), max: 300 }];
 const phingaRun = (x: number): Step[] => [
   { hold: 'R', until: X(x + 2.6), max: 400, note: 'to the rim' },
   waitFor((w) => ph(w).t0 >= 0 && (w.tick - ph(w).t0) / 120 > 0.9 + 0.6, 'the first lands soft'),
