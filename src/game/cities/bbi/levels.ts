@@ -15,15 +15,19 @@ import { room as room08, act6 as act08f, act7 as act08g, act8 as act08h, act9 as
 import { room as room09, act as act09, act2 as act09b, act6 as act09f, act7 as act09g, meta09 } from './s09';
 import { room as room10, act1 as act10a, act2 as act10b, act3 as act10c, act4 as act10d, act5 as act10e, act6 as act10f, act7 as act10g, act8 as act10h, act9 as act10i, act10 as act10j, act11 as act10k, act12 as act10l, act13 as act10m, act14 as act10n, act15 as act10o, act16 as act10p, act17 as act10q, meta10 } from './s10';
 import { longStage } from '../../levels/chunks';
+import { OWN_CAUSES } from './causes';
+import { ownCauses } from './common';
 import type { Act, ActCtx } from '../../levels/acts';
 
 /** plain ground added before an act, so its first checkpoint (at the act's first column) is a calm place to come
  *  back to: at least 4.5 tiles from its first pit and from anything moving (tests/cpsafe.test.ts) */
 export const LEAD: Record<string, number> = {
-  'bbi02-chhal': 4, 'bbi06-tana': 4, 'bbi06-sidhi': 4, 'bbi03-gali': 4, 'bbi03-mela': 4, 'bbi05-thaka': 4, 'bbi05-bail': 4, 'bbi06-sutra': 4, 'bbi06-rachh': 4, 'bbi06-tantu': 4, 'bbi06-palaa': 4, 'bbi08-phinga': 4, 'bbi08-ghurni': 4, 'bbi07-ghungur': 4, 'bbi07-kachha': 4, 'bbi07-pothi': 4, 'bbi10-ghungur': 4, 'bbi10-phinga': 4, 'bbi10-tantu': 4, 'bbi10-chakra': 4, 'bbi10-palaa': 4, 'bbi10-ghurni': 4,
+  'bbi05-khala': 4, 'bbi02-chhal': 4, 'bbi06-tana': 4, 'bbi06-sidhi': 4, 'bbi03-gali': 4, 'bbi03-mela': 4, 'bbi05-thaka': 4, 'bbi05-bail': 4, 'bbi06-sutra': 4, 'bbi06-rachh': 4, 'bbi06-tantu': 4, 'bbi06-palaa': 4, 'bbi08-phinga': 4, 'bbi08-ghurni': 4, 'bbi07-ghungur': 4, 'bbi07-kachha': 4, 'bbi07-pothi': 4, 'bbi10-ghungur': 4, 'bbi10-phinga': 4, 'bbi10-tantu': 4, 'bbi10-chakra': 4, 'bbi10-palaa': 4, 'bbi10-ghurni': 4,
   'bbi07-bandha': 4, 'bbi07-dui-baja': 4, 'bbi07-jodi': 4, 'bbi07-gadiba': 4, 'bbi07-hulahuli': 4, 'bbi07-sajaghara': 4, 'bbi09-udaya': 4, 'bbi09-ara': 4, 'bbi10-chhata': 4, 'bbi10-tana': 4, 'bbi10-udaya': 4,
 };
-const lead = (a: Act): Act => {
+const lead = (a0: Act): Act => {
+  // law 9: acts with their own death lines (causes.ts OWN_CAUSES)
+  const a = OWN_CAUSES[a0.id] ? ownCauses(a0, OWN_CAUSES[a0.id]) : a0;
   const L = LEAD[a.id] ?? 0;
   if (!L) return a;
   const sh = (c: ActCtx): ActCtx => ({ ...c, x: c.x + L, X: (t: number) => c.X(t + L) });

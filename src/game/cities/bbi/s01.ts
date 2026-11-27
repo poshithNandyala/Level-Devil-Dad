@@ -24,7 +24,9 @@ function intoDrain(w: World) {
   const p = w.player;
   if (!(p.stun > 0) || !w.flags.bbi1sliding) return;
   const c = Math.floor(p.cx / 16);
-  if (c === G1.drain[0] || c === G2.drain[0]) w.die('bbi-nala');
+  // the second drain has its own line: there nobody aimed at you, the lip was simply still wet
+  if (c === G1.drain[0]) w.die('bbi-nala');
+  if (c === G2.drain[0]) w.die('bbi-nala-lip');
   if (p.stun <= 1) w.flags.bbi1sliding = false;
 }
 

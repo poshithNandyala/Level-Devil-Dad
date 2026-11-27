@@ -1,5 +1,6 @@
 // Small helpers every Bhubaneswar stage shares.
 import type { World } from '../../world';
+import type { Act } from '../../levels/acts';
 import { px } from '../../levels/kit';
 import { lines as L } from './lines';
 import { Rig, box } from './entities';
@@ -7,6 +8,29 @@ import { Rig, box } from './entities';
 export const FL = 240;
 /** Tara's script for stage n (02..10): her intro is intro[n - 2] */
 export const taraScript = (n: number, beaten = 0) => ({ intro: L.intro[(n - 2) % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[beaten % L.beaten.length] });
+/**
+ * Law 9 (QA fix F1): inside this act a death is renamed to the act's own cause, so Tara's line names what killed
+ * you here and never repeats the advice another stage taught (the finale breaks those rules). `map` takes the cause
+ * a shared hazard reports to this act's cause; deaths elsewhere keep theirs.
+ */
+export function ownCauses(a: Act, map: Record<string, string>): Act {
+  return {
+    ...a,
+    build: (w, c) => {
+      a.build?.(w, c);
+      const list = (w.flags.bbiOwnCauses ??= []) as { x0: number; x1: number; map: Record<string, string> }[];
+      if (!list.length) {
+        const die = w.die.bind(w);
+        w.die = (cause, who) => {
+          const x = w.player.cx;
+          const r = list.find((e) => x >= e.x0 && x < e.x1);
+          die(r?.map[cause] ?? cause, who);
+        };
+      }
+      list.push({ x0: c.X(0), x1: c.X(a.w), map });
+    },
+  };
+}
 /** seconds since tick t0 */
 export const since = (w: World, t0: number) => (w.tick - t0) / 120;
 /** (time + phase) mod period, in seconds */

@@ -6,6 +6,7 @@ import { Step, X, and, ground, done } from '../runner';
 import type { CityTests } from '../city-tests';
 import { LEVELS } from '../../src/game/levels';
 import { LEAD } from '../../src/game/cities/bbi/levels';
+import { OWN_CAUSES } from '../../src/game/cities/bbi/causes';
 import { g1Road } from '../../src/game/cities/bbi/s01';
 
 type Move = 'L' | 'R' | '';
@@ -844,7 +845,8 @@ function actDeaths() {
     if (!def?.parts) continue;
     const pre: Step[] = [...room()];
     for (const p of def.parts) {
-      for (const d of DEATHS[p.kind] ?? []) (mistakes[id] ??= []).push({ what: `${p.kind}: ${d.what}`, steps: [...pre, ...d.steps(p.x0 + (LEAD[p.kind] ?? 0))], cause: d.cause });
+      // law 9: an act with its own death lines reports its own cause for a shared hazard (causes.ts OWN_CAUSES)
+      for (const d of DEATHS[p.kind] ?? []) (mistakes[id] ??= []).push({ what: `${p.kind}: ${d.what}`, steps: [...pre, ...d.steps(p.x0 + (LEAD[p.kind] ?? 0))], cause: OWN_CAUSES[p.kind]?.[d.cause] ?? d.cause });
       pre.push(...actRoutes[p.kind](p.x0));
     }
   }
@@ -918,7 +920,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'BBI-04': { steps: [passTorch(9, r4on, 'keep moving, as learnt'), { hold: 'R', until: X(15.6), max: 400 }, { hold: 'R', jump: 15, ticks: 15, note: 'and jump the trough' }, { hold: 'R', until: done, max: 600 }], cause: 'bbi-kunda' },
   'BBI-03': { steps: [{ hold: 'R', until: X(3.4), max: 600 }, waitFor((w) => p3(w, 0).open(w), 'wait for the customer'), leap((w) => (w.flags.bbi3p as { rig: { x: number } }[])[0].rig.x + 9, 'land on the near side of the silk'), { hold: '', until: done, max: 900, note: 'stand where you landed' }], cause: 'bbi-silk' },
   'BBI-02': { steps: [...board02(), onPad(4, 12), { hold: '', until: (w) => k2(w).ball === 'rebound', max: 900 }, { hold: 'R', until: done, max: 900, note: 'off the moment he lands, and on' }], cause: 'bbi-rebound' },
-  'BBI-01': { steps: [...pastG1(), ...tourTail().slice(0, 18), ...hop(72.2, 'jump the drain at its lip, as before'), { hold: 'R', until: done, max: 900 }], cause: 'bbi-nala' },
+  'BBI-01': { steps: [...pastG1(), ...tourTail().slice(0, 18), ...hop(72.2, 'jump the drain at its lip, as before'), { hold: 'R', until: done, max: 900 }], cause: 'bbi-nala-lip' },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
   'BBI-05': [{ what: 'climb on the cart and ride it', steps: [...room05(), ...act05a(32), { hold: 'R', until: X(58 + 6.9), max: 400 }, { hold: 'R', jump: 8, ticks: 8, note: 'up on the cart' }, { hold: '', until: done, max: 900 }], cause: 'bbi-gadi' }],
