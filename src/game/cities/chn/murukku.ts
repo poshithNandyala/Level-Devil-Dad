@@ -516,11 +516,13 @@ export const karandi: Act = {
   w: 30,
   advice: 'The cook lifts the darkest spiral out first: the moment you land near it his ladle hovers over it, scoops, and swings back dripping hot oil over the spiral before it. Step back to the bank when the ladle hovers; once he has laid a fresh one in the gap and it turns golden, go.',
   paint: (g, c) => {
-    g.pit(c.x + 4, c.x + 24);
+    // (every act's oil starts at its column 5, not 4, round 2: the act's hidden checkpoint at 0.5 is then 4.5 tiles
+    // from the first thing a short run or a hop from it can reach)
+    g.pit(c.x + 5, c.x + 24);
   },
   build: (w, c) => {
     const x = c.x;
-    kadai(w, x + 4, x + 25);
+    kadai(w, x + 5, x + 25);
     const press = w.add(new Press(px(x + 1.6)));
     const ladle = w.add(new Ladle(px(x + 1)));
     w.hazards.push(ladle.drip);
@@ -548,11 +550,11 @@ export const kannu: Act = {
   w: 30,
   advice: 'A big spiral: its middle is the eye, a hole wider than a stride, and the press comes down over its far turn as you land on it. Land on the near turn, wait for the press to lift away, then hop the eye to the far turn.',
   paint: (g, c) => {
-    g.pit(c.x + 4, c.x + 24);
+    g.pit(c.x + 5, c.x + 24);
   },
   build: (w, c) => {
     const x = c.x;
-    kadai(w, x + 4, x + 25);
+    kadai(w, x + 5, x + 25);
     // any hop under this press head hits it
     const press = w.add(new Press(px(x + 1.6), 48));
     // near turn 5 tiles, eye 1.5 tiles, far turn 5 tiles
@@ -578,11 +580,11 @@ export const thenkuzhal: Act = {
   w: 30,
   advice: 'Thenkuzhal fries white, so its colour never changes: watch the oil instead, it bubbles round a strand that is still frying. Step on when the bubbles stop, and do not wait too long: the spiral you are standing on is the oldest one here, and the ladle comes for it.',
   paint: (g, c) => {
-    g.pit(c.x + 4, c.x + 24);
+    g.pit(c.x + 5, c.x + 24);
   },
   build: (w, c) => {
     const x = c.x;
-    kadai(w, x + 4, x + 25);
+    kadai(w, x + 5, x + 25);
     const press = w.add(new Press(px(x + 1.6)));
     const ladle = w.add(new Ladle(px(x + 1)));
     const a = M(w, 't1', x + 6, 5, 'dark');
@@ -614,11 +616,11 @@ export const varisai: Act = {
   w: 30,
   advice: 'A row of four spirals laid together: all pale, all turning golden together. Then the cook starts lifting them from YOUR end, one after another. Wait for the row to turn, then run the whole row without stopping.',
   paint: (g, c) => {
-    g.pit(c.x + 4, c.x + 20);
+    g.pit(c.x + 5, c.x + 20);
   },
   build: (w, c) => {
     const x = c.x;
-    kadai(w, x + 4, x + 21);
+    kadai(w, x + 5, x + 21);
     const ladle = w.add(new Ladle(px(x + 1)));
     const row = [0, 1, 2, 3].map((i) => M(w, `v${i}`, x + 6 + i * 2, 2, 'pale', { hidden: true }));
     M(w, 'v4', x + 16, 5, 'golden');
@@ -649,11 +651,11 @@ export const ruchi: Act = {
   w: 30,
   advice: 'The cook tastes a finished spiral: as you land on its near end his hand comes down and snaps that end off, and a moment later his ladle lifts the rest. Do not stop on it: land and keep going to the next one.',
   paint: (g, c) => {
-    g.pit(c.x + 4, c.x + 21);
+    g.pit(c.x + 5, c.x + 21);
   },
   build: (w, c) => {
     const x = c.x;
-    kadai(w, x + 4, x + 22);
+    kadai(w, x + 5, x + 22);
     const ladle = w.add(new Ladle(px(x + 1)));
     // one long spiral: near end 5 tiles (snapped off), the rest 4 tiles
     const end = M(w, 'u1', x + 6, 5, 'golden');

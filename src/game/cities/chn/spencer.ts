@@ -534,11 +534,12 @@ export const pattarai: Act = {
   w: 30,
   advice: 'The food court display over the fountain: the pale spirals are real and hold; the golden one in the middle is painted plaster: it takes your weight for a second, then crumbles. Walk straight across it, never stop on it.',
   paint: (g, c) => {
-    g.pit(c.x + 4, c.x + 24);
+    // (the basin starts at column 5, round 2: the act's checkpoint at 0.5 is then 4.5 tiles from its edge)
+    g.pit(c.x + 5, c.x + 24);
   },
   build: (w, c) => {
     const x = c.x;
-    basin(w, x + 4, x + 25, 'chn-plaster');
+    basin(w, x + 5, x + 25, 'chn-plaster');
     const pale = w.add(new Murukku('d1', px(x + 6), px(5), 'pale'));
     pale.friesAt = -1;
     const plaster = w.add(new Murukku('d2', px(x + 13), px(5), 'golden'));
