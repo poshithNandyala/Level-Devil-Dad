@@ -2,7 +2,6 @@
 export const causeLines: Record<string, string[]> = {
   'pat-bheed': ['The crowd got you! It runs at its tempo, or walks behind its horse.', 'At the bus stop climb on to the kerb board. At the fair, keep right behind the horse rider.'],
   'pat-tempo': ['The tempo pulled out and took you with it.', 'Get off the kerb board once the crowd has gone by, and run on before the tempo moves.'],
-  'pat-hoarding': ['A coaching hoarding came down on you!', 'It falls when you get close. Wait for it to land, then hop it.'],
   'pat-angara': ['The poker threw the embers at you!', 'A crack in the ash glows just before it strikes. Stand between the cracks, and go once it has struck.'],
   'pat-doosra': ['The poker struck the second litti, and you with it.', 'Each litti has its own strike. Wait behind the second one, too, until its strike has gone.'],
   'pat-chimta': ['The cook raked the whole bed and you were in it.', 'After the last strike, keep moving out of the bed. Hop the rake if it catches up.'],

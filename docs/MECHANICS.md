@@ -165,7 +165,7 @@ rpr02-khet rpr03-chowk rpr04-kothi rpr05-mela rpr06-jungle rpr07-saal rpr08-duss
 rnc02-galli rnc03-maidan rnc04-seedhi rnc05-kharkai rnc06-ghariya rnc07-chattan rnc08-ghagh
 pat02-chokha pat03-batch pat04-anaaj pat05-ghat pat05-sangam pat06-sau pat06-nau pat07-sadak pat07-adda
 pat08-chowk pat08-vihara pat09-jhoola pat09-ghoda pat09-wapsi pat10-pipa pat10-sau pat10-sidhi pat10-anaaj
-pat05-bori pat06-gaadi pat06-kumhrar pat07-pul pat07-haat pat07-mandi pat10-bori pat10-gaadi
+pat05-bori pat06-gaadi pat07-pul pat07-haat pat07-mandi pat10-bori pat10-gaadi
 
 ## Door endings (ENDINGS: one stage each)
 Check the advice lines in endings*.ts too: an idea counts as used even under a new name (e.g. catching
@@ -186,7 +186,7 @@ pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound p
 
 ## PAT (Patna, Bihar): ideas used (module city, 10 stages)
 - **01 Prannam, Patna!** a tempo pulls in behind you at the bus stop and the waiting crowd surges along the road
-  to it (climb on the kerb board, then run on before the tempo pulls out); a coaching hoarding falls in the road.
+  to it (climb on the kerb board, then run on before the tempo pulls out).
 - **02 Litti ki Aanch** the poker digs where the cracks in the ash are (three strikes, then the rake); act: the poker
   follows a rolling litti; door: two pestles pounding chokha mortars (`pat-musal`).
 - **03 Ashok Rajpath** hoardings are the platforms; at the class bell each is swapped for a banner whose width shows

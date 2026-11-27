@@ -54,9 +54,6 @@ const tourRoute = (): Step[] => [
   { hold: 'R', jump: 12, ticks: 12, note: 'up on the deck' },
   { hold: 'R', until: ground, max: 200 },
   { hold: 'R', until: road(100.5), max: 600, note: 'off the deck' },
-  { hold: '', until: (w) => w.flags.pat1h?.phase === 'down', max: 600, note: 'wait for the hoarding to land' },
-  { hold: 'R', until: X(102.8), max: 300 },
-  { hold: 'R', jump: 14, ticks: 14, note: 'hop the hoarding' },
   { hold: 'R', until: done, max: 900 },
 ];
 
@@ -676,7 +673,6 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'PAT-02': [...ACT_MISTAKES['PAT-02'], { what: 'run on into the second bed, where the litti is', steps: [...room02(), { hold: 'R', until: X(34.3), max: 400 }, { hold: '', ticks: 235 }, { hold: 'R', until: done, max: 2400 }], cause: 'pat-angara' }],
   'PAT-07': [...ACT_MISTAKES['PAT-07'], { what: 'walk straight through the lane at the stand', steps: [{ policy: rideBalanced(true, false), until: (w) => !!w.flags.pat7g && w.player.onGround && w.player.y > 220 && w.player.cx > w.flags.pat7g.lane0 - 50, max: 16000 }, { hold: '', until: (w) => w.flags.pat7g.third.s.k > 0.7, max: 1200 }, { hold: 'R', until: done, max: 600 }], cause: 'pat-bhid' }],
   'PAT-08': [{ what: 'the hatch with 1 brick', steps: [...hop(5.5, ''), ...hop(10.5, ''), { hold: 'R', until: done, max: 900 }], cause: 'pat-kua' }],
-  'PAT-01': [{ what: 'run on at the hoarding', steps: [...upTo(32), { hold: 'R', until: done, max: 900 }], cause: 'pat-hoarding' }],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'pat02-chokha': act02,

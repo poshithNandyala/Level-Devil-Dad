@@ -1,6 +1,6 @@
 // PAT-01 Prannam Patna: the welcome tour with two bites. A tempo pulls in behind Dad at the bus stop and the
 // waiting crowd surges to it along the road (walk on and it sweeps you off your feet: sidestep up on the kerb
-// board). Then a coaching hoarding comes down in the road ahead of you.
+// board), and the tempo that pulls out takes whoever stays on the road.
 import type { LevelDef, World } from '../../world';
 import { tour } from '../../levels/tour';
 import type { Grid } from '../../levels/grid';
@@ -119,46 +119,6 @@ function bus(w: World) {
   );
 }
 
-/** a coaching hoarding that comes down in the road once Dad is near; it lands as a step */
-function hoarding(w: World, col: number) {
-  const st = { phase: 'up' as 'up' | 'fall' | 'down' };
-  w.flags.pat1h = st;
-  const h = w.add(
-    new Rig(px(col), -40, 32, 28, {
-      solid: true,
-      layer: 2,
-      cause: 'pat-hoarding',
-      inset: 3,
-      live: () => st.phase === 'fall',
-      paint: (ctx, r) => {
-        box(ctx, r.x, r.y, r.w, r.h, '#D7262E');
-        box(ctx, r.x + 2, r.y + 2, r.w - 4, r.h - 4, '#F9E3B0');
-        box(ctx, r.x + 5, r.y + 6, r.w - 10, 3, '#D7262E');
-        box(ctx, r.x + 5, r.y + 12, r.w - 14, 2, '#3A1E10');
-        box(ctx, r.x + 5, r.y + 17, r.w - 18, 2, '#3A1E10');
-      },
-      tick: (r, w2) => {
-        if (st.phase === 'fall') {
-          r.s.v = Math.min(500, (r.s.v ?? 0) + 1500 / 120);
-          let y = r.y + perTick(r.s.v);
-          if (y + r.h >= FL) {
-            y = FL - r.h;
-            st.phase = 'down';
-            r.solid!.collidable = true;
-            w2.sfx('thud', r.x + 16, FL);
-          }
-          r.moveTo(w2, r.x, y);
-        }
-      },
-    }),
-  );
-  h.solid!.collidable = false;
-  onPass(w, px(col - 4), (w2) => {
-    st.phase = 'fall';
-    w2.sfx('creak', h.x, 40);
-  });
-}
-
 export const tourLevel = (): LevelDef =>
   tour({
     id: 'PAT-01',
@@ -193,14 +153,13 @@ export const tourLevel = (): LevelDef =>
       ['lamp', 108, {}],
     ],
     things: [],
-    hint: 'A walk round Patna: hop the ditch, climb the steps, hop the posts and the parked cart. At the bus stop a tempo pulls in behind you and the crowd rushes at it along the road: climb on to the kerb board and let them go by under you, then run on before the tempo pulls out. Further on a coaching hoarding falls in the road: wait for it to land, then hop it.',
+    hint: 'A walk round Patna: hop the ditch, climb the steps, hop the posts and the parked cart. At the bus stop a tempo pulls in behind you and the crowd rushes at it along the road: climb on to the kerb board and let them go by under you, then run on before the tempo pulls out.',
     cps: [20, 36, 50, 59, 90, 101],
     paint: (g: Grid) => {
       g.fill(STOP.kerb[0], STOP.kerb[1], 13, 13, '=');
     },
     extra: (w: World) => {
       bus(w);
-      hoarding(w, 104);
     },
   });
 

@@ -9,7 +9,7 @@ matches its slot and declares its door ending.
 
 | # | Name | Allocation family / betrayals | Room | Act(s) | Door ending |
 | --- | --- | --- | --- | --- | --- |
-| 01 | Prannam, Patna! | crowd-carried-by-vehicle / sidestep-surge | a tempo pulls in behind you; the bus-stop crowd surges to it along the road; climb on the kerb board, then run on before the tempo pulls out. Second bite: a coaching hoarding falls in the road | none (tour) | none (tour) |
+| 01 | Prannam, Patna! | crowd-carried-by-vehicle / sidestep-surge | a tempo pulls in behind you; the bus-stop crowd surges to it along the road; climb on the kerb board, then run on before the tempo pulls out. | none (tour) | none (tour) |
 | 02 | Litti ki Aanch | ember-floor-poker-targets-food / poker-targets-food | three strikes of the poker at glowing cracks in the ash, then the rake from behind | `pat02-chokha`: the poker follows a rolling litti | `pat-musal`: two pestles pounding chokha |
 | 03 | Ashok Rajpath | hoarding-swap-at-class-bell / B8, banner-swap-width | hoardings are platforms; at the bell each is swapped for a banner whose width shows in the roll above it (grows from the left, or is pulled taut to the right) | `pat03-batch`: three bells, five hoardings | `pat-ghanti`: two iron bells swinging low |
 | 04 | Golghar | one-way-stairs-rising-grain / one-way-porters | porters come down the stair you climb, a second steps out of a landing door | `pat04-anaaj`: grain rises in the dome | `pat-bhitar`: the door leaf swings out into you |
@@ -42,4 +42,4 @@ Clear times of the scripted route: 01 15 s (the shared 120-column tour, see FIX-
 rule each); `pat05-bori`; `pat06-gaadi`; `pat07-pul`, `-haat`, `-mandi`; `pat09-wapsi`; `pat10-bori`, `pat10-gaadi`.
 `pat06-kumhrar` was cut (its idea repeated DMN-03's slippery floor). Details: `reports/cities/pat/LENGTH.md`, `FIX-1.md`.
 
-Fix round 2: 05 has no act after `pat05-bori` (`khokhla` cut in round 3, `kuli` in round 4: both repeated shipped decisions; 05 runs about 45 s), 06 `pat06-ginti` (61 s), 10 `pat10-roll` and `pat10-tempo` (100 s). Details: `reports/cities/pat/FIX-2.md`.
+Fix round 2: 05 has no act after `pat05-bori` (`khokhla` cut in round 3, `kuli` in round 4: both repeated shipped decisions; 05 runs 52.9 s), 06 `pat06-ginti` (61 s), 10 `pat10-roll` and `pat10-tempo` (100 s). Details: `reports/cities/pat/FIX-2.md`.
