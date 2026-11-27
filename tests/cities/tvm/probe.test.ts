@@ -299,3 +299,42 @@ it.runIf(!!process.env.LDD_CAND)('probe8', () => {
   }
   console.log(`${id} calm x: ${ok.join(' ')}\n  (first fails: ${why.slice(0, 80).join('; ')})`);
 }, 1800000);
+// probe9 (QA's lag-captured method): the route played with its inputs delayed 0, 6, 11 and 12 ticks; where each
+// checkpoint is captured in each, and from that capture: idle 4 s, run 0.3 s then idle, tap jump then idle.
+//   LDD_CAPIDS=TVM-02,TVM-03 LDD_TVMPROBE=1 npx vitest run tests/cities/tvm/probe.test.ts -t probe9 --silent=false
+it.runIf(!!process.env.LDD_CAPIDS)('probe9', () => {
+  const out: string[] = [];
+  const N = { left: false, right: false, jump: false, jumpPressed: false };
+  for (const id of process.env.LDD_CAPIDS!.split(',')) {
+    const def = LEVELS.find((l) => l.id === id)!;
+    for (const lag of (process.env.LDD_CAPLAGS ?? '0,6,11,12').split(',').map(Number)) {
+      const r = lagged(id, SOLUTIONS[id], lag, 0) as any;
+      for (const [cp, t, x] of r.cpTicks) {
+        if (cp < 0) continue;
+        const res: string[] = [];
+        for (const kind of ['idle', 'run', 'tap']) {
+          const q = replay(def, INFO, r.rec.slice(0, t));
+          q.player.vx = 0;
+          let landed = false;
+          for (let k = 0; k < 480 && q.state === 'play'; k++) {
+            let inp = N;
+            if (kind === 'run' && k < 36) inp = { ...N, right: true };
+            if (kind === 'tap' && !landed) {
+              if (k > 6 && q.player.onGround) landed = true;
+              if (!landed && k <= 240) inp = { ...N, right: true, jump: k < 6, jumpPressed: k === 0 };
+            }
+            q.step(inp);
+          }
+          res.push(`${kind} ${q.state === 'play' ? 'lives' : 'DIES ' + q.deathCause + ' x' + (q.player.cx / 16).toFixed(1)}`);
+        }
+        const onSolid = (() => {
+          const q = replay(def, INFO, r.rec.slice(0, t));
+          const g: any = q.player.groundSolid;
+          return g && g.velX !== undefined ? 'on a moving solid' : q.player.onGround ? 'on ground' : 'airborne';
+        })();
+        out.push(`${id} lag ${lag}: cp${cp} captured x${x} (${onSolid}) at ${(t / 120).toFixed(2)}s: ${res.join(', ')}`);
+      }
+    }
+  }
+  console.log(out.join('\n'));
+}, 1800000);

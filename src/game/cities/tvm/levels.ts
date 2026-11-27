@@ -147,7 +147,7 @@ export const levels = (): LevelDef[] => [
       return g.put(1, 12, '@').put(93, 11, 'E').rows();
     })(),
     build(w: World) {
-      for (const tx of [86]) checkpoint(w, tx);
+      for (const tx of [90]) checkpoint(w, tx);
       exitTwist(w, door(w), 'tvm-knock');
       // the flood: only the bus is dry
       water(w, 14.4, { rate: 0, minTy: 14.4, colors: ['rgba(86,140,150,0.88)', 'rgba(36,80,92,0.96)'], cause: 'splash' });
@@ -310,7 +310,7 @@ export const levels = (): LevelDef[] => [
       return g.put(2, 14, '@').put(77, 14, 'E').rows();
     })(),
     build(w: World) {
-      for (const tx of [41.5]) checkpoint(w, tx);
+      for (const tx of [38]) checkpoint(w, tx);
       exitTwist(w, door(w), 'swap', { to: 69 });
       water(w, 16.5, { rate: 0, minTy: 16.5, colors: ['#8C6A44', '#4E3620'], cause: 'burnt', behind: true });
       prop(w, 'teastall', 4, 15, { label: 'CHAAYA' });
