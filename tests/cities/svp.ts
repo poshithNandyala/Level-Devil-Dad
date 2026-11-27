@@ -531,7 +531,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...liftRide(0, x + 8),
     { hold: 'R', until: and(ground, X(x + 16)), max: 600, note: 'off on to the roof' },
     { hold: 'R', until: (w) => w.standing(((w.flags.belts ?? []) as { plat: { solid: unknown } }[])[0].plat.solid as never), max: 600, note: 'along the roof to the moving walkway' },
-    { hold: 'R', jump: 24, ticks: 24, note: 'jump from the walkway: it carries you over the gap' },
+    { hold: 'R', jump: 15, ticks: 15, note: 'jump from the walkway: it carries you over the gap' },
     ...liftRide(1, x + 28),
     { hold: 'R', until: and(ground, X(x + 38)), max: 600, note: 'off on to the road' },
     { hold: 'R', until: and(ground, X(x + 44)), max: 600 },

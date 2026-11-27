@@ -202,6 +202,6 @@ export const uthao: Act = {
     w.add(new Hurt(px(x + 7), FLOOR + 16, px(4), 40, 'svp-uthao', null));
     w.add(new Hurt(px(x + 21), FLOOR + 16, px(13), 40, 'svp-uthao', null));
     (w.flags.lifts ??= []).push(up, down);
-    (w.flags.belts ??= []).push(new Walkway(px(x + 16), FLOOR - 128, px(5), 220).install(w));
+    (w.flags.belts ??= []).push(new Walkway(px(x + 16), FLOOR - 128, px(5), 260).install(w));
   },
 };
