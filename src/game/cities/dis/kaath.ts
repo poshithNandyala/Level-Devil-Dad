@@ -1,8 +1,7 @@
 // DIS round 5, allocation v3 F451 spike-slides-under-jump (B11): sharpened bamboo splits laid out at the japi-maker's
 // stall in Fancy Bazar. Each split slides along the ground the moment you jump at it: the first slides two tiles ahead,
-// under the landing of an ordinary hop; the next slides back, toward you. Jump where it will NOT be: from the
-// first split's very edge, so you come down past where it goes; an ordinary hop over the second (from its edge you come
-// down in the ditch). Waiting for a split to settle is no good either: the japi-maker's wife is coming up behind you
+// under the landing of an ordinary hop; the next slides back, toward you. Jump where it will NOT be: a short hop
+// from well back on the first, down on the place it left, then over it where it stopped; an ordinary hop over the second. Waiting for a split to settle is no good either: the japi-maker's wife is coming up behind you
 // with a third gamosa, and with three on you cannot see your feet.
 import { Entity, type Hazard, type World } from '../../world';
 import { person, tara } from '../../levels/endkit';
@@ -107,7 +106,7 @@ export class Chaser extends Entity {
 export const gamKaath: Act = {
   id: 'dis05-kaath',
   w: 30,
-  advice: 'At the japi-maker’s stall the sharpened bamboo splits lie in the lane, and each one slides the moment you jump at it: the carved arrow shows which way. The first slides ahead, under where an ordinary hop lands: take off from its very edge. The next slides back toward you: an ordinary hop is right, and from its edge you come down in the ditch. Don’t stop to let a split settle: his wife is behind you with a third gamosa.',
+  advice: 'At the japi-maker’s stall the sharpened bamboo splits lie in the lane, and each one slides the moment you jump at it: the carved arrow shows which way. The first slides ahead, under where an ordinary hop lands: hop short, down where it was, then hop it where it stopped. The next slides back toward you: an ordinary hop is right. Don’t stop to let a split settle: his wife is behind you with a third gamosa.',
   cps: [1.5],
   paint: (g, c) => {
     g.pit(c.x + 22, c.x + 23);
