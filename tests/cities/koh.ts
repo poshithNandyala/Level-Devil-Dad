@@ -10,6 +10,7 @@ import type { Mat } from '../../src/game/cities/koh/s02';
 import type { Seesaw } from '../../src/game/cities/koh/s03';
 import type { Lilies } from '../../src/game/cities/koh/s04';
 import type { Log } from '../../src/game/cities/koh/s05';
+import type { Roof } from '../../src/game/cities/koh/s06';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -273,6 +274,92 @@ const drumPolicy: Policy = (w, m) => {
   return go(toward(w, dr.x - 30, 3));
 };
 
+// ------------------------------------------------------------------ KOH-06
+const Y1 = FL - 48;
+const cycT = (w: World, period: number, phase: number) => ((((w.tick / 120 + phase) % period) + period) % period);
+/** up the step at column c and on to the roof at c + 1 */
+const upRoof = (c: number): Step[] => [
+  { hold: 'R', until: X(c - 2.3), max: 900 },
+  { hold: 'R', jump: 10, ticks: 10, note: 'on to the step' },
+  { hold: 'R', until: and(ground, (w) => w.player.y < FL - 20), max: 300 },
+  { hold: 'R', jump: 14, ticks: 14, note: 'on to the roof' },
+  { hold: 'R', until: and(ground, (w) => w.player.y < Y1), max: 300 },
+];
+/** hop a tin roof low: a tap jump from the thatch's edge at column c */
+const hopTin = (c: number): Step[] => [
+  { hold: 'R', until: X(c), max: 900 },
+  { hold: 'R', jump: 13, ticks: 13, note: 'hop the tin, low' },
+  { hold: 'R', until: ground, max: 300 },
+];
+/** walk through the chimney at px x (puff `on` s of `period`, offset `phase`) between puffs */
+function throughChimney(x: number, period: number, on: number, phase: number): (w: World) => Out {
+  return (w) => {
+    const p = w.player;
+    if (p.cx > x + 16) return go('R');
+    if (p.cx < x - 40) return go('R');
+    const t = cycT(w, period, phase);
+    // go only when the puff is off and will stay off long enough to walk through
+    return go(t >= on && t < period - 0.5 ? 'R' : toward(w, x - 34, 2));
+  };
+}
+/** step into the chimney's column at px x as a puff starts, and ride it up; keep right to land on the tin */
+function rideChimney(x: number, period: number, on: number, phase: number): (w: World) => Out {
+  return (w) => {
+    const p = w.player;
+    if (!p.onGround) return go('R');
+    if (p.cx > x + 10) return go('R');
+    if (p.cx < x - 40) return go('R');
+    const t = cycT(w, period, phase);
+    return go(t < on - 0.6 ? 'R' : toward(w, x - 34, 2));
+  };
+}
+const room06 = (): Step[] => [...upRoof(5), ...hopTin(8.6), ...hopTin(16.6), { hold: 'R', until: road(26.5), max: 900, note: 'off the last roof' }, { hold: 'R', until: X(29), max: 400 }];
+const act06a = (x: number): Step[] => [
+  ...upRoof(x + 6),
+  { policy: throughChimney(px(x + 9), 2.2, 0.9, 0), until: X(x + 10.2), max: 2000, note: 'the first chimney, between puffs' },
+  ...hopTin(x + 11.6),
+  { policy: throughChimney(px(x + 18) + 8, 2.2, 0.9, 1.1), until: X(x + 19.7), max: 2000, note: 'the second chimney' },
+  { policy: throughChimney(px(x + 21) + 8, 2.2, 0.9, 0.4), until: X(x + 22.6), max: 2000, note: 'the third chimney' },
+  ...hopTin(x + 22.6),
+  { hold: 'R', until: road(x + 31.5), max: 900, note: 'off the last roof' },
+  { hold: 'R', until: X(x + 32.4), max: 400 },
+];
+const onTinL = (x: number) => (w: World) => w.standing((w.flags.koh6l as Roof).rig.solid!) && w.player.cx > px(x + 8);
+const act06b = (x: number): Step[] => [
+  ...upRoof(x + 6),
+  { policy: rideChimney(px(x + 8), 2.0, 1.0, 0), until: onTinL(x), max: 2400, note: 'ride the puff up on to the tin' },
+  { hold: 'R', jump: 13, ticks: 13, note: 'off the tin at once' },
+  { hold: 'R', until: and(ground, X(x + 13.2)), max: 300 },
+  ...hopTin(x + 17.6),
+  { hold: 'R', until: and(ground, (w) => w.player.cx > px(x + 26.5) && w.player.y > Y1 - 20), max: 900, note: 'down on to the low roof' },
+  { hold: 'R', until: road(x + 29.5), max: 900, note: 'off the last roof' },
+  { hold: 'R', until: X(x + 30.4), max: 400 },
+];
+/** the skylight door: up the step, walk the roof and over the glass, never jump on it */
+const skylightPolicy: Policy = (w, m, d) => {
+  const D = Math.round(d.x / 16);
+  const p = w.player;
+  if (m.j === undefined) {
+    m.j = 0;
+    m.ph = 0;
+  }
+  if (m.j > 0) {
+    m.j--;
+    return { move: 'R', jump: true };
+  }
+  if (m.ph === 0 && p.cx >= px(D - 10) - 44) {
+    m.ph = 1;
+    m.j = 10;
+    return { move: 'R', jump: true };
+  }
+  if (m.ph === 1 && p.onGround && p.y <= FL - 20 && p.y > Y1) {
+    m.ph = 2;
+    m.j = 14;
+    return { move: 'R', jump: true };
+  }
+  return go('R');
+};
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['KOH-01'] = tourRoute();
   S['KOH-02'] = room02();
@@ -283,6 +370,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('KOH-04', 0, []);
   S['KOH-05'] = room05();
   lengthen('KOH-05', 0, []);
+  S['KOH-06'] = room06();
+  lengthen('KOH-06', 0, []);
 }
 
 const upTo = (n: number) => tourRoute().slice(0, n);
@@ -293,20 +382,23 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'KOH-03': { steps: [{ hold: 'R', until: X(7.6), max: 600 }, { hold: 'R', jump: 10, ticks: 10, note: 'hop on to the plank at a run' }, { hold: 'R', until: done, max: 2400 }], cause: 'koh-kanta' },
   'KOH-04': { steps: runOn, cause: 'koh-daldal' },
   'KOH-05': { steps: runOn, cause: 'koh-nala' },
+  'KOH-06': { steps: [...upRoof(5), ...runOn], cause: 'koh-khatkhat' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'KOH-02': { steps: [{ hold: 'R', until: X(8.4), max: 600, note: 'on to the near end of the mat' }, { hold: '', until: done, max: 1500, note: 'and ride it from there' }], cause: 'koh-dubki' },
   'KOH-03': { steps: [{ hold: 'R', until: X(7.6), max: 600 }, { hold: 'R', jump: 10, ticks: 10, note: 'hop on to the plank at a run (short throw)' }, { hold: 'R', until: X(14.5), max: 600, note: 'to the far half' }, { hold: '', until: done, max: 1500, note: 'wait in front of the thorn gate' }], cause: 'koh-patak' },
   'KOH-04': { steps: [{ policy: chase('koh4a'), until: (w) => w.player.cx > px(11) + 8 && w.player.onGround, max: 2400 }, { hold: 'R', until: done, max: 1500, note: 'wade the stream' }], cause: 'koh-thand' },
   'KOH-05': { steps: [{ hold: 'R', until: X(6.6), max: 600, note: 'on to the log' }, { hold: '', until: done, max: 2400, note: 'and ride it all the way' }], cause: 'koh-shahtir' },
+  'KOH-06': { steps: [...upRoof(5), { hold: 'R', until: X(8.6), max: 900 }, { hold: 'R', jump: 30, ticks: 30, long: true, note: 'a big jump over the tin' }, { hold: 'R', until: done, max: 1500 }], cause: 'koh-chhajja' },
 };
 // mistakes inside the acts: the stage up to the act (route), then `steps` from the act's first column
-const ROOMS: Record<string, () => Step[]> = { 'KOH-02': room02, 'KOH-03': room03, 'KOH-04': room04, 'KOH-05': room05 };
+const ROOMS: Record<string, () => Step[]> = { 'KOH-02': room02, 'KOH-03': room03, 'KOH-04': room04, 'KOH-05': room05, 'KOH-06': room06 };
 const ACT_ORDER: Record<string, string[]> = {
   'KOH-02': ['koh02-teen'],
   'KOH-03': ['koh03-ulta'],
   'KOH-04': ['koh04-kali'],
   'KOH-05': ['koh05-dui', 'koh05-chadhai'],
+  'KOH-06': ['koh06-dhuan', 'koh06-upar'],
 };
 const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
 const prefix = (id: string, act: string): Step[] => [...ROOMS[id](), ...ACT_ORDER[id].slice(0, ACT_ORDER[id].indexOf(act)).flatMap((a) => actRoutes[a](actX0(id, a)))];
@@ -338,6 +430,13 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     inAct('KOH-05', 'koh05-chadhai', 'run on to the quick crew’s log and off its front', () => runOn, 'koh-nala'),
     inAct('KOH-05', 'koh05-chadhai', 'ride the slow crew’s log all the way', (x) => [{ policy: rideLog('koh5c', x + 13), until: and(ground, X(x + 14.5)), max: 2400 }, { hold: 'R', until: X(x + 18.6), max: 600 }, { hold: '', until: done, max: 2400 }], 'koh-shahtir'),
   ],
+  'KOH-06': [
+    inAct('KOH-06', 'koh06-dhuan', 'run on through the first chimney', (x) => [...upRoof(x + 6), ...runOn], 'koh-garam'),
+    inAct('KOH-06', 'koh06-dhuan', 'wait out the puff, then a big jump over the tin', (x) => [...upRoof(x + 6), { policy: throughChimney(px(x + 9), 2.2, 0.9, 0), until: X(x + 10.2), max: 2000 }, { hold: 'R', until: X(x + 11.6), max: 600 }, { hold: 'R', jump: 30, ticks: 30, long: true }, { hold: 'R', until: done, max: 1500 }], 'koh-chhajja'),
+    inAct('KOH-06', 'koh06-dhuan', 'hop over the chimney', (x) => [...upRoof(x + 6), { hold: 'R', until: X(x + 7.6), max: 600 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 1500 }], 'koh-garam'),
+    inAct('KOH-06', 'koh06-upar', 'run on along the roof', (x) => [...upRoof(x + 6), ...runOn], 'koh-gira'),
+    inAct('KOH-06', 'koh06-upar', 'ride the puff up and stand on the tin', (x) => [...upRoof(x + 6), { policy: rideChimney(px(x + 8), 2.0, 1.0, 0), until: onTinL(x), max: 2400 }, { hold: '', until: done, max: 1500 }], 'koh-khatkhat'),
+  ],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'koh02-teen': (x) => [{ policy: matPolicy('koh2b', x + 20), until: and(ground, X(x + 22.5)), max: 3000, note: 'behind the flag across the long ditch' }, { hold: 'R', until: X(x + 33.4), max: 400 }],
@@ -350,12 +449,15 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'koh04-kali': act04,
   'koh05-dui': act05a,
   'koh05-chadhai': act05b,
+  'koh06-dhuan': act06a,
+  'koh06-upar': act06b,
 };
 const endingPolicies: Record<string, Policy> = {
   'koh-manch': hoistPolicy,
   'koh-dhila-patta': loosePolicy,
   'koh-rim-lily': rimPolicy,
   'koh-rocking-drum': drumPolicy,
+  'koh-skylight': skylightPolicy,
 };
 
 export const test: CityTests = {
@@ -365,5 +467,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['KOH-02', 'KOH-03', 'KOH-04', 'KOH-05'],
+  fair: ['KOH-02', 'KOH-03', 'KOH-04', 'KOH-05', 'KOH-06'],
 };

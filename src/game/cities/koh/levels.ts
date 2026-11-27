@@ -12,6 +12,7 @@ import { room as room02, actTeen as act02, meta02 } from './s02';
 import { room as room03, actUlta as act03, meta03 } from './s03';
 import { room as room04, actKali as act04, meta04 } from './s04';
 import { room as room05, actDui as act05a, actChadhai as act05b, meta05 } from './s05';
+import { room as room06, actDhuan as act06a, actUpar as act06b, meta06 } from './s06';
 
 const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
 
@@ -41,7 +42,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: room03(), acts: [act03], twist: 'koh-dhila-patta', par: 46, shape: 'long', meta: meta03 }),
   longStage({ base: room04(), acts: [act04], twist: 'koh-rim-lily', par: 55, shape: 'long', meta: meta04 }),
   longStage({ base: room05(), acts: [act05a, act05b], twist: 'koh-rocking-drum', par: 80, shape: 'long', lives: 'act', meta: meta05 }),
-  longStage({ base: todoRoom(6), par: 30, shape: 'long' }), // KOH-06 TODO: acts, twist (a koh-... ending), par
+  longStage({ base: room06(), acts: [act06a, act06b], twist: 'koh-skylight', par: 80, shape: 'long', lives: 'act', meta: meta06 }),
   longStage({ base: todoRoom(7), par: 30, shape: 'long' }), // KOH-07 TODO: acts, twist (a koh-... ending), par
   longStage({ base: todoRoom(8), par: 30, shape: 'long' }), // KOH-08 TODO: acts, twist (a koh-... ending), par
   longStage({ base: todoRoom(9), par: 30, shape: 'long' }), // KOH-09 TODO: acts, twist (a koh-... ending), par

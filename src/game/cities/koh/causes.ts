@@ -11,5 +11,10 @@ export const causeLines: Record<string, string[]> = {
   'koh-daldal': ['You stepped on a lily that was not open: into the bog.', 'Only an open lily is a stand. Chase the wave on the near side; past the stream wait for the pad next to you, then run.'],
   'koh-thand': ['The icy stream numbed you.', 'Jump the stream from the last pad to the stone; a second in the water is the end.'],
   'koh-shahtir': ['The hut’s lintel knocked you off the log.', 'Step off at the top of the surge that touches the bank; whoever stays aboard is hauled on under the lintel.'],
+  'koh-gira': ['You fell into the gully between the houses.', 'The roofs are the road: thatch to thatch, and jump the tin.'],
+  'koh-khatkhat': ['The household banged the attic hatch open under you.', 'A tin roof rings under a step and the hatch follows. Jump the tin; where you must land on it, be off it before the bang.'],
+  'koh-chhajja': ['You jumped into the eave of the storey above.', 'Every tin roof has an eave hanging over it: hop the tin low, or walk the thatch.'],
+  'koh-garam': ['The chimney’s warm air lifted you into the tin eave.', 'The smoke shows the puff. Cross a chimney between puffs.'],
+  'koh-kanch': ['The skylight broke under your landing.', 'Glass holds a walker and breaks under a jump: walk over it.'],
   'koh-dhol': ['The log rolled over you.', 'After a double shout the log climbs the bank. Step off at the first top and keep going; at the hut hop the drum as it rolls away.'],
 };
