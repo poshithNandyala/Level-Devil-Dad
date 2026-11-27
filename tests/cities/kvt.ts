@@ -7,7 +7,8 @@ import type { World } from '../../src/game/world';
 import type { Door } from '../../src/game/entities/basics';
 import { Step, X, and, or, done, ground, thingOf, gustNOn, gustNLeft } from '../runner';
 import type { CityTests } from '../city-tests';
-import { KVT_LEAD, type Heap, type ShadowStep } from '../../src/game/cities/kvt/encores';
+import type { Heap, ShadowStep } from '../../src/game/cities/kvt/encores';
+import { KVT_LEAD } from '../../src/game/cities/kvt/lead';
 import { LEVEL_BY_ID } from '../../src/game/levels';
 import { Eel, Jelly, type Dolphin } from '../../src/game/cities/kvt/levels';
 import { DT } from '../../src/game/constants';
@@ -447,10 +448,10 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...stepUp(x + 13),
     ...stepUp(x + 16),
     ...stepUp(x + 19, 'up on to the sea wall'),
-    ...deepOn(x + 24.3, 30, 'the first break: land deep on the heap'),
-    ...stepUp(x + 29, 'back up on to the wall'),
-    ...deepOn(x + 33.3, 30, 'the second break: one loose block, jump it whole'),
-    { hold: 'R', until: and(ground, X(x + 50)), max: 600, note: 'along the wall and down' },
+    ...deepOn(x + 25.3, 30, 'the first break: land deep on the heap'),
+    ...stepUp(x + 30, 'back up on to the wall'),
+    ...deepOn(x + 34.3, 30, 'the second break: one loose block, jump it whole'),
+    { hold: 'R', until: and(ground, X(x + 51)), max: 600, note: 'along the wall and down' },
   ],
   'kvt09-irangal': (x) => [
     // up the plain rock stair: from the foot of each riser, a tap with the thumb off the stick mid-air
@@ -1019,7 +1020,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   };
   mistakes['KVT-09'] = [
     { what: 'land deep on the first heap of the ridge, as on the bank', steps: [...upTo(S['KVT-09'], 'the middle of each heap: deep slides you off the far side'), { hold: '', until: still, max: 200 }, { hold: 'R', jump: 30, ticks: 44 }, { hold: '', until: ground, max: 200 }, dies], cause: 'splash' },
-    { what: 'land on the one loose block in the second break, like the heap in the first', steps: [...upTo(S['KVT-09'], 'the second break: one loose block, jump it whole'), { hold: 'R', until: X(org('KVT-09', 'kvt09-kadalbhitti') + 33.3), max: 300 }, { hold: '', until: still, max: 60 }, { hold: 'R', jump: 8, ticks: 10 }, { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, dies], cause: 'splash' },
+    { what: 'land on the one loose block in the second break, like the heap in the first', steps: [...upTo(S['KVT-09'], 'the second break: one loose block, jump it whole'), { hold: 'R', until: X(org('KVT-09', 'kvt09-kadalbhitti') + 34.3), max: 300 }, { hold: '', until: still, max: 60 }, { hold: 'R', jump: 8, ticks: 10 }, { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, dies], cause: 'splash' },
     { what: 'hop down the far side of the summit, as Tara says', steps: [...upTo(S['KVT-09'], 'walk off each step, never hop down'), ...Array.from({ length: 5 }, (): Step[] => [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, { hold: '', until: (w) => !w.flags.kvtSlide || w.state !== 'play', max: 200 }]).flat(), dies], cause: 'splash' },
     { what: 'walk down the second way step by step, as Tara says', steps: [...upTo(S['KVT-09'], 'walk off the top on to the first wide step'), { hold: 'R', until: done, max: 900 }], cause: 'splash' },
     { what: 'hop down into the hollow', steps: [...upTo(S['KVT-09'], 'down into the hollow: walk off each step'), ...Array.from({ length: 4 }, (): Step[] => [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, { hold: '', until: (w) => !w.flags.kvtSlide || w.state !== 'play', max: 200 }]).flat(), dies], cause: 'splash' },

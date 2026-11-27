@@ -171,7 +171,8 @@ export const endings: Record<KvtEndingKind, Ending> = {
 
   /** The door is across the bay from the cliff. Grab the paraglider and float over; mind the gulls. */
   'kvt-glider': {
-    space: 16,
+    // (the checkpoint before the cliff sits out of a tap-jump's reach of the wing)
+    space: 19,
     advice: 'Grab the paraglider at the cliff edge, then jump off: it floats you over the bay. Go just after a gull has flown past.',
     paint: (g, D) => void g.pit(D - 12, D - 1),
     build(w, d) {

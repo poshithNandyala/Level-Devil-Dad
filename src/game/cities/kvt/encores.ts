@@ -3,7 +3,8 @@
 import { Entity, type Hazard, type LevelDef, type World } from '../../world';
 import { lines as L } from './lines';
 import { collectible, door, gust, panel, px, rival, shot, sign, prop } from '../../levels/kit';
-import { type Act, type ActCtx, G, pool } from '../../levels/acts';
+import { type Act, G, pool } from '../../levels/acts';
+import { lead } from './lead';
 import { onPass } from '../../levels/trolls';
 import { DT } from '../../constants';
 import { Grid } from '../../levels/grid';
@@ -361,25 +362,26 @@ const summit: Act = {
 const seaWall: Act = {
   id: 'kvt09-kadalbhitti',
   cps: [20.5],
-  w: 50,
+  w: 51,
   advice: 'Up the rubble to the sea wall. The storm broke the wall twice: the first break is a heap of rubble, land deep on it; the second is one loose block, and the slide takes you straight off it, so jump that break in one.',
   paint: (g, c) => {
     const x = c.x;
     bankUp(g, x + 2, 6, 3, 14);
-    g.fill(x + 20, x + 43, 8, 17, '#');
-    g.pit(x + 25, x + 26, 8).fill(x + 27, x + 29, 9, 17, '#').fill(x + 27, x + 29, 8, 8, '.');
+    // (six tiles of wall before the first break: the checkpoint on it is out of a tap-jump's reach of the water)
+    g.fill(x + 20, x + 44, 8, 17, '#');
+    g.pit(x + 26, x + 27, 8).fill(x + 28, x + 30, 9, 17, '#').fill(x + 28, x + 30, 8, 8, '.');
     // (three tiles of wall between the breaks: room to stop after the hop back up)
-    g.pit(x + 34, x + 34, 8).fill(x + 35, x + 35, 9, 17, '#').fill(x + 35, x + 35, 8, 8, '.').pit(x + 36, x + 36, 8);
-    g.fill(x + 44, x + 45, 10, 17, '#').fill(x + 46, x + 47, 12, 17, '#').fill(x + 48, x + 49, 14, 17, '#');
+    g.pit(x + 35, x + 35, 8).fill(x + 36, x + 36, 9, 17, '#').fill(x + 36, x + 36, 8, 8, '.').pit(x + 37, x + 37, 8);
+    g.fill(x + 45, x + 46, 10, 17, '#').fill(x + 47, x + 48, 12, 17, '#').fill(x + 49, x + 50, 14, 17, '#');
   },
   build: (w, c) => {
     const { X } = c;
-    w.add(new RubbleBank([...bankUpRects(c.x + 2, 6, 3, 14), { c0: c.x + 27, c1: c.x + 29, top: 9 }, { c0: c.x + 35, c1: c.x + 35, top: 9 }]));
-    pool(w, c.x + 25, c.x + 27, 15.3, { colors: LAGOON });
-    pool(w, c.x + 34, c.x + 35, 15.3, { colors: LAGOON });
-    pool(w, c.x + 36, c.x + 37, 15.3, { colors: LAGOON });
+    w.add(new RubbleBank([...bankUpRects(c.x + 2, 6, 3, 14), { c0: c.x + 28, c1: c.x + 30, top: 9 }, { c0: c.x + 36, c1: c.x + 36, top: 9 }]));
+    pool(w, c.x + 26, c.x + 28, 15.3, { colors: LAGOON });
+    pool(w, c.x + 35, c.x + 36, 15.3, { colors: LAGOON });
+    pool(w, c.x + 37, c.x + 38, 15.3, { colors: LAGOON });
     sign(w, c.x + 21, 8 - 4.4, 3.6, 'SEA WALL', 'green', null, 'PWD Kalpeni');
-    onPass(w, X(30.5), (w2) => taraSays(w2, 'Aa kallil chaadi nilkku! | Land on that rock!', 2.4));
+    onPass(w, X(31.5), (w2) => taraSays(w2, 'Aa kallil chaadi nilkku! | Land on that rock!', 2.4));
   },
 };
 
@@ -472,38 +474,6 @@ const hollow: Act = {
     onPass(w, X(20), (w2) => taraSays(w2, 'Ini nadannu kayaru! | Now just walk up!', 2.4));
   },
 };
-
-/** tiles of plain ground put in front of each act, so its checkpoint (at the act's first column) is never within a
- *  tap-jump or a short run of water: every act's first water edge ends up at least 4.5 tiles past it */
-export const KVT_LEAD: Record<string, number> = {
-  'kvt09-pavizham': 1,
-  'kvt09-kodumudi': 2,
-  'kvt09-varambu': 3,
-  'kvt10-midden': 2,
-  'kvt10-palaka': 2,
-  'kvt10-kallu': 2,
-  'kvt10-thengu': 3,
-  'kvt10-kamaanam': 2,
-  'kvt10-nizhal': 2,
-  'kvt10-veliyettam': 2,
-  'kvt10-paaru': 1,
-  'kvt10-kannadi': 1,
-  'kvt10-thoni': 1,
-  'kvt10-irakkam': 2,
-};
-/** the act with `n` tiles of plain ground before it (its own columns, flags and checkpoints move along) */
-function lead(a: Act): Act {
-  const n = KVT_LEAD[a.id] ?? 0;
-  if (!n) return a;
-  const sh = (c: ActCtx): ActCtx => ({ ...c, x: c.x + n, X: (t: number) => c.X(t + n) });
-  return {
-    ...a,
-    w: a.w + n,
-    paint: a.paint && ((g, c) => a.paint!(g, sh(c))),
-    build: a.build && ((w, c) => a.build!(w, sh(c))),
-    ...(a.cps ? { cps: a.cps.map((t) => t + n) } : {}),
-  };
-}
 
 export const kvt09 = { room: stormBankRoom, acts: [overhang, summit, seaWall, downAgain, ridge, hollow, breaches].map(lead) };
 
@@ -894,7 +864,6 @@ const rubbleOctopus: Act = {
  *  after a fish has gone over. */
 const highTuna: Act = {
   id: 'kvt10-choora',
-  cps: [13.5],
   w: 40,
   advice: 'The tuna fly higher here, right over your head while you walk: don’t hop them, that is where they are. Hop the gaps in the pier (the second is wider) just after one has gone over. The second boat throws low again, as in Minicoy: hop those.',
   paint: (g, c) => {

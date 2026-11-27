@@ -10,6 +10,7 @@ import { crumble, onPass } from '../../levels/trolls';
 import { DT, ease } from '../../constants';
 import { tour } from '../../levels/tour';
 import { longStage } from '../../levels/chunks';
+import { back } from './lead';
 import { Grid } from '../../levels/grid';
 import { exitTwist } from '../../levels/twists';
 import { Nest } from './entities';
@@ -1054,7 +1055,7 @@ export const levels = (): LevelDef[] => [
     },
   },
     par: 15,
-    acts: [tailwind],
+    acts: [back(tailwind, 2)],
     twist: 'kvt-glider',
   }),
   longStage({
@@ -1128,13 +1129,13 @@ export const levels = (): LevelDef[] => [
   longStage({
     base: palmRoom(),
     par: 38,
-    acts: [crabPalms, bendPalms],
+    acts: [back(crabPalms, 3), bendPalms],
     twist: 'kvt-pushoff',
   }),
   longStage({
     base: lagoonRoom(),
     par: 24,
-    acts: [weedBeds, dolphinRide],
+    acts: [back(weedBeds, 2), back(dolphinRide, 2)],
     twist: 'kvt-footsteps',
   }),
   longStage({
