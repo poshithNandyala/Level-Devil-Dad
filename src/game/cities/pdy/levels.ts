@@ -10,7 +10,9 @@ import { tour } from '../../levels/tour';
 import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
 import { Kepi } from '../../entities/tamil';
-import { MIMOSA_META, PETANQUE_META, aaru, carreau, doublette, mimosaRoom, petanqueRoom, pointe, thenga, tir } from './encores';
+import { MIMOSA_META, PETANQUE_META, aaru, carreau, doublette, mimosaRoom, petanqueRoom, pitFloor, pointe, thenga, tir } from './encores';
+/** the sea where it has eaten the Promenade: a splash */
+const seaFloor = (w: World, x0: number, x1: number) => pitFloor(w, x0, x1, 'splash');
 
 // Puducherry: yellow walls, cobbled rues, a rocky seafront that sneezes,
 // bollards that close the beach road at six, and a canal bridge that opens
@@ -302,10 +304,30 @@ export const levels = (): LevelDef[] => [
       ["bougain", 106, {}],
     ],
     things: [["cyclist", 24]],
-    hint: 'After the café terrace, the sea breeze takes a policeman’s red cap down the street and he comes running after it. Don’t stand in his way and don’t hop him (he leaps for his cap). Jump up and catch the cap as it goes over you: he stops and takes it back.',
+    hint: 'After the café terrace, the sea breeze takes a policeman’s red cap down the street and he comes running after it. Don’t stand in his way and don’t hop him (he leaps for his cap). Jump up and catch the cap as it goes over you: he stops and takes it back. On the Promenade the sea has eaten the path, and a yellow plywood square lies on the far side of the gap like a landing mat: it is not the far side. The moment you jump for it, it slides a tile on and the water it covered is under you. Jump long, for the sea wall itself, not for the paint.',
+    // (tour-pdy-b20) the Promenade: the sea has taken four tiles of path past the deck; the yellow
+    // square that seems to be the landing is a loose plywood lid over the last tile of water
+    paint: (g) => g.pit(103, 106).fill(103, 106, 17, 17, '#'),
     extra: (w) => {
       const kepi = Kepi.place(w, { hatTx: 85, copTx: 85, giveUpTx: 40, groundTy: 15 });
       onPass(w, px(69), (w2) => kepi.start(w2));
+      // the Promenade's gap: sea water, and the painted landing square that is not a landing
+      seaFloor(w, px(103), px(107));
+      const square = thing(w, 'pdy-square', 106, 15, { dy: -4, oneWay: true, layer: 2 });
+      w.flags.square = 'lid';
+      onPass(w, px(99.5), (w2) => w2.say('Manjal square-la land pannu, Dad! Easy! | Land on the yellow square, Dad! Easy!', w2.player.cx, w2.player.y, 2.2, 'rival'));
+      onPass(w, px(100.6), (w2) => w2.guide('Paint-a nambaadhe, Dad. Suvar-a nambu. | Don’t trust the paint, Dad. Trust the wall.'));
+      // commit to the jump and the lid slides a tile on, on to the sea wall, where it was never needed
+      w.when(
+        (w2) => w2.player.jumpTick === w2.tick && w2.player.cx >= px(100.4) && w2.player.cx < px(103.2) && w2.player.y + w2.player.h >= px(15) - 2,
+        (w2) => {
+          w2.flags.square = 'sliding';
+          w2.sfx('creak', square.cx, square.y);
+          square.moveTo(w2, px(107), square.y, 0.22, 'out', (w3) => {
+            w3.flags.square = 'slid';
+          });
+        },
+      );
     },
   }),
   longStage({

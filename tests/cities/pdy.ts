@@ -118,12 +118,15 @@ const leafState = (name: string) => (w: World) => w.flags[`pdy10:${name}`] as st
  */
 function foldAndCross(name: string, at: number, far: number, wait = 0): Step[] {
   const st = leafState(name);
+  const look: Step[] = wait ? [{ hold: '', ticks: wait, note: 'a look first' }] : [];
   return [
+    // (let go of right first: a direction held since a jump is released late by a person, and the near end is narrow)
+    { hold: '', ticks: 2 },
     { hold: 'R', until: (w) => w.player.x + w.player.w >= px(at) + 6, max: 900, note: `${name}: up to the leaf` },
     { hold: '', jump: 8, ticks: 8, note: 'a hop straight up on to its near end' },
     { hold: '', until: (w) => st(w) === 'fold' || st(w) === 'shut', max: 200, note: 'and let it fold under you' },
     { hold: '', until: (w) => st(w) === 'shut' && w.player.onGround, max: 200, note: 'it is a bar now' },
-    ...(wait ? [{ hold: '', ticks: wait, note: 'a look first' }] : []),
+    ...look,
     { hold: 'R', jump: 8, ticks: 8, note: 'up on the bar' },
     { hold: 'R', until: (w) => w.player.onGround && w.player.x >= px(far), max: 400, note: 'across, before it opens' },
   ];
@@ -134,6 +137,7 @@ const thengaAct = (x: number): Step[] => {
   const nut = (w: World) => w.flags['pdy10-thenga:nut'] as string;
   const st = leafState('thenga');
   return [
+    { hold: '', ticks: 2 },
     { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 7) + 6, max: 900, note: 'up to the leaf under the palm' },
     { hold: '', jump: 8, ticks: 8, note: 'a hop straight up on to its near end' },
     { hold: '', until: (w) => st(w) === 'fold' || st(w) === 'shut', max: 200, note: 'it folds: the nut is coming' },
@@ -149,6 +153,7 @@ const aaruAct = (x: number): Step[] => {
   const st = leafState('aaru');
   const f = (k: string) => (w: World) => w.flags[`pdy10-aaru:${k}`];
   return [
+    { hold: '', ticks: 2 },
     { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 9) + 6, max: 900, note: 'the bell goes: up to the leaf, not along the road' },
     { hold: '', jump: 8, ticks: 8, note: 'a hop straight up on to its near end' },
     { hold: '', until: (w) => st(w) === 'shut' && w.player.onGround, max: 200, note: 'let it fold: a bar' },
@@ -254,7 +259,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'PDY-09': { steps: [pitch('pdy09', 1, 'up on the stone nearest the cochonnet, and stay', { fixed: 1 })], cause: 'pdy-plomb' },
   // first death: walked into the pond. So: fold the first leaf and cross it the right way... and at the
   // second, folded the same, take the same look round before climbing on: it opens again under you
-  'PDY-10': { steps: [...foldAndCross('leaf1', 5, 13.3), ...foldAndCross('leaf2', 17, 24.3, 100), die], cause: 'pdy-mul' },
+  'PDY-10': { steps: [...foldAndCross('leaf1', 5, 13.3), ...foldAndCross('leaf2', 17, 24.3, 150), die], cause: 'pdy-mul' },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
   'PDY-09': [
@@ -264,7 +269,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'PDY-10': [
     { what: 'jump on to the first leaf and run across', steps: [{ hold: 'R', until: X(4.2), max: 300 }, { hold: 'R', jump: 10, ticks: 10 }, die], cause: 'splash' },
     { what: 'fold the first leaf, then wait for it to open again and walk across the open leaf', steps: [...foldAndCross('leaf1', 5, 13.3).slice(0, 4), { hold: '', until: (w) => leafState('leaf1')(w) === 'open', max: 900 }, { hold: 'R', jump: 8, ticks: 8 }, die], cause: 'splash' },
-    { what: 'fold the second leaf and stand on the bar to look', steps: [...foldAndCross('leaf1', 5, 13.3), ...foldAndCross('leaf2', 17, 24.3, 100), die], cause: 'pdy-mul' },
+    { what: 'fold the second leaf and stand on the bar to look', steps: [...foldAndCross('leaf1', 5, 13.3), ...foldAndCross('leaf2', 17, 24.3, 150), die], cause: 'pdy-mul' },
   ],
 };
 
@@ -277,7 +282,26 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'pdy10-aaru': aaruAct,
 };
 
+/** the tour's Promenade (tour-pdy-b20): the plywood square over the gap's last tile slides on as you jump for it */
+function tour01(S: Record<string, Step[]>) {
+  // the shared route ends 'up on the deck', a landing, then the walk to the door: the Promenade replaces the walk
+  const R = S['PDY-01'].slice(0, -1);
+  S['PDY-01'] = [
+    ...R,
+    { hold: 'R', until: X(101.6), max: 900, note: 'to the edge of the gap' },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'a long jump, for the sea wall and not the square' },
+    { hold: 'R', until: ground, max: 300 },
+    { hold: 'R', until: done, max: 600 },
+  ];
+  naive['PDY-01'] = { steps: [...R, { hold: 'R', until: X(101.8), max: 900 }, { hold: 'R', jump: 12, ticks: 12, note: 'a hop, for the yellow square' }, die], cause: 'splash' };
+  mistakes['PDY-01'] = [
+    { what: 'walk straight on along the Promenade', steps: [...R, die], cause: 'splash' },
+    { what: 'jump for the square from further back, so as to be on it sooner', steps: [...R, { hold: 'R', until: X(101.0), max: 900 }, { hold: 'R', jump: 16, ticks: 16 }, die], cause: 'splash' },
+  ];
+}
+
 const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) => {
+  tour01(S);
   S['PDY-09'] = petanqueRoom();
   lengthen('PDY-09', 0, []);
   S['PDY-10'] = mimosaRoom();

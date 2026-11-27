@@ -384,7 +384,7 @@ export class Mimosa {
 /** a pit from column a to b (inclusive) with a floor of its own two rows down */
 const thorns = (g: Grid, a: number, b: number) => g.pit(a, b).fill(a, b, 17, 17, '#');
 /** the mimosa's own thorns on the pit floor (cause pdy-mul), or a lily pond (splash) */
-const pitFloor = (w: World, x0: number, x1: number, cause: 'pdy-mul' | 'splash') => {
+export const pitFloor = (w: World, x0: number, x1: number, cause: 'pdy-mul' | 'splash') => {
   w.add(new Thing('spikerow', x0, FLOOR + 6, { solid: false, deadly: cause, layer: -5, w: x1 - x0, h: 20, inset: 1 }));
   if (cause === 'splash')
     w.add(
@@ -410,7 +410,7 @@ export function mimosaRoom(): LevelDef {
     build(w: World) {
       door(w);
       new Mimosa(w, 'leaf1', px(5), 144, 0.25, 4);
-      new Mimosa(w, 'leaf2', px(17), 128, 0.2, 1.3);
+      new Mimosa(w, 'leaf2', px(17), 128, 0.2, 1.8);
       pitFloor(w, px(6), px(13), 'splash');
       pitFloor(w, px(18), px(24), 'pdy-mul');
       sign(w, 2, 10.6, 4.6, 'JARDIN BOTANIQUE', 'green', null, 'thottal sinungi');
