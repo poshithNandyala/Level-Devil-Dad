@@ -87,7 +87,7 @@ function cloudWalk(key: string, far: number): (w: World) => Out {
     if (next < 0) return go('R');
     const edge = onBeam < 0 ? c.gap[0] : c.beams[onBeam][1] + 1;
     // under a sun that goes in, the whole crossing is decided on the bank: every beam covered for long enough, sun out for long enough
-    const whole = onBeam < 0 && c.sun ? sunLeft(w, c) > 3.6 && c.beams.every((_b, i) => beamReady(w, c, i, 2.0)) : true;
+    const whole = onBeam < 0 && c.sun ? sunLeft(w, c) > 4.8 && c.beams.every((_b, i) => beamReady(w, c, i, 2.6)) : true;
     const ready = whole && (next >= c.beams.length ? true : beamReady(w, c, next, 1.6));
     const target = next >= c.beams.length ? far : c.beams[next][0];
     if (!ready) {
@@ -240,7 +240,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
       { hold: 'R', jump: 12, ticks: 12 },
       { hold: 'R', until: done, max: 600 },
     ], 'shl-edge'),
-    inAct('SHL-02', 'shl02-lyoh', 'cross as before, bank only, never mind the sun', (x) => [{ policy: cloudWalk('shl2b-nosun', x + 22), until: done, max: 5000 }], 'shl-dum'),
+    inAct('SHL-02', 'shl02-lyoh', 'cross as before, bank only, never mind the sun', (x) => [{ policy: cloudWalk('shl2b-nosun', x + 21), until: done, max: 5000 }], 'shl-dum'),
   ],
   'SHL-03': [
     inAct('SHL-03', 'shl03-wake', 'stand still on the boats’ span while the boat comes', (x) => [
@@ -259,7 +259,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'shl02-sngi': act02,
-  'shl02-lyoh': (x) => [{ policy: cloudWalk('shl2b', x + 22), until: and(ground, X(x + 22.5)), max: 5000, note: 'beam to beam with the sun out and time in hand' }, { hold: 'R', until: X(x + 28), max: 400 }],
+  'shl02-lyoh': (x) => [{ policy: cloudWalk('shl2b', x + 21), until: and(ground, X(x + 21.5)), max: 5000, note: 'beam to beam with the sun out and time in hand' }, { hold: 'R', until: X(x + 28), max: 400 }],
   'shl03-wake': act03,
   'shl03-wet': (x) => [{ policy: burstWalk('shl3-wet'), until: and(ground, X(x + 26.5)), max: 4000, note: 'the wet span: stop early, stand long' }, { hold: 'R', until: X(x + 28), max: 300 }],
   'shl04-iew': act04,

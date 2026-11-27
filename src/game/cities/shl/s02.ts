@@ -181,10 +181,10 @@ export const actSun: Act = {
   w: 30,
   advice: 'Back at the view point, and a high cloud crosses the sun every few seconds. While the sun is covered, no beam lights anything and nothing holds, whatever the bank below is doing. Cross beam to beam only with the sun out and time in hand; wait on the bank while it is in.',
   paint: (g, c) => {
-    g.fill(c.x + 6, c.x + 21, 15, 17, '.');
+    g.fill(c.x + 6, c.x + 20, 15, 17, '.');
   },
   build: (w, c) => {
-    cloudGap(w, 'shl2b', [c.x + 6, c.x + 21], [[c.x + 9, c.x + 11], [c.x + 15, c.x + 17]], { w: 20, end: 2, speed: 2.5, span: 44, phase: 14, n: 2, sun: { period: 12, inFor: 2.0, phase: 3 } });
+    cloudGap(w, 'shl2b', [c.x + 6, c.x + 20], [[c.x + 9, c.x + 11], [c.x + 15, c.x + 17]], { w: 20, end: 2, speed: 2.5, span: 44, phase: 14, n: 2, sun: { period: 12, inFor: 2.0, phase: 3 } });
     sign(w, c.x + 2, 10.4, 3, 'SUN', 'shop', null, 'behind a high cloud');
   },
 };
