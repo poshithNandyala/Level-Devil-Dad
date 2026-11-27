@@ -285,9 +285,6 @@ function relay(id: string, v: [number, number, number], tallFirst: boolean, advi
   };
 }
 const sandhya = relay('ccu07-sandhya', [42, 60, 80], true, 'A long span at dusk and three porters. On to the tall one from the pylon step; a short one passes under you before his CHA board: walk off the front on to him. Then a tall one overtakes before the next board: hop up, but never with a load coming over.');
-const bhor = relay('ccu07-bhor', [43, 61, 81], true, 'Morning rush on the next span: tall porter, short one under you before his board, tall one over before the next. Watch for the loads coming the other way.');
-const raat = relay('ccu07-raat', [40, 58, 78], false, 'The last long span: short porter, tall one overtaking (only with nothing coming over), short one under you before the second board.');
-const dupur = relay('ccu07-dupur', [44, 60, 84], false, 'Midday: short, tall, short again, the same rules, the loads coming the other way thicker.');
 const ulto = relay('ccu07-ulto', [41, 59, 79], false, 'The same span the other way up: a short porter from the pylon, a tall one overtaking (hop up when nothing is coming over), then a short one passing under (walk off the front on to him) before the second CHA board.');
 
 /** CCU-07 act 3: the second pylon, a porter who leaves at once (and stops for tea at once), and the one to wait for */
@@ -1009,12 +1006,10 @@ function brokenRok(id: string, w0: number, segs: [number, number, number, number
   };
 }
 const gali = brokenRok('ccu08-gali', 68, [[6, 12, 13, 20, 32], [40, 46, 47, 54, 66]], 55, 'A lane broken twice. Sit in the adda before each break and wait for the tea seller; his plank goes back up a few seconds after he’s gone by, so cross it right behind him, and sit again at the next.');
-const duur = brokenRok('ccu08-duur', 46, [[6, 12, 13, 21, 44]], 45, 'The tea seller is far off down this lane, and slow: sit in the adda and wait. He’ll come.');
 
 
 /** CCU-10 acts 5 and 6: back over Howrah Bridge, on the porters, both ways up */
 const setu10a = relay('ccu10-setu', [45, 63, 83], true, 'Howrah Bridge again: tall porter, short one under you before his CHA board, tall one over you before the next, never jumping into a load coming the other way.');
-const setu10c = relay('ccu10-shesh', [46, 64, 84], true, 'The last span before College Street: tall, short under you, tall over you, each before the CHA board.');
 const setu10b = relay('ccu10-phera', [39, 57, 77], false, 'And back the other way up: short porter, tall one overtaking, short one under you, each before the CHA board.');
 
 
@@ -1057,8 +1052,6 @@ function liftAct(id: string, wait: number, advice: string): Act {
   };
 }
 const uthan = liftAct('ccu09-uthan', 2.7, 'Up inside the pandal: stand on the tied panel and wait while they tie the next one on above it; it lifts you to the high bamboo. Do it again on the next, then step off on to the gallery straight away: there’s one more coming, up into the roof frame.');
-const uthan3 = liftAct('ccu09-uthan3', 3.5, 'The third tower, its decorator slower still: wait on the step, ride up, and step off the moment it stops.');
-const uthan4 = liftAct('ccu09-uthan4', 3.9, 'The last tower before the gate: the same patience, the same quick step off at the top.');
 const uthan2 = liftAct('ccu09-uthan2', 3.1, 'The second tower: the same lift, the decorator slower up the ladder. Wait for it, and off on to the gallery the moment it stops.');
 
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
@@ -1118,8 +1111,8 @@ export const levels = (): LevelDef[] => [
   longStage({ base: boiRoom(), par: 36, acts: [thak, thak2], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
   longStage({ base: kumartuliRoom(), par: 82, acts: [uthon, lane, pratima, ghat, ghatpar], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
   longStage({ base: poleRoom(), par: 85, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
-  longStage({ base: howrahRoom(), par: 172, acts: [girder, dui, sandhya, ulto, bhor, dupur, raat, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
-  longStage({ base: addaRoom(), par: 86, acts: [rok, tokta, gali, duur], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
-  longStage({ base: pandalRoom(), par: 83, acts: [sinri, toran, chala, uthan, uthan2, uthan3, uthan4], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
-  longStage({ base: finaleRoom(), par: 129, acts: [bus10, tram10, rok10, kumor10, setu10a, setu10b, setu10c], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
+  longStage({ base: howrahRoom(), par: 172, acts: [girder, dui, sandhya, ulto, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
+  longStage({ base: addaRoom(), par: 86, acts: [rok, tokta, gali], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
+  longStage({ base: pandalRoom(), par: 83, acts: [sinri, toran, chala, uthan, uthan2], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
+  longStage({ base: finaleRoom(), par: 129, acts: [bus10, tram10, rok10, kumor10, setu10a, setu10b], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];

@@ -613,7 +613,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     { what: 'staying on the second porter of the dusk span', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [42, 60, 80], true).slice(0, 6), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
     { what: 'staying on the first porter of the upside-down span', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [42, 60, 80], true), ...relayRoute(184, [41, 59, 79], false).slice(0, 2), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
     { what: 'staying on the tall porter of the upside-down span', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [42, 60, 80], true), ...relayRoute(184, [41, 59, 79], false).slice(0, 3), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
-    { what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [42, 60, 80], true), ...relayRoute(184, [41, 59, 79], false), ...relayRoute(244, [43, 61, 81], true), ...relayRoute(304, [44, 60, 84], false), ...relayRoute(364, [40, 58, 78], false), walk(424 + 3.9), ...hopTo(px(430.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
+    { what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [42, 60, 80], true), ...relayRoute(184, [41, 59, 79], false), walk(244 + 3.9), ...hopTo(px(250.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
   'CCU-02': [
     {
       what: 'stepping off backwards on the crawl',
@@ -630,20 +630,13 @@ const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'ccu09-uthan': (x) => liftRoute('ccu09-uthan', x),
   'ccu09-uthan2': (x) => liftRoute('ccu09-uthan2', x),
-  'ccu09-uthan3': (x) => liftRoute('ccu09-uthan3', x),
-  'ccu09-uthan4': (x) => liftRoute('ccu09-uthan4', x),
   'ccu10-setu': (x) => relayRoute(x, [45, 63, 83], true),
   'ccu10-phera': (x) => relayRoute(x, [39, 57, 77], false),
-  'ccu10-shesh': (x) => relayRoute(x, [46, 64, 84], true),
   'ccu08-gali': (x) => brokenRoute('ccu08-gali', x, [[6, 12, 13, 20, 32], [40, 46, 47, 54, 66]], false),
-  'ccu08-duur': (x) => brokenRoute('ccu08-duur', x, [[6, 12, 13, 21, 44]], false),
   'ccu05-pratima': (x) => carryRoute(x, 2, false),
   'ccu05-ghatpar': (x) => carryRoute(x, 2),
   'ccu07-sandhya': (x) => relayRoute(x, [42, 60, 80], true),
   'ccu07-ulto': (x) => relayRoute(x, [41, 59, 79], false),
-  'ccu07-bhor': (x) => relayRoute(x, [43, 61, 81], true),
-  'ccu07-dupur': (x) => relayRoute(x, [44, 60, 84], false),
-  'ccu07-raat': (x) => relayRoute(x, [40, 58, 78], false),
   'ccu09-toran': (x) => [
     steerHop(px(x + 3), 12, 'on to the bamboo: two panels go up'),
     steerHop(px(x + 7), 34, 'a full jump on to the first', true),
@@ -798,11 +791,6 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   (mistakes['CCU-10'] ??= []).push(
     { what: 'staying on the first porter back over the bridge', steps: [...to174(), ...relayRoute(174, [45, 63, 83], true).slice(0, 4), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
     { what: 'staying on the short porter back over the bridge', steps: [...to174(), ...relayRoute(174, [45, 63, 83], true).slice(0, 6), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
-  );
-  const to244 = (): Step[] => [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [42, 60, 80], true), ...relayRoute(184, [41, 59, 79], false)];
-  mistakes['CCU-07'].push(
-    { what: 'staying on the first porter of the morning span', steps: [...to244(), ...relayRoute(244, [43, 61, 81], true).slice(0, 4), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
-    { what: 'staying on the tall porter of the midday span', steps: [...to244(), ...relayRoute(244, [43, 61, 81], true), ...relayRoute(304, [44, 60, 84], false).slice(0, 3), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
   );
 }
 
