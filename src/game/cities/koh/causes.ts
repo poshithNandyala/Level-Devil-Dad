@@ -4,6 +4,7 @@ export const causeLines: Record<string, string[]> = {
   'koh-rod': ['The handrail rod rolled out of its brackets with you on it.', 'It is round: it rolls you backwards and then drops. Jump the drain instead.'],
   'koh-khai': ['You fell into the ditch off the end of the mat.', 'The mat drifts away from you. Stay just behind the flag until the mat lies on the far bank, then step over.'],
   'koh-dubki': ['Your end of the mat dipped into the water.', 'The trailing end dips a moment after a heave settles. Stand just behind the flag, not on the end.'],
+  'koh-jhatka': ['The heave threw you back on to the end that dipped.', 'This team heaves in jerks: when they crouch, move right up to the flag, so the step back leaves you clear of the end.'],
   'koh-manch': ['The winners’ stand came down on you.', 'Walk in only while it is down. Keep off the spot under it while it is up.'],
   'koh-khad': ['The plank tipped you into the pit.', 'A loaded half of the seesaw sinks. Land on the tip to throw Kewhi, then cross at once.'],
   'koh-patak': ['Kewhi came down on the plank and it kicked you off.', 'He flies as far as you land from the post: land on the very tip, and he reaches the ledge.'],

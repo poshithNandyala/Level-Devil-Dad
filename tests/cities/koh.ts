@@ -94,6 +94,20 @@ function matPolicy(key: string, farBank: number): (w: World) => Out {
   };
 }
 const room02 = (): Step[] => [{ policy: matPolicy('koh2', 20), until: and(ground, X(21.5)), max: 3000, note: 'behind the flag across the ditch' }, { hold: 'R', until: X(29), max: 300 }];
+/** the jerk mat: behind the flag as usual, but right up to the flag while the far team crouches */
+function jerkPolicy(key: string, farBank: number): (w: World) => Out {
+  return (w) => {
+    const st = w.flags[key] as Mat;
+    const p = w.player;
+    const r = st.rig;
+    const W = r.w;
+    const flag = r.x + W / 2;
+    if (p.cx > r.x + W + 4) return go('R');
+    if (!w.standing(r.solid!)) return go('R');
+    if (r.x + W >= px(farBank) + 20 || p.cx > flag) return go('R');
+    return go(toward(w, st.crouch ? flag - 4 : flag - 12, 2));
+  };
+}
 /** the hoisted stand: walk in while it is down */
 const hoistPolicy: Policy = (w, _m, d) => {
   const s = w.flags.koh2s as { s: { k?: number; dir?: number } };
@@ -655,7 +669,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 // mistakes inside the acts: the stage up to the act (route), then `steps` from the act's first column
 const ROOMS: Record<string, () => Step[]> = { 'KOH-02': room02, 'KOH-03': room03, 'KOH-04': room04, 'KOH-05': room05, 'KOH-06': room06, 'KOH-07': room07, 'KOH-08': room08, 'KOH-09': room09, 'KOH-10': room10 };
 const ACT_ORDER: Record<string, string[]> = {
-  'KOH-02': ['koh02-teen'],
+  'KOH-02': ['koh02-teen', 'koh02-jhatka'],
   'KOH-03': ['koh03-ulta'],
   'KOH-04': ['koh04-kali'],
   'KOH-05': ['koh05-dui', 'koh05-chadhai'],
@@ -678,6 +692,8 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'KOH-02': [
     inAct('KOH-02', 'koh02-teen', 'run straight across the long mat', () => runOn, 'koh-khai'),
     inAct('KOH-02', 'koh02-teen', 'stand on the near end of the long mat', (x) => [{ hold: 'R', until: X(x + 5.4), max: 600 }, { hold: '', until: done, max: 1500 }], 'koh-dubki'),
+    inAct('KOH-02', 'koh02-jhatka', 'run straight across the jerk mat', () => runOn, 'koh-khai'),
+    inAct('KOH-02', 'koh02-jhatka', 'behind the flag as usual, through the jerk', (x) => [{ policy: matPolicy('koh2c', x + 18), until: done, max: 3000 }], 'koh-jhatka'),
   ],
   'KOH-03': [
     { what: 'land on the tip, then stand still on the near half', steps: [{ policy: landAt(SEE3.x0 + 9, SEE3.x0 - 30, 8), until: and(ground, (w) => w.player.x >= SEE3.x0 - 4), max: 900 }, { hold: '', until: done, max: 1500 }], cause: 'koh-khad' },
@@ -750,6 +766,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'koh02-teen': (x) => [{ policy: matPolicy('koh2b', x + 20), until: and(ground, X(x + 22.5)), max: 3000, note: 'behind the flag across the long ditch' }, { hold: 'R', until: X(x + 33.4), max: 400 }],
+  'koh02-jhatka': (x) => [{ policy: jerkPolicy('koh2c', x + 18), until: and(ground, X(x + 20.5)), max: 3000, note: 'up to the flag when they crouch' }, { hold: 'R', until: X(x + 31.4), max: 400 }],
   'koh03-ulta': (x) => [
     { hold: 'R', until: X(x + 4.6), max: 600, note: 'to the edge of the bank' },
     { policy: landAt(px(x + 6) + 80, px(x + 6) - 6, 34), until: and(ground, (w) => w.player.cx >= px(x + 6) + 60), max: 900, note: 'a running jump on to the far tip' },

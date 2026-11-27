@@ -11,7 +11,7 @@ import { Grid } from '../../levels/grid';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
 import { Rig, box, folk } from './entities';
 import { FL, ditch, since, taraScript } from './common';
-import { lines as L } from './lines';
+import { lines as L, NPC } from './lines';
 
 export interface Mat {
   rig: Rig;
@@ -29,6 +29,9 @@ export interface Mat {
   dip: number;
   /** which end is dipped right now: -1 left, 1 right, 0 none */
   dipped: number;
+  /** the jerk act: the far team crouches (the tell), then heaves the mat a tile and a half at once, which throws a rider back a step */
+  crouch: boolean;
+  jerkT: number;
 }
 
 /** ticks the teams take to answer a change of sides, and ticks of steady pull before the trailing end dips */
@@ -39,11 +42,11 @@ export const DIP_AFTER = 60;
  * a tug-of-war mat over the ditch columns c0..c1 (open), `n` tiles long, resting at the near bank. `fast` is the act's
  * third team: the dip comes sooner.
  */
-export function mat(w: World, c0: number, c1: number, n: number, key: string, o: { v?: number; dipAfter?: number } = {}): Mat {
+export function mat(w: World, c0: number, c1: number, n: number, key: string, o: { v?: number; dipAfter?: number; jerk?: { every: number; warn: number } } = {}): Mat {
   const W = px(n);
   const x0 = px(c0);
   const x1 = px(c1 + 1) - W + 24; // rests 1.5 tiles on to the far bank when hauled all the way
-  const st: Mat = { rig: null as any, v: o.v ?? 48, have: -1, want: -1, wantT: 0, haveT: 0, x0, x1, dip: 2, dipped: 0 };
+  const st: Mat = { rig: null as any, v: o.v ?? 48, have: -1, want: -1, wantT: 0, haveT: 0, x0, x1, dip: 2, dipped: 0, crouch: false, jerkT: -1 };
   const dipAfter = o.dipAfter ?? DIP_AFTER;
   ditch(w, x0 - 8, px(c1 + 1) + 8, 'koh-khai', FL + 12);
   const rig = w.add(
@@ -66,14 +69,34 @@ export function mat(w: World, c0: number, c1: number, n: number, key: string, o:
           st.haveT = w2.tick;
           if (on) w2.sfx('thud', r.x + (st.have > 0 ? W : 0), FL);
         }
-        const nx = Math.max(st.x0, Math.min(st.x1, r.x + (st.have * st.v) / 120));
+        let nx = Math.max(st.x0, Math.min(st.x1, r.x + (st.have * st.v) / 120));
+        // the jerk: while the far team gains, every `every` ticks of pull they crouch for `warn` ticks and then heave
+        // the mat a tile and a half in one go, which throws whoever rides it back a step (the near end dips at once)
+        let jerked = false;
+        if (o.jerk && st.have > 0 && on && r.x + W < px(c1 + 1)) {
+          const t = w2.tick - st.haveT;
+          const phase = t % o.jerk.every;
+          st.crouch = phase >= o.jerk.every - o.jerk.warn;
+          if (t > 0 && phase === 0) {
+            nx = Math.min(st.x1, nx + 24);
+            jerked = true;
+            st.jerkT = w2.tick;
+            w2.sfx('thud', r.x + W, FL);
+            w2.say('HO-O! | HEAVE!', px(c1 + 1) + 40, FL - 40, 0.6, 'npc');
+          }
+        } else st.crouch = false;
         const moved = Math.abs(nx - r.x) > 1e-6;
         r.solid!.velX = moved ? st.have * st.v : 0;
         if (moved) r.moveTo(w2, nx, FL);
+        if (jerked) {
+          // the shove: a step back along the mat
+          p.x -= 14;
+          p.vx = Math.min(p.vx, 0);
+        }
         // a heave only settles while the mat is really being hauled
         if (!moved) st.haveT = w2.tick;
-        // the trailing end dips once the pull has settled; the end on the far bank cannot dip
-        const settled = w2.tick - st.haveT >= dipAfter;
+        // the trailing end dips once the pull has settled; the end on the far bank cannot dip; a jerk dips it at once
+        const settled = w2.tick - st.haveT >= dipAfter || (st.jerkT >= 0 && w2.tick - st.jerkT < 60);
         const overBank = st.have > 0 ? r.x + W > px(c1 + 1) : false;
         st.dipped = settled && !overBank && on ? -st.have : 0;
         r.s.dipped = st.dipped;
@@ -101,7 +124,7 @@ export function mat(w: World, c0: number, c1: number, n: number, key: string, o:
     w.add(
       new Rig(0, FL - 2, px(st.dip), 12, {
         layer: 1,
-        cause: 'koh-dubki',
+        cause: o.jerk ? 'koh-jhatka' : 'koh-dubki',
         inset: 1,
         live: () => st.dipped === side,
         tick: (z) => {
@@ -120,7 +143,9 @@ export function mat(w: World, c0: number, c1: number, n: number, key: string, o:
       }
       for (let i = 0; i < 4; i++) {
         const lean = st.have > 0 ? 3 : -1;
-        folk(ctx, px(c1 + 1) + 20 + i * 14 + lean, FL - 26 + ((w2.tick >> 4) + i) % 2, 26, i % 2 ? '#2E7D32' : '#F2EFE4');
+        // the crouch before a jerk: the far team sits low
+        const low = st.crouch ? 6 : 0;
+        folk(ctx, px(c1 + 1) + 20 + i * 14 + lean, FL - 26 + low + ((w2.tick >> 4) + i) % 2, 26 - low, i % 2 ? '#2E7D32' : '#F2EFE4');
       }
     }, 1),
   );
@@ -169,6 +194,25 @@ export const actTeen: Act = {
   build: (w, c) => {
     mat(w, c.x + 5, c.x + 5 + 15, 8, 'koh2b', { dipAfter: 36, v: 56 });
     sign(w, c.x + 1, 10.4, 3, 'TEEN TEAM', 'shop', null, 'three teams');
+  },
+};
+
+/** the jerk: the far team crouches, then heaves the mat a tile and a half at once, which throws a rider a step back on to the end that dips; move up to the flag when they crouch */
+export const actJhatka: Act = {
+  id: 'koh02-jhatka',
+  w: 32,
+  advice: 'This far team heaves in jerks: they crouch low, then haul the mat a tile and a half in one go, and the heave throws you a step back along the mat, on to the end that dips at once. When they crouch, move right up to the flag: the step back leaves you clear. Behind the flag as usual is a step too far back.',
+  cps: [],
+  paint: (g, c) => {
+    g.fill(c.x + 5, c.x + 5 + 13, 15, 17, '.');
+  },
+  build: (w, c) => {
+    mat(w, c.x + 5, c.x + 5 + 13, 7, 'koh2c', { v: 44, jerk: { every: 150, warn: 70 } });
+    w.when(
+      (w2) => w2.player.cx > px(c.x + 2),
+      (w2) => w2.guide(NPC.rasta),
+    );
+    sign(w, c.x + 1, 10.4, 3, 'JHATKA', 'shop', null, 'the jerk');
   },
 };
 
