@@ -438,12 +438,12 @@ export const tihai: Act = {
  *  the next stamp they swap back. Every stamp is a change of state: press the other way, at once. Go back
  *  over a red strip and it rings; stand still on her floor and that's a bow, and she spins to you. */
 const GURU = { first: 70, every: 150, strips: [4, 9, 14, 19], from: 2, to: 23 };
-export const guru: Act = {
-  id: 'lko06-guru',
+export const makeGuru = (id: string, flip: boolean, advice: string, word: string): Act => ({
+  id,
   w: 28,
   cp0: false,
   cps: [-2.5, 25.5],
-  advice: 'The guru’s rule: the student mirrors her. At every stamp of her foot your left and right swap, and at the next stamp they swap back. Each stamp is a change: press the other way at once. Go back over a red strip and it rings; stop still on her floor and that is a bow, and she spins to you.',
+  advice,
   build: (w, c) => {
     const x = c.x;
     boards(w, x, x + 27);
@@ -471,7 +471,7 @@ export const guru: Act = {
           G.last = w2.tick;
           w2.sfx('thud', c.X(26), FLOOR);
           w2.emit('shake', c.X(26), FLOOR, { amount: 1.5 });
-          if (G.n % 2) w2.flipControls(999);
+          if (flip && G.n % 2) w2.flipControls(999);
           else w2.flipUntil = -1;
         }
       }
@@ -506,9 +506,15 @@ export const guru: Act = {
         }
       }, 3),
     );
-    sign(w, x + 0.4, 10.4, 3.2, 'GURU', 'shop', null, 'ulta');
+    sign(w, x + 0.4, 10.4, 3.2, word, 'shop', null, flip ? 'ulta' : 'seedha');
   },
-};
+});
+export const guru = makeGuru(
+  'lko06-guru',
+  true,
+  'The guru’s rule: the student mirrors her. At every stamp of her foot your left and right swap, and at the next stamp they swap back. Each stamp is a change: press the other way at once. Go back over a red strip and it rings; stop still on her floor and that is a bow, and she spins to you.',
+  'GURU',
+);
 
 export const s06 = { room: kathakRoom, acts: [tatkar, tihai, guru, mehfil] };
 export const meta06 = { family: 'sound-draws-dancer-spin', betrayals: ['sound-draws'], ending: 'lko-sam' } as StageMeta;

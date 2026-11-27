@@ -492,7 +492,7 @@ const R_lko06_mehfil = (id: string) => (x: number): Step[] => {
 actRoutes['lko06-mehfil'] = R_lko06_mehfil('lko06-mehfil');
 /** forward whichever way the guru's stamps have turned the controls, hopping each red strip */
 const GURU_STRIPS = [4, 9, 14, 19];
-const guruFwd = (x: number, to: number, old = false): Step => {
+const guruFwd = (x: number, to: number, old = false, key = 'lko06-guru', mirror = false): Step => {
   let jt = 0;
   let W: World | null = null;
   return {
@@ -502,7 +502,8 @@ const guruFwd = (x: number, to: number, old = false): Step => {
         jt = 0;
       }
       const p = w.player;
-      const move: Move = w.flipped && !old ? 'L' : 'R';
+      const n = (w.flags[`${key}:g`] as { n: number } | undefined)?.n ?? 0;
+      const move: Move = (w.flipped && !old) || (mirror && n % 2 === 1 && n < 99) ? 'L' : 'R';
       if (jt > 0) {
         jt--;
         return { move, jump: true };
@@ -520,6 +521,7 @@ const guruFwd = (x: number, to: number, old = false): Step => {
   };
 };
 actRoutes['lko06-guru'] = (x) => [guruFwd(x, x + 25.5), runTo(x + 27.5, 300)];
+actRoutes['lko10-seedha'] = (x) => [guruFwd(x, x + 25.5, false, 'lko10-seedha'), runTo(x + 27.5, 300)];
 const tihaiAt = (w: World) => (w.flags['lko06-tihai:at'] as ((w: World) => { n: number; k: number }) | undefined)?.(w) ?? { n: -1, k: -1 };
 const afterSam = (w: World) => { const a = tihaiAt(w); return a.n === 0 && a.k > 2 && a.k < 40; };
 actRoutes['lko06-tihai'] = (x) => [
@@ -1035,7 +1037,7 @@ mistakes['LKO-06'] = [
   },
 ];
 mistakes['LKO-10'] = [
-  { what: 'bowing to the last door from right in front of it', steps: [...through('LKO-10', room10, 9), walkTo(doorX('LKO-10') - 1.5, 600), until(done, 600)], cause: 'lko-tehzeeb' },
+  { what: 'bowing to the last door from right in front of it', steps: [...through('LKO-10', room10, 10), walkTo(doorX('LKO-10') - 1.5, 600), until(done, 600)], cause: 'lko-tehzeeb' },
   { what: 'the court again: taking the square the courtier bows you on to', steps: [...through('LKO-10', room10, 1), ...R_lko08_chausar('lko10-darbar', 5, 5, 200, true, false, 'court', 14.6)(actX('LKO-10', 1)), walkTo(actX('LKO-10', 1) + 23.6, 300), until((w) => ((w.flags['lko10-darbar:court2:bowed'] as { i: number } | undefined)?.i ?? -1) === 0, 2400, 'he bows you on'), hops([actX('LKO-10', 1) + 26.6]), until(done, 600)], cause: 'lko-goti-pehle' },
 ];
 
@@ -1058,8 +1060,8 @@ mistakes['LKO-10'].push(
   { what: 'the court again, hopping square after square', steps: [...through('LKO-10', room10, 1), walkTo(actX('LKO-10', 1) + 3.2, 300), hops([0, 1, 2, 3, 4].map((i) => actX('LKO-10', 1) + 5 + 3 * i + 0.5)), until(done, 300)], cause: 'lko-kuan' },
   { what: 'the procession again, rushing up behind them', steps: [...through('LKO-10', room10, 3), { hold: 'R', until: done, max: 1200 }], cause: 'lko-julus' },
   { what: 'the procession again, keeping the rhythm of the first three nalas', steps: [...through('LKO-10', room10, 3), ...R_lko07_julus('lko10-julus', [12, 24, 36, 48])(actX('LKO-10', 3)), until(done, 600)], cause: 'lko-julus-nala' },
-  { what: 'the gallery, walking through the second arch too', steps: [...through('LKO-10', room10, 8), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
-  { what: 'the gallery, hopping the drain into the first arch', steps: [...through('LKO-10', room10, 8), runTo(actX('LKO-10', 8) + 1, 300), hop(actX('LKO-10', 8) + 3, actX('LKO-10', 8) + 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-kuan' },
+  { what: 'the gallery, walking through the second arch too', steps: [...through('LKO-10', room10, 9), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
+  { what: 'the gallery, hopping the drain into the first arch', steps: [...through('LKO-10', room10, 9), runTo(actX('LKO-10', 9) + 1, 300), hop(actX('LKO-10', 9) + 3, actX('LKO-10', 9) + 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-kuan' },
 );
 
 mistakes['LKO-07'].push(
@@ -1143,6 +1145,11 @@ mistakes['LKO-06'].push(
 mistakes['LKO-05'].push(
   { what: 'the turning skewers: waiting till they lie still before hopping, as with a still rack', steps: [...through('LKO-05', room05, 6), walkTo(actX('LKO-05', 6) + 0.8, 300), hops([[actX('LKO-05', 6) + 4, spit(48, 56)]]), until(done, 600)], cause: 'lko-seekh' },
   { what: 'the turning skewers: staying on a heap till it all looks safe', steps: [...through('LKO-05', room05, 6), walkTo(actX('LKO-05', 6) + 0.8, 300), hops([[actX('LKO-05', 6) + 4, spit(0, 16)]]), until(done, 900)], cause: 'lko-tawa' },
+);
+
+mistakes['LKO-10'].push(
+  { what: 'the guru again: pressing the other way after her stamp, as 06 taught', steps: [...through('LKO-10', room10, 8), { ...guruFwd(actX('LKO-10', 8), actX('LKO-10', 8) + 25.5, false, 'lko10-seedha', true), until: done }], cause: 'lko-ghungroo' },
+  { what: 'the guru again: stopping after her stamp to see which way is which', steps: [...through('LKO-10', room10, 8), { ...guruFwd(actX('LKO-10', 8), actX('LKO-10', 8) + 25.5, false, 'lko10-seedha'), until: (w) => ((w.flags['lko10-seedha:g'] as { n: number } | undefined)?.n ?? 0) >= 1 }, until(done, 900)], cause: 'lko-chakkar' },
 );
 
 export const test: CityTests = {

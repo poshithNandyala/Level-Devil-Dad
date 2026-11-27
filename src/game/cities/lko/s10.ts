@@ -13,7 +13,7 @@ import { Art, FLOOR, gent, px, stillness, bowIcon, TAU } from './kit';
 import { archway, gentleman, looseStone, pehleDoorway, tara } from './s02';
 import { washLine } from './s03';
 import { Heap, karahi, shadows, type Light } from './s04';
-import { Dancer } from './s06';
+import { Dancer, makeGuru } from './s06';
 import { Flock, Flyer, drawFlyer, roofOf, roofs, type Roof } from './s09';
 import { arch, well, hooks, chausar } from './s08';
 import { on } from './kit';
@@ -434,5 +434,13 @@ const chirag: Act = {
   },
 };
 
-export const s10 = { room: tehzeebRoom, acts: [dhulai, darbar, tasveer, julusBells, jawab, raasta, daana, chirag, galiyara] };
+/** The guru again, and her stamps again, but tonight she dances for the guests, not for a student: nobody
+ *  is mirroring anybody, and a stamp swaps nothing. 06 taught: at a stamp, press the other way. */
+const seedha = makeGuru(
+  'lko10-seedha',
+  false,
+  'The guru again, stamping as before, but tonight she dances for the guests and nobody mirrors her: a stamp swaps nothing. Keep pressing the way you were going, hop the red strips, and never stop on her floor.',
+  'SEEDHA',
+);
+export const s10 = { room: tehzeebRoom, acts: [dhulai, darbar, tasveer, julusBells, jawab, raasta, daana, chirag, seedha, galiyara] };
 export const meta10 = { family: 'finale-bow-meets-bells', betrayals: ['bow-vs-bells'], ending: 'lko-tehzeeb' } as StageMeta;
