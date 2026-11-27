@@ -4,6 +4,14 @@ Module: `src/game/cities/lko/` (one file per stage, `s01.ts` .. `s10.ts`; shared
 Routes and the plays that must die: `tests/cities/lko.ts`. Allocation v2 slots, in order.
 Every spoken line is from the city bible's VERIFIED list (standard Lakhnavi Hindustani courtesy).
 
+## Fix round 6 (QA FAIL-2): what the table below no longer has
+
+The table below is the build history. Since fix round 6 these parts are gone from the tree:
+- The doors of 04 `lko-kulhad`, 06 `lko-sam`, 07 `lko-darban`, 08 `lko-489`, 09 `lko-chhatri` and 10 `lko-tehzeeb` are **plain doors**: no idea, walk in. Each one re-asked its own room (C1). The ids stay.
+- Acts cut (C2, C3, C4): `lko02-aadaab`, `lko04-badal`, `lko05-dum`, `lko06-tihai`, `lko07-chauraha`, `lko08-minar`, `lko08-mehrab`, `lko10-dhulai`, `lko10-julus`, `lko10-raasta`, `lko10-chirag`, `lko10-do`, `lko10-galiyara`.
+- `lko09-hawa` has four roofs. For the last one the flyer walks round in front (`lko-hawa-ulta`).
+- The finale keeps only the callbacks that break their rule: `darbar`, `tasveer`, `jawab`, `daana`, `seedha`, `thahra`.
+
 ## Stages
 
 | Id | Name | Slot / family | The room's idea | Acts | Door ending |
