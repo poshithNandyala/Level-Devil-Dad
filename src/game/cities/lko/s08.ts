@@ -433,5 +433,33 @@ export const wapas: Act = {
   },
 };
 
-export const s08 = { room: bhoolRoom, acts: [chaupar, minar, mehrab, utar, wapas] };
+// ================================================================ act: upar, on top of the arches
+/** The beamless vault: a row of arches standing in the well, and nothing over them but their own stone
+ *  tops. Jump at one, as everywhere, and it takes you up into the hooks; walk on and the floor ends at the
+ *  well. Go up through the first arch to the high ledge, and come down on to the arch tops from above:
+ *  from up there an arch is only a floor. */
+export const upar: Act = {
+  id: 'lko08-upar',
+  w: 26,
+  advice: 'The beamless vault: arches standing in the well, and nothing over them but their stone tops. Jump at one and it takes you up into the hooks; walk on and the floor ends. Go up through the first arch to the high ledge, then come down on to the arch tops from above, and hop top to top.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 8, x + 20, 15);
+    g.fill(x + 3, x + 6, 8, 8, '#');
+    for (const t of [9, 13, 17]) g.fill(x + t, x + t + 1, 10, 10, '#');
+    g.fill(x + 9, x + 19, 5, 5, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    mazeWall(w, x, x + 25, [8, 10, 15]);
+    well(w, x + 8, x + 20);
+    arch(w, c.X(1) + 8, FLOOR, { x: c.X(4) + 8, y: px(8) }, c.f('a0'));
+    for (const t of [9, 13, 17]) arch(w, c.X(t) + 16, FLOOR, { x: c.X(t) + 16, y: px(5) }, c.f('a' + t));
+    hooks(w, x + 9, x + 19, px(4), 'lko-bhool', false);
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Har darwaza ek jaisa hai. | Every doorway is alike.', 2.2));
+    sign(w, x + 0.2, 10.4, 3, 'UPAR', 'shop', null, 'mehrab par');
+  },
+};
+
+export const s08 = { room: bhoolRoom, acts: [chaupar, upar, minar, mehrab, utar, wapas] };
 export const meta08 = { family: 'entry-height-routes-level', betrayals: ['enter-height'], ending: 'lko-489' } as StageMeta;
