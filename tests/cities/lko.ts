@@ -479,7 +479,17 @@ const R_lko06_mehfil = (id: string) => (x: number): Step[] => {
   return steps;
 };
 actRoutes['lko06-mehfil'] = R_lko06_mehfil('lko06-mehfil');
-const R_lko07_shaam = (id: string) => (x: number): Step[] => [runTo(x + 45, 800, 'run the row, no pause')];
+const awningDown = (id: string, k: number) => (w: World) => {
+  const st = w.flags[`${id}:st`] as { t: number }[] | undefined;
+  return !!st && st[k].t >= 0 && w.tick - st[k].t > 26;
+};
+const R_lko07_shaam = (id: string) => (x: number): Step[] => [
+  walkTo(x + 12.4, 400, 'the awning ahead shivers: stop short of it'),
+  until(awningDown(id, 3), 300, 'it is down'),
+  walkTo(x + 28.4, 600, 'over it, and on to the next that shivers'),
+  until(awningDown(id, 7), 300),
+  runTo(x + 45, 800),
+];
 actRoutes['lko07-shaam'] = R_lko07_shaam('lko07-shaam');
 const R_lko07_batti = (id: string) => (x: number): Step[] => [behindLamp(`${id}:ll1`, x + 13), behindLamp(`${id}:ll2`, x + 34), behindLamp(`${id}:ll3`, x + 56), runTo(x + 57, 300)];
 actRoutes['lko07-batti'] = R_lko07_batti('lko07-batti');
@@ -534,38 +544,6 @@ actRoutes['lko07-photo'] = (x) => [
   walkTo(x + 23.2, 300),
   until(flash(1), 900, 'not the short test flash: the real one'),
   runTo(x + 33, 300),
-];
-const sprinkle = (i: number) => (w: World) => {
-  const f = w.flags[`lko07-chhidkav:s${i}`] as ((w: World) => number) | undefined;
-  const p = f ? f(w) : -1;
-  return p >= 0 && p < 30;
-};
-actRoutes['lko07-chhidkav'] = (x) => [
-  walkTo(x + 6.4, 300, 'on the far side of the pillar from the boy'),
-  until(sprinkle(0), 900, 'just after his throw'),
-  hop(x + 8, x + 12.5, 'over the pillar and past him'),
-  walkTo(x + 16.4, 300),
-  until(sprinkle(1), 900),
-  hop(x + 18, x + 22.5),
-  walkTo(x + 23.4, 300, 'this boy stands before his pillar: wait back here'),
-  until(sprinkle(2), 900),
-  runTo(x + 26.6, 300),
-  hop(x + 28, x + 30.5, 'over the pillar'),
-  runTo(x + 35, 300),
-];
-const fog07 = (w: World) => (w.flags['lko07-kohra:fog'] as { x: number } | undefined)?.x ?? -1e9;
-actRoutes['lko07-kohra'] = (x) => [
-  runTo(x + 9.5, 300, 'past the first greeting without stopping'),
-  hop(x + 12, x + 14.5, 'over the nala'),
-  walkTo(x + 16.4, 300),
-  pause('pause before the strollers'),
-  runTo(x + 27.5, 400, 'through them, past the second greeting'),
-  hop(x + 30, x + 32.5),
-  walkTo(x + 34.4, 300),
-  pause('pause before the strollers'),
-  runTo(x + 43.5, 400),
-  hop(x + 46, x + 48.5),
-  runTo(x + 53, 300),
 ];
 const R_lko07_chauraha = (id: string) => (x: number): Step[] => [walkTo(x + 3, 300), hop(x + 5, x + 7.3, 'over the nala'), pause('pause before the strollers'), runTo(x + 31, 600, 'stroll up, then run through')];
 actRoutes['lko07-chauraha'] = R_lko07_chauraha('lko07-chauraha');
@@ -954,12 +932,12 @@ mistakes['LKO-07'] = [
   },
   {
     what: 'following the lamplighter close behind',
-    steps: [...room07, runTo(actX('LKO-07', 1) - 1, 900), { hold: 'R', until: done, max: 900 }],
+    steps: [...room07, ...actRoutes0('lko07-shaam', actX('LKO-07', 0)), { hold: 'R', until: done, max: 900 }],
     cause: 'lko-seedhi',
   },
   {
     what: 'hopping the café nala and going straight in',
-    steps: [...room07, ...actRoutes0('lko07-shaam', actX('LKO-07', 0)), ...actRoutes0('lko07-batti', actX('LKO-07', 1)), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), ...actRoutes0('lko07-chhidkav', actX('LKO-07', 3)), ...actRoutes0('lko07-photo', actX('LKO-07', 4)), ...actRoutes0('lko07-kohra', actX('LKO-07', 5)), ...actRoutes0('lko07-chauraha', actX('LKO-07', 6)), runTo(doorX('LKO-07') - 10), hop(doorX('LKO-07') - 8, doorX('LKO-07') - 3), { hold: 'R', until: done, max: 600 }],
+    steps: [...room07, ...actRoutes0('lko07-shaam', actX('LKO-07', 0)), ...actRoutes0('lko07-batti', actX('LKO-07', 1)), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), ...actRoutes0('lko07-photo', actX('LKO-07', 3)), ...actRoutes0('lko07-chauraha', actX('LKO-07', 4)), runTo(doorX('LKO-07') - 10), hop(doorX('LKO-07') - 8, doorX('LKO-07') - 3), { hold: 'R', until: done, max: 600 }],
     cause: 'lko-darban',
   },
 ];
@@ -1069,9 +1047,10 @@ mistakes['LKO-06'].push(
   { what: 'walking into her tatkar patch', steps: [...room06, walkTo(actX('LKO-06', 0) + 2, 300), { hold: 'R', until: done, max: 900 }], cause: 'lko-tatkar' },
 );
 mistakes['LKO-07'].push(
-  { what: 'at dusk, pausing under the awnings, as the strollers taught', steps: [...room07, runTo(actX('LKO-07', 0) + 8, 300), pause(), until(done, 900)], cause: 'lko-shamiyana' },
-  { what: 'at the chauraha, rushing the strollers', steps: [...through('LKO-07', room07, 6), walkTo(actX('LKO-07', 6) + 3, 300), hop(actX('LKO-07', 6) + 5, actX('LKO-07', 6) + 7.3), { hold: 'R', until: done, max: 900 }], cause: 'lko-ganj' },
-  { what: 'at the chauraha, pausing again under the awnings once they part', steps: [...through('LKO-07', room07, 6), walkTo(actX('LKO-07', 6) + 3, 300), hop(actX('LKO-07', 6) + 5, actX('LKO-07', 6) + 7.3), pause(), runTo(actX('LKO-07', 6) + 14, 400), pause(), until(done, 600)], cause: 'lko-shamiyana' },
+  { what: 'at dusk, running the row without a stop, as the old awnings taught', steps: [...room07, { hold: 'R', until: done, max: 900 }], cause: 'lko-shamiyana' },
+  { what: 'at dusk, stopping for the first shivering awning, then running the rest', steps: [...room07, walkTo(actX('LKO-07', 0) + 12.4, 400), until(awningDown('lko07-shaam', 3), 300), { hold: 'R', until: done, max: 900 }], cause: 'lko-shamiyana' },
+  { what: 'at the chauraha, rushing the strollers', steps: [...through('LKO-07', room07, 4), walkTo(actX('LKO-07', 4) + 3, 300), hop(actX('LKO-07', 4) + 5, actX('LKO-07', 4) + 7.3), { hold: 'R', until: done, max: 900 }], cause: 'lko-ganj' },
+  { what: 'at the chauraha, pausing again under the awnings once they part', steps: [...through('LKO-07', room07, 4), walkTo(actX('LKO-07', 4) + 3, 300), hop(actX('LKO-07', 4) + 5, actX('LKO-07', 4) + 7.3), pause(), runTo(actX('LKO-07', 4) + 14, 400), pause(), until(done, 600)], cause: 'lko-shamiyana' },
 );
 mistakes['LKO-08'].push({ what: 'in the vault, walking on through the well arch too', steps: [...through('LKO-08', room08, 3), runTo(actX('LKO-08', 3) + 12, 400), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' });
 mistakes['LKO-10'].push(
@@ -1083,9 +1062,9 @@ mistakes['LKO-10'].push(
 );
 
 mistakes['LKO-07'].push(
-  { what: 'at the photograph, pausing so they part, as the strollers taught', steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), ...actRoutes0('lko07-chhidkav', actX('LKO-07', 3)), walkTo(actX('LKO-07', 4) + 4.5, 300), hop(actX('LKO-07', 4) + 6, actX('LKO-07', 4) + 8.5), walkTo(actX('LKO-07', 4) + 9.2, 300), pause(), { hold: 'R', until: done, max: 600 }], cause: 'lko-photo' },
-  { what: 'at the photograph, rushing them', steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), ...actRoutes0('lko07-chhidkav', actX('LKO-07', 3)), walkTo(actX('LKO-07', 4) + 4.5, 300), hop(actX('LKO-07', 4) + 6, actX('LKO-07', 4) + 8.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-photo-jaldi' },
-  { what: 'at the second camera, going on the test flash', steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), ...actRoutes0('lko07-chhidkav', actX('LKO-07', 3)), ...actRoutes0('lko07-photo', actX('LKO-07', 4)).slice(0, 7), until((w) => (w.flags['lko07-photo:g1'] as Ph).test, 900), { hold: 'R', until: done, max: 600 }], cause: 'lko-photo-test' },
+  { what: 'at the photograph, pausing so they part, as the strollers taught', steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), walkTo(actX('LKO-07', 3) + 4.5, 300), hop(actX('LKO-07', 3) + 6, actX('LKO-07', 3) + 8.5), walkTo(actX('LKO-07', 3) + 9.2, 300), pause(), { hold: 'R', until: done, max: 600 }], cause: 'lko-photo' },
+  { what: 'at the photograph, rushing them', steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), walkTo(actX('LKO-07', 3) + 4.5, 300), hop(actX('LKO-07', 3) + 6, actX('LKO-07', 3) + 8.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-photo-jaldi' },
+  { what: 'at the second camera, going on the test flash', steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), ...actRoutes0('lko07-photo', actX('LKO-07', 3)).slice(0, 7), until((w) => (w.flags['lko07-photo:g1'] as Ph).test, 900), { hold: 'R', until: done, max: 600 }], cause: 'lko-photo-test' },
 );
 
 mistakes['LKO-08'].push(
@@ -1105,19 +1084,9 @@ mistakes['LKO-08'].push(
   { what: 'in the vault, walking on along the floor', steps: [...through('LKO-08', room08, 1), runTo(actX('LKO-08', 1) + 5, 300), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
 );
 
-mistakes['LKO-07'].push(
-  { what: 'in the fog, stopping to return the greeting, as 02 taught', steps: [...through('LKO-07', room07, 5), walkTo(actX('LKO-07', 5) + 6, 300, 'stop for the greeting'), until((w) => fog07(w) > px(actX('LKO-07', 5) + 14.2), 1200), { hold: 'R', until: done, max: 600 }], cause: 'lko-kohra' },
-  { what: 'in the fog, running on ahead of it', steps: [...through('LKO-07', room07, 5), runTo(actX('LKO-07', 5) + 9.5, 300), hop(actX('LKO-07', 5) + 12, actX('LKO-07', 5) + 14.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-ganj' },
-);
-
 mistakes['LKO-09'].push(
   { what: 'the whistle duel: crossing on the red flag, as on the first roofs', steps: [...through('LKO-09', room09, 3), walkTo(actX('LKO-09', 3) + 2.5, 300), until(seetiIn(20, 30), 900), hops([actX('LKO-09', 3) + 2.5, actX('LKO-09', 3) + 5.3, actX('LKO-09', 3) + 8.8]), until(done, 600)], cause: 'lko-seeti' },
   { what: 'the whistle duel: going on past the tank roof once your flyer has called', steps: [...through('LKO-09', room09, 3), walkTo(actX('LKO-09', 3) + 2.5, 300), until(seetiIn(165, 175), 900), hops([actX('LKO-09', 3) + 2.5, actX('LKO-09', 3) + 5.3, actX('LKO-09', 3) + 8.8, actX('LKO-09', 3) + 11.2, actX('LKO-09', 3) + 15.6, actX('LKO-09', 3) + 19.2, actX('LKO-09', 3) + 22.8]), until(done, 600)], cause: 'lko-seeti-jawab' },
-);
-
-mistakes['LKO-07'].push(
-  { what: 'the evening sprinkle: walking straight on past the boys', steps: [...through('LKO-07', room07, 3), hop(actX('LKO-07', 3) + 8, actX('LKO-07', 3) + 10.5), until(done, 900)], cause: 'lko-chhidkav' },
-  { what: 'the evening sprinkle: sheltering against the third pillar, as at the first two', steps: [...through('LKO-07', room07, 3), ...actRoutes0('lko07-chhidkav', actX('LKO-07', 3)).slice(0, 6), walkTo(actX('LKO-07', 3) + 27.4, 300), until(done, 900)], cause: 'lko-chhidkav-ulta' },
 );
 
 mistakes['LKO-05'].push(

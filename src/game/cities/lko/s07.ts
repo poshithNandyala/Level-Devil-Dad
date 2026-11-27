@@ -154,45 +154,60 @@ function ganjRoom(): LevelDef {
 }
 
 // ================================================================ act 1: dusk, and the awnings come down
-/** At dusk the shops let their awnings down one after another, from behind you: keep moving and you stay ahead. */
+/** At dusk the shops let their awnings down. Most come down behind you once you are past. Two come down
+ *  ahead of you, and each shivers on its rope first: the shivering one is next. Stop short of it until it is
+ *  down, then walk over it. Running the row at full tilt takes you under it. */
+const SHAAM = { early: [3, 7], warn: 6, shiver: 66, down: 24 };
 export const shaam: Act = {
   id: 'lko07-shaam',
   cp0: false,
   cps: [-2],
   w: 46,
-  advice: 'Dusk: the shops let their awnings down one after another, starting behind you, and a falling awning flattens a stroller. Here, don’t pause: run the row without stopping.',
+  advice: 'Dusk: the shops let their awnings down. Most come down behind you, but the one that shivers on its rope is next, and it may be ahead of you: stop short of it until it is down, then walk over it.',
   build: (w, c) => {
     const x = c.x;
     arcade(w, x, x + 45);
-    const shops = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => {
+    const st = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(() => ({ t: -1, sh: -1 }));
+    const shops = st.map((S, k) => {
       const x0 = c.X(2 + 4 * k);
       const z = w.add(
         new Zone(x0, FLOOR - 40, px(4), 40, 'lko-shamiyana', (ctx, zz, w2) => {
-          const S = st[k];
           const k2 = S.t < 0 ? 0 : Math.min(1, (w2.tick - S.t) / 12);
+          // a shivering awning: it jerks on its rope and the rope shows slack
+          const jig = S.sh >= 0 && S.t < 0 ? Math.sin(w2.tick * 1.4) * 1.6 : 0;
           ctx.fillStyle = k % 2 ? '#5A8F7B' : '#C2485B';
-          ctx.fillRect(x0, FLOOR - 64 + k2 * 58, px(4), 6);
+          ctx.fillRect(x0 + jig, FLOOR - 64 + k2 * 58 + Math.abs(jig), px(4), 6);
           ctx.fillStyle = 'rgba(255,255,255,0.6)';
-          for (let i = 0; i < 4; i++) ctx.fillRect(x0 + 4 + i * 16, FLOOR - 58 + k2 * 58, 8, 2);
+          for (let i = 0; i < 4; i++) ctx.fillRect(x0 + jig + 4 + i * 16, FLOOR - 58 + k2 * 58 + Math.abs(jig), 8, 2);
+          if (jig) {
+            ctx.strokeStyle = '#3E2F25';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x0 + 6, FLOOR - 88);
+            ctx.quadraticCurveTo(x0 + 2 + jig * 2, FLOOR - 76, x0 + 6 + jig, FLOOR - 64);
+            ctx.stroke();
+          }
         }, 4),
       );
       z.on = false;
       return z;
     });
-    const st = shops.map(() => ({ t: -1 }));
-    let t0 = -1;
-    w.flags[c.f('t0')] = () => t0;
+    w.flags[c.f('st')] = st;
+    const drop = (w2: World, k: number) => {
+      st[k].t = w2.tick;
+      shops[k].on = true;
+      w2.sfx('thud', shops[k].x + 32, FLOOR - 20);
+    };
     w.onTick((w2) => {
-      if (t0 < 0 && w2.player.cx > c.X(1)) t0 = w2.tick;
-      if (t0 < 0) return;
+      const p = w2.player;
       shops.forEach((z, k) => {
-        const at = t0 + Math.round((0.75 + 0.457 * k) * 120);
-        if (w2.tick === at) {
-          st[k].t = w2.tick;
-          z.on = true;
-          w2.sfx('thud', z.x + 32, FLOOR - 20);
-        }
-        if (st[k].t >= 0 && w2.tick - st[k].t > 12) z.on = false;
+        const S = st[k];
+        const x0 = c.X(2 + 4 * k);
+        if (SHAAM.early.includes(k)) {
+          if (S.sh < 0 && p.cx > x0 - px(SHAAM.warn)) S.sh = w2.tick;
+          if (S.t < 0 && S.sh >= 0 && w2.tick - S.sh >= SHAAM.shiver) drop(w2, k);
+        } else if (S.t < 0 && p.cx > x0 + px(5)) drop(w2, k);
+        if (S.t >= 0 && w2.tick - S.t > (SHAAM.early.includes(k) ? SHAAM.down : 12)) z.on = false;
       });
     });
     sign(w, x + 0.2, 10.4, 3.2, 'SHAAM', 'shop', null, 'dusk');
@@ -591,137 +606,5 @@ export const photo: Act = {
   },
 };
 
-// ================================================================ act: chhidkav, the evening sprinkle
-/** At dusk the shop boys fling a bucket of water along the pavement to settle the dust, from their door
- *  towards the next arcade pillar, and the pillar stops it. Shelter on the pillar's far side from the boy:
- *  at the first two shops he stands past the pillar, at the third he stands before it. */
-const CHHIDKAV = [
-  { p: 8, boy: 11 },
-  { p: 18, boy: 21 },
-  { p: 28, boy: 25 },
-];
-const SPRINKLE = { period: 420, from: 290 };
-export const chhidkav: Act = {
-  id: 'lko07-chhidkav',
-  w: 36,
-  cps: [13.5, 22, 31.5],
-  advice: 'At dusk the shop boys fling a bucket of water along the pavement, from their door towards the next pillar, and the pillar stops it. Wait on the pillar’s far side from the boy, and cross the wet stretch just after a throw. The third boy stands before his pillar, not after it.',
-  paint: (g, c) => {
-    for (const s of CHHIDKAV) g.fill(c.x + s.p, c.x + s.p, 13, 14, '#');
-  },
-  build: (w, c) => {
-    const x = c.x;
-    arcade(w, x, x + 35);
-    CHHIDKAV.forEach((s, i) => {
-      const S = { t0: -1 };
-      const ph = (w2: World) => (S.t0 < 0 ? -1 : (w2.tick - S.t0) % SPRINKLE.period);
-      w.flags[c.f('s' + i)] = ph;
-      const right = s.boy > s.p;
-      const a = right ? c.X(s.p + 1) : c.X(s.boy + 1),
-        b = right ? c.X(s.boy) : c.X(s.p);
-      const z = w.add(new Zone(a, FLOOR - 30, b - a, 30, right ? 'lko-chhidkav' : 'lko-chhidkav-ulta'));
-      z.on = false;
-      w.add(
-        new Art((ctx, w2) => {
-          const p = ph(w2);
-          const lift = p >= SPRINKLE.from - 40 && p < SPRINKLE.from;
-          gent(ctx, c.X(s.boy) + 8, FLOOR, 22, KURTA[(i + 3) % KURTA.length], { face: right ? -1 : 1, arms: lift || z.on ? 1 : 0.2 });
-          // his bucket, and the sheet of water while it flies
-          ctx.fillStyle = '#90A4AE';
-          ctx.fillRect(c.X(s.boy) + (right ? -2 : 12), FLOOR - (lift ? 22 : 8), 7, 7);
-          if (z.on) {
-            ctx.fillStyle = 'rgba(144,202,249,0.55)';
-            ctx.fillRect(a, FLOOR - 26, b - a, 22);
-          }
-          // a wet sheen on the stones where the water falls
-          ctx.fillStyle = 'rgba(90,120,150,0.25)';
-          ctx.fillRect(a, FLOOR - 2, b - a, 2);
-        }, 3),
-      );
-      w.onTick((w2) => {
-        if (S.t0 < 0 && w2.player.cx > c.X(Math.min(s.p, s.boy) - 6)) S.t0 = w2.tick;
-        z.on = ph(w2) >= SPRINKLE.from;
-      });
-    });
-    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Zehmat na kijiye. | Please don’t trouble yourself.', 2.2));
-    sign(w, x + 0.4, 10.4, 3.4, 'CHHIDKAV', 'shop', null, 'ganj');
-  },
-};
-
-// ================================================================ act 6: kohra, the fog
-/** A winter fog rolls up the Ganj from behind, slower than a stroll. Inside it the nalas can't be seen.
- *  Gentlemen on their chabutras greet you as you pass ("Aadaab"): stop to return it, as 02 taught, and
- *  the fog catches you and hides the next nala. In the fog, greetings wait: stroll on past them. */
-const KOHRA = { greet: [8, 26, 42], nalas: [12, 30, 46], crowd: [20, 38] };
-export const kohra: Act = {
-  id: 'lko07-kohra',
-  w: 54,
-  advice: 'A winter fog rolls up the Ganj from behind you, slower than a stroll, and inside it the nalas can’t be seen. The gentlemen on their chabutras greet you: don’t stop to return it here, or the fog catches you and hides the next nala. Stroll on past them: pause before each group of strollers, then go.',
-  paint: (g, c) => {
-    for (const n of KOHRA.nalas) g.pit(c.x + n, c.x + n + 1);
-  },
-  build: (w, c) => {
-    const x = c.x;
-    arcade(w, x, x + 53);
-    const F = { x: c.X(-8), go: false };
-    w.flags[c.f('fog')] = F;
-    for (const n of KOHRA.nalas) {
-      const x0 = c.X(n),
-        x1 = c.X(n + 2);
-      w.add(
-        new Art((ctx) => {
-          ctx.fillStyle = '#3B3A36';
-          ctx.fillRect(x0, FLOOR, x1 - x0, 48);
-          ctx.fillStyle = '#5B6B4E';
-          ctx.fillRect(x0, FLOOR + 30, x1 - x0, 18);
-        }, -4),
-      );
-      const z = w.add(new Zone(x0 + 1, FLOOR + 16, x1 - x0 - 2, 30, 'lko-nala'));
-      w.onTick((w2) => {
-        // shoved back by strollers, or walked into a nala the fog had hidden
-        z.hazard.cause = w2.flags.shoveCause ?? (F.x > x1 ? 'lko-kohra' : 'lko-nala');
-      });
-    }
-    for (const k of KOHRA.crowd) strollers(w, x + k, c.f('crowd' + k), 'lko-ganj', -210);
-    KOHRA.greet.forEach((n, i) => {
-      let said = false;
-      w.add(
-        new Art((ctx) => {
-          ctx.fillStyle = '#C8B48E';
-          ctx.fillRect(c.X(n) - 6, FLOOR - 10, 28, 10);
-          gent(ctx, c.X(n) + 8, FLOOR - 10, 24, KURTA[(i + 2) % KURTA.length], { face: -1, bow: said ? 0.6 : 0, topi: '#F5F0E6' });
-        }, 3),
-      );
-      w.when(
-        (w2) => w2.player.cx > c.X(n - 4),
-        (w2) => {
-          said = true;
-          w2.say('Aadaab! | Respectful greetings!', c.X(n) + 8, FLOOR - 44, 1.6, 'npc');
-        },
-      );
-    });
-    w.onTick((w2) => {
-      if (!F.go && w2.player.cx > c.X(1)) F.go = true;
-      if (F.go && F.x < c.X(54)) F.x += 0.8;
-    });
-    w.add(
-      new Art((ctx) => {
-        // the fog bank: thick behind its front, a soft edge
-        if (!F.go) return;
-        const x0 = c.X(-30);
-        ctx.fillStyle = 'rgba(232,232,236,0.92)';
-        ctx.fillRect(x0, 0, F.x - 24 - x0, FLOOR + 60);
-        const g = ctx.createLinearGradient(F.x - 24, 0, F.x + 8, 0);
-        g.addColorStop(0, 'rgba(232,232,236,0.92)');
-        g.addColorStop(1, 'rgba(232,232,236,0)');
-        ctx.fillStyle = g;
-        ctx.fillRect(F.x - 24, 0, 32, FLOOR + 60);
-      }, 6),
-    );
-    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Shukriya, aage chaliye. | Thank you, go ahead.', 2.2));
-    sign(w, x + 0.4, 10.4, 3.4, 'KOHRA', 'shop', null, 'ganj');
-  },
-};
-
-export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, chhidkav, photo, kohra, chowk] };
+export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, photo, chowk] };
 export const meta07 = { family: 'pace-sets-crowd-shape', betrayals: ['pace-crowd', 'ladder-block'], ending: 'lko-darban' } as StageMeta;
