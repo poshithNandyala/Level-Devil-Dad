@@ -950,7 +950,7 @@ export const act14: Act = {
  *  machine starts, he walks over and stops it, the nearest running one first, and then sits by it a while to
  *  grumble. Start the water lift (as 05 taught) and he stops it under you. Start the little grinder by the well
  *  first: he goes to that, and the lift is yours; stay on it and he shoves you off it into the well. */
-export const MAMA = { decoy: 10, lift: 8, v: 45, rest: 7.5, up: 3.6 };
+export const MAMA = { decoy: 10, lift: 8, v: 60, rest: 7.5, up: 3.6 };
 export const act15: Act = {
   id: 'bbi05-mama',
   w: 26,
