@@ -4,7 +4,7 @@
 // and the city's stage files. After a change on purpose: npm run refreeze -- PDY (docs/CITY-MODULE.md).
 import type { World } from '../../src/game/world';
 import { Door } from '../../src/game/entities/basics';
-import { type Step, X, and, done, ground, quiet } from '../runner';
+import { type Step, X, and, done, ground, quiet, rollerNear } from '../runner';
 import type { CityTests } from '../city-tests';
 
 type Move = 'L' | 'R' | '';
@@ -346,10 +346,18 @@ function sixOClock(S: Record<string, Step[]>) {
   S['PDY-04'] = [...room, ...S['PDY-04'].slice(6)];
 }
 
+/** PDY-05, a person's timing (stage unchanged): hop the cart while it is still 78 px off, not 46, and the loose cobble from 25.8, not 26.6 */
+function grandCanal(S: Record<string, Step[]>) {
+  const r = S['PDY-05'];
+  // steps 0-3: to the bridge, wait, walk to the cart, hop it; then the cobble (jump first, lean after), then the rest
+  S['PDY-05'] = [r[0], r[1], { ...r[2], until: rollerNear(62) }, r[3], ...hopLean(25.4, 'the loose cobble again, from further back'), ...r.slice(6)];
+}
+
 const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) => {
   tour01(S);
   rockBeach(S);
   sixOClock(S);
+  grandCanal(S);
   S['PDY-09'] = petanqueRoom();
   lengthen('PDY-09', 0, []);
   S['PDY-10'] = mimosaRoom();
