@@ -19,8 +19,8 @@ import { Adda, House, TeaSeller, Wash } from './adda';
 import { ClothPanel, Decorator, DhakFrame, Lowered, Skeleton, Stakes } from './pandal';
 import { Tin } from './muri';
 import { Kumir } from './kumir';
-import { Bore } from './baan';
-import { BigFigure, Figure, Ghat } from './kumartuli';
+import { Bore, Front } from './baan';
+import { BigFigure, Figure, Ghat, Potter, Straw } from './kumartuli';
 import type { Act } from '../../levels/acts';
 
 const tara = (n: number, beaten = 0) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[beaten % L.beaten.length] });
@@ -292,6 +292,32 @@ function relay(id: string, v: [number, number, number], tallFirst: boolean, advi
 }
 const sandhya = relay('ccu07-sandhya', [42, 60, 80], true, 'A long span at dusk and three porters. On to the tall one from the pylon step; a short one passes under you before his CHA board: walk off the front on to him. Then a tall one overtakes before the next board: hop up, but never with a load coming over.');
 const ulto = relay('ccu07-ulto', [41, 59, 79], false, 'The same span the other way up: a short porter from the pylon, a tall one overtaking (hop up when nothing is coming over), then a short one passing under (walk off the front on to him) before the second CHA board.');
+
+/** CCU-07 act (R2, the bore's front, its A3): the low causeway along the river. The front comes up the
+ *  river behind you as you step on to it and floods all it has passed: the momentum beat. Keep moving,
+ *  hop each drain short, and be past the end of the causeway before it catches you */
+const jowar: Act = {
+  id: 'ccu07-jowar',
+  w: 40,
+  // the start is under the front once it's coming: the checkpoint is up the ghat steps past it
+  cp0: false,
+  cps: [36],
+  advice: 'The low causeway along the river, and the bore’s front is coming up behind you: everything it has passed is under water. Don’t stop. Hop each drain short (they’re close together) and keep running till you’re up the ghat steps at the end.',
+  paint: (g, c) => {
+    const x = c.x;
+    for (const d of [8, 12, 18, 24]) g.pit(x + d, x + d + 1);
+    g.fill(x + 33, x + 39, 14, 14, '#');
+  },
+  build: (w, c) => {
+    for (const d of [8, 12, 18, 24]) pool(w, c.x + d, c.x + d + 2, 16, { colors: NALA, cause: 'ccu-nala' });
+    const front = w.add(new Front(c.X(-2), c.X(33), 80));
+    onPass(w, c.X(1), (w2) => {
+      if (front.t0 < 0) front.t0 = w2.tick + 60;
+    });
+    sign(w, c.x + 0.3, 10.4, 3.4, 'CAUSEWAY', 'green', null, 'low tide only');
+    w.flags.jowar = front;
+  },
+};
 
 /** CCU-07 act (reserve R2, the Hooghly bore): down at the ghat under the bridge. The river is too wide and
  *  the jetty too high; the bore comes up on a timetable, drowns the ghat steps and floats the moored launch
@@ -737,6 +763,30 @@ const uthon: Act = {
   },
 };
 
+/** CCU-05 act (the bible's own seed): the straw yard. Straw skeletons are air; the potter lays the clay on
+ *  one after another, in front of you, never behind. Wait for each to turn grey, and don't wait on a
+ *  figure painted past the waist while you do */
+const khor: Act = {
+  id: 'ccu05-khor',
+  w: 26,
+  advice: 'The straw yard: these figures are only straw, and straw is air. The potter lays the clay on one after another: wait till the next one is grey clay, then hop on. Wait on the bank or on fresh clay, never on the painted one: it’s nearly done.',
+  paint: (g, c) => {
+    g.pit(c.x + 1, c.x + 19);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(new Ghat(c.X(1), c.X(20)));
+    figures(w, [[x + 1, 2, 0.6, 0.1, 'woman'], [x + 16, 2, 0.1, 0.04, 'horse']], c.X(0.2));
+    const straws = ([[4, 3], [7, 2], [10, 3], [13, 2]] as const).map(([k, h]) => w.add(new Straw(c.X(k), h)));
+    const potter = w.add(new Potter(straws, 2.2, 2.5));
+    onPass(w, c.X(0.2), (w2) => {
+      if (potter.t0 < 0) potter.t0 = w2.tick;
+    });
+    sign(w, c.x + 0.2, 10.4, 3.2, 'KHOR', 'green', null, 'straw yard');
+    w.flags.khor = straws;
+  },
+};
+
 /** CCU-05 act: the lane where they're finishing in order, one after another behind you */
 const ghat: Act = {
   id: 'ccu05-ghat',
@@ -852,11 +902,34 @@ const rok10: Act = {
   },
 };
 
+/** CCU-10 act: the canopy again (CCU-09's dhak), and its rule broken. 09 taught: wait, and run under it as it
+ *  goes up. Now they are hauling it up for good, level with the gallery: get on top of it while it's down,
+ *  ride it up, step across. Under it there's no way through, and it comes down again */
+const chhad: Act = {
+  id: 'ccu10-chhad',
+  w: 26,
+  advice: 'The canopy again, but they’re hauling it up for good now, level with the gallery: no running under it this time, there’s no way through. Get on top of it while it’s down, ride it up, and step across to the gallery.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 1, x + 1, 13, 14, '#').fill(x + 3, x + 14, 12, 12, '#').fill(x + 17, x + 20, 7, 14, '#').fill(x + 21, x + 21, 9, 14, '#').fill(x + 22, x + 22, 11, 14, '#').fill(x + 23, x + 23, 13, 14, '#');
+  },
+  build: (w, c) => {
+    w.add(new Skeleton(c.X(1), c.X(21)));
+    w.add(new Stakes(c.X(2), c.X(17)));
+    const frame = w.add(new DhakFrame(c.X(5), px(10), px(7), px(12) - 2, 5, 1.6));
+    onPass(w, c.X(1), (w2) => {
+      if (frame.t0 < 0) frame.t0 = w2.tick + 60;
+    });
+    sign(w, c.x + 0.2, 10.4, 3.2, 'CANOPY', 'green', null, 'going up');
+    w.flags.chhad = frame;
+  },
+};
+
 /** CCU-10 act: the pandal again, and its rule broken. After the festival they take it down: a cloth top you
  *  land on is untied under you, on to the stakes; the bamboo holds now. Over each panel, bamboo to bamboo,
  *  and never wait under the roof frame, where they let a panel down on to the bamboo */
-const bisarjan: Act = {
-  id: 'ccu10-bisarjan',
+const khola: Act = {
+  id: 'ccu10-khola',
   w: 32,
   cps: [7.4],
   advice: 'The pandal again, after the festival: they’re taking it down. A cloth top you land on, they untie under you. Stand on the bamboo now and jump over each panel to the next bamboo. Under the roof frame they let a panel down on to the bamboo: straight on from that one.',
@@ -887,8 +960,8 @@ const bisarjan: Act = {
       (w2) => w2.player.onGround && w2.player.y + w2.player.h === px(12) && w2.player.cx > c.X(12) && w2.player.cx < c.X(14),
       (w2) => down.lower(w2, 0.5),
     );
-    sign(w, c.x + 0.2, 10.4, 3.4, 'BISARJAN', 'green', null, 'pandal down');
-    w.flags.bisarjan = { cloth, down };
+    sign(w, c.x + 0.2, 10.4, 3.4, 'PANDAL', 'green', null, 'coming down');
+    w.flags.khola = { cloth, down };
   },
 };
 
@@ -1194,10 +1267,10 @@ export const levels = (): LevelDef[] => [
   longStage({ base: aasteRoom(), par: 23, acts: [], twist: 'ccu-stop', shape: 'short', meta: meta('exit-moving-vehicle-on-shout', ['exit-facing-forward'], 'ccu-bus-crawls-for-whoever-waits') }),
   longStage({ base: muriRoom(), par: 38, acts: [dui3], twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
   longStage({ base: boiRoom(), par: 23, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
-  longStage({ base: kumartuliRoom(), par: 55, acts: [uthon, lane, pratima, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
+  longStage({ base: kumartuliRoom(), par: 55, acts: [uthon, lane, pratima, ghat, khor], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
   longStage({ base: poleRoom(), par: 85, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
-  longStage({ base: howrahRoom(), par: 120, acts: [girder, dui, sandhya, ulto, baan, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
+  longStage({ base: howrahRoom(), par: 120, acts: [girder, dui, sandhya, ulto, jowar, baan, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 46, acts: [rok, tokta, gali], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
   longStage({ base: pandalRoom(), par: 56, acts: [sinri, toran, chala, dhak, uthan, uthan2], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
-  longStage({ base: finaleRoom(), par: 94, acts: [bus10, tram10, rok10, kumor10, bisarjan, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
+  longStage({ base: finaleRoom(), par: 94, acts: [bus10, tram10, chhad, rok10, kumor10, khola, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];

@@ -175,7 +175,7 @@ rnc02-galli rnc03-maidan rnc04-seedhi rnc05-kharkai rnc06-ghariya rnc07-chattan 
 ccu03-dokan ccu04-thak ccu05-uthon ccu05-lane ccu05-pratima ccu05-ghat
 ccu06-points ccu06-duiline ccu07-girder ccu07-dui ccu07-sandhya ccu07-ulto ccu07-baan ccu07-pylon
 ccu08-rok ccu08-tokta ccu08-gali ccu09-sinri ccu09-toran ccu09-chala ccu09-dhak ccu09-uthan ccu09-uthan2
-ccu10-bus ccu10-tram ccu10-rok ccu10-kumor ccu10-bisarjan ccu10-setu
+ccu10-bus ccu10-tram ccu10-rok ccu10-kumor ccu10-khola ccu10-setu
 
 ## Door endings (ENDINGS: one stage each)
 Check the advice lines in endings*.ts too: an idea counts as used even under a new name (e.g. catching
