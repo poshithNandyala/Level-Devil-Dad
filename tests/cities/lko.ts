@@ -271,7 +271,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-06': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk across the stage' }], cause: 'lko-chakkar' },
   'LKO-07': { steps: [runTo(7, 200), hop(9, 11.3), { hold: 'R', until: done, max: 900, note: 'on along the arcade at a run' }], cause: 'lko-ganj' },
   'LKO-08': { steps: [runTo(5, 200), hop(7, 9, 'hop the little drain into the arch'), { hold: 'R', until: done, max: 600 }], cause: 'lko-bhool' },
-  'LKO-09': { steps: [walkTo(6.1, 300), hops([8.6, 14.1, 17.6, 20.1, 23.6, 28], 'roof to roof, never mind the flag'), until(done, 300)], cause: 'lko-kabootar' },
+  'LKO-09': { steps: [walkTo(6.1, 300), until((w) => { const o = (w.flags.kabootar?.f as Fl | undefined)?.order(w); return !!o && o.c === 'white' && o.left > 1.0; }, 600), hops([8.6], 'on to the roof, never mind the flag'), until(done, 400)], cause: 'lko-kabootar' },
   'LKO-10': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk straight in' }], cause: 'lko-pehle' },
 };
 
@@ -280,10 +280,10 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-02': { steps: [runTo(8.2), until(done, 900, 'bow, and keep bowing')], cause: 'lko-dhakka' },
   'LKO-10': { steps: [walkTo(13.5, 400, 'up to the gentlemen'), until(done, 600, 'and bow, as learned')], cause: 'lko-tehzeeb' },
   'LKO-08': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk, as learned, through every arch' }], cause: 'lko-kuan' },
-  'LKO-07': { steps: [...room07.slice(0, 3), runTo(32 + 8, 400), pause('stroll on, as learned'), runTo(32 + 14, 300), pause(), until(done, 300)], cause: 'lko-shamiyana' },
+  'LKO-07': { steps: [...room07.slice(0, 3), runTo(32 + 8, 400), pause('pause, as learned'), { hold: 'R', until: done, max: 600, note: 'then stroll on, as the strollers taught' }], cause: 'lko-shamiyana' },
   'LKO-06': { steps: [walkTo(5.9, 200), hops([8.5, 10.6, 13.3, 15.6, 18.3], 'plain boards only'), { hold: 'R', until: done, max: 600 }], cause: 'lko-tatkar' },
   'LKO-05': { steps: [runTo(3.5, 200), hops([6]), until(done, 600, 'wait on it, to be sure')], cause: 'lko-tawa' },
-  'LKO-04': { steps: [runTo(4, 200), hops([6, 9, 12], 'the shady left tiles, as learned'), until(done, 900, 'wait on it')], cause: 'lko-dhakkan' },
+  'LKO-04': { steps: [runTo(4, 200), hops([6, 9, 12], 'the shady left tiles, as learned'), { policy: (w) => go(toward(w, px(12) + 7, 1)), until: done, max: 900, note: 'wait on it, on the left tile alone' }], cause: 'lko-dhakkan' },
   'LKO-03': { steps: [runTo(3.5, 200), hops([6, 7, 9, 12, 13, 15, 17, 18, 21, 22, 24], 'every white tile in turn, jali too', 12, 30), until(done, 600)], cause: 'lko-jali' },
 };
 
@@ -567,7 +567,7 @@ actRoutes['lko06-tihai'] = (x) => [
 ]
 const awningDown = (id: string, k: number) => (w: World) => {
   const st = w.flags[`${id}:st`] as { t: number }[] | undefined;
-  return !!st && st[k].t >= 0 && w.tick - st[k].t > 26;
+  return !!st && st[k].t >= 0 && w.tick - st[k].t > 42;
 };
 const R_lko07_shaam = (id: string) => (x: number): Step[] => [
   walkTo(x + 12.4, 400, 'the awning ahead shivers: stop short of it'),
@@ -1035,7 +1035,7 @@ mistakes['LKO-02'].push(
 );
 mistakes['LKO-03'].push(
   { what: 'the dyer: waiting on a stitched flower in his half, as learned', steps: [...through('LKO-03', room03, 2), walkTo(actX('LKO-03', 2) + 2, 300), hops([actX('LKO-03', 2) + 4, actX('LKO-03', 2) + 7, actX('LKO-03', 2) + 10]), until(rangUp, 900), hops([actX('LKO-03', 2) + 10, actX('LKO-03', 2) + 13]), until(done, 900)], cause: 'lko-rang' },
-  { what: 'the dyer: hopping on to his half while it is under', steps: [...through('LKO-03', room03, 2), walkTo(actX('LKO-03', 2) + 2, 300), hops([actX('LKO-03', 2) + 4, actX('LKO-03', 2) + 7, actX('LKO-03', 2) + 10]), until((w) => rangPh(w) >= 352, 900), hops([actX('LKO-03', 2) + 10, actX('LKO-03', 2) + 13]), until(done, 600)], cause: 'lko-rang-kood' },
+  { what: 'the dyer: hopping on to his half while it is under', steps: [...through('LKO-03', room03, 2), walkTo(actX('LKO-03', 2) + 2, 300), hops([actX('LKO-03', 2) + 4, actX('LKO-03', 2) + 7, actX('LKO-03', 2) + 10]), until((w) => rangPh(w) >= 336, 900), hops([actX('LKO-03', 2) + 10, actX('LKO-03', 2) + 13]), until(done, 600)], cause: 'lko-rang-kood' },
 );
 mistakes['LKO-04'].push(
 );
@@ -1067,7 +1067,7 @@ mistakes['LKO-10'].push(
 );
 
 mistakes['LKO-07'].push(
-  { what: 'at the photograph, pausing so they part, as the strollers taught', steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), walkTo(actX('LKO-07', 3) + 4.5, 300), hop(actX('LKO-07', 3) + 6, actX('LKO-07', 3) + 8.5), walkTo(actX('LKO-07', 3) + 9.2, 300), pause(), { hold: 'R', until: done, max: 600 }], cause: 'lko-photo' },
+  { what: 'at the photograph, pausing so they part, as the strollers taught', steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), walkTo(actX('LKO-07', 3) + 4.5, 300), hop(actX('LKO-07', 3) + 6, actX('LKO-07', 3) + 8.5), walkTo(actX('LKO-07', 3) + 9.2, 300), pause(), until((w) => ((w.flags['lko07-photo:g0'] as Ph | undefined)?.blind ?? 0) <= 0, 600), { hold: 'R', until: done, max: 600 }], cause: 'lko-photo' },
   { what: 'at the photograph, rushing them', steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), walkTo(actX('LKO-07', 3) + 4.5, 300), hop(actX('LKO-07', 3) + 6, actX('LKO-07', 3) + 8.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-photo-jaldi' },
   { what: 'at the second camera, going on the test flash', steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), ...actRoutes0('lko07-photo', actX('LKO-07', 3)).slice(0, 7), until((w) => (w.flags['lko07-photo:g1'] as Ph).test, 900), { hold: 'R', until: done, max: 600 }], cause: 'lko-photo-test' },
 );
@@ -1090,8 +1090,8 @@ mistakes['LKO-08'].push(
 );
 
 mistakes['LKO-09'].push(
-  { what: 'the whistle duel: crossing on the red flag, as on the first roofs', steps: [...through('LKO-09', room09, 3), walkTo(actX('LKO-09', 3) + 2.5, 300), until(seetiIn(20, 30), 900), hops([actX('LKO-09', 3) + 2.5, actX('LKO-09', 3) + 5.3, actX('LKO-09', 3) + 8.8]), until(done, 600)], cause: 'lko-seeti' },
-  { what: 'the whistle duel: going on past the tank roof once your flyer has called', steps: [...through('LKO-09', room09, 3), walkTo(actX('LKO-09', 3) + 2.5, 300), until(seetiIn(165, 175), 900), hops([actX('LKO-09', 3) + 2.5, actX('LKO-09', 3) + 5.3, actX('LKO-09', 3) + 8.8, actX('LKO-09', 3) + 11.2, actX('LKO-09', 3) + 15.6, actX('LKO-09', 3) + 19.2, actX('LKO-09', 3) + 22.8]), until(done, 600)], cause: 'lko-seeti-jawab' },
+  { what: 'the whistle duel: crossing on the red flag, as on the first roofs', steps: [...through('LKO-09', room09, 3), walkTo(actX('LKO-09', 3) + 2.5, 300), until(seetiIn(20, 30), 900), hops([actX('LKO-09', 3) + 2.5, actX('LKO-09', 3) + 4.6, actX('LKO-09', 3) + 8.8]), until(done, 600)], cause: 'lko-seeti' },
+  { what: 'the whistle duel: going on past the tank roof once your flyer has called', steps: [...through('LKO-09', room09, 3), walkTo(actX('LKO-09', 3) + 2.5, 300), until(seetiIn(165, 175), 900), hops([actX('LKO-09', 3) + 2.5, actX('LKO-09', 3) + 4.6, actX('LKO-09', 3) + 8.8, actX('LKO-09', 3) + 10.6, actX('LKO-09', 3) + 15.6, actX('LKO-09', 3) + 19.2, actX('LKO-09', 3) + 22.8]), until(done, 600)], cause: 'lko-seeti-jawab' },
 );
 
 mistakes['LKO-05'].push(

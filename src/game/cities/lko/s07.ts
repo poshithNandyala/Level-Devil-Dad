@@ -157,7 +157,7 @@ function ganjRoom(): LevelDef {
 /** At dusk the shops let their awnings down. Most come down behind you once you are past. Two come down
  *  ahead of you, and each shivers on its rope first: the shivering one is next. Stop short of it until it is
  *  down, then walk over it. Running the row at full tilt takes you under it. */
-const SHAAM = { early: [3, 7], warn: 6, shiver: 66, down: 24 };
+const SHAAM = { early: [3, 7], warn: 6, shiver: 66, down: 40 };
 export const shaam: Act = {
   id: 'lko07-shaam',
   cp0: false,
