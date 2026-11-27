@@ -3,7 +3,7 @@
 // (docs/CITY-MODULE.md): tour() and longStage() read the course, skin and endings once they are installed.
 import { type LevelDef } from '../../world';
 import { tourLevel, meta01 } from './s01';
-import { room as room02, act as act02, act2 as act02b, act3 as act02c, meta02 } from './s02';
+import { room as room02, act as act02, act2 as act02b, act3 as act02c, act4 as act02d, meta02 } from './s02';
 import { room as room03, act as act03, act2 as act03b, meta03 } from './s03';
 import { room as room04, act as act04, meta04 } from './s04';
 import { room as room05, act1 as act05a, act2 as act05b, act3 as act05c, act4 as act05d, act5 as act05e, act6 as act05f, act7 as act05g, act8 as act05h, act9 as act05i, act10 as act05j, meta05 } from './s05';
@@ -16,7 +16,7 @@ import { longStage } from '../../levels/chunks';
 
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: meta01 },
-  longStage({ base: room02(), acts: [act02, act02b, act02c], twist: 'bbi-goal-net', par: 28, shape: 'short', meta: meta02 }),
+  longStage({ base: room02(), acts: [act02, act02b, act02d, act02c], twist: 'bbi-goal-net', par: 28, shape: 'short', meta: meta02 }),
   longStage({ base: room03(), acts: [act03, act03b], twist: 'bbi-lantern-drop', par: 33, shape: 'short', meta: meta03 }),
   longStage({ base: room04(), acts: [act04], twist: 'bbi-curl-stair', par: 38, shape: 'short', meta: meta04 }),
   longStage({ base: room05(), acts: [act05a, act05b, act05d, act05f, act05c, act05i, act05h, act05e, act05j, act05g], twist: 'bbi-behind-step', par: 30, shape: 'wtf', meta: meta05 }),

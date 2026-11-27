@@ -186,7 +186,7 @@ export function room(): LevelDef {
 /** act: a penalty corner. The injector pushes the ball in along the turf, the stopper stops it dead, and the
  *  flicker drag-flicks it back to the goal at chest height. Cross the stopper's spot while the ball sits still. */
 export const CORNER0 = { period: 5.0, push: 1.1, stop: 2.3, inj: 31, stopAt: 20, goal: 2, pushV: 160, flickV: 300 };
-export function cornerAct(id: string, w0: number, CORNER: typeof CORNER0, key: string, advice: string): Act {
+export function cornerAct(id: string, w0: number, CORNER: typeof CORNER0 & { dummy?: boolean }, key: string, advice: string): Act {
   return {
   id,
   w: w0,
@@ -195,7 +195,7 @@ export function cornerAct(id: string, w0: number, CORNER: typeof CORNER0, key: s
   paint: () => {},
   build: (w, c) => {
     turf(w, c.x, c.x + w0 - 1);
-    const st = { t0: -1, x: c.X(CORNER.inj), y: FL - BALL, phase: 'wait' as 'wait' | 'push' | 'stop' | 'flick' };
+    const st = { t0: -1, k: 0, x: c.X(CORNER.inj), y: FL - BALL, phase: 'wait' as 'wait' | 'push' | 'stop' | 'flick' | 'dummy' };
     (w.flags[key] as unknown) = st;
     onPass(w, c.X(1), (w2) => (st.t0 = w2.tick));
     const sx = c.X(CORNER.stopAt);
@@ -208,7 +208,15 @@ export function cornerAct(id: string, w0: number, CORNER: typeof CORNER0, key: s
         tick: (r, w2) => {
           if (st.t0 < 0) return;
           const t = since(w2, st.t0) % CORNER.period;
-          if (t < CORNER.push) {
+          const k = Math.floor(since(w2, st.t0) / CORNER.period);
+          st.k = k;
+          if ((CORNER as { dummy?: boolean }).dummy && k % 2 === 0) {
+            // the dummy: the stopper lets it run, and it rolls on along the turf to the goal behind you
+            st.phase = 'dummy';
+            st.x = c.X(CORNER.inj) - (c.X(CORNER.inj) - sx) * (t / CORNER.push);
+            st.y = FL - BALL;
+            if (st.x < c.X(CORNER.goal)) st.x = -999;
+          } else if (t < CORNER.push) {
             st.phase = 'push';
             st.x = c.X(CORNER.inj) - (c.X(CORNER.inj) - sx) * (t / CORNER.push);
             st.y = FL - BALL;
@@ -257,6 +265,8 @@ export function cornerAct(id: string, w0: number, CORNER: typeof CORNER0, key: s
 }
 export const act = cornerAct('bbi02-corner', 36, CORNER0, 'bbi2c', 'A penalty corner: the injector pushes the ball in, the stopper stops it dead, and then it is drag-flicked back the way you came, at chest height. Never wait on the goal side for the flick: cross the stopper’s spot, hopping the still ball, while it sits there.');
 export const CORNER2 = { period: 4.4, push: 0.9, stop: 2.0, inj: 25, stopAt: 14, goal: 2, pushV: 160, flickV: 320 };
+export const CORNER3 = { period: 4.0, push: 1.2, stop: 1.8, inj: 25, stopAt: 14, goal: 2, pushV: 160, flickV: 300, dummy: true };
+export const act4 = cornerAct('bbi02-chhal', 30, CORNER3, 'bbi2h', 'A dummy: on the first corner the stopper lets the ball run, and it rolls on along the turf at you. Hop it, then wait for the next corner, where he stops it, and go over the still ball.');
 export const act3 = cornerAct('bbi02-dobara', 30, CORNER2, 'bbi2d', 'A second corner, closer and quicker: the stopper is nearer, the flick is harder. Same answer: over the still ball while it sits, never wait on the goal side.');
 
 /** act 2: a second keeper by a second drain, the flicker further off: the same ride, longer */

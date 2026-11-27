@@ -783,6 +783,18 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02
   ],
   'bbi05-bail': bailRun('bbi5b', 14),
   'bbi05-gali': bailRun('bbi5g', 20),
+  'bbi02-chhal': (x) => {
+    const st = (w: World) => w.flags.bbi2h as { k: number; x: number; phase: string };
+    return [
+      { hold: 'R', until: X(x + 7), max: 400 },
+      { hold: '', until: (w) => st(w).phase === 'dummy' && st(w).x > 0 && st(w).x - (w.player.x + w.player.w) < 30, max: 600, note: 'the dummy rolls at you' },
+      { hold: '', jump: 12, ticks: 12, note: 'hop it' },
+      { hold: '', until: ground, max: 200 },
+      { hold: '', until: (w) => st(w).k >= 1 && st(w).phase === 'stop', max: 900, note: 'the next corner: he stops it' },
+      ...hop(x + 11.9, 'over the still ball'),
+      { hold: 'R', until: X(x + 29), max: 600 },
+    ];
+  },
   'bbi10-mela': (x) => [...crossTroupe('bbi10m0', x, 3, 6, 'bridge'), ...crossTroupe('bbi10m1', x, 13, 7, 'wheel'), { hold: 'R', until: X(x + 23.5), max: 300 }],
 };
 const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy, 'bbi-pose-gate': gatePolicy, 'bbi-leaf-plate': platePolicy, 'bbi-horse-gap': horseGap, 'bbi-ribbon-snip': ribbonPolicy };
