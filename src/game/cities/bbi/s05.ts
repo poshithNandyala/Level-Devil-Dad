@@ -367,7 +367,10 @@ export function tendaAct(id: string, wallRows: number, up: number, key: string, 
       const st = { started: -1, k: 0 };
       (w.flags[key] as unknown) = st;
       const ch = channel(w, c.x + 5, c.x + 7, 'bbi-tenda', 'water');
-      void ch;
+      // someone else may stop the lift under you: the death line names him
+      ch.o.tick = (r, w2) => {
+        r.hazard!.cause = (w2.flags[key + 'why'] as string | undefined) ?? 'bbi-tenda';
+      };
       const x = c.X(8) - 27;
       const y0 = FL - 8;
       const bucket = w.add(
@@ -885,6 +888,94 @@ export const act14: Act = {
         inset: 2,
         layer: 4,
         live: (_r, w2) => running(w2),
+      }),
+    );
+  },
+};
+
+/** act 15, the uncle (IDEAS C5, idle-world family): an uncle keeps the holiday from his verandah: whatever
+ *  machine starts, he walks over and stops it, the nearest running one first, and then sits by it a while to
+ *  grumble. Start the water lift (as 05 taught) and he stops it under you. Start the little grinder by the well
+ *  first: he goes to that, and the lift is yours; stay on it and he shoves you off it into the well. */
+export const MAMA = { decoy: 10, lift: 8, v: 45, rest: 7.5, up: 5.0 };
+export const act15: Act = {
+  id: 'bbi05-mama',
+  w: 26,
+  advice: 'An uncle keeps the holiday: whatever machine you start, he walks over and stops it, the nearest first, then sits by it a while to grumble. Start the little grinder by the well first and step off it at once; while he deals with it, ride the water lift up the wall.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + MAMA.lift + 5, c.x + MAMA.lift + 7).fill(c.x + MAMA.lift + 8, c.x + 25, 10, 14, '#');
+  },
+  build: (w, c) => {
+    const key = 'bbi5mm';
+    const sh = { ...c, x: c.x + MAMA.lift, X: (t: number) => c.X(t + MAMA.lift) };
+    tendaAct('bbi05-mama', 5, MAMA.up, key, '').build!(w, sh);
+    village(w, c.x, c.x + MAMA.lift);
+    const lift = w.flags[key] as { started: number; k: number };
+    const st = { decoy: false, x: c.X(1), rest: -1, restFor: 0, at: 'home' as string };
+    w.flags.bbi5ma = st;
+    // the little grinder's treadle by the well: step on it and the grinder starts, harmlessly
+    w.add(
+      new Rig(c.X(MAMA.decoy), FL - 3, 32, 3, {
+        solid: true,
+        layer: 3,
+        tick: (r, w2) => {
+          if (!st.decoy && r.rides(w2) && st.at !== 'decoy') st.decoy = true;
+        },
+        paint: (ctx, r, w2) => {
+          box(ctx, r.x, r.y, r.w, r.h, '#6E4A2E');
+          box(ctx, r.x + 8, r.y - 16, 16, 12, '#8C7B6B');
+          if (st.decoy) box(ctx, r.x + 10 + ((w2.tick >> 2) % 3) * 4, r.y - 12, 3, 3, '#F3EEDC');
+        },
+      }),
+    );
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: 4,
+        tick: (_r, w2) => {
+          if (st.rest >= 0) {
+            if (since(w2, st.rest) < st.restFor) return;
+            st.rest = -1;
+            st.at = 'walking';
+          }
+          const liftOn = lift.started >= 0 && lift.k >= 0;
+          const dx = c.X(MAMA.decoy) + 16 - st.x;
+          const lx = c.X(MAMA.lift + 4) + 4 - st.x;
+          // the nearest running machine first; home when nothing runs
+          let tx = c.X(1);
+          let target = 'home';
+          if (st.decoy && (!liftOn || Math.abs(dx) <= Math.abs(lx))) { tx = c.X(MAMA.decoy) + 16; target = 'decoy'; }
+          else if (liftOn) { tx = c.X(MAMA.lift + 4) + 4; target = 'lift'; }
+          const d = tx - st.x;
+          if (Math.abs(d) > 2) { st.x += Math.sign(d) * Math.min(Math.abs(d), MAMA.v / 120); st.at = 'walking'; return; }
+          if (target === 'decoy') {
+            // anyone still standing at his grinder gets shoved off it: towards the well
+            const p = w2.player;
+            if (Math.abs(p.cx - (c.X(MAMA.decoy) + 16)) < 24 && p.onGround) {
+              p.vx = 240;
+              p.vy = -180;
+              p.onGround = false;
+              p.launched = true;
+              p.stun = 60;
+              w2.flags[key + 'why'] = 'bbi-dhakka';
+            }
+            st.decoy = false;
+            st.at = 'decoy';
+            st.rest = w2.tick;
+            st.restFor = MAMA.rest;
+          } else if (target === 'lift') {
+            // he pulls the brake: the bucket swings straight back down into the well
+            lift.started = w2.tick - Math.round((MAMA.up + 1.2 + 0.3) * 120);
+            if (w2.player.x > c.X(MAMA.lift) && w2.player.x < c.X(MAMA.lift + 8)) w2.flags[key + 'why'] = 'bbi-mama';
+            st.at = 'lift';
+            st.rest = w2.tick;
+            st.restFor = 1.5;
+          } else st.at = 'home';
+        },
+        paint: (ctx, _r, w2) => {
+          box(ctx, c.X(0), FL - 30, px(2), 4, '#8D5A2B');
+          folk(ctx, st.x, FL, 26, '#5D4037', { skirt: '#F5F5F5', face: 1, arm: st.at === 'walking' ? ((w2.tick >> 4) & 1 ? 0.8 : 0.2) : -0.6 });
+        },
       }),
     );
   },
