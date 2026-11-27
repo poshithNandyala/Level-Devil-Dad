@@ -2,7 +2,7 @@
 // with their acts and door endings.
 import { Entity, type Hazard, type LevelDef, type World } from '../../world';
 import { lines as L } from './lines';
-import { collectible, door, px, rival, shot, sign, prop } from '../../levels/kit';
+import { collectible, door, gust, px, rival, shot, sign, prop } from '../../levels/kit';
 import { type Act, G, pool } from '../../levels/acts';
 import { onPass } from '../../levels/trolls';
 import { DT } from '../../constants';
@@ -871,7 +871,25 @@ const twiceEels: Act = {
   },
 };
 
-export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, twiceEels, risingTide, tideHoles] };
+/** KVT-10 act, KVT-04 turned over: at Agatti you jumped while the wind was calm. This inlet is too wide for any
+ *  jump in the calm: wait for the sea breeze to blow, and let it carry you over. */
+const breeze: Act = {
+  id: 'kvt10-kaattu',
+  w: 22,
+  advice: 'This inlet is too wide for a jump in the calm. Wait at the edge for the breeze to blow (the sand streaks show it), and jump while it blows: it carries you over.',
+  paint: (g, c) => {
+    g.pit(c.x + 5, c.x + 9);
+  },
+  build: (w, c) => {
+    const { X } = c;
+    pool(w, c.x + 5, c.x + 10, 15.3, { colors: LAGOON });
+    gust(w, c.x + 5.5, 9, 4.5, 7, 95, { period: 3.0, on: 1.4, phase: 0 });
+    sign(w, c.x + 0.4, G - 4.4, 3.4, 'BREEZE', 'green', 'right', 'from the sea');
+    onPass(w, X(2), (w2) => taraSays(w2, 'Kaattu nilkkumbol chaadu! | Jump when the wind stops!', 2.4));
+  },
+};
+
+export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, twiceEels, breeze, risingTide, tideHoles] };
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {

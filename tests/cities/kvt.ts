@@ -5,7 +5,7 @@
 // shared routes exist, so NAIVE, FIX and MISTAKES here are filled in there too.
 import type { World } from '../../src/game/world';
 import type { Door } from '../../src/game/entities/basics';
-import { Step, X, and, done, ground, thingOf } from '../runner';
+import { Step, X, and, done, ground, thingOf, gustNOn, gustNLeft } from '../runner';
 import type { CityTests } from '../city-tests';
 import type { Heap } from '../../src/game/cities/kvt/encores';
 import { Eel, Jelly, type Dolphin } from '../../src/game/cities/kvt/levels';
@@ -187,6 +187,13 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { hold: 'R', until: X(x + 26), max: 300 },
     ];
   },
+  'kvt10-kaattu': (x) => [
+    { hold: 'R', until: X(x + 3.7), max: 300, note: 'to the edge: wait for the breeze' },
+    { hold: '', until: (w) => still(w) && gustNOn(w, 0) && gustNLeft(w, 0) > 1.0, max: 900 },
+    { hold: 'R', jump: 30, ticks: 60, long: true, note: 'and jump while it blows' },
+    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: X(x + 22), max: 300 },
+  ],
   'kvt10-veliyettam': (x) => [...hop(x + 1.6, 12, 'from head to head, never stopping'), ...hop(x + 6.6, 12, 'the next head'), ...hop(x + 11.6, 12, 'the next'), ...hop(x + 16.6, 12, 'and the shore'), { hold: 'R', until: X(x + 24), max: 300 }],
   'kvt10-irakkam': (x) => {
     const tide = (i: number) => (w: World) => (w.flags['kvt10-irakkam:tide'] as boolean[])[i] && still(w);
@@ -800,7 +807,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
       cause: 'hit',
     },
     { what: 'cross the moray hole once it has struck and slid back, as on the reef', steps: [...upTo(S['KVT-10'], 'bait the first moray, and wait for its second strike'), { hold: 'R', until: X(192 + 6.4), max: 300 }, { hold: '', until: (w) => w.entities.some((e) => e instanceof Eel && e.x === px(192 + 8) + 8 && e.strikes >= 1), max: 900 }, { hold: 'R', until: done, max: 300 }], cause: 'kvt-bitten' },
-    { what: 'stop on the first coral head in the incoming tide, as on the tour', steps: [...upTo(S['KVT-10'], 'from head to head, never stopping'), ...hop(218 + 1.6, 12, 'on to the first head', true), { hold: '', until: done, max: 400 }], cause: 'splash' },
+    { what: 'jump the inlet while the wind is calm, as at Agatti', steps: [...upTo(S['KVT-10'], 'to the edge: wait for the breeze'), { hold: 'R', until: X(218 + 3.7), max: 300 }, { hold: '', until: (w) => still(w) && !gustNOn(w, 0) && gustNLeft(w, 0) > 0.9, max: 900 }, { hold: 'R', jump: 30, ticks: 60 }, { hold: 'R', until: done, max: 300 }], cause: 'splash' },
+    { what: 'stop on the first coral head in the incoming tide, as on the tour', steps: [...upTo(S['KVT-10'], 'from head to head, never stopping'), ...hop(240 + 1.6, 12, 'on to the first head', true), { hold: '', until: done, max: 400 }], cause: 'splash' },
     { what: 'run straight over the hole with eyes', steps: [...upTo(S['KVT-10'], 'the hole with eyes: let the moray lunge and go back in'), { hold: 'R', until: done, max: 300 }], cause: 'kvt-bitten' },
     { what: 'walk into the door', steps: [...upTo(S['KVT-10'], 'the door: kvt-sand-arm'), { hold: 'R', until: done, max: 900 }], cause: 'kvt-octopus' },
   ];
