@@ -353,6 +353,17 @@ export const actMori: Act = {
         },
       }),
     );
+    // the gate coming down crushes whoever is pressed against it too (a hand slow by a tenth is not spared by the bar going solid)
+    const pouringNow = (w2: World) => gate.pourT >= 0 && since(w2, gate.pourT) < POUR;
+    w.add(
+      new Rig(px(G) - 10, FL - 40, 28, 40, {
+        layer: 1,
+        cause: 'ita-kapaat',
+        inset: 0,
+        live: (_r, w2) => gate.pourT >= 0 && gate.open > 0.02 && gate.open < 0.98 && !pouringNow(w2),
+        paint: () => {},
+      }),
+    );
     w.add(new Paint((ctx) => box(ctx, px(G) - 10, FL - 72, 40, 8, '#6B4A2A'), -4));
     sign(w, c.x + 1, 10.4, 3, 'MORI', 'shop', null, 'the sluice');
   },

@@ -15,6 +15,8 @@ import { lines as L } from './lines';
 
 export const LEAN = 0.45;
 const SLUMP = 0.3;
+/** seconds the pulled brick stays in the hole (solid, not deadly) once the courses above have started down */
+const CRUMBLE = 0.2;
 
 export interface Wall {
   c: number;
@@ -27,11 +29,13 @@ export interface Wall {
   slumpT: number;
   lean: number;
   pulls: number;
+  /** the pulled brick, still in the hole for a moment */
+  crumbling: Rig | null;
 }
 
 /** a wall of bricks one tile thick at column c; `key` holds the state for the tests */
 export function wall(w: World, c: number, bonded: boolean[], key: string): Wall {
-  const st: Wall = { c, bonded, bricks: [], hole: false, slumpT: -1, lean: 0, pulls: 0 };
+  const st: Wall = { c, bonded, bricks: [], hole: false, slumpT: -1, lean: 0, pulls: 0, crumbling: null };
   w.flags[key] = st;
   const n = bonded.length;
   for (let i = 0; i < n; i++) {
@@ -40,11 +44,12 @@ export function wall(w: World, c: number, bonded: boolean[], key: string): Wall 
         solid: true,
         layer: 2,
         cause: 'ita-malba',
-        inset: 0,
+        // a brick coming down inside the wall's column cannot hit a man standing flush against its face (a 1 px touch under lag)
+        inset: 2,
         live: (q) => q.s.falling === true,
         paint: (ctx, q, w2) => {
-          const out = q.s.out ?? 0;
-          brick(ctx, q.x - out, q.y, 16, 16, q.s.bonded === true, 0);
+          const out = q.s.crumbleT !== undefined ? 6 + since(w2, q.s.crumbleT) * 20 : (q.s.out ?? 0);
+          brick(ctx, q.x - out, q.y, 16, 16, q.s.bonded === true, q.s.crumbleT !== undefined ? -0.15 : 0);
           if (q.s.bonded) {
             ctx.fillStyle = '#EDE4CC';
             ctx.fillRect(q.x - out, q.y - 2, 16, 3);
@@ -83,6 +88,13 @@ export function wall(w: World, c: number, bonded: boolean[], key: string): Wall 
       tick: (_q, w2) => {
         const bottom = st.bricks[0];
         if (!bottom) return;
+        // the pulled brick crumbles away a moment after the slump has begun
+        if (st.crumbling && since(w2, st.crumbling.s.crumbleT) >= CRUMBLE) {
+          st.crumbling.setSolid(false);
+          st.crumbling.on = false;
+          st.crumbling.alive = false;
+          st.crumbling = null;
+        }
         // slumping: the courses above fall into the hole
         if (st.slumpT >= 0) {
           const k = Math.min(1, since(w2, st.slumpT) / SLUMP);
@@ -111,19 +123,24 @@ export function wall(w: World, c: number, bonded: boolean[], key: string): Wall 
           st.lean = 0;
           st.pulls++;
           w2.sfx('crack', bottom.x, FL);
-          // the bottom brick comes out and crumbles
-          bottom.setSolid(false);
-          bottom.on = false;
-          bottom.alive = false;
           st.bricks.shift();
-          if (st.bricks.length === 0) return;
-          if (st.bricks[0].s.bonded) {
-            st.hole = true;
-            w2.sfx('thud', bottom.x, FL);
-          } else {
-            st.slumpT = w2.tick;
-            w2.sfx('rumble', bottom.x, FL - 20);
+          if (st.bricks.length === 0 || st.bricks[0].s.bonded) {
+            // the bottom brick comes out and crumbles; under fresh mortar the course above holds: a doorway
+            bottom.setSolid(false);
+            bottom.on = false;
+            bottom.alive = false;
+            if (st.bricks.length) {
+              st.hole = true;
+              w2.sfx('thud', bottom.x, FL);
+            }
+            return;
           }
+          // dry mortar above: the courses come down behind the pulled brick, which is still in the hole for a moment
+          // (it blocks the puller for CRUMBLE s, so a hand that is slow to let go is not a death; a walk in still is)
+          st.slumpT = w2.tick;
+          bottom.s.crumbleT = w2.tick;
+          st.crumbling = bottom;
+          w2.sfx('rumble', bottom.x, FL - 20);
         }
       },
     }),
