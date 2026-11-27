@@ -173,7 +173,7 @@ const TAWA2 = 'FTFTTF';
 export const tawa2: Act = {
   id: 'lko05-tawa',
   cp0: false,
-  cps: [-2],
+  cps: [-3],
   w: 24,
   advice: 'Down the long tawa some kebabs are already flat, squashed by the last customer: they’re thin, and the heat comes through fast. Hop off a flat one at once; on a full heap, wait till it squashes, then hop.',
   build: (w, c) => {
@@ -194,7 +194,7 @@ export const lane: Act = {
   cp0: false,
   w: 34,
   advice: 'Under the lowest rack there’s no room to hop: one long slab of galouti. Stand at its start and it squashes flat from your feet forwards, a tile at a time. Walk the flat lane right behind the squash, and don’t jump. Linger and the thin lane burns.',
-  cps: [-2, 1.5],
+  cps: [-3],
   build: (w, c) => {
     const x = c.x;
     tawa(w, x + 3, x + 24);
@@ -220,7 +220,7 @@ export const lane: Act = {
 export const ulta: Act = {
   id: 'lko05-ulta',
   cp0: false,
-  cps: [-2],
+  cps: [-3],
   w: 28,
   advice: 'Here the cook presses the slab himself, from his end, with his big iron kafgir: the squash comes at you. Don’t stand on the slab to squash it: wait on the ground before it till he has pressed it all flat and lifted his kafgir, then walk the lane.',
   build: (w, c) => {
@@ -275,7 +275,7 @@ const BHARA = [3, 7];
 export const bhara: Act = {
   id: 'lko05-bhara',
   cp0: false,
-  cps: [-2],
+  cps: [-3],
   w: 14,
   advice: 'The cook keeps this rack low: you can stand under it on a full heap but not hop. Hop only when he hoists it to turn the seekh. Till then keep your heap full: step from one heap of the pair to the other so neither squashes. The last time he only half-hoists it: let that heap squash flat first, and hop from flat.',
   build: (w, c) => {
@@ -389,12 +389,12 @@ export const ghee: Act = {
   id: 'lko05-ghee',
   w: 18,
   cp0: false,
-  cps: [-2],
+  cps: [-3.6],
   advice: 'The cook walks his ladle of ghee down the row. These heaps are set: your weight flattens nothing. A heap under fresh ghee sizzles down nearly flat for a moment, then crusts back up full: hop while it sizzles, and don’t stand in the sizzle.',
   build: (w, c) => {
     const x = c.x;
-    tawa(w, x + 2, x + 13);
-    seekhRack(w, x + 2, x + 13, 72);
+    tawa(w, x + 3, x + 13);
+    seekhRack(w, x + 3, x + 13, 72);
     const heaps = GHEE.map((d) => w.add(new GheeHeap(px(x + d))));
     w.flags[c.f('heaps')] = heaps;
     const L = { x: c.X(0), go: false };
@@ -430,7 +430,7 @@ export const ghee: Act = {
 /** The door is beyond the baker's tandoor, too wide to jump. When you reach its edge he slaps a sheermal
  *  on to the tandoor's inside wall: a ledge, below the rim, for as long as the bread is raw. */
 export const sheermal: Ending = {
-  space: 12,
+  space: 13,
   advice: 'The tandoor is too wide to jump. When you stand at its rim the baker slaps a sheermal on to its inside wall: drop on to it, and hop out the far side before it bakes golden and peels off.',
   paint: (g, D) => {
     g.pit(D - 8, D - 3);
@@ -579,7 +579,7 @@ export const charkhi: Act = {
   id: 'lko05-charkhi',
   w: 19,
   cp0: false,
-  cps: [-2],
+  cps: [-3],
   advice: 'These skewers hang on a spit that turns by itself: tips down and low (no hop under them), then a half turn up to lie flat, a short rest, and down again. A skewer fresh from its turn still rocks; one that has gone still is about to turn back. Hop the moment they come up flat, never once they look settled.',
   build: (w, c) => {
     const x = c.x;
