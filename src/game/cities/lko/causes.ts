@@ -23,7 +23,7 @@ export const causeLines: Record<string, string[]> = {
   'lko-chhat': ['Off the rooftops, down into the lane.', 'Jump from the roof’s edge; tap, no need to hold.'],
   'lko-tehzeeb': ['You bowed on the chikan cover, and the bells under it rang for the dancer.', 'A step on the covers is silent: bow only on plain boards.'],
   'lko-than': ['The bolt was sold: the hook slid it out sideways from under you.', 'Off each bolt and on to the next before the hook gets its grip.'],
-  'lko-parda': ['A long bolt unrolled down across the road, and its roller came down on you.', 'Run under it at once, before the roller reaches the ground. Or wait for it to roll up.'],
+  'lko-parda': ['A long bolt unrolled down across the road, and its roller came down on you.', 'Run under it at once, before the roller reaches the ground. Or wait back by the last hook, left of where the bolt falls, till it rolls up.'],
   'lko-goti-pehle': ['He bowed you on to the square between you: pehle aap. It was the loose stone.', 'When the courtier bows you on, wait on your own square for the next throw.'],
   'lko-takrar': ['You stopped bowing first, so you went first: on to the loose stone.', 'Keep bowing (stand still) till he gives up and goes through himself.'],
   'lko-balti': ['You waited on the white for a second wash: this dhobi’s second move is his bucket.', 'At the door: flower, flower, in, before he throws.'],

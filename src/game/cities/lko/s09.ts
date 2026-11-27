@@ -368,7 +368,7 @@ export const chhatri: Ending = {
   },
 };
 
-// ================================================================ act 2: the white domes (the Taj reserve)
+// ================================================================ act 2: the white domes (a Chota Imambara-style garden tank)
 /** From the rooftops a row of white domed kiosks stands in the long garden pool. A dome seems bigger the
  *  farther you stand from it, and so does its terrace: from far away the terrace is high above your jump;
  *  walk up to it and it shrinks into the water. Only from the paving line (the inlaid strip) is it your size.
