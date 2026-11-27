@@ -359,34 +359,34 @@ export const act9: Act = {
   advice: 'Down the hill over the rooftops: each flat roof is a step down to the next, a little hop across the gap. The stairs up only go to front doors; the gaps between the houses go all the way down.',
   paint: (g, c) => {
     const x = c.x;
-    g.fill(x, x + 35, 15, 15, '.');
+    g.fill(x, x + 35, 15, 17, '.');
     g.fill(x, x + 2, 11, 17, '#');
-    g.fill(x + 3, x + 10, 10, 17, '#');
-    g.fill(x + 12, x + 19, 12, 17, '#');
-    g.fill(x + 21, x + 28, 14, 17, '#');
-    g.fill(x + 30, x + 35, 16, 17, '#');
+    g.fill(x + 3, x + 9, 10, 17, '#');
+    g.fill(x + 13, x + 18, 12, 17, '#');
+    g.fill(x + 22, x + 27, 14, 17, '#');
+    g.fill(x + 31, x + 35, 16, 17, '#');
     for (const [a, r] of [
-      [x + 5, 8],
-      [x + 7, 6],
-      [x + 14, 10],
-      [x + 16, 8],
-      [x + 23, 12],
-      [x + 25, 10],
+      [x + 4, 8],
+      [x + 6, 6],
+      [x + 13, 10],
+      [x + 15, 8],
+      [x + 22, 12],
+      [x + 24, 10],
     ] as [number, number][])
       g.fill(a, a + 2, r, r, '=');
   },
   build: (w, c) => {
     const x = c.x;
     stairArt(w, [
-      [x + 5, 8],
-      [x + 14, 10],
-      [x + 23, 12],
+      [x + 4, 8],
+      [x + 13, 10],
+      [x + 22, 12],
     ]);
     decor(w, -2, (ctx) => {
       for (const [a, r] of [
-        [x + 8, 6],
-        [x + 17, 8],
-        [x + 26, 10],
+        [x + 7, 6],
+        [x + 16, 8],
+        [x + 25, 10],
       ]) {
         box(ctx, px(a), px(r) - 32, px(2), 32, '#8E6C8A');
         box(ctx, px(a) + 4, px(r) - 28, px(2) - 8, 28, '#5B4458');
