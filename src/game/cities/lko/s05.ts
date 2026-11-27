@@ -455,8 +455,18 @@ export const dum: Act = {
   build: (w, c) => {
     const x = c.x;
     tawa(w, x + 2, x + 17);
-    seekhRack(w, x + 2, x + 17, 70);
-    w.flags[c.f('kebabs')] = DUM.map((d, i) => w.add(i === 0 ? new Galouti(px(x + d)) : new DoubleGalouti(px(x + d), i === DUM.length - 1 ? 2 : 1)));
+    const rack = seekhRack(w, x + 2, x + 17, 70);
+    const ks: Galouti[] = DUM.map((d, i) => w.add(i === 0 ? new Galouti(px(x + d)) : new DoubleGalouti(px(x + d), i === DUM.length - 1 ? 2 : 1)));
+    w.flags[c.f('kebabs')] = ks;
+    // a hop off a piled heap that was squashed but not flat has its own line: one squash isn't enough here,
+    // and on the last heap two aren't either
+    let last: Galouti | null = null;
+    w.onTick((w2) => {
+      const k = ks.find((g) => on(w2, g.solid));
+      if (k) last = k;
+      const d = last instanceof DoubleGalouti ? last : null;
+      rack.hazard.cause = d && d.stage > 0 && !d.flat ? (d.extra > 1 && d.stage >= d.extra ? 'lko-dum-teen' : 'lko-dum') : 'lko-seekh';
+    });
     sign(w, x + 0.2, 10.4, 3.2, 'DUM', 'shop', null, 'galouti');
   },
 };

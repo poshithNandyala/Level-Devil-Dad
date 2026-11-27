@@ -21,7 +21,7 @@ Every spoken line is from the city bible's VERIFIED list (standard Lakhnavi Hind
 
 ## New death causes (causes.ts)
 
-`lko-julus lko-saamne lko-jhanda lko-goti lko-gumbad lko-mehfil lko-than lko-parda lko-pehle lko-dhakka lko-kiwad lko-chhapa lko-jali lko-malai lko-seekh lko-tawa lko-tandoor lko-chakkar lko-tatkar lko-ganj lko-shamiyana lko-seedhi lko-darban lko-bhool lko-kuan lko-mehrab lko-kabootar lko-chhat lko-tehzeeb lko-hawa lko-takrar lko-adda lko-kunda lko-balti lko-badal lko-badal-peeche lko-dhakkan lko-kafgir lko-jhanda-peeche lko-jhanda-aage lko-goti-pehle lko-dakiya lko-dakiya-aage lko-dakiya-doosra lko-rang lko-rang-kood`
+`lko-julus lko-saamne lko-jhanda lko-goti lko-gumbad lko-mehfil lko-than lko-parda lko-pehle lko-dhakka lko-kiwad lko-chhapa lko-jali lko-malai lko-seekh lko-tawa lko-tandoor lko-chakkar lko-tatkar lko-ganj lko-shamiyana lko-seedhi lko-darban lko-bhool lko-kuan lko-mehrab lko-kabootar lko-chhat lko-tehzeeb lko-hawa lko-takrar lko-adda lko-kunda lko-balti lko-badal lko-badal-peeche lko-dhakkan lko-kafgir lko-jhanda-peeche lko-jhanda-aage lko-goti-pehle lko-dakiya lko-dakiya-aage lko-dakiya-doosra lko-rang lko-rang-kood lko-dum lko-dum-teen lko-aks lko-saamne-taak`
 
 ## Hidden items (things.ts)
 

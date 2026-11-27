@@ -832,7 +832,7 @@ mistakes['LKO-07'] = [
       hops([actX('LKO-07', 3) + 42.5], 'up into the last alcove'),
       until(done, 1500),
     ],
-    cause: 'lko-saamne',
+    cause: 'lko-saamne-taak',
   },
   { what: 'rushing up behind the slow procession', steps: [...pre07(), hop(actX('LKO-07', 2) + 12, actX('LKO-07', 2) + 14.5), { hold: 'R', until: done, max: 1200 }], cause: 'lko-julus' },
   {
@@ -884,17 +884,17 @@ fix['LKO-09'] = {
   cause: 'lko-hawa',
 };
 mistakes['LKO-09'] = [
-  { what: 'jumping for the reflection from the usual distance', steps: [...room09, ...R_lko09_gumbad()(actX('LKO-09', 0)).slice(0, 6), walkTo(actX('LKO-09', 0) + 19, 300), { hold: 'R', jump: 12, ticks: 60 }, until(done, 300)], cause: 'lko-gumbad' },
+  { what: 'jumping for the reflection from the usual distance', steps: [...room09, ...R_lko09_gumbad()(actX('LKO-09', 0)).slice(0, 6), walkTo(actX('LKO-09', 0) + 19, 300), { hold: 'R', jump: 12, ticks: 60 }, until(done, 300)], cause: 'lko-aks' },
   { what: 'walking up to the white dome', steps: [...room09, { hold: 'R', until: done, max: 900 }], cause: 'lko-gumbad' },
   { what: 'jumping for the dome from far back, where it looked big', steps: [...room09, walkTo(actX('LKO-09', 0) + 2.2, 300), { hold: 'R', jump: 14, ticks: 60 }, until(done, 300)], cause: 'lko-gumbad' },
 ];
 const DK = (i: number) => (w: World) => (w.flags['lko05-dum:kebabs'] ?? [])[i]?.stage === 1;
 mistakes['LKO-05'] = [
-  { what: 'on the double heaps, hopping on after one squash, as learned', steps: [...through('LKO-05', room05, 4), runTo(actX('LKO-05', 4) + 0.5, 300), hops([actX('LKO-05', 4) + 3, [actX('LKO-05', 4) + 6.1, kflat('lko05-dum:kebabs', 0)], [actX('LKO-05', 4) + 9.1, DK(1)]]), until(done, 300)], cause: 'lko-seekh' },
+  { what: 'on the double heaps, hopping on after one squash, as learned', steps: [...through('LKO-05', room05, 4), runTo(actX('LKO-05', 4) + 0.5, 300), hops([actX('LKO-05', 4) + 3, [actX('LKO-05', 4) + 6.1, kflat('lko05-dum:kebabs', 0)], [actX('LKO-05', 4) + 9.1, DK(1)]]), until(done, 300)], cause: 'lko-dum' },
   {
     what: 'on the triple heap, hopping off after two squashes',
     steps: [...through('LKO-05', room05, 4), runTo(actX('LKO-05', 4) + 0.5, 300), hops([actX('LKO-05', 4) + 3, ...[6, 9, 12, 15].map((d, i) => [actX('LKO-05', 4) + d + 0.1, kflat('lko05-dum:kebabs', i)] as [number, (w: World) => boolean]), [actX('LKO-05', 4) + 19.5, (w: World) => (w.flags['lko05-dum:kebabs'] ?? [])[4]?.stage === 2]]), until(done, 300)],
-    cause: 'lko-seekh',
+    cause: 'lko-dum-teen',
   },
   { what: 'on the double heaps, hopping straight on', steps: [...through('LKO-05', room05, 4), runTo(actX('LKO-05', 4) + 0.5, 300), hops([actX('LKO-05', 4) + 3, actX('LKO-05', 4) + 6.1, actX('LKO-05', 4) + 9.1]), until(done, 300)], cause: 'lko-seekh' },
 ];

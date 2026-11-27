@@ -593,6 +593,7 @@ export const saamne: Act = {
       stood = on(w2, sill.solid) ? stood + 1 : 0;
       if (stood > 20) {
         sill.set(false);
+        w2.flags.shoveCause = 'lko-saamne-taak';
         w2.sfx('collapse', sill.x + 16, px(13));
       }
     });

@@ -434,7 +434,7 @@ export const gumbad: Act = {
           for (let xx = c.X(d) + ((w2.tick >> 2) % 9); xx < c.X(d + 5) - 3; xx += 9) ctx.fillRect(xx, FLOOR + 6, 4, 1);
         }, -4),
       );
-      w.add(new Zone(c.X(d) + 1, FLOOR + 14, px(5) - 2, 30, 'lko-gumbad'));
+      w.add(new Zone(c.X(d) + 1, FLOOR + 14, px(5) - 2, 30, d === GUMBAD[GUMBAD.length - 1] ? 'lko-aks' : 'lko-gumbad'));
     }
     sign(w, x + 0.2, 10.4, 3.4, 'BAGH', 'shop', null, 'gumbad');
     sign(w, x + 18.6, 10.4, 2.6, 'AKS', 'shop', null, 'reflection');
