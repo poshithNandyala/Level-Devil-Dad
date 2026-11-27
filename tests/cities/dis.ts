@@ -937,7 +937,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'dis04-batah': mark('dis04-batah', (x) => [
     { hold: 'R', until: (w) => w.player.onGround && w.player.x >= px(x + 0.5), max: 600, note: 'down into the gallery' },
     ...hopR(x + 6.2, 'over the lit well: the flooded vault', 12),
-    ...hopR(x + 11.2, 'over the first dark well: the flame leans on past it', 12),
+    ...hopR(x + 12.2, 'over the first dark well: the flame leans on past it', 12),
     { hold: 'R', until: (w) => w.player.x >= px(x + 24), max: 400, note: 'down the well the flame points into, and up the far stair' },
     { hold: 'R', until: and(ground, X(x + 29)), max: 300 },
   ]),

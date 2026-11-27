@@ -10,7 +10,9 @@ import type { Act } from '../../levels/acts';
 import { Danger, GROUND, px } from './entities';
 
 /** the stairwells' left columns (tiles from the act's x): lit and flooded, dark and fallen in, dark and through */
-export const WELLS = [7, 12, 17];
+// fix round 3: the fallen well moved one column on (12 -> 13), so a hop-mash's second landing (x+13.8 at every lag)
+// comes down inside it instead of on the lip before the through well
+export const WELLS = [7, 13, 17];
 
 /** Dad's lantern: the flame streams toward the through well (centre `to`, px) when he is within 3 tiles of it */
 export class Lamp extends Entity {
@@ -117,7 +119,16 @@ export const talatalBatah: Act = {
       })(),
     );
     w.add(new Danger({ x: a, y: GROUND + 8, w: px(2), h: 80 }, 'dis-kup'));
-    w.add(new Danger({ x: b, y: GROUND + 8, w: px(2), h: 80 }, 'dis-garh'));
+    const fallen = new Danger({ x: b, y: GROUND + 8, w: px(2), h: 80 }, 'dis-garh');
+    w.add(fallen);
+    // walked down into it, or came down into it from a hop (law 9: the line names which)
+    let hopping = false;
+    w.onTick((w2) => {
+      const p = w2.player;
+      if (p.onGround) hopping = false;
+      else if (p.vy < 0) hopping = true;
+      fallen.hazard.cause = hopping ? 'dis-garh-hop' : 'dis-garh';
+    });
     // the through well: down it, and up the far stair beyond the wall
     w.onTick((w2) => {
       const p = w2.player;

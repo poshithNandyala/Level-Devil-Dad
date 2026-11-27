@@ -52,6 +52,7 @@ export const causeLines: Record<string, string[]> = {
   'dis-gamosa-gat': ['Gat! You walked into the pit, and you could still see it.', 'Hop the pit from its edge.'],
   'dis-bhutbhuti': ['Luit! That was the ferry’s horn, not the siren: no bar came up.', 'Watch the level post: on the horn it does not move. Stay on your bar until the real siren and the new bar.'],
   'dis-kup': ['Doba! The light in that well was daylight off the water in the flooded vault.', 'A glowing stairwell is lit from the water below. Of the dark ones, go down the one your lamp’s flame leans toward: the draught runs that way.'],
+  'dis-garh-hop': ['Garh! You hopped on without reading the wells, and came down in the one that has fallen in.', 'Stop at each well and look: the lit one is flooded, and of the two dark ones only the well your lantern’s flame streams toward goes through. Go down that one.'],
   'dis-garh': ['Garh! That stairwell had fallen in.', 'The lit well is the flooded vault, and one dark one has fallen in. Watch your lamp: its flame leans toward the well the draught runs into. Go down that one.'],
   'dis-luit': ['Luit! The sandbar was not there, or it went out from under you.', 'Read the level post. When the siren goes the next bar comes up first, the bar you stand on goes last, and a bar that narrows keeps its left end. The hut never moves.'],
   'dis-basket': ['Tokari! The plucker’s basket swung into you.', 'Stay a few steps behind her and follow. Never hop over her, and when the path is wet wait before it: you can’t stop on it.'],
