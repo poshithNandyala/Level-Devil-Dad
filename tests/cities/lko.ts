@@ -282,7 +282,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-07': { steps: [...room07.slice(0, 3), runTo(32 + 8, 400), pause('stroll on, as learned'), runTo(32 + 14, 300), pause(), until(done, 300)], cause: 'lko-shamiyana' },
   'LKO-06': { steps: [walkTo(5.9, 200), hops([8.5, 10.6, 13.3, 15.6, 18.3], 'plain boards only'), { hold: 'R', until: done, max: 600 }], cause: 'lko-tatkar' },
   'LKO-05': { steps: [runTo(3.5, 200), hops([6]), until(done, 600, 'wait on it, to be sure')], cause: 'lko-tawa' },
-  'LKO-04': { steps: [runTo(4, 200), hops([6, 9, 12], 'the shady left tiles, as learned'), until(done, 900, 'wait on it')], cause: 'lko-malai' },
+  'LKO-04': { steps: [runTo(4, 200), hops([6, 9, 12], 'the shady left tiles, as learned'), until(done, 900, 'wait on it')], cause: 'lko-dhakkan' },
   'LKO-03': { steps: [runTo(3.5, 200), hops([6, 7, 9, 12, 13, 15, 17, 18, 21, 22, 24], 'every white tile in turn, jali too', 12, 30), until(done, 600)], cause: 'lko-jali' },
 };
 
@@ -328,6 +328,18 @@ const R_lko05_tawa = (id: string) => (x: number): Step[] => {
   return [runTo(x + 0.5, 300), hops([x + 3, ...cols.map((c, i) => [x + c, kflat(k, i)] as [number, (w: World) => boolean])], 'thin ones at once, thick ones once squashed'), runTo(x + 23.5, 300)];
 };
 actRoutes['lko05-tawa'] = R_lko05_tawa('lko05-tawa');
+const BADAL = [4, 6.5, 9, 11.5, 14, 16.5, 19, 21.5, 24, 26.5];
+/** a cup is safe to land on when the cloud's shadow covers it with room to spare */
+const shaded = (x: number, d: number) => (w: World) => {
+  const B = w.flags['lko04-badal:cloud'] as { x: number; w: number };
+  const cx = px(x + d) + 8;
+  return cx > B.x - B.w / 2 + 14 && cx < B.x + B.w / 2 - 20;
+};
+actRoutes['lko04-badal'] = (x) => [
+  walkTo(x + 2.4, 300),
+  hops([...BADAL.map((d) => [x + d - 0.5, shaded(x, d)] as [number, (w: World) => boolean]), x + 29.6], 'cup to cup inside the cloud’s shadow'),
+  runTo(x + 31, 300),
+];
 const DUM = [3, 6, 9, 12, 15];
 actRoutes['lko05-dum'] = (x) => {
   const k = 'lko05-dum:kebabs';
@@ -697,7 +709,7 @@ mistakes['LKO-04'] = [
   },
   {
     what: 'at the counter, landing on the left tile of the step (the fire is behind you)',
-    steps: [...room04, ...actRoutes0('lko04-chowk', actX('LKO-04')), runTo(doorX('LKO-04') - 9), hops([doorX('LKO-04') - 6]), until(done, 300)],
+    steps: [...through('LKO-04', room04, 2), runTo(doorX('LKO-04') - 9), hops([doorX('LKO-04') - 6]), until(done, 300)],
     cause: 'lko-malai',
   },
 ];
@@ -758,7 +770,9 @@ mistakes['LKO-08'] = [
   { what: 'hopping the crack into the last arch', steps: [...pre08(), ...actRoutes0('lko08-mehrab', actX('LKO-08', 1)), runTo(doorX('LKO-08') - 8.5, 300), hop(doorX('LKO-08') - 6, doorX('LKO-08') - 2), { hold: 'R', until: done, max: 400 }], cause: 'lko-bhool' },
 ];
 /** the room's route and the routes of the stage's first n acts */
-const through = (id: string, room: Step[], n: number) => [...room, ...LEVEL_BY_ID.get(id)!.parts!.slice(0, n).flatMap((pt) => actRoutes0(pt.kind, pt.x0))];
+function through(id: string, room: Step[], n: number): Step[] {
+  return [...room, ...LEVEL_BY_ID.get(id)!.parts!.slice(0, n).flatMap((pt) => actRoutes0(pt.kind, pt.x0))];
+}
 fix['LKO-09'] = {
   steps: [
     ...through('LKO-09', room09, 1),
@@ -784,6 +798,10 @@ mistakes['LKO-05'] = [
   },
   { what: 'on the double heaps, hopping straight on', steps: [...through('LKO-05', room05, 2), runTo(actX('LKO-05', 2) + 0.5, 300), hops([actX('LKO-05', 2) + 3, actX('LKO-05', 2) + 6.1, actX('LKO-05', 2) + 9.1]), until(done, 300)], cause: 'lko-seekh' },
 ];
+mistakes['LKO-04'].push(
+  { what: 'under the cloud: hopping on before its shadow comes', steps: [...through('LKO-04', room04, 1), walkTo(actX('LKO-04', 1) + 2.4, 300), hops([actX('LKO-04', 1) + 3.5, actX('LKO-04', 1) + 6]), until(done, 300)], cause: 'lko-badal' },
+  { what: 'under the cloud: waiting on a cup, as on the heaps', steps: [...through('LKO-04', room04, 1), walkTo(actX('LKO-04', 1) + 2.4, 300), hops([[actX('LKO-04', 1) + 3.5, shaded(actX('LKO-04', 1), 4)]]), until(done, 600)], cause: 'lko-badal-peeche' },
+);
 mistakes['LKO-06'] = [
   { what: 'in the mehfil, crossing her floor', steps: [...through('LKO-06', room06, 1), walkTo(actX('LKO-06', 1) + 3.6, 300), hops([actX('LKO-06', 1) + 6.5, actX('LKO-06', 1) + 9.3, actX('LKO-06', 1) + 11.6]), until(done, 1200)], cause: 'lko-mehfil' },
   {

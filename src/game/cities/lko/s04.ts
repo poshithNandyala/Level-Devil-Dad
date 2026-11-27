@@ -175,7 +175,7 @@ function malaiRoom(): LevelDef {
       const S = { lid: 0, at: -1 };
       w.flags.malai = S;
       const light = () => (S.lid >= 1 ? 'L' : 'R') as Light;
-      karahi(w, 6, 26);
+      const kz = karahi(w, 6, 26);
       const heaps = [6, 9, 12, 15, 18, 21, 24].map((c, k) => new Heap(w, px(c), k % 2 ? px(14) : px(13), light));
       shadows(w, heaps);
       // the halwai with his big polished lid, at the far end: lifted, it throws the sun back the other way
@@ -202,6 +202,7 @@ function malaiRoom(): LevelDef {
           if (S.lid >= 1) {
             w2.sfx('blink', px(28), FLOOR - 40);
             w2.flags.twistRoom = 'flipped';
+            kz.hazard.cause = 'lko-dhakkan';
           }
         }
         void p;
@@ -326,5 +327,49 @@ export const kulhad: Ending = {
   },
 };
 
-export const s04 = { room: malaiRoom, acts: [gali] };
+// ================================================================ act 2: badal, a cloud over the sun
+/** A winter cloud drifts across the low sun, and its shadow slides along the lane. Single cups have no
+ *  shady side: inside the cloud's shadow every cup holds, outside it every cup is in the sun. Go with the
+ *  shadow, cup to cup: not ahead of it, not behind it. */
+const BADAL = [4, 6.5, 9, 11.5, 14, 16.5, 19, 21.5, 24, 26.5];
+export const badal: Act = {
+  id: 'lko04-badal',
+  w: 32,
+  advice: 'A winter cloud drifts over the sun and its shadow slides along the lane. These single cups have no shady side: inside the cloud’s shadow every cup holds, outside it every cup is in the sun and sinks under you. Wait for the shadow to reach you, then go cup to cup with it, never ahead of it, never left behind.',
+  cps: [1.5],
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 28);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const B = { x: c.X(-3), go: false, w: 88 };
+    w.flags[c.f('cloud')] = B;
+    const inShade = (cx: number) => cx > B.x - B.w / 2 && cx < B.x + B.w / 2;
+    const kz = karahi(w, x + 3, x + 28);
+    BADAL.forEach((d) => new Heap(w, Math.round(c.X(d)), px(13), () => (inShade(c.X(d) + 8) ? null : 'R'), 1));
+    w.onTick((w2) => {
+      if (!B.go && w2.player.cx > c.X(1.5)) B.go = true;
+      if (B.go && B.x < c.X(40)) B.x += 0.36;
+      // ahead of the shadow, or left behind by it: two ways to sink, two lessons
+      kz.hazard.cause = w2.player.cx > B.x ? 'lko-badal' : 'lko-badal-peeche';
+    });
+    w.add(
+      new Art((ctx) => {
+        // the cloud high up, and its soft blue shadow on the lane
+        ctx.fillStyle = 'rgba(245,245,250,0.85)';
+        for (const [dx, dy, r] of [
+          [-24, 0, 14],
+          [0, -6, 18],
+          [24, 0, 14],
+        ])
+          ctx.beginPath(), ctx.arc(B.x + dx, px(5) + dy, r, 0, Math.PI * 2), ctx.fill();
+        ctx.fillStyle = 'rgba(40,60,110,0.22)';
+        ctx.fillRect(B.x - B.w / 2, px(12), B.w, FLOOR - px(12) + 30);
+      }, -3),
+    );
+    sign(w, x + 0.2, 10.4, 3.2, 'BADAL', 'shop', null, 'chowk');
+  },
+};
+
+export const s04 = { room: malaiRoom, acts: [gali, badal] };
 export const meta04 = { family: 'sun-direction-sinks-foam', betrayals: ['light-sinks'], ending: 'lko-kulhad' } as StageMeta;
