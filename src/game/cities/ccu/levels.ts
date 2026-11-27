@@ -229,50 +229,13 @@ function howrahRoom(): LevelDef {
   };
 }
 
-/** CCU-07 act 1: a tall porter from the pylon, and a short one overtaking under him before his chai stop */
-const girder: Act = {
-  id: 'ccu07-girder',
-  w: 48,
-  // on the room's last ground, before the pylon
-  cp0: false,
-  cps: [-3],
-  advice: 'From the pylon step, on to the tall porter’s load. His chai stop is ahead on the road: a short porter comes up from behind, faster, and passes under you. Walk off the front of your load on to his as he goes by.',
-  paint: (g, c) => {
-    g.fill(c.x, c.x + 3, 14, 14, '#').fill(c.x + 1, c.x + 3, 13, 13, '#');
-  },
-  build: (w, c) => {
-    const x = c.x;
-    w.add(new Girders(c.X(0), c.X(48)));
-    road(w, c.X(4), c.X(48));
-    const p3 = w.add(new Porter({ x: c.X(5), v: 45, h: TALL, rests: [[c.X(30), 3]], go: (w2, me) => w2.player.isRiding(me.load) }));
-    w.add(new Porter({ x: c.X(-2), v: 66, h: SHORT, rests: [[c.X(51.5), Infinity]], go: walking(p3) }));
-    w.add(new ChaiBoard(c.X(30)));
-    sign(w, x + 0.3, 8.6, 3.2, 'PYLON', 'green', null, 'east');
-    w.flags.girder = { x };
-  },
-};
+/** CCU-07 act 1 (fix 3: one span of the room's relay, from pylon to pylon): the tall porter from the pylon
+ *  step, and the short one overtaking under him before his chai stop */
+const girder = relayHalf('ccu07-girder', [58, 84], true, 'From the pylon step, on to the tall porter’s load. His chai stop is ahead on the road: a short porter comes up from behind, faster, and passes under you. Walk off the front of your load on to his as he goes by, and ride him to the next pylon.', [-3]);
 
-
-/** CCU-07 act 2: two streams. Tall loads come the other way over your head while you ride a short one; the
- *  tall porter going your way overtakes. Hop up to him, but never while an oncoming load is over you */
-const dui: Act = {
-  id: 'ccu07-dui',
-  w: 44,
-  advice: 'Two streams now. You ride a short porter, and tall loads come the other way, over your head: harmless, unless you jump into them. A tall porter going your way overtakes before the CHA board: hop up on to his load, but only when no oncoming load is over you.',
-  paint: (g, c) => {
-    g.fill(c.x, c.x + 3, 14, 14, '#').fill(c.x + 1, c.x + 3, 13, 13, '#');
-  },
-  build: (w, c) => {
-    w.add(new Girders(c.X(0), c.X(44)));
-    road(w, c.X(4), c.X(44));
-    const q1 = w.add(new Porter({ x: c.X(4.9), v: 45, h: SHORT, rests: [[c.X(25), 3]], go: (w2, me) => w2.player.isRiding(me.load) }));
-    w.add(new Porter({ x: c.X(-1), v: 78, h: TALL, rests: [[c.X(47.5), Infinity]], go: walking(q1) }));
-    w.add(new Porter({ x: c.X(30), v: -50, h: TALL - 1, go: walking(q1), off: c.X(4) }));
-    w.add(new Porter({ x: c.X(46), v: -50, h: TALL - 1, go: walking(q1), off: c.X(4) }));
-    w.add(new ChaiBoard(c.X(25)));
-    w.add(new ChaiBoard(c.X(2), true));
-  },
-};
+/** CCU-07 act 2 (fix 3: one span): two streams. A tall load comes the other way over your head while you ride a
+ *  short one; the tall porter going your way overtakes. Hop up to him, but never while an oncoming load is over you */
+const dui = relayHalf('ccu07-dui', [58, 92], false, 'Two streams now. You ride a short porter, and a tall load comes the other way, over your head: harmless, unless you jump into it. A tall porter going your way overtakes before the CHA board: hop up on to his load, but only when no oncoming load is over you.', [-0.5]);
 
 
 /** CCU-07 long acts: a relay of three porters over a long span of road. `v` are the speeds of the first,
@@ -1333,9 +1296,9 @@ export const levels = (): LevelDef[] => [
   longStage({ base: muriRoom(), par: 38, acts: [dui3], twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
   longStage({ base: boiRoom(), par: 23, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
   longStage({ base: kumartuliRoom(), par: 26, acts: [lane, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs'], 'ccu-ride-the-finished-figure-out') }),
-  longStage({ base: poleRoom(), par: 82, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
-  longStage({ base: howrahRoom(), par: 111, acts: [girder, dui, horn, board, pylon, jowar], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
+  longStage({ base: poleRoom(), par: 70, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
+  longStage({ base: howrahRoom(), par: 98, acts: [girder, dui, horn, board, pylon, jowar], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 19, acts: [rok], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
-  longStage({ base: pandalRoom(), par: 62, acts: [sinri, dhak, uthan, line], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
-  longStage({ base: finaleRoom(), par: 127, acts: [bus10, chhad, phire, pherot, kumor10, khola, kumir10, setu10a, setu10b], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
+  longStage({ base: pandalRoom(), par: 49, acts: [sinri, dhak, uthan, line], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
+  longStage({ base: finaleRoom(), par: 96, acts: [bus10, chhad, phire, pherot, kumor10, khola, kumir10, setu10a, setu10b], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];
