@@ -62,7 +62,10 @@ export function raft(w: World, c0: number, poles: Pole[], key: string): Raft {
         inset: kind === 'frayed' ? -8 : 1,
         live: (q) => q.s.live === true,
         tick: (q, w2) => {
-          const on = w2.standing(q.solid!);
+          // a pole takes Dad's weight when his centre is over it (a toe over the next pole is not weight on it:
+          // the landing scatter of a late hop does not spread a raft)
+          const p = w2.player;
+          const on = w2.state === 'play' && p.onGround && p.cx >= q.x && p.cx < q.x + PW && Math.abs(p.y + p.h - FL) < 2;
           if (kind === 'band') return;
           if (on && st.spreadT < 0) {
             st.spreadT = w2.tick;
@@ -107,14 +110,27 @@ export function raft(w: World, c0: number, poles: Pole[], key: string): Raft {
           box(ctx, q.x + 10, FL, 2, 12, '#8A7A3A');
           box(ctx, q.x + 21, FL, 2, 12, '#8A7A3A');
           if (kind !== 'plain') {
-            // the lashing: a dark rope band over the pole, frayed ends on the loose one
-            ctx.fillStyle = kind === 'frayed' ? '#8A4A2A' : '#3A2A1A';
-            ctx.fillRect(q.x + 12, FL - 3, 8, 6);
-            ctx.fillRect(q.x + 4, FL - 2, 24, 2);
+            // the lashing at tile scale (the HWIK tell has to read on a phone before the first death): a dark rope collar
+            // round the middle of the pole, crossed ropes on it, and the rope running out to both neighbours; frayed ends
+            // on the loose one, flicking
+            const col = kind === 'frayed' ? '#8A4A2A' : '#2A1A0E';
+            const hi = kind === 'frayed' ? '#C27A4A' : '#8A6A3A';
+            box(ctx, q.x + 9, FL - 6, 14, 18, col);
+            box(ctx, q.x + 0, FL - 2, 32, 3, col);
+            ctx.strokeStyle = hi;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(q.x + 10, FL - 5);
+            ctx.lineTo(q.x + 22, FL + 11);
+            ctx.moveTo(q.x + 22, FL - 5);
+            ctx.lineTo(q.x + 10, FL + 11);
+            ctx.stroke();
+            box(ctx, q.x + 9, FL - 6, 14, 2, hi);
             if (kind === 'frayed') {
               const f = ((w2.tick >> 3) % 2) as number;
-              ctx.fillRect(q.x + 1, FL - 7 - f, 4, 2);
-              ctx.fillRect(q.x + 27, FL - 6 + f, 4, 2);
+              box(ctx, q.x - 2, FL - 10 - f * 2, 8, 3, col);
+              box(ctx, q.x + 26, FL - 9 + f * 2, 8, 3, col);
+              box(ctx, q.x + 4, FL - 13 + f, 3, 5, col);
             }
           }
           ctx.restore();
@@ -139,12 +155,14 @@ export function room(): LevelDef {
     tagline: 'Two rafts moored across the Siang. Look at the ropes.',
     hint: 'A raft is poles lashed together, and the lashings are drawn: a dark rope band round a pole. A banded pole holds. Stand on a plain pole and the lashings beside it give: the poles spread apart under your weight and the one under you rolls you into the river. Hop from banded pole to banded pole, and never put a foot on a plain one.',
     par: 24,
-    map: Grid.ground(15).fill(6, 26, 15, 17, '.').put(1, 14, '@').put(30, 14, 'E').rows(),
+    map: Grid.ground(15).fill(6, 25, 15, 17, '.').put(1, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      river(w, px(6), px(27));
-      raft(w, 7, ['plain', 'band', 'plain', 'band', 'plain'], 'ita8a');
-      raft(w, 17, ['band', 'plain', 'band', 'plain', 'band'], 'ita8b');
+      river(w, px(6), px(26));
+      // both rafts are moored to the banks: the first pole of each is banded and touches the bank or the raft before it,
+      // so every move is a hop from one band to the next (one pole of water or plain cane between), never a run off a bank
+      raft(w, 6, ['band', 'plain', 'band', 'plain', 'band'], 'ita8a');
+      raft(w, 16, ['band', 'plain', 'band', 'plain', 'band'], 'ita8b');
       onPass(w, px(3), (w2) => tara(w2, L.intro[6], 2.4));
       sign(w, 2, 10.4, 3.4, 'SIANG', 'shop', null, 'the river');
       rival(w, 28, 15, -1, taraScript(8));
@@ -160,12 +178,12 @@ export const act: Act = {
   advice: 'Longer rafts, and one of the bands is frayed, its ends loose and twitching: that lashing snaps the moment you stand on it and the rope whips you. A frayed pole is not a step: hop over it to the next sound band.',
   cps: [44],
   paint: (g, c) => {
-    g.fill(c.x + 6, c.x + 40, 15, 17, '.');
+    g.fill(c.x + 6, c.x + 39, 15, 17, '.');
   },
   build: (w, c) => {
-    river(w, c.X(6), c.X(41));
-    raft(w, c.x + 7, ['plain', 'band', 'frayed', 'band', 'plain', 'band', 'plain', 'band'], 'ita8c');
-    raft(w, c.x + 23, ['band', 'plain', 'band', 'frayed', 'band', 'plain', 'band', 'plain', 'band'], 'ita8d');
+    river(w, c.X(6), c.X(40));
+    raft(w, c.x + 6, ['band', 'plain', 'band', 'frayed', 'band', 'plain', 'band', 'plain'], 'ita8c');
+    raft(w, c.x + 22, ['band', 'plain', 'band', 'frayed', 'band', 'plain', 'band', 'plain', 'band'], 'ita8d');
     sign(w, c.x + 1, 10.4, 3, 'DHAARA', 'shop', null, 'the current');
   },
 };

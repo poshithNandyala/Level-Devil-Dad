@@ -130,11 +130,14 @@ export function herd(w: World, trigger: number, spec: Graze[], key: string): Her
   return st;
 }
 
+// the young one grazes 1.6 s (the others 3.5-4.5): long enough for a hand 12 ticks late to land on it and leave it
+// (round 3: was 1.0 s, a 0.1 s hop window with the route's 0.9 s margin); the last animal dips later so it is still
+// grazing when the young one's second graze lets you off it
 const ROOM: Graze[] = [
   { c: 7, dip: 1.5, graze: 3.5, up: 3.0 },
   { c: 11, dip: 2.2, graze: 4.5, up: 3.0 },
-  { c: 15, dip: 2.0, graze: 1.0, up: 2.0, young: true },
-  { c: 19, dip: 3.6, graze: 4.5, up: 3.0 },
+  { c: 15, dip: 2.0, graze: 1.6, up: 1.4, young: true },
+  { c: 19, dip: 4.2, graze: 4.5, up: 3.0 },
 ];
 
 export function room(): LevelDef {
@@ -164,11 +167,11 @@ export function room(): LevelDef {
 
 const JHUND: Graze[] = [
   { c: 5, dip: 1.4, graze: 4.5, up: 3.0 },
-  { c: 9, dip: 2.0, graze: 1.0, up: 2.0, young: true },
+  { c: 9, dip: 2.0, graze: 1.6, up: 1.4, young: true },
   { c: 13, dip: 2.6, graze: 4.5, up: 3.0 },
   { c: 17, dip: 3.3, graze: 4.5, up: 3.0 },
-  { c: 21, dip: 2.4, graze: 1.0, up: 2.0, young: true },
-  { c: 25, dip: 4.0, graze: 4.5, up: 3.0 },
+  { c: 21, dip: 2.4, graze: 1.6, up: 1.4, young: true },
+  { c: 25, dip: 4.6, graze: 4.5, up: 3.0 },
 ];
 
 /** act: a bigger herd with two young ones in it, the first right behind the lead */

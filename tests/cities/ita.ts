@@ -37,6 +37,15 @@ const courseRoute = (): Step[] => [
   { hold: 'R', jump: 14, ticks: 14, note: 'hop the parked Sumo' },
   { hold: 'R', until: (w) => w.player.onGround && w.player.y > 220, max: 400 },
 ];
+/** stop, three ticks of R on their own, then a jump held `hold` ticks: a standing hop lands the same wherever the lag */
+const stopHop = (hold: number, note: string): Step[] => [
+  { hold: '', ticks: 6, note: 'stop' },
+  { hold: 'R', ticks: 3 },
+  { hold: 'R', jump: hold, ticks: hold, note },
+  // a lagged hand's jump comes late: hold R until Dad has actually left the ground, then until he lands
+  { hold: 'R', until: (w) => !w.player.onGround, max: 60 },
+  { hold: 'R', until: ground, max: 200 },
+];
 const tourRoute = (): Step[] => [
   ...courseRoute(),
   { hold: 'R', until: X(63.0), max: 600, note: 'the first wall: the loose brick is the second' },
@@ -44,10 +53,8 @@ const tourRoute = (): Step[] => [
   { hold: 'R', until: ground, max: 200 },
   { hold: 'R', until: road(69), max: 400, note: 'off the wall' },
   { hold: 'R', until: X(75.8), max: 600, note: 'the second wall: the loose brick is in the arch over the third brick' },
-  { hold: 'R', jump: 9, ticks: 9, note: 'a short hop on to the first brick' },
-  { hold: 'R', until: ground, max: 200 },
-  { hold: 'R', jump: 16, ticks: 16, note: 'long, over the arch brick’s column, to the far end' },
-  { hold: 'R', until: ground, max: 200 },
+  ...stopHop(9, 'a short standing hop on to the first brick'),
+  ...stopHop(18, 'from a stop on the first brick, long over the arch brick’s column to the road beyond'),
   { hold: 'R', until: road(83), max: 400 },
   ...hop(89.4, 'the low wall'),
   { hold: 'R', until: X(92.4), max: 300 },
@@ -91,28 +98,52 @@ type HerdSt = { t0: number; spec: { c: number; dip: number; graze: number; up: n
 function herdWalk(key: string, need = 0.9): (w: World) => Out {
   let W: World | null = null;
   let jt = 0;
+  let pre = 0;
+  let launched = false;
+  let wasAir = false;
   return (w) => {
     if (W !== w) {
       W = w;
       jt = 0;
+      pre = 0;
+      launched = false;
+      wasAir = false;
     }
     if (jt > 0) {
       jt--;
+      launched = true;
       return { move: 'R', jump: true };
     }
     const st = w.flags[key] as HerdSt;
     const p = w.player;
-    if (!p.onGround) return go('R');
+    // a jump asked for is on its way (a lagged hand presses it late): keep R down until Dad has left the ground
+    if (launched) {
+      if (p.onGround) return go('R');
+      launched = false;
+    }
+    if (!p.onGround) {
+      wasAir = true;
+      return go('R');
+    }
+    // one tick off R on landing: a direction pressed with a jump is one late gesture to a lagged hand, so a fresh press
+    // is what lets the next stop be instant
+    if (wasAir) {
+      wasAir = false;
+      return go('');
+    }
     const next = st.rigs.find((r) => r.x > p.x + p.w - 4);
     if (!next) return go('R');
     const ready = st.t0 >= 0 && next.s.ph === 'down' && (next.s.left ?? 0) >= need;
     const edge = p.x + p.w >= next.x - 34;
+    if (pre > 0) {
+      pre--;
+      if (pre === 0) jt = 12;
+      return go('R');
+    }
     if (!edge) return go('R');
     if (!ready) return go('');
-    if (p.onGround) {
-      jt = 12;
-      return { move: 'R', jump: true };
-    }
+    if (Math.abs(p.vx) > 8) return go('');
+    pre = 3;
     return go('R');
   };
 }
@@ -196,25 +227,47 @@ const FIGW = 56;
 function canopyWalk(key: string, o: { wrongRead?: boolean; noJumpWhen?: (w: World, st: CanopySt) => boolean } = {}): (w: World) => Out {
   let W: World | null = null;
   let jt = 0;
+  let pre = 0;
+  let launched = false;
+  let wasAir = false;
   return (w) => {
     if (W !== w) {
       W = w;
       jt = 0;
+      pre = 0;
+      launched = false;
+      wasAir = false;
     }
     if (jt > 0) {
       jt--;
+      launched = true;
       return { move: 'R', jump: true };
     }
     const st = w.flags[key] as CanopySt;
     const p = w.player;
     if (st.t0 < 0) return go('R');
-    if (!p.onGround) return go('R');
+    // a jump asked for is on its way (a lagged hand presses it late): keep R down until Dad has left the ground
+    if (launched) {
+      if (p.onGround) return go('R');
+      launched = false;
+    }
+    if (!p.onGround) {
+      wasAir = true;
+      return go('R');
+    }
+    // one tick off R on landing, so the next stop is a fresh press's release (instant for a lagged hand too)
+    if (wasAir) {
+      wasAir = false;
+      return go('');
+    }
     const rigs = st.rigs.map((r, i) => ({ r, at: st.figs[i].at, i })).sort((a, b) => a.r.x - b.r.x);
-    const ni = rigs.findIndex((q) => q.r.x > p.x + p.w - 6);
-    if (ni < 0) return go('R');
-    const next = rigs[ni];
-    const ci = ni - 1;
+    // the platform under Dad's centre (a landing with a heel hanging off its left edge is still standing on it)
+    const cx = p.x + p.w / 2;
+    const ci = rigs.findIndex((q) => q.r.s.down && cx >= q.r.x - 2 && cx < q.r.x + FIGW + 8);
     const cur = ci >= 0 ? rigs[ci] : null;
+    const ni = cur ? ci + 1 : rigs.findIndex((q) => q.r.x > p.x + p.w - 6);
+    if (ni < 0 || ni >= rigs.length) return go('R');
+    const next = rigs[ni];
     const pending = rigs.filter((q) => !q.r.s.down);
     const soon = pending.length ? pending.reduce((a, b) => (o.wrongRead ? (b.at > a.at ? b : a) : b.at < a.at ? b : a)) : null;
     const soonIdx = soon ? rigs.indexOf(soon) : -1;
@@ -225,11 +278,19 @@ function canopyWalk(key: string, o: { wrongRead?: boolean; noJumpWhen?: (w: Worl
       const gap = next.r.x - (cur ? from : p.x + p.w);
       const needHop = cur ? gap > 12 : true;
       if (!needHop) return go('R');
-      if (p.x + p.w >= next.r.x - (cur ? 36 : 46)) {
-        if (o.noJumpWhen && o.noJumpWhen(w, st)) return go('');
-        jt = cur ? 12 : 14;
-        return { move: 'R', jump: true };
+      // the hop is lag-safe the raft way: get the right foot 40 px short of the next platform (back up if past it),
+      // STOP, three ticks of R alone, then the jump; a standing hop lands the same wherever the lag
+      const want = next.r.x - 40;
+      if (pre > 0) {
+        pre--;
+        if (pre === 0) jt = 12;
+        return go('R');
       }
+      if (p.x + p.w > want + 6) return go('L');
+      if (p.x + p.w < want) return go('R');
+      if (Math.abs(p.vx) > 8) return go('');
+      if (o.noJumpWhen && o.noJumpWhen(w, st)) return go('');
+      pre = 3;
       return go('R');
     }
     // wait: on the bank well short of the first platform's landing zone, or on the half of my platform away from the next drop
@@ -326,21 +387,42 @@ function releaseAtTell(key: string): (w: World) => Out {
 
 // ------------------------------------------------------------------ ITA-08
 type RaftSt = { c0: number; poles: ('plain' | 'band' | 'frayed')[]; rigs: { x: number }[] };
-/** hop from banded pole to banded pole (and to the far bank): jump as soon as you stand with the next band ahead */
+/** band to band: walk to the far end of the pole you stand on, STOP, and hop from standstill (a release is instant and a
+ *  standing hop lands the same wherever the lag, so the landing never scatters on to a plain pole); walk where poles touch */
 function raftHop(keys: string[], bankX: number, frayedIsFine = false): (w: World) => Out {
   let W: World | null = null;
   let jt = 0;
+  let pre = 0;
+  let launched = false;
+  let wasAir = false;
   return (w) => {
     if (W !== w) {
       W = w;
       jt = 0;
+      pre = 0;
+      launched = false;
+      wasAir = false;
     }
     if (jt > 0) {
       jt--;
+      launched = true;
       return { move: 'R', jump: true };
     }
     const p = w.player;
-    if (!p.onGround) return go('R');
+    // a jump asked for is on its way (a lagged hand presses it late): keep R down until Dad has left the ground
+    if (launched) {
+      if (p.onGround) return go('R');
+      launched = false;
+    }
+    if (!p.onGround) {
+      wasAir = true;
+      return go('R');
+    }
+    // one tick off R on landing, so the next stop is a fresh press's release (instant for a lagged hand too)
+    if (wasAir) {
+      wasAir = false;
+      return go('');
+    }
     const bands: number[] = [];
     for (const k of keys) {
       const st = w.flags[k] as RaftSt;
@@ -348,23 +430,28 @@ function raftHop(keys: string[], bankX: number, frayedIsFine = false): (w: World
         if (kind === 'band' || (frayedIsFine && kind === 'frayed')) bands.push(px(st.c0 + 2 * i));
       });
     }
-    bands.push(bankX);
-    const next = bands.filter((x) => x > p.x + p.w - 6).sort((a, b) => a - b)[0];
-    if (next === undefined) return go('R');
-    const gap = next - (p.x + p.w);
-    const edge = !w.solidAt(p.x + p.w + 3, p.y + p.h + 1, 1, 1);
-    const under = w.solidAt(p.x + p.w - 1, p.y + p.h + 1, 1, 1);
-    const adjacent = !!under && under !== true && under.x + under.w >= next - 1;
-    if (adjacent) return go('R');
-    if ((gap <= 34 && gap >= -2) || (edge && gap <= 56)) {
-      jt = gap > 34 ? 16 : 12;
-      return { move: 'R', jump: true };
+    const cx = p.x + p.w / 2;
+    const under = bands.find((x) => cx >= x && cx < x + 32);
+    if (under === undefined) return go('R');
+    const next = [...bands, bankX].filter((x) => x > under).sort((a, b) => a - b)[0];
+    if (next === undefined || next - (under + 32) <= 0) return go('R');
+    // at the far end of this pole: stop; then three ticks of R on their own before the jump (a direction pressed together
+    // with a jump is replayed late as one gesture by a lagged hand, so its release would come late too), then the hop
+    if (p.x + p.w >= under + 32 - 8) {
+      if (pre > 0) {
+        pre--;
+        if (pre === 0) jt = 16;
+        return go('R');
+      }
+      if (Math.abs(p.vx) > 8) return go('');
+      pre = 3;
+      return go('R');
     }
     return go('R');
   };
 }
-const room08 = (): Step[] => [{ policy: raftHop(['ita8a', 'ita8b'], px(27)), until: and(ground, X(27.5)), max: 2000, note: 'band to band across both rafts' }, { hold: 'R', until: X(29), max: 400 }];
-const act08 = (x: number): Step[] => [{ policy: raftHop(['ita8c', 'ita8d'], px(x + 41)), until: and(ground, X(x + 41.5)), max: 3000, note: 'band to band, over the frayed ones' }, { hold: 'R', until: X(x + 46.4), max: 400 }];
+const room08 = (): Step[] => [{ policy: raftHop(['ita8a', 'ita8b'], px(26)), until: and(ground, X(26.5)), max: 2000, note: 'band to band across both rafts' }, { hold: 'R', until: X(29), max: 400 }];
+const act08 = (x: number): Step[] => [{ policy: raftHop(['ita8c', 'ita8d'], px(x + 40)), until: and(ground, X(x + 40.5)), max: 3000, note: 'band to band, over the frayed ones' }, { hold: 'R', until: X(x + 46.4), max: 400 }];
 
 // ------------------------------------------------------------------ ITA-09
 type WallSt = { c: number; bonded: boolean[]; bricks: { x: number; y: number }[]; hole: boolean; slumpT: number; pulls: number };
@@ -456,7 +543,7 @@ const act10d = (x: number): Step[] => [
 
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
-  'ITA-01': { steps: [...courseRoute(), ...hop(62.4, 'hop the fort wall like the others'), { hold: 'R', until: done, max: 900 }], cause: 'ita-ita' },
+  'ITA-01': { steps: [...courseRoute(), { hold: 'R', until: X(61.8), max: 900 }, ...stopHop(12, 'hop the fort wall like the others: on to its second brick'), { hold: 'R', until: done, max: 900 }], cause: 'ita-ita' },
   'ITA-02': { steps: [...hopGaps([12, 18]), { hold: 'R', until: done, max: 2400 }], cause: 'ita-bhaar' },
   'ITA-03': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-keechad' },
   'ITA-04': { steps: [{ hold: 'R', until: X(9.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12, note: 'jump for the oranges in the tree' }, { hold: '', until: done, max: 600 }], cause: 'ita-santra' },
@@ -468,7 +555,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-10': { steps: [...hopGaps([15]), { hold: 'R', until: done, max: 2400, note: 'run on along the one-lane deck, hopping the bay' }], cause: 'ita-bhaar' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
-  'ITA-01': { steps: [...upTo(24), { hold: 'R', until: X(77.0), max: 600 }, { hold: 'R', jump: 16, ticks: 16, note: 'skip the first brick, as on the first wall' }, { hold: 'R', until: done, max: 900 }], cause: 'ita-pop' },
+  'ITA-01': { steps: [...upTo(24), { hold: 'R', until: X(77.0), max: 600 }, ...stopHop(12, 'skip the first brick, as on the first wall: land on the third, under the arch'), { hold: 'R', until: done, max: 900 }], cause: 'ita-pop' },
   'ITA-02': { steps: [{ hold: 'R', until: (w) => w.player.x >= px(12) && w.player.y > FL - 8, max: 900, note: 'step aside into the first bay' }, { hold: '', until: done, max: 2400, note: 'and wait there' }], cause: 'ita-bans' },
   'ITA-03': { steps: [{ policy: herdWalk('ita3', 0.05), until: done, max: 3000, note: 'wait for the lead’s dip, then hop on in rhythm' }], cause: 'ita-seeng' },
   'ITA-04': { steps: [...shake(5.2, 4), { hold: '', until: done, max: 600 }], cause: 'ita-tokri' },
@@ -476,9 +563,12 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
     steps: [
       { hold: 'R', until: X(4), max: 600 },
       { hold: '', until: (w) => !!(w.flags.ita5 as CanopySt).rigs[0].s.down, max: 900, note: 'wait for the first cluster to land' },
-      { hold: 'R', until: X(6.2), max: 300 },
+      { hold: 'R', until: X(5.1), max: 300, note: 'to the bank edge' },
+      { hold: '', ticks: 6 },
+      { hold: 'R', ticks: 3 },
       { hold: 'R', jump: 12, ticks: 12, note: 'hop on' },
-      { hold: 'R', until: (w) => w.player.x + w.player.w >= (w.flags.ita5 as CanopySt).rigs[0].x + FIGW - 1, max: 600, note: 'to its right edge, to wait for the next' },
+      { hold: 'R', until: and(ground, (w) => w.player.y < 220), max: 300 },
+      { hold: 'R', until: (w) => w.player.x + w.player.w >= (w.flags.ita5 as CanopySt).rigs[0].x + FIGW - 3, max: 600, note: 'to its right edge, to wait for the next' },
       { hold: '', until: done, max: 1500 },
     ],
     cause: 'ita-anjeer',
@@ -497,7 +587,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-08': {
     get steps(): Step[] {
       const x = actX0('ITA-08', 'ita08-dhaara');
-      return [...room08(), { policy: raftHop(['ita8c', 'ita8d'], px(x + 41), true), until: done, max: 3000, note: 'band to band, the frayed one too' }];
+      return [...room08(), { policy: raftHop(['ita8c', 'ita8d'], px(x + 40), true), until: done, max: 3000, note: 'band to band, the frayed one too' }];
     },
     cause: 'ita-rassi',
   },
