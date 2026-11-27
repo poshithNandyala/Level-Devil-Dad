@@ -224,7 +224,7 @@ export const sanjh: Act = {
   id: 'svp06-sanjh',
   w: 46,
   advice: 'Two more creeks, one after the other. The same flock, the same horn: a cliff, a creek, a branch that bends and springs back. Each branch has its own flock, and each is only up for a few seconds after its horn, so be on it when the parrots go. Step off the cliff to go on.',
-  cps: [20.5],
+  cps: [15.5],
   paint: (g, c) => {
     const x = c.x;
     // the room's cliff goes on a little, a creek, a second cliff; then down to the road for the next creek

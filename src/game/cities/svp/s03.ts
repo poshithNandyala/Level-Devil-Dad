@@ -319,7 +319,7 @@ export const nala: Act = {
   id: 'svp03-nala',
   w: 36,
   advice: 'A longer creek, and this time the crocodile is already in the water, strolling to and fro under the logs. The board’s arrow shows where it is. It comes up through a gap to whoever is jumping it: cross a gap when the arrow is pointing at another one.',
-  cps: [10.6, 16.6, 22.6],
+  cps: [9.6, 15.6, 21.6],
   paint: (g, c) => {
     g.pit(c.x + 3, c.x + 33).fill(c.x + 3, c.x + 33, 17, 17, '#');
   },

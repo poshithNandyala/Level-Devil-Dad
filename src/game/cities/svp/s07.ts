@@ -402,7 +402,7 @@ export const doosra: Act = {
   id: 'svp07-doosra',
   w: 46,
   advice: 'A second hall, and the call is not always the call: the board says ARRIVING first, and then everybody stands and sits down again, and the luggage stays. The real call, when the board says NOW BOARDING, takes the luggage. This time the crowd comes the other way, from the quay end, and the trench is still the place to be.',
-  cps: [25],
+  cps: [],
   paint: (g, c) => {
     const x = c.x;
     g.pit(x + 4, x + 11);
@@ -427,7 +427,7 @@ export const teesra: Act = {
   id: 'svp07-teesra',
   w: 48,
   advice: 'A third hall. The crowd goes over the trench one way, and then the board says WRONG SHIP and they all come back the other way. Stay in the trench for both.',
-  cps: [25],
+  cps: [],
   paint: (g, c) => {
     const x = c.x;
     g.pit(x + 4, x + 11);
