@@ -484,7 +484,8 @@ const phuchka: Act = {
   id: 'ccu08-phuchka',
   w: 32,
   cp0: false,
-  cps: [3.5],
+  // before the maid's beat starts (it starts as you pass column 1)
+  cps: [0.5],
   advice: 'The phuchka man, and a crowd round him you can’t climb: they only let through someone who has just eaten. Stop in front of him and he hands you one, and you’re eating for a moment, going nowhere. So watch the maid’s door: let her water go by first, then stop and eat, and go straight through the gap.',
   paint: (g, c) => {
     g.pit(c.x, c.x + 31).fill(c.x, c.x + 31, 13, 14, '#');
@@ -946,6 +947,33 @@ const rok10: Act = {
   },
 };
 
+/** CCU-10 act: College Street again (CCU-04's stacks), and its rule broken. 04 taught: the stack he points at
+ *  goes down a book. Here a customer is bringing books back: the stack he points at grows, a book at a time,
+ *  up to the high stall. The quiet one is being bought, and goes */
+const pherot: Act = {
+  id: 'ccu10-pherot',
+  w: 24,
+  advice: 'College Street again, but this customer is bringing books back: the stack he points at grows a book at a time, all the way up to the high stall. Stand on that one and ride it up. The quiet stack next to it is being bought down.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 2, x + 9).fill(x + 10, x + 14, 8, 14, '#').fill(x + 15, x + 15, 10, 14, '#').fill(x + 16, x + 16, 12, 14, '#').fill(x + 17, x + 17, 13, 14, '#').fill(x + 16, x + 16, 13, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    w.add(new Stall(c.X(2), c.X(10), 'RETURNS'));
+    boiDrain(w, x + 2, x + 10);
+    const b = w.add(new Stack(c.X(4), px(2), 2));
+    const a = w.add(new Stack(c.X(7), px(2), 1));
+    w.add(new Customer(c.X(9.2), '#00897B'));
+    const buyer = w.add(new Customer(c.X(3.2), '#6D4C41'));
+    onPass(w, c.X(1), (w2) => {
+      for (let k = 0; k < 7; k++) w2.after(1 + 1.2 * k, () => a.shelve(w2));
+      [2, 3.5].forEach((t) => w2.after(t, () => buyer.ask(w2, b, 1, 0.6)));
+    });
+    w.flags.pherot = { a, b };
+  },
+};
+
 /** CCU-10 act: the straw yard again (CCU-05's khor), and its rule broken. 05 taught: wait for the clay. Now
  *  the potter is scraping it off, figure after figure from the near end: whoever waits is on straw. Go */
 const chhanta: Act = {
@@ -1268,7 +1296,6 @@ const dhak: Act = {
 const line: Act = {
   id: 'ccu09-line',
   w: 30,
-  cps: [3.4],
   advice: 'Opening night, and the queue for the pandal: one person to a bamboo, and on each beat of the dhak they all step one bamboo on. Nobody climbs over the queue, and under it are the stakes. Move up into the bamboo they’ve just left, one beat at a time.',
   paint: (g, c) => {
     const x = c.x;
@@ -1390,5 +1417,5 @@ export const levels = (): LevelDef[] => [
   longStage({ base: howrahRoom(), par: 120, acts: [girder, dui, sandhya, ulto, jowar, baan, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 46, acts: [rok, tokta, gali, phuchka], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
   longStage({ base: pandalRoom(), par: 56, acts: [sinri, toran, chala, dhak, uthan, uthan2, line], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
-  longStage({ base: finaleRoom(), par: 94, acts: [bus10, tram10, chhad, phire, rok10, kumor10, chhanta, khola, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
+  longStage({ base: finaleRoom(), par: 94, acts: [bus10, tram10, chhad, phire, rok10, pherot, kumor10, chhanta, khola, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];

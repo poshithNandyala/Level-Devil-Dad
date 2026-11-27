@@ -21,6 +21,7 @@ export class Stack extends Entity {
   delay = 1.2;
   pulls = 0;
   private dropTo = -1;
+  private riseTo = -1;
   private goneT = -1;
   constructor(
     readonly x: number,
@@ -51,6 +52,12 @@ export class Stack extends Entity {
     this.pointH = Math.min(h, this.n);
     this.delay = delay;
   }
+  /** a book put back on top: the stack grows one book, lifting whoever is on it */
+  shelve(w: World) {
+    this.n++;
+    this.riseTo = this.top();
+    w.sfx('slide', this.x + this.wd / 2, this.top());
+  }
   pull(w: World) {
     this.pointAt = -1;
     this.n = Math.max(0, this.n - 1);
@@ -77,6 +84,11 @@ export class Stack extends Entity {
     if (this.pointed) {
       const landed = w.player.onGround && w.player.isRiding(this.solid);
       if (landed || w.tick - this.pointAt >= Math.round(this.delay * 120)) this.pull(w);
+    }
+    // slowly (a pixel every other tick), so a jump off it gets no lift from it
+    if (this.riseTo >= 0 && this.solid.collidable) {
+      if (this.solid.y <= this.riseTo) this.riseTo = -1;
+      else if (w.tick % 2 === 0) this.solid.moveBy(w, 0, -1);
     }
     if (this.dropTo >= 0 && this.solid.collidable) {
       const dy = Math.min(4, this.dropTo - this.solid.y);
