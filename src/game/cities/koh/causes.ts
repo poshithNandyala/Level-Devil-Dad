@@ -1,6 +1,6 @@
 /** Tara's line for each new death cause ('koh-...'): [what happened, how to beat it] */
 export const causeLines: Record<string, string[]> = {
-  'koh-nala': ['You went into the drain.', 'Jump the open drain and the stream; nothing laid across them is a bridge.'],
+  'koh-nala': ['You went into the water.', 'Drain, stream or ford: in the water you are done. Cross on what carries you, and only while it carries you.'],
   'koh-rod': ['The handrail rod rolled out of its brackets with you on it.', 'It is round: it rolls you backwards and then drops. Jump the drain instead.'],
   'koh-khai': ['You fell into the ditch off the end of the mat.', 'The mat drifts away from you. Stay just behind the flag until the mat lies on the far bank, then step over.'],
   'koh-dubki': ['Your end of the mat dipped into the water.', 'The trailing end dips a moment after a heave settles. Stand just behind the flag, not on the end.'],
@@ -31,5 +31,8 @@ export const causeLines: Record<string, string[]> = {
   'koh-takkar': ['The cart rolled back into the wall with you on it.', 'This lane climbs: a boarded cart rolls backwards. The lane is paved here. Walk it.'],
   'koh-bhagti-gari': ['The loose cart ran you down.', 'Its chock gave as you passed the first cart and it came down the lane. A cart coming at you is hopped, not boarded.'],
   'koh-bera': ['The raft sank under you.', 'A raft tied in the ford is not the bank. Stay on the log for the next surge; there is no lintel here.'],
+  'koh-jhanda': ['The mat’s end dipped under you.', 'This rope’s flags mark the teams, at the ends. The middle has no flag and is the only place to be, and only for a moment: cross in one go before the whistle.'],
+  'koh-tuta-sira': ['The rotten tip broke under your landing.', 'The stall’s plank is a walkway with a sack for a rider: walk on to it. Its near tip is rotten and the far half dips under a landing.'],
+  'koh-pilla': ['The puppy ran at the open pot and tripped you.', 'This one loves axone. Lid the pot (stand still) before him; open it again only for the crows beyond.'],
   'koh-dhol': ['The log rolled over you.', 'After a double shout the log climbs the bank. Step off at the first top and keep going; at the hut hop the drum as it rolls away.'],
 };

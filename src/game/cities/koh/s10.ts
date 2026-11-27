@@ -18,6 +18,7 @@ import { lines as L, NPC } from './lines';
 import { roof } from './s06';
 import { DECK_W, DECK_Y } from './s07';
 import { log } from './s05';
+import { type Pot, crow, pot, wire } from './s08';
 
 /** the lashed rod: a bamboo across the drain from column c0 to c1, tied at both ends; it is a bridge this time */
 function lashedRod(w: World, c0: number, c1: number) {
@@ -96,6 +97,8 @@ export function room(): LevelDef {
     map: Grid.ground(15).fill(6, 11, 15, 17, '.').fill(15, 26, 15, 17, '.').put(1, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
+      // the axone pot comes along to the festival (its lid matters again at the stall's puppy)
+      pot(w);
       ditch(w, px(6), px(12), 'koh-nala');
       lashedRod(w, 6, 12);
       // the empty house: a step up, rotten thatch, tin, rotten thatch, tin, down
@@ -298,6 +301,241 @@ export const actBera: Act = {
       (w2) => w2.guide(NPC.loghat),
     );
     sign(w, c.x + 1, 10.4, 3, 'BERA', 'shop', null, 'the raft');
+  },
+};
+
+/**
+ * the show rope (02's callback): a tug-of-war demonstration over a ditch; the mat heaves a little each way and never
+ * reaches a bank, and this rope carries a TEAM flag at each end of the mat and none in the middle; stand behind a flag
+ * (02's habit) and you are on an end, which dips; and the bout ends on the whistle, when both teams drop the rope.
+ */
+function showMat(w: World, c0: number, key: string, o: { bout: number }) {
+  const W = 64;
+  const x0 = px(c0);
+  const st = { t0: -1, endT: -1, dropped: false, x: x0 };
+  w.flags[key] = st;
+  const rig = w.add(
+    new Rig(x0, FL, W, 8, {
+      solid: true,
+      layer: 2,
+      tick: (r, w2) => {
+        const p = w2.player;
+        if (st.dropped) {
+          if (r.y < FL + 40) r.moveTo(w2, r.x, r.y + 3);
+          return;
+        }
+        const on = w2.standing(r.solid!);
+        if (st.t0 < 0 && on) st.t0 = w2.tick;
+        if (st.t0 >= 0) {
+          const t = since(w2, st.t0);
+          // a heave each way every 1.2 s, 12 px, and back: a show, not a contest
+          const k = Math.sin((t / 1.2) * Math.PI);
+          const nx = Math.round(x0 + 12 * k);
+          r.solid!.velX = (nx - r.x) * 120;
+          if (nx !== r.x) r.moveTo(w2, nx, FL);
+          if (t >= o.bout) {
+            st.dropped = true;
+            r.setSolid(false);
+            w2.sfx('whistle', r.x + W / 2, FL - 40);
+            w2.say('Bas! | Enough!', r.x + W / 2, FL - 46, 0.8, 'npc');
+          }
+        }
+        // the ends are the teams' ends: stand on one for a third of a second and it dips
+        const onEnd = on && (p.cx < r.x + 14 || p.cx > r.x + W - 14);
+        if (onEnd) {
+          if (st.endT < 0) st.endT = w2.tick;
+          else if (since(w2, st.endT) > 0.3) {
+            w2.sfx('splash', p.cx, FL);
+            w2.die('koh-jhanda');
+          }
+        } else st.endT = -1;
+        st.x = r.x;
+      },
+      paint: (ctx, r, w2) => {
+        // the mat, the rope through it, a red team flag at each end
+        box(ctx, r.x, r.y - 4, r.w, 5, '#C9B870');
+        box(ctx, r.x, r.y - 4, r.w, 1, '#E6D898');
+        box(ctx, r.x - 60, r.y - 2, r.w + 120, 2, '#8A7A3A');
+        for (const fx of [r.x + 4, r.x + r.w - 7]) {
+          box(ctx, fx, r.y - 22, 1, 18, '#5D4037');
+          box(ctx, fx + 1, r.y - 22, 7, 5, '#C0392B');
+        }
+        // the teams, pulling on the beat
+        const lean = st.t0 < 0 ? 0 : Math.sin((since(w2, st.t0) / 1.2) * Math.PI) * 3;
+        for (let i = 0; i < 3; i++) folk(ctx, r.x - 70 - i * 12 - lean, FL - 26, 26, i % 2 ? '#C0392B' : '#1B1B1B');
+        for (let i = 0; i < 3; i++) folk(ctx, r.x + r.w + 70 + i * 12 - lean, FL - 26, 26, i % 2 ? '#E0B04A' : '#1B1B1B');
+        // the referee with the whistle
+        folk(ctx, r.x + r.w / 2, FL - 86, 22, '#F2EFE4');
+      },
+    }),
+  );
+  return { st, rig };
+}
+
+export const actJhanda: Act = {
+  id: 'koh10-jhanda',
+  w: 30,
+  advice: 'The festival’s tug-of-war is a show over a ditch, and this mat has a team flag at each end and none in the middle. The ends dip; the teams are matched and the mat never reaches a bank; and at the whistle both teams drop the rope. Walk straight across the middle, in one go.',
+  cps: [],
+  paint: (g, c) => {
+    g.fill(c.x + 10, c.x + 15, 15, 17, '.');
+  },
+  build: (w, c) => {
+    ditch(w, px(c.x + 10) - 6, px(c.x + 16) + 6, 'koh-nala', FL + 10);
+    showMat(w, c.x + 11, c.f('mat'), { bout: 6 });
+    w.when(
+      (w2) => w2.player.cx > px(c.x + 3),
+      (w2) => w2.guide(NPC.rasta),
+    );
+    sign(w, c.x + 1, 10.4, 3, 'RASSI SHOW', 'shop', null, 'a show');
+  },
+};
+
+/**
+ * the stall's plank (03's callback): a seesaw over the water with a prize sack on the far end and nobody to throw; the
+ * near tip, where 03 taught you to land, is rotten and breaks under a landing; a landing on the far half dips it into
+ * the water. The plank is a walkway: walk it.
+ */
+function stallPlank(w: World, c0: number, key: string) {
+  const x0 = px(c0);
+  const L = 96;
+  const st = { tipGone: false, dipT: -1, wasAir: false };
+  w.flags[key] = st;
+  // the near tip (rotten), the near half, the far half
+  const tip = w.add(
+    new Rig(x0, FL - 4, 14, 5, {
+      solid: true,
+      layer: 2,
+      paint: (ctx, r) => {
+        if (st.tipGone) return;
+        box(ctx, r.x, r.y, r.w, r.h, '#9A8A4A');
+        ctx.fillStyle = '#4E4028';
+        for (let k = 2; k < r.w - 2; k += 4) ctx.fillRect(r.x + k, r.y + 1, 1, 3);
+      },
+    }),
+  );
+  w.add(new Rig(x0 + 14, FL - 4, L / 2 - 14, 5, { solid: true, layer: 2, paint: (ctx, r) => box(ctx, r.x, r.y, r.w, r.h, '#C9B870') }));
+  const far = w.add(
+    new Rig(x0 + L / 2, FL - 4, L / 2, 5, {
+      solid: true,
+      layer: 2,
+      tick: (r, w2) => {
+        if (st.dipT >= 0) {
+          const t = since(w2, st.dipT);
+          const k = t < 0.4 ? t / 0.4 : t < 1.2 ? 1 : Math.max(0, 1 - (t - 1.2) / 0.5);
+          const ny = FL - 4 + Math.round(k * 26);
+          if (ny !== r.y) r.moveTo(w2, r.x, ny);
+          if (t > 1.7) st.dipT = -1;
+        }
+      },
+      paint: (ctx, r) => {
+        box(ctx, r.x, r.y, r.w, r.h, '#C9B870');
+        // the prize sack on the far end
+        box(ctx, r.x + r.w - 16, r.y - 14, 14, 14, '#8D5524');
+        box(ctx, r.x + r.w - 12, r.y - 17, 6, 4, '#C9A24B');
+      },
+    }),
+  );
+  w.onTick((w2) => {
+    const p = w2.player;
+    const landed = p.onGround && st.wasAir;
+    st.wasAir = !p.onGround;
+    if (!landed) return;
+    if (!st.tipGone && w2.standing(tip.solid!)) {
+      st.tipGone = true;
+      tip.setSolid(false);
+      w2.sfx('snap', tip.x + 7, FL - 4);
+      w2.die('koh-tuta-sira');
+      return;
+    }
+    if (st.dipT < 0 && w2.standing(far.solid!)) {
+      st.dipT = w2.tick;
+      w2.sfx('creak', far.x + 20, FL - 4);
+    }
+  });
+  w.add(
+    new Paint((ctx) => {
+      // the post under the middle
+      box(ctx, x0 + L / 2 - 3, FL - 1, 6, 14, '#5D4037');
+    }, -1),
+  );
+  return st;
+}
+
+export const actTutaSira: Act = {
+  id: 'koh10-tuta-sira',
+  w: 28,
+  advice: 'A stall’s seesaw over the water, a prize sack on the far end and nobody to throw. The near tip, where you learned to land, is rotten and breaks under a landing; a landing on the far half dips it into the water. It is a walkway: walk on to it and across.',
+  cps: [],
+  paint: (g, c) => {
+    g.fill(c.x + 9, c.x + 15, 15, 17, '.');
+  },
+  build: (w, c) => {
+    ditch(w, px(c.x + 9) - 4, px(c.x + 16) + 4, 'koh-nala', FL + 10);
+    stallPlank(w, c.x + 9, c.f('plank'));
+    w.when(
+      (w2) => w2.player.cx > px(c.x + 3),
+      (w2) => w2.guide(NPC.thik),
+    );
+    sign(w, c.x + 1, 10.4, 3, 'MELA JHULA', 'shop', null, 'the stall');
+  },
+};
+
+/** the stall's puppy (08's callback): he LOVES axone; an open pot within 4.5 tiles and he runs at you and trips you */
+function pilla(w: World, c: number, key: string) {
+  const x0 = px(c);
+  const st = { mode: 'sit' as 'sit' | 'run' | 'done' };
+  w.flags[key] = st;
+  w.add(
+    new Rig(x0, FL - 10, 12, 10, {
+      layer: 3,
+      cause: 'koh-pilla',
+      inset: 1,
+      live: () => st.mode === 'run',
+      tick: (r, w2) => {
+        const p = w2.player;
+        const lid = (w2.flags.koh8 as Pot).lid;
+        const d = p.cx - (r.x + 6);
+        if (st.mode === 'sit' && !lid && Math.abs(d) < 72) {
+          st.mode = 'run';
+          w2.sfx('monkey', r.x, r.y);
+        }
+        if (st.mode === 'run') {
+          r.x += Math.sign(d) * (210 / 120);
+          if (Math.abs(d) > 150) st.mode = 'done';
+        }
+        r.s.mode = st.mode;
+      },
+      paint: (ctx, r, w2) => {
+        ctx.fillStyle = '#D7A86E';
+        ctx.fillRect(r.x + 1, r.y + 3, 9, 5);
+        ctx.fillRect(r.x + 8, r.y, 4, 5);
+        // the wagging tail: the tell that he likes it
+        ctx.fillStyle = '#B07A52';
+        ctx.fillRect(r.x - 3 + ((w2.tick >> 2) % 2) * 2, r.y + 1, 4, 2);
+        ctx.fillStyle = '#1B1B1B';
+        ctx.fillRect(r.x + 10, r.y + 1, 1, 1);
+      },
+    }),
+  );
+  return st;
+}
+
+export const actPilla: Act = {
+  id: 'koh10-pilla',
+  w: 32,
+  advice: 'The stall’s puppy loves axone: an open pot within a few tiles and he runs at you and trips you, so pass him lidded (stand still first). The crows on the wire past him are the same as ever: they dive at a lidded walker, so hop once after the puppy and walk under them open.',
+  cps: [],
+  build: (w, c) => {
+    pilla(w, c.x + 11, c.f('pilla'));
+    wire(w, c.x + 20, c.x + 28);
+    crow(w, c.x + 22, c.f('c1'));
+    crow(w, c.x + 26, c.f('c2'));
+    w.when(
+      (w2) => w2.player.cx > px(c.x + 3),
+      (w2) => w2.guide(NPC.bhat),
+    );
+    sign(w, c.x + 1, 10.4, 3, 'PILLA', 'shop', null, 'the puppy');
   },
 };
 

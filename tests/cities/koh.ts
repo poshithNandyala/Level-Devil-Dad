@@ -549,6 +549,12 @@ function stayAboard(key: string, bank: number): (w: World) => Out {
 }
 const act10b = (x: number): Step[] => [{ policy: stayAboard('koh10-bera:log', x + 25), until: and(ground, X(x + 26.5)), max: 3000, note: 'ride the log past the raft to the bank' }, { hold: 'R', until: X(x + 31.4), max: 600 }];
 const offLog = (key: string) => (w: World) => !w.standing((w.flags[key] as Log).rig.solid!);
+/** the show mat: walk straight across its middle in one go (the mat starts at x + 11, 4 tiles wide) */
+const act10c = (x: number): Step[] => [{ hold: 'R', until: X(x + 16.5), max: 900, note: 'straight across the show mat' }, { hold: 'R', until: X(x + 27.4), max: 600 }];
+/** the stall's plank: walk on to it and across, no landing */
+const act10d = (x: number): Step[] => [{ hold: 'R', until: X(x + 16), max: 900, note: 'walk the plank' }, { hold: 'R', until: X(x + 25.4), max: 600 }];
+/** the puppy: lid the pot before him, then a hop after him for the crows */
+const act10e = (x: number): Step[] => [...lidAt(x + 3), { hold: 'R', until: X(x + 15.6), max: 900, note: 'past the puppy, lidded' }, ...hopLid(x + 16), { hold: 'R', until: X(x + 29.4), max: 900, note: 'under the crows, open' }];
 const morungPolicy: Policy = (w, _m, d) => {
   const st = w.flags.koh10gate as { open: boolean };
   const p = w.player;
@@ -614,7 +620,7 @@ const ACT_ORDER: Record<string, string[]> = {
   'KOH-07': acts07.map((a) => a.id),
   'KOH-08': ['koh08-galli', 'koh08-taar'],
   'KOH-09': ['koh09-teen', 'koh09-paanch'],
-  'KOH-10': ['koh10-ulta-gari', 'koh10-bera'],
+  'KOH-10': ['koh10-ulta-gari', 'koh10-bera', 'koh10-jhanda', 'koh10-tuta-sira', 'koh10-pilla'],
 };
 const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
 const prefix = (id: string, act: string): Step[] => [...ROOMS[id](), ...ACT_ORDER[id].slice(0, ACT_ORDER[id].indexOf(act)).flatMap((a) => actRoutes[a](actX0(id, a)))];
@@ -681,6 +687,12 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     inAct('KOH-10', 'koh10-ulta-gari', 'board the cart like Kath ka Gari', () => runOn, 'koh-takkar'),
     inAct('KOH-10', 'koh10-ulta-gari', 'hop the first cart, then stand to board the one coming down the lane', (x) => [...act10a(x).slice(0, 3), { hold: '', until: done, max: 1500, note: 'wait for it like a ride' }], 'koh-bhagti-gari'),
     inAct('KOH-10', 'koh10-bera', 'step off at the first touch, like Dhol Gach', (x) => [{ policy: rideLog('koh10-bera:log', x + 13), until: and(ground, offLog('koh10-bera:log'), (w) => w.player.cx > px(x + 13)), max: 3000 }, { hold: '', until: done, max: 1500 }], 'koh-bera'),
+    inAct('KOH-10', 'koh10-jhanda', 'stand behind the flag, like Rassi Tan', (x) => [{ hold: 'R', until: X(x + 11.2), max: 900, note: 'on to the mat, behind the near flag' }, { hold: '', until: done, max: 1500 }], 'koh-jhanda'),
+    inAct('KOH-10', 'koh10-jhanda', 'stand in the middle and wait for the mat to reach the far bank', (x) => [{ hold: 'R', until: X(x + 12.6), max: 900, note: 'to the middle of the mat' }, { hold: '', until: done, max: 1500 }], 'koh-nala'),
+    inAct('KOH-10', 'koh10-tuta-sira', 'land on the near tip, like Bans Jhula', (x) => [{ hold: 'R', until: X(x + 7.3), max: 900 }, { hold: 'R', jump: 9, ticks: 9, note: 'a hop on to the tip' }, { hold: '', until: done, max: 1500 }], 'koh-tuta-sira'),
+    inAct('KOH-10', 'koh10-tuta-sira', 'a running jump on to the far half, like the second seesaw', (x) => [{ hold: 'R', until: X(x + 10.2), max: 900 }, { hold: 'R', jump: 20, ticks: 20, note: 'on to the far half' }, { hold: '', until: done, max: 1500 }], 'koh-nala'),
+    inAct('KOH-10', 'koh10-pilla', 'hop before the dog, like Axone Handi', (x) => [...lidAt(x + 3), ...hopLid(x + 6), { hold: 'R', until: done, max: 1500 }], 'koh-pilla'),
+    inAct('KOH-10', 'koh10-pilla', 'pass the puppy lidded and walk under the crows lidded', (x) => [...lidAt(x + 3), { hold: 'R', until: done, max: 1500 }], 'koh-kag'),
     inAct('KOH-10', 'koh10-bera', 'jump for the raft before the log touches it', (x) => [{ policy: rideLog('koh10-bera:log', x + 13), until: (w) => (w.flags['koh10-bera:log'] as Log).rig.x + 80 >= px(x + 13) - 76 && (w.flags['koh10-bera:log'] as Log).phase === 1, max: 3000 }, { hold: 'R', until: (w) => w.player.cx > (w.flags['koh10-bera:log'] as Log).rig.x + 70, max: 300, note: 'to the log’s front' }, { hold: 'R', jump: 8, ticks: 8, note: 'a hop for the raft, short' }, { hold: 'R', until: done, max: 1500 }], 'koh-nala'),
   ],
 };
@@ -704,6 +716,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'koh09-paanch': act09b,
   'koh10-ulta-gari': act10a,
   'koh10-bera': act10b,
+  'koh10-jhanda': act10c,
+  'koh10-tuta-sira': act10d,
+  'koh10-pilla': act10e,
 };
 const endingPolicies: Record<string, Policy> = {
   'koh-manch': hoistPolicy,
