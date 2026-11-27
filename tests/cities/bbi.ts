@@ -678,6 +678,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02
   'bbi02-dobara': (x) => [...hop(x + 11.9, 'hop the still ball at the stopper'), { hold: 'R', until: X(x + 29), max: 600 }],
   'bbi05-pokhari': rajaRun(RAJA4, 30),
   'bbi05-gaon': rajaRun(RAJA5, 34),
+  'bbi07-deepa': (x) => [...crossTroupe('bbi7l', x, 4, 8, 'bridge'), { hold: 'R', until: X(x + 15.5), max: 300 }],
+  'bbi07-shrinkhala': (x) => [...onBridge('bbi7k0', x + 4, x + 22.2, 'on at the stop, then walk the whole chain'), { hold: 'R', until: X(x + 25.5), max: 300 }],
+  'bbi07-dweepa': (x) => [...crossTroupe('bbi7i0', x, 4, 6, 'bridge'), ...crossTroupe('bbi7i1', x, 12, 7, 'bridge'), { hold: 'R', until: X(x + 21.5), max: 300 }],
   'bbi10-mela': (x) => [...crossTroupe('bbi10m0', x, 3, 6, 'bridge'), ...crossTroupe('bbi10m1', x, 13, 7, 'wheel'), { hold: 'R', until: X(x + 23.5), max: 300 }],
 };
 const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy, 'bbi-pose-gate': gatePolicy, 'bbi-leaf-plate': platePolicy, 'bbi-horse-gap': horseGap, 'bbi-ribbon-snip': ribbonPolicy };

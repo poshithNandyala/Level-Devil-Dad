@@ -348,6 +348,62 @@ export const act7 = troupeAct(
   [],
 );
 
+/** act 8, lamps: a string of oil lamps hangs low over the pit. The wheel pose comes first and looks like the way,
+ *  but standing on its top puts your head in the lamps; only the bridge goes under them */
+export const T07L: TroupeCfg = { c0: 4, n: 8, drum: 2.6, hold: 1.6, poses: ['wheel', 'tower', 'bridge'], form: 0.3 };
+export const act8: Act = {
+  id: 'bbi07-deepa',
+  w: 16,
+  advice: 'A string of oil lamps hangs low over this pit. The wheel comes first, but its top puts your head in the lamps: wait for the bridge and walk under them.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + T07L.c0, c.x + T07L.c0 + T07L.n - 1);
+  },
+  build: (w, c) => {
+    const st = { t0: -1 };
+    onPass(w, c.X(T07L.c0 - 2.5), (w2) => (st.t0 = w2.tick));
+    stagePit(w, c.x + T07L.c0, c.x + T07L.c0 + T07L.n - 1);
+    troupe(w, { ...T07L, c0: c.x + T07L.c0 }, () => st.t0, 'bbi7l');
+    w.add(
+      new Rig(c.X(T07L.c0) + 8, FL - 64, px(T07L.n) - 16, 12, {
+        cause: 'bbi-deepa',
+        inset: 1,
+        layer: 4,
+        paint: (ctx, r) => {
+          ctx.strokeStyle = '#5D3A1E';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(r.x - 8, r.y - 30);
+          ctx.quadraticCurveTo(r.x + r.w / 2, r.y + 8, r.x + r.w + 8, r.y - 30);
+          ctx.stroke();
+          for (let x = r.x + 4; x < r.x + r.w; x += 14) {
+            box(ctx, x, r.y + 4, 6, 4, '#8D5A2B');
+            box(ctx, x + 2, r.y, 2, 4, '#FFB300');
+            box(ctx, x + 2, r.y - 2, 2, 2, '#FFF59D');
+          }
+        },
+      }),
+    );
+  },
+};
+
+/** act 9, the chain: three troupes in one long pit with no bank between them; each drummer stops as you reach his
+ *  part, and each bridge only lasts the walk: no stopping anywhere */
+export const T07C: TroupeCfg[] = [
+  { c0: 4, n: 6, drum: 2.4, hold: 1.5, poses: ['tower', 'bridge'], form: 0.25 },
+  { c0: 10, n: 6, drum: 0.12, hold: 1.4, poses: ['bridge', 'wheel'], form: 0.2 },
+  { c0: 16, n: 6, drum: 0.12, hold: 1.4, poses: ['bridge', 'tower'], form: 0.2 },
+];
+export const act9 = troupeAct('bbi07-shrinkhala', 26, T07C, 'bbi7k', 'One long pit, three troupes and no bank between them. Each drummer stops as you reach his part, and each bridge only lasts the walk over it: once on, keep walking to the far side without stopping.');
+
+/** act 10, the island: a long pit with a lamp plinth in the middle; the far troupe's bridge comes rarely: rest on
+ *  the plinth (the shelter), not on a pose */
+export const T07I: TroupeCfg[] = [
+  { c0: 4, n: 6, drum: 1.6, hold: 1.5, poses: ['wheel', 'bridge'], form: 0.3 },
+  { c0: 12, n: 7, drum: 2.6, hold: 1.5, poses: ['tower', 'wheel', 'tower', 'bridge'], form: 0.3, phase: 0.8 },
+];
+export const act10 = troupeAct('bbi07-dweepa', 22, T07I, 'bbi7i', 'A lamp plinth stands in the middle of this pit. Cross the first troupe’s bridge to it and wait there: the second troupe makes a tower, a wheel and a tower again before its bridge comes.');
+
 /** ending: the last pose is a gate over the door; between poses the troupe whirls across the doorway */
 export const T07e: TroupeCfg = { c0: 0, n: 4, drum: 1.6, hold: 1.6, poses: ['gate'], form: 0.3, ground: true };
 export const ending: Ending = {
