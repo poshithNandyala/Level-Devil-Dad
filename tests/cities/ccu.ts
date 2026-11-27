@@ -376,7 +376,7 @@ const duiRoute = (x: number): Step[] => [
 
 /** CCU-07 relay acts: porter 1 from the pylon, then 2, then 3 (told apart by speed), to the next pylon */
 const nearAct = (x: number) => (p: Porter) => p.o.x >= px(x - 13) && p.o.x <= px(x + 6);
-function relayRoute(x: number, v: [number, number, number], tallFirst: boolean): Step[] {
+function relayRoute(x: number, v: [number, number, number], tallFirst: boolean, end = 59.6): Step[] {
   const by = (sp: number) => (w: World) => porters(w).find((p) => p.o.v === sp && nearAct(x)(p));
   const under = (from: number, to: number): Step[] => [
     { hold: '', until: (w) => { const a = by(from)(w), b = by(to)(w); return !!a && !!b && a.riding(w) && !porters(w).some((o) => o.o.v < 0 && o.state === 'walk' && o.x - w.player.cx < 70 && o.x - w.player.cx > -10) && b.x - a.x > 20 && b.x - a.x < 34; }, max: 2400, note: 'till the short porter is just ahead, under you' },
@@ -413,8 +413,8 @@ function relayRoute(x: number, v: [number, number, number], tallFirst: boolean):
     onStep,
     ...(tallFirst ? [walk(x + 2.4), ...hopTo(px(x + 5), 10, 'up on the tall porter')] : [{ hold: 'R' as const, until: (w: World) => !!by(v[0])(w)?.riding(w), max: 300, note: 'walk off on to the short porter' }]),
     ...(tallFirst ? under(v[0], v[1]) : [up(v[1])]),
-    ...(tallFirst ? [up(v[2])] : under(v[1], v[2])),
-    { hold: '', until: (w) => w.player.cx > px(x + 59.6) || (w.player.onGround && !riding(w)), max: 2400, note: 'ride him to the next pylon' },
+    ...(v[2] ? (tallFirst ? [up(v[2])] : under(v[1], v[2])) : []),
+    { hold: '', until: (w) => w.player.cx > px(x + end) || (w.player.onGround && !riding(w)), max: 2400, note: 'ride him to the next pylon' },
     { hold: 'R', until: (w) => w.player.onGround && !riding(w), max: 200, note: 'off on to the pylon' },
   ];
 }
@@ -759,7 +759,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-07': { steps: [howrahRoom()[0], howrahRoom()[1], hopUp((w) => porters(w).find((p) => p.o.v < 0), 'jump for the first load that comes by'), { hold: '', until: done, max: 900 }], cause: 'ccu-bojha' },
   'CCU-06': { steps: [walk(2.4), ...hopTo(px(5), 12, 'over the stop’s step'), { hold: 'R', until: (w) => w.player.onGround && w.player.y > 222 && w.player.cx > px(6.6), max: 300 }, ...hopTo(px(7) + 12, 8, 'on to the rear step'), { hold: '', until: done, max: 4000, note: 'stay on the step, past the island' }], cause: 'ccu-points' },
   'CCU-02': { steps: [...ride(px(16), px(19.5), 'off on the first “aaste”'), { hold: 'R', until: (w) => w.state !== 'play', max: 300 }], cause: 'ccu-nala' },
-  'CCU-10': { steps: [...finaleRoom().slice(0, 3), { hold: '', until: done, max: 2400, note: 'stay on the porter with three bundles past the far kerb: he walks on over the bus stand’s drain' }], cause: 'ccu-nala' },
+  'CCU-10': { steps: [...finaleRoom().slice(0, 3), { hold: '', until: done, max: 2400, note: 'stay on the porter with three bundles past the far kerb: he walks on to the bus stand, into the bus’s footboard at speed' }], cause: 'ccu-gir' },
 };
 
 /** more scripted first-timer deaths and 'like last time' moves */
@@ -799,7 +799,8 @@ const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'ccu09-uthan': (x) => liftRoute('ccu09-uthan', x),
-  'ccu10-setu': (x) => relayRoute(x, [45, 63, 83], true),
+  'ccu10-setu': (x) => relayRoute(x, [58, 84, 0], true, 32.6),
+  'ccu10-setu-b': (x) => relayRoute(x, [66, 100, 0], false, 32.6),
   'ccu07-jowar': (x) => jowarRoute(x),
   'ccu07-horn': (x) => hornRoute(x),
   'ccu07-board': (x) => boardRoute(x),
@@ -890,7 +891,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   ],
   'ccu10-bus': (x) => [
     boardAtStop((w) => w.flags.bus10),
-    ...ride(px(x + 25), px(x + 27.5), 'over the drain, and off on his one “aaste”'),
+    ...ride(px(x + 25), px(x + 27.2), 'over the drain, and off on his one “aaste”'),
     walk(x + 38),
   ],
   'ccu10-tram': (x) => [
@@ -958,8 +959,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { what: 'a full jump at the high stall from the low stack', steps: [...toBooks(), ...pherotRoute(128, 'jump')], cause: 'ccu-kada' },
     { what: 'landing on a cloth top in the pandal being taken down', steps: [...toKhola(), ...kholaRoute(176).slice(0, 2), steerHop(px(176 + 5.5), 30, 'up on to the cloth top, as in the pandal', true), { hold: '', until: done, max: 400 }], cause: 'ccu-bansh' },
     { what: 'waiting on the bamboo under the roof frame', steps: [...toKhola(), ...kholaRoute(176, 2)], cause: 'crushed' },
-    { what: 'staying on the first porter back over the bridge', steps: [...toSetu(), ...relayRoute(232, [45, 63, 83], true).slice(0, 4), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
-    { what: 'staying on the short porter back over the bridge', steps: [...toSetu(), ...relayRoute(232, [45, 63, 83], true).slice(0, 6), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
+    { what: 'staying on the first porter back over the bridge', steps: [...toSetu(), ...relayRoute(232, [58, 84, 0], true, 32.6).slice(0, 4), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
+    { what: 'staying on the short porter of the second span', steps: [...toSetu(), ...relayRoute(232, [58, 84, 0], true, 32.6), ...relayRoute(265, [66, 100, 0], false, 32.6).slice(0, 2), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
   );
 }
 
@@ -988,7 +989,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     'CCU-07': [['ccu07-girder', 32], ['ccu07-dui', 80], ['ccu07-horn', 124], ['ccu07-board', 160], ['ccu07-pylon', 200], ['ccu07-jowar', 240]],
     'CCU-08': [['ccu08-rok', 32]],
     'CCU-09': [['ccu09-sinri', 32], ['ccu09-dhak', 62], ['ccu09-uthan', 86], ['ccu09-line', 116]],
-    'CCU-10': [['ccu10-bus', 32], ['ccu10-chhad', 72], ['ccu10-phire', 98], ['ccu10-pherot', 128], ['ccu10-kumor', 152], ['ccu10-khola', 176], ['ccu10-kumir', 208], ['ccu10-setu', 232]],
+    'CCU-10': [['ccu10-bus', 32], ['ccu10-chhad', 72], ['ccu10-phire', 98], ['ccu10-pherot', 128], ['ccu10-kumor', 152], ['ccu10-khola', 176], ['ccu10-kumir', 208], ['ccu10-setu', 232], ['ccu10-setu-b', 265]],
   };
   const MOVE: Record<string, Step[]> = {
     stay: [{ hold: '', until: done, max: 1500 }],
@@ -1024,7 +1025,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   act('CCU-10', 'ccu10-bus', 0, 'jump', 'a long jump at the drain instead of the bus', 'ccu-nala');
   act('CCU-10', 'ccu10-kumor', 1, 'jump', 'a long jump off the first figure, past the next', 'ccu-ganga');
   act('CCU-10', 'ccu10-kumor', 1, 'stay', 'resting on the first figure', 'ccu-murti');
-  act('CCU-10', 'ccu10-setu', 8, 'walk', 'walking on from the tall porter into the load coming over', 'ccu-bojha');
+  act('CCU-10', 'ccu10-setu-b', 3, 'walk', 'walking on off the front of the tall porter', 'ccu-gaari');
 }
 
 /** a policy for each door ending, by kind */

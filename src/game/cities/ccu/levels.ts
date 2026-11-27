@@ -650,8 +650,8 @@ function finaleRoom(): LevelDef {
     build(w: World) {
       w.add(new Girders(px(4), px(30)));
       road10(w, px(6), px(28));
-      const b1 = w.add(new BookPorter({ x: px(5), v: 40, h: 0, go: (w2, me) => w2.player.isRiding(me.load), off: px(48) }, 1));
-      const b2 = w.add(new BookPorter({ x: px(0), v: 58, h: 0, go: () => b1.state !== 'idle', off: px(48) }, 3));
+      const b1 = w.add(new BookPorter({ x: px(5), v: 46, h: 0, go: (w2, me) => w2.player.isRiding(me.load), off: px(48) }, 1));
+      const b2 = w.add(new BookPorter({ x: px(0), v: 66, h: 0, go: () => b1.state !== 'idle', off: px(48) }, 3));
       const c1 = w.add(new Pointer(px(14), '#7B8D6E'));
       const c2 = w.add(new Pointer(px(21), '#A0522D'));
       const c3 = w.add(new Pointer(px(26), '#5C6BC0'));
@@ -685,7 +685,7 @@ function stopBus(id: string, flag: string, stopName: string, label: string, advi
       pool(w, c.x + 12, c.x + 25, 16, { colors: NALA, cause: 'ccu-nala' });
       sign(w, c.x + 2, 10.4, 3.2, 'BUS STOP', 'green', null, stopName);
       const stop = [c.X(1), c.X(5)];
-      const bus = w.add(new Bus({ x: c.X(-14), go: (w2) => w2.player.cx > c.X(1), slow: [[c.X(25), c.X(27.5)]], end: c.X(30), fast: 130, crawl: 24, label, hidden: true }));
+      const bus = w.add(new Bus({ x: c.X(-14), go: (w2) => w2.player.cx > c.X(1), slow: [[c.X(25), c.X(27.2)]], end: c.X(29.4), fast: 130, crawl: 24, label, hidden: true }));
       w.flags[flag] = { bus, stop };
       w.add(
         new (class extends Entity {
@@ -923,7 +923,7 @@ const dui3: Act = {
 const pherot: Act = {
   id: 'ccu10-pherot',
   cp0: false,
-  cps: [-1.3, 13],
+  cps: [-1.3, 10.9, 13],
   w: 24,
   advice: 'College Street again, but this customer is bringing books back: the stack he points at grows a book at a time, all the way up to the high stall. Stand on that one and ride it up. The quiet stack next to it is being bought down.',
   paint: (g, c) => {
@@ -939,7 +939,7 @@ const pherot: Act = {
     w.add(new Customer(c.X(9.2), '#00897B'));
     const buyer = w.add(new Customer(c.X(3.2), '#6D4C41'));
     onPass(w, c.X(1), (w2) => {
-      for (let k = 0; k < 7; k++) w2.after(0.6 + 0.8 * k, () => a.shelve(w2));
+      for (let k = 0; k < 7; k++) w2.after(0.5 + 0.7 * k, () => a.shelve(w2));
       [2, 3.5].forEach((t) => w2.after(t, () => buyer.ask(w2, b, 1, 0.6)));
     });
     w.flags.pherot = { a, b };
@@ -953,7 +953,7 @@ const kumir10: Act = {
   w: 24,
   // on the pandal's deck before the chalk, out of his reach
   cp0: false,
-  cps: [-3],
+  cps: [-3, 14],
   advice: 'The kumir again, but tonight he counts backwards, “tin… dui… ek…”, with his eyes wide open. Only when he stops counting does he cover his eyes: that’s when you cross. And hop the drain on the far bank.',
   paint: (g, c) => {
     g.pit(c.x + 9, c.x + 10);
@@ -1145,7 +1145,33 @@ const toran: Act = {
 
 
 /** CCU-10 acts 5 and 6: back over Howrah Bridge, on the porters, both ways up */
-const setu10a = relay('ccu10-setu', [45, 63, 83], true, 'Howrah Bridge again: tall porter, short one under you before his CHA board, tall one over you before the next, never jumping into a load coming the other way.', [-0.5]);
+/** half the room's relay (fix 3): two porters from one pylon step to the next, where the second sets down for
+ *  good. The bridge's relay is laid as two of these, so each leg starts when Dad steps on its first load */
+function relayHalf(id: string, v: [number, number], tallFirst: boolean, advice: string, cps: number[]): Act {
+  return {
+    id,
+    w: 33,
+    cp0: false,
+    cps,
+    advice,
+    paint: (g, c) => {
+      g.fill(c.x, c.x + 3, 14, 14, '#').fill(c.x + 1, c.x + 3, 13, 13, '#');
+    },
+    build: (w, c) => {
+      w.add(new Girders(c.X(0), c.X(33)));
+      road(w, c.X(4), c.X(33));
+      const [h1, h2] = tallFirst ? [TALL, SHORT] : [SHORT, TALL];
+      const r1 = tallFirst ? 20 : 24;
+      const a1 = w.add(new Porter({ x: c.X(5), v: v[0], h: h1, rests: [[c.X(r1), 3]], go: (w2, me) => w2.player.isRiding(me.load), kind: 'sack' }));
+      w.add(new Porter({ x: c.X(tallFirst ? 1 : -1), v: v[1], h: h2, rests: [[c.X(33.8), Infinity]], go: walking(a1), kind: 'books' }));
+      w.add(new Porter({ x: c.X(44), v: -48, h: TALL - 1, go: walking(a1), off: c.X(4) }));
+      w.add(new ChaiBoard(c.X(r1)));
+      w.add(new ChaiBoard(c.X(2), true));
+    },
+  };
+}
+const setu10a = relayHalf('ccu10-setu', [58, 84], true, 'Howrah Bridge again: the tall porter, then the short one under you before his CHA board, and off on to the middle pylon where he sets down.', [-0.5]);
+const setu10b = relayHalf('ccu10-setu-b', [66, 100], false, 'The second span: on to the short porter, and up on the tall one as he overtakes before the CHA board, never jumping into a load coming the other way.', [-0.5]);
 
 
 /** CCU-09 act: the canopy. Over a long stretch of lashed bamboo they let the canopy frame down on the
@@ -1311,5 +1337,5 @@ export const levels = (): LevelDef[] => [
   longStage({ base: howrahRoom(), par: 111, acts: [girder, dui, horn, board, pylon, jowar], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 19, acts: [rok], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
   longStage({ base: pandalRoom(), par: 62, acts: [sinri, dhak, uthan, line], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
-  longStage({ base: finaleRoom(), par: 127, acts: [bus10, chhad, phire, pherot, kumor10, khola, kumir10, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
+  longStage({ base: finaleRoom(), par: 127, acts: [bus10, chhad, phire, pherot, kumor10, khola, kumir10, setu10a, setu10b], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];
