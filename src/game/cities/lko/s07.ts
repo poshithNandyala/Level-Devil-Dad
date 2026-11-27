@@ -180,6 +180,10 @@ export const shaam: Act = {
           ctx.fillStyle = 'rgba(255,255,255,0.6)';
           for (let i = 0; i < 4; i++) ctx.fillRect(x0 + jig + 4 + i * 16, FLOOR - 58 + k2 * 58 + Math.abs(jig), 8, 2);
           if (jig) {
+            // the shop boy at the crank, letting this one down next
+            gent(ctx, x0 + 10, FLOOR, 17, '#E7D9C3', { face: 1, arms: 0.5 + 0.5 * Math.sin(w2.tick * 0.5), skin: '#9C6B48' });
+            ctx.fillStyle = '#3E2F25';
+            ctx.fillRect(x0 + 14, FLOOR - 22, 6, 2);
             ctx.strokeStyle = '#3E2F25';
             ctx.lineWidth = 1;
             ctx.beginPath();
