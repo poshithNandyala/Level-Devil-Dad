@@ -13,6 +13,7 @@ import type { Bank } from '../../src/game/cities/dis/bank';
 import type { Gate, Husori } from '../../src/game/cities/dis/husori';
 import type { Charge } from '../../src/game/cities/dis/gorh';
 import type { DholPlanks } from '../../src/game/cities/dis/dhol';
+import type { Loom } from '../../src/game/cities/dis/loom';
 import type { TugRope } from '../../src/game/cities/dis/tug';
 
 type Out = { move: 'L' | 'R' | ''; jump: boolean };
@@ -352,6 +353,19 @@ const dholTempo = (x: number, every: number): NonNullable<Step['policy']> => {
   };
 };
 const tug = (w: World) => (w.flags.tug as TugRope[])[0];
+/** on the loom's cloth, just behind its growing edge; hop the shuttle when it comes (if `hop`) */
+const weave = (hop = true): NonNullable<Step['policy']> => (w) => {
+  const l = (w.flags.loom as Loom[])[0];
+  const p = w.player;
+  if (l.done) return { move: 'R', jump: false };
+  const near = l.shuttle.on && Math.abs(l.shuttle.box.x + 5 - p.cx) < 30;
+  if (!p.onGround) return { move: '', jump: true };
+  if (hop && near) return { move: '', jump: true };
+  if (p.cx < l.x0 - 20) return { move: 'R', jump: false };
+  const edge = l.x0 + l.cloth.w;
+  if (l.cloth.w > 0 && p.cx < edge - 16 && !l.shuttle.on) return { move: 'R', jump: false };
+  return { move: '', jump: false };
+};
 type Play = (x: number) => Step[];
 const ACT_DEATHS: { act: string; stage: string; naive: [Play, string, string]; fix: [Play, string, string] }[] = [];
 const die = (x: number): Step[] => [{ hold: 'R', until: done, max: 6000 }];
@@ -392,6 +406,7 @@ act('dis06-chang', 'DIS-06', [changNaive, 'dis-bank', 'jumps at the stilt house'
 act('dis07-dhol', 'DIS-07', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholHop(110), until: (w) => done(w) || w.player.cx > px(x + 36), max: 6000 }, { hold: '', until: done, max: 900 }], 'dis-pukhuri', 'keeps the first tempo after the dhol quickens']);
 act('dis10-dhol', 'DIS-10', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholTempo(x, 84), until: done, max: 6000 }], 'dis-pukhuri', 'hops on the quick tempo from 07 after the drummer has slowed']);
 act('dis09-tug', 'DIS-09', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => tug(w).phase(w.tick).taut, max: 900, note: 'wait till it is taut' }, { hold: 'R', until: done, max: 900 }], 'dis-rope', 'goes the moment the rope is taut, whoever is winning']);
+act('dis05-taat', 'DIS-05', [(x) => [{ hold: 'R', until: X(x + 5.2), max: 600 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 900 }], 'dis-taat', 'takes a run and jumps the ditch: lands on the warp threads'], [(x) => [{ policy: weave(false), until: done, max: 2400 }], 'dis-shuttle', 'waits on the cloth by its edge without hopping']);
 act('dis08-jeep', 'DIS-08', [rhinoNaive, 'dis-beel', 'walks into the tall grass'], [rhinoFix, 'dis-gorh', 'waits at the edge of the grass, where the second jeep is']);
 act('dis08-bagori', 'DIS-08', [(x) => [{ hold: 'R', until: X(x + 2.4), max: 600 }, { hold: '', until: done, max: 2000 }], 'dis-gorh', 'stays on the bank: the rhino comes from behind'], [(x) => [{ hold: 'R', until: X(x + 1.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: '', until: (w) => charges(w).some((c) => c.d.c0 === x + 11 && c.phase === 'rest'), max: 2000 }, { hold: 'R', until: done, max: 2000 }], 'dis-gorh', 'off the hay as soon as the rhino stops halfway']);
 act('dis10-gamosa', 'DIS-10', [() => [{ hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'walks into every giver'], [(x) => [{ hold: 'R', until: X(x + 12.4), max: 600 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'a little hop over the third giver, into the fourth']);
@@ -724,6 +739,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir > 0 && p.t < 6; }, max: 2400, note: 'wait for the far team’s red flag' },
     { hold: 'R', until: and(ground, X(x + 32)), max: 600, note: 'across on the rope at once' },
   ]),
+  'dis05-taat': mark('dis05-taat', (x) => [{ policy: weave(), until: and(ground, X(x + 24)), max: 3000, note: 'on the cloth by its edge, a hop over the shuttle each pass' }]),
   'dis07-chowk': (x) => [{ policy: atTheGate(2), until: and(ground, X(x + 73)), max: 7000, note: 'three gates, the middle one after the gamosas' }],
   'dis06-majuli': (x) => [
     { hold: 'R', until: X(x + 2.7), max: 600, note: 'run to the edge' },
