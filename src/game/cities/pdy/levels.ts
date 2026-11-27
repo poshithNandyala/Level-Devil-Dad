@@ -10,6 +10,7 @@ import { tour } from '../../levels/tour';
 import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
 import { Kepi } from '../../entities/tamil';
+import { MIMOSA_META, PETANQUE_META, aaru, carreau, doublette, mimosaRoom, petanqueRoom, pointe, thenga, tir } from './encores';
 
 // Puducherry: yellow walls, cobbled rues, a rocky seafront that sneezes,
 // bollards that close the beach road at six, and a canal bridge that opens
@@ -290,7 +291,7 @@ export const levels = (): LevelDef[] => [
       [88, "Cycle vaadagaikku! | Bicycles for hire!"],
     ],
     ride: "cart",
-    item: "croissant",
+    item: "pdy-croissant",
     signs: [[8, "RUE DE LA PLAGE", "beach road"], [55, "WHITE TOWN", "quartier français"], [102, "PROMENADE", "rock beach"]],
     props: [
       ["bougain", 4, {}],
@@ -330,12 +331,12 @@ export const levels = (): LevelDef[] => [
       prop(w, 'umbrellas', 27, 12, { n: 2 });
       thing(w, 'lighthouse', 1, 4, { solid: false, layer: -6 });
       rival(w, 26, 12, -1, tara(0, -1));
-      collectible(w, 'croissant', 14, 9.2);
+      collectible(w, 'pdy-croissant', 14, 9.2);
     },
   },
     par: 15,
     acts: [rockPools],
-    twist: 'shuffle',
+    twist: 'pdy-shuffle',
   }),
   longStage({
     base: {
@@ -368,7 +369,7 @@ export const levels = (): LevelDef[] => [
           scooter.moveTo(w2, px(-3), scooter.y, 0.7, 'in', () => scooter.hide());
         }
       });
-      thing(w, 'awning', 12.5, 11.75, { oneWay: true, tint: '#1E88E5' });
+      thing(w, 'pdy-awning', 12.5, 11.75, { oneWay: true, tint: '#1E88E5' });
       let chased = false;
       w.when(
         (w2) => !chased && w2.player.onGround && w2.player.x >= px(18) && w2.player.y > px(13),
@@ -382,12 +383,12 @@ export const levels = (): LevelDef[] => [
       prop(w, 'bougain', 16, 10);
       prop(w, 'rueplaque', 21, 15, { label: 'Rue Dumas' });
       rival(w, 25, 15, -1, tara(2, -1));
-      collectible(w, 'croissant', 16, 7.6);
+      collectible(w, 'pdy-croissant', 16, 7.6);
     },
   },
     par: 13,
     acts: [frenchSigns],
-    twist: 'mirror',
+    twist: 'pdy-mirror',
   }),
   longStage({
     base: {
@@ -417,9 +418,9 @@ export const levels = (): LevelDef[] => [
       const sockets = [11, 15, 19, 23];
       const lit = [true, true, true, false];
       sockets.forEach((tx, i) => {
-        const b = thing(w, 'bollard', tx, 15, { dx: 4, w: 8, h: 24, layer: -4 });
+        const b = thing(w, 'pdy-bollard', tx, 15, { dx: 4, w: 8, h: 24, layer: -4 });
         const cx = px(tx) + 8;
-        if (lit[i]) thing(w, 'lights', tx, 7.6, { dx: -8, solid: false, deadly: 'burnt' });
+        if (lit[i]) thing(w, 'pdy-lights', tx, 7.6, { dx: -8, solid: false, deadly: 'burnt' });
         let up = false;
         w.onTick((w2) => {
           if (!six || up) return;
@@ -443,12 +444,12 @@ export const levels = (): LevelDef[] => [
       prop(w, 'umbrellas', 3, 15, { n: 1 });
       sign(w, 25.4, 5.6, 3.2, 'CAFÉ', 'shop', null, 'balcony seats', false);
       rival(w, 26, 9, -1, tara(3, -1));
-      collectible(w, 'croissant', 22, 7.4);
+      collectible(w, 'pdy-croissant', 22, 7.4);
     },
   },
     par: 15,
     acts: [sixOClock],
-    twist: 'lamp',
+    twist: 'pdy-lamp',
   }),
   longStage({
     base: {
@@ -503,13 +504,13 @@ export const levels = (): LevelDef[] => [
       prop(w, 'bougain', 4, 15);
       sign(w, 6, 10.6, 3.6, 'GRAND CANAL', 'green', 'right', 'Tamil town this side');
       rival(w, 25, 15, -1, tara(4, -1));
-      collectible(w, 'croissant', 11, 11.4);
+      collectible(w, 'pdy-croissant', 11, 11.4);
       void Thing;
     },
   },
     par: 22,
     acts: [ferries],
-    twist: 'bells',
+    twist: 'pdy-bells',
   }),
   // ------------------------------------------------------------------ around Puducherry
   longStage({
@@ -545,7 +546,7 @@ export const levels = (): LevelDef[] => [
         w2.flags.dryLeft = m >= 1.6 && m < 2.7 ? 2.7 - m : 0;
       });
       // the big beach umbrella: folds the first time, bounces you the second
-      const umb = thing(w, 'umbrella', 24.5, 0, { dy: 208, w: 34, h: 32, oneWay: true, tint: '#E8572A' });
+      const umb = thing(w, 'pdy-umbrella', 24.5, 0, { dy: 208, w: 34, h: 32, oneWay: true, tint: '#E8572A' });
       let folded = false;
       let busy = false;
       w.onTick((w2) => {
@@ -570,12 +571,12 @@ export const levels = (): LevelDef[] => [
         }
       });
       rival(w, 28, 9, -1, { intro: 'Paradise Beach-ku vaa! Tide paathu po! | Come to Paradise Beach! Watch the tide!', point: -1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
-      collectible(w, 'croissant', 16, 10.6);
+      collectible(w, 'pdy-croissant', 16, 10.6);
     },
   },
     par: 24,
     acts: [jumpyPalms],
-    twist: 'mime',
+    twist: 'pdy-mime',
   }),
   longStage({
     base: {
@@ -593,7 +594,7 @@ export const levels = (): LevelDef[] => [
       const sea = water(w, 14.5, { rate: 0, minTy: 6, colors: ['rgba(40,140,200,0.8)', 'rgba(10,60,120,0.95)'], cause: 'splash' });
       const tints = ['#FF7043', '#26C6DA', '#FFCA28', '#AB47BC', '#66BB6A'];
       [5, 9, 13, 17, 21].forEach((tx, i) => {
-        const b = thing(w, 'surfboard', tx, 0, { dy: 220, oneWay: true, tint: tints[i] });
+        const b = thing(w, 'pdy-surfboard', tx, 0, { dy: 220, oneWay: true, tint: tints[i] });
         w.onTick((w2) => {
           const t = w2.tick * DT;
           b.place(w2, px(tx) + Math.sin(t * 0.9 + i * 1.7) * 10, 218 + Math.sin(t * 2.2 + i) * 5);
@@ -611,7 +612,7 @@ export const levels = (): LevelDef[] => [
         },
       );
       rival(w, 29, 7, -1, { intro: 'Surf pannalaam vaa! Board mela yeru! | Let’s surf! Get on a board!', point: -1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[1] });
-      collectible(w, 'croissant', 12.5, 10.4);
+      collectible(w, 'pdy-croissant', 12.5, 10.4);
     },
   },
     // the only way on is over the top platform: a wall, then steps down to the road
@@ -639,7 +640,7 @@ export const levels = (): LevelDef[] => [
       const street = (cx: number, period: number, phase: number) => {
         const fire = () => {
           if (w.state !== 'play') return;
-          const r = shot(w, 'rocket', cx - 3, 290, 0, -330, 0, 'burnt');
+          const r = shot(w, 'pdy-rocket', cx - 3, 290, 0, -330, 0, 'burnt');
           w.sfx('whistle', cx, 280);
           w.after(0.75, () => {
             if (!r.alive) return;
@@ -681,11 +682,14 @@ export const levels = (): LevelDef[] => [
         for (let i = 0; i < 12; i++) w2.after(i * 0.09, () => (shot(w2, 'spark', px(25.5) + (i % 6) * 14, -10 - (i % 3) * 20, (i % 2 ? 1 : -1) * 12, 60, 300, 'burnt').stopOnSolid = true));
       });
       rival(w, 28, 11, -1, { intro: 'Bastille Day! Rooftop-la vaa, Dad! | Bastille Day! Come up on the rooftops, Dad!', point: -1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
-      collectible(w, 'croissant', 21.5, 5.2);
+      collectible(w, 'pdy-croissant', 21.5, 5.2);
     },
   },
     par: 17,
-    twist: 'fakewin',
+    twist: 'pdy-fakewin',
     acts: [sparkRain],
   }),
+  // ------------------------------------------------------------------ encores (the new bar: ten stages)
+  longStage({ base: petanqueRoom(), acts: [pointe, carreau, doublette, tir], twist: 'pdy-boule-pile', par: 75, shape: 'long', meta: PETANQUE_META }),
+  longStage({ base: mimosaRoom(), acts: [thenga, aaru], twist: 'pdy-night-leaf', par: 60, shape: 'long', lives: 'act', meta: MIMOSA_META }),
 ];
