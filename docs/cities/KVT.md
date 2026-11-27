@@ -33,7 +33,7 @@ Notes for the integrator (MECHANICS.md, WAVE1.md, CITIES.md). Branch `city/kvt`.
   `kvt10-irakkam` calls back the city in a new order: the tour's tide-shrinking coral steps, and between them a
   hole with eyes (KVT-06's moray). Door `kvt-sand-arm`: the octopus's arm lies across the threshold the colour
   of the sand; the sand that ripples is the arm. Jump it.
-  The finale (route 93.1 s, `lives: 'act'`, 21 calm checkpoints): each act calls back one KVT idea and
+  The finale (route 86.7 s after QA round 4, `lives: 'act'`, calm checkpoints): each act calls back one KVT idea and
   breaks the rule it taught. `kvt10-palaka` the rotten plank is the way down to the catwalk (jump over it, as Tara says, and the far planks give way with the catwalk hung under them); `kvt10-kallu` on
   the rubble the far tile of step 2 is an octopus, land in the middle; `kvt10-aama` a nest behind you (run on),
   then one ahead (wait); `kvt10-choora` high tuna you walk under (two gaps, one and two tiles), then a low boat whose tuna you hop;
@@ -41,12 +41,15 @@ Notes for the integrator (MECHANICS.md, WAVE1.md, CITIES.md). Branch `city/kvt`.
   `kvt10-kaattu` tailwind then headwind, jump in the calm; `kvt10-kamaanam` the dolphin under a jagged arch,
   ride over and step off coming down; `kvt10-nizhal` the lighthouse beam takes steps away, step on after it
   passes; `kvt10-veliyettam` the incoming tide, KVT-08's rule reversed: three heads that go under while you move on them and hold while you stand (`SinkStep` 'move'); `kvt10-paaru` the reef rises only
-  for a jumper; `kvt10-kotta` KVT-05's basket reversed: stay in to the very end, it runs on along its cable to the
-  boats, and the landing it passes on the way down is rotten over the reef; `kvt10-thoni` the boat that is not
-  coming back. (Fix round 4 cut `kvt10-kannadi`, the cracked glass: it re-asked KVT-08's "keep moving".)
+  for a jumper; `kvt10-thoni` the boat that is not coming back. (Fix round 4 cut `kvt10-kannadi`, the cracked
+  glass: it re-asked KVT-08's "keep moving". QA round 4 cut `kvt10-kotta`, the basket you stay in past a rotten
+  landing to the very end: its thought, "the ride isn't over at the first place you could get off", is Gangtok's
+  yak that stops for photos on thin ice (`GTK-09/room`, `gtk09-dophoto`, committed earlier, so it wins). No other
+  break of KVT-05's basket was found that is neither that nor KVT-05's own "get off before the end". KVT-10 is
+  86.7 s, honestly under the 90 s floor.)
 - Acts: `kvt09-pavizham kvt09-kodumudi kvt09-kadalbhitti kvt09-ozhukku kvt09-varambu kvt09-murivu`
   `kvt10-midden kvt10-palaka kvt10-kallu kvt10-aama kvt10-choora kvt10-thengu kvt10-irandu kvt10-kaattu`
-  `kvt10-kamaanam kvt10-nizhal kvt10-veliyettam kvt10-paaru kvt10-kotta kvt10-thoni kvt10-irakkam`.
+  `kvt10-kamaanam kvt10-nizhal kvt10-veliyettam kvt10-paaru kvt10-thoni kvt10-irakkam`.
 - Door endings: `kvt-buried-door kvt-sand-arm`.
 - Checkpoints: `kvt/lead.ts` puts plain ground in front of acts whose water started a tile or three in (`lead`), or
   moves an act's checkpoint back on to the ground before it (`back`, KVT-04/07/08), so every checkpoint survives

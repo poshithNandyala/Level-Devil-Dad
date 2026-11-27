@@ -1177,68 +1177,7 @@ const jumpReef: Act = {
   },
 };
 
-/** KVT-10 act, KVT-05's fish basket turned over: in Minicoy you got off before the end of its run, or it took you
- *  into the pulley. This basket lowers you from the high pier past a landing, and then runs on along its cable,
- *  low over the lagoon, to the boats: stay in it to the very end. The landing it passes is rotten, and under the
- *  pier is the jagged reef. */
-const lowerBasket: Act = {
-  id: 'kvt10-kotta',
-  w: 25,
-  advice: 'Up the steps to the high pier and into the fish basket. It lowers you past a landing and then runs on along its cable, low over the lagoon, to the boats: stay in to the very end. The landing is rotten.',
-  paint: (g, c) => {
-    const x = c.x;
-    g.fill(x + 1, x + 2, 13, 17, '#').fill(x + 3, x + 6, 11, 17, '#');
-    g.pit(x + 7, x + 19);
-    // under the pier, the reef: jagged rock, not water
-    g.fill(x + 7, x + 12, 16, 16, '^').fill(x + 7, x + 12, 17, 17, '#');
-    g.fill(x + 20, x + 24, 14, 17, '#');
-  },
-  build: (w, c) => {
-    const { X } = c;
-    pool(w, c.x + 13, c.x + 20, 15.3, { colors: LAGOON });
-    // the landing the basket passes on its way down: it looks like the place to get off, and it is rotten
-    const landing = w.add(new Thing('jetty', X(11), px(12), { w: px(2) }));
-    landing.tint = '#6D4C33';
-    let landingGone = false;
-    w.when(
-      (w2) => !landingGone && w2.standing(landing.solid),
-      (w2) => {
-        landingGone = true;
-        w2.sfx('crack', landing.cx, landing.y);
-        landing.fall(w2, { delay: 0.05, land: false });
-      },
-    );
-    // the cable it runs on, from the pier out over the lagoon to the boats
-    w.add(new Paint((ctx) => {
-      ctx.strokeStyle = 'rgba(70,50,30,0.8)';
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(X(8.5), px(10));
-      ctx.lineTo(X(8.5), px(13));
-      ctx.lineTo(X(18.5), px(13));
-      ctx.stroke();
-    }));
-    const basket = w.add(new Thing('crate', X(7), px(11), { w: px(3), h: 12 }));
-    basket.tint = '#B07A3A';
-    let on = false;
-    w.onTick((w2) => {
-      if (!on && w2.standing(basket.solid)) {
-        on = true;
-        w2.sfx('creak', basket.cx, basket.y);
-        w2.say('Thazhekku! | Going down!', basket.cx, basket.y - 30, 1, 'npc');
-      }
-      if (!on) return;
-      // down to the cable's low run, then along it to the boats, and there it stops
-      if (basket.solid.y < px(14)) basket.solid.moveBy(w2, 0, Math.min(40 * DT, px(14) - basket.solid.y));
-      else if (basket.solid.x < X(17)) basket.solid.moveBy(w2, Math.min(60 * DT, X(17) - basket.solid.x), 0);
-    });
-    w.flags[c.f('basket')] = basket;
-    sign(w, c.x + 3.2, 11 - 4.4, 3.4, 'FISH', 'wood', 'right', 'to the boats');
-    onPass(w, X(5), (w2) => taraSays(w2, 'Aa padiyil irangu, Dad! | Get off at that landing, Dad!', 2.4));
-  },
-};
-
-export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, archDolphin, shadowSteps, risingTide, jumpReef, lowerBasket, leavingBoat, tideHoles].map(lead) };
+export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, archDolphin, shadowSteps, risingTide, jumpReef, leavingBoat, tideHoles].map(lead) };
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {
