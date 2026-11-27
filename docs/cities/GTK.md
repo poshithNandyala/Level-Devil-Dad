@@ -55,3 +55,10 @@ the backdrop has the massif, the ridge, the ropeway's line and the town on the s
 
 See `/local/home/saiposh/personal/ldd-inbox/reports/cities/gtk/BUILD.md` for the full `LDD_N=80 npm run fair -- GTK`
 output and the route times against par; round 2's N=80 runs and probe tables are in `LENGTH-2.md` there.
+
+Round 3 (`LENGTH-3.md`) made every checkpoint calm. `tests/cpsafe.test.ts -t GTK` passes idle, run and tap-jump at
+lag 0/6/12 on all ten stages. It got there by widening the banks before the thin shore in 09 and 10 `chauri`, moving
+03 `kagaz`'s jhora 2 tiles on, taking the 05 and 10 `peechha` checkpoints empty-handed, pulling the 01 tour
+checkpoints clear of a tap-jump into the brooms, and adding checkpoints on the 02 shelf and the `ulta` walkway.
+Replay to a trap is still over 7.5 s on 02, 05, 06, 07, 08, 09 and 10. Each of those is one ride or one cloud wait,
+and the probe's `replay` test names the stretch.
