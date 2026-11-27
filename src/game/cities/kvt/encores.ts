@@ -206,21 +206,21 @@ const overhang: Act = {
 /** KVT-09 act 2: the crest the storm breached: two cuts of lagoon water through it, and rubble beyond each. */
 const breaches: Act = {
   id: 'kvt09-murivu',
-  w: 30,
-  advice: 'The storm cut the crest in two places. The rubble past each cut slides you back towards it when you land: jump well past the cut, never just over it.',
+  w: 40,
+  advice: 'The storm cut the crest in three places. The rubble past each cut slides you back towards it when you land: jump well past the cut, never just over it.',
   paint: (g, c) => {
     const x = c.x;
-    g.fill(x + 1, x + 27, 13, 17, '#').fill(x + 28, x + 29, 14, 17, '#');
-    g.pit(x + 6, x + 7, 13).pit(x + 16, x + 17, 13);
+    g.fill(x + 1, x + 37, 13, 17, '#').fill(x + 38, x + 39, 14, 17, '#');
+    g.pit(x + 6, x + 7, 13).pit(x + 16, x + 17, 13).pit(x + 26, x + 27, 13);
   },
   build: (w, c) => {
     const { X } = c;
-    pool(w, c.x + 6, c.x + 8, 15.3, { colors: LAGOON });
-    pool(w, c.x + 16, c.x + 18, 15.3, { colors: LAGOON });
+    for (const t of [6, 16, 26]) pool(w, c.x + t, c.x + t + 2, 15.3, { colors: LAGOON });
     w.add(
       new RubbleBank([
         { c0: c.x + 8, c1: c.x + 11, top: 13 },
         { c0: c.x + 18, c1: c.x + 21, top: 13 },
+        { c0: c.x + 28, c1: c.x + 31, top: 13 },
       ]),
     );
     sign(w, c.x + 2.4, 13 - 4.4, 3.4, 'MURIVU', 'warn', null, 'storm cut');
@@ -380,51 +380,53 @@ const seaWall: Act = {
 };
 
 const DOWN2 = (x: number): RubbleRect[] => [
-  { c0: x + 15, c1: x + 17, top: 10 },
-  { c0: x + 18, c1: x + 18, top: 11 },
-  { c0: x + 19, c1: x + 21, top: 12 },
-  { c0: x + 22, c1: x + 22, top: 13 },
-  { c0: x + 23, c1: x + 25, top: 14 },
+  { c0: x + 15, c1: x + 17, top: 8 },
+  { c0: x + 18, c1: x + 18, top: 9 },
+  { c0: x + 19, c1: x + 21, top: 10 },
+  { c0: x + 22, c1: x + 22, top: 11 },
+  { c0: x + 23, c1: x + 25, top: 12 },
+  { c0: x + 26, c1: x + 26, top: 13 },
+  { c0: x + 27, c1: x + 29, top: 14 },
 ];
 /** KVT-09 act: down to the lagoon again, but every other step is one tile: walk off on to one of those and the
  *  slide carries you over its front edge. Hop over the narrow ones. (Up a plain rock stair first.) */
 const downAgain: Act = {
   id: 'kvt09-irangal',
-  w: 38,
+  w: 42,
   advice: 'Down to the lagoon side again, but every other step is a single tile: walk off on to one and the slide takes you straight over its edge. Hop over each narrow step to the wide one below it.',
   paint: (g, c) => {
     const x = c.x;
-    g.fill(x + 2, x + 4, 13, 17, '#').fill(x + 5, x + 7, 11, 17, '#');
-    g.fill(x + 8, x + 14, 9, 17, '#');
+    g.fill(x + 2, x + 4, 13, 17, '#').fill(x + 5, x + 7, 11, 17, '#').fill(x + 8, x + 10, 9, 17, '#');
+    g.fill(x + 11, x + 14, 7, 17, '#');
     for (const r of DOWN2(x)) g.fill(r.c0, r.c1, r.top, 17, '#');
-    g.pit(x + 26, x + 27);
+    g.pit(x + 30, x + 31);
   },
   build: (w, c) => {
     const { X } = c;
     w.add(new RubbleBank(DOWN2(c.x), 1));
-    pool(w, c.x + 26, c.x + 28, 15.3, { colors: LAGOON });
-    sign(w, c.x + 12.2, 9 - 4.4, 3.4, 'IRAKKAM', 'wood', 'right', 'lagoon side');
+    pool(w, c.x + 30, c.x + 32, 15.3, { colors: LAGOON });
+    sign(w, c.x + 11.2, 7 - 4.4, 3.4, 'IRAKKAM', 'wood', 'right', 'lagoon side');
     onPass(w, X(13), (w2) => taraSays(w2, 'Padi padiyaayi nadannu irangu! | Walk down step by step!', 2.4));
   },
 };
 
-const RIDGE = (x: number): RubbleRect[] => Array.from({ length: 6 }, (_, i) => ({ c0: x + 3 + i * 4, c1: x + 5 + i * 4, top: 13, ridge: true }));
+const RIDGE = (x: number): RubbleRect[] => Array.from({ length: 9 }, (_, i) => ({ c0: x + 3 + i * 4, c1: x + 5 + i * 4, top: 13, ridge: true }));
 /** KVT-09 act: a thin rubble ridge out across the lagoon, water on both sides. Each heap runs off towards the
  *  nearer water: land deep, as the bank taught you, and it slides you off the far side. Only the middle holds. */
 const ridge: Act = {
   id: 'kvt09-varambu',
-  w: 32,
+  w: 44,
   advice: 'A thin ridge of rubble heaps with water on both sides: each heap runs off towards the nearer edge, so landing deep slides you off its far side. Land in the middle of each heap; only the middle holds.',
   paint: (g, c) => {
     const x = c.x;
     g.fill(x, x + 1, 13, 17, '#');
-    g.pit(x + 2, x + 27);
+    g.pit(x + 2, x + 39);
     for (const r of RIDGE(x)) g.fill(r.c0, r.c1, r.top, 17, '#');
-    g.fill(x + 28, x + 31, 13, 17, '#');
+    g.fill(x + 40, x + 43, 13, 17, '#');
   },
   build: (w, c) => {
     const { X } = c;
-    pool(w, c.x + 2, c.x + 28, 15.3, { colors: LAGOON });
+    pool(w, c.x + 2, c.x + 40, 15.3, { colors: LAGOON });
     w.add(new RubbleBank(RIDGE(c.x)));
     sign(w, c.x + 0.2, 13 - 4.4, 3.4, 'VARAMBU', 'warn', null, 'water both sides');
     onPass(w, X(2), (w2) => taraSays(w2, 'Munpathe pole akathu chaadu! | Land deep, like before!', 2.4));
@@ -850,7 +852,26 @@ const turtlesBehind: Act = {
   },
 };
 
-export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, risingTide, tideHoles] };
+/** KVT-10 act, KVT-06 turned over: two moray holes in the reef flat. On the reef you crossed once the moray had
+ *  lunged and slid back; these slide back and strike again at once. Cross after the second strike. */
+const twiceEels: Act = {
+  id: 'kvt10-irandu',
+  w: 26,
+  advice: 'Two moray holes, and these morays strike twice: after the first lunge one slides back and comes straight out again. Wait for the second strike to go back in, then cross.',
+  build: (w, c) => {
+    const { X } = c;
+    const e1 = w.add(new Eel(X(8) + 8, FLOOR, -1, 40, true));
+    w.add(new Eel(X(17) + 8, FLOOR, -1, 40, true));
+    sign(w, c.x + 0.4, G - 4.4, 3.4, 'MORAY', 'warn', null, 'they bite twice');
+    // Tara the moment the first strike has slid back in: the lie the second strike waits for
+    w.when(
+      () => e1.strikes >= 1,
+      (w2) => taraSays(w2, 'Poyi! Ippo odu! | It’s gone in! Run now!', 2),
+    );
+  },
+};
+
+export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, twiceEels, risingTide, tideHoles] };
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {

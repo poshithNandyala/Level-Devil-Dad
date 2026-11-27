@@ -215,6 +215,7 @@ export class Jelly extends Entity {
 /** A moray eel in a hole in the reef: it lunges out when you swim close, then slides back in. */
 export class Eel extends Entity {
   out = 0;
+  strikes = 0;
   state: 'in' | 'lunge' | 'out' | 'back' | 'rest' = 'in';
   private t0 = 0;
   hazard: Hazard;
@@ -224,6 +225,8 @@ export class Eel extends Entity {
     /** -1: up out of the sea floor, 1: down out of the reef roof */
     readonly dir: -1 | 1,
     readonly len: number,
+    /** a moray that slides back and strikes again at once, every time (KVT-10) */
+    readonly twice = false,
   ) {
     super();
     this.layer = 3;
@@ -268,8 +271,11 @@ export class Eel extends Entity {
       case 'back':
         this.out = Math.max(0, 1 - dt / 30);
         if (dt >= 30) {
-          this.state = 'rest';
+          this.strikes++;
+          // (the twice moray goes straight back out after its first strike: it rests only after the second)
+          this.state = this.twice && this.strikes % 2 === 1 ? 'lunge' : 'rest';
           this.t0 = w.tick;
+          if (this.state === 'lunge') w.sfx('snap', this.x, this.base);
         }
         break;
       case 'rest':
