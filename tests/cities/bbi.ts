@@ -788,6 +788,10 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'stay on your badi', cause: 'bbi-bhanwar', steps: (x) => [...hop(x + 1.4, 'up on the rim'), { hold: '', until: ground, max: 300 }, leap((w) => pl(w).bx[0] + 13, 'on to it', () => true, 5), { hold: '', until: done, max: 1500 }] },
     { what: 'hop for the far rim at the last moment', cause: 'bbi-pakhala', steps: (x) => [...hop(x + 1.4, 'up on the rim'), { hold: '', until: ground, max: 300 }, leap((w) => pl(w).bx[0] + 13, 'on to it', () => true, 5), stayOn((w) => pl(w).bx[0] + 13, (w) => pl(w).bx[0] + 13 > px(x + 9) - 10, 'to the hole', 1500), { hold: 'R', jump: 15, ticks: 15 }, { hold: 'R', until: done, max: 600 }] },
   ],
+  'bbi10-chakra': [
+    { what: 'wait on the hub for the slam, as before', cause: 'bbi-chakka', steps: (x) => [...chakraRun(x).slice(0, 7), { hold: '', until: done, max: 900 }] },
+    cFix(8, 'bbi10ck'),
+  ],
   'bbi10-ghungur': [
     { what: 'jump the bells and walk the quiet, as before', cause: 'bbi-nacha', steps: (x) => [...hop(x + 5.3, 'over the bells'), { hold: 'R', until: done, max: 600 }] },
     { what: 'wait at the edge for the lamps', cause: 'bbi-thrown', steps: (x) => [{ hold: 'R', until: X(x + 3.2), max: 400 }, waitFor((w) => (w.flags.bbi10gh as { phase: string; t0: number }).t0 >= 0 && (w.flags.bbi10gh as { phase: string }).phase !== 'dark', 'the lamps come back'), { hold: 'R', until: done, max: 600 }] },
@@ -1059,6 +1063,21 @@ const kachhaRun = (x: number): Step[] => [
 ];
 /** the ghungur: in the dark, jump each ringing spot (7, 12, 17), walk the quiet floor between */
 const ghungurRun = (x: number): Step[] => [...hop(x + 5.3, 'over the bells at 7'), ...hop(x + 10.3, 'over the bells at 12'), ...hop(x + 15.3, 'over the bells at 17'), { hold: 'R', until: X(x + 22.5), max: 300 }];
+/** the finale's chariot: on to the hub that rides the stone, then up on to the still rim before the slam */
+const chakraRun = (x: number): Step[] => [
+  ...hop(x + 1.4, 'up on the plinth'),
+  { hold: 'R', until: X(x + 8 - 1.3), max: 400 },
+  { hold: 'R', jump: 11, ticks: 11, note: 'up on the horses' },
+  { hold: 'R', until: ground, max: 200 },
+  { hold: 'R', until: ground, max: 200 },
+  { hold: '', until: (w) => chOf(w, 'bbi10ck').started >= 0, max: 300, note: 'it moves' },
+  hubJump((w) => chOf(w, 'bbi10ck'), false),
+  stayOn((w) => chOf(w, 'bbi10ck').hub.x + 20, (w) => chOf(w, 'bbi10ck').hub.x >= px(x + 13.5), 'ride the hub under the rim', 600),
+  { steer: (w) => { const d = px(x + 14) + 20 - w.player.cx; return d > 4 ? 'R' : d < -4 ? 'L' : ''; }, jump: 14, ticks: 50, note: 'up on to the still rim' },
+  stayOn(() => px(x + 14) + 20, (w) => chOf(w, 'bbi10ck').stopped, 'the stone slams under the rim'),
+  leap(() => px(x + 19.5), 'up on to the wall'),
+  { hold: 'R', until: and(ground, X(x + 23.2)), max: 400 },
+];
 const ph10 = (w: World) => w.flags.bbi10ph as { t0: number; floats: { x: number }[] };
 /** the finale's server: wait back while he throws hard, then ride the first soft one (the fourth) */
 const phinga10Run = (x: number): Step[] => [
@@ -1223,6 +1242,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi07-sajaghara': sa
   'bbi07-ghungur': ghungurRun,
   'bbi07-kachha': kachhaRun,
   'bbi10-ghungur': ghungur10Run,
+  'bbi10-chakra': chakraRun,
   'bbi10-phinga': phinga10Run,
   'bbi10-tantu': tantu10Run,
   'bbi09-ulta': chAct('bbi9u', 9, 8),

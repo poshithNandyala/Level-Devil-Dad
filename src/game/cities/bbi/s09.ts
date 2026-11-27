@@ -70,6 +70,9 @@ export interface ChariotCfg {
   bare?: boolean;
   /** a second after the slam the plinth sinks into the moat */
   back?: boolean;
+  /** the finale's turn (law 7): the hub is fixed to the plinth and slides with it into the wall; the wheel's rim
+   *  above, where 09's hub hung, stays still */
+  hubRides?: boolean;
 }
 export interface ChariotSt {
   started: number;
@@ -112,8 +115,10 @@ export function chariot(w: World, cfg: ChariotCfg, key: string) {
     }),
   );
   if (cfg.bare) horses.setSolid(false);
+  // riding, the hub stands on a post out past the horses, so it passes under the rim on its way to the wall
+  const hub0 = cfg.hubRides ? px(cfg.hub) - dist + px(4.5) : px(cfg.hub);
   const hub = w.add(
-    new Rig(px(cfg.hub), cfg.hubY, 40, 6, {
+    new Rig(hub0, cfg.hubY, 40, 6, {
       solid: true,
       layer: 4,
       paint: (ctx, r) => {
@@ -124,6 +129,18 @@ export function chariot(w: World, cfg: ChariotCfg, key: string) {
   );
   st.plinth = plinth;
   st.hub = hub;
+  // the rim: a stone arc at the top of the wheel, where 09's hub hung; it does not move
+  if (cfg.hubRides)
+    w.add(
+      new Rig(px(cfg.hub), cfg.hubY - 38, 40, 6, {
+        solid: true,
+        layer: 4,
+        paint: (ctx, r) => {
+          box(ctx, r.x, r.y, r.w, r.h, '#B9A07A');
+          box(ctx, r.x + 2, r.y, r.w - 4, 2, '#D8C49A');
+        },
+      }),
+    );
   // the drive: entities update before Dad, so the plinth carries him
   w.add(
     new Rig(0, 0, 0, 0, {
@@ -142,7 +159,7 @@ export function chariot(w: World, cfg: ChariotCfg, key: string) {
             st.stopped = true;
             st.moving = false;
             // the slam: whoever rides the chariot is thrown forward against the temple wall
-            if (plinth.rides(w2) || horses.rides(w2)) {
+            if (plinth.rides(w2) || horses.rides(w2) || (cfg.hubRides && hub.rides(w2))) {
               const p = w2.player;
               // hard enough to reach the wall from anywhere on the stone
               p.vx = Math.max(240, (px(cfg.stopAt) - p.x) * 2.6);
@@ -157,6 +174,10 @@ export function chariot(w: World, cfg: ChariotCfg, key: string) {
           st.x = nx;
           plinth.moveTo(w2, nx, FL - 16);
           horses.moveTo(w2, nx + L - 48, FL - 36);
+          if (cfg.hubRides) {
+            hub.moveTo(w2, hub0 + (nx - x0), cfg.hubY);
+            hub.solid!.velX = 0;
+          }
           // a jump off the sliding stone keeps none of its speed: it's a heavy, slow push
           plinth.solid!.velX = 0;
           horses.solid!.velX = 0;
@@ -172,7 +193,12 @@ export function chariot(w: World, cfg: ChariotCfg, key: string) {
           }
         }
       },
-      paint: (ctx) => wheelArt(ctx, px(cfg.hub) + 20, cfg.hubY + 3, 46),
+      paint: (ctx) => {
+        if (!cfg.hubRides) return wheelArt(ctx, px(cfg.hub) + 20, cfg.hubY + 3, 46);
+        // the hub on its post, fixed to the stone: it goes where the stone goes
+        box(ctx, hub.x + 18, cfg.hubY + 6, 4, 22, '#7A6A58');
+        box(ctx, hub.x - 10, cfg.hubY + 26, 34, 4, '#7A6A58');
+      },
     }),
   );
   return st;
@@ -294,7 +320,7 @@ export const act2: Act = {
 };
 
 /** a chariot act: plinth from column 3, `len` long, front stops at the wall at column 3 + len + slide */
-export function chariotAct(id: string, len: number, slide: number, hubAt: number, key: string, advice: string): Act {
+export function chariotAct(id: string, len: number, slide: number, hubAt: number, key: string, advice: string, hubRides = false): Act {
   const stop = 3 + len + slide;
   return {
     id,
@@ -306,7 +332,7 @@ export function chariotAct(id: string, len: number, slide: number, hubAt: number
     },
     build: (w, c) => {
       channel(w, c.x + 3, c.x + stop - 1, 'bbi-khai', 'water');
-      chariot(w, { c0: c.x + 3, len, stopAt: c.x + stop, hub: c.x + hubAt, hubY: FL - 58, wait: 0.4 }, key);
+      chariot(w, { c0: c.x + 3, len, stopAt: c.x + stop, hub: c.x + hubAt, hubY: FL - 58, wait: 0.4, hubRides }, key);
       templeWall(w, c.x + stop, px(11));
     },
   };
