@@ -248,14 +248,15 @@ export const kachraAct = (id: string, key: string, speed: number): Act => ({
     const b2 = bin(w, x + 10, true);
     planterPaint(w, x + 14, x + 15, 2);
     planterPaint(w, x + 24, x + 25, 1);
-    const st = { t0: -1, x: c.X(31) };
+    // he starts his round from the bed past the bins, so the wait by the first bin is short
+    const st = { t0: -1, x: c.X(20) };
     w.flags[key] = st;
     onPass(w, c.X(2), (w2) => {
       st.t0 = w2.tick;
     });
     // the bin man: walks in from the far end, stops at each full bin to tip it into his cart
     w.add(
-      new Rig(c.X(31), FL - 28, 12, 28, {
+      new Rig(c.X(20), FL - 28, 12, 28, {
         layer: 2,
         tick: (r, w2) => {
           if (st.t0 < 0 || (w2.tick - st.t0) / 120 < ROUND.start) return;
@@ -318,7 +319,8 @@ export const act4: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    litter(w, x + 2);
+    // the wrapper lies halfway down the round, so the act's second checkpoint is taken empty-handed
+    litter(w, x + 19.5);
     const bins = [x + 8, x + 13, x + 18, x + 23].map((cc) => bin(w, cc, true));
     planterPaint(w, x + 27, x + 28, 2);
     const st = { t0: -1, done: 0, bins };

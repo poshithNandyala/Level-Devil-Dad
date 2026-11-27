@@ -386,8 +386,7 @@ const act05c = (x: number): Step[] => [
   { policy: stepper(), until: X(x + 29), max: 1200, note: 'up on the bed, down, the next wrapper into the next bin, over the low bed' },
 ];
 const act05d = (x: number): Step[] => [
-  { policy: stepper(), until: X(x + 3), max: 600, note: 'the wrapper underfoot' },
-  { hold: 'R', until: X(x + 20), max: 900, note: 'on to the middle of the round' },
+  { hold: 'R', until: X(x + 20), max: 900, note: 'on to the middle of the round, and the wrapper underfoot there' },
   {
     policy: (w) => {
       const st = w.flags.gtk5p as { bins: { x: number; w: number; s: { full: boolean } }[] };
@@ -1018,7 +1017,7 @@ function actDeaths() {
   for (const id of ['gtk05-peeche', 'gtk05-do', 'gtk05-kachra'])
     actDeath('GTK-05', r5, id, 'straight on, wrapper in hand', on, 'gtk-jurmana');
   actDeath('GTK-05', r5, 'gtk05-peeche', 'wait for two, then bin it in the first one he emptied', (x) => [
-    ...act05d(x).slice(0, 2),
+    ...act05d(x).slice(0, 1),
     { hold: '', until: (w) => (w.flags.gtk5p as { done: number }).done >= 2, max: 2400 },
     ...on(),
   ], 'gtk-jurmana');

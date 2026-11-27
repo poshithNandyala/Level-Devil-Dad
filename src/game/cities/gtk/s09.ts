@@ -245,7 +245,8 @@ export const act3: Act = {
   },
   build: (w, c) => {
     lake(w, c.X(3), c.X(30));
-    thinShore(w, c.x + 5.5, c.x + 30);
+    // a 6.5-tile bank at the start: the act's checkpoint is 4.5 tiles or more from the thin shore
+    thinShore(w, c.x + 7, c.x + 30);
     river(w, c.x + 37, c.x + 37);
     yak(w, c.X(3), [{ wait: 0.8 }, { to: c.X(11) }, { wait: 2.0, photo: true }, { to: c.X(23) }, { wait: 2.0, photo: true }, { to: c.X(35) }, { sink: true }], 'mount', 'gtk9c');
     sign(w, c.x + 36, 8.6, 3.4, 'TSOMGO', 'wood', null, 'far bank');
