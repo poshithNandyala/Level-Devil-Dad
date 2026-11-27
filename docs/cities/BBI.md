@@ -86,6 +86,24 @@ Laterite red ground with carved caps, a blue-to-marigold afternoon sky, the cave
 (Udayagiri-Khandagiri), a white dome (Dhauli, backdrop only), generic curved stone towers (no shrine, no named
 temple), stadium floodlights and palms. Music: a Bhupali-like pentatonic at 96 bpm on a mardala-style theka.
 
+## Fix round 2 and QA round 2 (the state at merge)
+
+- **F6 closed:** every scripted play (141 of them: NAIVE, FIX and every act's MISTAKES) dies with its own labelled cause
+  at lag 0, 6 and 12 in the lagged-input model, and none stalls before its bait (lag-aware plays: press on distance,
+  stop short and jump from standing, steer in the air). No act pair collapses to one cause or one tick.
+- **Lines:** every death a walk, a hop, a long jump, waiting then walking, hopping every 0.3 s or backing off meets,
+  from every part's start at lag 0/6/12, names what met that play; `ownCauses()` gives the finale's callbacks their
+  own lines, so none teaches the rule the finale broke.
+- **F7 closed:** from every checkpoint a walk or a tap-walk of 4.5 tiles meets nothing (deaths only past +4.7, the
+  overshoot). **F8 closed:** the tour's FIX dies at the lip (`bbi-nala-lip`), not `bbi-nala`.
+- **Checks at merge (QA round 2):** lag-captured sweep at lag 0/6/11/12 x idle 0/37/120/251, idle, run and tap-jump
+  after every capture: 0 deaths, worst replay 7.24 s (03 m0); fair N=80 100/100 at 6/12 ticks on all ten, every
+  stretch 100; no unscripted play gets alive past the end of an act it started in.
+- **Hardening note (not blocking):** hopping every 0.3 s crosses several Raja acts (05 dhenki, gadi, khala, patra, bail,
+  mama), 06 patta, the 08 room and 10 patra/patta, and dies in a later act; walking straight through crosses
+  10 bagudi (its break is "walk straight through"). Raja's rule is "touch nothing", so a hopper that touches nothing
+  is right there; a later pass can give those acts a hazard where a mindless hop lands.
+
 ## Notes for MECHANICS / WAVE1
 
 - A jump off the sliding plinth keeps none of its speed (`solid.velX = 0`), so the hub is a straight jump up.
