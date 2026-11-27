@@ -1,0 +1,44 @@
+// Itanagar's ten stages: 01 the welcome tour, 02-10 long stages (room + acts + door ending), harder each time, 10 the
+// finale. Each built stage lives in its own file (s01.ts ..) with its allocation slot as `meta` (docs/allocation.json).
+// `levels` is a function (docs/CITY-MODULE.md). Slots not yet built are TODO placeholders (an empty room with a door).
+import { type LevelDef, type World } from '../../world';
+import { lines as L } from './lines';
+import { door, rival } from '../../levels/kit';
+import { longStage } from '../../levels/chunks';
+import { Grid } from '../../levels/grid';
+import { tourLevel, meta01 } from './s01';
+import { room as room02, act as act02, meta02 } from './s02';
+
+const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
+
+/** TODO placeholder room for stage `n`: replace with the real room (its own idea, sign, Tara, hidden item) */
+function todoRoom(n: number): LevelDef {
+  return {
+    id: `ITA-${String(n).padStart(2, '0')}`,
+    city: 'ITA',
+    index: n,
+    name: `TODO stage ${n}`,
+    nameEn: 'TODO',
+    tagline: 'TODO',
+    hint: 'TODO: what kills you and how to beat it.',
+    par: 30,
+    map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').rows(),
+    build(w: World) {
+      door(w);
+      rival(w, 3, 15, 1, tara(n - 2));
+    },
+  };
+}
+
+export const levels = (): LevelDef[] => [
+  { ...tourLevel(), meta: meta01 },
+  longStage({ base: room02(), acts: [act02], twist: 'ita-phatak', par: 40, shape: 'long', meta: meta02 }),
+  longStage({ base: todoRoom(3), par: 30, shape: 'long' }), // ITA-03 TODO
+  longStage({ base: todoRoom(4), par: 30, shape: 'long' }), // ITA-04 TODO
+  longStage({ base: todoRoom(5), par: 30, shape: 'long' }), // ITA-05 TODO
+  longStage({ base: todoRoom(6), par: 30, shape: 'long' }), // ITA-06 TODO
+  longStage({ base: todoRoom(7), par: 30, shape: 'long' }), // ITA-07 TODO
+  longStage({ base: todoRoom(8), par: 30, shape: 'long' }), // ITA-08 TODO
+  longStage({ base: todoRoom(9), par: 30, shape: 'long' }), // ITA-09 TODO
+  longStage({ base: todoRoom(10), par: 30, shape: 'long' }), // ITA-10 TODO
+];
