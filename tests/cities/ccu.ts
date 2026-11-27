@@ -579,6 +579,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-07': { steps: [howrahRoom()[0], howrahRoom()[1], hopUp((w) => porters(w).find((p) => p.o.v < 0), 'jump for the first load that comes by'), { hold: '', until: done, max: 900 }], cause: 'ccu-bojha' },
   'CCU-06': { steps: [walk(2.4), ...hopTo(px(5), 12, 'over the stop’s step'), { hold: 'R', until: (w) => w.player.onGround && w.player.y > 222 && w.player.cx > px(6.6), max: 300 }, ...hopTo(px(7) + 12, 8, 'on to the rear step'), { hold: '', until: done, max: 4000, note: 'stay on the step, past the island' }], cause: 'ccu-points' },
   'CCU-02': { steps: [...ride(px(16), px(19.5), 'off on the first “aaste”'), { hold: 'R', until: (w) => w.state !== 'play', max: 300 }], cause: 'ccu-nala' },
+  'CCU-10': { steps: [...finaleRoom().slice(0, 3), { hold: '', until: done, max: 2400, note: 'stay on the porter with three bundles past the far kerb: he walks on over the bus stand’s drain' }], cause: 'ccu-nala' },
 };
 
 /** more scripted first-timer deaths and 'like last time' moves */
