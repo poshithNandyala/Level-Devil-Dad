@@ -205,10 +205,10 @@ export function chariot(w: World, cfg: ChariotCfg, key: string) {
 }
 
 /** the temple wall the chariot slams into: carved, with sharp stone relief on its face */
-export function templeWall(w: World, c: number, top: number) {
+export function templeWall(w: World, c: number, top: number, cause = 'bbi-chakka') {
   w.add(
     new Rig(px(c) - 4, top, 6, FL - 16 - top, {
-      cause: 'bbi-chakka',
+      cause,
       inset: 0,
       layer: 4,
       paint: (ctx, r) => {

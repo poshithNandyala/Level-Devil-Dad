@@ -42,7 +42,7 @@ function turf(w: World, c0: number, c1: number) {
 
 /** the keeper and his pads on a bank at x0 (px), the flicker at ballFrom; he dives `travel` px at the flick,
  *  and the save rebounds off the boards (px) back to his front pad */
-export function keeperOn(w: World, o: { x0: number; travel: number; boards: number; ballFrom: number; ballY?: number; drop?: boolean; feet?: number }, key: string) {
+export function keeperOn(w: World, o: { x0: number; travel: number; boards: number; ballFrom: number; ballY?: number; drop?: boolean; feet?: number; lob?: boolean }, key: string) {
   const st = { t0: -1, flick: -1, save: -1, bx: 0, by: 0, bvx: 0, bvy: 0, ball: 'none' as 'none' | 'flick' | 'rebound' | 'roll' | 'back' | 'gone', kx: o.x0 };
   (w.flags[key] as unknown) = st;
   const keeper = w.add(
@@ -104,7 +104,14 @@ export function keeperOn(w: World, o: { x0: number; travel: number; boards: numb
         }
         if (st.ball === 'flick') {
           st.bx -= K.ballV / 120;
-          if (st.bx <= keeper.x + keeper.w - 18) {
+          // lob (the finale's turn on 02, law 7): the flick is lifted over the keeper's front pad and comes down on
+          // his back pad, so tonight the back pad is the one that gets the ball
+          if (o.lob && st.bx <= keeper.x + 10) {
+            st.ball = 'rebound';
+            st.save = w2.tick;
+            st.bvx = 0;
+            st.bvy = 120;
+          } else if (!o.lob && st.bx <= keeper.x + keeper.w - 18) {
             st.ball = 'rebound';
             st.save = w2.tick;
             st.bvx = o.drop ? 0 : 220;
@@ -131,7 +138,7 @@ export function keeperOn(w: World, o: { x0: number; travel: number; boards: numb
         }
         r.x = st.bx || fx;
         r.y = st.by || FL - 22;
-        r.hazard!.cause = st.ball === 'flick' ? 'bbi-ball' : 'bbi-rebound';
+        r.hazard!.cause = o.lob ? 'bbi-lob' : st.ball === 'flick' ? 'bbi-ball' : 'bbi-rebound';
       },
       paint: (ctx, r) => {
         if (st.ball !== 'none' && st.ball !== 'gone') ballArt(ctx, r.x, r.y);

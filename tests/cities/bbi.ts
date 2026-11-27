@@ -395,8 +395,8 @@ const hubJump = (c: (w: World) => ChSt, walk = true): Step => ({
 });
 const room10 = (): Step[] => [
   ...board10(),
-  onPad10(4, 12),
-  waitFor((w) => k10(w).ball === 'gone' && k10(w).kx >= px(5) + px(9) + 7, 'ride the back pad across the moat'),
+  onPad10(34, 42),
+  waitFor((w) => k10(w).ball === 'gone' && k10(w).kx >= px(5) + px(9) + 7, 'ride the front pad across: the lob drops on the back pad'),
   { hold: 'R', jump: 8, ticks: 8, note: 'hop on to the plinth' },
   { hold: 'R', until: (w) => w.player.onGround && w.player.x >= px(18), max: 300, note: 'on the plinth' },
   { hold: 'R', until: (w) => w.player.x + w.player.w >= c10(w).hub.x - 40, max: 400, note: 'to its front' },
@@ -899,7 +899,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
 }
 
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
-  'BBI-10': { steps: [...board10(), onPad10(36, 44), { hold: '', until: done, max: 900, note: 'the front pad, nearest the way' }], cause: 'bbi-ball' },
+  'BBI-10': { steps: [...board10(), onPad10(4, 12), { hold: '', until: done, max: 900, note: 'the back pad, as at the hockey' }], cause: 'bbi-lob' },
   'BBI-09': { steps: [...toHorses(), { hold: '', until: done, max: 900, note: 'ride the chariot' }], cause: 'bbi-chakka' },
   'BBI-08': { steps: [...hop(4.4, 'up on the rim'), { hold: 'R', until: done, max: 900, note: 'and walk across the rice' }], cause: 'bbi-pakhala' },
   'BBI-07': { steps: [...hop(8.8, 'jump on to the dancers'), { hold: 'R', until: done, max: 600 }], cause: 'bbi-nacha' },
@@ -911,7 +911,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'BBI-01': { steps: [...tourHead(), ...hop(28.6, 'just walk on and hop the drain'), { hold: 'R', until: done, max: 900 }], cause: 'bbi-nala' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
-  'BBI-10': { steps: [...room10().slice(0, 7), { hold: '', until: done, max: 900, note: 'and ride the plinth to the wall' }], cause: 'bbi-chakka' },
+  'BBI-10': { steps: [...room10().slice(0, 7), { hold: '', until: done, max: 900, note: 'and ride the plinth to the wall' }], cause: 'bbi-chakka-room10' },
   'BBI-09': { steps: [], cause: 'bbi-ara' },
   'BBI-08': { steps: [...hop(4.4, 'up on the rim'), leap(badiX('bbi8', 2), 'on to the badi nearest the way out'), stayOn(badiX('bbi8', 2), done, 'and wait on it')], cause: 'bbi-dhara' },
   'BBI-07': { steps: [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(10) - 2, max: 900 }, waitFor((w) => tr(w, 'bbi7').pose === 'bridge' && tr(w, 'bbi7').into > 0.35, 'wait for the bridge to be whole'), { hold: '', ticks: 18, note: 'a look to be sure' }, { hold: 'R', until: done, max: 900 }], cause: 'bbi-thrown' },

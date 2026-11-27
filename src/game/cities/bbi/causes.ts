@@ -1,6 +1,8 @@
 /** Tara's line for each way to die here ('bbi-...'): [what happened, how to beat it] */
 export const causeLines: Record<string, string[]> = {
   'bbi-nala': ['Into the drain, Dad! His jet wet the tile under you as you walked.', 'Go while the gardener faces his pots; if he turns to the road, stand still.'],
+  'bbi-chakka-room10': ['This plinth has no horses, Dad: your first step started it, and it slid into the wall with you on it.', 'From its front, jump up on to the hub as it comes over.'],
+  'bbi-lob': ['Tonight the flick was lifted over his front pad, Dad, and came down on the back one.', 'Ride the keeper’s front pad: the ball comes down behind you.'],
   'bbi-nala-lip': ['The lip of this drain was still wet, Dad, and nobody was watering.', 'A wet tile at a drain slides you in: jump from the dry tile before it.'],
   'bbi-turf': ['Into the drain beside the turf, Dad.', 'Ride the keeper across: stand on his pads and let him dive.'],
   'bbi-rebound': ['The save bounced the ball on to you, Dad.', 'Stay on the keeper’s back pad until the rebound has come back off the boards to him.'],

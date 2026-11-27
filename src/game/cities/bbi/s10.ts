@@ -30,15 +30,16 @@ export function room(): LevelDef {
     name: 'Kalinga',
     nameEn: 'All of Bhubaneswar',
     tagline: 'The finale at the stadium gate: the keeper, the stone chariot, the parasols, the loom and the dancers, in a new order.',
-    hint: 'Ride the keeper’s back pad: at the flick he dives right across the moat and puts you down by the stone plinth. Hop on to it and it slides for the temple wall: go to its front and jump up on to the wheel’s hub as it comes over, and let the plinth slam under you. Then up on to the wall.',
+    hint: 'Tonight the flick is lifted over the keeper’s front pad and comes down on his back pad: ride the front pad. At the flick he dives right across the moat and puts you down by the stone plinth. Hop on to it and it slides for the temple wall: go to its front and jump up on to the wheel’s hub as it comes over, and let the plinth slam under you. Then up on to the wall.',
     par: 90,
     map: Grid.ground(15, 44).pit(K10.gap[0], K10.gap[1]).fill(C10.stopAt, C10.stopAt + 3, 11, 14, '#').put(1, 14, '@').put(42, 14, 'E').rows(),
     build(w: World) {
       door(w);
       channel(w, K10.gap[0], K10.gap[1], 'bbi-khai', 'water');
-      keeperOn(w, { x0: px(K10.x0), travel: px(K10.travel) + 8, boards: px(36), ballFrom: px(37.5), ballY: FL - 22, drop: true, feet: FL - 64 }, 'bbi10k');
+      // law 7 on 02 (QA fix F5): the flick is lifted over the front pad and comes down on the back pad
+      keeperOn(w, { x0: px(K10.x0), travel: px(K10.travel) + 8, boards: px(36), ballFrom: px(37.5), ballY: FL - 60, drop: true, feet: FL - 64, lob: true }, 'bbi10k');
       chariot(w, C10, 'bbi10c');
-      templeWall(w, C10.stopAt, px(11));
+      templeWall(w, C10.stopAt, px(11), 'bbi-chakka-room10');
       sign(w, 40.5, 10.4, 3.2, 'KALINGA', 'shop', null, 'stadium');
       rival(w, 2, 15, 1, taraScript(10));
       onPass(w, px(4), (w2) => tara(w2, 'Hockey one, Dad zero!', 1.6));
