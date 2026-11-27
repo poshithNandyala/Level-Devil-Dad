@@ -55,7 +55,7 @@ export const levels = (): LevelDef[] => [
     shape: 'tour',
     meta: { family: 'lane-sheet-flow-push', betrayals: ['sheet-flow'], ending: 'svp-lane-sun' },
   },
-  longStage({ base: aariRoom(), acts: [chirai], twist: 'svp-timber-stack', par: 35, shape: 'short', meta: { family: 'cut-floor-saw-carriage', betrayals: ['cut-floor'], ending: 'svp-timber-stack' } }),
+  longStage({ base: aariRoom(), acts: [chirai], twist: 'svp-timber-stack', par: 35, cps: [6.5], shape: 'short', meta: { family: 'cut-floor-saw-carriage', betrayals: ['cut-floor'], ending: 'svp-timber-stack' } }),
   longStage({ base: magarRoom(), acts: [nala], twist: 'svp-board-bridge', par: 35, shape: 'short', meta: { family: 'warning-board-arrow-turns', betrayals: ['honest-moving-sign'], ending: 'svp-board-bridge' } }),
   longStage({ base: hiranRoom(), acts: [ghat], twist: 'svp-jetty-guard', par: 35, shape: 'short', meta: { family: 'food-holder-followed-by-deer', betrayals: ['carry-attracts'], ending: 'svp-jetty-guard' } }),
   longStage({ base: tasveerRoom(), acts: [dekho, rassi, choona], twist: 'svp-note-door', par: 86, shape: 'wtf', meta: { family: 'picture-aligns-ledge-from-spot', betrayals: ['viewpoint-align'], ending: 'svp-note-door' } }),

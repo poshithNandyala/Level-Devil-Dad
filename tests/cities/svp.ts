@@ -572,7 +572,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: and(ground, X(x + 50)), max: 300 },
     rootsPolicy([x + 52, x + 57, x + 62, x + 67], px(x + 71), 'the stair of roots, up and down', and(ground, (w) => w.player.x >= px(x + 71) + 2), 74, 26),
     { hold: 'R', until: and(ground, X(x + 74.5)), max: 300 },
-    rootsPolicy([x + 80, x + 86, x + 92, x + 98, x + 104], px(x + 108), 'the long cellar of roots', and(ground, (w) => w.player.x >= px(x + 108) + 2), 74, 26),
+    rootsPolicy([x + 80, x + 86], px(x + 91), 'the first half of the long cellar', and(ground, (w) => w.player.x >= px(x + 91) + 2), 74, 26),
+    { hold: 'R', until: and(ground, X(x + 94.5)), max: 300, note: 'across the sound floor in the middle' },
+    rootsPolicy([x + 98, x + 104], px(x + 108), 'the second half of the long cellar', and(ground, (w) => w.player.x >= px(x + 108) + 2), 60, 24),
     { hold: 'R', until: and(ground, X(x + 110)), max: 300 },
   ],
   'svp08-gali': () => [streetUntil(6, 'the longer street, awning to awning')],
@@ -659,7 +661,7 @@ const endingPolicies: Record<string, Policy> = {
       return go('R');
     }
     if (p.cx >= gx0 - 4 && !p.onGround) return go('R');
-    const clear = !k.raining && g.flood === 0 && k.left > 150;
+    const clear = !k.raining && g.flood === 0 && k.left > 110;
     if (clear) return go('R');
     return streetPolicy(w);
   },

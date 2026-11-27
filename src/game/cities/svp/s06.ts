@@ -14,11 +14,11 @@ import { Fx, Hurt, Plat, px, TAU, type Ctx } from './kit';
 
 export const UP = FLOOR - 96;
 export const BENT = FLOOR - 24;
-const COME = 360,
-  SAG = 150,
-  HELD = 600,
-  SPRING = 420,
-  REST = 420;
+const COME = 180,
+  SAG = 90,
+  HELD = 210,
+  SPRING = 240,
+  REST = 240;
 const CYCLE = COME + SAG + HELD + SPRING + REST;
 
 /** the flock: when it starts (Dad passes `startX`) it comes in, settles, and on the horn leaves all at once */
@@ -236,8 +236,8 @@ export const sanjh: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    const f1 = new Flock(px(x + 0.5), [px(x + 4), px(x + 11)], 8);
-    const f2 = new Flock(px(x + 22), [px(x + 26), px(x + 33)], 8);
+    const f1 = new Flock(px(x + 4), [px(x + 4), px(x + 11)], 8);
+    const f2 = new Flock(px(x + 24), [px(x + 26), px(x + 33)], 8);
     w.add(f1);
     w.add(f2);
     const b1 = new Bough(f1, px(x + 4), px(x + 11)).install(w);
@@ -255,7 +255,7 @@ export const boughDoor: Ending = {
   advice: 'The door is hung on the last bough, and the bough bobs with the flock: down while they sit on it, up when the horn sends them off. Hop on while it’s low, and the door goes up and down with you.',
   build(w, d) {
     const D = Math.round(d.x / 16);
-    const flock = new Flock(px(D - 12), [px(D - 4), px(D + 3)], 7);
+    const flock = new Flock(px(D - 9), [px(D - 4), px(D + 3)], 7);
     w.add(flock);
     const b = new Bough(flock, px(D - 4), px(D + 3), FLOOR - 22, FLOOR - 70).install(w);
     d.follow = () => ({ x: px(D) - 4, y: b.plat.y - 32 });

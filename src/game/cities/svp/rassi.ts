@@ -8,7 +8,7 @@ import type { Act } from '../../levels/acts';
 import { Fx, Hurt, Plat, FLOOR, px, TAU, type Ctx } from './kit';
 
 const DRIFT = 5;
-const RIDE = 24;
+const RIDE = 36;
 const SETTLE = 40;
 const GIVE_UP = 900;
 
@@ -169,8 +169,8 @@ export const rassi: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    const a = new Rope(px(x + 10), px(x + 24), px(x + 4) + 8, 80, 38).install(w);
-    const b = new Rope(px(x + 34), px(x + 52), px(x + 27) + 8, 96, 40, 'svp-rassi2').install(w);
+    const a = new Rope(px(x + 10), px(x + 24), px(x + 4) + 8, 80, 50).install(w);
+    const b = new Rope(px(x + 34), px(x + 52), px(x + 27) + 8, 96, 58, 'svp-rassi2').install(w);
     (w.flags.ropes ??= []).push(a, b);
   },
 };

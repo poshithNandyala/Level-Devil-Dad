@@ -1,14 +1,14 @@
 // Choona, the limestone caves (knock-drip): a formation hangs over the path, and a hop under it raps it. It rings,
 // and for a while it drips on the floor ahead: wet limestone is a slide that carries you back into the drain at its
 // foot. Walk through without hopping and nothing happens. If the path makes you hop under it, wait on the dry side
-// until the dripping stops (it drips for seven seconds, and every new knock starts it again). Used by SVP-05's third
+// until the dripping stops (it drips for five seconds, and every new knock starts it again). Used by SVP-05's third
 // act and the finale.
 import { Entity, type World } from '../../world';
 import { DT } from '../../constants';
 import type { Act } from '../../levels/acts';
 import { Fx, Hurt, FLOOR, px, TAU, type Ctx } from './kit';
 
-export const WET = 840;
+export const WET = 600;
 const PUSH = -240;
 
 /** a formation, the floor it drips on, and the drain at the foot of that floor */

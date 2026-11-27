@@ -48,6 +48,8 @@ export class SawHall extends Entity {
     readonly cuts: Cut[],
     /** the blade only comes down for the moment of each cut (the room's blade stands in the road for good) */
     readonly retract = false,
+    /** ticks the log rests after each cut */
+    readonly rest = 110,
   ) {
     super();
     this.layer = 1;
@@ -60,7 +62,7 @@ export class SawHall extends Entity {
     let a = 0,
       b = LOG;
     for (const c of cuts) {
-      this.plan.push({ k: 'move', to: this.S - c.off }, { k: 'wait', n: 40 }, { k: 'cut', c }, { k: 'wait', n: 110 });
+      this.plan.push({ k: 'move', to: this.S - c.off }, { k: 'wait', n: 40 }, { k: 'cut', c }, { k: 'wait', n: this.rest });
       if (c.drop === 'right') b = c.off;
       else a = c.off;
     }

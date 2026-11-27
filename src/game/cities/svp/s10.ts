@@ -39,7 +39,7 @@ export function dweepRoom(): LevelDef {
       const hall = new SawHall(px(10), [
         { off: 72, drop: 'right' },
         { off: 48, drop: 'right' },
-      ]).install(w);
+      ], false, 70).install(w);
       w.flags.saw = hall;
       sign(w, 7.2, 10.4, 3.4, 'DWEEP', 'shop', null, 'island');
       rival(w, 3, 15, 1, { intro: L.intro[8], point: 1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });

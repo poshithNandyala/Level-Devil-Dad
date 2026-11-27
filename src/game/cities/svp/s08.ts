@@ -16,9 +16,9 @@ import { Fx, Hurt, awning as drawAwning, px, TAU, type Ctx } from './kit';
 export type Wind = 1 | -1;
 const LEE = 38;
 /** the cycle: an opening lull, then rain from the west, a lull, rain from the east, a lull, and again */
-const FIRST_LULL = 240;
-const RAIN = 600;
-const LULL = 360;
+const FIRST_LULL = 80;
+const RAIN = 240;
+const LULL = 270;
 const KILL = 84;
 
 export class Awning {
@@ -49,6 +49,9 @@ export class Weather extends Entity {
   next: Wind = 1;
   left = 0;
   private now = 0;
+  /** where the weather starts over from its first lull (each section of the street has its own), px */
+  readonly resets: number[] = [];
+  private fired = new Set<number>();
   constructor(readonly startX: number) {
     super();
     this.layer = 6;
@@ -60,6 +63,8 @@ export class Weather extends Entity {
   /** phase from the clock */
   private phaseAt(t: number): { rain: boolean; dir: Wind; next: Wind; left: number; age: number } {
     if (t < FIRST_LULL) return { rain: false, dir: 1, next: 1, left: FIRST_LULL - t, age: t };
+    // a section has two rains, west and then east, and then the sky is clear until the next section starts it again
+    if (t >= FIRST_LULL + RAIN + LULL + RAIN) return { rain: false, dir: -1, next: -1, left: 99999, age: t };
     const k = t - FIRST_LULL;
     const period = RAIN + LULL;
     const n = Math.floor(k / period);
@@ -83,6 +88,12 @@ export class Weather extends Entity {
       if (w.player.cx >= this.startX) this.t = 0;
       else return;
     } else this.t++;
+    for (const r of this.resets)
+      if (w.player.cx >= r && !this.fired.has(r)) {
+        this.fired.add(r);
+        this.t = 0;
+        this.wet = 0;
+      }
     const ph = this.phaseAt(this.t);
     this.raining = ph.rain;
     this.dir = ph.dir;
@@ -190,7 +201,7 @@ export function monsoonRoom(): LevelDef {
     map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      street(w, [[6, 11], [16, 21], [26, 31]], px(2));
+      street(w, [[6, 11], [16, 21], [26, 31]], px(5));
       rival(w, 3, 15, 1, { intro: L.intro[6], point: 1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
       collectible(w, 'svp-kela', 18.5, 10.4);
     },
@@ -207,6 +218,7 @@ export const gali: Act = {
     const x = c.x;
     const wx = w.flags.weather as Weather;
     wx.porches.push([px(x + 28), px(x + 34)]);
+    wx.resets.push(px(x + 4), px(x + 34.5));
     wx.porches.push([px(x), px(x + 4)]);
     w.add(new Fx(null, (ctx) => text(ctx, 'BAZAAR', px(x + 31), FLOOR - 62, 6.5, '#F4ECD6', 'rgba(0,0,0,0.5)'), 3));
     for (const [a, b] of [[x + 9, x + 14], [x + 19, x + 24], [x + 38, x + 43], [x + 47, x + 52]]) wx.add(new Awning(px(a), px(b)));
@@ -226,6 +238,7 @@ export const gutterRiver: Ending = {
     wx.add(new Awning(px(D - 14), px(D - 9)));
     // the checkpoint before the door is on a covered stoop, dry for any wind
     wx.porches.push([px(D - 20), px(D - 13)]);
+    wx.resets.push(px(D - 13));
     let flood = 0;
     const x0 = px(D - 8),
       x1 = px(D - 3);
@@ -238,8 +251,8 @@ export const gutterRiver: Ending = {
     w.onTick((w2) => {
       // it floods as soon as the rain starts and drains a moment after it stops
       if (wx.raining) lastRain = w2.tick;
-      const target = w2.tick - lastRain < 40;
-      flood = Math.max(0, Math.min(1, flood + (target ? 0.02 : -0.03)));
+      const target = w2.tick - lastRain < 30;
+      flood = Math.max(0, Math.min(1, flood + (target ? 0.02 : -0.06)));
       river.on = flood > 0.35;
     });
     w.add(

@@ -20,7 +20,7 @@ export const causeLines: Record<string, string[]> = {
   'svp-rassi': ['Rassi! You jumped for a boat that was still tied up on the far bank.', 'The rope answers hops by the bollard. Hop there until the boat is alongside, then step on.'],
   'svp-rassi2': ['Rassi! The long creek takes more pulls, and its bollard is a long way back from the edge.', 'Hop by the second bollard, not at the water: five or six pulls bring this boat in. Then step on.'],
   'svp-chuna2': ['Chuna! The wall’s formation was dripping too, and the floor behind it slid you into the drain.', 'The wall is a hop too: rap it, then wait on top of the wall until the dripping stops, then climb down.'],
-  'svp-chuna': ['Chuna! The wet limestone slid you back into the drain.', 'Hop, then wait on the dry side: the formation drips for seven seconds, and the floor is only slippery while it does.'],
+  'svp-chuna': ['Chuna! The wet limestone slid you back into the drain.', 'Hop, then wait on the dry side: the formation drips for five seconds, and the floor is only slippery while it does.'],
   'svp-uthao': ['Uthao! The lift overran the floor and you were still on it.', 'The lift stops at every floor for a few seconds. Step off at the last stop, not the first, and never stay aboard after it.'],
   'svp-khula': ['Khula! The bridge lifted for the ship, and you were on it.', 'When the lights flash the deck is about to lift. Wait on the road for the green, then cross at once.'],
   'svp-hauz': ['Hauz! The pool filled up and you were on the floor.', 'A pipe starts to run when you walk in, and the water climbs the wall. Get on the raft: it rises with the water, and you step across at the top.'],

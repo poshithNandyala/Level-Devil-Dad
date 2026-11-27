@@ -353,7 +353,7 @@ export function jettyRoom(): LevelDef {
     build(w: World) {
       door(w);
       const crowd = new Crowd(px(15), px(39));
-      const hall = new Hall([{ x: px(6), w: px(3), h: 16 }, { x: px(9), w: px(5), h: 24 }], 720, crowd, HALL1.gap, 0, [px(16) + 8, px(17) + 8, px(18) + 8, px(19) + 8]).install(w);
+      const hall = new Hall([{ x: px(6), w: px(3), h: 16 }, { x: px(9), w: px(5), h: 24 }], 420, crowd, HALL1.gap, 0, [px(16) + 8, px(17) + 8, px(18) + 8, px(19) + 8]).install(w);
       w.flags.hall = hall;
       w.flags.crowd = crowd;
       trenchArt(w, HALL1.trench[0], HALL1.trench[1]);
@@ -381,8 +381,8 @@ export const ghatSte: Act = {
     const h = sea(w, px(x + 6), px(x + 15), 'svp-jahaz');
     void h;
     hall.crowd.onArrive = (w2) => {
-      w2.after(2.0, () => s1.leave());
-      w2.after(7.0, () => s2.arrive());
+      w2.after(1.0, () => s1.leave());
+      w2.after(3.5, () => s2.arrive());
     };
     w.add(
       new Fx(null, (ctx) => {
@@ -411,7 +411,7 @@ export const doosra: Act = {
   build: (w, c) => {
     const x = c.x;
     const crowd = new Crowd(px(x + 42), px(x + 13), 150, 72);
-    const hall = new Hall([{ x: px(x + 4), w: px(3), h: 16 }, { x: px(x + 7), w: px(5), h: 24 }], 1000, crowd, [px(x + 4), px(x + 12)], 420, [px(x + 38) + 8, px(x + 39) + 8, px(x + 40) + 8, px(x + 41) + 8]).install(w);
+    const hall = new Hall([{ x: px(x + 4), w: px(3), h: 16 }, { x: px(x + 7), w: px(5), h: 24 }], 600, crowd, [px(x + 4), px(x + 12)], 240, [px(x + 38) + 8, px(x + 39) + 8, px(x + 40) + 8, px(x + 41) + 8]).install(w);
     (w.flags.halls ??= []).push(hall);
     trenchArt(w, x + 24, x + 26);
     w.add(
@@ -437,7 +437,7 @@ export const teesra: Act = {
     const x = c.x;
     const back = new Crowd(px(x + 13), px(x + 44), 150, 72);
     const crowd = new Crowd(px(x + 42), px(x + 13), 150, 72);
-    const hall = new Hall([{ x: px(x + 4), w: px(3), h: 24 }, { x: px(x + 7), w: px(5), h: 16 }], 900, crowd, [px(x + 4), px(x + 12)], 0, [px(x + 38) + 8, px(x + 39) + 8, px(x + 40) + 8, px(x + 41) + 8]).install(w);
+    const hall = new Hall([{ x: px(x + 4), w: px(3), h: 24 }, { x: px(x + 7), w: px(5), h: 16 }], 300, crowd, [px(x + 4), px(x + 12)], 0, [px(x + 38) + 8, px(x + 39) + 8, px(x + 40) + 8, px(x + 41) + 8]).install(w);
     w.add(back);
     w.add(back.hurt);
     crowd.onArrive = (w2) => w2.after(1.6, () => back.go());
