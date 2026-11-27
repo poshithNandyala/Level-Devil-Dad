@@ -217,3 +217,31 @@ pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound p
 - **Fix round 2 (PAT):** 05 stays at its honest length (no extra act after round 4); 06 the truck at the foot is unloaded while you read it and a second truck half-way is loaded, so the count that
   counts is the one left when the porter has finished (`pat06-ginti`); 10 callbacks: the coaching hoardings with the
   cart's three sacks naming the narrowing bell (`pat10-roll`) and the shared tempo with sacks as riders (`pat10-tempo`).
+
+## SHL (Shillong, Meghalaya): ideas used (module city, 6 of 10 stages built, branch `city/shl`)
+- **01 Kumno, Shillong!** at the view point a first drop falls by a pine well short of the cloud and means nothing;
+  the rain falls only under the cloud shape, on a beat, and the cloud drifts over anyone who stands near it waiting:
+  run under it right after it has emptied (`shl-slap`, `shl-lyoh`).
+- **02 Pine Peak** a cloud bank sliding across the gap is a floor only where a sunbeam lights its thick middle, never
+  at its two thin ends (`shl-edge`, `shl-dum`, `shl-pit`); acts: a thinner bank whose end is under the lit third beam
+  (`shl02-sngi`), a high cloud that crosses the sun so nothing holds while it does (`shl02-lyoh`); door: the radar
+  dish's beam sweeps the approach on a beat (`shl-dish`).
+- **03 Sway** the Dawki deck swings to your own running: bursts of a few steps and a stop keep it flat (`shl-sway`);
+  acts: a boat's wake is a full swing to anyone on that span, let it pass from the tower (`shl03-wake`, `shl-wake`);
+  wet planks slide you on after a stop and the slide swings the deck (`shl03-wet`, `shl-slip`); door: the toll bar at
+  the far tower drops on whoever arrives swinging (`shl-tollbar`, `shl-bar`).
+- **04 Knup** jump at a hook to put the rain shield on or hang it up: on, rain and awning drips are nothing but a low
+  branch catches it (`shl-dieng`); off, the drips are a spike row (`shl-drip`); acts: a tall arch the knup fits with a
+  lure hook before it, a low arch, an awning (`shl04-iew`, `shl-lintel`); a small knup that fits the low arch but not
+  heavy rain, swap at the hooks (`shl04-khynnah`); door: a Khasi half-door (`shl-halfdoor`).
+- **05 Seven Sisters (HWIK)** each fall pours on a schedule: full, thinning, on the white mark, a dry moment, full again
+  with no warning; cross on the mark, the dry moment is the lure (`shl-um`, `shl-wah`); acts: a sister that never goes
+  dry (`shl05-ar`), a basin that floods whenever either sister is full (`shl05-pung`, `shl-pung`); door: the seventh
+  sister's pool (`shl-pool`).
+- **06 Root Guide** three bamboo guides: jump at one and its root grows across the gorge, the others wither; the short
+  one lands in the spray, the middle gives up half way, the long one from the rock lands dry (`shl-gorge`,
+  `shl-spray`); acts: stand on the tip of a root you grew and it sprouts the next span (`shl06-sprout`); a guide in the
+  path grows a root across it at head height, hop the guide (`shl06-kiang`, `shl-jri`); door: one guide, one root to
+  the ledge (`shl-rootdoor`).
+- **07-10** not built in round 1: Mawsmai drip-growth pairs (marathon), Wettest Desert cloud meter (HWIK), Eight-Day
+  Market day cycle (tough), Down Seven Hundred finale (callbacks breaking 01-09).
