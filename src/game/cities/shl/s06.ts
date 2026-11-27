@@ -23,7 +23,7 @@ export interface RootSet {
 }
 
 /** a root that grows from (x0, y) rightwards to length `len` px over `secs` once `started()`; solid as far as it has grown */
-export function root(w: World, x0: number, y: number, len: number, secs: number, started: () => number, o: { stopAt?: number; onDone?: (w: World) => void } = {}) {
+export function root(w: World, x0: number, y: number, len: number, secs: number, started: () => number, o: { stopAt?: number; onDone?: (w: World) => void; left?: boolean } = {}) {
   const r = w.add(
     new Rig(x0, y, 1, 10, {
       solid: true,
@@ -39,9 +39,11 @@ export function root(w: World, x0: number, y: number, len: number, secs: number,
         const wd = Math.max(1, Math.round(len * full));
         if (rr.solid) {
           rr.solid.w = wd;
+          if (o.left) rr.solid.x = x0 - wd;
           rr.solid.collidable = wd > 4;
         }
         rr.w = wd;
+        if (o.left) rr.x = x0 - wd;
         if (k >= 1 && !rr.s.done) {
           rr.s.done = true;
           o.onDone?.(w2);
@@ -55,7 +57,7 @@ export function root(w: World, x0: number, y: number, len: number, secs: number,
         for (let x = rr.x; x < rr.x + rr.w - 4; x += 9) box(ctx, x + 2, rr.y + 7, 5, 2, '#8A6A3E');
         for (let x = rr.x + 4; x < rr.x + rr.w; x += 14) box(ctx, x, rr.y - 3, 4, 3, '#4E8A3E');
         // the growing tip
-        box(ctx, rr.x + rr.w - 2, rr.y - 1, 3, 6, '#C8D86B');
+        box(ctx, o.left ? rr.x - 1 : rr.x + rr.w - 2, rr.y - 1, 3, 6, '#C8D86B');
       },
     }),
   );

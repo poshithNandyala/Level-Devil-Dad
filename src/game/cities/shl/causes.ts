@@ -31,5 +31,7 @@ export const causeLines: Record<string, string[]> = {
   'shl-shift': ['The day turned at the arch in the middle of the row, and that stall closed.', 'Each arch is a new day, even one standing in a row. Beyond it, read the plates with the next day in mind.'],
   'shl-pack': ['The keeper had taken the boards off: sold out.', 'A stall with its boards leaning on the frame is closed, whatever its plate says. Jump it.'],
   'shl-board': ['The board lied: a keeper had flipped it to yesterday.', 'The arches are the days, not the paint. Count the arches: this is the eighth day, and plate 8 is the frame.'],
+  'shl-truedrop': ['This time the drop told the truth: the rain came down just past it.', 'A lone drop by the pine here means rain a moment later, just ahead of it. Stop at the drop, go when the rain ends.'],
+  'shl-liar': ['Her mark lies: it was painted too high, and the sheet under it was still full.', 'Read the sheet, not the paint: cross her only when the sheet is narrow.'],
   'shl-lintel': ['The low lintel caught your knup.', 'A low arch or a half-door needs the knup off: jump at the hook before it. A tall arch does not.'],
 };

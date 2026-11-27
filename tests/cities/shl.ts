@@ -367,7 +367,8 @@ function marketWalk(key: string, o: { dayOf?: (w: World, real: number) => number
       jt--;
       return { move: 'R', jump: true };
     }
-    const st = w.flags[key] as Market;
+    const frozen = key.endsWith('-d1');
+    const st = w.flags[frozen ? key.slice(0, -3) : key] as Market;
     const p = w.player;
     if (!p.onGround || w.tick < cool) return go('R');
     const front = p.x + p.w;
@@ -376,6 +377,7 @@ function marketWalk(key: string, o: { dayOf?: (w: World, real: number) => number
     const dayAt = (xTarget: number) => {
       let day = st.day;
       for (const a of st.arches) if (!a.passed && a.x > p.cx && a.x <= xTarget + 8 && !(o.ignoreArchesAfter !== undefined && a.x > o.ignoreArchesAfter)) day = (day % 8) + 1;
+      if (frozen) return 1;
       return o.dayOf ? o.dayOf(w, day) : day;
     };
     const pitches = st.pitches.slice().sort((a, b) => a.x - b.x);
@@ -415,6 +417,89 @@ const act09d = (x: number): Step[] => [{ policy: marketWalk('shl9'), until: and(
 const boardWalk = marketWalk('shl9');
 const boardPolicy: Policy = (w) => boardWalk(w);
 
+// ------------------------------------------------------------------ SHL-10
+type Drop = { t0: number };
+/** the honest drop: stop at the drop, go the moment the rain ends */
+const dropWalk = (key: string, c: number): ((w: World) => Out) => (w) => {
+  const st = w.flags[key] as Drop;
+  const p = w.player;
+  const s = st.t0 < 0 ? -9 : (w.tick - st.t0) / 120;
+  if (s < 0) return go('R');
+  if (s >= 1.15) return go('R');
+  if (p.x + p.w >= px(c) - 6) return go('');
+  return go('R');
+};
+type Liar = { c0: number; at: (w: World) => { k: string; left: number } };
+/** the liar: cross only while the sheet is narrow (thin), with time in hand */
+const liarWalk = (key: string): ((w: World) => Out) => (w) => {
+  const st = w.flags[key] as Liar;
+  const p = w.player;
+  if (p.x + p.w < px(st.c0) - 26) return go('R');
+  if (p.x + p.w > px(st.c0) - 2) return go('R');
+  const ph = st.at(w);
+  return go(ph.k === 'thin' && ph.left > 0.7 ? 'R' : '');
+};
+/** the liar's mark, read as in 05: cross when the sheet starts at the mark */
+const markWalk = (key: string): ((w: World) => Out) => (w) => {
+  const st = w.flags[key] as Liar;
+  const p = w.player;
+  if (p.x + p.w < px(st.c0) - 26) return go('R');
+  if (p.x + p.w > px(st.c0) - 2) return go('R');
+  return go(st.at(w).k === 'mark' ? 'R' : '');
+};
+const dryLiar = (key: string): ((w: World) => Out) => (w) => {
+  const st = w.flags[key] as Liar;
+  const p = w.player;
+  if (p.x + p.w < px(st.c0) - 26) return go('R');
+  if (p.x + p.w > px(st.c0) - 2) return go('R');
+  return go(st.at(w).k === 'dry' ? 'R' : '');
+};
+/** the span of stalls: market reads for the plates, bursts for the deck */
+function spanWalk(mkey: string, skey: string): (w: World) => Out {
+  const mw = marketWalk(mkey);
+  return (w) => {
+    const sw = w.flags[skey] as { e: number } | undefined;
+    const out = mw(w);
+    if (!sw || out.jump) return out;
+    const p = w.player;
+    const onDeck = p.onGround && p.y + p.h <= MTOP + 2;
+    if (onDeck && sw.e > 0.4) return go('');
+    if (onDeck && sw.e > 0.06 && Math.abs(p.vx) < 5) return go('');
+    return out;
+  };
+}
+const room10 = (): Step[] => [
+  { policy: dropWalk('shl10d', 9), until: and(ground, X(15)), max: 1500, note: 'stop at the drop; go when the rain ends' },
+  { hold: 'R', until: X(22.5), max: 900, note: 'past the hook, bare, under the branch' },
+  ...atHook(24, 'the knup for the awning'),
+  { hold: 'R', until: X(29), max: 600 },
+];
+const act10a = (x: number): Step[] => [{ policy: liarWalk('shl10l'), until: and(ground, X(x + 21)), max: 4000, note: 'the liar: cross on the narrow sheet' }, { hold: 'R', until: X(x + 28), max: 400 }];
+const act10b = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 5.6), max: 600, note: 'under the pole’s tip' },
+  { hold: '', until: (w) => Math.abs(w.player.vx) < 5, max: 60 },
+  { hold: '', jump: 9, ticks: 9, note: 'jump at the pole’s tip' },
+  { hold: '', until: and(ground, (w) => (w.flags.shl10r as { far: number }).far >= 0 && w.tick - (w.flags.shl10r as { far: number }).far >= 3.6 * 120), max: 1200, note: 'the root grows from the far bank' },
+  { hold: 'R', until: and(ground, X(x + 26)), max: 1200, note: 'across, under the hanging guide (never touched)' },
+  { hold: 'R', until: X(x + 30), max: 400 },
+];
+const act10c = (x: number): Step[] => [{ policy: spanWalk('shl10m', 'shl10s'), until: and(ground, X(x + 33)), max: 6000, note: 'the stalls on the span: bursts, plates, the mid arch' }, { hold: 'R', until: X(x + 42), max: 600 }];
+const tallgatePolicy: Policy = (w, m, d) => {
+  const D = Math.round(d.x / 16);
+  const st = w.flags.shl10e as { on: boolean };
+  const p = w.player;
+  if (m.hold > 0) {
+    m.hold--;
+    return { move: 'R', jump: true };
+  }
+  if (!st.on && p.onGround && p.x >= (D - 8 - 1.4) * 16 && !m.jumped) {
+    m.hold = 9;
+    m.jumped = true;
+    return { move: 'R', jump: true };
+  }
+  return go('R');
+};
+
 // ------------------------------------------------------------------ tables
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['SHL-01'] = tourRoute();
@@ -434,9 +519,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('SHL-08', 0, []);
   S['SHL-09'] = room09();
   lengthen('SHL-09', 0, []);
-  for (const n of [10]) {
-    S[`SHL-${String(n).padStart(2, '0')}`] = [{ hold: 'R', until: done, max: 1200, note: 'not built yet' }];
-  }
+  S['SHL-10'] = room10();
+  lengthen('SHL-10', 0, []);
 }
 
 const upTo = (n: number) => tourRoute().slice(0, n);
@@ -451,6 +535,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-07': { steps: runOn, cause: 'shl-shut' },
   'SHL-08': { steps: runOn, cause: 'shl-soaked' },
   'SHL-09': { steps: runOn, cause: 'shl-nala' },
+  'SHL-10': { steps: runOn, cause: 'shl-truedrop' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-01': { steps: [...upTo(21), { hold: 'R', until: X(64), max: 600 }, { hold: '', until: done, max: 1500, note: 'stand outside the cloud and wait' }], cause: 'shl-lyoh' },
@@ -465,9 +550,10 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-07': { steps: [{ hold: 'R', until: X(14.4), max: 600, note: 'stop under the quick one to count its drips' }, { hold: '', until: done, max: 1500 }], cause: 'shl-maw' },
   'SHL-08': { steps: [{ policy: tankWait('shl8', 3.5, false), until: done, max: 3000, note: 'stand out of reach, and go the moment the gate lifts' }], cause: 'shl-spout' },
   'SHL-09': { steps: [{ policy: marketWalk('shl9', { dayOf: () => 99 }), until: done, max: 3000, note: 'hop on, walk the counter, never mind the plates' }], cause: 'shl-closed' },
+  'SHL-10': { steps: [{ hold: 'R', until: X(8), max: 600 }, { hold: '', until: done, max: 1500, note: 'stop at the drop and keep waiting for a beat, as in the tour' }], cause: 'shl-lyoh' },
 };
-const ROOMS: Record<string, () => Step[]> = { 'SHL-02': room02, 'SHL-03': room03, 'SHL-04': room04, 'SHL-05': room05, 'SHL-06': room06, 'SHL-07': room07, 'SHL-08': room08, 'SHL-09': room09 };
-const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'], 'SHL-05': ['shl05-ar', 'shl05-pung'], 'SHL-06': ['shl06-sprout', 'shl06-kiang'], 'SHL-07': ['shl07-krem'], 'SHL-08': ['shl08-roof', 'shl08-pull', 'shl08-bucket', 'shl08-two'], 'SHL-09': ['shl09-sngi', 'shl09-kot', 'shl09-pdeng', 'shl09-doh'] };
+const ROOMS: Record<string, () => Step[]> = { 'SHL-02': room02, 'SHL-03': room03, 'SHL-04': room04, 'SHL-05': room05, 'SHL-06': room06, 'SHL-07': room07, 'SHL-08': room08, 'SHL-09': room09, 'SHL-10': room10 };
+const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'], 'SHL-05': ['shl05-ar', 'shl05-pung'], 'SHL-06': ['shl06-sprout', 'shl06-kiang'], 'SHL-07': ['shl07-krem'], 'SHL-08': ['shl08-roof', 'shl08-pull', 'shl08-bucket', 'shl08-two'], 'SHL-09': ['shl09-sngi', 'shl09-kot', 'shl09-pdeng', 'shl09-doh'], 'SHL-10': ['shl10-rong', 'shl10-jingkieng', 'shl10-pung'] };
 const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
 const prefix = (id: string, act: string): Step[] => [...ROOMS[id](), ...ACT_ORDER[id].slice(0, ACT_ORDER[id].indexOf(act)).flatMap((a) => actRoutes[a](actX0(id, a)))];
 /** the stage up to the act (route), then `steps` played from the act's first column; built when the test runs */
@@ -544,8 +630,21 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     inAct('SHL-09', 'shl09-doh', 'jump today’s plate and walk on to the packed stall', () => [{ policy: marketWalk('shl9', { ignorePack: true }), until: done, max: 3000 }], 'shl-pack'),
     inAct('SHL-09', 'shl09-doh', 'walk the counter, never mind the plates', () => [{ policy: marketWalk('shl9', { dayOf: () => 99, ignorePack: true }), until: done, max: 3000 }], 'shl-closed'),
   ],
+  'SHL-10': [
+    { what: 'take the knup at the first hook, as the Knup stage taught', steps: [{ policy: dropWalk('shl10d', 9), until: and(ground, X(15)), max: 1500 }, ...atHook(17, 'take it'), { hold: 'R', until: done, max: 1500 }], cause: 'shl-lintel' },
+    { what: 'bare all the way down the lane', steps: [{ policy: dropWalk('shl10d', 9), until: and(ground, X(15)), max: 1500 }, { hold: 'R', until: done, max: 1500 }], cause: 'shl-drip' },
+    inAct('SHL-10', 'shl10-rong', 'cross the second sister on her mark, as the Seven Sisters taught', () => [{ policy: markWalk('shl10l'), until: done, max: 4000 }], 'shl-liar'),
+    inAct('SHL-10', 'shl10-rong', 'wait for her to run dry', () => [{ policy: dryLiar('shl10l'), until: done, max: 4000 }], 'shl-wah'),
+    inAct('SHL-10', 'shl10-jingkieng', 'jump at the hanging guide and wait, as the Root Guide taught, then walk', (x) => [...atHook(x + 10, 'the hanging guide'), { hold: '', ticks: 300, note: 'wait for the root' }, { hold: 'R', until: done, max: 1500, note: 'the root is at head height, and the floor is not there' }], 'shl-gorge'),
+    inAct('SHL-10', 'shl10-jingkieng', 'jump the gorge from under the hanging guide (it grows into you as you take off)', (x) => [{ hold: 'R', until: X(x + 10.6), max: 600 }, { hold: 'R', jump: 24, ticks: 24 }, { hold: 'R', until: done, max: 900 }], 'shl-jri'),
+    inAct('SHL-10', 'shl10-pung', 'run the span of stalls (plates read right)', () => [{ policy: marketWalk('shl10m'), until: done, max: 6000 }], 'shl-sway'),
+    inAct('SHL-10', 'shl10-pung', 'bursts, but keep the day of the first arch past the arch in the middle', (x) => [{ policy: spanWalk('shl10m-d1', 'shl10s'), until: done, max: 6000 }], 'shl-shift'),
+  ],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'shl10-rong': act10a,
+  'shl10-jingkieng': act10b,
+  'shl10-pung': act10c,
   'shl09-sngi': act09a,
   'shl09-kot': act09b,
   'shl09-pdeng': act09c,
@@ -575,6 +674,7 @@ const endingPolicies: Record<string, Policy> = {
   'shl-column': columnPolicy,
   'shl-tap': tapPolicy,
   'shl-board': boardPolicy,
+  'shl-tallgate': tallgatePolicy,
 };
 
 export const test: CityTests = {
@@ -584,5 +684,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['SHL-02', 'SHL-03', 'SHL-04', 'SHL-05', 'SHL-06', 'SHL-07', 'SHL-08', 'SHL-09'],
+  fair: ['SHL-02', 'SHL-03', 'SHL-04', 'SHL-05', 'SHL-06', 'SHL-07', 'SHL-08', 'SHL-09', 'SHL-10'],
 };
