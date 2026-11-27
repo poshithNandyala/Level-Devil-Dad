@@ -29,6 +29,8 @@ export interface TroupeCfg {
   ground?: boolean;
   /** the troupe follows a drummer on the far bank; the one by you plays this many seconds out of step */
   decoy?: number;
+  /** the drum plays while they hold the pose and stops while they whirl: the finale breaks the stage's rule */
+  rev?: boolean;
 }
 
 export interface TroupeSt {
@@ -153,7 +155,8 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
           box(ctx, dx + 1, FL - 14, 2, 7, '#5D3A1E');
           box(ctx, dx + 13, FL - 14, 2, 7, '#5D3A1E');
         };
-        if (cfg.decoy === undefined) drummer(x0 - 22, 1, a.pose === null, a.pose !== null && a.left < 0.45);
+        if (cfg.rev) drummer(x0 - 22, 1, a.pose !== null, a.pose === null && a.left < 0.45);
+        else if (cfg.decoy === undefined) drummer(x0 - 22, 1, a.pose === null, a.pose !== null && a.left < 0.45);
         else {
           // the troupe's own drummer is across the pit; the one by you plays out of step
           drummer(x0 + W + 6, -1, a.pose === null, a.pose !== null && a.left < 0.45);
@@ -190,7 +193,7 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
 }
 
 /** the pit the troupe dances in: thrown off a pose, or simply fallen in */
-function stagePit(w: World, c0: number, c1: number) {
+export function stagePit(w: World, c0: number, c1: number) {
   const g = channel(w, c0, c1, 'bbi-nacha', 'drain');
   g.o.tick = (r, w2) => {
     const p = w2.player;

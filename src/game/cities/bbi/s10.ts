@@ -1,7 +1,7 @@
-// BBI-10 Kalinga: the finale, at the new stadium gate. Only Bhubaneswar's own ideas, in a new order: the
-// keeper's pads carry you across the moat on to the stone chariot's plinth, and the plinth slides; step up on
-// to the still hub before it slams the wall. Then a parasol street where the second shopkeeper sells his
-// cut-out early, an ikat loom whose motif beat lands you on a Gotipua troupe's pit, and the ribbon at the gate.
+// BBI-10 Kalinga: the finale, at the new stadium gate. Only Bhubaneswar's own ideas, each turned against the rule
+// it taught (law 7): the keeper's pads carry you on to a plinth with no horses (any step starts it); a parasol
+// street where every parasol is open and a customer is what shuts it; a quiet loom; a troupe whose drummer plays
+// while they hold the pose; and the ribbon at the gate.
 import type { LevelDef, World } from '../../world';
 import type { Act } from '../../levels/acts';
 import type { Ending } from '../../levels/endkit';
@@ -13,9 +13,9 @@ import { Rig, box, folk } from './entities';
 import { FL, channel, cyc, since, taraScript } from './common';
 import { keeperOn } from './s02';
 import { parasol } from './s03';
-import { loom, loomAct, sidhiAct, type LoomCfg } from './s06';
-import { deepaAct, troupe, troupeAct, type TroupeCfg } from './s07';
-import { chariot, chariotAct, risingSpokes, templeWall, type ChariotCfg } from './s09';
+import { loom, type LoomCfg } from './s06';
+import { stagePit, troupe, type TroupeCfg } from './s07';
+import { chariot, templeWall, type ChariotCfg } from './s09';
 
 export const C10: ChariotCfg = { c0: 18, len: 10, stopAt: 36, hub: 30, hubY: FL - 58, wait: 0.35, any: true, bare: true };
 export const K10 = { x0: 5, travel: 9, gap: [9, 35] as [number, number] };
@@ -45,17 +45,19 @@ export function room(): LevelDef {
   };
 }
 
-/** act 1: the parasol street again, but the second shopkeeper sells his cut-out almost at once */
+/** act 1, the parasol street turned round (law 7): on the finale's festival day every parasol is open already,
+ *  and each is folded up when its customer comes to buy it. Pipili taught you to wait for the customer; here
+ *  the customer is what shuts it. */
 export const P10: { c: number; y: number; cut: -1 | 0 | 1; open: [number, number]; peel?: number }[] = [
-  { c: 5, y: FL - 36, cut: -1, open: [0.6, 3.2] },
-  { c: 9, y: FL - 36, cut: -1, open: [2.4, 4.6], peel: 3.5 },
-  { c: 13, y: FL - 48, cut: 0, open: [3.0, 6.4] },
-  { c: 17, y: FL - 40, cut: 1, open: [5.0, 8.4] },
+  { c: 5, y: FL - 36, cut: -1, open: [0, 3.0] },
+  { c: 9, y: FL - 36, cut: -1, open: [0, 3.8] },
+  { c: 13, y: FL - 48, cut: 0, open: [0, 4.6] },
+  { c: 17, y: FL - 40, cut: 1, open: [0, 5.6] },
 ];
 export const act1: Act = {
   id: 'bbi10-chhata',
   w: 24,
-  advice: 'The parasol street, quicker: each opens as its customer comes, stand only on the cut-out, and the second shopkeeper sells his almost at once. Touch it and go on to the third.',
+  advice: 'Festival day: every parasol is open already, and each one is folded up when its customer comes to buy it. Don’t wait for anyone: cut-out to cut-out, straight across, before the buyers arrive.',
   cps: [],
   paint: (g, c) => {
     g.pit(c.x + 2, c.x + 20);
@@ -84,13 +86,15 @@ export const act1: Act = {
   },
 };
 
-/** act 2: the loom's motif beat, then a little bank, then a troupe whose bridge comes in its own time */
-export const L10: LoomCfg = { c0: 3, n: 7, speeds: [3, 1, 4, 2, 4, 1, 3], beat: 0.85, hold: 2.0, shuttle: [[0, -1]] };
-export const T10: TroupeCfg = { c0: 14, n: 9, drum: 1.4, hold: 1.5, poses: ['wheel', 'tower', 'bridge'], form: 0.3 };
+/** act 2: a quiet loom (the weaver is away, no shuttle: the plain beat), then the troupe turned round (law 7):
+ *  this drummer plays while they hold the pose and stops while they whirl, so going at the drum's stop, as the
+ *  Raja night taught, is going into the whirl. */
+export const L10: LoomCfg = { c0: 3, n: 7, speeds: [3, 1, 4, 2, 4, 1, 3], beat: 0.85, hold: 2.0, shuttle: [] };
+export const T10: TroupeCfg = { c0: 14, n: 9, drum: 1.4, hold: 1.5, poses: ['wheel', 'tower', 'bridge'], form: 0.3, rev: true };
 export const act2: Act = {
   id: 'bbi10-tana',
   w: 28,
-  advice: 'The loom first: count to the motif beat, let the shuttle by and cross. Rest on the bank. Then the Gotipua pit: be at its edge when the drum stops for the bridge and go straight over.',
+  advice: 'The weaver is away: no shuttle today, cross on the motif. Then this drummer plays while his troupe holds the pose: go when the bridge forms, never at his stop.',
   cps: [12.5],
   paint: (g, c) => {
     g.pit(c.x + L10.c0, c.x + L10.c0 + L10.n - 1).pit(c.x + T10.c0, c.x + T10.c0 + T10.n - 1);
@@ -103,76 +107,11 @@ export const act2: Act = {
     w.flags.bbi10t = st2;
     onPass(w, c.X(11), (w2) => (st2.t0 = w2.tick));
     channel(w, c.x + L10.c0, c.x + L10.c0 + L10.n - 1, 'bbi-ranga', 'water');
-    channel(w, c.x + T10.c0, c.x + T10.c0 + T10.n - 1, 'bbi-nacha', 'drain');
+    stagePit(w, c.x + T10.c0, c.x + T10.c0 + T10.n - 1);
     loom(w, { ...L10, c0: c.x + L10.c0 }, () => st.t0, 'bbi10lm');
     troupe(w, { ...T10, c0: c.x + T10.c0 }, () => st2.t0, 'bbi10tr');
   },
 };
-
-/** act 3: the stone chariot once more, with its horses: start it, wait on the hub, up the wall */
-export const act3: Act = {
-  id: 'bbi10-ratha',
-  w: 28,
-  advice: 'The chariot once more, horses and all: stand on the horses to start it, jump up to the hub as it comes over, and up on to the wall after the slam.',
-  cps: [],
-  paint: (g, c) => {
-    g.pit(c.x + 3, c.x + 21).fill(c.x + 22, c.x + 25, 11, 14, '#');
-  },
-  build: (w, c) => {
-    channel(w, c.x + 3, c.x + 21, 'bbi-khai', 'water');
-    chariot(w, { c0: c.x + 3, len: 11, stopAt: c.x + 22, hub: c.x + 18, hubY: FL - 58, wait: 0.4 }, 'bbi10c2');
-    templeWall(w, c.x + 22, px(11));
-  },
-};
-
-/** act 4: the keeper once more, over a wider drain, then the troupe whose only pose is a tower */
-export const act4: Act = {
-  id: 'bbi10-khela',
-  w: 26,
-  advice: 'The keeper again: his back pad, the dive across, the rebound back to him, and off before he gets up.',
-  cps: [],
-  paint: (g, c) => {
-    g.pit(c.x + 6, c.x + 13);
-  },
-  build: (w, c) => {
-    channel(w, c.x + 6, c.x + 13, 'bbi-turf', 'water');
-    keeperOn(w, { x0: c.X(2.5), travel: px(9), boards: c.X(21), ballFrom: c.X(20) }, 'bbi10k2');
-  },
-};
-export const T10b: TroupeCfg[] = [
-  { c0: 3, n: 5, drum: 1.2, hold: 1.8, poses: ['tower'], form: 0.3 },
-  { c0: 12, n: 8, drum: 1.0, hold: 1.4, poses: ['wheel', 'bridge'], form: 0.3, phase: 0.4 },
-];
-export const act5 = troupeAct('bbi10-nacha', 23, T10b, 'bbi10n', 'Two last troupes: the first only makes a tower (on to its top and off), the second a wheel and then the bridge.', [10.5]);
-
-export const act6 = loomAct('bbi10-bunakar', 16, { c0: 3, n: 8, speeds: [2, 4, 1, 3, 3, 1, 4, 2], beat: 0.7, hold: 2.8, shuttle: [[0, 1], [0.5, -1]] }, 'bbi10b', 'The weaver again: count to the motif, let the shuttle go across and back, then cross.');
-export const act7 = chariotAct('bbi10-konark', 10, 8, 17, 'bbi10c3', 'The last chariot: horses, hub, wall.');
-export const act8 = troupeAct(
-  'bbi10-mela',
-  24,
-  [
-    { c0: 3, n: 6, drum: 1.2, hold: 1.4, poses: ['bridge', 'tower'], form: 0.3 },
-    { c0: 13, n: 7, drum: 1.4, hold: 1.7, poses: ['wheel'], form: 0.3, phase: 0.5 },
-  ],
-  'bbi10m',
-  'Two troupes before the gate: the first lies down for a bridge, the second only ever makes a wheel.',
-  [10.5],
-);
-
-export const act9 = sidhiAct('bbi10-sidhi', 'bbi10s');
-export const act10 = deepaAct('bbi10-deepa', 'bbi10d');
-export const act11 = troupeAct(
-  'bbi10-shrinkhala',
-  26,
-  [
-    { c0: 4, n: 6, drum: 2.0, hold: 1.5, poses: ['wheel', 'bridge'], form: 0.25 },
-    { c0: 10, n: 6, drum: 0.12, hold: 1.4, poses: ['bridge', 'tower'], form: 0.2 },
-    { c0: 16, n: 6, drum: 0.12, hold: 1.4, poses: ['bridge', 'wheel'], form: 0.2 },
-  ],
-  'bbi10k3',
-  'The chain of troupes once more: no bank between them, each bridge only lasts its walk. Once on, keep going.',
-);
-export const act12 = risingSpokes('bbi10-udaya', 1, 'bbi10u');
 
 /** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */
 export const RIB = { period: 2.2, shut: 0.5, at: 9 };

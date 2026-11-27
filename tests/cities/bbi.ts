@@ -439,20 +439,16 @@ const p10 = (w: World, i: number) => (w.flags.bbi10ps as Para10[])[i];
 const cut10 = (i: number) => (w: World) => p10(w, i).cutX() + 12;
 const act10a = (x: number): Step[] => [
   { hold: 'R', until: X(x + 0.4), max: 300 },
-  waitFor((w) => p10(w, 0).open(w), 'the first opens'),
-  leap6(cut10(0), 'cut-out on the right'),
-  stayOn(cut10(0), (w) => p10(w, 1).open(w), 'the second opens'),
-  leap6(cut10(1), 'touch his cut-out'),
-  stayOn(cut10(1), (w) => p10(w, 2).open(w), 'and the third opens at once'),
-  leap6(cut10(2), 'on before he sells the second'),
-  stayOn(cut10(2), (w) => p10(w, 3).open(w), 'the fourth'),
-  leap6(cut10(3), 'cut-out on the right'),
+  leap6(cut10(0), 'cut-out on the right, at once'),
+  leap6(cut10(1), 'the next before its buyer comes'),
+  leap6(cut10(2), 'and the next'),
+  leap6(cut10(3), 'the last'),
   leap(() => px(x + 22), 'off on to the bank'),
   { hold: 'R', until: X(x + 23.5), max: 300 },
 ];
 const act10b = (x: number): Step[] => [
-  { hold: 'R', until: X(x + 0.9), max: 300 },
-  waitFor((w) => lm(w, 'bbi10lm').bridge && lm(w, 'bbi10lm').into > 0.5, 'the motif beat; the shuttle by'),
+  { hold: 'R', until: X(x + 2.1), max: 300 },
+  waitFor((w) => lm(w, 'bbi10lm').bridge && lm(w, 'bbi10lm').into > 0.12, 'the motif beat: go at once'),
   { hold: 'R', until: and(ground, X(x + 10.4)), max: 400, note: 'across' },
   ...onBridge('bbi10tr', x + 14, x + 23.2, 'the troupe’s bridge'),
   { hold: 'R', until: X(x + 27.5), max: 400 },
@@ -753,18 +749,14 @@ const DEATHS: Record<string, Death[]> = {
   'bbi09-ratha': [cNaive(10)],
   'bbi09-ulta': [cNaive(9), { what: 'step down on to the stone after the slam', cause: 'bbi-ulta', steps: (x) => [...chAct('bbi9u', 9, 8)(x).slice(0, 9), { hold: 'L', ticks: 40 }, { hold: '', until: done, max: 900 }] }],
   'bbi09-udaya': [spokesNaive()],
-  'bbi10-chhata': [pNaive(), pFix('bbi10ps')],
-  'bbi10-tana': [walkOn('bbi-ranga'), lFix('bbi10lm')],
-  'bbi10-bunakar': [walkOn('bbi-ranga'), lFix('bbi10b')],
-  'bbi10-sidhi': [walkOn('bbi-ranga')],
-  'bbi10-khela': [kNaive('bbi10k2'), kFix('bbi10k2')],
-  'bbi10-deepa': [walkOn('bbi-nacha')],
-  'bbi10-nacha': [walkOn('bbi-nacha')],
-  'bbi10-shrinkhala': [walkOn('bbi-nacha'), tFix('bbi10k30', 4, 6)],
-  'bbi10-mela': [walkOn('bbi-nacha'), tFix('bbi10m0', 3, 6)],
-  'bbi10-konark': [cNaive(10)],
-  'bbi10-ratha': [cNaive(11)],
-  'bbi10-udaya': [spokesNaive()],
+  'bbi10-chhata': [
+    { what: 'wait on the first cut-out for a customer', cause: 'bbi-rangapani', steps: (x) => [{ hold: 'R', until: X(x + 0.4), max: 300 }, leap6(cut10(0), 'on to it'), stayOn(cut10(0), done, 'and wait', 1500)] },
+    pFix('bbi10ps'),
+  ],
+  'bbi10-tana': [
+    { what: 'go at the troupe drummer’s stop', cause: 'bbi-nacha', steps: (x) => [...act10b(x).slice(0, 3), { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 14) - 2, max: 600 }, waitFor((w) => tr(w, 'bbi10tr').pose === null && tr(w, 'bbi10tr').into < 0.2 && (w.flags.bbi10tr as { stops: number }).stops > 0, 'his stop'), { hold: 'R', until: done, max: 600 }] },
+    { what: 'take the bridge, then rest on it', cause: 'bbi-thrown', steps: (x) => [...act10b(x).slice(0, 3), ...onBridge('bbi10tr', x + 14, x + 17, 'the bridge'), { hold: '', until: done, max: 900 }] },
+  ],
 };
 const ROOMS: Record<string, () => Step[]> = { 'BBI-02': room02, 'BBI-04': room04, 'BBI-03': room03, 'BBI-05': room05, 'BBI-06': room06, 'BBI-07': room07, 'BBI-08': room08, 'BBI-09': room09, 'BBI-10': room10 };
 /** for every act with deaths listed: the stage's route up to the act's start, then the death play */
@@ -936,10 +928,8 @@ const sutraRun = (x: number): Step[] => [
   { hold: 'R', until: and(ground, X(x + 12.4)), max: 400 },
   { hold: 'R', until: X(x + 16.5), max: 300 },
 ];
-const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi06-sutra': sutraRun, 'bbi07-dui-baja': (x) => [...crossTroupe('bbi7db0', x, 4, 7, 'bridge'), { hold: 'R', until: X(x + 14.5), max: 300 }], 'bbi07-pada': padaRun, 'bbi08-bhanwar': bhanwarRun, 'bbi06-sari': sariRun, 'bbi05-chheli': chheliRun, 'bbi07-bagudi': bagudiRun, 'bbi06-patta': pattaRun, 'bbi05-patra': patraRun, 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi10-ratha': act10c, 'bbi02-dive': act02b, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b, 'bbi10-khela': act10d, 'bbi10-nacha': act10e,
+const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi06-sutra': sutraRun, 'bbi07-dui-baja': (x) => [...crossTroupe('bbi7db0', x, 4, 7, 'bridge'), { hold: 'R', until: X(x + 14.5), max: 300 }], 'bbi07-pada': padaRun, 'bbi08-bhanwar': bhanwarRun, 'bbi06-sari': sariRun, 'bbi05-chheli': chheliRun, 'bbi07-bagudi': bagudiRun, 'bbi06-patta': pattaRun, 'bbi05-patra': patraRun, 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi02-dive': act02b, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b,
   'bbi09-ghoda': chAct('bbi9g', 8, 7),
-  'bbi10-bunakar': loomRun('bbi10b', 8, 1.1),
-  'bbi10-konark': chAct('bbi10c3', 10, 8),
   'bbi07-deepa': (x) => [...crossTroupe('bbi7l', x, 4, 8, 'bridge'), { hold: 'R', until: X(x + 15.5), max: 300 }],
   'bbi07-shrinkhala': (x) => [...onBridge('bbi7k0', x + 4, x + 22.2, 'on at the stop, then walk the whole chain'), { hold: 'R', until: X(x + 25.5), max: 300 }],
   'bbi07-dweepa': (x) => [...crossTroupe('bbi7i0', x, 4, 6, 'bridge'), ...crossTroupe('bbi7i1', x, 12, 7, 'bridge'), { hold: 'R', until: X(x + 21.5), max: 300 }],
@@ -973,15 +963,6 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi06-sutra': sutraR
     return out;
   },
   'bbi08-dui': bowlRun('bbi8h', 4, 24, 1, 6.0),
-  'bbi10-sidhi': sidhiRun('bbi10s'),
-  'bbi10-deepa': (x) => [...crossTroupe('bbi10d', x, 4, 8, 'bridge'), { hold: 'R', until: X(x + 15.5), max: 300 }],
-  'bbi10-shrinkhala': (x) => [...onBridge('bbi10k30', x + 4, x + 22.2, 'on at the stop, then walk the whole chain'), { hold: 'R', until: X(x + 25.5), max: 300 }],
-  'bbi10-udaya': (x) => {
-    const out: Step[] = [{ hold: 'R', until: X(x + 1.4), max: 300 }];
-    for (let k = 0; k < 8; k++) out.push(waitFor((w) => (w.flags.bbi10u.stood[k - 1] ?? w.flags.bbi10u.stood[-1] ?? 1e9) + 1.35 * 120 <= w.tick, `wait till spoke ${k + 1} is up`), leap(() => px(x + 3 + 2.5 * k) + 14, `spoke ${k + 1}`, () => true, 8));
-    out.push(leap(() => px(x + 26), 'on to the terrace'), { hold: 'R', until: and(ground, X(x + 27.4)), max: 300 });
-    return out;
-  },
   'bbi05-tenda': tendaRun('bbi5t', 5),
   'bbi05-chakki': (x) => [
     { hold: 'R', until: X(x + 1.4), max: 400 },
@@ -1003,7 +984,6 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi06-sutra': sutraR
       { hold: 'R', until: X(x + 29), max: 600 },
     ];
   },
-  'bbi10-mela': (x) => [...crossTroupe('bbi10m0', x, 3, 6, 'bridge'), ...crossTroupe('bbi10m1', x, 13, 7, 'wheel'), { hold: 'R', until: X(x + 23.5), max: 300 }],
 };
 const endingPolicies: Record<string, Policy> = { 'bbi-turf-roll': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy, 'bbi-pose-gate': gatePolicy, 'bbi-leaf-plate': platePolicy, 'bbi-horse-gap': horseGap, 'bbi-ribbon-snip': ribbonPolicy };
 void and;
