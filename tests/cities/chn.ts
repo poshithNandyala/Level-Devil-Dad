@@ -188,6 +188,14 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
       ...R.slice(j + 2),
     ];
   }
+  // 04 (human timing, route only): leave the pigeons' ledge from 16.2 (was 16.8): a hop 12 ticks late then still
+  // lands short of the kaapi streams at 22
+  {
+    const R = S['CHN-04'];
+    const k = R.findIndex((st) => st.note === 'do not stop here');
+    if (k < 0) throw new Error("CHN-04: no step 'do not stop here'");
+    R[k] = { hold: 'R', until: and(ground, X(16.2)), note: 'do not stop here' };
+  }
   // 06 (human timing, route only): the shipped route's third hop usually flew clean over the third garland on to the
   // road at 18, and then hopped again ("off the drain") from the road, which with a late press landed in the gap at 21.
   // Now: hop off the drain only if still on a garland; on the road, stop and wait for the crowd where you are
@@ -302,7 +310,48 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 
 const groupOf = (w: World, letter: string) => w.entities.find((e: any) => e.letter === letter) as any;
 
+/** a ball rolling at Dad along the ground will reach him within `lead` seconds (the bouncer flies over his head and
+ *  is not counted: "stay down for the bouncer") */
+const ballIn = (w: World, lead: number) => {
+  const p = w.player;
+  for (const e of w.entities as any[]) {
+    if (!e.alive || e.vx === undefined || e.x === undefined || !e.hazard?.active) continue;
+    const ew = e.w ?? 12,
+      eh = e.h ?? 12;
+    if (e.y + eh < p.y - 6 || e.y > p.y + p.h + 2) continue;
+    const ahead = e.x - (p.x + p.w);
+    if (e.vx < 0 && ahead > -4) {
+      const closing = -e.vx + Math.max(0, p.vx);
+      if (closing > 20 && ahead / closing <= lead) return true;
+    }
+  }
+  return false;
+};
+/** run right and hop every ball that will arrive within `lead` s (the shared dodge waits till 0.13 s, too late for a
+ *  press 12 ticks behind against balls at 200-320 px/s) */
+const runHopping = (to: number, lead: number, note: string): Step => {
+  let hold = 0;
+  return {
+    policy: (w) => {
+      if (hold > 0) {
+        hold--;
+        return { move: 'R', jump: true };
+      }
+      if (w.player.onGround && ballIn(w, lead)) {
+        hold = 11;
+        return { move: 'R', jump: true };
+      }
+      return { move: 'R', jump: false };
+    },
+    until: X(to),
+    max: 1500,
+    note,
+  };
+};
+
 const actRoutes: Record<string, (x: number, p: any) => Step[]> = {
+  // CHN-04's act (round 2, human timing): the same run, hopping each ground ball 0.25 s ahead instead of 0.13
+  'chn04-cricket': (x) => [runHopping(x + 36, 0.25, 'hop the balls on the ground, stay down for the bouncer')],
   // CHN-07's act, re-timed for human play (round 2): the shipped route waited for the second stone wherever the long
   // jump happened to land, which with a late jump was on the pit's edge; now Dad settles in the middle of the trigger
   // band (cx 16.5..19.2), hops on to the (now 3-wide) fallen stone from 17.9, and leaves it with a long jump

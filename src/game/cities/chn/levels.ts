@@ -475,8 +475,10 @@ export const levels = (): LevelDef[] => [
         }
       });
       prop(w, 'teastall', 25, 15, { label: 'KAAPI' });
-      arc(w, px(22), 228, px(27), 228, 5, { period: 1.8, on: 0.9, phase: 0 }, '#6D4C41', 'burnt');
-      arc(w, px(22), 196, px(27), 196, 5, { period: 1.8, on: 0.9, phase: 0.9 }, '#6D4C41', 'burnt');
+      // round 2 (human timing): the two streams still take turns, 0.9 s each, but the cycle is 2.2 s (was 1.8), so
+      // the low one rests 1.3 s: a walk under the high one that starts up to 12 ticks late still gets across
+      arc(w, px(22), 228, px(27), 228, 5, { period: 2.2, on: 0.9, phase: 0 }, '#6D4C41', 'burnt');
+      arc(w, px(22), 196, px(27), 196, 5, { period: 2.2, on: 0.9, phase: 1.1 }, '#6D4C41', 'burnt');
       rival(w, 6, 15, 1, tara(3, 1));
       collectible(w, 'tumbler', 15, 10);
     },
