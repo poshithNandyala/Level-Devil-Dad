@@ -521,9 +521,33 @@ const guruFwd = (x: number, to: number, old = false, key = 'lko06-guru', mirror 
   };
 };
 actRoutes['lko06-guru'] = (x) => [guruFwd(x, x + 25.5), runTo(x + 27.5, 300)];
+/** keep your feet moving on a covered board (a pause there is a bow) until `f` */
+const pace10 = (x0: number, x1: number, f: (w: World) => boolean): Step => {
+  let to = x1;
+  return {
+    policy: (w) => {
+      const t = px(to) + 8;
+      if (Math.abs(w.player.cx - t) <= 3) to = to === x1 ? x0 : x1;
+      return go(toward(w, px(to) + 8, 1));
+    },
+    until: f,
+    max: 1200,
+    note: 'keep moving on the covered board till sam',
+  };
+};
+const samDo = (w: World) => afterSam(w, 'lko10-do');
+actRoutes['lko10-do'] = (x) => [
+  walkTo(x + 2.6, 300, 'up to the stage: the short tihai starts'),
+  until(samDo, 600, 'sam has rung, on the second'),
+  runTo(x + 9.6, 300, 'on to the first covered board'),
+  pace10(x + 9.4, x + 11.4, samDo),
+  runTo(x + 18.6, 300),
+  pace10(x + 18.4, x + 20.4, samDo),
+  runTo(x + 29.5, 300),
+];
 actRoutes['lko10-seedha'] = (x) => [guruFwd(x, x + 25.5, false, 'lko10-seedha'), runTo(x + 27.5, 300)];
-const tihaiAt = (w: World) => (w.flags['lko06-tihai:at'] as ((w: World) => { n: number; k: number }) | undefined)?.(w) ?? { n: -1, k: -1 };
-const afterSam = (w: World) => { const a = tihaiAt(w); return a.n === 0 && a.k > 2 && a.k < 40; };
+const tihaiAt = (w: World, id = 'lko06-tihai') => (w.flags[`${id}:at`] as ((w: World) => { n: number; k: number }) | undefined)?.(w) ?? { n: -1, k: -1 };
+const afterSam = (w: World, id = 'lko06-tihai') => { const a = tihaiAt(w, id); return a.n === 0 && a.k > 2 && a.k < 40; };
 actRoutes['lko06-tihai'] = (x) => [
   walkTo(x + 2.6, 300, 'up to the stage: the first tihai starts'),
   until(afterSam, 600, 'sam has rung'),
@@ -1037,7 +1061,7 @@ mistakes['LKO-06'] = [
   },
 ];
 mistakes['LKO-10'] = [
-  { what: 'bowing to the last door from right in front of it', steps: [...through('LKO-10', room10, 10), walkTo(doorX('LKO-10') - 1.5, 600), until(done, 600)], cause: 'lko-tehzeeb' },
+  { what: 'bowing to the last door from right in front of it', steps: [...through('LKO-10', room10, 11), walkTo(doorX('LKO-10') - 1.5, 600), until(done, 600)], cause: 'lko-tehzeeb' },
   { what: 'the court again: taking the square the courtier bows you on to', steps: [...through('LKO-10', room10, 1), ...R_lko08_chausar('lko10-darbar', 5, 5, 200, true, false, 'court', 14.6)(actX('LKO-10', 1)), walkTo(actX('LKO-10', 1) + 23.6, 300), until((w) => ((w.flags['lko10-darbar:court2:bowed'] as { i: number } | undefined)?.i ?? -1) === 0, 2400, 'he bows you on'), hops([actX('LKO-10', 1) + 26.6]), until(done, 600)], cause: 'lko-goti-pehle' },
 ];
 
@@ -1060,8 +1084,8 @@ mistakes['LKO-10'].push(
   { what: 'the court again, hopping square after square', steps: [...through('LKO-10', room10, 1), walkTo(actX('LKO-10', 1) + 3.2, 300), hops([0, 1, 2, 3, 4].map((i) => actX('LKO-10', 1) + 5 + 3 * i + 0.5)), until(done, 300)], cause: 'lko-kuan' },
   { what: 'the procession again, rushing up behind them', steps: [...through('LKO-10', room10, 3), { hold: 'R', until: done, max: 1200 }], cause: 'lko-julus' },
   { what: 'the procession again, keeping the rhythm of the first three nalas', steps: [...through('LKO-10', room10, 3), ...R_lko07_julus('lko10-julus', [12, 24, 36, 48])(actX('LKO-10', 3)), until(done, 600)], cause: 'lko-julus-nala' },
-  { what: 'the gallery, walking through the second arch too', steps: [...through('LKO-10', room10, 9), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
-  { what: 'the gallery, hopping the drain into the first arch', steps: [...through('LKO-10', room10, 9), runTo(actX('LKO-10', 9) + 1, 300), hop(actX('LKO-10', 9) + 3, actX('LKO-10', 9) + 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-kuan' },
+  { what: 'the gallery, walking through the second arch too', steps: [...through('LKO-10', room10, 10), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
+  { what: 'the gallery, hopping the drain into the first arch', steps: [...through('LKO-10', room10, 10), runTo(actX('LKO-10', 10) + 1, 300), hop(actX('LKO-10', 10) + 3, actX('LKO-10', 10) + 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-kuan' },
 );
 
 mistakes['LKO-07'].push(
@@ -1150,6 +1174,11 @@ mistakes['LKO-05'].push(
 mistakes['LKO-10'].push(
   { what: 'the guru again: pressing the other way after her stamp, as 06 taught', steps: [...through('LKO-10', room10, 8), { ...guruFwd(actX('LKO-10', 8), actX('LKO-10', 8) + 25.5, false, 'lko10-seedha', true), until: done }], cause: 'lko-ghungroo' },
   { what: 'the guru again: stopping after her stamp to see which way is which', steps: [...through('LKO-10', room10, 8), { ...guruFwd(actX('LKO-10', 8), actX('LKO-10', 8) + 25.5, false, 'lko10-seedha'), until: (w) => ((w.flags['lko10-seedha:g'] as { n: number } | undefined)?.n ?? 0) >= 1 }, until(done, 900)], cause: 'lko-chakkar' },
+);
+
+mistakes['LKO-10'].push(
+  { what: 'the short tihai: counting to three, as 06 taught', steps: [...through('LKO-10', room10, 9), walkTo(actX('LKO-10', 9) + 2.6, 300), until(samDo, 600), runTo(actX('LKO-10', 9) + 9.6, 300), pace10(actX('LKO-10', 9) + 9.4, actX('LKO-10', 9) + 11.4, (w) => tihaiAt(w, 'lko10-do').n === 1 && tihaiAt(w, 'lko10-do').k > 0), runTo(actX('LKO-10', 9) + 15, 300), until(done, 600)], cause: 'lko-tihai-do' },
+  { what: 'the short tihai: standing still on a board to wait for sam', steps: [...through('LKO-10', room10, 9), walkTo(actX('LKO-10', 9) + 2.6, 300), until(samDo, 600), walkTo(actX('LKO-10', 9) + 10.4, 300), until(done, 600)], cause: 'lko-tehzeeb' },
 );
 
 export const test: CityTests = {

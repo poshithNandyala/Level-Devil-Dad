@@ -360,16 +360,19 @@ export const mehfil: Act = {
  *  tied up in cloth and stay silent through the first two phrases; on the sam that ends the third, every bell
  *  on the stage rings, tied or not, and she spins to it. Count the phrases; on the third, be on plain board. */
 const TIHAI = { first: 200, phrase: 80, cycle: 420, boards: [9, 18], bw: 4 };
-export const tihai: Act = {
-  id: 'lko06-tihai',
+/** `reps` phrases land on sam; with `bow`, the plain boards are chikan covers over bells: stand still on one
+ *  and that's a bow, it rings */
+export const makeTihai = (id: string, reps: number, bow: boolean, cause: string, advice: string, word: string): Act => ({
+  id,
   w: 30,
-  advice: 'The tabla plays a tihai: one phrase three times over, and the third lands on sam. The grey strips have their bells tied up and stay silent for the first two; on sam every bell on the stage rings, tied or not, and she spins to it. Count the three lamps on the tabla: when the third lights, be on plain board.',
+  advice,
   cp0: false,
-  cps: [-2, 9.2, 18.2],
+  cps: bow ? [-2, 28] : [-2, 9.2, 18.2],
   build: (w, c) => {
     const x = c.x;
     boards(w, x, x + 29);
-    const d = new Dancer(w, c.X(12) + 8, 420, 'lko-tihai');
+    const d = new Dancer(w, c.X(12) + 8, 420, cause);
+    const still = stillness(w);
     let chase = -1;
     const T = { t0: -1 };
     w.flags[c.f('t')] = T;
@@ -385,7 +388,7 @@ export const tihai: Act = {
       if (T.t0 < 0) return { n: 0, sam: false, k: -1 };
       const e = w2.tick - T.t0;
       const k = e < TIHAI.first ? e - TIHAI.first + TIHAI.cycle : (e - TIHAI.first) % TIHAI.cycle;
-      const intoTihai = k - (TIHAI.cycle - 3 * TIHAI.phrase);
+      const intoTihai = k - (TIHAI.cycle - reps * TIHAI.phrase);
       const n = intoTihai >= 0 ? 1 + Math.floor(intoTihai / TIHAI.phrase) : 0;
       return { n, sam: e >= TIHAI.first && k === 0, k };
     };
@@ -419,19 +422,44 @@ export const tihai: Act = {
       if (T.t0 < 0 && p.cx > c.X(2)) T.t0 = w2.tick;
       // sam is her fastest chakkar, and it comes to you: she follows you for a moment, not just the sound
       if (w2.tick < chase && d.s === 'out') d.target = p.cx;
+      // the covered boards: a pause there is a bow, and the bells under the cover ring
+      const onBoard = p.onGround && TIHAI.boards.some((b) => p.cx > c.X(b) && p.cx < c.X(b + TIHAI.bw));
+      if (bow && onBoard && still() > 40) {
+        d.call(w2, p.cx, 'lko-tehzeeb');
+        chase = w2.tick + 45;
+      }
       const a = at(w2);
       if (!a.sam) return;
       w2.sfx('bells', p.cx, FLOOR - 4);
       w2.emit('shake', c.X(14), FLOOR, { amount: 1.5 });
       const onStrip = p.onGround && p.y + p.h >= FLOOR - 1 && spans.some(([c0, c1]) => p.x + p.w > px(c0) + 2 && p.x < px(c1 + 1) - 2);
       if (onStrip) {
-        d.call(w2, p.cx, 'lko-tihai');
+        d.call(w2, p.cx, cause);
         chase = w2.tick + 45;
       }
     });
-    sign(w, x + 0.4, 10.4, 3.2, 'TIHAI', 'shop', null, 'dha');
+    if (bow)
+      w.add(
+        new Art((ctx) => {
+          for (const b of TIHAI.boards) {
+            ctx.fillStyle = '#F5F1E8';
+            ctx.fillRect(c.X(b), FLOOR - 2, px(TIHAI.bw), 3);
+            ctx.fillStyle = '#E8C547';
+            for (let xx = c.X(b) + 2; xx < c.X(b + TIHAI.bw); xx += 6) ctx.fillRect(xx, FLOOR + 1, 2, 1.5);
+          }
+        }, 0),
+      );
+    sign(w, x + 0.4, 10.4, 3.2, word, 'shop', null, 'dha');
   },
-};
+});
+export const tihai = makeTihai(
+  'lko06-tihai',
+  3,
+  false,
+  'lko-tihai',
+  'The tabla plays a tihai: one phrase three times over, and the third lands on sam. The grey strips have their bells tied up and stay silent for the first two; on sam every bell on the stage rings, tied or not, and she spins to it. Count the three lamps on the tabla: when the third lights, be on plain board.',
+  'TIHAI',
+);
 
 // ================================================================ act: guru, the student mirrors her
 /** The guru's rule: the student mirrors her. At every stamp of her foot Dad's left and right swap, and at

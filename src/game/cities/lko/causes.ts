@@ -43,6 +43,7 @@ export const causeLines: Record<string, string[]> = {
   'lko-aks': ['That dome was the reflection in the water, and it sinks as you step back.', 'For the reflection, jump from closer, from its own line.'],
   'lko-ghungroo': ['You stepped on a red strip: she heard the bells and spun back to them.', 'Never touch a strip: hop over it, from takht to takht.'],
   'lko-tihai': ['That was the third time round: on sam every bell rings, tied up or not, and she spun to you.', 'Count the lamps on the tabla. When the third lights, be on plain board.'],
+  'lko-tihai-do': ['Sam came on the second tonight: he cut the tihai short, and you were counting to three.', 'Watch the lamps, not the count: be on a board when sam comes.'],
   'lko-julus-nala': ['The fourth nala comes two steps early, off the rhythm of the first three.', 'Look for each nala; don’t count steps.'],
   'lko-photo': ['They were posing for the photograph: a pause doesn’t part them here, and they walked you back into the nala.', 'Wait for the flash: while it dazzles them, run straight through.'],
   'lko-photo-jaldi': ['You rushed the posing group before the flash: they closed ranks and shoved you back.', 'Wait for the flash, then run through while they blink.'],

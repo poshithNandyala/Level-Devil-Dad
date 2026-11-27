@@ -13,7 +13,7 @@ import { Art, FLOOR, gent, px, stillness, bowIcon, TAU } from './kit';
 import { archway, gentleman, looseStone, pehleDoorway, tara } from './s02';
 import { washLine } from './s03';
 import { Heap, karahi, shadows, type Light } from './s04';
-import { Dancer, makeGuru } from './s06';
+import { Dancer, makeGuru, makeTihai } from './s06';
 import { Flock, Flyer, drawFlyer, roofOf, roofs, type Roof } from './s09';
 import { arch, well, hooks, chausar } from './s08';
 import { on } from './kit';
@@ -442,5 +442,15 @@ const seedha = makeGuru(
   'The guru again, stamping as before, but tonight she dances for the guests and nobody mirrors her: a stamp swaps nothing. Keep pressing the way you were going, hop the red strips, and never stop on her floor.',
   'SEEDHA',
 );
-export const s10 = { room: tehzeebRoom, acts: [dhulai, darbar, tasveer, julusBells, jawab, raasta, daana, chirag, seedha, galiyara] };
+/** The tihai again, but tonight the tabla player cuts it short for the nawab: two phrases, and sam on the
+ *  second. 06 taught: count three. And the plain boards are chikan covers here: a pause on one is a bow. */
+const do_ = makeTihai(
+  'lko10-do',
+  2,
+  true,
+  'lko-tihai-do',
+  'The tihai again, but tonight he cuts it short: sam comes on the second lamp, not the third. Be on a board when the second lights. The boards are chikan covers over bells now: keep your feet moving on them, a pause is a bow.',
+  'DO HI',
+);
+export const s10 = { room: tehzeebRoom, acts: [dhulai, darbar, tasveer, julusBells, jawab, raasta, daana, chirag, seedha, do_, galiyara] };
 export const meta10 = { family: 'finale-bow-meets-bells', betrayals: ['bow-vs-bells'], ending: 'lko-tehzeeb' } as StageMeta;
