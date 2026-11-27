@@ -44,7 +44,7 @@ How to use this file:
 | 22 | DIS | Dispur (Guwahati) | Assam | Northeast | Assamese + Hindi + English | built on city/dis (10 stages), waiting for QA; notes in docs/cities/DIS.md |
 | 23 | SHL | Shillong | Meghalaya | Northeast | Khasi + English | built (module, 10 stages on `city/shl`, awaiting QA; 04/05/06/07/08/09/10 under their length floors) |
 | 24 | ITA | Itanagar | Arunachal Pradesh | Northeast | Arunachali Hindi + Nyishi + English | to do |
-| 25 | KOH | Kohima | Nagaland | Northeast | Nagamese + English | to do |
+| 25 | KOH | Kohima | Nagaland | Northeast | Nagamese + English | built, round 1 (10 stages on `city/koh`; length pass and QA pending) |
 | 26 | IMP | Imphal | Manipur | Northeast | Meitei (Manipuri) + Hindi + English | to do |
 | 27 | AIZ | Aizawl | Mizoram | Northeast | Mizo + English | to do |
 | 28 | AGT | Agartala | Tripura | Northeast | Bengali + Kokborok + Hindi + English | to do |

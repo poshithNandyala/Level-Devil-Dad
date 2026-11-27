@@ -1,0 +1,47 @@
+# KOH · Kohima, Nagaland: design notes (module city, 10 stages)
+
+Code: `src/game/cities/koh/` (one file per stage, `s01.ts` .. `s10.ts`, plus `entities.ts` kit (the `Rig`: a box that can be
+solid and/or deadly, moved and drawn by closures), `common.ts`, `endings.ts`, `levels.ts`, `lines.ts`, `theme.ts`, `look.ts`,
+`music.ts`, `backdrop.ts`, `things.ts`, `causes.ts`). Routes and plays: `tests/cities/koh.ts`. Allocation: `docs/allocation.json`
+(v2), every stage's `meta` matches its slot and declares its door ending.
+
+**Status:** round 1 built (branch `city/koh`, report `ldd-inbox/reports/cities/koh/BUILD.md`); 02-06 and 08-10 are under their
+length floors (a length pass is the next round); not yet through independent QA.
+
+## Stages
+
+| # | Name | Allocation family / betrayals | Room | Act(s) | Door ending |
+| --- | --- | --- | --- | --- | --- |
+| 01 | Bhal ase, Kohima | rolling-handrail-rod / grab-rolls | the shared tour course; at the top of the lane a bamboo handrail rod lies across an open drain: it is round, stand on it and it rolls you back and drops you in; jump the drain | - | - |
+| 02 | Rassi Tan | tug-rope-bridge-drifts / team-drift | the tug-of-war rope's mat is the bridge over the ditch; it drifts towards the winning team in heaves; stand just behind the flag, step over when the mat lies on the far bank | `koh02-teen`: a third team; the stronger side swaps when you pass the middle | `koh-manch`: the winners' stand is hoisted and comes down; walk in while it is down |
+| 03 | Bans Jhula | helper-launched-by-your-jump / helper-launched | the seesaw over the pit: your landing on the near tip throws Kewhi to the ledge where he lifts the thorn gate's bar; a landing nearer the post throws him short and the plank kicks you off; the near half is loose after the landing | `koh03-ulta`: Kewhi on the near end, the far end propped: a running jump on to the far tip | `koh-dhila-patta`: a loose plank at the door, jump its near half |
+| 04 | Dzükou | bloom-wave-platforms-cold-slows / bloom-wave | lilies over a bog open in a wave; only an open lily is a stand; the icy stream halves your speed and a second in it kills; past it the wave comes the other way: wait on the stone for the pad next to you | `koh04-kali`: every third lily is a bud that never opens: jump it inside the wave | `koh-rim-lily`: the door stands on a lily that opens on the wave's beat |
+| 05 | Dhol Gach | crew-beat-log-platform / crew-surge | a crew hauls the log drum across the ford in surges, it rolls back between; step off at the top of the surge that first touches the bank; whoever stays aboard is hauled under the drum hut's lintel | `koh05-dui`: two logs, two crews, each shout moves only its own rope's log; the white crew's double shout brings the log up the bank where you stepped off · `koh05-chadhai`: a quick crew then a slow one | `koh-rocking-drum`: the drum across the doorway rocks a tile at you and back; hop it as it rolls away |
+| 06 | Chaal-Chaal | sloped-noisy-tin-roofs / noisy-floor | the roofs are the road; thatch is silent, tin rings under a step and the household bangs the attic hatch open through whoever stands on it; the storey above hangs an eave over every tin roof (hop, not high); a thatch chimney's puff lifts you into the eave: walk through between puffs | `koh06-dhuan`: chimneys on every thatch roof · `koh06-upar`: the top roof is reached only on a chimney's lift, which sets you down on tin: off it before the bang | `koh-skylight`: glass on the top roof holds a walker and breaks under a landing |
+| 07 | Kath ka Gari (marathon) | downhill-cart-lean-steer / cart-steer | the lane is scree (walking kills), the cart has no brake and gets quicker to the bale at each landing; where you stand on the plank is the steering: back lifts the nose over a pothole, front drops it under a low beam | nineteen rides (`koh07-mod` .. `koh07-aakhri`): sequences of holes and beams; wet patches mirror the lean for a second (`chikna`, `jotsoma`, `dui-chikna`, `bazaar-dui`, `chikna-teen`, `aakhri`); mist hides the lane and the obstacle you pass sounds the next (`kohra` x3); a shed's rafters are a row of beams (`chhaon`) | `koh-garage-nose`: the garage door opens only to a cart that bumps it nose first (ride the last cart at the front) |
+| 08 | Axone Handi (HWIK) | carried-scent-repels / scent-selective | Dad carries the axone pot; a jump knocks the lid off and the scent pours out; standing still half a second lids it; the lane dog and the crows keep off an open pot and go for a lidded one; the cat loves it and runs at an open pot; no sign says so: the animals show it | `koh08-galli`: dog, cat, dog (off, on, off) · `koh08-taar`: the crows' wire over the cat's wall: lid on, beat each crow by standing still (it dives at where a walker will be) | `koh-kitchen-door`: shut to a lidded pot; hop once before it |
+| 09 | Kisama Din (tough) | five-houses-opposite-rules / rule-flip-per-room | five morungs, each floor rule the opposite of the last: 1 drum floor (a landing booms, a roof plank drops: walk, never jump), 2 hearth (jump it) | `koh09-teen`: 3 the gate counts from your first step (keep moving), 4 the plank tips under a steady walk (stop and go) · `koh09-paanch`: 5 drum floor up to a hearth: one long jump landing on neither | `koh-pichla-dwar`: the grand front door is painted on; the plain back door is real |
+| 10 | Subah Kisama (finale) | finale-run-to-hornbill-ground / hornbill-ground-run | callbacks that break the rules: the tour's rod is lashed and is the only bridge; the house is empty for the festival (dark windows), tin is the floor and the inner thatch is rotten | `koh10-ulta-gari`: the lane climbs, a boarded cart rolls back into the wall; walk the paved lane · `koh10-bera`: the log's first touch is a raft that sinks; stay aboard, no lintel | `koh-morung-gate`: opens for a man who stands still before it |
+
+Death causes (`causes.ts`, all `koh-`): nala, rod, khai, dubki, manch, khad, patak, kanta, daldal, kali, thand, shahtir, dhol, gira, khatkhat,
+chhajja, garam, kanch, gaddha, balli, dhalan, kukur, kag, billi, takhta, aag, phatak, jhukav, sadi, takkar, bera.
+
+## Ideas used (for the integrator's MECHANICS.md section at merge; this file is the source)
+
+- **01 Bhal ase, Kohima** the tour; a bamboo handrail rod laid across the drain at the top of the lane is a roller: stand on it and it rolls you back and drops (jump the drain).
+- **02 Rassi Tan** the tug-of-war rope's mat is the bridge and drifts towards the winning team in heaves; stand behind the flag, step over when it lies on the far bank; act: a third team, the stronger side swaps at the middle; door: the hoisted winners' stand (`koh-manch`).
+- **03 Bans Jhula** your landing on the seesaw's near tip throws Kewhi to the ledge where he lifts the thorn gate; nearer the post he is thrown short and the plank kicks you off; act: Kewhi on the wrong end, a running jump on to the far tip; door: a loose plank (`koh-dhila-patta`).
+- **04 Dzükou** lilies open in a wave and only an open lily is a stand; the icy stream halves your speed and kills after a second; past it the wave reverses; act: buds that never open and snap under a step; door: the rim lily (`koh-rim-lily`).
+- **05 Dhol Gach** a crew hauls the log drum across the ford in surges with roll-backs; step off at the top of the surge that first touches the bank, or be hauled under the lintel; acts: two crews two logs with a double shout; quick and slow crews; door: the rocking drum (`koh-rocking-drum`).
+- **06 Chaal-Chaal** roofs are the road: thatch is silent, tin rings and the household bangs the hatch open under you; eaves over every tin roof; a chimney's puff lifts you into the eave; acts: chimneys everywhere; a lift that sets you down on tin (off it before the bang); door: the skylight glass (`koh-skylight`).
+- **07 Kath ka Gari (marathon)** a brakeless cart down scree lanes, steered by where you stand on the plank (back lifts the nose over a pothole, front drops it under a beam); wet patches mirror the lean; mist stretches announce the next obstacle by sound; a shed is a row of beams; door: the garage door opens to a nose-first bump (`koh-garage-nose`).
+- **08 Axone Handi (HWIK)** the carried axone pot: a jump knocks the lid off, standing still lids it; the dog and the crows keep off an open pot, the cat runs at one; acts: dog-cat-dog; the crows' wire over the cat's wall (stand still under each crow); door: the kitchen door opens for the smell (`koh-kitchen-door`).
+- **09 Kisama Din (tough)** five morungs whose floor rules invert: drum floor (walk, never jump), hearth (jump), gate that counts (keep moving), plank that tips under a steady walk (stop and go), and both at once; door: the painted front door, the real back door (`koh-pichla-dwar`).
+- **10 Subah Kisama (finale)** callbacks that break the rules: the lashed rod is the bridge, the empty house's tin is the floor and its thatch rotten, the uphill cart rolls back (and a loose one comes down the lane), the log's first touch is a raft that sinks; door: the morung gate opens for a man who stands still (`koh-morung-gate`).
+
+## Numbers (round 1, tip 7b73339)
+
+Route clear: 01 12.5 s, 02 15.3, 03 9.8, 04 22.7, 05 20.6, 06 15.1, 07 123.3, 08 17.4, 09 22.3, 10 22.5.
+Fairness `LDD_N=80 npm run fair -- KOH`: 100% at 6t and 12t for all ten, every stretch 100%.
+Lag-captured sweep: 0 deaths in 5,376 plays, every lagged route wins, worst replay to a death 6.88 s.
+Full suite 1824 passed; typecheck clean; flows no errors.
