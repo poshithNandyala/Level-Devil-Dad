@@ -450,9 +450,10 @@ export const levels = (): LevelDef[] => [
         let up = false;
         w.onTick((w2) => {
           if (!six || up) return;
-          // it fires the moment anything passes over its socket
+          // it fires the moment anything passes over its socket at road level (a proper hop clears it;
+          // a late, low one used to be launched from mid-air into the lights)
           const p = w2.player;
-          if (p.x + p.w <= b.x + 1 || p.x >= b.x + 7) return;
+          if (p.x + p.w <= b.x + 1 || p.x >= b.x + 7 || p.y + p.h < px(15) - 16) return;
           up = true;
           w2.sfx('boing', cx, px(15));
           b.moveTo(w2, b.x, px(15) - 24, 0.08, 'out', (w3) => {

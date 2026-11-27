@@ -170,6 +170,15 @@ const aaruAct = (x: number): Step[] => {
 
 // ------------------------------------------------------------------ the two doors
 const endingPolicies: Record<string, Policy> = {
+  /** the old lamp door, a person's timing: the dash in starts anywhere in the first 0.35 s of light, not only the first 0.12 s */
+  'pdy-lamp'(w, _m, d) {
+    const p = w.player;
+    const sx = d.x - px(3);
+    if (p.x + p.w < sx - 6) return go('R');
+    if (w.flags.twist === 'lit' && (w.flags.litFor as number) < 0.35) return go('R');
+    if (p.x + p.w >= sx - 2 && p.x + p.w < sx + 8 && w.flags.twist === 'dark') return go('L');
+    return go(p.x + p.w > sx ? 'R' : '');
+  },
   /** stand on the stone nearest the cochonnet while three volleys heap boules on the other; then climb the heap and the wall */
   'pdy-boule-pile'(w, m, d) {
     const F = (k: string) => w.flags[`pdy09door:${k}`];
@@ -323,9 +332,24 @@ function rockBeach(S: Record<string, Step[]>) {
   S['PDY-02'] = [...room, ...S['PDY-02'].slice(12)];
 }
 
+/** a hop a person makes: jump, then lean right a moment later (the direction is not let go late, so no drift on landing) */
+const hopLean = (at: number, note?: string, ticks = 12): Step[] => [
+  { hold: 'R', until: X(at), max: 600, note },
+  { hold: '', jump: ticks, ticks: 3 },
+  { hold: 'R', until: ground, max: 200 },
+  { hold: '', ticks: 2 },
+];
+/** PDY-04, a person's timing (the socket itself changed: it no longer fires under a hop in the air): the same three hops, without the drift */
+function sixOClock(S: Record<string, Step[]>) {
+  const room: Step[] = [...hopLean(9.4, 'over the first socket'), ...hopLean(13.4), ...hopLean(17.4)];
+  // the shared long run keeps the room's first 6 steps, then 'the last bollard is the lift' and on
+  S['PDY-04'] = [...room, ...S['PDY-04'].slice(6)];
+}
+
 const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) => {
   tour01(S);
   rockBeach(S);
+  sixOClock(S);
   S['PDY-09'] = petanqueRoom();
   lengthen('PDY-09', 0, []);
   S['PDY-10'] = mimosaRoom();
