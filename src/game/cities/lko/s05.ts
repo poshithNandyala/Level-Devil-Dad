@@ -270,7 +270,7 @@ const BHARA = [3, 7, 11];
 export const bhara: Act = {
   id: 'lko05-bhara',
   w: 18,
-  advice: 'The cook keeps this rack low: you can stand under it on a full heap but not hop. Hop only when he hoists it to turn the seekh. Till then keep your heap full: step from one heap of the pair to the other so neither squashes. Don’t wait for a squash here.',
+  advice: 'The cook keeps this rack low: you can stand under it on a full heap but not hop. Hop only when he hoists it to turn the seekh. Till then keep your heap full: step from one heap of the pair to the other so neither squashes. The last time he only half-hoists it: let that heap squash flat first, and hop from flat.',
   build: (w, c) => {
     const x = c.x;
     tawa(w, x + 2, x + 13);
@@ -280,6 +280,7 @@ export const bhara: Act = {
       x1 = px(x + 14.5);
     const z = w.add(new Zone(x0, FLOOR - R.tip - 22, x1 - x0, 22, 'lko-seekh'));
     const ph = (w2: World) => (R.t0 < 0 ? 0 : (w2.tick - R.t0) % R.period);
+    w.flags[c.f('toLift')] = (w2: World) => (R.t0 < 0 ? 999 : R.period - R.up - ph(w2));
     w.flags[c.f('upNow')] = (w2: World) => {
       const p = ph(w2);
       return R.t0 >= 0 && p >= R.period - R.up ? R.period - p : 0;
@@ -318,7 +319,10 @@ export const bhara: Act = {
       if (R.t0 < 0 && w2.player.cx > px(x)) R.t0 = w2.tick;
       const up = (w2.flags[c.f('upNow')] as (w: World) => number)(w2) > 0;
       // the rack eases up and down (a few ticks), the deadly tips with it
-      const want = FLOOR - (up ? 112 : R.tip) - 22;
+      // the last time he only half-hoists it (his arm is tired): a hop off a full heap finds the skewers
+      // again, and from a flat one it passes under, as at the start of the stall
+      const half = w2.player.cx >= c.X(BHARA[2]);
+      const want = FLOOR - (up ? (half ? 70 : 112) : R.tip) - 22;
       z.y += Math.sign(want - z.y) * Math.min(Math.abs(want - z.y), 9);
     });
     sign(w, x + 0.1, 10.4, 3.2, 'BHARA', 'shop', null, 'seekh');

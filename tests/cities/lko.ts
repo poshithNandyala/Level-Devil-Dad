@@ -398,7 +398,7 @@ actRoutes['lko05-ulta'] = (x) => [
 ];
 const bharaUp = (need = 46) => (w: World) => ((w.flags['lko05-bhara:upNow'] as ((w: World) => number) | undefined)?.(w) ?? 0) > need;
 /** keep a pair of heaps full: step from one to the other till the rack goes up, ending on the right one */
-const shuffle = (a: number, need = 46): Step => {
+const shuffle = (a: number, need = 46, ready: ((w: World) => boolean) | null = null): Step => {
   let to = 1;
   let W: World | null = null;
   return {
@@ -411,7 +411,7 @@ const shuffle = (a: number, need = 46): Step => {
       if (Math.abs(w.player.cx - t) <= 3) to = 1 - to;
       return go(toward(w, px(a + to) + 8, 1));
     },
-    until: (w) => bharaUp(need)(w) && w.player.onGround && Math.abs(w.player.cx - (px(a + 1) + 8)) <= 6,
+    until: (w) => (ready ? ready(w) : bharaUp(need)(w)) && w.player.onGround && Math.abs(w.player.cx - (px(a + 1) + 8)) <= 6,
     max: 1200,
     note: 'step from heap to heap so neither squashes, till he hoists the rack',
   };
@@ -421,7 +421,10 @@ actRoutes['lko05-bhara'] = (x) => [
   walkTo(x + 0.9, 300, 'stop before the low rack'),
   until(bharaUp(), 900, 'wait till he hoists it'),
   hops([x + 1, x + 3], 'on to the first pair'),
-  ...BHARA.flatMap((d, i) => [shuffle(x + d), hops([x + d + 1, i < BHARA.length - 1 ? x + BHARA[i + 1] : x + 15.5], 'he hoisted it: hop')]),
+  ...BHARA.slice(0, -1).flatMap((d, i) => [shuffle(x + d), hops([x + d + 1, x + BHARA[i + 1]], 'he hoisted it: hop')]),
+  shuffle(x + 11, -1, (w) => { const t = (w.flags['lko05-bhara:toLift'] as (w: World) => number)(w); return t > 70 && t < 100; }),
+  until((w) => bharaUp(40)(w) && kflat('lko05-bhara:kebabs', 5)(w), 600, 'the last one only half-hoisted: stand still till the heap squashes, then hop from flat'),
+  hops([x + 12, x + 15.5]),
   runTo(x + 17.5, 300),
 ];
 
@@ -896,6 +899,11 @@ mistakes['LKO-05'] = [
   { what: 'on the double heaps, hopping straight on', steps: [...through('LKO-05', room05, 4), runTo(actX('LKO-05', 4) + 0.5, 300), hops([actX('LKO-05', 4) + 3, actX('LKO-05', 4) + 6.1, actX('LKO-05', 4) + 9.1]), until(done, 300)], cause: 'lko-seekh' },
 ];
 mistakes['LKO-05'].push(
+  {
+    what: 'under the half-hoisted rack: hopping off a full heap, as all along',
+    steps: [...through('LKO-05', room05, 3), walkTo(actX('LKO-05', 3) + 0.9, 300), until(bharaUp(), 900), hops([actX('LKO-05', 3) + 1, actX('LKO-05', 3) + 3]), ...[3, 7].flatMap((d, i) => [shuffle(actX('LKO-05', 3) + d), hops([actX('LKO-05', 3) + d + 1, actX('LKO-05', 3) + [7, 11][i]])]), shuffle(actX('LKO-05', 3) + 11), hops([actX('LKO-05', 3) + 12, actX('LKO-05', 3) + 15.5]), until(done, 400)],
+    cause: 'lko-seekh',
+  },
   { what: 'the cook’s slab: standing on its end to squash it, as learned', steps: [...through('LKO-05', room05, 2), walkTo(actX('LKO-05', 2) + 0.6, 300), hops([actX('LKO-05', 2) + 2.2], 'on to the slab'), until(done, 900)], cause: 'lko-kafgir' },
   { what: 'the cook’s slab: walking up it to meet him', steps: [...through('LKO-05', room05, 2), walkTo(actX('LKO-05', 2) + 0.6, 300), hops([actX('LKO-05', 2) + 2.2]), { hold: 'R', until: done, max: 400 }], cause: 'lko-seekh' },
   { what: 'under the low rack: waiting for the heap to squash, as learned', steps: [...through('LKO-05', room05, 3), walkTo(actX('LKO-05', 3) + 0.9, 300), until(bharaUp(), 900), hops([actX('LKO-05', 3) + 1, actX('LKO-05', 3) + 3]), until(done, 900)], cause: 'lko-tawa' },
