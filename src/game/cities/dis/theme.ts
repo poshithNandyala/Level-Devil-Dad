@@ -1,0 +1,25 @@
+import type { Theme } from '../../../render/theme';
+
+export const theme: Theme = {
+  city: 'DIS',
+  name: 'Dispur',
+  local: 'গুৱাহাটী',
+  sky: ['#8FB8A8', '#D6E4D9', '#F6EBCB'],
+  sun: '#FFF3D0',
+  far: '#4F7942',
+  mid: '#3F6A3A',
+  near: '#2B4E2C',
+  accent: '#C1121F',
+  accent2: '#FDF0D5',
+  tileBase: '#8C7660',
+  tileTop: '#A9927D',
+  tileEdge: '#6A5846',
+  tileDark: '#4A3C2E',
+  topper: '#BBA68A',
+  pattern: 'brick',
+  spike: '#FDF0D5',
+  spikeEdge: '#3A2A20',
+  ink: '#33261C',
+  rim: null,
+  ui: '#C1121F',
+};
