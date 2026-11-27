@@ -39,7 +39,7 @@ export interface Fall {
 }
 
 /** a fall pouring across the path at columns c0..c0+2, deadly while full or thinning; the white mark on the rock is its safe level */
-export function fall(w: World, list: Fall[], c0: number, s: Sched, cause = 'shl-um') {
+export function fall(w: World, list: Fall[], c0: number, s: Sched, cause = 'shl-um', hidden = false) {
   const f: Fall = { c0, s, at: (w2) => phaseOf(w2, s) };
   list.push(f);
   w.add(
@@ -89,9 +89,31 @@ export function fall(w: World, list: Fall[], c0: number, s: Sched, cause = 'shl-
         }
         // the bed: wet dark stone
         box(ctx, r.x - 4, FL - 2, r.w + 8, 2, '#2A352F');
+        // a sister behind an outcrop: only her foot shows; her roar is the read (the sfx below)
+        if (hidden) {
+          box(ctx, r.x - 12, 0, r.w + 24, FL - 30, '#4A5A54');
+          box(ctx, r.x - 12, FL - 32, r.w + 24, 3, '#3A4842');
+          const roar = ph.k === 'strong' ? 3 : ph.k === 'fade' ? 2 : ph.k === 'mark' ? 1 : 0;
+          for (let i = 0; i < roar; i++) box(ctx, r.x + r.w + 14 + i * 5, FL - 60 - i * 6, 3, 10 + i * 6, 'rgba(255,255,255,0.6)');
+        }
       },
     }),
   );
+  if (hidden) {
+    // the roar: a sound each beat whose strength follows the sheet (strong: loud, mark: quiet, dry: silent)
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: 0,
+        tick: (r, w2) => {
+          const ph = phaseOf(w2, s);
+          if (w2.tick % 30 !== 0 || ph.k === 'dry') return;
+          if (Math.abs(w2.player.cx - px(c0)) < px(14)) w2.sfx(ph.k === 'strong' ? 'rumble' : 'splash', px(c0), FL - 40);
+          void r;
+        },
+        paint: () => {},
+      }),
+    );
+  }
   return f;
 }
 
@@ -170,6 +192,22 @@ export const actBasin: Act = {
       }),
     );
     sign(w, c.x + 2, 10.4, 3, 'THE BASIN', 'shop', null, 'two sisters, one pool');
+  },
+};
+
+/** act 3: a long ledge to a sister hidden behind an outcrop (the roar is the read), then the quick sister: the labelled momentum beat */
+export const actRoar: Act = {
+  id: 'shl05-roar',
+  w: 40,
+  advice: 'A long ledge, and a sister behind the rock: you see only her foot and hear her roar. Loud is full, softer is thinning, quiet is the mark, silence is the dry lure: cross on the quiet, never on the silence. Then the quick sister: her mark lasts half a second. Stand at the very edge and go the instant the sheet drops to the mark.',
+  cps: [14],
+  paint: () => {},
+  build: (w, c) => {
+    const falls = w.flags.shl5 as Fall[];
+    fall(w, falls, c.x + 19, { strong: 2.4, fade: 1.0, mark: 1.3, dry: 0.4, phase: 0.6 }, 'shl-um', true);
+    fall(w, falls, c.x + 30, { strong: 3.0, fade: 0.9, mark: 0.5, dry: 0.35, phase: 1.9 });
+    sign(w, c.x + 4, 10.4, 3, 'LISTEN', 'shop', null, 'you hear her before you see her');
+    sign(w, c.x + 25, 10.4, 3, 'QUICK', 'shop', null, 'half a second on the mark');
   },
 };
 

@@ -200,17 +200,17 @@ const halfdoorPolicy: Policy = (w, m, d) => {
 
 // ------------------------------------------------------------------ SHL-05
 /** cross each fall ahead the moment its water sits on the mark (with time in hand), waiting a tile and a half short of it */
-function fordWalk(key: string, onlyUpTo?: number): (w: World) => Out {
+function fordWalk(key: string, onlyUpTo?: number, minLeft = 0.75, from?: number): (w: World) => Out {
   return (w) => {
     const falls = w.flags[key] as Fall[];
     const p = w.player;
-    const next = falls.filter((f) => px(f.c0 + 3) > p.x && (onlyUpTo === undefined || f.c0 <= onlyUpTo)).sort((a, b) => a.c0 - b.c0)[0];
+    const next = falls.filter((f) => px(f.c0 + 3) > p.x && (onlyUpTo === undefined || f.c0 <= onlyUpTo) && (from === undefined || f.c0 >= from)).sort((a, b) => a.c0 - b.c0)[0];
     if (!next) return go('R');
     const edge = px(next.c0) - 26;
     if (p.x + p.w < edge) return go('R');
     if (p.x + p.w > px(next.c0) - 2) return go('R');
     const ph = next.at(w);
-    return go(ph.k === 'mark' && ph.left > 0.75 ? 'R' : '');
+    return go(ph.k === 'mark' && ph.left > minLeft ? 'R' : '');
   };
 }
 /** the lure: wait for the fall to go dry, then go */
@@ -243,6 +243,20 @@ function basinWalk(x: number): (w: World) => Out {
 const room05 = (): Step[] => [{ policy: fordWalk('shl5', 14), until: and(ground, X(18)), max: 4000, note: 'the first sister: on the mark' }, { hold: 'R', until: X(29), max: 400 }];
 const act05 = (x: number): Step[] => [{ policy: fordWalk('shl5', x + 22), until: and(ground, X(x + 26)), max: 6000, note: 'two sisters, each on her mark' }, { hold: 'R', until: X(x + 32), max: 400 }];
 const act05b = (x: number): Step[] => [{ policy: basinWalk(x), until: and(ground, X(x + 18)), max: 6000, note: 'both on their marks, then through the basin' }, { hold: 'R', until: X(x + 34), max: 400 }];
+/** the quick sister: wait at the very edge (not 26 px back) and go the instant the mark starts */
+const quickWalk = (key: string, c0: number): ((w: World) => Out) => (w) => {
+  const f = (w.flags[key] as Fall[]).find((q) => q.c0 === c0)!;
+  const p = w.player;
+  if (p.x + p.w < px(c0) - 10) return go('R');
+  if (p.x + p.w > px(c0) - 2) return go('R');
+  const ph = f.at(w);
+  return go(ph.k === 'mark' && ph.left > 0.3 ? 'R' : '');
+};
+const act05c = (x: number): Step[] => [
+  { policy: fordWalk('shl5', x + 19, 0.75, x + 19), until: and(ground, X(x + 23)), max: 6000, note: 'the hidden sister: on the quiet, not the silence' },
+  { policy: quickWalk('shl5', x + 30), until: and(ground, X(x + 34)), max: 6000, note: 'the quick sister from the very edge' },
+  { hold: 'R', until: X(x + 38), max: 400 },
+];
 const poolPolicy: Policy = (w) => fordWalk('shl5')(w);
 
 // ------------------------------------------------------------------ SHL-06
@@ -263,6 +277,18 @@ const act06 = (x: number): Step[] => [
   { hold: 'R', until: X(x + 28), max: 400 },
 ];
 const act06b = (x: number): Step[] => [...hop(x + 9.9, 'hop the guide in the path', 14), { hold: 'R', until: X(x + 27), max: 900 }];
+type Dbl = { near: number; far: number };
+const act06c = (x: number): Step[] => [
+  ...atHook(x + 4, 'the near guide first'),
+  { hold: '', until: (w) => (w.flags.shl6c as Dbl).near >= 0 && w.tick - (w.flags.shl6c as Dbl).near >= 3.6 * 120, max: 1200, note: 'the near root grows half way' },
+  ...hop(x + 5.6, 'over the rock', 14),
+  { hold: 'R', until: and(ground, X(x + 19.6)), max: 900, note: 'out to its tip' },
+  { hold: '', until: (w) => Math.abs(w.player.vx) < 5, max: 60 },
+  { hold: '', jump: 10, ticks: 10, note: 'jump at the far guide' },
+  { hold: '', until: and(ground, (w) => (w.flags.shl6c as Dbl).far >= 0 && w.tick - (w.flags.shl6c as Dbl).far >= 3.6 * 120), max: 1200, note: 'the far root grows to meet it' },
+  { hold: 'R', until: and(ground, X(x + 33)), max: 1200, note: 'across' },
+  { hold: 'R', until: X(x + 37), max: 400 },
+];
 const rootdoorPolicy: Policy = (w, m, d) => {
   const D = Math.round(d.x / 16);
   const set = w.flags.shl6e as RootSet;
@@ -658,7 +684,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-10': { steps: [{ hold: 'R', until: X(8), max: 600 }, { hold: '', until: done, max: 1500, note: 'stop at the drop and keep waiting for a beat, as in the tour' }], cause: 'shl-lyoh' },
 };
 const ROOMS: Record<string, () => Step[]> = { 'SHL-02': room02, 'SHL-03': room03, 'SHL-04': room04, 'SHL-05': room05, 'SHL-06': room06, 'SHL-07': room07, 'SHL-08': room08, 'SHL-09': room09, 'SHL-10': room10 };
-const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'], 'SHL-05': ['shl05-ar', 'shl05-pung'], 'SHL-06': ['shl06-sprout', 'shl06-kiang'], 'SHL-07': ['shl07-krem', 'shl07-pool', 'shl07-plop', 'shl07-knock', 'shl07-pairs'], 'SHL-08': ['shl08-roof', 'shl08-pull', 'shl08-bucket', 'shl08-two'], 'SHL-09': ['shl09-sngi', 'shl09-kot', 'shl09-pdeng', 'shl09-doh'], 'SHL-10': ['shl10-rong', 'shl10-jingkieng', 'shl10-pung'] };
+const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'], 'SHL-05': ['shl05-ar', 'shl05-pung', 'shl05-roar'], 'SHL-06': ['shl06-sprout', 'shl06-double', 'shl06-kiang'], 'SHL-07': ['shl07-krem', 'shl07-pool', 'shl07-plop', 'shl07-knock', 'shl07-pairs'], 'SHL-08': ['shl08-roof', 'shl08-pull', 'shl08-bucket', 'shl08-two'], 'SHL-09': ['shl09-sngi', 'shl09-kot', 'shl09-pdeng', 'shl09-doh'], 'SHL-10': ['shl10-rong', 'shl10-jingkieng', 'shl10-pung'] };
 const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
 const prefix = (id: string, act: string): Step[] => [...ROOMS[id](), ...ACT_ORDER[id].slice(0, ACT_ORDER[id].indexOf(act)).flatMap((a) => actRoutes[a](actX0(id, a)))];
 /** the stage up to the act (route), then `steps` played from the act's first column; built when the test runs */
@@ -681,16 +707,15 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     inAct('SHL-02', 'shl02-lyoh', 'cross as before, bank only, never mind the sun', (x) => [{ policy: cloudWalk('shl2b-nosun', x + 21), until: done, max: 5000 }], 'shl-dum'),
   ],
   'SHL-03': [
-    inAct('SHL-03', 'shl03-wake', 'stand still on the boats’ span while the boat comes', (x) => [
+    inAct('SHL-03', 'shl03-wake', 'run span three the moment the boat has gone under the tower (bursts forgotten in the hurry)', (x) => [
       { policy: burstWalk('shl3'), until: and(ground, X(x + 19.5)), max: 3000 },
-      { policy: burstWalk('shl3'), until: and(ground, X(x + 30)), max: 3000 },
-      { hold: '', until: done, max: 1500 },
-    ], 'shl-wake'),
+      { hold: '', until: (w) => { const wk = (w.flags.shl3 as SwayState).wakes[0]; const t = wk.at(w); return t > wk.period / 2 + 0.2 && t < wk.period / 2 + 0.5; }, max: 2000, note: 'the wake has just passed' },
+      { hold: 'R', until: done, max: 1500 },
+    ], 'shl-sway'),
     inAct('SHL-03', 'shl03-wet', 'the same bursts as on the dry spans', () => [{ policy: burstWalk('shl3'), until: done, max: 4000 }], 'shl-slip'),
   ],
   'SHL-04': [
     inAct('SHL-04', 'shl04-iew', 'hang the knup up at the hook before the tall arch, as before the branch', (x) => [...atHook(x + 10.5, 'the lure'), { hold: 'R', until: done, max: 1500 }], 'shl-slap'),
-    { what: 'take the knup and never hang it up', steps: [...atHook(5, ''), { hold: 'R', until: done, max: 2400 }], cause: 'shl-dieng' },
     inAct('SHL-04', 'shl04-khynnah', 'keep the small knup on into the heavy rain', (x) => [...atHook(x + 5, 'swap to the small knup'), { hold: 'R', until: done, max: 1500 }], 'shl-slap'),
     inAct('SHL-04', 'shl04-khynnah', 'keep the big knup through the school lane', () => [{ hold: 'R', until: done, max: 1500 }], 'shl-lintel'),
   ],
@@ -706,11 +731,15 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
       { hold: '', until: (w) => { const f = (w.flags.shl5 as Fall[]).find((q) => q.c0 === x + 6)!.at(w); const g = (w.flags.shl5 as Fall[]).find((q) => q.c0 === x + 14)!.at(w); return f.k === 'mark' && g.k !== 'mark'; }, max: 3000 },
       { hold: 'R', until: done, max: 900 },
     ], 'shl-pung'),
+    inAct('SHL-05', 'shl05-roar', 'cross the hidden sister when her roar stops (the silence is the dry lure)', (x) => [{ policy: dryWalk('shl5'), until: done, max: 6000 }], 'shl-wah'),
+    inAct('SHL-05', 'shl05-roar', 'the quick sister from a stop back from the edge, as the others', (x) => [{ policy: fordWalk('shl5', x + 19, 0.75, x + 19), until: and(ground, X(x + 23)), max: 6000 }, { policy: fordWalk('shl5', x + 30, 0.3, x + 30), until: done, max: 6000 }], 'shl-um'),
   ],
   'SHL-06': [
     inAct('SHL-06', 'shl06-sprout', 'jump the second gorge like the first', (x) => [{ hold: 'R', until: X(x + 4.6), max: 600 }, { hold: 'R', jump: 22, ticks: 22 }, { hold: 'R', until: done, max: 900 }], 'shl-gorge'),
     { what: 'the middle guide: its root gives up half way', steps: [...offRock, { hold: 'R', until: X(9.9), max: 400 }, { hold: '', until: (w) => Math.abs(w.player.vx) < 5, max: 60 }, { hold: '', jump: 8, ticks: 8, note: 'the middle guide' }, { hold: 'R', until: ground, max: 300 }, { hold: '', until: and(ground, (w) => (w.flags.shl6 as RootSet).roots[1].w >= 12 * 16 * 0.55 - 2), max: 1200 }, { hold: 'R', until: done, max: 1500 }], cause: 'shl-gorge' },
     inAct('SHL-06', 'shl06-kiang', 'walk into the guide in the path', () => [{ hold: 'R', until: done, max: 1500 }], 'shl-jri'),
+    inAct('SHL-06', 'shl06-double', 'grow the near root and walk off its tip (it stops half way)', (x) => [...atHook(x + 4, 'the near guide'), { hold: '', until: (w) => (w.flags.shl6c as Dbl).near >= 0 && w.tick - (w.flags.shl6c as Dbl).near >= 3.6 * 120, max: 1200 }, ...hop(x + 5.6, 'over the rock', 14), { hold: 'R', until: done, max: 1500 }], 'shl-gorge'),
+    inAct('SHL-06', 'shl06-double', 'the far guide first, from the high rock, then the near one', (x) => [...hop(x + 5.6, 'up on the rock', 14), { hold: '', until: ground, max: 200 }, { hold: 'R', until: X(x + 7.2), max: 300 }, { hold: '', until: (w) => Math.abs(w.player.vx) < 5, max: 60 }, { hold: '', jump: 10, ticks: 10, note: 'the far guide, out of order' }, { hold: '', until: ground, max: 300 }, { hold: 'L', until: and(ground, (w) => w.player.y > 220 && w.player.x <= (x + 6.5) * 16), max: 900, note: 'back down off the rock' }, { hold: 'L', until: (w) => w.player.x <= (x + 2.5) * 16, max: 600 }, ...atHook(x + 4, 'now the near guide'), { hold: '', until: (w) => (w.flags.shl6c as Dbl).near >= 0 && w.tick - (w.flags.shl6c as Dbl).near >= 3.6 * 120, max: 1200 }, ...hop(x + 5.6, 'over the rock', 14), { hold: 'R', until: done, max: 1500 }], 'shl-jri'),
   ],
   'SHL-07': [
     inAct('SHL-07', 'shl07-krem', 'stop under the fourth stalactite of the gallery to count', (x) => [{ policy: galleryRun(x), until: X(x + 16.2), max: 3000 }, { hold: '', until: done, max: 1500 }], 'shl-maw'),
@@ -775,6 +804,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'shl06-kiang': act06b,
   'shl05-ar': act05,
   'shl05-pung': act05b,
+  'shl05-roar': act05c,
+  'shl06-double': act06c,
   'shl02-sngi': act02,
   'shl02-lyoh': (x) => [{ policy: cloudWalk('shl2b', x + 21), until: and(ground, X(x + 21.5)), max: 5000, note: 'beam to beam with the sun out and time in hand' }, { hold: 'R', until: X(x + 28), max: 400 }],
   'shl03-wake': act03,

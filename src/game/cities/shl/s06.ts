@@ -84,13 +84,13 @@ export function guide(w: World, set: RootSet, i: number, c: number, label: strin
       },
       paint: (ctx, rr) => {
         const dead = set.chosen >= 0 && set.chosen !== i;
-        box(ctx, rr.x + 11, FL - 110, 2, 54, dead ? '#6B6B5A' : '#B9A25A');
+        box(ctx, rr.x + 11, FL - 96, 2, 40, dead ? '#6B6B5A' : '#B9A25A');
         box(ctx, rr.x + 6, FL - 58, 12, 3, dead ? '#6B6B5A' : '#B9A25A');
         // the young root's tip hanging at the guide
         box(ctx, rr.x + 10, FL - 55, 4, 8, dead ? '#5A4A3A' : '#6B4A2B');
         ctx.fillStyle = '#F4F7F2';
         ctx.font = '7px monospace';
-        ctx.fillText(label, rr.x + 2, FL - 112);
+        ctx.fillText(label, rr.x + 2, FL - 98);
       },
     }),
   );
@@ -169,12 +169,12 @@ export function room(): LevelDef {
           },
           paint: (ctx, rr) => {
             const dead = set.chosen >= 0 && set.chosen !== 2;
-            box(ctx, rr.x + 11, FL - 32 - 110, 2, 54, dead ? '#6B6B5A' : '#B9A25A');
+            box(ctx, rr.x + 11, FL - 32 - 96, 2, 40, dead ? '#6B6B5A' : '#B9A25A');
             box(ctx, rr.x + 6, FL - 32 - 58, 12, 3, dead ? '#6B6B5A' : '#B9A25A');
             box(ctx, rr.x + 10, FL - 32 - 55, 4, 8, dead ? '#5A4A3A' : '#6B4A2B');
             ctx.fillStyle = '#F4F7F2';
             ctx.font = '7px monospace';
-            ctx.fillText('long', rr.x + 2, FL - 32 - 112);
+            ctx.fillText('long', rr.x + 2, FL - 32 - 98);
           },
         }),
       );
@@ -269,6 +269,69 @@ export const actPole: Act = {
       }),
     );
     sign(w, c.x + 2, 10.4, 3, 'MIND IT', 'shop', null, 'a guide in the path');
+  },
+};
+
+/** act 3: a gorge too wide for one root: the near guide's root stops half way; the far guide hangs over its tip. Near first, then far. */
+export const actDouble: Act = {
+  id: 'shl06-double',
+  w: 40,
+  advice: 'This gorge is too wide for one root. The guide on your bank grows a root that stops half way; a second guide hangs over where that root ends, and grows one from the far bank to meet it. Near first: grow it, walk out to its tip, jump at the far guide, wait, walk on. A root grown out of order grows high, into your path.',
+  cps: [1],
+  paint: (g, c) => {
+    g.fill(c.x + 10, c.x + 31, 15, 17, '.');
+    g.fill(c.x + 7, c.x + 8, 13, 14, '#');
+  },
+  build: (w, c) => {
+    const st = { near: -1, far: -1 };
+    w.flags.shl6c = st;
+    gorge(w, c.x + 10, c.x + 31);
+    // the near root: ten tiles out from the bank, at floor level if it is the first chosen; at head height if the far one came first
+    root(w, px(c.x + 10), FL, px(11), 3.5, () => (st.near >= 0 && st.far < 0 || (st.near >= 0 && st.near < st.far) ? st.near : -1));
+    w.add(
+      new Rig(px(c.x + 10), FL - 30, px(11), 18, {
+        layer: 3,
+        cause: 'shl-jri',
+        inset: 2,
+        live: (_r, w2) => st.near >= 0 && st.far >= 0 && st.far < st.near && w2.tick - st.near >= 40,
+        paint: (ctx, r, w2) => {
+          if (!(st.near >= 0 && st.far >= 0 && st.far < st.near)) return;
+          const k = Math.min(1, (w2.tick - st.near) / 240);
+          box(ctx, r.x, r.y + 4, Math.round(r.w * k), 5, '#6B4A2B');
+          box(ctx, r.x, r.y + 9, Math.round(r.w * k), 2, '#4E3520');
+        },
+      }),
+    );
+    // the far root grows from the far bank leftwards to meet the near one
+    root(w, px(c.x + 32), FL, px(11), 3.5, () => st.far, { left: true });
+    // the near guide hangs over the bank; the far guide hangs over the near root's tip, and over the high rock by the edge
+    const hang = (cx: number, y: number, pick: () => void, chosen: () => boolean, label: string) =>
+      w.add(
+        new Rig(px(cx) - 2, y - 56, 24, 20, {
+          layer: 3,
+          tick: (rr, w2) => {
+            const p = w2.player;
+            const over = p.x < rr.x + rr.w && p.x + p.w > rr.x && p.y < rr.y + rr.h && p.y + p.h > rr.y;
+            if (over && !chosen()) {
+              pick();
+              w2.sfx('snap', rr.x, rr.y);
+            }
+          },
+          paint: (ctx, rr) => {
+            box(ctx, rr.x + 11, y - 96, 2, 40, chosen() ? '#6B6B5A' : '#B9A25A');
+            box(ctx, rr.x + 6, y - 58, 12, 3, chosen() ? '#6B6B5A' : '#B9A25A');
+            box(ctx, rr.x + 10, y - 55, 4, 8, '#6B4A2B');
+            ctx.fillStyle = '#F4F7F2';
+            ctx.font = '7px monospace';
+            ctx.fillText(label, rr.x + 2, y - 98);
+          },
+        }),
+      );
+    hang(c.x + 4, FL, () => (st.near = w.tick), () => st.near >= 0, 'near');
+    hang(c.x + 20, FL, () => (st.far = w.tick), () => st.far >= 0, 'far');
+    // the high rock by the edge reaches the far guide too (out of order)
+    hang(c.x + 7.5, FL - 32, () => (st.far = w.tick), () => st.far >= 0, 'far');
+    sign(w, c.x + 1, 10.4, 3, 'TWO ROOTS', 'shop', null, 'near first, then far');
   },
 };
 
