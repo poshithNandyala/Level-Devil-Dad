@@ -6,7 +6,7 @@ import { longStage } from '../../levels/chunks';
 import { tourLevel, meta01 } from './s01';
 import { room as room02, actTeen as act02, actJhatka as act02b, meta02 } from './s02';
 import { room as room03, actUlta as act03, actBhari as act03b, meta03 } from './s03';
-import { room as room04, actKali as act04, meta04 } from './s04';
+import { room as room04, actKali as act04, actUltaDhara as act04b, meta04 } from './s04';
 import { room as room05, actDui as act05a, actChadhai as act05b, meta05 } from './s05';
 import { room as room06, actDhuan as act06a, actUpar as act06b, meta06 } from './s06';
 import { room as room07, acts as acts07, meta07 } from './s07';
@@ -18,7 +18,7 @@ export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: meta01 },
   longStage({ base: room02(), acts: [act02, act02b], twist: 'koh-manch', par: 60, shape: 'long', meta: meta02 }),
   longStage({ base: room03(), acts: [act03, act03b], twist: 'koh-dhila-patta', par: 60, shape: 'long', meta: meta03 }),
-  longStage({ base: room04(), acts: [act04], twist: 'koh-rim-lily', par: 55, shape: 'long', meta: meta04 }),
+  longStage({ base: room04(), acts: [act04, act04b], twist: 'koh-rim-lily', par: 70, shape: 'long', meta: meta04 }),
   longStage({ base: room05(), acts: [act05a, act05b], twist: 'koh-rocking-drum', par: 80, shape: 'long', lives: 'act', meta: meta05 }),
   longStage({ base: room06(), acts: [act06a, act06b], twist: 'koh-skylight', par: 80, shape: 'long', lives: 'act', meta: meta06 }),
   longStage({ base: room07(), acts: acts07, twist: 'koh-garage-nose', par: 170, shape: 'marathon', lives: 'act', meta: meta07 }),

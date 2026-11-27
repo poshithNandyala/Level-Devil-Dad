@@ -241,6 +241,24 @@ const act04 = (x: number): Step[] => [
   { policy: waitRun('koh4d'), until: and(ground, X(x + 33.2)), max: 3000, note: 'wait on the stone, then run through' },
   { hold: 'R', until: X(x + 36.4), max: 400 },
 ];
+/** the far half the other way round: on the frosted stone, wait (one beat at most) for the chase wave's first pad, then chase */
+function stoneChase(key: string): (w: World) => Out {
+  return (w) => {
+    const st = w.flags[key] as Lilies;
+    const p = w.player;
+    const first = st.pads[0];
+    if (p.cx >= first.x - 4) return chase(key)(w);
+    if (p.cx < first.x - 30) return go('R');
+    return go(padOpen(st, 0) && padLeft(st, 0) > 0.6 ? 'R' : '');
+  };
+}
+const act04b = (x: number): Step[] => [
+  { policy: waitRun('koh4e2'), until: (w) => w.player.cx > px(x + 14) + 8 && w.player.onGround, max: 3000, note: 'wait on the bank for the pad next to you, run through' },
+  { hold: 'R', jump: 30, ticks: 30, long: true, note: 'jump the stream to the frosted stone' },
+  { hold: 'R', until: and(ground, X(x + 19.2)), max: 300 },
+  { policy: stoneChase('koh4f'), until: (w) => w.player.cx > px(x + 29) + 8 && w.player.onGround, max: 3000, note: 'one beat on the stone, then chase the far wave' },
+  { hold: 'R', until: X(x + 35.4), max: 400 },
+];
 const rimPolicy: Policy = (w) => chase('koh4e')(w);
 
 // ------------------------------------------------------------------ KOH-05
@@ -671,7 +689,7 @@ const ROOMS: Record<string, () => Step[]> = { 'KOH-02': room02, 'KOH-03': room03
 const ACT_ORDER: Record<string, string[]> = {
   'KOH-02': ['koh02-teen', 'koh02-jhatka'],
   'KOH-03': ['koh03-ulta', 'koh03-bhari'],
-  'KOH-04': ['koh04-kali'],
+  'KOH-04': ['koh04-kali', 'koh04-ulta-dhara'],
   'KOH-05': ['koh05-dui', 'koh05-chadhai'],
   'KOH-06': ['koh06-dhuan', 'koh06-upar'],
   'KOH-07': acts07.map((a) => a.id),
@@ -706,6 +724,8 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     { what: 'run through the far half the moment you land on the stone', steps: [...room04().slice(0, 3), { hold: 'R', until: done, max: 1500 }], cause: 'koh-daldal' },
     inAct('KOH-04', 'koh04-kali', 'run on across the second meadow', () => runOn, 'koh-daldal'),
     inAct('KOH-04', 'koh04-kali', 'take the bud for a stand', () => [{ policy: budStand('koh4c'), until: done, max: 3000 }], 'koh-kali'),
+    inAct('KOH-04', 'koh04-ulta-dhara', 'from the stone, wait for the pad next to you and run through, as in the meadow', (x) => [...act04b(x).slice(0, 3), { policy: waitRun('koh4f'), until: done, max: 3000 }], 'koh-daldal'),
+    inAct('KOH-04', 'koh04-ulta-dhara', 'stand on the stone until the far lilies are all open', (x) => [...act04b(x).slice(0, 3), { hold: '', until: done, max: 3000 }], 'koh-paala'),
   ],
   'KOH-05': [
     { what: 'ride to the bank, let the log roll back, then walk off its front', steps: [{ hold: 'R', until: X(6.6), max: 600 }, { hold: '', until: (w) => (w.flags.koh5 as Log).cycle >= 1 && (w.flags.koh5 as Log).phase === -1, max: 2400 }, { hold: 'R', until: done, max: 900 }], cause: 'koh-nala' },
@@ -784,6 +804,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: X(x + 29.4), max: 600 },
   ],
   'koh04-kali': act04,
+  'koh04-ulta-dhara': act04b,
   'koh05-dui': act05a,
   'koh05-chadhai': act05b,
   'koh06-dhuan': act06a,

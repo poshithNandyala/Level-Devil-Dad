@@ -196,6 +196,59 @@ export const actKali: Act = {
   },
 };
 
+/**
+ * the wave the other way round: on the near half it comes TOWARDS you (wait on the bank for the pad next to you), past
+ * the stream it runs away from you (chase it); and the stone in the middle is frosted: stand on it longer than a beat
+ * and it slides you into the stream. The wave's direction decides chase or wait, not which half you are on.
+ */
+export const actUltaDhara: Act = {
+  id: 'koh04-ulta-dhara',
+  w: 36,
+  advice: 'Here the wave runs the other way round: on the near half it comes towards you, so wait on the bank for the pad next to you and run through; past the stream it runs away from you, so chase it. The stone between is frosted: it gives you one beat, then it slides you into the stream.',
+  cps: [],
+  paint: (g, c) => {
+    g.fill(c.x + 6, c.x + 15, 15, 17, '.').fill(c.x + 16, c.x + 18, 15, 15, '~').fill(c.x + 19, c.x + 20, 14, 14, '#').fill(c.x + 21, c.x + 30, 15, 17, '.');
+  },
+  build: (w, c) => {
+    lilies(w, c.x + 6, 5, 'koh4e2', { dir: -1, gap: 0.45, open: 3.2, period: 5.0, phase: 0 });
+    stream(w, c.x + 16, c.x + 18, 'koh4u');
+    // the frosted stone: one beat, then the slide
+    const sx0 = px(c.x + 19);
+    const sx1 = px(c.x + 21);
+    const fr = { onT: -1 };
+    w.onTick((w2) => {
+      const p = w2.player;
+      const on = p.onGround && p.cx > sx0 && p.cx < sx1 && p.y + p.h <= FL - 14;
+      if (!on) {
+        fr.onT = -1;
+        return;
+      }
+      if (fr.onT < 0) fr.onT = w2.tick;
+      if (since(w2, fr.onT) > 1.4) {
+        w2.sfx('slide', p.cx, FL - 16);
+        w2.die('koh-paala');
+      }
+    });
+    w.add(
+      new Paint((ctx, w2) => {
+        ctx.fillStyle = 'rgba(230,240,250,0.8)';
+        ctx.fillRect(sx0, FL - 17, sx1 - sx0, 2);
+        if (fr.onT >= 0 && since(w2, fr.onT) > 0.7) {
+          ctx.fillStyle = 'rgba(255,255,255,0.9)';
+          ctx.fillRect(sx0 + ((w2.tick >> 2) % 8) * 4, FL - 18, 3, 1);
+        }
+      }, -1),
+    );
+    // the far wave's first pad opens half a beat after a man who took the near wave lands on the stone
+    lilies(w, c.x + 21, 5, 'koh4f', { dir: 1, gap: 0.45, open: 1.3, period: 5.0, phase: 1.3 });
+    w.when(
+      (w2) => w2.player.cx > px(c.x + 3),
+      (w2) => w2.guide(NPC.cold),
+    );
+    sign(w, c.x + 2, 10.4, 3, 'ULTA DHARA', 'shop', null, 'the wave reversed');
+  },
+};
+
 export const ending: Ending = {
   space: 12,
   advice: 'The door stands on the rim’s great lily. It opens on the wave’s beat and closes again: step on while it is open, and off it on to the rim at once.',
