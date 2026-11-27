@@ -245,7 +245,7 @@ export const act2: Act = {
   paint: (g, c) => {
     const x = c.x;
     g.fill(x + 10, x + 10, 13, 14, '#');
-    g.fill(x + 2, x + 9, 6, 6, '=');
+    g.fill(x + 2, x + 8, 6, 6, '=');
     g.fill(x + 0, x + 6, 4, 4, '=');
     g.fill(x - 6, x + 31, 2, 2, '=');
   },

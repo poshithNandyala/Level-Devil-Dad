@@ -150,7 +150,12 @@ function rideTier(key: string, jumpOff: boolean, mode: 'route' | 'stay' | 'secon
       }
       return go('');
     }
-    if (mode === 'stay' || mode === 'second') return go(p.onGround ? '' : 'R');
+    if (mode === 'stay') {
+      const t = s.tiers.find((tt) => tt.carries(w));
+      if (t) return go(p.cx < t.x + t.w / 2 - 3 ? 'R' : p.cx > t.x + t.w / 2 + 3 ? 'L' : '');
+      return go(p.onGround ? '' : 'R');
+    }
+    if (mode === 'second') return go(p.onGround ? '' : 'R');
     if (stage === 1 && mode !== 'back') {
       // on the stack: stand at its right edge
       const top = s.tiers.find((t) => t.s.rank === 2)!;
