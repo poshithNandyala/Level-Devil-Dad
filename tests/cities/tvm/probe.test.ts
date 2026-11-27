@@ -129,7 +129,8 @@ it.runIf(!!process.env.LDD_TVMPROBE)('probe5', () => {
   const Rr = { ...I, right: true };
   for (const id of (process.env.LDD_IDS ?? 'TVM-09,TVM-10').split(',')) {
     const def = LEVELS.find((l) => l.id === id)!;
-    const r = lagged(id, SOLUTIONS[id], 0, 0) as any;
+    const r = lagged(id, SOLUTIONS[id], +(process.env.LDD_LAG ?? 0), +(process.env.LDD_IDLE ?? 0)) as any;
+    if (!r.won) { out.push(`${id} route at lag ${process.env.LDD_LAG ?? 0} did not win: ${r.why}`); continue; }
     const rec: number[] = r.rec;
     const cpAt = new Map<number, number>(); cpAt.set(-1, 0);
     for (const [cp, t] of r.cpTicks) cpAt.set(cp, t);
@@ -158,6 +159,12 @@ it.runIf(!!process.env.LDD_TVMPROBE)('probe5', () => {
       }
     }
     for (const [cp, [b, what]] of [...worst].sort((a, b) => a[0] - b[0])) out.push(`${id} stretch from cp${cp}: worst replay ${b.toFixed(1)}s (${what})`);
+    let prev = 0,
+      longest = 0;
+    for (const [, t] of r.cpTicks) (longest = Math.max(longest, t - prev)), (prev = t);
+    longest = Math.max(longest, r.w.tick - prev);
+    out.push(`${id} cps at lag ${process.env.LDD_LAG ?? 0}: ` + r.cpTicks.map(([c, t, x]: number[]) => `cp${c}@${(t / 120).toFixed(1)}s x${x}`).join(' '));
+    out.push(`${id} at lag ${process.env.LDD_LAG ?? 0}: ${r.cpTicks.length} checkpoints, longest stretch ${(longest / 120).toFixed(1)}s, route ${(r.w.tick / 120).toFixed(1)}s`);
   }
   console.log(out.join('\n'));
 }, 1800000);
@@ -175,3 +182,40 @@ it.runIf(!!process.env.LDD_TVMREC)('rec', () => {
     console.log('REC', name, q.w.state, q.w.deathCause, (q.w.player.cx / 16).toFixed(1), q.rec.length);
   }
 });
+
+/** is anything on the stage mid-cycle (a wave whistled or in, the backwash running)? */
+function busy(w: World): string {
+  for (const e of w.entities as any[]) {
+    if (e.waves && e.state && e.state !== 'calm') return `${e.name} ${e.state}`;
+  }
+  return '';
+}
+// probe6: every checkpoint of 09 and 10, the route at lag 0..12 (step 2) x idle 0/90/180/270: is the checkpoint
+// taken while a wave is whistled or in, and does standing 4 s from it live?
+it.runIf(!!process.env.LDD_TVMPROBE)('probe6', () => {
+  const out: string[] = [];
+  const I = { left: false, right: false, jump: false, jumpPressed: false };
+  for (const id of (process.env.LDD_IDS ?? 'TVM-09,TVM-10').split(',')) {
+    const def = LEVELS.find((l) => l.id === id)!;
+    const bad = new Map<number, string[]>();
+    let runs = 0;
+    for (let lag = 0; lag <= 12; lag += 2)
+      for (const idle of [0, 90, 180, 270]) {
+        const r = lagged(id, SOLUTIONS[id], lag, idle) as any;
+        if (!r.won) { out.push(`${id} lag ${lag} idle ${idle}: route did not win: ${r.why}`); continue; }
+        runs++;
+        for (const [cp, t] of r.cpTicks) {
+          if (cp < 0) continue;
+          const w = replay(def, INFO, r.rec.slice(0, t));
+          const b = busy(w);
+          w.player.vx = 0;
+          for (let i = 0; i < 480 && w.state === 'play'; i++) w.step(I);
+          if (b || w.state === 'dead') bad.set(cp, [...(bad.get(cp) ?? []), `lag ${lag} idle ${idle}: ${b ? 'taken while ' + b : ''}${w.state === 'dead' ? ' idle dies ' + w.deathCause : ''}`]);
+        }
+      }
+    out.push(`${id}: ${runs} route runs; checkpoints taken mid-wave or not calm: ${bad.size === 0 ? 'none' : ''}`);
+    for (const [cp, l] of bad) out.push(`  cp${cp}: ${l.length}/${runs}  e.g. ${l[0]}`);
+  }
+  console.log(out.join('\n'));
+}, 1800000);
+

@@ -186,7 +186,7 @@ export const pozhikkara: Act = {
 export const theeram: Act = {
   id: 'tvm10-theeram',
   w: 36,
-  cps: [23.6, 28.2],
+  cps: [23.6, 28.6],
   advice: 'On the shore the lifeguard runs the flags far on, and between you and them lies dark, soaked sand. It is not the rip: soaked ground holds a walker and gives way under a hop. Walk across it to the flags, and back across it when he brings them back. The last time he plants them on the soaked sand itself: stand there, it holds you.',
   paint: (g, c) => {
     const x = c.x;
@@ -203,7 +203,7 @@ export const theeram: Act = {
         waves: [
           { at: x + 7, moves: [{ to: x + 20, sec: 1.4 }], inAt: 3.0, inFor: 2.6 },
           { at: x + 27.5, moves: [{ to: x + 6, sec: 1.6 }], inAt: 3.2, inFor: 2.6 },
-          { at: x + 31.8, moves: [{ to: x + 13, sec: 1.4 }], inAt: 3.0, inFor: 2.6 },
+          { at: x + 32.2, moves: [{ to: x + 13, sec: 1.4 }], inAt: 3.0, inFor: 2.6 },
         ],
       }),
     );
@@ -225,6 +225,7 @@ export const theeram: Act = {
 export const chanda: Act = {
   id: 'tvm10-chanda',
   w: 30,
+  cps: [3.5],
   advice: 'At Chalai market the fish ice over the drain moves twice again: wait for the yank, then a long jump on to it. Past it there is oil and a kindi: jump both from the ice.',
   paint: (g, c) => {
     const x = c.x;
@@ -284,7 +285,7 @@ export const kadappuram: Act = {
 export const thira: Act = {
   id: 'tvm10-thira',
   w: 34,
-  cps: [14.6, 25.4],
+  cps: [14.6, 25.4, 32.5],
   advice: 'He plants the flags under a stall tarp full of rain: step up to it, back off and let it empty, then get between the flags before the wave. Then he carries them on, and back again.',
   paint: (g, c) => {
     const x = c.x;

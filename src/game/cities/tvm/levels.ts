@@ -932,6 +932,6 @@ export const levels = (): LevelDef[] => [
     },
   },
   // the encores (allocation v2 slots 9 and 10)
-  longStage({ base: kovalamRoom(), acts: [vilakku, samudra, pozhikkara, ashoka], twist: 'tvm-backwash-ride', par: 80, shape: 'long', meta: KOVALAM_META }),
+  longStage({ base: kovalamRoom(), acts: [vilakku, samudra, pozhikkara, ashoka], twist: 'tvm-backwash-ride', par: 80, cps: [2], shape: 'long', meta: KOVALAM_META }),
   longStage({ base: dharaRoom(), acts: [kizhi, thumba, theeram, kadappuram, uzhichil, thira, chanda], lives: 'act', twist: 'tvm-oily-feet-coir-mat', par: 110, shape: 'long', meta: DHARA_META }),
 ];

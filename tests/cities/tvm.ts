@@ -384,7 +384,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     follow('theeram', 0, 'walk across the soaked sand to the new flags'),
     walk(x + 27.7, 'on'),
     follow('theeram', 1, 'and walk back across it'),
-    { hold: 'R', until: X(x + 32.0), max: 600, note: 'and walk on across it' },
+    { hold: 'R', until: X(x + 32.1), max: 600, note: 'and walk on across it' },
     follow('theeram', 2, 'back to the flags on the soaked sand'),
     { hold: 'R', until: X(x + 32.2), max: 600, note: 'and on across it to the rocks' },
     ...hopAt(x + 32.2, 12, 'up on the rocks'),
