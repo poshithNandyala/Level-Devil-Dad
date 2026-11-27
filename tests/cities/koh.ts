@@ -681,7 +681,7 @@ const endingPolicies: Record<string, Policy> = {
   'koh-skylight': skylightPolicy,
   'koh-garage-nose': garagePolicy,
   'koh-kitchen-door': kitchenPolicy,
-  'koh-back-door': backDoorPolicy,
+  'koh-pichla-dwar': backDoorPolicy,
   'koh-morung-gate': morungPolicy,
 };
 

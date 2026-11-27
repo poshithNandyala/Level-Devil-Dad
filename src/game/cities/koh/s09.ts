@@ -264,4 +264,4 @@ export const ending: Ending = {
   },
 };
 
-export const meta09 = { family: 'five-houses-opposite-rules', betrayals: ['rule-flip-per-room'], ending: 'koh-back-door' };
+export const meta09 = { family: 'five-houses-opposite-rules', betrayals: ['rule-flip-per-room'], ending: 'koh-pichla-dwar' };
