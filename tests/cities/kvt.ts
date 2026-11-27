@@ -261,6 +261,20 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { hold: 'R', until: X(x + 24), max: 300 },
     ];
   },
+  'kvt10-paaru': (x) => [
+    { hold: 'R', until: X(x + 3.2), max: 300, note: 'jump out over the water: this reef comes up for a jumper' },
+    { hold: 'R', jump: 12, ticks: 12 },
+    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: X(x + 7.4), max: 200 },
+    { hold: 'R', jump: 12, ticks: 12 },
+    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: X(x + 11.4), max: 200 },
+    { hold: 'R', jump: 12, ticks: 12 },
+    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: X(x + 15.4), max: 200 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'and the shore' },
+    { hold: 'R', until: and(ground, X(x + 22)), max: 300 },
+  ],
   'kvt10-thoni': (x) => {
     const boat = (w: World) => w.flags['kvt10-thoni:boat'] as any;
     return [
@@ -903,7 +917,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
       cause: 'splash',
     },
     { what: 'stop on the first coral head in the incoming tide, as on the tour', steps: [...upTo(S['KVT-10'], 'from head to head, never stopping'), ...hop(362 + 1.6, 12, 'on to the first head', true), { hold: '', until: done, max: 400 }], cause: 'splash' },
-    { what: 'wait at the end of the jetty for the boat to come back, as at Kavaratti', steps: [...upTo(S['KVT-10'], 'run down the jetty after the boat: it is not coming back'), { hold: 'R', until: X(386 + 5.0), max: 400 }, { hold: '', until: done, max: 900 }], cause: 'splash' },
+    { what: 'walk off the edge on to the reef, as off the jetty at Supari Light', steps: [...upTo(S['KVT-10'], 'jump out over the water: this reef comes up for a jumper'), { hold: 'R', until: done, max: 300 }], cause: 'splash' },
+    { what: 'wait at the end of the jetty for the boat to come back, as at Kavaratti', steps: [...upTo(S['KVT-10'], 'run down the jetty after the boat: it is not coming back'), { hold: 'R', until: X(408 + 5.0), max: 400 }, { hold: '', until: done, max: 900 }], cause: 'splash' },
     { what: 'run straight over the hole with eyes', steps: [...upTo(S['KVT-10'], 'the hole with eyes: let the moray lunge and go back in'), { hold: 'R', until: done, max: 300 }], cause: 'kvt-bitten' },
     { what: 'walk into the door', steps: [...upTo(S['KVT-10'], 'the door: kvt-sand-arm'), { hold: 'R', until: done, max: 900 }], cause: 'kvt-octopus' },
   ];

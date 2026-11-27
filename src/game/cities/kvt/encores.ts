@@ -2,7 +2,7 @@
 // with their acts and door endings.
 import { Entity, type Hazard, type LevelDef, type World } from '../../world';
 import { lines as L } from './lines';
-import { collectible, door, gust, px, rival, shot, sign, prop } from '../../levels/kit';
+import { collectible, door, gust, panel, px, rival, shot, sign, prop } from '../../levels/kit';
 import { type Act, G, pool } from '../../levels/acts';
 import { onPass } from '../../levels/trolls';
 import { DT } from '../../constants';
@@ -1057,7 +1057,58 @@ const leavingBoat: Act = {
   },
 };
 
-export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, archDolphin, shadowSteps, risingTide, leavingBoat, tideHoles] };
+/** a stretch of reef just under the water, four tiles: it comes up to the surface when called */
+class ReefStone extends Entity {
+  solid: Solid;
+  constructor(tx: number) {
+    super();
+    this.layer = 1;
+    this.solid = new Solid(px(tx), px(G), px(4), px(3));
+    this.solid.collidable = false;
+  }
+  draw(ctx: CanvasRenderingContext2D) {
+    if (!this.solid.collidable) return;
+    const s = this.solid;
+    coralBlock(ctx, s.x, s.y, s.w, '#D9C29A', '#A88F68');
+  }
+}
+
+/** KVT-10 act, KVT-03's reef turned over: there the reef rose under your feet only if you walked off the jetty.
+ *  This reef rises only for a jumper: walk off the edge and you go in; jump out over the water and it comes up to
+ *  catch you, one stretch after another. */
+const jumpReef: Act = {
+  id: 'kvt10-paaru',
+  w: 22,
+  advice: 'This reef only comes up for a dad who jumps: walk off the edge and you go in. Jump out over the water and each stretch rises to catch you; jump again from it.',
+  paint: (g, c) => {
+    g.pit(c.x + 4, c.x + 17);
+  },
+  build: (w, c) => {
+    pool(w, c.x + 4, c.x + 18, 15.3, { colors: ['rgba(20,110,150,0.92)', 'rgba(8,50,90,0.98)'] });
+    for (const t of [5, 9, 13]) panel(w, c.x + t, G + 0.3, 4, 0.5, 'rgba(240,220,170,0.16)', 'rgba(0,0,0,0)');
+    const stones = [5, 9, 13].map((t) => w.add(new ReefStone(c.x + t)));
+    // (a jump, even one taken in the moment after stepping off the edge, counts; a walk off does not)
+    let jumped = false;
+    w.onTick((w2) => {
+      const p = w2.player;
+      if (p.onGround) jumped = false;
+      else if (p.vy < -50) jumped = true;
+      if (p.onGround || !jumped || p.vy <= 0) return;
+      for (const st of stones) {
+        if (st.solid.collidable) continue;
+        if (p.cx > st.solid.x && p.cx < st.solid.x + st.solid.w) {
+          st.solid.collidable = true;
+          w2.sfx('splash', st.solid.x + 32, st.solid.y);
+          w2.emit('fx', st.solid.x + 32, st.solid.y + 4, { kind: 'splash' });
+        }
+      }
+    });
+    sign(w, c.x + 0.2, G - 4.4, 3.4, 'PHAR', 'wood', 'right', 'the reef');
+    onPass(w, c.X(2), (w2) => taraSays(w2, 'Nadannu po, phar varum! | Walk on, the reef will come!', 2.4));
+  },
+};
+
+export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, archDolphin, shadowSteps, risingTide, jumpReef, leavingBoat, tideHoles] };
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {
