@@ -822,8 +822,6 @@ function yakRide(key: string, o: { at?: number; jumpAt?: boolean; jumpAtPhoto?: 
     if (on) rode = true;
     if (off || (rode && !on && p.onGround)) {
       off = true;
-      // stepped off: no push while dropping to the bank, so a late release can't carry him into the water
-      if (rode && !on && !p.onGround) return go('');
       return go(offDir);
     }
     if (!p.onGround) {
