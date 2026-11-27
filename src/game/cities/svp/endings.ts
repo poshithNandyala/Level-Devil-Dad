@@ -1,0 +1,26 @@
+// Sri Vijaya Puram's door endings, one per stage 02-10, each a new idea. Kinds start with 'svp-'.
+import type { Ending } from '../../levels/endkit';
+import { timberStack } from './s02';
+import { boardBridge } from './s03';
+import { jettyGuard } from './s04';
+import { noteDoor, boughDoor, ticketWindow, frameDoor } from './doors';
+import { gutterRiver } from './s08';
+import { dweepGate } from './s10';
+
+export type SvpEndingKind = 'svp-timber-stack' | 'svp-board-bridge' | 'svp-jetty-guard' | 'svp-note-door' | 'svp-bough-door' | 'svp-ticket-window' | 'svp-gutter-river' | 'svp-frame-door' | 'svp-dweep-gate';
+
+declare module '../../levels/endings' {
+  interface ModuleEndingKinds extends Record<SvpEndingKind, true> {}
+}
+
+export const endings: Record<SvpEndingKind, Ending> = {
+  'svp-timber-stack': timberStack,
+  'svp-board-bridge': boardBridge,
+  'svp-jetty-guard': jettyGuard,
+  'svp-note-door': noteDoor,
+  'svp-bough-door': boughDoor,
+  'svp-ticket-window': ticketWindow,
+  'svp-gutter-river': gutterRiver,
+  'svp-frame-door': frameDoor,
+  'svp-dweep-gate': dweepGate,
+};
