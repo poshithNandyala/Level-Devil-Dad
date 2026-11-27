@@ -10,7 +10,7 @@ import { tour } from '../../levels/tour';
 import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
 import { Kepi } from '../../entities/tamil';
-import { MIMOSA_META, PETANQUE_META, aaru, alai, doublette, meneNulle, mimosaRoom, petanqueRoom, pitFloor, pointe, thenga, tir } from './encores';
+import { MIMOSA_META, PETANQUE_META, aaru, alai, doublette, kuzhi, meneNulle, mimosaRoom, petanqueRoom, pitFloor, pointe, thenga, tir } from './encores';
 /** the sea where it has eaten the Promenade: a splash */
 const seaFloor = (w: World, x0: number, x1: number) => pitFloor(w, x0, x1, 'splash');
 
@@ -721,5 +721,5 @@ export const levels = (): LevelDef[] => [
   // ------------------------------------------------------------------ encores (the new bar: ten stages)
   // (round 2: the carreau act was cut, a shipped TVM-09 thought in Puducherry clothes; its recast was Agartala's carrom reserve)
   longStage({ base: petanqueRoom(), acts: [pointe, doublette, tir, meneNulle], twist: 'pdy-boule-pile', par: 70, shape: 'long', meta: PETANQUE_META }),
-  longStage({ base: mimosaRoom(), acts: [thenga, aaru, alai], twist: 'pdy-night-leaf', par: 70, shape: 'long', lives: 'act', meta: MIMOSA_META }),
+  longStage({ base: mimosaRoom(), acts: [kuzhi, thenga, aaru, alai], twist: 'pdy-night-leaf', par: 75, shape: 'long', lives: 'act', meta: MIMOSA_META }),
 ];

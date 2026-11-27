@@ -404,7 +404,7 @@ export class Mimosa {
 /** a pit from column a to b (inclusive) with a floor of its own two rows down */
 const thorns = (g: Grid, a: number, b: number) => g.pit(a, b).fill(a, b, 17, 17, '#');
 /** the mimosa's own thorns on the pit floor (cause pdy-mul), or a lily pond (splash) */
-export const pitFloor = (w: World, x0: number, x1: number, cause: 'pdy-mul' | 'splash') => {
+export const pitFloor = (w: World, x0: number, x1: number, cause: 'pdy-mul' | 'pdy-kuzhi' | 'splash') => {
   w.add(new Thing('spikerow', x0, FLOOR + 6, { solid: false, deadly: cause, layer: -5, w: x1 - x0, h: 20, inset: 1 }));
   if (cause === 'splash')
     w.add(
@@ -603,6 +603,42 @@ export const alai: Act = {
       if (k > 5.1 && w2.flags[c.f('alai')] === 'big') w2.flags[c.f('alai')] = 'passed';
       w2.flags[c.f('until')] = k < 4.3 ? 4.3 - k : P - k + 4.3;
     });
+  },
+};
+
+/**
+ * PDY-02's rock pools, turned: two pools under leaves. Rock Beach taught "clear is ankle deep, walk it; dark is
+ * deep, jump it". Here the clear pool shows the mimosa's thorns through its water, and the dark pool is deep
+ * under an open leaf that folds: the water's colour tells you nothing, the leaf's state does. Fold first, both.
+ */
+export const kuzhi: Act = {
+  id: 'pdy10-kuzhi',
+  w: 28,
+  advice: 'Two pools under leaves, one clear and one dark. The clear one is not ankle deep: its bottom is thorns. The dark one is deep, and a jump at it lands on an open leaf. Read the leaf, not the water: fold each one from its near end over the path, and cross on the bar.',
+  cps: [27],
+  paint: (g, c) => {
+    thorns(g, c.x + 6, c.x + 11);
+    thorns(g, c.x + 16, c.x + 22);
+  },
+  build: (w, c) => {
+    const { X } = c;
+    new Mimosa(w, 'kuzhi1', X(5), 128, 0.25, 3.5);
+    // (the dark pool is 7 tiles, like the room's first: a hop on to its leaf and a run still fold it over the water)
+    new Mimosa(w, 'kuzhi2', X(15), 144, 0.25, 3.5);
+    pitFloor(w, X(6), X(12), 'pdy-mul');
+    pitFloor(w, X(16), X(23), 'pdy-kuzhi');
+    w.add(
+      new Paint((ctx) => {
+        // clear water over the thorns, dark water over the deep pool
+        ctx.fillStyle = 'rgba(150,215,235,0.45)';
+        ctx.fillRect(X(6), FLOOR + 2, X(12) - X(6), 30);
+        ctx.fillStyle = 'rgba(15,45,80,0.92)';
+        ctx.fillRect(X(16), FLOOR + 2, X(23) - X(16), 30);
+      }, -1),
+    );
+    sign(w, c.x + 1.5, G - 4.4, 3.2, 'KUZHI', 'wood', null, 'the two pools');
+    onPass(w, X(2.5), (w2) => w2.guide('Thanni colour-a paakkaadhe, Dad. Ilai-ya paaru. | Don’t read the water, Dad. Read the leaf.'));
+    onPass(w, X(3.5), (w2) => taraSays(w2, 'Clear-a irukku, Dad! Nadandhu po! | It’s clear, Dad! Just walk through!', 2));
   },
 };
 
