@@ -7,7 +7,8 @@ import type { World } from '../../src/game/world';
 import type { Door } from '../../src/game/entities/basics';
 import { Step, X, and, or, done, ground, thingOf, gustNOn, gustNLeft } from '../runner';
 import type { CityTests } from '../city-tests';
-import type { Heap, ShadowStep } from '../../src/game/cities/kvt/encores';
+import { KVT_LEAD, type Heap, type ShadowStep } from '../../src/game/cities/kvt/encores';
+import { LEVEL_BY_ID } from '../../src/game/levels';
 import { Eel, Jelly, type Dolphin } from '../../src/game/cities/kvt/levels';
 import { DT } from '../../src/game/constants';
 
@@ -52,6 +53,12 @@ function upTo(r: Step[], note: string): Step[] {
   return r.slice(0, i);
 }
 const dies: Step = { hold: '', until: done, max: 900 };
+/** where act `act` of stage `id` starts its own ground (after the plain lead-in tiles KVT_LEAD puts in front) */
+const org = (id: string, act: string) => {
+  const part = LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act);
+  if (!part) throw new Error(`kvt org: no act ${act} in ${id}`);
+  return part.x0 + (KVT_LEAD[act] ?? 0);
+};
 
 // ------------------------------------------------------------------ the storm bank (KVT-09)
 /** standing still, the rubble done sliding */
@@ -188,18 +195,17 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'kvt10-choora': (x) => {
     /** no tuna on its way within a second of reaching Dad */
     const clear = (w: World) => !w.entities.some((e: any) => e.kind === 'kvt-tuna' && e.alive && e.x > w.player.x - 12 && e.x - w.player.x < 130);
-    const gap = (t: number, note: string): Step[] => [
+    const gap = (t: number, note: string, j = 10, r = 24): Step[] => [
       { hold: 'R', until: X(x + t - 1.3), max: 400, note },
       { hold: '', until: still, max: 60 },
       { hold: '', until: clear, max: 400 },
-      { hold: 'R', jump: 10, ticks: 24 },
+      { hold: 'R', jump: j, ticks: r },
       { hold: '', until: landed(), max: 200 },
     ];
     return [
       ...gap(10, 'walk under the tuna; hop the gap once one has gone over'),
-      ...gap(18, 'the next gap'),
-      ...gap(26, 'and the last'),
-      { policy: hopAt(0.26, 12), until: X(x + 52), max: 900, note: 'the second boat throws low: hop those' },
+      ...gap(18, 'the wider gap', 16, 44),
+      { policy: hopAt(0.26, 12), until: X(x + 40), max: 900, note: 'the second boat throws low: hop those' },
     ];
   },
   'kvt10-thengu': (x) => {
@@ -498,8 +504,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { hold: 'R', until: landed(), max: 200 },
       { hold: 'R', until: X(x + 1.3), max: 200 },
       ...mid(0, 12, 30, 'the middle of each heap: deep slides you off the far side'),
-      ...[4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44].flatMap((c) => mid(x + c, 30, 52)),
-      { hold: 'R', until: X(x + 51.2), max: 300 },
+      ...[4, 8, 16, 20].flatMap((c) => mid(x + c, 30, 52)),
+      { hold: 'R', until: X(x + 27.2), max: 300 },
     ];
   },
   'kvt09-kuzhi': (x) => [
@@ -955,24 +961,25 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   // the dark hole looks like a pit, so jump it: straight on to the bright head past it, the octopus
   naive['KVT-10'] = { steps: [...hop(4.4, 12, 'on to the first coral head'), ...hop(10.3, 30, 'over the dark hole'), dies], cause: 'kvt-octopus' };
   // the dark hole was the safe one: so trust dark holes. The bare one goes right through to the lagoon
-  fix['KVT-10'] = { steps: [...upTo(S['KVT-10'], 'the far side of the bare hole: it goes right through'), ...hop(32 + 7.0, 12, 'into the dark hole'), dies], cause: 'splash' };
+  fix['KVT-10'] = { steps: [...upTo(S['KVT-10'], 'the far side of the bare hole: it goes right through'), ...hop(org('KVT-10', 'kvt10-midden') + 7.0, 12, 'into the dark hole'), dies], cause: 'splash' };
   mistakes['KVT-10'] = [
-    { what: 'land on the pink head: it was yellow a moment ago', steps: [...upTo(S['KVT-10'], 'over the pink one: that pink moved'), ...hop(32 + 22.6, 12, 'on to the pink head'), dies], cause: 'kvt-octopus' },
-    { what: 'walk to the far end of the first rubble step and tap up, as at Kalpeni', steps: [...upTo(S['KVT-10'], 'not the far end this time: the middle'), ...stepUp(100 + 7), dies], cause: 'kvt-octopus' },
-    { what: 'stop for the baby turtles, as on the jetty at Kavaratti', steps: [...upTo(S['KVT-10'], 'run on: the babies are coming your way'), { hold: 'R', until: X(130 + 10), max: 300 }, { hold: '', until: done, max: 900 }], cause: 'kvt-hatchling' },
+    { what: 'land on the pink head: it was yellow a moment ago', steps: [...upTo(S['KVT-10'], 'over the pink one: that pink moved'), ...hop(org('KVT-10', 'kvt10-midden') + 22.6, 12, 'on to the pink head'), dies], cause: 'kvt-octopus' },
+    { what: 'jump over the rotten plank, as Tara says and as at the jetty', steps: [...upTo(S['KVT-10'], 'stand on the rotten plank: it is the way down'), { hold: 'R', until: X(org('KVT-10', 'kvt10-palaka') + 7.6), max: 300 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 900 }], cause: 'splash' },
+    { what: 'walk to the far end of the first rubble step and tap up, as at Kalpeni', steps: [...upTo(S['KVT-10'], 'not the far end this time: the middle'), ...stepUp(org('KVT-10', 'kvt10-kallu') + 7), dies], cause: 'kvt-octopus' },
+    { what: 'stop for the baby turtles, as on the jetty at Kavaratti', steps: [...upTo(S['KVT-10'], 'run on: the babies are coming your way'), { hold: 'R', until: X(org('KVT-10', 'kvt10-aama') + 10), max: 300 }, { hold: '', until: done, max: 900 }], cause: 'kvt-hatchling' },
     {
       what: 'hop the tuna as they come, as in Minicoy',
       steps: [
         ...upTo(S['KVT-10'], 'walk under the tuna; hop the gap once one has gone over'),
-        { hold: 'R', until: X(172 + 6), max: 300 },
+        { hold: 'R', until: X(org('KVT-10', 'kvt10-choora') + 6), max: 300 },
         { policy: (w) => ({ move: '', jump: w.player.onGround && w.entities.some((e: any) => e.kind === 'kvt-tuna' && e.alive && e.x - w.player.x > 20 && e.x - w.player.x < 40) }), until: done, max: 900 },
       ],
       cause: 'hit',
     },
     { what: 'climb right up on to the crown, as on the crab palms', steps: [...upTo(S['KVT-10'], 'climb only part way'), { hold: 'R', until: done, max: 900 }], cause: 'kvt-pinched' },
-    { what: 'cross the moray hole once it has struck and slid back, as on the reef', steps: [...upTo(S['KVT-10'], 'bait the first moray, and wait for its second strike'), { hold: 'R', until: X(254 + 6.4), max: 300 }, { hold: '', until: (w) => w.entities.some((e) => e instanceof Eel && e.x === px(254 + 8) + 8 && e.strikes >= 1), max: 900 }, { hold: 'R', until: done, max: 300 }], cause: 'kvt-bitten' },
-    { what: 'jump the inlet while the wind is calm, as at Agatti', steps: [...upTo(S['KVT-10'], 'to the edge: wait for the breeze'), { hold: 'R', until: X(280 + 3.7), max: 300 }, { hold: '', until: (w) => still(w) && !gustNOn(w, 0) && gustNLeft(w, 0) > 0.9, max: 900 }, { hold: 'R', jump: 30, ticks: 60 }, { hold: 'R', until: done, max: 300 }], cause: 'splash' },
-    { what: 'jump off the dolphin at the top of its leap, as on the lagoon', steps: [...upTo(S['KVT-10'], 'ride it over the top, under the arch, and step off coming down'), { policy: rideDolphin(`kvt10-kamaanam:dolphins`, 0, px(316 + 17), 0.5, 0.06), until: done, max: 1500 }], cause: 'spikes' },
+    { what: 'cross the moray hole once it has struck and slid back, as on the reef', steps: [...upTo(S['KVT-10'], 'bait the first moray, and wait for its second strike'), { hold: 'R', until: X(org('KVT-10', 'kvt10-irandu') + 6.4), max: 300 }, { hold: '', until: (w) => w.entities.some((e) => e instanceof Eel && e.x === px(org('KVT-10', 'kvt10-irandu') + 8) + 8 && e.strikes >= 1), max: 900 }, { hold: 'R', until: done, max: 300 }], cause: 'kvt-bitten' },
+    { what: 'jump the inlet while the wind is calm, as at Agatti', steps: [...upTo(S['KVT-10'], 'to the edge: wait for the breeze'), { hold: 'R', until: X(org('KVT-10', 'kvt10-kaattu') + 3.7), max: 300 }, { hold: '', until: (w) => still(w) && !gustNOn(w, 0) && gustNLeft(w, 0) > 0.9, max: 900 }, { hold: 'R', jump: 30, ticks: 60 }, { hold: 'R', until: done, max: 300 }], cause: 'splash' },
+    { what: 'jump off the dolphin at the top of its leap, as on the lagoon', steps: [...upTo(S['KVT-10'], 'ride it over the top, under the arch, and step off coming down'), { policy: rideDolphin(`kvt10-kamaanam:dolphins`, 0, px(org('KVT-10', 'kvt10-kamaanam') + 17), 0.5, 0), until: done, max: 1500 }], cause: 'spikes' },
     {
       what: 'jump on to the first step as the beam lights it, as on Supari Light',
       steps: [
@@ -983,11 +990,11 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
       ],
       cause: 'splash',
     },
-    { what: 'stop on the first coral head in the incoming tide, as on the tour', steps: [...upTo(S['KVT-10'], 'from head to head, never stopping'), ...hop(362 + 1.6, 12, 'on to the first head', true), { hold: '', until: done, max: 400 }], cause: 'splash' },
+    { what: 'stop on the first coral head in the incoming tide, as on the tour', steps: [...upTo(S['KVT-10'], 'from head to head, never stopping'), ...hop(org('KVT-10', 'kvt10-veliyettam') + 1.6, 12, 'on to the first head', true), { hold: '', until: done, max: 400 }], cause: 'splash' },
     { what: 'walk off the edge on to the reef, as off the jetty at Supari Light', steps: [...upTo(S['KVT-10'], 'jump out over the water: this reef comes up for a jumper'), { hold: 'R', until: done, max: 300 }], cause: 'splash' },
     { what: 'stay in the fish basket till it stops, as in Minicoy', steps: [...upTo(S['KVT-10'], 'step off on to the landing as it passes'), { steer: (w: World) => (w.player.cx < (w.flags['kvt10-kotta:basket'] as any).cx - 2 ? 'R' : w.player.cx > (w.flags['kvt10-kotta:basket'] as any).cx + 2 ? 'L' : '') as Move, until: done, max: 900 }], cause: 'splash' },
-    { what: 'walk slowly over the glass to see the fish, as Tara says', steps: [...upTo(S['KVT-10'], 'run straight across the cracked glass, flat out'), { hold: 'R', until: X(452 + 6), max: 300 }, { hold: '', until: done, max: 600 }], cause: 'splash' },
-    { what: 'wait at the end of the jetty for the boat to come back, as at Kavaratti', steps: [...upTo(S['KVT-10'], 'run down the jetty after the boat: it is not coming back'), { hold: 'R', until: X(472 + 5.0), max: 400 }, { hold: '', until: done, max: 900 }], cause: 'splash' },
+    { what: 'walk slowly over the glass to see the fish, as Tara says', steps: [...upTo(S['KVT-10'], 'run straight across the cracked glass, flat out'), { hold: 'R', until: X(org('KVT-10', 'kvt10-kannadi') + 6), max: 300 }, { hold: '', until: done, max: 600 }], cause: 'splash' },
+    { what: 'wait at the end of the jetty for the boat to come back, as at Kavaratti', steps: [...upTo(S['KVT-10'], 'run down the jetty after the boat: it is not coming back'), { hold: 'R', until: X(org('KVT-10', 'kvt10-thoni') + 5.0), max: 400 }, { hold: '', until: done, max: 900 }], cause: 'splash' },
     { what: 'run straight over the hole with eyes', steps: [...upTo(S['KVT-10'], 'the hole with eyes: let the moray lunge and go back in'), { hold: 'R', until: done, max: 300 }], cause: 'kvt-bitten' },
     { what: 'walk into the door', steps: [...upTo(S['KVT-10'], 'the door: kvt-sand-arm'), { hold: 'R', until: done, max: 900 }], cause: 'kvt-octopus' },
   ];
@@ -998,12 +1005,12 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   // the hops were too small: so leap big. Under the beach-rock lip a full leap meets its jagged underside
   fix['KVT-09'] = {
     steps: swapAt(S['KVT-09'], 'up under the lip: a tap, never a full leap', 5, [
-      { hold: 'R', until: X(34 + 8.3), max: 200 },
+      { hold: 'R', until: X(org('KVT-09', 'kvt09-pavizham') + 8.3), max: 200 },
       { hold: '', until: still, max: 60 },
       { hold: 'R', jump: 40, ticks: 40, long: true },
       { hold: 'R', until: landed(), max: 200 },
       { hold: '', until: still, max: 200 },
-      { hold: 'R', until: X(34 + 11.3), max: 200 },
+      { hold: 'R', until: X(org('KVT-09', 'kvt09-pavizham') + 11.3), max: 200 },
       { hold: '', until: still, max: 60 },
       { hold: 'R', jump: 40, ticks: 40, long: true },
       dies,
@@ -1012,11 +1019,11 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   };
   mistakes['KVT-09'] = [
     { what: 'land deep on the first heap of the ridge, as on the bank', steps: [...upTo(S['KVT-09'], 'the middle of each heap: deep slides you off the far side'), { hold: '', until: still, max: 200 }, { hold: 'R', jump: 30, ticks: 44 }, { hold: '', until: ground, max: 200 }, dies], cause: 'splash' },
-    { what: 'land on the one loose block in the second break, like the heap in the first', steps: [...upTo(S['KVT-09'], 'the second break: one loose block, jump it whole'), { hold: 'R', until: X(136 + 33.3), max: 300 }, { hold: '', until: still, max: 60 }, { hold: 'R', jump: 8, ticks: 10 }, { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, dies], cause: 'splash' },
+    { what: 'land on the one loose block in the second break, like the heap in the first', steps: [...upTo(S['KVT-09'], 'the second break: one loose block, jump it whole'), { hold: 'R', until: X(org('KVT-09', 'kvt09-kadalbhitti') + 33.3), max: 300 }, { hold: '', until: still, max: 60 }, { hold: 'R', jump: 8, ticks: 10 }, { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, dies], cause: 'splash' },
     { what: 'hop down the far side of the summit, as Tara says', steps: [...upTo(S['KVT-09'], 'walk off each step, never hop down'), ...Array.from({ length: 5 }, (): Step[] => [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, { hold: '', until: (w) => !w.flags.kvtSlide || w.state !== 'play', max: 200 }]).flat(), dies], cause: 'splash' },
     { what: 'walk down the second way step by step, as Tara says', steps: [...upTo(S['KVT-09'], 'walk off the top on to the first wide step'), { hold: 'R', until: done, max: 900 }], cause: 'splash' },
     { what: 'hop down into the hollow', steps: [...upTo(S['KVT-09'], 'down into the hollow: walk off each step'), ...Array.from({ length: 4 }, (): Step[] => [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, { hold: '', until: (w) => !w.flags.kvtSlide || w.state !== 'play', max: 200 }]).flat(), dies], cause: 'splash' },
-    { what: 'a little hop over the storm cut, as Tara says', steps: [...upTo(S['KVT-09'], 'well past the first cut').slice(0, -1), { hold: 'R', until: X(324 + 5.2), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 400 }], cause: 'splash' },
+    { what: 'a little hop over the storm cut, as Tara says', steps: [...upTo(S['KVT-09'], 'well past the first cut').slice(0, -1), { hold: 'R', until: X(org('KVT-09', 'kvt09-murivu') + 5.2), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 400 }], cause: 'splash' },
   ];
   // hop straight up the steps from wherever you land
   naive['KVT-09'] = {
@@ -1031,6 +1038,12 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     ],
     cause: 'splash',
   };
+}
+
+// acts with plain ground put in front of them: their routes start that many tiles on
+for (const [k, n] of Object.entries(KVT_LEAD)) {
+  const f = actRoutes[k];
+  if (f) actRoutes[k] = (x) => f(x + n);
 }
 
 export const test: CityTests = {
