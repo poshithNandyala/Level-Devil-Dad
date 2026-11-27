@@ -12,7 +12,7 @@ import { collectible, door, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
 import { FL, Rig, box, local, perTick, px } from './entities';
 import { taraScript } from './common';
-import { bench, sweeper } from './s01';
+import { bench, reserved, sweeper } from './s01';
 
 export interface Rule {
   hold: boolean;
@@ -368,38 +368,6 @@ export const act5: Act = {
     sign(w, x + 15.5, 9.6, 4.4, 'MG MARG', 'green', null, 'benches');
   },
 };
-/** an MG Marg bench, with or without a RESERVED card; a reserved one turns you off it */
-function reserved(w: World, x: number, card: boolean) {
-  const b = bench(w, x, 32);
-  const st = { on: 0, off: 0 };
-  w.add(
-    new Rig(x, FL - 30, 32, 16, {
-      layer: 3,
-      tick: (_r, w2) => {
-        if (st.off > 0) {
-          st.off--;
-          if (st.off === 0) b.setSolid(true);
-          return;
-        }
-        if (card && b.carries(w2)) {
-          st.on++;
-          if (st.on > 24) {
-            st.on = 0;
-            st.off = 90;
-            b.setSolid(false);
-            npc(w2, 'Maphi paun. | Excuse me.', x + 16, FL - 40, 1.2);
-          }
-        } else st.on = 0;
-      },
-      paint: (ctx, r) => {
-        if (!card) return;
-        box(ctx, r.x + 8, r.y + 4, 16, 8, '#F4F1EA');
-        box(ctx, r.x + 8, r.y + 4, 16, 2, '#C0392B');
-      },
-    }),
-  );
-  return b;
-}
 
 /** act 6: two wrappers. Two left lying close together, and the bins here are nearly full: each takes one more
  *  and is heaped. One bin won't do: bin one, and the other in the next, before the jump */

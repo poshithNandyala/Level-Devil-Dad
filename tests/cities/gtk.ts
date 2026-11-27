@@ -62,6 +62,7 @@ function stepper(): (w: World) => Out {
 }
 
 // ------------------------------------------------------------------ GTK-01
+const ferryOf = (w: World) => w.entities.find((e: any) => e.ferry) as any;
 /** wait outside a sweeper's stroke, then walk through right behind it while the broom is in the air */
 function behindStroke(i: number, key = 'gtk1'): (w: World) => Out {
   return (w) => {
@@ -77,22 +78,33 @@ function behindStroke(i: number, key = 'gtk1'): (w: World) => Out {
   };
 }
 const tourRoute = (): Step[] => [
-  { policy: stepper(), until: X(26), max: 900, note: 'up and down the stairs' },
-  { policy: behindStroke(0), until: X(39.5), max: 1500, note: 'the first sweeper: through behind his stroke' },
-  { policy: stepper(), until: X(60), max: 900, note: 'the kerb posts' },
-  { policy: behindStroke(1), until: X(71.5), max: 1500, note: 'the second sweeper' },
-  { policy: stepper(), until: X(79.2), max: 900 },
+  { policy: stepper(), until: X(19.4), max: 900, note: 'up and down the stairs' },
+  ...hop(19.1, 'on to the first stone', 10),
+  ...hop(23.1, 'the next stone', 10),
+  ...hop(27.1, 'off the stones', 10),
+  { policy: behindStroke(0), until: X(38.5), max: 1500, note: 'the first sweeper: through behind his stroke' },
+  { policy: stepper(), until: X(52), max: 900, note: 'the kerb posts' },
+  { policy: behindStroke(1), until: X(59.5), max: 1500, note: 'the second sweeper: not the reserved bench, behind his stroke' },
+  { hold: 'R', until: X(60.8), max: 900 },
+  { hold: '', until: (w) => { const f = ferryOf(w); return f.state === 'rest' && f.x === 62 * 16; }, max: 1500, note: 'wait for the shuttle' },
+  { hold: 'R', until: (w) => w.standing(ferryOf(w).solid!) && w.player.x >= ferryOf(w).x + 10, max: 200, note: 'step aboard' },
+  { hold: '', until: (w) => { const f = ferryOf(w); return f.state === 'rest' && f.x === (62 + 20 - 3) * 16; }, max: 1500, note: 'ride across' },
+  { hold: 'R', until: X(82.4), max: 200, note: 'step off' },
+  { policy: behindStroke(2), until: X(88.6), max: 1500, note: 'the third sweeper' },
   { hold: 'R', jump: 14, ticks: 14, note: 'hop the parked jeep' },
   { hold: 'R', until: ground, max: 300 },
-  { policy: stepper(), until: done, max: 1500, note: 'over the deck to the door' },
+  { policy: stepper(), until: X(100.5), max: 900, note: 'over the deck' },
+  { policy: behindStroke(3), until: X(107.5), max: 1500, note: 'the last sweeper' },
+  { policy: stepper(), until: done, max: 900 },
 ];
 /** A2 at the first sweeper: up on the bench while he strokes, off once the broom is in the air */
 const benchRoute = (): Step[] => [
-  { policy: stepper(), until: X(31.2), max: 900 },
+  ...tourRoute().slice(0, 10),
+  { policy: stepper(), until: X(32.6), max: 900 },
   { hold: 'R', jump: 10, ticks: 10, note: 'up on the bench' },
   { hold: 'R', until: (w) => w.player.onGround, max: 200 },
   { hold: '', until: (w) => { const st = (w.flags.gtk1 as Sweep[])[0]; const u = cyc(w, st.t0, SWEEP_PERIOD); return st.t0 >= 0 && u >= STROKE.sweep + 0.05 && u < STROKE.sweep + 0.4; }, max: 900, note: 'wait out the stroke' },
-  { hold: 'R', until: X(39.5), max: 300 },
+  { hold: 'R', until: X(38.5), max: 300 },
 ];
 
 // ------------------------------------------------------------------ GTK-02

@@ -5,15 +5,20 @@
 import type { LevelDef, World } from '../../world';
 import { tour } from '../../levels/tour';
 import { onPass } from '../../levels/trolls';
-import { tara } from '../../levels/endkit';
+import { npc, tara } from '../../levels/endkit';
 import { FL, Rig, box, local, px } from './entities';
 import { lines as L } from './lines';
 
 /** one stroke: the broom lands at the right end, sweeps left on the paving, lifts and comes back in the air */
-export const STROKE = { reach: 32, sweep: 0.7, back: 1.5 };
+export const STROKE = { reach: 32, sweep: 0.7, back: 2.4 };
 export const SWEEP_PERIOD = STROKE.sweep + STROKE.back;
 /** the two sweepers (tile columns of the man), the bench beside the first */
-export const SWEEPERS = [{ c: 36, bench: true }, { c: 68, bench: false }];
+export const SWEEPERS: { c: number; bench: 'free' | 'reserved' | null }[] = [
+  { c: 35, bench: 'free' },
+  { c: 56, bench: 'reserved' },
+  { c: 86, bench: null },
+  { c: 104, bench: null },
+];
 
 export interface Sweep {
   t0: number;
@@ -37,14 +42,15 @@ export function broomAt(st: Sweep, t: number): { bx: number; down: boolean; lift
 }
 
 /** a sweeper with his broom and cart at column c; the stroke clock starts when Dad comes within `lead` tiles */
-export function sweeper(w: World, c: number, lead = 7, key = 'gtk1'): Sweep {
+export function sweeper(w: World, c: number, lead = 7, key = 'gtk1', always = false): Sweep {
   const sx = px(c) + 8;
-  const st: Sweep = { t0: -1, sx, bx: sx - STROKE.reach, down: false };
+  const st: Sweep = { t0: always ? Math.round(c * 7) : -1, sx, bx: sx - STROKE.reach, down: false };
   (w.flags[key] ??= []).push(st);
-  // the clock: timed so that the first stroke meets someone who walks straight on
-  onPass(w, sx - px(lead), (w2) => {
-    st.t0 = w2.tick - Math.round(0.08 * 120);
-  });
+  // the clock: timed so that the first stroke meets someone who walks straight on (or, `always`, just sweeping away)
+  if (!always)
+    onPass(w, sx - px(lead), (w2) => {
+      st.t0 = w2.tick - Math.round(0.08 * 120);
+    });
   w.add(
     new Rig(0, FL - 10, 12, 10, {
       layer: 4,
@@ -124,6 +130,39 @@ export function bench(w: World, x: number, wd = 40) {
   );
 }
 
+/** an MG Marg bench, with or without a RESERVED card; a reserved one turns you off it */
+export function reserved(w: World, x: number, card: boolean) {
+  const b = bench(w, x, 32);
+  const st = { on: 0, off: 0 };
+  w.add(
+    new Rig(x, FL - 30, 32, 16, {
+      layer: 3,
+      tick: (_r, w2) => {
+        if (st.off > 0) {
+          st.off--;
+          if (st.off === 0) b.setSolid(true);
+          return;
+        }
+        if (card && b.carries(w2)) {
+          st.on++;
+          if (st.on > 24) {
+            st.on = 0;
+            st.off = 90;
+            b.setSolid(false);
+            npc(w2, 'Maphi paun. | Excuse me.', x + 16, FL - 40, 1.2);
+          }
+        } else st.on = 0;
+      },
+      paint: (ctx, r) => {
+        if (!card) return;
+        box(ctx, r.x + 8, r.y + 4, 16, 8, '#F4F1EA');
+        box(ctx, r.x + 8, r.y + 4, 16, 2, '#C0392B');
+      },
+    }),
+  );
+  return b;
+}
+
 export function tourLevel(): LevelDef {
   return tour({
     id: 'GTK-01',
@@ -131,7 +170,7 @@ export function tourLevel(): LevelDef {
     name: 'Namaste Gangtok',
     nameEn: 'Hello, Gangtok',
     tagline: 'MG Marg is the evening living room of Gangtok, and it is swept all day long. Very thoroughly.',
-    hint: 'Up the stairs, over the kerb posts and the parked jeep. On MG Marg the sweepers stroke their brooms along the paving and sweep everything on the ground into the cart, you too: the broom only takes what’s on the ground. At the first one, hop up on the bench while he strokes, then go once the broom is in the air. The second has no bench: wait outside his stroke, and walk through right behind it while the broom is coming back in the air.',
+    hint: 'Up the stairs, over the stones, over the kerb posts, across on the ropeway shuttle, over the parked jeep. On MG Marg the sweepers stroke their brooms along the paving and sweep everything on the ground into the cart, you too: the broom only takes what’s on the ground. At the first one, hop up on the bench while he strokes. The second bench has a RESERVED card: its owner asks you off it, in front of the broom. There, and at the last two, wait outside the stroke and walk through right behind it while the broom is in the air.',
     lines: [
       'Namaste! Kasto chha? Swagatam, Dad! | Hello! How are you? Welcome, Dad!',
       'Gangtok: every house on the ground floor! | Gangtok: every house on the ground floor!',
@@ -141,34 +180,34 @@ export function tourLevel(): LevelDef {
       'Dhanyabad, Dad! Now the real stages! | Thank you, Dad! Now the real stages!',
     ],
     shouts: [
-      [30, 'Maphi paun! | Excuse me!'],
-      [86, 'Yasko kati ho? | How much is this?'],
+      [20, 'Maphi paun! | Excuse me!'],
+      [80, 'Yasko kati ho? | How much is this?'],
     ],
     ride: 'jeep',
     item: 'gtk-momo',
     signs: [
-      [5, 'GANGTOK', 'swagatam'],
-      [44, 'MG MARG', 'no vehicles'],
-      [90, 'LAL MARKET', '200 m'],
+      [4, 'GANGTOK', 'swagatam'],
+      [30, 'MG MARG', 'no vehicles'],
+      [96, 'LAL MARKET', '200 m'],
     ],
     props: [
-      ['lamp', 28, {}],
-      ['lamp', 46, {}],
-      ['stall', 58, { label: 'MOMO' }],
-      ['lamp', 76, {}],
-      ['crowd', 102, { n: 3 }],
-      ['lamp', 108, {}],
+      ['lamp', 22, {}],
+      ['lamp', 47, {}],
+      ['stall', 83, { label: 'MOMO' }],
+      ['lamp', 100, {}],
+      ['crowd', 116, { n: 3 }],
     ],
     things: [],
     par: 40,
-    cps: [26.5, 46.5, 78.5],
+    cps: [30.5, 51.5, 83.5, 101.5],
     extra(w: World) {
-      for (const s of SWEEPERS) {
-        sweeper(w, s.c);
-        if (s.bench) bench(w, px(s.c) - 8, 40);
+      for (const [i, s] of SWEEPERS.entries()) {
+        sweeper(w, s.c, 7, 'gtk1', i > 0);
+        if (s.bench === 'free') bench(w, px(s.c) - 8, 40);
+        if (s.bench === 'reserved') reserved(w, px(s.c) - 8, true);
       }
       // Tara, at the second sweeper: "just walk on" (it's his stroke she wants you in)
-      onPass(w, px(60), (w2) => tara(w2, 'Hajur! Just walk past him, Dad! | Yes! Just walk past him, Dad!', 2.2));
+      onPass(w, px(78), (w2) => tara(w2, 'Hajur! Just walk past him, Dad! | Yes! Just walk past him, Dad!', 2.2));
       void L;
     },
   });
