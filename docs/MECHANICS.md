@@ -172,10 +172,10 @@ jai02-show jai03-zenana jai04-yantras jai05-rasta jai06-mela jai07-udaan jai08-a
 bpl02-jheel bpl03-shelters bpl04-karchob bpl05-mehfil bpl06-chowk bpl07-karkhana bpl08-bhojtal
 rpr02-khet rpr03-chowk rpr04-kothi rpr05-mela rpr06-jungle rpr07-saal rpr08-dussehra
 rnc02-galli rnc03-maidan rnc04-seedhi rnc05-kharkai rnc06-ghariya rnc07-chattan rnc08-ghagh
-ccu03-dokan ccu04-thak ccu05-uthon ccu05-lane ccu05-ghat
-ccu06-points ccu06-duiline ccu07-girder ccu07-dui ccu07-ulto ccu07-jowar ccu07-pylon ccu07-baan
-ccu08-rok ccu08-tokta ccu09-sinri ccu09-toran ccu09-chala ccu09-dhak ccu09-uthan ccu09-uthan2 ccu09-line
-ccu10-bus ccu10-tram ccu10-chhad ccu10-phire ccu10-pherot ccu10-kumor ccu10-khola ccu10-setu
+ccu03-dokan ccu04-thak ccu05-lane ccu05-ghat
+ccu06-points ccu06-duiline ccu07-girder ccu07-dui ccu07-horn ccu07-board ccu07-pylon ccu07-jowar
+ccu08-rok ccu09-sinri ccu09-toran ccu09-chala ccu09-dhak ccu09-uthan ccu09-line
+ccu10-bus ccu10-tram ccu10-chhad ccu10-phire ccu10-pherot ccu10-kumor ccu10-khola ccu10-kumir ccu10-setu
 pat02-chokha pat03-batch pat04-anaaj pat05-ghat pat05-sangam pat06-sau pat06-nau pat07-sadak pat07-adda
 pat08-chowk pat08-vihara pat09-jhoola pat09-ghoda pat09-wapsi pat10-pipa pat10-sau pat10-sidhi pat10-anaaj
 pat05-bori pat06-gaadi pat07-pul pat07-haat pat07-mandi pat10-bori pat10-gaadi

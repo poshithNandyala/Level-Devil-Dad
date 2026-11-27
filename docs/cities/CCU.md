@@ -20,6 +20,22 @@ Ashi, Bhalo theko, Jatra shubho hok, Saat baar), some with ", Dad" added.
   - 06 `duiline` now ends on its island.
   - 07 now ends on the bore's ghat steps, and the arch door has its own porter.
 
+**Fix round 2 (allocation v3, DECISIONS.md 5):**
+- Cut, each for the reason in DECISIONS.md section 5:
+  - `ccu05-uthon` (S4)
+  - `ccu07-baan` (S6)
+  - `ccu07-ulto` (W4, once F481 was built)
+  - `ccu08-tokta` (W3: the door keeps the stage's reversal)
+  - `ccu09-uthan2` (S3)
+- Built:
+  - `ccu07-horn` (v3 F481, the sound beat: the porters step back on the lorry's horn; be on the back of the load)
+  - `ccu07-board` (v3 F502: the board seats one; stay on, yours walks on past it)
+  - `ccu10-kumir` (01's kumir broken: he counts backwards with his eyes open; cross when he stops)
+  - `ccu09-line`, two beats longer (09's labelled momentum beat)
+- Re-laid:
+  - 06 has a second island stop mid-ride with ground, where you step off and back on.
+  - 07's horn and board start on a long pylon step.
+
 | # | Stage | Allocation family / betrayals | The room | Acts | Door ending (meta.ending) | NAIVE / FIX |
 |---|---|---|---|---|---|---|
 | 01 | Nomoshkar Kolkata (tour) | rail-groove-sticks-foot / groove-catch | Land on the tram rail from a jump and the groove locks your foot: it steers you along its line, no turning or jumping, into the rail-works trench. Walk on to the rail instead (up on the thela, walk off). | (tour) + two kumir-danga chalk rivers (R1 safe-call-window: cross only while the kumir counts; ccu-kumir) | the Esplanade tram shuttle (ccu-esplanade-tram-shuttle) | long jump over the thela / hop up and hop off: both ccu-rail |
