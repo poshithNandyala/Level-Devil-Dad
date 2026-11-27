@@ -94,10 +94,11 @@ const sixOClock: Act = {
     const rows: { t: number; s: Thing; up: boolean }[] = [];
     for (let t = 0; t < 29; t++) if (!skip.has(t)) rows.push({ t, s: w.add(new Thing('spikerow', X(t), px(G) + 1, { solid: false, deadly: 'spikes', layer: -4 })), up: false });
     let t0 = -1;
-    onPass(w, X(3), (w2) => {
+    // the bell rings 4.5 tiles past the act's checkpoint (X(0.5)): a respawn that runs or hops a moment does not ring it
+    onPass(w, X(5), (w2) => {
       t0 = w2.tick;
-      w2.sfx('bell', X(4), px(G));
-      say(w2, 'Six mani! Road close! | Six o’clock! The road is closed!', X(6), G - 4);
+      w2.sfx('bell', X(6), px(G));
+      say(w2, 'Six mani! Road close! | Six o’clock! The road is closed!', X(8), G - 4);
     });
     w.onTick((w2) => {
       if (t0 < 0) return;
@@ -304,6 +305,9 @@ export const levels = (): LevelDef[] => [
       ["bougain", 106, {}],
     ],
     things: [["cyclist", 24]],
+    // the checkpoint after the terrace steps sits on the terrace itself (63.5, not 67.5): the cap blows at 69,
+    // and a dad who respawns at 67.5 and runs is in the policeman's way at once
+    cps: [28.5, 35.5, 47.5, 63.5, 89.5],
     hint: 'After the café terrace, the sea breeze takes a policeman’s red cap down the street and he comes running after it. Don’t stand in his way and don’t hop him (he leaps for his cap). Jump up and catch the cap as it goes over you: he stops and takes it back. On the Promenade the sea has eaten the path, and a yellow plywood square lies on the far side of the gap like a landing mat: it is not the far side. The moment you jump for it, it slides a tile on and the water it covered is under you. Jump long, for the sea wall itself, not for the paint.',
     // (tour-pdy-b20) the Promenade: the sea has taken four tiles of path past the deck; the yellow
     // square that seems to be the landing is a loose plywood lid over the last tile of water
