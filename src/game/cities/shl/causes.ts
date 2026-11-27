@@ -19,5 +19,7 @@ export const causeLines: Record<string, string[]> = {
   'shl-gorge': ['Into the gorge: no root was there yet.', 'A root must grow across first. Jump at a guide and wait for its root; on a root you grew, stand on the tip and it sprouts the next span.'],
   'shl-spray': ['The spray at the low landing took you.', 'The short root lands in the spray. Climb the rock and take the long guide: its root lands dry on the far rock.'],
   'shl-jri': ['The guide you walked into grew a root straight across the path, into you.', 'Every guide you touch grows a root. Hop over a guide you do not want.'],
+  'shl-maw': ['The stalactite came down to its stump with you under it.', 'Every drip is a step down. Count them: pass while there is room, or wait for it to meet the floor and break.'],
+  'shl-shut': ['You walked into a stalactite that had met its stump.', 'A shut one is a wall for a moment, then it breaks and starts again from the top: wait for the break.'],
   'shl-lintel': ['The low lintel caught your knup.', 'A low arch or a half-door needs the knup off: jump at the hook before it. A tall arch does not.'],
 };

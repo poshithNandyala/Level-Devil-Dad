@@ -9,6 +9,8 @@ import { VIEW } from '../../src/game/cities/shl/s01';
 import type { SwayState } from '../../src/game/cities/shl/s03';
 import type { Fall } from '../../src/game/cities/shl/s05';
 import type { RootSet } from '../../src/game/cities/shl/s06';
+import type { Stal } from '../../src/game/cities/shl/s07';
+import { FIT } from '../../src/game/cities/shl/s07';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -275,6 +277,44 @@ const rootdoorPolicy: Policy = (w, m, d) => {
   return go('R');
 };
 
+// ------------------------------------------------------------------ SHL-07
+/** pass each stalactite while it has room to spare (a drip during the crossing still leaves room); wait at its edge otherwise */
+function caveWalk(key: string, upTo?: number): (w: World) => Out {
+  return (w) => {
+    const list = (w.flags[key] as Stal[]).filter((st) => upTo === undefined || st.c <= upTo);
+    const p = w.player;
+    const next = list.filter((st) => px(st.c) + 16 > p.x).sort((a, b) => a.c - b.c)[0];
+    if (!next) return go('R');
+    if (p.x + p.w < px(next.c) - 22) return go('R');
+    if (p.x + p.w > px(next.c) + 2) return go('R');
+    const ok = next.s.shutAt < 0 && next.gap >= FIT + next.s.step + 4;
+    return go(ok ? 'R' : '');
+  };
+}
+/** the gallery: wait at the first stalactite until it has just broken (back to the top), then run the whole row */
+function galleryRun(x: number): (w: World) => Out {
+  let going = false;
+  let W: World | null = null;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      going = false;
+    }
+    const first = (w.flags.shl7 as Stal[]).find((st) => Math.abs(st.c - (x + 6)) < 0.01)!;
+    const p = w.player;
+    if (going) return go('R');
+    if (p.x + p.w < px(first.c) - 22) return go('R');
+    if (first.s.shutAt < 0 && first.gap >= first.s.g0 - 1) {
+      going = true;
+      return go('R');
+    }
+    return go('');
+  };
+}
+const room07 = (): Step[] => [{ policy: caveWalk('shl7', 22), until: and(ground, X(24)), max: 4000, note: 'three stalactites, each on its own drip' }, { hold: 'R', until: X(29), max: 400 }];
+const act07 = (x: number): Step[] => [{ policy: galleryRun(x), until: and(ground, X(x + 33)), max: 5000, note: 'wait for the first to break, then run the gallery' }, { hold: 'R', until: X(x + 34), max: 300 }];
+const columnPolicy: Policy = (w) => caveWalk('shl7')(w);
+
 // ------------------------------------------------------------------ tables
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['SHL-01'] = tourRoute();
@@ -288,7 +328,9 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('SHL-05', 0, []);
   S['SHL-06'] = room06();
   lengthen('SHL-06', 0, []);
-  for (const n of [7, 8, 9, 10]) {
+  S['SHL-07'] = room07();
+  lengthen('SHL-07', 0, []);
+  for (const n of [8, 9, 10]) {
     S[`SHL-${String(n).padStart(2, '0')}`] = [{ hold: 'R', until: done, max: 1200, note: 'not built yet' }];
   }
 }
@@ -302,6 +344,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-04': { steps: runOn, cause: 'shl-slap' },
   'SHL-05': { steps: runOn, cause: 'shl-um' },
   'SHL-06': { steps: [...offRock, { hold: 'R', until: X(11.6), max: 600 }, { hold: 'R', jump: 22, ticks: 22, note: 'jump the gorge' }, { hold: 'R', until: done, max: 900 }], cause: 'shl-gorge' },
+  'SHL-07': { steps: runOn, cause: 'shl-shut' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-01': { steps: [...upTo(21), { hold: 'R', until: X(64), max: 600 }, { hold: '', until: done, max: 1500, note: 'stand outside the cloud and wait' }], cause: 'shl-lyoh' },
@@ -313,9 +356,10 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-04': { steps: [...atHook(5, 'take the knup'), { hold: 'R', until: done, max: 2400, note: 'and keep it on' }], cause: 'shl-dieng' },
   'SHL-05': { steps: [{ policy: dryWalk('shl5'), until: done, max: 4000, note: 'wait for the bed to run dry, then go' }], cause: 'shl-wah' },
   'SHL-06': { steps: [...offRock, ...atHook(8.5, 'the first guide: the short root'), { hold: '', until: and(ground, rootFull('shl6', 0, 12 * 16)), max: 1200, note: 'wait for it' }, { hold: 'R', until: done, max: 1500, note: 'across, into the spray' }], cause: 'shl-spray' },
+  'SHL-07': { steps: [{ hold: 'R', until: X(14.4), max: 600, note: 'stop under the quick one to count its drips' }, { hold: '', until: done, max: 1500 }], cause: 'shl-maw' },
 };
-const ROOMS: Record<string, () => Step[]> = { 'SHL-02': room02, 'SHL-03': room03, 'SHL-04': room04, 'SHL-05': room05, 'SHL-06': room06 };
-const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'], 'SHL-05': ['shl05-ar', 'shl05-pung'], 'SHL-06': ['shl06-sprout', 'shl06-kiang'] };
+const ROOMS: Record<string, () => Step[]> = { 'SHL-02': room02, 'SHL-03': room03, 'SHL-04': room04, 'SHL-05': room05, 'SHL-06': room06, 'SHL-07': room07 };
+const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'], 'SHL-05': ['shl05-ar', 'shl05-pung'], 'SHL-06': ['shl06-sprout', 'shl06-kiang'], 'SHL-07': ['shl07-krem'] };
 const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
 const prefix = (id: string, act: string): Step[] => [...ROOMS[id](), ...ACT_ORDER[id].slice(0, ACT_ORDER[id].indexOf(act)).flatMap((a) => actRoutes[a](actX0(id, a)))];
 /** the stage up to the act (route), then `steps` played from the act's first column; built when the test runs */
@@ -369,8 +413,12 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     { what: 'the middle guide: its root gives up half way', steps: [...offRock, { hold: 'R', until: X(9.9), max: 400 }, { hold: '', until: (w) => Math.abs(w.player.vx) < 5, max: 60 }, { hold: '', jump: 8, ticks: 8, note: 'the middle guide' }, { hold: 'R', until: ground, max: 300 }, { hold: '', until: and(ground, (w) => (w.flags.shl6 as RootSet).roots[1].w >= 12 * 16 * 0.55 - 2), max: 1200 }, { hold: 'R', until: done, max: 1500 }], cause: 'shl-gorge' },
     inAct('SHL-06', 'shl06-kiang', 'walk into the guide in the path', () => [{ hold: 'R', until: done, max: 1500 }], 'shl-jri'),
   ],
+  'SHL-07': [
+    inAct('SHL-07', 'shl07-krem', 'stop under the fourth stalactite of the gallery to count', (x) => [{ policy: galleryRun(x), until: X(x + 16.2), max: 3000 }, { hold: '', until: done, max: 1500 }], 'shl-maw'),
+  ],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'shl07-krem': act07,
   'shl06-sprout': act06,
   'shl06-kiang': act06b,
   'shl05-ar': act05,
@@ -388,6 +436,7 @@ const endingPolicies: Record<string, Policy> = {
   'shl-halfdoor': halfdoorPolicy,
   'shl-pool': poolPolicy,
   'shl-rootdoor': rootdoorPolicy,
+  'shl-column': columnPolicy,
 };
 
 export const test: CityTests = {
@@ -397,5 +446,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['SHL-02', 'SHL-03', 'SHL-04', 'SHL-05', 'SHL-06'],
+  fair: ['SHL-02', 'SHL-03', 'SHL-04', 'SHL-05', 'SHL-06', 'SHL-07'],
 };
