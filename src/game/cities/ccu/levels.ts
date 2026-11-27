@@ -130,8 +130,9 @@ function poleRoom(): LevelDef {
 const duiLine: Act = {
   id: 'ccu06-duiline',
   w: 26,
-  // its checkpoint is the door's, at the island's far end, past the other line's tram
+  // on the island's middle, clear of the other line's tram; the door's is at its far end
   cp0: false,
+  cps: [22],
   advice: 'One more junction: stay on the step. At the island stop a tram on the other line comes past, right by the step: get off on to the island, let it go by, and hop back on before yours leaves.',
   paint: (g, c) => {
     g.pit(c.x, c.x + 19);
@@ -219,7 +220,9 @@ function howrahRoom(): LevelDef {
 const girder: Act = {
   id: 'ccu07-girder',
   w: 48,
+  // on the room's last ground, before the pylon
   cp0: false,
+  cps: [-3],
   advice: 'From the pylon step, on to the tall porter’s load. His chai stop is ahead on the road: a short porter comes up from behind, faster, and passes under you. Walk off the front of your load on to his as he goes by.',
   paint: (g, c) => {
     g.fill(c.x, c.x + 3, 14, 14, '#').fill(c.x + 1, c.x + 3, 13, 13, '#');
@@ -289,7 +292,7 @@ function relay(id: string, v: [number, number, number], tallFirst: boolean, advi
     },
   };
 }
-const ulto = relay('ccu07-ulto', [41, 59, 79], false, 'A long span, and the relay the other way up: a short porter from the pylon, a tall one overtaking (hop up when nothing is coming over), then a short one passing under (walk off the front on to him) before the second CHA board.', [2.4]);
+const ulto = relay('ccu07-ulto', [41, 59, 79], false, 'A long span, and the relay the other way up: a short porter from the pylon, a tall one overtaking (hop up when nothing is coming over), then a short one passing under (walk off the front on to him) before the second CHA board.', [0.4]);
 
 /** CCU-07 act (R2, the bore's front, its A3): the low causeway along the river. The front comes up the
  *  river behind you as you step on to it and floods all it has passed: the momentum beat. Keep moving,
@@ -526,7 +529,7 @@ function pandalRoom(): LevelDef {
 const sinri: Act = {
   id: 'ccu09-sinri',
   cp0: false,
-  cps: [-3.4],
+  cps: [-5.5],
   w: 30,
   advice: 'The panels they’ve already tied make a staircase: climb it, cloth top to cloth top. At the top a new panel goes up across the next bamboo: a full jump on to it, and walk straight off the far side before they tie the next one above, into the roof frame.',
   paint: (g, c) => {
@@ -614,7 +617,8 @@ function stopBus(id: string, flag: string, stopName: string, label: string, advi
   return {
     id,
     w: 40,
-    cps: [3.5],
+    // at the stop, and on the far kerb once he's let you off
+    cps: [3.5, 32],
     advice,
     paint: (g, c) => {
       g.pit(c.x + 12, c.x + 24);
@@ -645,7 +649,7 @@ const tram10: Act = {
   id: 'ccu10-tram',
   w: 44,
   cp0: false,
-  cps: [26.5],
+  cps: [1, 26.5],
   advice: 'The tram: on to its rear step, never the roof. Through the junction on the step, and off at the island: the pointsman has it set for the other line.',
   paint: (g, c) => {
     g.pit(c.x + 6, c.x + 21);
@@ -861,7 +865,7 @@ const dui3: Act = {
 const pherot: Act = {
   id: 'ccu10-pherot',
   cp0: false,
-  cps: [-1.3],
+  cps: [-1.3, 13],
   w: 24,
   advice: 'College Street again, but this customer is bringing books back: the stack he points at grows a book at a time, all the way up to the high stall. Stand on that one and ride it up. The quiet stack next to it is being bought down.',
   paint: (g, c) => {
@@ -912,7 +916,7 @@ const phire: Act = {
 const chhad: Act = {
   id: 'ccu10-chhad',
   cp0: false,
-  cps: [-0.2],
+  cps: [-1.8],
   w: 26,
   advice: 'The canopy again, but they’re hauling it up for good now, level with the gallery: no running under it this time, there’s no way through. Get on top of it while it’s down, ride it up, and step across to the gallery.',
   paint: (g, c) => {
@@ -1005,6 +1009,8 @@ const kumor10: Act = {
 const lane: Act = {
   id: 'ccu05-lane',
   w: 34,
+  cp0: false,
+  cps: [-3.5],
   advice: 'The long lane down to the river: every kind of figure, mixed. Read each one before you land: below the waist, stay; above it, go on at once; pale and dry, walk down on to it, never jump.',
   paint: (g, c) => {
     g.pit(c.x, c.x + 29);
@@ -1094,7 +1100,7 @@ const dhak: Act = {
 const line: Act = {
   id: 'ccu09-line',
   cp0: false,
-  cps: [-0.3],
+  cps: [-1.8],
   w: 30,
   advice: 'Opening night, and the queue for the pandal: one person to a bamboo, and on each beat of the dhak they all step one bamboo on. Nobody climbs over the queue, and under it are the stakes. Move up into the bamboo they’ve just left, one beat at a time.',
   paint: (g, c) => {
@@ -1124,7 +1130,7 @@ function liftAct(id: string, wait: number, advice: string): Act {
     id,
     w: 30,
     cp0: false,
-    cps: [11.6, 27],
+    cps: [-4, 11.6, 27],
     advice,
     paint: (g, c) => {
       const x = c.x;
