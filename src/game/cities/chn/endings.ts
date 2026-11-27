@@ -341,7 +341,7 @@ export const endings: Record<ChnEndingKind, Ending> = {
       let t0 = 0;
       let stood = 0;
       const flame = { x: cx - px(2.6), w: px(2.2) };
-      const burner = { active: false, cause: 'burnt', hits: (x: number, y: number, ww: number, h: number) => burner.active && x < flame.x + flame.w && x + ww > flame.x && y + h > FLOOR - 12 };
+      const burner = { active: false, cause: 'chn-adupu', hits: (x: number, y: number, ww: number, h: number) => burner.active && x < flame.x + flame.w && x + ww > flame.x && y + h > FLOOR - 12 };
       w.hazards.push(burner);
       w.flags.twist = 'pale';
       w.add(

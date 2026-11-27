@@ -60,6 +60,8 @@ export interface EscalatorSpec {
   /** once it has reversed to run down, it runs down at least this long (seconds): the overload run-back */
   latch?: number;
   name: string;
+  /** the comb plate's death here (law 9: each act names its own; default `chn-comb`) */
+  combCause?: string;
 }
 
 const UP_SPEED = 60;
@@ -108,7 +110,7 @@ export class Escalator extends Entity {
     const self = this;
     this.comb = {
       active: false,
-      cause: 'chn-comb',
+      cause: spec.combCause ?? 'chn-comb',
       hits: (x, y, w, h) => self.comb.active && x < self.x0 + 34 && x + w > self.x0 - 4 && y < self.y0 + 8 && y + h > self.y0 - 16,
     };
   }
@@ -194,7 +196,7 @@ export class Escalator extends Entity {
           // under the comb plate at the foot: whoever stands on it goes with it
           if (w.standing(s)) {
             this.comb.active = true;
-            w.die('chn-comb');
+            w.die(this.spec.combCause ?? 'chn-comb');
             this.comb.active = false;
           }
           s.place(x, y);
@@ -365,6 +367,8 @@ export function spencerRoom(): LevelDef {
 }
 
 // ================================================================== the acts
+/** chn10-kaanal: where the food court display starts, from the act's start */
+const D = 29;
 /** the family: three board together behind you; the rule you learned (two = down) goes stale: four stop it */
 export const moodal: Act = {
   id: 'chn10-moodal',
@@ -377,10 +381,12 @@ export const moodal: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    basin(w, x + 9, x + 18);
+    basin(w, x + 9, x + 18, 'chn-atrium');
     const e = w.add(
       new Escalator({
         name: 'moodal',
+        // off it as it buzzes and back on as it runs back: the comb, told as this act's own mistake
+        combCause: 'chn-bhaaram',
         fx: x + 8,
         run: 10,
         rise: 4,
@@ -421,47 +427,18 @@ export const moodal: Act = {
   },
 };
 
-/** a down escalator: alone you ride down into the comb; with the kid who rides it for fun aboard, it runs up */
-export const keezhe: Act = {
-  id: 'chn10-keezhe',
-  w: 30,
-  advice: 'This escalator runs down, and a kid rides it down for fun, over and over. Alone on it you go down into the comb plate. Step on while the kid is riding: two aboard and it runs up, and she rides up with you.',
-  paint: (g, c) => {
-    g.fill(c.x + 5, c.x + 7, 14, 14, '#');
-    g.pit(c.x + 9, c.x + 17);
-    landing(g, c.x + 18, c.x + 23, 11);
-  },
-  build: (w, c) => {
-    const x = c.x;
-    basin(w, x + 9, x + 18);
-    const e = w.add(
-      new Escalator({
-        name: 'keezhe',
-        fx: x + 8,
-        run: 10,
-        rise: 4,
-        idleRuns: true,
-        downSpeed: 60,
-        dirFor: (n) => (n >= 2 ? 1 : -1),
-        shoppers: [{ at: 1.8, fromTop: true, again: 0.3, shirt: '#43A047', h: 10 }],
-      }),
-    );
-    sign(w, x + 2, 10.4, 3.4, 'DOWN', 'metro', 'down', 'to the food court');
-    onPass(w, px(x + 2), (w2) => w2.guide('Idhu keezha pogum escalator. | This one runs down.'));
-    w.when(
-      (w2) => w2.player.x > px(x + 5),
-      (w2) => taraSays(w2, 'Kaali-aa irukkum podhu yeru! | Get on while it is empty!', 1.6),
-    );
-  },
-};
-
-/** the mall floor: the shimmer is polish and holds, the dark patch is the open well (CHN-05 the other way round) */
+/** The mall floor, then the food court display (fix round 3: the display, once `chn10-pattarai`, is this act's second
+ *  half). Chennai's two colour rules the wrong way up: on the polished floor the shimmer holds and the dark patch is an
+ *  open well (CHN-05 reversed); on the display shelf over the fountain the pale spirals are real and the golden ones are
+ *  painted plaster that gives the moment it is touched (CHN-09 reversed). Two habits, two deaths: walk the dark
+ *  (`chn-kinaru`), land on the golden (`chn-plaster`). Nothing here asks you to keep moving. */
 export const kaanal: Act = {
   id: 'chn10-kaanal',
-  w: 26,
-  advice: 'Indoors it is the other way round from the beach road: the shimmer is floor polish and it holds; the dark patch is an open well down to the fountain. Walk the shimmer, jump the dark.',
+  w: 44,
+  advice: 'Indoors it is the other way round from the beach road: the shimmer is floor polish and holds; the dark patch is an open well down to the fountain. Walk the shimmer, jump the dark. Then the food court display over the fountain: here the pale spirals are the real ones, and the golden ones are painted plaster that gives the moment you touch it. Hop from pale to pale.',
   paint: (g, c) => {
     for (const t of [6, 13, 19]) g.pit(c.x + t, c.x + t + 1);
+    g.pit(c.x + D, c.x + D + 10);
   },
   build: (w, c) => {
     const x = c.x;
@@ -472,6 +449,41 @@ export const kaanal: Act = {
     sign(w, x + 0.5, 10.4, 3.4, 'FLOOR 2', 'metro', null, 'polished today');
     onPass(w, px(x + 2), (w2) => w2.guide('Floor polish pannirukkaanga. | They have polished the floor.'));
     onPass(w, px(x + 4.5), (w2) => taraSays(w2, 'Veyil kaanal! Thaandu! | Heat shimmer! Jump it!', 1.4));
+    // the display shelf: pale (real, cold: it holds), golden (plaster), pale, golden, then floor. The spirals sit at
+    // the kitchen's height, a curb above the floor, and are solid (not one-way), so a walker steps up on to the first
+    const d = x + D;
+    const water = pool(w, d, d + 11, G + 1 / 16, { colors: FOUNTAIN, cause: 'chn-thotti' });
+    const piece = (name: string, t: number, wt: number, fry: 'pale' | 'golden') => {
+      const m = w.add(new Murukku(name, px(d + t), px(wt), fry));
+      m.solid.oneWay = false;
+      Object.defineProperty(m, 'holds', { get: () => true });
+      return m;
+    };
+    piece('d1', 0, 3, 'pale');
+    const plaster = [piece('d2', 3, 3, 'golden'), piece('d4', 9, 2, 'golden')];
+    piece('d3', 6, 3, 'pale');
+    let touched = false;
+    w.onTick((w2) => {
+      const p = w2.player;
+      for (const m of plaster) {
+        if (!m.visible) continue;
+        const s = m.solid;
+        // a touch is enough: standing on it, or coming down on to it (so a buffered hop cannot bounce off it)
+        const over = p.x + p.w > s.x && p.x < s.x + s.w;
+        const landing = p.vy >= 0 && p.y + p.h >= s.y - 3 && p.y + p.h <= s.y + 2;
+        if (w2.standing(s) || (over && landing)) {
+          m.hide();
+          touched = true;
+          w2.sfx('snap', m.cx, s.y);
+          w2.emit('fx', m.cx, s.y + 2, { kind: 'poof', w: s.w, h: 8 });
+        }
+      }
+      // law 9: off the shelf into the fountain without touching the plaster is a missed hop, not the plaster
+      water.hazard.cause = touched ? 'chn-plaster' : 'chn-thotti';
+    });
+    sign(w, d - 2.6, 10.4, 3.6, 'FOOD COURT', 'shop', null, 'display only');
+    onPass(w, px(d - 3), (w2) => w2.guide('Idhu display murukku. | These are display murukku.'));
+    onPass(w, px(d - 1.5), (w2) => taraSays(w2, 'Pon niram dhaan strong! | Golden is the strong one!', 1.4));
   },
 };
 
@@ -493,16 +505,31 @@ export const billing: Act = {
     const trolleys = spots.map((t, i) => thingOn(w, 'crate', x + t, G, { w: i === 2 ? 48 : 16, h: 14, tint: i === 2 ? '#C62828' : i === 0 ? '#5D4037' : '#78909C' }));
     const gone = new Set<number>();
     const stoodAt = spots.map(() => -1);
+    // law 9 (fix round 3): what put him in the water. Off the rim (`chn-neer`), off the locked one short of the floor
+    // (`chn-poottu`), or a trolley that went from under him (set where it goes: `chn-tipped`, `chn-rolled`)
+    water.hazard.cause = 'chn-neer';
+    w.onTick((w2) => {
+      const p = w2.player;
+      if (!p.onGround) return;
+      const k = trolleys.findIndex((t) => t.alive && p.groundSolid === t.solid);
+      if (k === 2) water.hazard.cause = 'chn-poottu';
+      else if (k < 0 && !p.groundSolid) water.hazard.cause = 'chn-neer';
+    });
     w.onTick((w2) => {
       trolleys.forEach((t, i) => {
         if (i === 2 || gone.has(i) || !t.alive) return;
-        if (stoodAt[i] < 0 && w2.standing(t.solid)) {
+        // a free one rolls at a touch: standing on it, or coming down on to it (fix round 3: a hop that only grazes it
+        // used to bounce on, buffered, before it went); the loaded first one tips once you have stood on it a moment
+        const p = w2.player;
+        const s = t.solid;
+        const landing = i !== 0 && p.vy >= 0 && p.x + p.w > s.x && p.x < s.x + s.w && p.y + p.h >= s.y - 3 && p.y + p.h <= s.y + 2;
+        if (stoodAt[i] < 0 && (w2.standing(t.solid) || landing)) {
           stoodAt[i] = w2.tick;
           w2.sfx('creak', t.cx, t.y);
           if (i === 0) w2.say('Ayyo, load! | Oh no, it is loaded!', t.cx, t.y - 14, 1.0, 'npc');
           else w2.say('Chakkaram! | The wheels!', t.cx, t.y - 14, 0.9, 'npc');
         }
-        if (stoodAt[i] >= 0 && w2.tick - stoodAt[i] >= (i === 0 ? 20 : 5)) {
+        if (stoodAt[i] >= 0 && w2.tick - stoodAt[i] >= (i === 0 ? 20 : 0)) {
           gone.add(i);
           t.alive = false;
           t.hide();
@@ -528,35 +555,3 @@ export const billing: Act = {
   },
 };
 
-/** the food court display: the golden murukku are painted plaster and crumble; the pale one is real (CHN-09 reversed) */
-export const pattarai: Act = {
-  id: 'chn10-pattarai',
-  w: 30,
-  advice: 'The food court display over the fountain: the pale spirals are real and hold; the golden one in the middle is painted plaster: it takes your weight for a second, then crumbles. Walk straight across it, never stop on it.',
-  paint: (g, c) => {
-    // (the basin starts at column 5, round 2: the act's checkpoint at 0.5 is then 4.5 tiles from its edge)
-    g.pit(c.x + 5, c.x + 24);
-  },
-  build: (w, c) => {
-    const x = c.x;
-    basin(w, x + 5, x + 25, 'chn-plaster');
-    const pale = w.add(new Murukku('d1', px(x + 6), px(5), 'pale'));
-    pale.friesAt = -1;
-    const plaster = w.add(new Murukku('d2', px(x + 13), px(5), 'golden'));
-    const pale2 = w.add(new Murukku('d3', px(x + 20), px(5), 'pale'));
-    // the pale ones are real murukku, cold: they hold; the golden one is plaster: it crumbles under weight
-    Object.defineProperty(pale, 'holds', { get: () => true });
-    Object.defineProperty(pale2, 'holds', { get: () => true });
-    let crumbleAt = -1;
-    Object.defineProperty(plaster, 'holds', { get: () => crumbleAt < 0 || w.tick < crumbleAt });
-    w.onTick((w2) => {
-      if (crumbleAt < 0 && w2.standing(plaster.solid)) {
-        crumbleAt = w2.tick + 100;
-        w2.sfx('creak', plaster.cx, plaster.solid.y);
-      }
-    });
-    sign(w, x + 0.5, 10.4, 3.6, 'FOOD COURT', 'shop', null, 'display only');
-    onPass(w, px(x + 2), (w2) => w2.guide('Idhu display murukku. | These are display murukku.'));
-    onPass(w, px(x + 3.5), (w2) => taraSays(w2, 'Pon niram dhaan strong! | Golden is the strong one!', 1.4));
-  },
-};

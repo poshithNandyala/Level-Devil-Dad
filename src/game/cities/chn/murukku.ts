@@ -422,39 +422,6 @@ export class Ladle extends Entity {
   }
 }
 
-/** the cook's hand coming down to snap a piece off */
-class Hand extends Entity {
-  hazard: Hazard;
-  at = -1;
-  constructor(
-    readonly x0: number,
-    readonly w: number,
-  ) {
-    super();
-    this.layer = 7;
-    const self = this;
-    this.hazard = { active: false, cause: 'chn-kai', hits: (x, y, w, h) => self.hazard.active && x < self.x0 + self.w && x + w > self.x0 && y < OIL && y + h > OIL - 40 };
-  }
-  snap(w: World, then: (w: World) => void) {
-    this.at = w.tick;
-    this.hazard.active = true;
-    w.sfx('snap', this.x0 + this.w / 2, OIL - 10);
-    w.after(0.1, () => {
-      this.hazard.active = false;
-      then(w);
-    });
-  }
-  draw(ctx: CanvasRenderingContext2D, w: World) {
-    if (this.at < 0 || w.tick - this.at > 16) return;
-    const x = this.x0 + this.w / 2;
-    ctx.fillStyle = '#A0653B';
-    ctx.fillRect(x - 6, OIL - 36, 12, 24);
-    ctx.fillRect(x - 10, OIL - 70, 8, 40);
-    ctx.fillStyle = '#F5F5F5';
-    ctx.fillRect(x - 12, OIL - 72, 12, 8);
-  }
-}
-
 /** the murukku of the current world, by name (tests and the guide) */
 export const murukkuOf = (w: World, name: string) => w.entities.find((e) => e instanceof Murukku && e.name === name) as Murukku | undefined;
 export const pressOf = (w: World, i = 0) => w.entities.filter((e) => e instanceof Press)[i] as Press | undefined;
@@ -462,9 +429,36 @@ export const ladleOf = (w: World, i = 0) => w.entities.filter((e) => e instanceo
 /** a stage's presses and ladles in the order they were added: the i-th act's are at index i */
 export const ladleAt = (w: World, i: number) => ladleOf(w, i);
 
-/** the oil between two columns (the pit is painted by the act) */
+/** the oil between two columns (the pit is painted by the act). Law 9, fix round 3: the line names what this play
+ *  did, so the oil's cause follows what Dad last stood on: straight off the bank (`chn-karai`), a pale or still-white
+ *  spiral that folded under him (`chn-ennai`; a white one, `chn-vellai`), through the open eye of the spiral he was on (`chn-kannu`), or off a
+ *  spiral that held, into the oil beside it (`chn-idai`). */
 function kadai(w: World, tx0: number, tx1: number) {
-  pool(w, tx0, tx1, G + 1 / 16, { colors: OIL_COLORS, cause: 'chn-ennai' });
+  const oil = pool(w, tx0, tx1, G + 1 / 16, { colors: OIL_COLORS, cause: 'chn-karai' });
+  let last: Murukku | null = null;
+  const x0 = px(tx0),
+    x1 = px(tx1);
+  w.onTick((w2) => {
+    const p = w2.player;
+    // what he stands on: a spiral (by its solid), or the bank (on the ground outside this oil); a tick of on-ground
+    // over a gap (walking off an edge) changes nothing
+    if (p.onGround) {
+      const m = w2.entities.find((e) => e instanceof Murukku && e.visible && p.groundSolid === e.solid) as Murukku | undefined;
+      if (m) last = m;
+      else if (p.cx < x0 || p.cx > x1) last = null;
+    }
+    const m = last;
+    const parts = m?.solid.parts;
+    oil.hazard.cause = !m
+      ? 'chn-karai'
+      : !m.holds || m.sinkAt >= 0
+        ? m.fry === 'white'
+          ? 'chn-vellai'
+          : 'chn-ennai'
+        : parts && p.cx > m.solid.x + parts[0].w && p.cx < m.solid.x + parts[1].x
+          ? 'chn-kannu'
+          : 'chn-idai';
+  });
 }
 
 const M = (w: World, name: string, tx: number, wTiles: number, fry: Fry, o: { eye?: [number, number]; hidden?: boolean } = {}) => w.add(new Murukku(name, px(tx), px(wTiles), fry, o));
@@ -642,39 +636,5 @@ export const varisai: Act = {
       (w2) => taraSays(w2, 'Medhuvaa po, Dad! | Go slow, Dad!', 1.4),
     );
     onPass(w, px(x + 2), (w2) => w2.guide('Varisai-la nikkaadhe. | Do not stop on the row.'));
-  },
-};
-
-/** A6: the cook tastes a finished spiral: he snaps its near end off, then lifts the rest. */
-export const ruchi: Act = {
-  id: 'chn09-ruchi',
-  w: 30,
-  advice: 'The cook tastes a finished spiral: as you land on its near end his hand comes down and snaps that end off, and a moment later his ladle lifts the rest. Do not stop on it: land and keep going to the next one.',
-  paint: (g, c) => {
-    g.pit(c.x + 5, c.x + 21);
-  },
-  build: (w, c) => {
-    const x = c.x;
-    kadai(w, x + 5, x + 22);
-    const ladle = w.add(new Ladle(px(x + 1)));
-    // one long spiral: near end 5 tiles (snapped off), the rest 4 tiles
-    const end = M(w, 'u1', x + 6, 5, 'golden');
-    const rest = M(w, 'u2', x + 11, 4, 'golden');
-    M(w, 'u3', x + 17, 5, 'golden');
-    const hand = w.add(new Hand(px(x + 6), px(5)));
-    w.when(
-      (w2) => w2.standing(end.solid) || w2.standing(rest.solid),
-      (w2) => {
-        w2.say('Ruchi paakkaren! | Let me taste!', px(x + 8), px(9.5), 1.2, 'npc');
-        w2.after(0.5, () =>
-          hand.snap(w2, (w3) => {
-            end.hide();
-            w3.emit('fx', end.cx, OIL, { kind: 'poof', w: 40, h: 8 });
-            w3.after(0.2, () => ladle.take(w3, rest, 0.4));
-          }),
-        );
-      },
-    );
-    onPass(w, px(x + 2), (w2) => w2.guide('Munnaadi nunni odanjidum. | The near end gets snapped off.'));
   },
 };

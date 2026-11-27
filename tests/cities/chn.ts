@@ -294,14 +294,18 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
       return n;
     };
     const prefix = (note: string) => r.slice(0, at(note));
+    // act starts: the family at 32, the polished floor and the food court display at 62, the billing queue at 106
+    const F = 32,
+      K = 62,
+      B = 106;
     mistakes['CHN-10'].push(
-      { what: 'family A1 (the room taught it): hop back off when they board', steps: [...prefix('board the moodal escalator'), { hold: 'R', until: riding('moodal'), max: 600 }, { hold: 'L', until: (w) => w.player.x <= px(32 + 8.6), max: 60 }, { hold: 'L', jump: 30, ticks: 30, long: true }, { hold: 'L', until: (w) => w.player.onGround && !riding('moodal')(w), max: 120 }, { hold: '', until: done, max: 900 }], cause: 'chn-trolley' },
-      { what: 'polished floor A1 (the beach road taught it): hop the shimmer, walk the dark patch', steps: [...prefix('walk the shimmer'), ...hopAt(32 + 30 + 2.4, 12, 'hop the shimmer'), die], cause: 'chn-kinaru' },
-      { what: 'down escalator A1: step on while it is empty', steps: [...prefix('wait for a step under the kerb (keezhe)'), until((w) => esc('keezhe')(w).shoppers[0].p < 0 && stepUnder(w, 'keezhe'), 'wait for the kid to step off', 1200), { hold: 'R', until: riding('keezhe'), max: 60 }, { hold: 'L', until: (w) => w.player.vx <= 0, max: 20 }, stay], cause: 'chn-comb' },
-      { what: 'display A1 (the kitchen taught it): stand on the golden one', steps: [...prefix('across the plaster one without stopping'), { hold: 'R', until: (w) => w.player.onGround && w.player.x >= px(32 + 30 + 26 + 26 + 30 + 14), max: 600 }, stay], cause: 'chn-plaster' },
-      // the billing queue (act at 88): A1 as the beach taught, on to the second to skip the third; A2 stand on the loaded first and look
-      { what: 'billing A1 (the queue taught it): hop on to the second trolley to skip the third', steps: [...prefix('up to the rim: the locked one is the third'), ...hopAt(88 + 7.4, 12, 'on to the second'), die], cause: 'chn-rolled' },
-      { what: 'billing A2: stand on the loaded first trolley and look', steps: [...prefix('up to the rim: the locked one is the third'), ...hopAt(88 + 5.8, 12, 'on to the first'), stay], cause: 'chn-tipped' },
+      { what: 'family A1 (the room taught it): hop back off when they board', steps: [...prefix('board the moodal escalator'), { hold: 'R', until: riding('moodal'), max: 600 }, { hold: 'L', until: (w) => w.player.x <= px(F + 8.6), max: 60 }, { hold: 'L', jump: 30, ticks: 30, long: true }, { hold: 'L', until: (w) => w.player.onGround && !riding('moodal')(w), max: 120 }, { hold: '', until: done, max: 900 }], cause: 'chn-trolley' },
+      { what: 'family A2: ride, and jump off as the overload buzzer goes', steps: [...prefix('board the moodal escalator'), { hold: 'R', until: riding('moodal'), max: 600 }, { hold: 'L', until: (w) => w.player.vx <= 0 || !w.player.onGround, max: 20 }, until((w) => esc('moodal')(w).riders(w) >= 4, 'the family is aboard: the buzzer', 600), { hold: 'L', jump: 12, ticks: 12, note: 'jump off as it buzzes' }, { hold: '', until: done, max: 900 }], cause: 'chn-bhaaram' },
+      { what: 'polished floor A1 (the beach road taught it): hop the shimmer, walk the dark patch', steps: [...prefix('walk the shimmer'), ...hopAt(K + 2.4, 12, 'hop the shimmer'), die], cause: 'chn-kinaru' },
+      { what: 'display A2 (the kitchen taught it): the golden one is the strong one', steps: [...prefix('on to the display: the pale one'), { hold: 'R', until: done, max: 900, note: 'walk on to the golden one' }], cause: 'chn-plaster' },
+      // the billing queue: A1 as the beach taught, on to the second to skip the third; A2 stand on the loaded first and look
+      { what: 'billing A1 (the queue taught it): hop on to the second trolley to skip the third', steps: [...prefix('up to the rim: the locked one is the third'), ...hopAt(B + 7.4, 12, 'on to the second'), die], cause: 'chn-rolled' },
+      { what: 'billing A2: stand on the loaded first trolley and look', steps: [...prefix('up to the rim: the locked one is the third'), { hold: 'R', until: X(B + 7.0), max: 600 }, { hold: '', ticks: 40 }, { hold: 'R', jump: 10, ticks: 10, note: 'a short hop on to the first' }, { hold: '', until: done, max: 900 }], cause: 'chn-tipped' },
     );
   }
   {
@@ -316,20 +320,17 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     const K = 32,
       E = K + 30,
       T = E + 30,
-      V = T + 30,
-      U = V + 30;
+      V = T + 30;
     mistakes['CHN-09'].push(
       { what: 'ladle A1: hop straight on to the dark spiral', steps: [...prefix('on to the first spiral (the ladle comes for the dark one)'), ...hopAt(K + 3.4, 12, 'on'), ...hopAt(K + 10.4, 12, 'and on to the dark one'), die], cause: 'chn-karandi' },
       { what: 'ladle A2: wait on the first spiral for the dark one to go', steps: [...prefix('on to the first spiral (the ladle comes for the dark one)'), ...hopAt(K + 3.4, 12, 'on'), stay], cause: 'chn-sottu' },
-      { what: 'eye A1: run straight across the big spiral', steps: [...prefix('on to the near turn of the big spiral'), ...hopAt(E + 3.4, 12, 'on'), die], cause: 'chn-ennai' },
+      { what: 'eye A1: run straight across the big spiral', steps: [...prefix('on to the near turn of the big spiral'), ...hopAt(E + 3.4, 12, 'on'), die], cause: 'chn-kannu' },
       { what: 'eye A2: hop the eye at once, under the press', steps: [...prefix('on to the near turn of the big spiral'), ...hopAt(E + 3.4, 12, 'on'), ...hopAt(E + 10.4, 12, 'hop the eye'), die], cause: 'chn-achu' },
       { what: 'thenkuzhal A1 (the room taught it): wait for it to go golden', steps: [...prefix('on to the dark spiral (the press lays a white one)'), ...hopAt(T + 3.4, 12, 'on'), stay], cause: 'chn-karandi' },
-      { what: 'thenkuzhal A2: it never turns, so step on at once', steps: [...prefix('on to the dark spiral (the press lays a white one)'), ...hopAt(T + 3.4, 12, 'on'), until((w) => !!murukkuOf(w, 't2')?.visible, 'the white one lands', 600), ...hopAt(T + 10.4, 12, 'on to it'), die], cause: 'chn-ennai' },
-      { what: 'row A1: run on to the row as it is laid', steps: [...prefix('up to the edge: the row is laid'), die], cause: 'chn-ennai' },
+      { what: 'thenkuzhal A2: it never turns, so step on at once', steps: [...prefix('on to the dark spiral (the press lays a white one)'), ...hopAt(T + 3.4, 12, 'on'), until((w) => !!murukkuOf(w, 't2')?.visible, 'the white one lands', 600), ...hopAt(T + 10.4, 12, 'on to it'), die], cause: 'chn-vellai' },
+      { what: 'row A1: hop on to the row as it is laid', steps: [...prefix('up to the edge: the row is laid'), ...hopAt(V + 3.4, 12, 'on to the pale row at once'), die], cause: 'chn-ennai' },
       { what: 'row A2: wait for golden, step on, and stop for a look', steps: [...prefix('up to the edge: the row is laid'), { hold: 'R', until: X(V + 3.4), max: 600 }, until(fried('v0'), 'wait for the row to turn', 600), ...hopAt(V + 3.4, 12, 'on to the row'), stay], cause: 'chn-karandi' },
-      { what: 'taste A1 (the room taught it): land on the near end and wait there', steps: [...prefix('on to the near end, and keep going'), ...hopAt(U + 3.4, 12, 'on'), stay], cause: 'chn-kai' },
-      { what: 'taste A2: land, get past the near end on to the middle, and wait there', steps: [...prefix('on to the near end, and keep going'), ...hopAt(U + 3.4, 12, 'on'), { hold: 'R', until: X(U + 12.2), max: 300 }, stay], cause: 'chn-karandi' },
-      { what: 'door: stop in front of the pale curtain to let it fry', steps: [...r.slice(0, r.length - 1), { hold: 'R', until: (w) => w.player.x >= w.level.doorX! * 16 - px(5.3), max: 900 }, stay], cause: 'burnt' },
+      { what: 'door: stop in front of the pale curtain to let it fry', steps: [...r.slice(0, r.length - 1), { hold: 'R', until: (w) => w.player.x >= w.level.doorX! * 16 - px(5.3), max: 900 }, stay], cause: 'chn-adupu' },
     );
   }
 };
@@ -357,7 +358,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 };
 
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
-  'CHN-09': [{ what: 'run straight into the oil', steps: [die], cause: 'chn-ennai' }],
+  'CHN-09': [{ what: 'run straight into the oil', steps: [die], cause: 'chn-karai' }],
   'CHN-10': [{ what: 'leap from the kerb over the escalator', steps: [...mount(8), ...hopAt(6.4, 30, 'leap', true), die], cause: 'chn-fountain' }],
 };
 
@@ -523,21 +524,8 @@ const actRoutes: Record<string, (x: number, p: any) => Step[]> = {
     ...hopAt(x + 13.4, 12, 'run it and off the far end'),
     walk(x + 29.5),
   ],
-  'chn09-ruchi': (x) => [
-    ...hopAt(x + 3.4, 12, 'on to the near end, and keep going'),
-    ...hopAt(x + 14.4, 12, 'off the middle before the ladle'),
-    walk(x + 29.5),
-  ],
   'chn10-moodal': (x) => [...mount(x + 8), until((w) => stepUnder(w, 'moodal'), 'a step under the kerb', 600), { hold: 'R', until: riding('moodal'), max: 60, note: 'board the moodal escalator' }, { hold: 'L', until: (w) => w.player.vx <= 0 || !w.player.onGround, max: 20 }, { hold: '', until: X(x + 17.2), max: 1500, note: 'stay on: the family boards, it crawls on up' }, walk(x + 29.5, 'off at the top')],
-  'chn10-kaanal': (x) => [{ hold: 'R', until: X(x + 4.4), max: 600, note: 'walk the shimmer' }, { hold: 'R', jump: 12, ticks: 12, note: 'hop the dark well' }, { hold: 'R', until: ground, max: 300 }, ...hopAt(x + 11.4, 12, 'hop the next well'), ...hopAt(x + 17.4, 12, 'and the last'), walk(x + 25.5)],
-  'chn10-keezhe': (x) => [
-    ...mount(x + 8),
-    // the down escalator's step comes toward the kerb and goes under the comb: take one 24..33 px up the run, so a
-    // step-off up to 12 ticks late still lands on it
-    ...ride('keezhe', x + 8, x + 17.2, (w) => { const k = esc('keezhe')(w).shoppers[0]; return k.p >= 0.15 && k.p <= 0.95; }, [24, 33]),
-    walk(x + 29.5),
-  ],
-  'chn10-pattarai': (x) => [...hopAt(x + 3.4, 12, 'on to the pale one'), ...hopAt(x + 10.4, 12, 'across the plaster one without stopping'), ...hopAt(x + 17.4, 12, 'on to the far pale one'), walk(x + 29.5)],
+  'chn10-kaanal': (x) => [{ hold: 'R', until: X(x + 4.4), max: 600, note: 'walk the shimmer' }, { hold: 'R', jump: 12, ticks: 12, note: 'hop the dark well' }, { hold: 'R', until: ground, max: 300 }, ...hopAt(x + 11.4, 12, 'hop the next well'), ...hopAt(x + 17.4, 12, 'and the last'), walk(x + 29.5, 'on to the display: the pale one'), ...hopAt(x + 31.4, 12, 'over the golden plaster to the next pale one'), ...hopAt(x + 37.4, 12, 'over the last golden one to the floor'), walk(x + 43.5)],
   // the billing queue: one long jump from the rim straight on to the locked third trolley (11-14), and one off it
   'chn10-billing': (x) => [
     { hold: 'R', until: X(x + 7.0), max: 600, note: 'up to the rim: the locked one is the third' },
