@@ -745,6 +745,10 @@ const DEATHS: Record<string, Death[]> = {
   'bbi09-ratha': [cNaive(10)],
   'bbi09-ulta': [cNaive(9), { what: 'step down on to the stone after the slam', cause: 'bbi-ulta', steps: (x) => [...chAct('bbi9u', 9, 8)(x).slice(0, 9), { hold: 'L', ticks: 40 }, { hold: '', until: done, max: 900 }] }],
   'bbi09-udaya': [spokesNaive()],
+  'bbi10-deepa': [
+    { what: 'wait for the bridge and walk under the lamps', cause: 'bbi-deepa', steps: (x) => [...onBridge('bbi10d', x + 4, x + 12.2, 'the bridge')] },
+    { what: 'ride the wheel and stay on it', cause: 'bbi-thrown', steps: (x) => [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 4) - 2, max: 900 }, waitFor((w) => tr(w, 'bbi10d').pose === 'wheel' && tr(w, 'bbi10d').into < 0.2, 'the wheel', 2400), leap(() => px(x + 8), 'on to its top'), { hold: '', until: done, max: 900 }] },
+  ],
   'bbi10-chhata': [
     { what: 'wait on the first cut-out for a customer', cause: 'bbi-rangapani', steps: (x) => [{ hold: 'R', until: X(x + 0.4), max: 300 }, leap6(cut10(0), 'on to it'), stayOn(cut10(0), done, 'and wait', 1500)] },
     pFix('bbi10ps'),
@@ -915,7 +919,7 @@ const sutraRun = (x: number): Step[] => [
   { hold: 'R', until: and(ground, X(x + 12.4)), max: 400 },
   { hold: 'R', until: X(x + 16.5), max: 300 },
 ];
-const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi06-sutra': sutraRun, 'bbi07-dui-baja': (x) => [...crossTroupe('bbi7db0', x, 4, 7, 'bridge'), { hold: 'R', until: X(x + 14.5), max: 300 }], 'bbi07-pada': padaRun, 'bbi08-bhanwar': bhanwarRun, 'bbi05-chheli': chheliRun, 'bbi07-bagudi': bagudiRun, 'bbi06-patta': pattaRun, 'bbi05-patra': patraRun, 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi02-dive': act02b, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b,
+const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi10-deepa': (x) => [...crossTroupe('bbi10d', x, 4, 8, 'wheel'), { hold: 'R', until: X(x + 15.5), max: 300 }], 'bbi06-sutra': sutraRun, 'bbi07-dui-baja': (x) => [...crossTroupe('bbi7db0', x, 4, 7, 'bridge'), { hold: 'R', until: X(x + 14.5), max: 300 }], 'bbi07-pada': padaRun, 'bbi08-bhanwar': bhanwarRun, 'bbi05-chheli': chheliRun, 'bbi07-bagudi': bagudiRun, 'bbi06-patta': pattaRun, 'bbi05-patra': patraRun, 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi02-dive': act02b, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b,
   'bbi09-ghoda': chAct('bbi9g', 8, 7),
   'bbi07-deepa': (x) => [...crossTroupe('bbi7l', x, 4, 8, 'bridge'), { hold: 'R', until: X(x + 15.5), max: 300 }],
   'bbi07-shrinkhala': (x) => [...onBridge('bbi7k0', x + 4, x + 22.2, 'on at the stop, then walk the whole chain'), { hold: 'R', until: X(x + 25.5), max: 300 }],

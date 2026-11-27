@@ -11,7 +11,7 @@ import { room as room06, act as act06, act6 as act06f, act7 as act06g, act9 as a
 import { room as room07, act1 as act07a, act2 as act07b, act8 as act07h, act11 as act07k, act12 as act07l, act13 as act07m, act9 as act07i, act10 as act07j, meta07 } from './s07';
 import { room as room08, act as act08, act5 as act08e, act6 as act08f, meta08 } from './s08';
 import { room as room09, act as act09, act2 as act09b, act4 as act09d, act6 as act09f, act7 as act09g, act8 as act09h, meta09 } from './s09';
-import { room as room10, act1 as act10a, act2 as act10b, meta10 } from './s10';
+import { room as room10, act1 as act10a, act2 as act10b, act3 as act10c, meta10 } from './s10';
 import { longStage } from '../../levels/chunks';
 
 export const levels = (): LevelDef[] => [
@@ -24,5 +24,5 @@ export const levels = (): LevelDef[] => [
   longStage({ base: room07(), acts: [act07a, act07h, act07b, act07m, act07k, act07l, act07i, act07j], twist: 'bbi-pose-gate', par: 78, shape: 'marathon', lives: 'act', meta: meta07 }),
   longStage({ base: room08(), acts: [act08, act08f, act08e], twist: 'bbi-leaf-plate', par: 46, shape: 'wtf', meta: meta08 }),
   longStage({ base: room09(), acts: [act09d, act09g, act09b, act09f, act09h, act09], twist: 'bbi-horse-gap', par: 74, shape: 'long', meta: meta09 }),
-  longStage({ base: room10(), acts: [act10a, act10b], twist: 'bbi-ribbon-snip', par: 112, shape: 'marathon', lives: 'act', meta: meta10 }),
+  longStage({ base: room10(), acts: [act10a, act10c, act10b], twist: 'bbi-ribbon-snip', par: 112, shape: 'marathon', lives: 'act', meta: meta10 }),
 ];

@@ -14,7 +14,7 @@ import { FL, channel, cyc, since, taraScript } from './common';
 import { keeperOn } from './s02';
 import { parasol } from './s03';
 import { loom, type LoomCfg } from './s06';
-import { stagePit, troupe, type TroupeCfg } from './s07';
+import { deepaAct, stagePit, troupe, type TroupeCfg } from './s07';
 import { chariot, templeWall, type ChariotCfg } from './s09';
 
 export const C10: ChariotCfg = { c0: 18, len: 10, stopAt: 36, hub: 30, hubY: FL - 58, wait: 0.35, any: true, bare: true };
@@ -112,6 +112,11 @@ export const act2: Act = {
     troupe(w, { ...T10, c0: c.x + T10.c0 }, () => st2.t0, 'bbi10tr');
   },
 };
+
+/** act 3, the lamps turned round (law 7): the Raja night taught you to wait for the bridge and walk under the
+ *  lamps, because the wheel's top put your head in them. Here they hang down to the bridge, and the wheel rides
+ *  above them. */
+export const act3 = deepaAct('bbi10-deepa', 'bbi10d', true);
 
 /** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */
 export const RIB = { period: 2.2, shut: 0.5, at: 9 };

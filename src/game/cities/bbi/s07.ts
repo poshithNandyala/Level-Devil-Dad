@@ -315,11 +315,13 @@ export function troupeAct(id: string, w0: number, cfgs: TroupeCfg[], key: string
 /** act 8, lamps: a string of oil lamps hangs low over the pit. The wheel pose comes first and looks like the way,
  *  but standing on its top puts your head in the lamps; only the bridge goes under them */
 export const T07L: TroupeCfg = { c0: 4, n: 8, drum: 1.6, hold: 1.5, poses: ['wheel', 'bridge'], form: 0.3 };
-export function deepaAct(id: string, key: string): Act {
+export function deepaAct(id: string, key: string, low = false): Act {
   return {
   id,
   w: 16,
-  advice: 'A string of oil lamps hangs low over this pit. The wheel comes first, but its top puts your head in the lamps: wait for the bridge and walk under them.',
+  advice: low
+    ? 'The lamps hang right down to the bridge here: walking under them on the bridge burns you. The wheel’s top rides above them: on to the wheel, and off to the far bank before the drum.'
+    : 'A string of oil lamps hangs low over this pit. The wheel comes first, but its top puts your head in the lamps: wait for the bridge and walk under them.',
   cps: [],
   paint: (g, c) => {
     g.pit(c.x + T07L.c0, c.x + T07L.c0 + T07L.n - 1);
@@ -330,10 +332,14 @@ export function deepaAct(id: string, key: string): Act {
     stagePit(w, c.x + T07L.c0, c.x + T07L.c0 + T07L.n - 1);
     troupe(w, { ...T07L, c0: c.x + T07L.c0 }, () => st.t0, key);
     w.add(
-      new Rig(c.X(T07L.c0) + 8, FL - 64, px(T07L.n) - 16, 12, {
+      new Rig(low ? c.X(T07L.c0 + 2) : c.X(T07L.c0) + 8, low ? FL - 22 : FL - 64, low ? px(T07L.n - 4) : px(T07L.n) - 16, 12, {
         cause: 'bbi-deepa',
         inset: 1,
         layer: 4,
+        // thrown up off a pose into the lamps: the throw is what killed you
+        tick: (r, w2) => {
+          r.hazard!.cause = w2.flags.bbiThrown ? 'bbi-thrown' : 'bbi-deepa';
+        },
         paint: (ctx, r) => {
           ctx.strokeStyle = '#5D3A1E';
           ctx.lineWidth = 1;
