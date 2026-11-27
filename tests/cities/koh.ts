@@ -276,6 +276,24 @@ function rideLog(key: string, bank: number): (w: World) => Out {
   };
 }
 const room05 = (): Step[] => [{ policy: rideLog('koh5', 16), until: and(ground, X(18.6)), max: 2400, note: 'ride the log, off at the top of the surge that touches the bank' }, { hold: 'R', until: X(29), max: 400 }];
+/** the rock ford: stand over the rock (the log's middle) until the log is past it, then as usual */
+function rideOverRock(key: string, rockX: number, bank: number, stance: 'middle' | 'back' | 'front' = 'middle'): (w: World) => Out {
+  return (w) => {
+    const st = w.flags[key] as Log;
+    const r = st.rig;
+    const p = w.player;
+    if (p.cx > r.x + r.w + 6) return go('R');
+    if (!w.standing(r.solid!)) return go('R');
+    const centre = r.x + 40;
+    const nearRock = centre - rockX > -70 && centre - rockX < 50;
+    const touching = r.x + r.w >= px(bank) - 2;
+    if (touching && (st.phase === 1 || st.phase === 0)) return go('R');
+    if (stance === 'back') return go(toward(w, r.x + 14, 3));
+    if (stance === 'front') return go(toward(w, r.x + 66, 3));
+    return go(toward(w, nearRock ? r.x + 40 : r.x + 44, 3));
+  };
+}
+const act05c = (x: number): Step[] => [{ policy: rideOverRock('koh5r', px(x + 15), x + 22.5), until: and(ground, X(x + 23.5)), max: 3000, note: 'over the rock in the middle, then off at the bank' }, { hold: 'R', until: X(x + 33.4), max: 400 }];
 /** two logs: ride the red one to its last top, step across, ride the white one, off at its first top and keep going */
 function twoLogs(x: number): (w: World) => Out {
   return (w) => {
@@ -690,7 +708,7 @@ const ACT_ORDER: Record<string, string[]> = {
   'KOH-02': ['koh02-teen', 'koh02-jhatka'],
   'KOH-03': ['koh03-ulta', 'koh03-bhari'],
   'KOH-04': ['koh04-kali', 'koh04-ulta-dhara'],
-  'KOH-05': ['koh05-dui', 'koh05-chadhai'],
+  'KOH-05': ['koh05-dui', 'koh05-chadhai', 'koh05-chattan'],
   'KOH-06': ['koh06-dhuan', 'koh06-upar'],
   'KOH-07': acts07.map((a) => a.id),
   'KOH-08': ['koh08-galli', 'koh08-taar'],
@@ -733,6 +751,8 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     inAct('KOH-05', 'koh05-dui', 'step off the white log at its first top and stand on the bank edge', (x) => [{ policy: twoLogs(x), until: and(ground, (w) => w.player.y >= 224 && w.player.cx > px(x + 20)), max: 3000 }, { hold: '', until: done, max: 1500 }], 'koh-dhol'),
     inAct('KOH-05', 'koh05-chadhai', 'run on to the quick crew’s log and off its front', () => runOn, 'koh-nala'),
     inAct('KOH-05', 'koh05-chadhai', 'ride the slow crew’s log all the way', (x) => [{ policy: rideLog('koh5c', x + 13), until: and(ground, X(x + 14.5)), max: 2400 }, { hold: 'R', until: X(x + 18.6), max: 600 }, { hold: '', until: done, max: 2400 }], 'koh-shahtir'),
+    inAct('KOH-05', 'koh05-chattan', 'ride at the back over the rock, as always', (x) => [{ policy: rideOverRock('koh5r', px(x + 15), x + 22.5, 'back'), until: done, max: 3000 }], 'koh-chattan'),
+    inAct('KOH-05', 'koh05-chattan', 'over the rock in the middle, then ride it all the way', (x) => [{ policy: rideOverRock('koh5r', px(x + 15), x + 22.5), until: (w) => (w.flags.koh5r as Log).rig.x + 80 >= px(x + 22.5) - 2, max: 3000 }, { hold: '', until: done, max: 2400 }], 'koh-shahtir'),
   ],
   'KOH-06': [
     inAct('KOH-06', 'koh06-dhuan', 'run on through the first chimney', (x) => [...upRoof(x + 6), ...runOn], 'koh-garam'),
@@ -807,6 +827,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'koh04-ulta-dhara': act04b,
   'koh05-dui': act05a,
   'koh05-chadhai': act05b,
+  'koh05-chattan': act05c,
   'koh06-dhuan': act06a,
   'koh06-upar': act06b,
   ...Object.fromEntries(acts07.map((a) => [a.id, act07(a)])),

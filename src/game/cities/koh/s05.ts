@@ -12,7 +12,7 @@ import { Grid } from '../../levels/grid';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
 import { Rig, box, folk } from './entities';
 import { FL, ditch, since, taraScript } from './common';
-import { lines as L } from './lines';
+import { lines as L, NPC } from './lines';
 
 export const LOG_H = 12;
 /** the log's top sits flush with the banks; it climbs a tile on to the drum stand at the far bank */
@@ -268,6 +268,67 @@ export const actChadhai: Act = {
     log(w, c.x + 18, c.x + 26, c.x + 31, 'koh5d', { P: 2.0, surge: 4, hold: 0.6, roll: 3, colour: '#E0B04A', name: 'HOI', bank: c.x + 29 });
     lintel(w, c.x + 25.4);
     sign(w, c.x + 1, 10.4, 3, 'CHADHAI', 'shop', null, 'the climb');
+  },
+};
+
+/**
+ * the rock in the ford: the log is hauled over it, and as it rides up the rock its back end dips into the water, and as
+ * it rides off, its front; the one safe place is over the rock, the middle. The lintel still waits for whoever rides on.
+ */
+export const actChattan: Act = {
+  id: 'koh05-chattan',
+  w: 34,
+  advice: 'A rock stands in the middle of this ford and the log is hauled right over it. As the log rides up the rock its back end goes under, and as it rides off, its front: the one place to stand is over the rock, the middle of the log, until it is past. Then forward, and off at the surge that touches the bank.',
+  cps: [],
+  paint: (g, c) => {
+    g.fill(c.x + 7, c.x + 21, 15, 17, '.');
+  },
+  build: (w, c) => {
+    ford(w, c.x + 7, c.x + 21);
+    // the tops come every 1.5 tiles from 12 (front): the one at 22.5 is the bank touch, at rest, with no rise yet
+    const lg = log(w, c.x + 7, c.x + 22, c.x + 26, 'koh5r', { P: 1.6, surge: 3, hold: 0.6, roll: 1.5, colour: '#6A1B9A', name: 'HO', bank: c.x + 22.5 });
+    lintel(w, c.x + 22.1);
+    const rockX = px(c.x + 15);
+    const tilt = (): number => {
+      const centre = lg.rig.x + 40;
+      const d = centre - rockX;
+      // -1: riding up the rock (the back dips); 1: riding off it (the front dips); 0: clear
+      return d > -44 && d < 0 ? -1 : d >= 0 && d < 44 ? 1 : 0;
+    };
+    for (const end of [-1, 1]) {
+      w.add(
+        new Rig(0, DECK - 14, 26, 16, {
+          layer: 1,
+          cause: 'koh-chattan',
+          inset: 0,
+          live: () => tilt() === end,
+          tick: (r) => {
+            r.x = end < 0 ? lg.rig.x : lg.rig.x + 80 - 26;
+            r.y = lg.rig.y - 14;
+          },
+          paint: () => {},
+        }),
+      );
+    }
+    w.add(
+      new Paint((ctx, w2) => {
+        // the rock, and the water over the dipped end
+        box(ctx, rockX - 10, FL - 2, 20, 10, '#6B6B6B');
+        box(ctx, rockX - 6, FL - 6, 12, 5, '#8A8A8A');
+        const t = tilt();
+        if (t !== 0) {
+          const x = t < 0 ? lg.rig.x : lg.rig.x + 80 - 26;
+          ctx.fillStyle = 'rgba(120,150,150,0.75)';
+          ctx.fillRect(x, lg.rig.y - 2, 26, 6);
+        }
+        void w2;
+      }, 3),
+    );
+    w.when(
+      (w2) => w2.player.cx > px(c.x + 1),
+      (w2) => w2.guide(NPC.thik),
+    );
+    sign(w, c.x + 1, 10.4, 3, 'CHATTAN', 'shop', null, 'the rock');
   },
 };
 

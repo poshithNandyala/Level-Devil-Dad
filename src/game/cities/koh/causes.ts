@@ -42,5 +42,6 @@ export const causeLines: Record<string, string[]> = {
   'koh-jhanda': ['The mat’s end dipped under you.', 'This rope’s flags mark the teams, at the ends. The middle has no flag and is the only place to be, and only for a moment: cross in one go before the whistle.'],
   'koh-tuta-sira': ['The rotten tip broke under your landing.', 'The stall’s plank is a walkway with a sack for a rider: walk on to it. Its near tip is rotten and the far half dips under a landing.'],
   'koh-pilla': ['The puppy ran at the open pot and tripped you.', 'This one loves axone. Lid the pot (stand still) before him; open it again only for the crows beyond.'],
+  'koh-chattan': ['The log tipped on the rock and your end went under.', 'As the log rides up the rock its back dips, as it rides off, its front. Stand over the rock, the middle of the log, until it is past.'],
   'koh-dhol': ['The log rolled over you.', 'After a double shout the log climbs the bank. Step off at the first top and keep going; at the hut hop the drum as it rolls away.'],
 };
