@@ -649,7 +649,7 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'keep moving and jump the trough', cause: 'bbi-kunda', steps: (x) => [passTorch(x + 5, torchOn('bbi4a', 2.0, 0.6, 0.2), 'the first torch'), { hold: 'R', until: X(x + 9.2), max: 300 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 400 }] },
   ],
   'bbi05-dhenki': [
-    { what: 'jump the pit, then use the stone as a stair', cause: 'bbi-sila', steps: (x) => [...act05a(x).slice(0, 5), { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 16.75) - 14, max: 300 }, { hold: 'R', jump: 5, ticks: 5 }, { hold: '', until: done, max: 900 }] },
+    { what: 'jump the pit, then use the stone as a stair', cause: 'bbi-sila', steps: (x) => [...act05a(x).slice(0, 5), { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 16.75) - 14, max: 300 }, { hold: 'R', jump: 5, ticks: 14, note: 'up the stone, still walking' }, { hold: '', until: done, max: 900 }] },
   ],
   'bbi05-khala': [
     walkOn('bbi-jaanta', 'walk on into the yard'),
