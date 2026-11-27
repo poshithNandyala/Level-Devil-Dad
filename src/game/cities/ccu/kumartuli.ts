@@ -1,7 +1,7 @@
 // CCU-05: Kumartuli, the potters' lane on the Hooghly. Clay figures (horses, people: never deities) stand on
 // their plinths over the ghat's mud. Each is being painted from the feet up, and the paint line IS the
-// clock: when it reaches the crown the figure is finished, and the men carry it out of the lane. A figure
-// not yet painted is dry pale clay: land on it from a height and its top layer cracks away under you.
+// clock: when it reaches the crown the figure is finished, and the men carry it out of the lane.
+// (The dry clay that cracked under a landing from height is cut: DECISIONS.md S4, the walk-down read is RNC-07's.)
 import { Entity, type Hazard, type World } from '../../world';
 import { Solid } from '../../body';
 import { DT, TILE } from '../../constants';
@@ -22,11 +22,8 @@ export class Figure extends Entity {
   solid: Solid;
   paint: number;
   gone = false;
-  cracked = false;
   started = false;
   liftT = -1;
-  private wasRiding = false;
-  private airTop = Infinity;
   constructor(readonly o: FigureSpec) {
     super();
     this.layer = 1;
@@ -61,29 +58,9 @@ export class Figure extends Entity {
       }
       return;
     }
-    // how high did Dad come down from? a dry figure cracks under a landing from more than a tile up
-    if (!p.onGround) this.airTop = Math.min(this.airTop, p.y + p.h);
-    const r = this.riding(w);
-    if (r && !this.wasRiding && this.dry && !this.cracked && this.top() - this.airTop > 22) {
-      this.cracked = true;
-      w.flags.cracked = 1;
-      w.sfx('snap', p.cx, this.top());
-      w.emit('fx', p.cx, this.top(), { kind: 'dust' });
-      this.solid.collidable = false;
-      this.gone = true;
-      p.coyoteT = 0;
-    }
-    if (p.onGround) this.airTop = Infinity;
-    this.wasRiding = r;
   }
   draw(ctx: CanvasRenderingContext2D, w: World) {
-    if (this.gone && !(this.liftT >= 0 && this.liftT < 0.6)) {
-      if (this.cracked) {
-        ctx.fillStyle = 'rgba(214,200,170,0.8)';
-        for (let i = 0; i < 4; i++) ctx.fillRect(this.o.x + 4 + i * 7, FLOOR + 4 + (i % 2) * 3, 5, 3);
-      }
-      return;
-    }
+    if (this.gone && !(this.liftT >= 0 && this.liftT < 0.6)) return;
     const x = this.o.x,
       top = this.top() - (this.liftT > 0 ? this.liftT * 60 : 0),
       wd = 2 * TILE,
@@ -158,7 +135,7 @@ export class Ghat extends Entity {
   }
   update(w: World) {
     const p = w.player;
-    if (p.y + p.h > FLOOR + 10 && p.x + p.w > this.x0 && p.x < this.x1) w.die(w.flags.cracked ? 'ccu-phata' : w.flags.carried ? 'ccu-murti' : 'ccu-ganga');
+    if (p.y + p.h > FLOOR + 10 && p.x + p.w > this.x0 && p.x < this.x1) w.die(w.flags.carried ? 'ccu-murti' : 'ccu-ganga');
   }
   draw(ctx: CanvasRenderingContext2D, w: World) {
     const g = ctx.createLinearGradient(0, FLOOR + 6, 0, FLOOR + 48);

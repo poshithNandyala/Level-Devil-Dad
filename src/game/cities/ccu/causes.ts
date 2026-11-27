@@ -1,6 +1,5 @@
 /** Tara's line for each new death cause: [what happened, how to beat it] */
 export const causeLines: Record<string, string[]> = {
-  'ccu-rail': ['Your foot went into the tram groove and the rail took you with it.', 'Don’t land on the rail from a jump. Walk on to it.'],
   'ccu-gir': ['You got off a bus going full tilt. It never stops, Dad.', 'Only step off when the conductor shouts “aaste” and it crawls.'],
   'ccu-ulto': ['You stepped off backwards, against the bus. Over you go.', 'Step off forwards, the way the bus is going.'],
   'ccu-nala': ['Into the open drain. That “aaste” was for the far side.', 'Look where you’ll land before you step off.'],
@@ -18,7 +17,6 @@ export const causeLines: Record<string, string[]> = {
   'ccu-muri': ['He shook the tin, and you went under the muri.', 'When he lifts the tin, be on a peanut.'],
   'ccu-lonka': ['A green chilli came up right where you landed.', 'From the second shake on, hop to the next peanut as he shakes.'],
   'ccu-murti': ['The paint reached the top, and they carried the figure out, with you on it.', 'Stand only on figures painted below the waist.'],
-  'ccu-phata': ['You jumped down on to dry clay, and its top cracked away.', 'Walk off on to the pale ones. Never jump down on them.'],
   'ccu-ganga': ['Into the ghat’s mud.', 'Figure to figure: they’re close enough to hop.'],
   'ccu-kumir': ['On to the chalk river while the kumir was looking. Caught!', 'Wait on the bank till he covers his eyes and counts, then run across.'],
   'ccu-line': ['Nobody climbs over the queue, Dad. They shoved you off.', 'Move up behind them, one bamboo a beat.'],

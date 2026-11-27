@@ -10,7 +10,7 @@ import { tour } from '../../levels/tour';
 import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
 import { pool } from '../../levels/acts';
-import { Bus, Rail, feet } from './entities';
+import { Bus, feet } from './entities';
 import { NALA } from './endings';
 import { Customer, Muck, Stack, Stall } from './books';
 import { Junction, OtherTram, Points, Tram } from './tram';
@@ -758,7 +758,7 @@ function kumartuliRoom(): LevelDef {
     name: 'Kumartuli',
     nameEn: 'The potters’ lane',
     tagline: 'Kumartuli’s potters paint each clay figure from the feet up, and carry it out the moment it’s done.',
-    hint: 'The lane is over the ghat’s mud: go figure to figure. Each one is being painted from the feet up, and when the paint reaches the top they carry it out, with you on it. Stand only on figures the paint hasn’t passed the waist of (the little mark), and move on quickly from the others. The pale ones aren’t painted yet: they’re dry, and their top cracks under a landing from a height. Walk off on to a pale one; never jump down on to it.',
+    hint: 'The lane is over the ghat’s mud: go figure to figure. Each one is being painted from the feet up, and when the paint reaches the top they carry it out, with you on it. Stand only on figures the paint hasn’t passed the waist of (the little mark), and move on quickly from the others.',
     par: 18,
     map: Grid.ground(15).pit(4, 29).put(1, 14, '@').rows(),
     build(w: World) {
@@ -768,11 +768,11 @@ function kumartuliRoom(): LevelDef {
         [
           [5, 2, 0.1, 0.05, 'man'],
           [8, 3, 0.55, 0.12, 'horse'],
-          [10, 2, 0, 0, 'woman'],
+          [10, 2, 0.1, 0.05, 'woman'],
           [13, 3, 0.3, 0.08, 'man'],
           [17, 4, 0.62, 0.14, 'horse'],
           [20, 3, 0.15, 0.08, 'woman'],
-          [22, 2, 0, 0, 'man'],
+          [22, 2, 0.1, 0.05, 'man'],
           [26, 2, 0, 0.06, 'horse'],
         ],
         px(2),
@@ -821,7 +821,7 @@ const ghat: Act = {
   cp0: false,
   cps: [-4.5],
   w: 26,
-  advice: 'Here they finish one after another, from the near end, and carry each one out as you go: keep moving, never wait, and still walk off (never jump) on to the pale dry ones.',
+  advice: 'Here they finish one after another, from the near end, and carry each one out as you go: keep moving, never wait.',
   paint: (g, c) => {
     g.pit(c.x, c.x + 21);
   },
@@ -833,9 +833,9 @@ const ghat: Act = {
       [
         [x + 1, 2, 0.45, 0.14, 'horse'],
         [x + 4, 3, 0.35, 0.14, 'man'],
-        [x + 6, 2, 0, 0, 'woman'],
+        [x + 6, 2, 0.1, 0.05, 'woman'],
         [x + 9, 3, 0.3, 0.13, 'horse'],
-        [x + 11, 2, 0, 0, 'man'],
+        [x + 11, 2, 0.1, 0.05, 'man'],
         [x + 14, 3, 0.2, 0.13, 'woman'],
         [x + 18, 2, 0.15, 0.13, 'horse'],
       ],
@@ -1049,7 +1049,7 @@ const kumor10: Act = {
   cp0: false,
   cps: [-3.3],
   w: 24,
-  advice: 'Kumartuli once more: on the ones painted below the waist, quickly off the others, and walk (never jump) down on to the pale dry ones.',
+  advice: 'Kumartuli once more: on the ones painted below the waist, quickly off the others.',
   paint: (g, c) => {
     g.pit(c.x, c.x + 19);
   },
@@ -1061,10 +1061,10 @@ const kumor10: Act = {
       [
         [x + 1, 2, 0.3, 0.12, 'man'],
         [x + 4, 3, 0.55, 0.16, 'horse'],
-        [x + 6, 2, 0, 0, 'woman'],
+        [x + 6, 2, 0.1, 0.05, 'woman'],
         [x + 9, 3, 0.2, 0.12, 'man'],
         [x + 13, 3, 0.4, 0.14, 'horse'],
-        [x + 15, 2, 0, 0, 'woman'],
+        [x + 15, 2, 0.1, 0.05, 'woman'],
       ],
       c.X(0),
     );
@@ -1078,7 +1078,7 @@ const lane: Act = {
   id: 'ccu05-lane',
   w: 34,
   cp0: false,
-  cps: [-5],
+  cps: [-5, 11.6],
   advice: 'The long lane down to the river: every kind of figure, mixed. Read each one before you land: below the waist, stay; above it, go on at once; nearly done, step straight across. Every one here is being painted: watch the line, not the height.',
   paint: (g, c) => {
     g.pit(c.x, c.x + 29);
@@ -1266,13 +1266,13 @@ export const levels = (): LevelDef[] => [
         ['lamp', 106, {}],
       ],
       things: [],
-      hint: 'A walk round town: jump the kerb ditch, climb the Maidan steps, hop the tram-stop posts and the parked thela. Past the thela there’s a tram rail in the road. Jump on to it and your foot drops into the groove: the rail steers you along its line, no turning, no jumping, straight into the rail-works trench. Walk on to the rail instead (up on the thela, and walk off it), then jump the trench. At Esplanade, ride the little tram across. And the children’s chalk rivers on the Maidan and by the door are kumir-danga: the kumir in the middle catches anyone on his water. Wait on the bank till he shuts his eyes and counts, then run straight across.',
+      hint: 'A walk round town: jump the kerb ditch, climb the Maidan steps, hop the tram-stop posts and the parked thela. Past the thela, jump the rail-works trench by the tram line. At Esplanade, ride the little tram across. And the children’s chalk rivers on the Maidan and by the door are kumir-danga: the kumir in the middle catches anyone on his water. Wait on the bank till he shuts his eyes and counts, then run straight across.',
       paint: (g) => {
         g.pit(70, 71);
       },
       extra: (w) => {
         feet(w);
-        w.add(new Rail(px(62), px(70), px(72)));
+        // the rail-groove bite is cut (DECISIONS.md S5: arrive walking, not from a jump, is KVT-02's / TVM-01's)
         // kumir-danga: a chalk river too wide to jump, safe only while the kumir counts
         w.flags.kumirA = w.add(new Kumir(px(16), px(23.6), 4.5, 2.6));
         w.flags.kumirB = w.add(new Kumir(px(101.5), px(110.8), 6.5, 2.6));
@@ -1287,7 +1287,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: aasteRoom(), par: 23, acts: [], twist: 'ccu-stop', shape: 'short', meta: meta('exit-moving-vehicle-on-shout', ['exit-facing-forward'], 'ccu-bus-crawls-for-whoever-waits') }),
   longStage({ base: muriRoom(), par: 38, acts: [dui3], twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
   longStage({ base: boiRoom(), par: 23, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
-  longStage({ base: kumartuliRoom(), par: 26, acts: [lane, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
+  longStage({ base: kumartuliRoom(), par: 26, acts: [lane, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs'], 'ccu-ride-the-finished-figure-out') }),
   longStage({ base: poleRoom(), par: 82, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 111, acts: [girder, dui, horn, board, pylon, jowar], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 19, acts: [rok], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),

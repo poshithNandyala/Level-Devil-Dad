@@ -340,21 +340,21 @@ function crossTin(key: string, toX: number, opts: { stay?: boolean } = {}): Step
 
 // ------------------------------------------------------------------ CCU-05: Kumartuli
 const figAt = (w: World, c: number) => w.entities.find((e) => e instanceof Figure && Math.abs((e as Figure).o.x - px(c)) < 2) as Figure;
-/** walk off the edge of the figure you're on, down on to the (dry) one beside it */
+/** walk off the edge of the figure you're on, down on to the one beside it */
 const walkOnto = (c: number, note: string): Step => ({ hold: 'R', until: (w) => figAt(w, c).riding(w) && w.player.cx > px(c) + 8, max: 120, note });
-function kumartuliRoute(jumpDry = false, waitOnHorse = 0): Step[] {
+function kumartuliRoute(waitOnHorse = 0): Step[] {
   return [
     walk(2.6),
     steerHop(px(6), 12, 'on to the first figure'),
     steerHop(px(8.8), 12, 'up on the horse (painted past the waist: don’t stay)'),
     ...(waitOnHorse ? [{ hold: '' as const, ticks: waitOnHorse, note: 'rest on the horse' }] : []),
-    jumpDry ? steerHop(px(10.8), 10, 'a hop down on to the pale one') : walkOnto(10, 'walk off on to the dry pale one'),
+    walkOnto(10, 'walk off on to the one just started'),
     steerHop(px(13.8), 12, 'up on the next'),
     { hold: 'R', until: X(14.2), max: 120 },
     steerHop(px(17.8), 14, 'up on the tall horse, and straight off it'),
     { hold: 'R', until: X(18.2), max: 120 },
     steerHop(px(20.6), 10, 'down on to the next'),
-    walkOnto(22, 'walk off on to the dry one'),
+    walkOnto(22, 'walk off on to the next'),
     { hold: 'R', until: X(22.8), max: 120 },
     steerHop(px(26.8), 12, 'across to the last'),
     { hold: 'R', until: X(26.8), max: 120 },
@@ -716,9 +716,9 @@ function thakRoute(flag: string, x: number): Step[] {
 
 /** the obvious play per stage, and the cause it must die of */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
-  'CCU-01': { steps: tourRun('long'), cause: 'ccu-rail' },
+  'CCU-01': { steps: [...tourRun('onto').slice(0, 3), { hold: 'R', until: done, max: 600, note: 'walk straight on across the Maidan’s chalk river' }], cause: 'ccu-kumir' },
   'CCU-04': { steps: boiRoute(false), cause: 'ccu-boi' },
-  'CCU-05': { steps: [...kumartuliRoute(true), { hold: '', until: done, max: 300 }], cause: 'ccu-phata' },
+  'CCU-05': { steps: [...kumartuliRoute(600)], cause: 'ccu-murti' },
   'CCU-03': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk across the muri' }], cause: 'ccu-muri' },
   'CCU-10': { steps: [finaleRoom()[0], finaleRoom()[1], { hold: '', until: done, max: 2400, note: 'ride the single bundle across' }], cause: 'ccu-boi' },
   'CCU-09': { steps: [...pandalStart(), steerHop(px(14), 10, 'on to the third bamboo'), { hold: '', until: done, max: 300 }], cause: 'ccu-bansh' },
@@ -733,11 +733,11 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
-  'CCU-01': { steps: [...tourRun('onto').slice(0, -2), { hold: 'R', jump: 34, ticks: 34, long: true, note: 'stay on the thela this time, then a long jump off the deck over the chalk river by the door' }, { hold: 'R', until: done, max: 600 }], cause: 'ccu-kumir' },
+  'CCU-01': { steps: [...tourRun('onto').slice(0, tourRun('onto').findIndex((x) => x.note === 'over the trench')), { hold: 'R', until: done, max: 600, note: 'wait for the kumir as learnt, and walk on along the tram line into the rail-works trench' }], cause: 'fell' },
   // shortcut: with tokta cut (DECISIONS W3) the stage's only traps are the adda's hold and the maid's water, so its FIX dies of the water too, later
   'CCU-08': { steps: [...addaRoute(), walk(32 + 24.5), { hold: '', until: done, max: 1500, note: 'never stop beside the old men, as learnt; then wait at the second adda for the water to stop' }], cause: 'ccu-dhowa' },
   'CCU-04': { steps: [walk(4.6), ...hopTo(px(8), 12, 'up on the first stack'), { hold: '', ticks: 10 }, { hold: 'R', jump: 34, ticks: 34, long: true, note: 'never land on a pointed stack: one long jump over them' }, { hold: 'R', until: done, max: 300 }], cause: 'ccu-kada' },
-  'CCU-05': { steps: kumartuliRoute(false, 600), cause: 'ccu-murti' },
+  'CCU-05': { steps: [walk(2.6), steerHop(px(6), 12, 'on to the first figure'), { hold: 'R', jump: 34, ticks: 34, long: true, note: 'never stand on a painted one: one long jump on past the horse' }, { hold: 'R', until: done, max: 300 }], cause: 'ccu-ganga' },
   'CCU-03': { steps: [{ ...crossTin('tin', px(27), { stay: true }), until: done }], cause: 'ccu-lonka' },
   'CCU-09': { steps: pandalRoute(200), cause: 'crushed' },
   'CCU-07': { steps: [howrahRoom()[0], howrahRoom()[1], hopUp((w) => porters(w).find((p) => p.o.v < 0), 'jump for the first load that comes by'), { hold: '', until: done, max: 900 }], cause: 'ccu-bojha' },
@@ -749,7 +749,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 /** more scripted first-timer deaths and 'like last time' moves */
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
   'CCU-01': [
-    { what: 'walking straight on across the Maidan’s chalk river', steps: [...tourRun('onto').slice(0, 3), { hold: 'R', until: done, max: 600 }], cause: 'ccu-kumir' },
+    { what: 'a long jump off the thela’s deck over the chalk river by the door', steps: [...tourRun('onto').slice(0, -2), { hold: 'R', jump: 34, ticks: 34, long: true }, { hold: 'R', until: done, max: 600 }], cause: 'ccu-kumir' },
   ],
   'CCU-06': [
     { what: 'staying on the step at the double-line island', steps: [...S06(), ...ACT06(32), { hold: '', until: done, max: 3000, note: 'stay on the step' }], cause: 'ccu-dui' },
@@ -824,11 +824,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'ccu10-kumor': (x) => [
     steerHop(px(x + 1.8), 12, 'up on the first'),
     steerHop(px(x + 4.8), 12, 'up, and on at once'),
-    walkOnto(x + 6, 'walk off on to the dry one'),
+    walkOnto(x + 6, 'walk off on to the next'),
     steerHop(px(x + 9.8), 12, 'up on the next'),
     { hold: 'R', until: X(x + 10.2), max: 120 },
     steerHop(px(x + 13.8), 12, 'across to the horse'),
-    walkOnto(x + 15, 'walk off on to the dry one'),
+    walkOnto(x + 15, 'walk off on to the next'),
     { hold: 'R', until: X(x + 16.2), max: 120 },
     steerHop(px(x + 20.8), 10, 'down on to the lane'),
     walk(x + 23),
@@ -852,10 +852,10 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     steerHop(px(x + 1.8), 12, 'up on the first'),
     steerHop(px(x + 3.8), 10, 'up a step'),
     steerHop(px(x + 5.8), 10, 'and up again'),
-    walkOnto(x + 7, 'walk off on to the dry one, one step down'),
+    walkOnto(x + 7, 'walk off on to the next, one step down'),
     { hold: 'R', until: X(x + 8.2), max: 120 },
     steerHop(px(x + 12.8), 14, 'over the low dry one, across to the half-painted one'),
-    walkOnto(x + 14, 'walk off on to the low dry one'),
+    walkOnto(x + 14, 'walk off on to the low one'),
     steerHop(px(x + 17.8), 12, 'up on the last'),
     { hold: 'R', until: X(x + 18.4), max: 120 },
     steerHop(px(x + 22.6), 10, 'down on to the lane'),
@@ -864,9 +864,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'ccu05-ghat': (x) => [
     steerHop(px(x + 1.8), 12, 'up on the first'),
     steerHop(px(x + 4.8), 12, 'the next, up'),
-    walkOnto(x + 6, 'walk off on to the dry one'),
+    walkOnto(x + 6, 'walk off on to the next'),
     steerHop(px(x + 9.8), 12, 'up on the next'),
-    walkOnto(x + 11, 'walk off on to the dry one'),
+    walkOnto(x + 11, 'walk off on to the next'),
     steerHop(px(x + 14.8), 12, 'up on the next'),
     steerHop(px(x + 18.8), 10, 'down on to the last'),
     steerHop(px(x + 22.8), 10, 'down on to the lane'),
@@ -987,7 +987,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   act('CCU-05', 'ccu05-lane', 1, 'jump', 'a long jump off the first figure in the lane, past the next', 'ccu-ganga');
   act('CCU-05', 'ccu05-lane', 1, 'stay', 'resting on the first figure in the lane', 'ccu-murti');
   act('CCU-05', 'ccu05-ghat', 1, 'stay', 'waiting on the first figure while they finish in order', 'ccu-murti');
-  act('CCU-05', 'ccu05-ghat', 3, 'jump', 'a jump down off the dry one by the ghat', 'ccu-phata');
+  act('CCU-05', 'ccu05-ghat', 1, 'jump', 'a long jump off the first figure by the ghat', 'ccu-ganga');
   act('CCU-06', 'ccu06-points', 0, 'jump', 'jumping off the step into the dug-up road before the island', 'ccu-khod');
   act('CCU-07', 'ccu07-girder', 5, 'stay', 'staying on the tall porter from the pylon', 'ccu-cha');
   act('CCU-07', 'ccu07-girder', 0, 'jump', 'jumping off the pylon at the first load', 'ccu-gaari');
@@ -1007,7 +1007,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   act('CCU-10', 'ccu10-bus', 1, 'stay', 'staying on the bus past its one “aaste”', 'ccu-gir');
   act('CCU-10', 'ccu10-bus', 0, 'jump', 'a long jump at the drain instead of the bus', 'ccu-nala');
   act('CCU-10', 'ccu10-tram', 0, 'jump', 'a long jump off the stop into the dug-up road', 'ccu-khod');
-  act('CCU-10', 'ccu10-kumor', 1, 'jump', 'a jump down from the first figure', 'ccu-phata');
+  act('CCU-10', 'ccu10-kumor', 1, 'jump', 'a long jump off the first figure, past the next', 'ccu-ganga');
   act('CCU-10', 'ccu10-kumor', 1, 'stay', 'resting on the first figure', 'ccu-murti');
   act('CCU-10', 'ccu10-setu', 8, 'walk', 'walking on from the tall porter into the load coming over', 'ccu-bojha');
 }
