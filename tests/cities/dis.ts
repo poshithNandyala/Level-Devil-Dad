@@ -391,8 +391,8 @@ const roofFix: Play = () => [{ policy: ribHop(16), until: done, max: 4000 }];
 const act = (a: string, stage: string, naive: [Play, string, string], fix?: [Play, string, string]) => ACT_DEATHS.push({ act: a, stage, naive, fix });
 // acts with one play (see ONE_PLAY): one scripted death, walking straight on into the act's trap
 const runOn: Play = () => [{ hold: 'R', until: done, max: 3000 }];
-for (const [a, stage, cause] of [['dis05-biya', 'DIS-05', 'dis-gamosa'], ['dis05-atithi', 'DIS-05', 'dis-gamosa'], ['dis06-majuli', 'DIS-06', 'dis-bank'], ['dis06-chapori', 'DIS-06', 'dis-bank'], ['dis07-ghar', 'DIS-07', 'dis-gate'], ['dis07-chowk', 'DIS-07', 'dis-gate'], ['dis08-kaziranga', 'DIS-08', 'dis-beel']]) act(a, stage, [runOn, cause, 'walks straight on into it']);
-for (const a of ['dis09-chaal', 'dis09-dhal']) act(a, 'DIS-09', [() => [{ policy: ribHop(7), until: done, max: 4000 }], 'dis-roof', 'stops on the oil before the rib']);
+for (const [a, stage, cause] of [['dis05-atithi', 'DIS-05', 'dis-gamosa'], ['dis06-chapori', 'DIS-06', 'dis-bank'], ['dis07-chowk', 'DIS-07', 'dis-gate']]) act(a, stage, [runOn, cause, 'walks straight on into it']);
+for (const a of ['dis09-chaal']) act(a, 'DIS-09', [() => [{ policy: ribHop(7), until: done, max: 4000 }], 'dis-roof', 'stops on the oil before the rib']);
 act('dis06-chang', 'DIS-06', [changNaive, 'dis-bank', 'jumps at the stilt house'], [changFix(11), 'dis-bank', 'up the ladder, then walks off the house into the river']);
 act('dis07-dhol', 'DIS-07', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholHop(110), until: (w) => done(w) || w.player.cx > px(x + 36), max: 6000 }, { hold: '', until: done, max: 900 }], 'dis-dhol-sink', 'keeps the first tempo after the dhol quickens']);
 act('dis10-dhol', 'DIS-10', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholTempo(x, 84), until: done, max: 6000 }], 'dis-dhol-sink', 'hops on the quick tempo from 07 after the drummer has slowed: the next plank is not up, he comes down on his own as it sinks']);
@@ -623,15 +623,10 @@ export const ONE_PLAY: Record<string, string> = {
   'DIS-06': 'the retreating bank has one hazard, the slab clock: slow and stopping both lose to it',
   'dis06-chang': 'the stilt house stands in the same river as the bank: missing the ladder and walking off the house both drop into it',
   'dis08-bagori': 'the rhino’s charge is the act’s only hazard: staying on the bank and leaving the hay early both stand in its line',
-  'dis05-biya': 'the wedding gamosas are the act: the only trap is walking blind into the pit under them',
   'dis05-atithi': 'the guest-house givers have one trap, three gamosas over your feet at the pit',
-  'dis06-majuli': 'the island bank has one trap, the river behind the slab clock',
   'dis06-chapori': 'the chapori slabs have one trap, the river where a slab has gone',
-  'dis07-ghar': 'the husori yard has one trap, the gate’s bamboo stakes when the group is not at it',
   'dis07-chowk': 'the chowk gates have one trap, the stakes: early, late and out of the ring all meet them',
-  'dis08-kaziranga': 'the tall grass has one trap, no floor where no rhino has flattened it',
   'dis09-chaal': 'the roof has one trap, the ball down the oil: every stop off a grip pad meets it',
-  'dis09-dhal': 'the steep roof has one trap, the ball down the oil, as the first roof',
   'dis10-gamosa': 'the callback has one trap, the blinding gamosa at the pit: walking into the givers and taking the fourth one both blind you',
 };
 /** acts whose obvious fix is the stage's FIX play (a different trap from the stage's NAIVE) */
@@ -729,13 +724,6 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   ],
   'dis10-tawa': (x) => [{ policy: crossPan(0, 60), until: and(ground, X(x + 29)), max: 4000, note: 'the pan over the water' }],
   'dis10-bagan': (x) => [{ policy: follow(0), until: and(ground, X(x + 29.4)), max: 4000, note: 'behind the plucker through the tea rows' }],
-  'dis09-dhal': (x) => [
-    { hold: 'R', until: X(x + 5.2), max: 1200, note: 'across the first oil to the pad' },
-    ...roofLeap(x + 5.2, 'over the rib and the oil'),
-    ...roofLeap(x + 12.2, 'and the next'),
-    ...roofLeap(x + 19.2, 'and the last'),
-    { hold: 'R', until: and(ground, X(x + 32)), max: 900 },
-  ],
   'dis10-gate': (x) => [{ policy: atTheGate(0), until: and(ground, X(x + 39)), max: 6000, note: 'the husori gate and the host’s ritual' }],
   'dis10-bank': (x) => [
     { hold: 'R', until: X(x + 2.7), max: 600, note: 'run to the edge' },
@@ -746,18 +734,6 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...hopR(x + 19.4, 'off the last slab', 12),
     { hold: 'R', until: X(x + 29), max: 600 },
   ],
-  'dis08-kaziranga': (x) => [
-    { hold: 'R', until: X(x + 1.3), max: 600, note: 'the jeep starts up' },
-    { hold: '', until: chargeGone(1), max: 1500, note: 'keep clear of the rhino' },
-    { hold: 'R', until: and(ground, X(x + 19.6)), max: 900, note: 'along the strip to the bank' },
-    { hold: 'R', until: X(x + 24.6), max: 300 },
-    { hold: 'R', jump: 12, ticks: 12, note: 'up through the haystack platform: the rhino starts from behind' },
-    { hold: '', until: and(ground, (w) => w.player.y < 200), max: 200 },
-    { hold: '', until: chargeGone(2), max: 1500, note: 'let it run underneath and trot off' },
-    { hold: 'R', until: and(ground, X(x + 31)), max: 900, note: 'off the hay and along the new strip' },
-    { hold: 'R', until: and(ground, X(x + 63)), max: 900 },
-  ],
-  'dis07-ghar': (x) => [{ policy: atTheGate(1), until: and(ground, X(x + 61)), max: 6000, note: 'gate by gate with the singers' }],
   'dis07-dhol': mark('dis07-dhol', (x) => [{ policy: dholHop(), until: and(ground, X(x + 36)), max: 6000, note: 'one plank on every beat of the dhol' }]),
   'dis10-dhol': mark('dis10-dhol', (x) => [{ policy: dholHop(), until: and(ground, X(x + 30)), max: 6000, note: 'one plank on every beat, slow or fast' }]),
   'dis09-tug': mark('dis09-tug', (x) => [
@@ -782,31 +758,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...hopR(x + 11.3, 'and jump the channel on it', 14),
     { hold: 'R', until: and(ground, X(x + 28)), max: 600 },
   ]),
-  'dis07-chowk': (x) => [{ policy: atTheGate(2), until: and(ground, X(x + 73)), max: 7000, note: 'three gates, the middle one after the gamosas' }],
-  'dis06-majuli': (x) => [
-    { hold: 'R', until: X(x + 2.7), max: 600, note: 'run to the edge' },
-    { hold: 'R', jump: 14, ticks: 14, note: 'over the channel' },
-    { hold: 'R', until: ground, max: 200 },
-    ...hopR(x + 7.4, 'to the second slab', 12),
-    ...hopR(x + 12.4, 'to the third slab', 12),
-    ...hopR(x + 17.4, 'to the fourth slab', 12),
-    ...hopR(x + 22.4, 'off the last slab', 12),
-    { hold: 'R', until: X(x + 41), max: 600 },
-  ],
-  'dis05-biya': (x) => [
-    { hold: 'R', until: X(x + 7.2), max: 900, note: 'two givers' },
-    { hold: 'R', jump: 10, ticks: 10, note: 'up to the first red sash' },
-    { hold: 'R', until: and(ground, (w) => w.player.y > 220 && w.player.x > px(x + 11.2)), max: 400 },
-    { hold: 'R', until: X(x + 16.2), max: 900, note: 'two more' },
-    { hold: 'R', jump: 10, ticks: 10, note: 'up to the second' },
-    { hold: 'R', until: and(ground, (w) => w.player.y > 220 && w.player.x > px(x + 20.2)), max: 400 },
-    { hold: 'R', until: X(x + 25.2), max: 900, note: 'and two more' },
-    { hold: 'R', jump: 10, ticks: 10, note: 'up to the third' },
-    { hold: 'R', until: and(ground, (w) => w.player.y > 220 && w.player.x > px(x + 29.2)), max: 400 },
-    ...hopR(x + 31.4, 'over the first pit', 12),
-    ...hopR(x + 38.4, 'over the second', 12),
-    { hold: 'R', until: and(ground, X(x + 51)), max: 600 },
-  ],
+  'dis07-chowk': (x) => [{ policy: atTheGate(1), until: and(ground, X(x + 73)), max: 7000, note: 'three gates, the middle one after the gamosas' }],
   'dis05-atithi': (x) => [
     ...gamosaSet(x, 19),
     { hold: 'R', until: X(x + 22.2), max: 300 },
@@ -816,7 +768,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...hopR(x + 40.0, 'over the third pit', 14),
     { hold: 'R', until: and(ground, X(x + 48)), max: 400 },
   ],
-  'dis04-bhogali': (x) => [{ policy: crossPan(2, 60, 280), until: and(ground, X(x + 36)), max: 4000, note: 'the far-end cook: wait for the near crepe' }],
+  'dis04-bhogali': (x) => [{ policy: crossPan(1, 60, 280), until: and(ground, X(x + 36)), max: 4000, note: 'the far-end cook: wait for the near crepe' }],
   'dis06-chapori': (x) => [
     { hold: 'R', until: X(x + 2.7), max: 600, note: 'run to the edge' },
     { hold: 'R', jump: 14, ticks: 14, note: 'over the channel' },
@@ -830,23 +782,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...hopR(x + 36.4, 'and off', 12),
     { hold: 'R', until: and(ground, X(x + 45)), max: 600 },
   ],
-  'dis04-tawa': (x) => [
-    { policy: crossPan(1, 60), until: and(ground, X(x + 37)), max: 4000, note: 'four crepes, one after the other' },
-  ],
   'dis03-bagan': (x) => [
     { policy: follow(1, 58, 0), until: and(ground, X(x + 33.4)), max: 6000, note: 'behind her again; before the wet path, wait till it is dry' },
-  ],
-  'dis02-dhar': (x) => [
-    ...hopR(x + 1.4, 'on to the first bar', 12),
-    { hold: '', until: and(ground, barUp(2, 1, 4)), max: 900, note: 'wait for the siren and the next bar' },
-    ...hopR(x + 7.6, 'on to the new bar', 12),
-    { hold: 'R', until: X(x + 15.8), max: 300, note: 'along to its right end while the next bar comes up' },
-    { hold: '', until: and(ground, barUp(2, 2, 4)), max: 900, note: 'the next bar is up: go at once' },
-    { hold: 'R', jump: 12, ticks: 12, note: 'on to the far bar, before this one narrows' },
-    { hold: 'R', until: ground, max: 200 },
-    ...hopR(x + 23.6, 'on to the bank bar', 12),
-    ...hopR(x + 31.0, 'and off', 12),
-    { hold: 'R', until: and(ground, X(x + 35)), max: 300 },
   ],
   'dis02-chapori': (x) => [
     ...hopR(x + 1.4, 'on to the first bar', 12),
