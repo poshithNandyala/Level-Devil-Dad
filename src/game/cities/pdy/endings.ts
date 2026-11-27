@@ -255,9 +255,11 @@ export const endings: Record<PdyEndingKind, Ending> = {
     space: 11,
     advice: 'Near the door the screen turns into its mirror image, but right is still right: trust your thumbs, not your eyes, and jump both spike rows.',
     build(w, d) {
-      for (const k of [7, 3]) w.add(new Thing('spikerow', d.x - px(k), FLOOR - 10, { solid: false, deadly: 'spikes', layer: -1, w: 32 }));
+      // (round 2: the first row moved a tile out, 7 -> 8 tiles before the door, so the landing between the rows
+      // is 3 tiles, not 2: a person's jump a little late or early still comes down between them)
+      for (const k of [8, 3]) w.add(new Thing('spikerow', d.x - px(k), FLOOR - 10, { solid: false, deadly: 'spikes', layer: -1, w: 32 }));
       w.flags.twist = 'mirror';
-      w.flags.spikes = [d.x - px(7), d.x - px(3)];
+      w.flags.spikes = [d.x - px(8), d.x - px(3)];
       let said = false;
       w.onTick((w2) => {
         const on = w2.player.x > d.x - px(10) && w2.state === 'play';

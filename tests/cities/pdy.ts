@@ -173,6 +173,34 @@ const aaruAct = (x: number): Step[] => {
 
 // ------------------------------------------------------------------ the two doors
 const endingPolicies: Record<string, Policy> = {
+  /**
+   * the old mirror door, a person's timing: walk up to 20 px before each spike row, stop, and take a full standing
+   * jump with right (the bot hopped from a run 8 px before the row; a late press then left from on the row, and a
+   * late lean fell short of the gap)
+   */
+  'pdy-mirror'(w, m, d) {
+    const p = w.player;
+    // let go of right for a moment first: a direction held since the act's last hop is released late by a person,
+    // and that late release would carry the stop before the first row 14 px too far
+    m.n = (m.n ?? 0) + 1;
+    if (m.n <= 3) return go('');
+    // the jump, held its full 30 ticks whatever the lag does with it
+    if (m.jt > 0) {
+      m.jt--;
+      return { move: 'R', jump: true };
+    }
+    if (!p.onGround) return go('R');
+    for (const sx of w.flags.spikes as number[])
+      if (p.x < sx && p.x + p.w >= sx - 24) {
+        m.wait = (m.wait ?? 0) + 1;
+        if (m.wait < 4) return go('');
+        m.wait = 0;
+        m.jt = 29;
+        return { move: 'R', jump: true };
+      }
+    m.wait = 0;
+    return go(toward(w, d.x + 8, 1));
+  },
   /** the old lamp door, a person's timing: the dash in starts anywhere in the first 0.35 s of light, not only the first 0.12 s */
   'pdy-lamp'(w, _m, d) {
     const p = w.player;
@@ -325,8 +353,7 @@ function rockBeach(S: Record<string, Step[]>) {
     { policy: (w) => go(toward(w, px(at) + 5, 3)), until: (w) => w.player.onGround && Math.abs(w.player.cx - px(at) - 5) <= 4, max: 300, note: 'to the middle of the rock' },
     { hold: '', until: and(ground, quiet(i, need)), max: 600, note: i === 3 ? 'wait for the second sneeze' : undefined },
     // jump first, lean right a moment later: a direction pressed with the jump is let go late, and that walks you off the next rock
-    { hold: '', jump: ticks, ticks: 3 },
-    { hold: 'R', until: ground, max: 200 },
+    ...leap(ticks),
     { hold: '', ticks: 2 },
   ];
   const room: Step[] = [...hop(0, 8.2), ...hop(1, 12.2), ...hop(2, 16.2), ...hop(3, 20.2, 14)];
@@ -334,13 +361,18 @@ function rockBeach(S: Record<string, Step[]>) {
   S['PDY-02'] = [...room, ...S['PDY-02'].slice(12)];
 }
 
-/** a hop a person makes: jump, then lean right a moment later (the direction is not let go late, so no drift on landing) */
-const hopLean = (at: number, note?: string, ticks = 12): Step[] => [
-  { hold: 'R', until: X(at), max: 600, note },
-  { hold: '', jump: ticks, ticks: 3 },
+const airborne = (w: World) => !w.player.onGround;
+/**
+ * a standing hop a person makes: jump, lean right a moment later, wait to be in the air (a late press leaves
+ * from the same spot), land. The direction is not pressed with the jump, so it is not let go late either.
+ */
+const leap = (ticks: number, note?: string): Step[] => [
+  { hold: '', jump: ticks, ticks: 3, note },
+  { hold: 'R', until: airborne, max: 60 },
   { hold: 'R', until: ground, max: 200 },
-  { hold: '', ticks: 2 },
 ];
+/** walk to tile `at`, then a standing hop to the right */
+const hopLean = (at: number, note?: string, ticks = 12): Step[] => [{ hold: 'R', until: X(at), max: 600, note }, ...leap(ticks), { hold: '', ticks: 2 }];
 /** PDY-04, a person's timing (the socket itself changed: it no longer fires under a hop in the air): the same three hops, without the drift */
 function sixOClock(S: Record<string, Step[]>) {
   const room: Step[] = [...hopLean(9.4, 'over the first socket'), ...hopLean(13.4), ...hopLean(17.4)];
@@ -379,12 +411,33 @@ function quatorze(S: Record<string, Step[]>) {
   S['PDY-08'] = room;
 }
 
+/**
+ * PDY-03, a person's timing (stage unchanged): every hop from a standstill, jump first and lean right after,
+ * so a late press leaves from the same spot (the bot's chain of three running hops needed its exact phase:
+ * late, the first flew over the scooter and the next bumped the wall for ever)
+ */
+function yellowWall(S: Record<string, Step[]>) {
+  const r = S['PDY-03'];
+  const room: Step[] = [
+    { hold: 'R', until: X(7.8), max: 600 },
+    ...leap(12, 'onto the scooter'),
+    ...leap(14, 'straight on to the awning'),
+    ...leap(14, 'up on the wall'),
+    { hold: '', ticks: 2 },
+    { hold: 'R', until: and(ground, X(26.0)), max: 600, note: 'down and run' },
+    { hold: 'R', jump: 12, ticks: 12, note: 'over the flower pot' },
+  ];
+  // the shared long run keeps the room's first 8 steps; 'on through the archway', the act and the door follow
+  S['PDY-03'] = [...room, ...r.slice(8)];
+}
+
 const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) => {
   tour01(S);
   rockBeach(S);
   sixOClock(S);
   grandCanal(S);
   quatorze(S);
+  yellowWall(S);
   S['PDY-09'] = petanqueRoom();
   lengthen('PDY-09', 0, []);
   S['PDY-10'] = mimosaRoom();
