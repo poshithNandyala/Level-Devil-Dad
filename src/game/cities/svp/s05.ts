@@ -178,7 +178,7 @@ export const dekho: Act = {
   id: 'svp05-dekho',
   w: 112,
   advice: 'More views, further on. The first has two benches: the first picture takes you to the little island in the middle, and the island has a bench of its own for the rest. The next has its footprints a long way from the bench: it’s the footprints that count. After it the ledge is a stair going up, and the last view is a long gap that holds a little longer.',
-  cps: [17.2, 30, 57, 84],
+  cps: [15.6, 30, 57, 84],
   paint: (g, c) => {
     const x = c.x;
     // gap 1 with an island in the middle; gap 2 further on

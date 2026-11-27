@@ -224,6 +224,8 @@ export const gutterRiver: Ending = {
     const D = Math.round(d.x / 16);
     const wx = w.flags.weather as Weather;
     wx.add(new Awning(px(D - 14), px(D - 9)));
+    // the checkpoint before the door is on a covered stoop, dry for any wind
+    wx.porches.push([px(D - 20), px(D - 13)]);
     let flood = 0;
     const x0 = px(D - 8),
       x1 = px(D - 3);

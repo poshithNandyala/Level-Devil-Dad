@@ -246,7 +246,7 @@ export const pul: Act = {
   id: 'svp09-pul',
   w: 112,
   advice: 'Not every root is alive. A dead root is grey and bare, with no leaves, and it crumbles like brick: only the green ones hold. Take the green ones, and skip the grey ones between them. The middle green one swings. Then the roots make a stair up and down, and a long cellar with more swinging ones.',
-  cps: [21.5, 49, 74],
+  cps: [21.5, 47, 74],
   paint: (g, c) => {
     g.pit(c.x + 3, c.x + 19);
     g.pit(c.x + 28, c.x + 44);
