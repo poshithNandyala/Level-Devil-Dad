@@ -38,9 +38,10 @@ export class Husori extends Entity {
     this.layer = 2;
   }
   inside(w: World) {
-    return w.state === 'play' && Math.abs(w.player.cx - this.x) <= CIRCLE;
+    return !this.gone && w.state === 'play' && Math.abs(w.player.cx - this.x) <= CIRCLE;
   }
   update(w: World) {
+    if (this.gone) return;
     if (!this.walking && w.player.cx >= this.from) this.walking = true;
     if (!this.walking) return;
     if (this.at >= 0) {
@@ -52,6 +53,9 @@ export class Husori extends Entity {
       return;
     }
     this.x += this.speed * DT;
+    // past its last house the group turns off the lane and is gone
+    const lastG = this.gates[this.gates.length - 1];
+    if (this.next >= this.gates.length && this.x > px(lastG.x) + px(7)) this.gone = true;
     const g = this.gates[this.next];
     if (g && this.x >= px(g.x) + 8 - 6) {
       this.at = this.next;
@@ -59,7 +63,9 @@ export class Husori extends Entity {
       w.sfx('dong', this.x, GROUND - 20);
     }
   }
+  gone = false;
   draw(ctx: CanvasRenderingContext2D, w: World) {
+    if (this.gone) return;
     const sing = this.walking && w.state !== 'dead';
     const bob = (k: number) => (sing ? Math.round(Math.sin(w.tick * 0.11 + k)) : 0);
     // a circle of men in white with red gamosas round their heads, a dhol in the middle

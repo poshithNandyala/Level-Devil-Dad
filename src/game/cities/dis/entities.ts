@@ -222,8 +222,8 @@ export class River extends Entity {
   draw(ctx: CanvasRenderingContext2D, w: World) {
     const y = GROUND + 6;
     const g = ctx.createLinearGradient(0, y, 0, y + 50);
-    g.addColorStop(0, '#A89A84');
-    g.addColorStop(1, '#6F6250');
+    g.addColorStop(0, '#7E8F8A');
+    g.addColorStop(1, '#46554F');
     ctx.fillStyle = g;
     ctx.fillRect(this.x0, y, this.x1 - this.x0, 50);
     ctx.strokeStyle = 'rgba(255,255,255,0.35)';
