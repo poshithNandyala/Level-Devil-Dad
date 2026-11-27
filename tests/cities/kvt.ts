@@ -5,7 +5,7 @@
 // shared routes exist, so NAIVE, FIX and MISTAKES here are filled in there too.
 import type { World } from '../../src/game/world';
 import type { Door } from '../../src/game/entities/basics';
-import { Step, X, and, done, ground, thingOf, gustNOn, gustNLeft } from '../runner';
+import { Step, X, and, or, done, ground, thingOf, gustNOn, gustNLeft } from '../runner';
 import type { CityTests } from '../city-tests';
 import type { Heap, ShadowStep } from '../../src/game/cities/kvt/encores';
 import { Eel, Jelly, type Dolphin } from '../../src/game/cities/kvt/levels';
@@ -56,12 +56,24 @@ const dies: Step = { hold: '', until: done, max: 900 };
 // ------------------------------------------------------------------ the storm bank (KVT-09)
 /** standing still, the rubble done sliding */
 const still = (w: World) => w.player.onGround && !w.flags.kvtSlide && w.player.stun === 0 && Math.abs(w.player.vx) < 1;
+/** on the ground after the jump the step before started: a player holds right until he lands, so a jump that
+ *  starts late (a slow thumb) is still held through. (On the ground for 24 ticks with no jump at all ends it too.) */
+const landed = () => {
+  let w0: World | null = null,
+    t0 = 0,
+    air = false;
+  return (w: World) => {
+    if (w !== w0) [w0, t0, air] = [w, w.tick, false];
+    if (!w.player.onGround) air = true;
+    return w.player.onGround && (air || w.tick - t0 >= 24);
+  };
+};
 /** walk to the far end of the rubble step ending at column c1 (against the next riser), stop, and tap up */
 const stepUp = (c1: number, note = 'walk to the far end of the step, then up'): Step[] => [
   { hold: 'R', until: X(c1 + 0.3), max: 200, note },
   { hold: '', until: still, max: 60 },
   { hold: 'R', jump: 12, ticks: 12 },
-  { hold: 'R', until: ground, max: 200 },
+  { hold: 'R', until: landed(), max: 200 },
   { hold: '', until: still, max: 200 },
 ];
 /** from a standstill at an edge, a middling jump that lands deep on the rubble past it */
@@ -69,7 +81,7 @@ const deepOn = (edge: number, j: number, note: string): Step[] => [
   { hold: 'R', until: X(edge), max: 400, note },
   { hold: '', until: still, max: 60 },
   { hold: 'R', jump: j, ticks: j },
-  { hold: 'R', until: ground, max: 200 },
+  { hold: 'R', until: landed(), max: 200 },
   { hold: '', until: still, max: 200 },
 ];
 const kvt09Room: Step[] = [
@@ -102,10 +114,11 @@ const buried: Policy = (w, m, d) => {
 // ------------------------------------------------------------------ the octopus (KVT-10)
 /** from a standstill, a jump of `j` ticks to the right, landing and settling */
 /** a running jump: keep running until X(at), jump `j` ticks, land, run on (or stop with `stop`) */
-const hop = (at: number, j: number, note: string, stop = false): Step[] => [
+const hop = (at: number, j: number, note: string, stop = false, wait = false): Step[] => [
   { hold: 'R', until: X(at), max: 400, note },
   { hold: 'R', jump: j, ticks: j, ...(j > 15 ? { long: true } : {}) },
-  { hold: 'R', until: (w) => w.player.onGround || w.state !== 'play', max: 200 },
+  // (`wait`: until he has landed from this jump, even one that went late)
+  { hold: 'R', until: wait ? or(landed(), done) : (w) => w.player.onGround || w.state !== 'play', max: 200 },
   ...(stop ? [{ hold: '' as const, until: still, max: 100 }] : []),
 ];
 const kvt10Room: Step[] = [
@@ -140,11 +153,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: X(x + 0.3), max: 300, note: 'up the rocks to the jetty' },
     { hold: '', until: still, max: 60 },
     { hold: 'R', jump: 14, ticks: 24 },
-    { hold: '', until: ground, max: 200 },
+    { hold: '', until: landed(), max: 200 },
     { hold: 'R', until: X(x + 2.3), max: 200 },
     { hold: '', until: still, max: 60 },
     { hold: 'R', jump: 14, ticks: 24 },
-    { hold: '', until: ground, max: 200 },
+    { hold: '', until: landed(), max: 200 },
     { hold: 'R', until: X(x + 9.2), max: 300, note: 'stand on the rotten plank: it is the way down' },
     { hold: '', until: (w) => !!w.flags['kvt10-palaka:dropped'] && w.player.onGround && w.player.y + w.player.h >= px(14) - 1, max: 300 },
     { hold: 'R', until: and(ground, X(x + 34)), max: 600, note: 'along the catwalk, under the wall' },
@@ -154,10 +167,10 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { steer: (w) => (w.player.x < px(x + 5.9) - 1 ? 'R' : w.player.x > px(x + 5.9) + 1 ? 'L' : ''), until: (w) => Math.abs(w.player.x - px(x + 5.9)) <= 1, max: 120, note: 'not the far end this time: the middle' },
     { hold: '', until: still, max: 60 },
     { hold: 'R', jump: 12, ticks: 30 },
-    { hold: '', until: ground, max: 200 },
+    { hold: '', until: landed(), max: 200 },
     { hold: '', until: still, max: 200, note: 'in the middle of the octopus step' },
     { hold: 'R', jump: 30, ticks: 60, long: true, note: 'over the octopus, deep on the next step' },
-    { hold: '', until: ground, max: 200 },
+    { hold: '', until: landed(), max: 200 },
     { hold: '', until: still, max: 200 },
     ...stepUp(x + 13),
     ...stepUp(x + 16),
@@ -180,13 +193,13 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { hold: '', until: still, max: 60 },
       { hold: '', until: clear, max: 400 },
       { hold: 'R', jump: 10, ticks: 24 },
-      { hold: '', until: ground, max: 200 },
+      { hold: '', until: landed(), max: 200 },
     ];
     return [
       ...gap(10, 'walk under the tuna; hop the gap once one has gone over'),
       ...gap(18, 'the next gap'),
       ...gap(26, 'and the last'),
-      { policy: hopAt(0.16, 12), until: X(x + 52), max: 900, note: 'the second boat throws low: hop those' },
+      { policy: hopAt(0.26, 12), until: X(x + 52), max: 900, note: 'the second boat throws low: hop those' },
     ];
   },
   'kvt10-thengu': (x) => {
@@ -225,11 +238,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: X(x + 3.7), max: 300, note: 'to the edge: wait for the breeze' },
     { hold: '', until: (w) => still(w) && gustNOn(w, 0) && gustNLeft(w, 0) > 1.0, max: 900 },
     { hold: 'R', jump: 30, ticks: 60, long: true, note: 'and jump while it blows' },
-    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: landed(), max: 200 },
     { hold: 'R', until: X(x + 19.7), max: 300, note: 'the next inlet: the breeze in your face, so jump in the calm' },
     { hold: '', until: (w) => still(w) && !gustNOn(w, 1) && gustNLeft(w, 1) > 1.0, max: 900 },
     { hold: 'R', jump: 30, ticks: 60, long: true },
-    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: landed(), max: 200 },
     { hold: 'R', until: X(x + 36), max: 300 },
   ],
   'kvt10-kamaanam': (x) => [
@@ -257,20 +270,20 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { steer: (w: World) => (w.player.x < px(x + 16.7) - 1 ? 'R' : w.player.x > px(x + 16.7) + 1 ? 'L' : '') as Move, until: (w: World) => Math.abs(w.player.x - px(x + 16.7)) <= 1, max: 120 },
       { hold: '', until: still, max: 100 },
       { hold: 'R', jump: 10, ticks: 40, note: 'and the shore' },
-      { hold: 'R', until: ground, max: 200 },
+      { hold: 'R', until: landed(), max: 200 },
       { hold: 'R', until: X(x + 24), max: 300 },
     ];
   },
   'kvt10-paaru': (x) => [
-    { hold: 'R', until: X(x + 3.2), max: 300, note: 'jump out over the water: this reef comes up for a jumper' },
+    { hold: 'R', until: X(x + 2.4), max: 300, note: 'jump out over the water: this reef comes up for a jumper' },
     { hold: 'R', jump: 12, ticks: 12 },
-    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: landed(), max: 200 },
     { hold: 'R', until: X(x + 7.4), max: 200 },
     { hold: 'R', jump: 12, ticks: 12 },
-    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: landed(), max: 200 },
     { hold: 'R', until: X(x + 11.4), max: 200 },
     { hold: 'R', jump: 12, ticks: 12 },
-    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: landed(), max: 200 },
     { hold: 'R', until: X(x + 15.4), max: 200 },
     { hold: 'R', jump: 12, ticks: 12, note: 'and the shore' },
     { hold: 'R', until: and(ground, X(x + 22)), max: 300 },
@@ -281,11 +294,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { hold: 'R', until: X(x + 0.3), max: 300, note: 'up to the high pier' },
       { hold: '', until: still, max: 60 },
       { hold: 'R', jump: 14, ticks: 24 },
-      { hold: '', until: ground, max: 200 },
+      { hold: '', until: landed(), max: 200 },
       { hold: 'R', until: X(x + 2.3), max: 200 },
       { hold: '', until: still, max: 60 },
       { hold: 'R', jump: 14, ticks: 24 },
-      { hold: '', until: ground, max: 200 },
+      { hold: '', until: landed(), max: 200 },
       { hold: 'R', until: (w) => w.standing(basket(w).solid), max: 300, note: 'into the basket: it goes down' },
       { steer: (w: World) => (w.player.cx < basket(w).cx - 2 ? 'R' : w.player.cx > basket(w).cx + 2 ? 'L' : '') as Move, until: (w: World) => basket(w).solid.y >= px(14) - 6, max: 600, note: 'step off on to the landing as it passes' },
       { hold: 'R', jump: 10, ticks: 20 },
@@ -306,14 +319,14 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ];
   },
   'kvt10-veliyettam': (x) => [
-    ...hop(x + 1.6, 12, 'from head to head, never stopping'),
-    ...hop(x + 6.6, 12, 'the next head'),
-    ...hop(x + 11.6, 12, 'the next'),
-    ...hop(x + 16.6, 12, 'and the next'),
-    ...hop(x + 21.6, 12, 'and on'),
-    ...hop(x + 26.6, 12, 'on'),
-    ...hop(x + 31.6, 12, 'the last'),
-    ...hop(x + 36.6, 12, 'and the shore'),
+    ...hop(x + 1.6, 12, 'from head to head, never stopping', false, true),
+    ...hop(x + 6.6, 12, 'the next head', false, true),
+    ...hop(x + 11.6, 12, 'the next', false, true),
+    ...hop(x + 16.6, 12, 'and the next', false, true),
+    ...hop(x + 21.6, 12, 'and on', false, true),
+    ...hop(x + 26.6, 12, 'on', false, true),
+    ...hop(x + 31.6, 12, 'the last', false, true),
+    ...hop(x + 36.6, 12, 'and the shore', false, true),
     { hold: 'R', until: X(x + 44), max: 300 },
   ],
   'kvt10-irakkam': (x) => {
@@ -323,18 +336,18 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { hold: 'R', until: X(x + 2.2), max: 400, note: 'to the edge: the tide is going out' },
       { hold: '', until: tide(0), max: 600, note: 'wait till the step is down to its top' },
       { hold: 'R', jump: 30, ticks: 48, long: true, note: 'on to the coral top' },
-      { hold: '', until: ground, max: 200 },
+      { hold: '', until: landed(), max: 200 },
       { hold: '', until: still, max: 100 },
       { hold: 'R', jump: 30, ticks: 42, long: true, note: 'off it, on to the rock' },
-      { hold: '', until: ground, max: 200 },
+      { hold: '', until: landed(), max: 200 },
       { hold: '', until: eelRests, max: 600, note: 'the hole with eyes: let the moray lunge and go back in' },
       { hold: 'R', until: X(x + 13.2), max: 300, note: 'now across' },
       { hold: '', until: tide(1), max: 600, note: 'wait for the second step' },
       { hold: 'R', jump: 30, ticks: 48, long: true },
-      { hold: '', until: ground, max: 200 },
+      { hold: '', until: landed(), max: 200 },
       { hold: '', until: still, max: 100 },
       { hold: 'R', jump: 30, ticks: 42, long: true },
-      { hold: '', until: ground, max: 200 },
+      { hold: '', until: landed(), max: 200 },
       { hold: 'R', until: X(x + 24), max: 400 },
     ];
   },
@@ -420,7 +433,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: X(x + 1.3), max: 300, note: 'to the foot of the rubble' },
     { hold: '', until: still, max: 60 },
     { hold: 'R', jump: 12, ticks: 12 },
-    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: landed(), max: 200 },
     { hold: '', until: still, max: 200 },
     ...stepUp(x + 4),
     ...stepUp(x + 7),
@@ -430,7 +443,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...stepUp(x + 19, 'up on to the sea wall'),
     ...deepOn(x + 24.3, 30, 'the first break: land deep on the heap'),
     ...stepUp(x + 29, 'back up on to the wall'),
-    ...deepOn(x + 32.3, 30, 'the second break: one loose block, jump it whole'),
+    ...deepOn(x + 33.3, 30, 'the second break: one loose block, jump it whole'),
     { hold: 'R', until: and(ground, X(x + 50)), max: 600, note: 'along the wall and down' },
   ],
   'kvt09-irangal': (x) => [
@@ -439,7 +452,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { hold: 'R', until: X(x + c + 0.3), max: 300, ...(i === 0 ? { note: 'up the rock stair' } : {}) },
       { hold: '', until: still, max: 60 },
       { hold: 'R', jump: 14, ticks: 24 },
-      { hold: '', until: ground, max: 200 },
+      { hold: '', until: landed(), max: 200 },
       { hold: '', until: still, max: 200 },
     ]),
     { hold: 'R', until: X(x + 15), max: 300, note: 'walk off the top on to the first wide step' },
@@ -447,19 +460,21 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: '', ticks: 4 },
     { hold: '', until: still, max: 200 },
     { hold: 'R', jump: 10, ticks: 38, note: 'over the narrow step' },
-    { hold: '', until: ground, max: 200 },
+    { hold: '', until: landed(), max: 200 },
     { hold: '', ticks: 4 },
     { hold: '', until: still, max: 200 },
     { hold: 'R', jump: 10, ticks: 38, note: 'and the next narrow one' },
-    { hold: '', until: ground, max: 200 },
+    { hold: '', until: landed(), max: 200 },
     { hold: '', ticks: 4 },
     { hold: '', until: still, max: 200 },
     { hold: 'R', jump: 10, ticks: 38, note: 'and the last narrow one' },
-    { hold: '', until: ground, max: 200 },
+    { hold: '', until: landed(), max: 200 },
     { hold: '', ticks: 4 },
     { hold: '', until: still, max: 200 },
-    { hold: 'R', jump: 20, ticks: 20, long: true, note: 'over the water' },
-    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: X(x + 29.3), max: 200, note: 'to the end of the last step' },
+    { hold: '', until: still, max: 60 },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'over the water' },
+    { hold: 'R', until: landed(), max: 200 },
     { hold: 'R', until: X(x + 41), max: 400 },
   ],
   'kvt09-varambu': (x) => {
@@ -480,7 +495,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     return [
       { hold: 'R', until: X(x - 0.8), max: 200 },
       { hold: 'R', jump: 16, ticks: 16, long: true, note: 'up on to the ridge' },
-      { hold: 'R', until: ground, max: 200 },
+      { hold: 'R', until: landed(), max: 200 },
       { hold: 'R', until: X(x + 1.3), max: 200 },
       ...mid(0, 12, 30, 'the middle of each heap: deep slides you off the far side'),
       ...[4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44].flatMap((c) => mid(x + c, 30, 52)),
@@ -492,7 +507,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { hold: 'R', until: X(x + c), max: 300, ...(i === 0 ? { note: 'up the rock to the rim of the hollow' } : {}) },
       { hold: '', until: still, max: 60 },
       { hold: 'R', jump: 14, ticks: 24 },
-      { hold: '', until: ground, max: 200 },
+      { hold: '', until: landed(), max: 200 },
     ]),
     // down: walk off each step (you land at its back and the slide pushes you on to its middle)
     ...[10, 13, 16, 19].flatMap((c, i): Step[] => [
@@ -500,10 +515,10 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { hold: '', until: (w) => (w.player.onGround && !w.flags.kvtSlide && w.player.x >= px(x + c)) || w.state !== 'play', max: 200 },
     ]),
     { hold: '', until: still, max: 100 },
-    { hold: 'R', until: X(x + 21.3), max: 200, note: 'over the pool, and land deep on the far side' },
+    { hold: 'R', until: X(x + 20.3), max: 200, note: 'over the pool, and land deep on the far side' },
     { hold: '', until: still, max: 60 },
     { hold: 'R', jump: 30, ticks: 48 },
-    { hold: '', until: ground, max: 200 },
+    { hold: '', until: landed(), max: 200 },
     { hold: '', until: still, max: 200 },
     ...stepUp(x + 25),
     ...stepUp(x + 28),
@@ -514,18 +529,18 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'kvt09-murivu': (x) => [
     { hold: 'R', until: X(x - 0.2), max: 200 },
     { hold: 'R', jump: 16, ticks: 16, long: true, note: 'up on to the breached crest' },
-    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: landed(), max: 200 },
     { hold: 'R', until: and(ground, X(x + 4.6)), max: 400 },
     { hold: 'R', jump: 30, ticks: 30, long: true, note: 'well past the first cut' },
-    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: landed(), max: 200 },
     { hold: '', until: still, max: 200 },
     { hold: 'R', until: X(x + 14.6), max: 400 },
     { hold: 'R', jump: 30, ticks: 30, long: true, note: 'and well past the second' },
-    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: landed(), max: 200 },
     { hold: '', until: still, max: 200 },
     { hold: 'R', until: X(x + 24.6), max: 400 },
     { hold: 'R', jump: 30, ticks: 30, long: true, note: 'and the third' },
-    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: landed(), max: 200 },
     { hold: '', until: still, max: 200 },
     { hold: 'R', until: X(x + 40), max: 400 },
   ],
@@ -986,7 +1001,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
       { hold: 'R', until: X(34 + 8.3), max: 200 },
       { hold: '', until: still, max: 60 },
       { hold: 'R', jump: 40, ticks: 40, long: true },
-      { hold: 'R', until: ground, max: 200 },
+      { hold: 'R', until: landed(), max: 200 },
       { hold: '', until: still, max: 200 },
       { hold: 'R', until: X(34 + 11.3), max: 200 },
       { hold: '', until: still, max: 60 },
@@ -997,8 +1012,10 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   };
   mistakes['KVT-09'] = [
     { what: 'land deep on the first heap of the ridge, as on the bank', steps: [...upTo(S['KVT-09'], 'the middle of each heap: deep slides you off the far side'), { hold: '', until: still, max: 200 }, { hold: 'R', jump: 30, ticks: 44 }, { hold: '', until: ground, max: 200 }, dies], cause: 'splash' },
-    { what: 'land on the one loose block in the second break, like the heap in the first', steps: [...upTo(S['KVT-09'], 'the second break: one loose block, jump it whole'), { hold: 'R', until: X(136 + 32.3), max: 300 }, { hold: '', until: still, max: 60 }, { hold: 'R', jump: 8, ticks: 10 }, { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, dies], cause: 'splash' },
+    { what: 'land on the one loose block in the second break, like the heap in the first', steps: [...upTo(S['KVT-09'], 'the second break: one loose block, jump it whole'), { hold: 'R', until: X(136 + 33.3), max: 300 }, { hold: '', until: still, max: 60 }, { hold: 'R', jump: 8, ticks: 10 }, { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, dies], cause: 'splash' },
     { what: 'hop down the far side of the summit, as Tara says', steps: [...upTo(S['KVT-09'], 'walk off each step, never hop down'), ...Array.from({ length: 5 }, (): Step[] => [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, { hold: '', until: (w) => !w.flags.kvtSlide || w.state !== 'play', max: 200 }]).flat(), dies], cause: 'splash' },
+    { what: 'walk down the second way step by step, as Tara says', steps: [...upTo(S['KVT-09'], 'walk off the top on to the first wide step'), { hold: 'R', until: done, max: 900 }], cause: 'splash' },
+    { what: 'hop down into the hollow', steps: [...upTo(S['KVT-09'], 'down into the hollow: walk off each step'), ...Array.from({ length: 4 }, (): Step[] => [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, { hold: '', until: (w) => !w.flags.kvtSlide || w.state !== 'play', max: 200 }]).flat(), dies], cause: 'splash' },
     { what: 'a little hop over the storm cut, as Tara says', steps: [...upTo(S['KVT-09'], 'well past the first cut').slice(0, -1), { hold: 'R', until: X(324 + 5.2), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 400 }], cause: 'splash' },
   ];
   // hop straight up the steps from wherever you land

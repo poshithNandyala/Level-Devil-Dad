@@ -365,15 +365,16 @@ const seaWall: Act = {
     bankUp(g, x + 2, 6, 3, 14);
     g.fill(x + 20, x + 43, 8, 17, '#');
     g.pit(x + 25, x + 26, 8).fill(x + 27, x + 29, 9, 17, '#').fill(x + 27, x + 29, 8, 8, '.');
-    g.pit(x + 33, x + 33, 8).fill(x + 34, x + 34, 9, 17, '#').fill(x + 34, x + 34, 8, 8, '.').pit(x + 35, x + 35, 8);
+    // (three tiles of wall between the breaks: room to stop after the hop back up)
+    g.pit(x + 34, x + 34, 8).fill(x + 35, x + 35, 9, 17, '#').fill(x + 35, x + 35, 8, 8, '.').pit(x + 36, x + 36, 8);
     g.fill(x + 44, x + 45, 10, 17, '#').fill(x + 46, x + 47, 12, 17, '#').fill(x + 48, x + 49, 14, 17, '#');
   },
   build: (w, c) => {
     const { X } = c;
-    w.add(new RubbleBank([...bankUpRects(c.x + 2, 6, 3, 14), { c0: c.x + 27, c1: c.x + 29, top: 9 }, { c0: c.x + 34, c1: c.x + 34, top: 9 }]));
+    w.add(new RubbleBank([...bankUpRects(c.x + 2, 6, 3, 14), { c0: c.x + 27, c1: c.x + 29, top: 9 }, { c0: c.x + 35, c1: c.x + 35, top: 9 }]));
     pool(w, c.x + 25, c.x + 27, 15.3, { colors: LAGOON });
-    pool(w, c.x + 33, c.x + 34, 15.3, { colors: LAGOON });
-    pool(w, c.x + 35, c.x + 36, 15.3, { colors: LAGOON });
+    pool(w, c.x + 34, c.x + 35, 15.3, { colors: LAGOON });
+    pool(w, c.x + 36, c.x + 37, 15.3, { colors: LAGOON });
     sign(w, c.x + 21, 8 - 4.4, 3.6, 'SEA WALL', 'green', null, 'PWD Kalpeni');
     onPass(w, X(30.5), (w2) => taraSays(w2, 'Aa kallil chaadi nilkku! | Land on that rock!', 2.4));
   },
@@ -399,12 +400,13 @@ const downAgain: Act = {
     g.fill(x + 2, x + 4, 13, 17, '#').fill(x + 5, x + 7, 11, 17, '#').fill(x + 8, x + 10, 9, 17, '#');
     g.fill(x + 11, x + 14, 7, 17, '#');
     for (const r of DOWN2(x)) g.fill(r.c0, r.c1, r.top, 17, '#');
-    g.pit(x + 30, x + 31);
+    // (four tiles of lagoon at the bottom: the rubble carried down with you does not carry you over it)
+    g.pit(x + 30, x + 33);
   },
   build: (w, c) => {
     const { X } = c;
     w.add(new RubbleBank(DOWN2(c.x), 1));
-    pool(w, c.x + 30, c.x + 32, 15.3, { colors: LAGOON });
+    pool(w, c.x + 30, c.x + 34, 15.3, { colors: LAGOON });
     sign(w, c.x + 11.2, 7 - 4.4, 3.4, 'IRAKKAM', 'wood', 'right', 'lagoon side');
     onPass(w, X(13), (w2) => taraSays(w2, 'Padi padiyaayi nadannu irangu! | Walk down step by step!', 2.4));
   },
@@ -433,7 +435,8 @@ const ridge: Act = {
   },
 };
 
-const BOWL_DOWN = (x: number): RubbleRect[] => [10, 13, 16, 19].map((c, i) => ({ c0: x + c, c1: x + c + 2, top: 10 + i }));
+// (the bottom step down is two tiles: hop down on to it and the slide takes you into the pool)
+const BOWL_DOWN = (x: number): RubbleRect[] => [10, 13, 16, 19].map((c, i) => ({ c0: x + c, c1: x + (i < 3 ? c + 2 : 20), top: 10 + i }));
 const BOWL_UP = (x: number): RubbleRect[] => [23, 26, 29, 32].map((c, i) => ({ c0: x + c, c1: x + c + 2, top: 13 - i }));
 /** KVT-09 act: a hollow in the bank where the storm water stands. Both sides slide towards the pool at the
  *  bottom: going down, the slide pushes you on, so walk off each step; coming up, it pulls you back, so land deep.
@@ -446,12 +449,12 @@ const hollow: Act = {
     const x = c.x;
     g.fill(x + 1, x + 3, 13, 17, '#').fill(x + 4, x + 6, 11, 17, '#').fill(x + 7, x + 9, 9, 17, '#');
     for (const r of [...BOWL_DOWN(x), ...BOWL_UP(x)]) g.fill(r.c0, r.c1, r.top, 17, '#');
-    g.pit(x + 22, x + 22);
+    g.pit(x + 21, x + 22);
     g.fill(x + 35, x + 38, 9, 17, '#').fill(x + 39, x + 40, 11, 17, '#').fill(x + 41, x + 42, 13, 17, '#');
   },
   build: (w, c) => {
     const { X } = c;
-    pool(w, c.x + 22, c.x + 23, 15.3, { colors: LAGOON });
+    pool(w, c.x + 21, c.x + 23, 15.3, { colors: LAGOON });
     w.add(new RubbleBank(BOWL_DOWN(c.x), 1));
     w.add(new RubbleBank(BOWL_UP(c.x)));
     sign(w, c.x + 7.2, 9 - 4.4, 3.4, 'KUZHI', 'warn', null, 'storm water');
@@ -800,7 +803,8 @@ const risingTide: Act = {
   build: (w, c) => {
     const { X } = c;
     pool(w, c.x + 3, c.x + 39, 15.3, { colors: LAGOON });
-    for (const tx of [4, 9, 14, 19, 24, 29, 34]) w.add(new SinkStep(c.x + tx, 14));
+    // (four tiles wide: room to take off a moment late at a run; the gap between is still a hop)
+    for (const tx of [4, 9, 14, 19, 24, 29, 34]) w.add(new SinkStep(c.x + tx, 14, 4));
     sign(w, c.x + 0.4, G - 4.4, 3.4, 'HIGH TIDE', 'wood', null, 'coming in');
     onPass(w, X(1), (w2) => taraSays(w2, 'Oro padiyilum nilkku, sookshichu! | Stop on each one, carefully!', 2.4));
   },
@@ -971,7 +975,7 @@ const archDolphin: Act = {
   build: (w, c) => {
     const { X } = c;
     pool(w, c.x + 3, c.x + 16, 15.3, { colors: LAGOON });
-    const d = w.add(new Dolphin(X(4), X(14.5), px(15) + 4, 70, 1.45, 3.4, 0));
+    const d = w.add(new Dolphin(X(4), X(14.5), px(15) + 4, 70, 1.7, 3.4, 0));
     w.flags[c.f('dolphins')] = [d];
     sign(w, c.x + 0.2, G - 4.4, 3.4, 'ARCH', 'wood', null, 'mind your head');
     onPass(w, X(1), (w2) => taraSays(w2, 'Mukalil ethumbol chaadu! | Jump off at the top!', 2.4));

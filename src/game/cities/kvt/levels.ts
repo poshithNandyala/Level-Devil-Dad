@@ -815,7 +815,7 @@ const dolphinRide: Act = {
     const { X } = c;
     skim(w, c.x + 3, c.x + 16, [[c.x + 5, c.x + 16]]);
     skim(w, c.x + 21, c.x + 34, [[c.x + 21, c.x + 32.5]]);
-    const d1 = w.add(new Dolphin(X(4), X(14.5), px(15) + 4, 70, 1.45, 3.4, 0));
+    const d1 = w.add(new Dolphin(X(3.3), X(14.5), px(15) + 4, 70, 1.45, 3.4, 0));
     const d2 = w.add(new Dolphin(X(21.5), X(32.5), px(15) + 4, 76, 1.5, 3.4, 1.7));
     w.flags[c.f('dolphins')] = [d1, d2];
     sign(w, c.x + 0.2, G - 4.4, 3.4, 'DOLPHINS', 'wood', null, 'do not ride');
