@@ -616,6 +616,77 @@ export function bailAct(id: string, len: number, v: number, key: string, advice?
 export const act9 = bailAct('bbi05-bail', 14, 38, 'bbi5b');
 export const act10 = bailAct('bbi05-gali', 20, 22, 'bbi5g', 'A longer lane and slower bullocks: touch the cart, step back, and follow well behind it all the way to the gate.');
 
+/** act 11, Talapatra (BBI reserve, stylus-cut-lines-soot): palm leaves laid over a ditch, all alike. A scribe
+ *  walks them rubbing soot into his stylus lines, and only behind him does the writing show. The written leaves
+ *  hold; the blank ones are rotten and drop under Dad. A2: wait for the soot. A3: the marks are the safe ones. */
+export const PATRA = { c0: 4, n: 6, blank: [1, 4], delay: 0.5, v: 36 };
+export const act11: Act = {
+  id: 'bbi05-patra',
+  w: 22,
+  advice: 'Palm leaves over the ditch, all alike. The scribe’s lines only show once his soot is rubbed in: wait for him to pass. The leaves he wrote on hold; the blank ones are rotten. Step on the written ones and jump the blank.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + PATRA.c0, c.x + PATRA.c0 + PATRA.n * 2 - 1);
+  },
+  build: (w, c) => {
+    village(w, c.x, c.x + 22);
+    const st = { t0: -1, x: c.X(PATRA.c0 - 1), soot: 0 };
+    w.flags.bbi5p = st;
+    onPass(w, c.X(2), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
+    const ditch = channel(w, c.x + PATRA.c0, c.x + PATRA.c0 + PATRA.n * 2 - 1, 'bbi-patra', 'drain');
+    // the cause is the leaf's: rotten before the soot showed it, or a blank leaf the soot left plain
+    let last = -1;
+    ditch.o.tick = (r) => {
+      r.hazard!.cause = last >= 0 && last < st.soot ? 'bbi-khali' : 'bbi-patra';
+    };
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: 1,
+        tick: (_r, w2) => {
+          if (st.t0 < 0 || since(w2, st.t0) < PATRA.delay) return;
+          if (st.x < c.X(PATRA.c0 + PATRA.n * 2) + 8) st.x += PATRA.v / 120;
+          st.soot = Math.max(0, Math.min(PATRA.n, Math.floor((st.x - c.X(PATRA.c0)) / 32 + 0.5)));
+        },
+      }),
+    );
+    for (let i = 0; i < PATRA.n; i++) {
+      const rotten = PATRA.blank.includes(i);
+      let on = 0;
+      w.add(
+        new Rig(c.X(PATRA.c0 + i * 2), FL, 32, 6, {
+          solid: true,
+          layer: 2,
+          tick: (r, w2) => {
+            if (!rotten || !r.solid?.collidable) return;
+            on = r.rides(w2) ? on + 1 : 0;
+            if (on >= 6) {
+              last = i;
+              r.setSolid(false);
+            }
+          },
+          paint: (ctx, r) => {
+            if (!r.solid?.collidable) return;
+            box(ctx, r.x + 1, r.y, r.w - 2, r.h, '#D9C08A');
+            box(ctx, r.x + 1, r.y + r.h - 1, r.w - 2, 1, '#A88B52');
+            if (i < st.soot && !rotten) for (let k = 0; k < 3; k++) box(ctx, r.x + 4 + k * 9, r.y + 2, 6, 1, '#1A1A1A');
+            if (i < st.soot && rotten) box(ctx, r.x + 6, r.y + 2, r.w - 12, 2, '#BFB49A');
+          },
+        }),
+      );
+    }
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: 3,
+        paint: (ctx, _r, w2) => {
+          const walking = st.t0 >= 0 && since(w2, st.t0) >= PATRA.delay;
+          folk(ctx, st.x, FL, 22, '#8D5524', { skirt: '#F5F5F5', face: 1, arm: walking ? ((w2.tick >> 4) & 1 ? 0.9 : 0.4) : 0.2 });
+        },
+      }),
+    );
+    sign(w, c.x + 18, 10.4, 3.4, 'TALAPATRA', 'shop', null, 'D');
+  },
+};
+
 /** ending: the house with podapitha on the verandah step; the front door up there is locked. The way in is
  *  below, behind the step. On the verandah, the grinding stone's roller starts when you land by it. */
 export const ending: Ending = {

@@ -417,6 +417,77 @@ export const T07I: TroupeCfg[] = [
 ];
 export const act10 = troupeAct('bbi07-dweepa', 22, T07I, 'bbi7i', 'A lamp plinth stands in the middle of this pit. Cross the first troupe’s bridge to it and wait there: the second troupe makes a tower, a wheel and a tower again before its bridge comes.');
 
+/** act 11, Bagudi (BBI reserve, tag-it-passes-to-you): the boys play bagudi between shows. The raider's touch
+ *  makes Dad "it", and the line of boys tackles whoever is it. He jumps for anyone hopping him, so the tag
+ *  can't be dodged. A2: tagged, run back over the chalk line to pass it on. A3: hopping him is a tag too. */
+export const BAGUDI = { line: 3, p0: 6, p1: 12, v: 60, guards: 16, gw: 3 };
+export const act11: Act = {
+  id: 'bbi07-bagudi',
+  w: 24,
+  advice: 'Bagudi in the yard. The raider’s touch makes you “it”, and the line of boys tackles whoever is it. You can’t hop him: he jumps too. Let him tag you, run back over the chalk line to pass it on, then walk through.',
+  cps: [],
+  paint: () => {},
+  build: (w, c) => {
+    const st = { t0: -1, x: c.X(BAGUDI.p1), dir: -1, it: false, air: false, out: false };
+    w.flags.bbi7bg = st;
+    onPass(w, c.X(BAGUDI.line), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
+    const raider = w.add(
+      new Rig(st.x, FL - 26, 14, 26, {
+        layer: 3,
+        tick: (r, w2) => {
+          const p = w2.player;
+          if (st.out || st.t0 < 0) return;
+          st.x += (st.dir * BAGUDI.v) / 120;
+          if (st.x <= c.X(BAGUDI.p0)) st.dir = 1;
+          if (st.x >= c.X(BAGUDI.p1)) st.dir = -1;
+          // anyone hopping him: he jumps up to touch
+          const over = Math.abs(p.cx - (st.x + 7)) < 22 && p.y + p.h < FL - 20;
+          r.x = st.x;
+          r.y = over ? FL - 58 : FL - 26;
+          if (!st.it && p.x < r.x + r.w && p.x + p.w > r.x && p.y < r.y + r.h && p.y + p.h > r.y) {
+            st.it = true;
+            st.air = !p.onGround;
+          }
+          if (st.it && p.x + p.w < c.X(BAGUDI.line)) {
+            st.it = false;
+            st.out = true;
+          }
+        },
+        paint: (ctx, r) => {
+          if (st.out) folk(ctx, c.X(BAGUDI.line) - 26, FL, 20, '#F4A261', { skirt: '#E63946', face: 1, arm: -0.4 });
+          else folk(ctx, r.x + 7, r.y + 26, 24, '#F4A261', { skirt: '#E63946', face: st.dir < 0 ? -1 : 1, arm: 1.0 });
+        },
+      }),
+    );
+    void raider;
+    const guard = w.add(
+      new Rig(c.X(BAGUDI.guards), FL - 26, px(BAGUDI.gw), 26, {
+        cause: 'bbi-bagudi',
+        inset: 2,
+        layer: 3,
+        live: () => st.it,
+        tick: (r) => {
+          r.hazard!.cause = st.air ? 'bbi-chhuin' : 'bbi-bagudi';
+        },
+        paint: (ctx, r) => {
+          for (let i = 0; i < 3; i++) folk(ctx, r.x + 8 + i * 16, FL, 22, '#F4A261', { skirt: '#2A9D8F', face: -1, arm: st.it ? 1.2 : 0.2 });
+        },
+      }),
+    );
+    void guard;
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: -1,
+        paint: (ctx) => {
+          box(ctx, c.X(BAGUDI.line), FL - 1, 3, 1, '#FFFFFF');
+          box(ctx, c.X(BAGUDI.line) - 1, FL - 2, 5, 2, '#F5F5F5');
+        },
+      }),
+    );
+    sign(w, c.x + 20, 10.4, 3.2, 'BAGUDI', 'shop', null, 'D');
+  },
+};
+
 /** ending: the last pose is a gate over the door; between poses the troupe whirls across the doorway */
 export const T07e: TroupeCfg = { c0: 0, n: 4, drum: 1.6, hold: 1.6, poses: ['gate'], form: 0.3, ground: true };
 export const ending: Ending = {

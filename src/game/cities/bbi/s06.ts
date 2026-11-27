@@ -325,6 +325,75 @@ export const act8: Act = {
   },
 };
 
+/** act 9, Pattachitra (BBI reserve, painted-panel-previews-next): two dye pits with cloth planks, and a painted
+ *  panel on the bank before each. A panel paints the NEXT pit, not the one beside it. The first pit holds all
+ *  over (the plain beat) and its panel shows the second; the second's panel shows what comes after. */
+export const PATTA = { a: 3, b: 13, n: 3, rotten: [1], panelB: [1] };
+export const act9: Act = {
+  id: 'bbi06-patta',
+  w: 22,
+  advice: 'Painted panels by the pits. Each one shows the NEXT pit, not the one beside it: the first pit holds all over, and its panel shows the second. Remember it. The panel at the second pit is showing what comes after.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + PATTA.a, c.x + PATTA.a + PATTA.n * 2 - 1);
+    g.pit(c.x + PATTA.b, c.x + PATTA.b + PATTA.n * 2 - 1);
+  },
+  build: (w, c) => {
+    channel(w, c.x + PATTA.a, c.x + PATTA.a + PATTA.n * 2 - 1, 'bbi-ranga', 'water');
+    const pitB = channel(w, c.x + PATTA.b, c.x + PATTA.b + PATTA.n * 2 - 1, 'bbi-sadha', 'water');
+    // the cause: walked on to the rotten plank, or jumped to it because the panel beside the pit painted it
+    const st = { touched0: false, fell: false };
+    w.flags.bbi6pc = st;
+    pitB.o.tick = (r) => {
+      r.hazard!.cause = st.touched0 ? 'bbi-sadha' : 'bbi-chitra';
+    };
+    const planks = (c0: number, rotten: number[], first?: (on: boolean) => void) => {
+      for (let i = 0; i < PATTA.n; i++) {
+        const bad = rotten.includes(i);
+        let on = 0;
+        w.add(
+          new Rig(c.X(c0 + i * 2), FL, 32, 6, {
+            solid: true,
+            layer: 2,
+            tick: (r, w2) => {
+              if (i === 0 && first && r.rides(w2)) first(true);
+              if (!bad || !r.solid?.collidable) return;
+              on = r.rides(w2) ? on + 1 : 0;
+              if (on >= 6) r.setSolid(false);
+            },
+            paint: (ctx, r) => {
+              if (!r.solid?.collidable) return;
+              box(ctx, r.x + 1, r.y, r.w - 2, r.h, IKAT[(c0 + i) % 5]);
+              box(ctx, r.x + 1, r.y + r.h - 1, r.w - 2, 1, '#3B2416');
+            },
+          }),
+        );
+      }
+    };
+    planks(PATTA.a, []);
+    planks(PATTA.b, PATTA.rotten, () => (st.touched0 = true));
+    // the panels: a framed painting of three planks, the ones it shows holding in colour, the rest torn
+    const panel = (cx: number, good: number[]) =>
+      w.add(
+        new Rig(0, 0, 0, 0, {
+          layer: -2,
+          paint: (ctx) => {
+            const x = c.X(cx);
+            box(ctx, x + 4, FL - 44, 3, 44, '#5D3A1E');
+            box(ctx, x - 6, FL - 74, 34, 30, '#7A1F1F');
+            box(ctx, x - 4, FL - 72, 30, 26, '#F3E3C3');
+            box(ctx, x - 2, FL - 60, 26, 8, '#5E7F86');
+            for (let i = 0; i < 3; i++) if (good.includes(i)) box(ctx, x - 1 + i * 9, FL - 62, 7, 3, '#B71C1C');
+            folk(ctx, x + 11, FL - 64, 8, '#1B1B3A', { skirt: '#F4D35E', face: 1, arm: 0.6 });
+          },
+        }),
+      );
+    panel(PATTA.a - 2, [0, 2]);
+    panel(PATTA.b - 2, PATTA.panelB);
+    sign(w, c.x + 20, 10.4, 3.6, 'PATTACHITRA', 'shop', null, 'D');
+  },
+};
+
 /** ending: a curtain of warp threads in front of the door; only on the motif beat do they part into its shape */
 export const L06E: LoomCfg = { c0: 0, n: 3, speeds: [1, 2, 3], beat: 0.8, hold: 1.6, shuttle: [] };
 export const ending: Ending = {

@@ -286,38 +286,20 @@ export const act2: Act = {
   },
 };
 
-/** ending: the door is inside a goal net, closed until a goal goes in; a flick comes from behind along the turf */
-export const GOAL = { flicker: 12, bench: 6, at: 10, delay: 1.0, v: 200 };
+/** ending: the groundsmen roll the turf up from the door end once you step on it; the roll comes back along the floor at you */
+export const ROLL = { at: 10, bench: 6, delay: 0.5, v: 150, end: 16, size: 22 };
 export const ending: Ending = {
   space: 15,
-  advice: 'The door is inside the goal, and the net only lifts when a goal goes in. Someone behind you flicks the ball along the turf at it: don’t stand in its way at the net. Get up on the bench, let it score, then walk in.',
+  advice: 'Match over: the groundsmen roll the turf up from the door end, and the roll comes along the floor at you. Get up on the bench and let it pass under, or hop it. Then walk to the door.',
   build(w, d) {
     const D = Math.round(d.x / 16);
-    w.flags.twist = 'bbi-goal-net';
+    w.flags.twist = 'bbi-turf-roll';
     turf(w, D - 15, D + 3);
-    const st = { t0: -1, x: px(D - GOAL.flicker), scored: false };
+    const st = { t0: -1, x: px(D - 1), passed: false };
     w.flags.bbi2e = st;
-    onPass(w, px(D - GOAL.at), (w2) => (st.t0 = w2.tick));
-    const net = w.add(
-      new Rig(px(D - 1), FL - 64, 16, 64, {
-        solid: true,
-        layer: 3,
-        paint: (ctx, r) => {
-          if (!r.solid?.collidable) return;
-          ctx.strokeStyle = 'rgba(255,255,255,0.85)';
-          ctx.lineWidth = 1;
-          for (let y = r.y; y < r.y + r.h; y += 6) {
-            ctx.beginPath();
-            ctx.moveTo(r.x, y);
-            ctx.lineTo(r.x + 16, y + 3);
-            ctx.stroke();
-          }
-          box(ctx, r.x, r.y, 2, r.h, '#FFFFFF');
-        },
-      }),
-    );
+    onPass(w, px(D - ROLL.at), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
     w.add(
-      new Rig(px(D - GOAL.bench), FL - 30, 32, 30, {
+      new Rig(px(D - ROLL.bench), FL - 30, 32, 30, {
         solid: true,
         layer: 2,
         paint: (ctx, r) => {
@@ -328,23 +310,30 @@ export const ending: Ending = {
       }),
     );
     w.add(
-      new Rig(st.x, FL - BALL, BALL, BALL, {
-        cause: 'bbi-ball',
-        inset: 1,
+      new Rig(st.x, FL - ROLL.size, ROLL.size, ROLL.size, {
+        cause: 'bbi-roll',
+        inset: 2,
         layer: 4,
-        live: () => st.t0 >= 0 && !st.scored,
+        live: () => st.t0 >= 0 && !st.passed,
         tick: (r, w2) => {
-          if (st.t0 < 0 || st.scored) return;
-          if (since(w2, st.t0) >= GOAL.delay) st.x += GOAL.v / 120;
-          if (st.x >= px(D - 1) - BALL) {
-            st.scored = true;
-            net.setSolid(false);
-            w2.emit('shake', r.x, r.y, { amount: 2 });
-          }
+          if (st.t0 < 0 || st.passed) return;
+          if (since(w2, st.t0) >= ROLL.delay) st.x -= ROLL.v / 120;
+          if (st.x <= px(D - ROLL.end)) st.passed = true;
           r.x = st.x;
         },
-        paint: (ctx, r) => {
-          if (!st.scored) ballArt(ctx, r.x, r.y);
+        paint: (ctx, r, w2) => {
+          if (st.t0 < 0 || st.passed) return;
+          // the rolled-up turf, and the bare floor it leaves behind
+          box(ctx, r.x + r.w, FL - 2, px(D - 1) - r.x - r.w, 2, '#8A7F6A');
+          ctx.fillStyle = '#2E8B57';
+          ctx.beginPath();
+          ctx.arc(r.x + r.w / 2, r.y + r.h / 2, r.w / 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#1F5E3B';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(r.x + r.w / 2, r.y + r.h / 2, r.w / 4, (w2.tick / 10) % 6, ((w2.tick / 10) % 6) + 4);
+          ctx.stroke();
         },
       }),
     );
@@ -352,15 +341,15 @@ export const ending: Ending = {
       new Rig(0, 0, 0, 0, {
         layer: 3,
         paint: (ctx, _r, w2) => {
-          const swung = st.t0 >= 0 && since(w2, st.t0) >= GOAL.delay && since(w2, st.t0) < GOAL.delay + 0.3;
-          folk(ctx, px(D - GOAL.flicker) - 6, FL, 26, '#E63946', { skirt: '#F5F5F5', face: 1, arm: swung ? 0.9 : -0.5 });
-          // the goal frame round the door
-          box(ctx, px(D - 1), FL - 66, px(3), 3, '#FFFFFF');
-          box(ctx, px(D + 2) - 2, FL - 66, 3, 66, '#FFFFFF');
+          const push = st.t0 >= 0 && !st.passed && since(w2, st.t0) >= ROLL.delay;
+          if (!push) {
+            folk(ctx, px(D) + 4, FL, 26, '#6B8E23', { skirt: '#F5F5F5', face: -1, arm: 0.4 });
+            folk(ctx, px(D) + 18, FL, 24, '#6B8E23', { skirt: '#F5F5F5', face: -1, arm: 0.6 });
+          }
         },
       }),
     );
   },
 };
 
-export const meta02 = { family: 'keeper-pads-carry-you', betrayals: ['carried-by-actor'], ending: 'bbi-goal-net' };
+export const meta02 = { family: 'keeper-pads-carry-you', betrayals: ['carried-by-actor'], ending: 'bbi-turf-roll' };
