@@ -147,7 +147,7 @@ function markerBed(w: World, c: { x: number; X: (t: number) => number }, key: st
         layer: 3,
         cause: m.cause,
         inset: 3,
-        live: (_r, w2) => st.t0 >= 0 && (since(w2, st.t0) + m.off) % P < STRIKE_ON && since(w2, st.t0) + m.off >= 1.5,
+        live: (r, w2) => st.t0 >= 0 && r.x + r.w / 2 < c.X(len) && (since(w2, st.t0) + m.off) % P < STRIKE_ON && since(w2, st.t0) + m.off >= 1.5,
         tick: (rr, w2) => {
           if (st.t0 < 0) return;
           const t = since(w2, st.t0) + m.off;
@@ -159,6 +159,8 @@ function markerBed(w: World, c: { x: number; X: (t: number) => number }, key: st
           if (i === 0) st.x = st.xs[0];
         },
         paint: (ctx, rr, w2) => {
+          // the cook lifts the litti off at the end of the bed, and the poker with it
+          if (rr.x + rr.w / 2 >= c.X(len)) return;
           const t = st.t0 < 0 ? -9 : since(w2, st.t0) + m.off;
           const into = t % P;
           ember(ctx, rr.x + rr.w / 2, t >= 1 && into > P - 0.5 ? 1 : 0, t >= 1.5 && into < STRIKE_ON ? 1 : 0);
@@ -186,7 +188,7 @@ export const actBhatti: Act = {
   id: 'pat02-bhatti',
   w: 50,
   advice: 'The big bhatti: the cook has rolled two litti along the bed, and the poker follows each one in turn. Get behind the first until its strike has gone and run past it, then do the same behind the second, which strikes at a different moment.',
-  cps: [18],
+  cps: [43],
   paint: () => {},
   build: (w, c) => {
     markerBed(w, c, 'pat2b', [{ start: 7, off: 0, cause: 'pat-angara' }, { start: 25, off: 1.3, cause: 'pat-doosra' }], 40);
