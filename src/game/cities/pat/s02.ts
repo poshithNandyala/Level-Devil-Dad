@@ -186,7 +186,7 @@ export const actBhatti: Act = {
   id: 'pat02-bhatti',
   w: 50,
   advice: 'The big bhatti: the cook has rolled two litti along the bed, and the poker follows each one in turn. Get behind the first until its strike has gone and run past it, then do the same behind the second, which strikes at a different moment.',
-  cps: [18],
+  cps: [22],
   paint: () => {},
   build: (w, c) => {
     markerBed(w, c, 'pat2b', [{ start: 7, off: 0, cause: 'pat-angara' }, { start: 25, off: 1.3, cause: 'pat-doosra' }], 40);

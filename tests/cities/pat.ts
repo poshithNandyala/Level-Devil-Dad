@@ -607,14 +607,14 @@ const inAct = (id: string, act: string, what: string, steps: (x: number) => Step
 });
 const runOn: Step[] = [{ hold: 'R', until: done, max: 5000 }];
 const stair2 = (x: number, wait: number): Step[] => [
-  { hold: 'R', until: X(x + 3.2), max: 600, note: 'to the foot of the second flight' },
+  { hold: 'R', until: X(x + 6.2), max: 600, note: 'to the foot of the second flight' },
   { hold: '', until: (w) => w.flags.pat4b.t0 >= 0 && (w.tick - w.flags.pat4b.t0) / 120 >= wait, max: 2400, note: 'all the porters have been and gone' },
-  ...hop(x + 3.7, 'the first step'),
-  ...hop(x + 5.7, 'the second step'),
-  ...hop(x + 7.7, 'the third step'),
-  ...hop(x + 9.7, 'the fourth step'),
-  { hold: 'R', until: and(ground, X(x + 29)), max: 900, note: 'over the landing and down the far stair' },
-  { hold: 'R', until: X(x + 33.4), max: 300 },
+  ...hop(x + 6.7, 'the first step'),
+  ...hop(x + 8.7, 'the second step'),
+  ...hop(x + 10.7, 'the third step'),
+  ...hop(x + 12.7, 'the fourth step'),
+  { hold: 'R', until: and(ground, X(x + 32)), max: 900, note: 'over the landing and down the far stair' },
+  { hold: 'R', until: X(x + 36.4), max: 300 },
 ];
 const ACT_MISTAKES: Record<string, ReturnType<typeof inAct>[]> = {
   'PAT-03': [
@@ -626,7 +626,7 @@ const ACT_MISTAKES: Record<string, ReturnType<typeof inAct>[]> = {
     inAct('PAT-02', 'pat02-bhatti', 'get past the first litti, then run on past the second', () => [{ policy: pastMarkers('pat2b', 1), until: done, max: 5000 }], 'pat-doosra'),
   ],
   'PAT-04': [
-    inAct('PAT-04', 'pat04-sidhi', 'climb behind the first porter', (x) => [{ hold: 'R', until: X(x + 2), max: 300 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 20, ticks: 26 }))], 'pat-bojh'),
+    inAct('PAT-04', 'pat04-sidhi', 'climb behind the first porter', (x) => [{ hold: 'R', until: X(x + 5), max: 300 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 20, ticks: 26 }))], 'pat-bojh'),
     inAct('PAT-04', 'pat04-sidhi', 'wait for two porters, as on the first flight, then climb', (x) => stair2(x, 6.0), 'pat-sidhi'),
   ],
   'PAT-05': [
@@ -671,7 +671,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'PAT-06': ACT_MISTAKES['PAT-06'],
   'PAT-05': ACT_MISTAKES['PAT-05'],
   'PAT-02': [...ACT_MISTAKES['PAT-02'], { what: 'run on into the second bed, where the litti is', steps: [...room02(), { hold: 'R', until: X(34.3), max: 400 }, { hold: '', ticks: 235 }, { hold: 'R', until: done, max: 2400 }], cause: 'pat-angara' }],
-  'PAT-07': [...ACT_MISTAKES['PAT-07'], { what: 'walk straight through the lane at the stand', steps: [{ policy: rideBalanced(true, false), until: (w) => !!w.flags.pat7g && w.player.onGround && w.player.y > 220 && w.player.cx > w.flags.pat7g.lane0 - 50, max: 16000 }, { hold: '', until: (w) => w.flags.pat7g.third.s.k > 0.7, max: 1200 }, { hold: 'R', until: done, max: 600 }], cause: 'pat-bhid' }],
+  'PAT-07': [...ACT_MISTAKES['PAT-07'], { what: 'walk straight through the lane at the stand', steps: [{ policy: rideBalanced(true, false), until: (w) => !!w.flags.pat7g && w.player.onGround && w.player.y > 220 && w.player.cx > w.flags.pat7g.lane0 - 50, max: 26000 }, { hold: '', until: (w) => w.flags.pat7g.third.s.k > 0.7, max: 1200 }, { hold: 'R', until: done, max: 600 }], cause: 'pat-bhid' }],
   'PAT-08': [{ what: 'the hatch with 1 brick', steps: [...hop(5.5, ''), ...hop(10.5, ''), { hold: 'R', until: done, max: 900 }], cause: 'pat-kua' }],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
@@ -679,7 +679,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'pat02-bhatti': (x) => [{ policy: pastMarkers('pat2b'), until: and(ground, X(x + 48)), max: 5000, note: 'behind each litti, then past it' }, { hold: 'R', until: X(x + 49.4), max: 400 }],
   'pat03-batch': act03,
   'pat04-anaaj': act04,
-  'pat04-sidhi': (x) => stair2(x, 9.0),
+  'pat04-sidhi': (x) => stair2(x, 8.2),
   'pat03-patti': (x) => [{ policy: laneWalk('pat3b'), until: and(ground, X(x + 27.5)), max: 5000, note: 'wait for the last bell, then cross' }, { hold: 'R', until: X(x + 35.4), max: 400 }],
   'pat05-ghat': act05,
   'pat05-bori': (x) => [{ policy: sackWalk('pat5s'), until: and(ground, X(x + 54.6)), max: 5000, note: 'wait at the end of the section before the one the sack lands on' }, { hold: 'R', until: X(x + 61.4), max: 400 }],
@@ -699,14 +699,14 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'pat10-roll': (x) => [{ policy: laneWalk('pat10r'), until: and(ground, X(x + 27.5)), max: 5000, note: 'wait for the third bell, then cross' }, { hold: 'R', until: X(x + 37), max: 400 }],
   'pat10-tempo': (x) => [{ policy: rideBalanced(true, false, undefined, 1e9), until: X(x + 76), max: 8000, note: 'balance for each halt, truck, hump and arch' }, { hold: 'R', until: X(x + 85), max: 600 }],
   'pat10-sidhi': (x) => [
-    { hold: 'R', until: X(x + 3.2), max: 600, note: 'to the foot of the stair' },
+    { hold: 'R', until: X(x + 9.2), max: 600, note: 'to the foot of the stair' },
     { hold: '', until: (w) => w.flags.pat10g.t0 >= 0 && (w.tick - w.flags.pat10g.t0) / 120 >= 6.0, max: 1500, note: 'both porters have been and gone' },
-    ...hop(x + 3.7, 'the first step'),
-    ...hop(x + 5.7, 'the second step'),
-    ...hop(x + 7.7, 'the third step'),
-    ...hop(x + 9.7, 'the fourth step'),
-    { hold: 'R', until: and(ground, X(x + 29)), max: 900, note: 'over the landing and down the far stair' },
-    { hold: 'R', until: X(x + 33.4), max: 300 },
+    ...hop(x + 9.7, 'the first step'),
+    ...hop(x + 11.7, 'the second step'),
+    ...hop(x + 13.7, 'the third step'),
+    ...hop(x + 15.7, 'the fourth step'),
+    { hold: 'R', until: and(ground, X(x + 35)), max: 900, note: 'over the landing and down the far stair' },
+    { hold: 'R', until: X(x + 39.4), max: 300 },
   ],
   'pat10-sau': (x) => [{ policy: hopOver(() => [5, 10].map((i) => (x + 6 + (i - 1) * 5) * 16), 6), until: and(ground, X(x + 61.4)), max: 2500, note: 'jump the fifth plate’s gap and the tenth’s' }],
   'pat06-sau': act06,

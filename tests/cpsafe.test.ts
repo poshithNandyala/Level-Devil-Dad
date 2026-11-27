@@ -31,7 +31,7 @@ const ALLOWLISTED = new Set(
  * PAT: fails the three plays at PAT-01 cp4, PAT-02 cp3, PAT-03 cp2, PAT-04 cp0, PAT-07 cp0/1/6/8/10/11/12/13/14
  * and PAT-10 cp6/cp9 (reports/integrate-cpsafe3.md); removed by the Patna checkpoint fix round.
  */
-const CPSAFE3_PENDING = ['PAT'];
+const CPSAFE3_PENDING: string[] = [];
 
 const TICKS = 480; // 4 s
 const LAGS = [0, 6, 12];

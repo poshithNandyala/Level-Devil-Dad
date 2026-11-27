@@ -201,7 +201,7 @@ export const actLane2: Act = {
   id: 'pat03-patti',
   w: 36,
   advice: 'A third lane. The roll above each hoarding shows exactly where the new banner will hang, and this time some banners narrow from the right: the left end stays and the right end goes. Do not wait at the right end of one that is about to narrow, and wait for the last bell before you cross.',
-  cps: [],
+  cps: [5.5],
   paint: (g, c) => {
     g.fill(c.x + 4, c.x + 26, 15, 17, '.');
   },
@@ -213,7 +213,7 @@ export const actLane2: Act = {
       { c0: c.x + 18, w0: 4, swaps: [{ bell: 1, w: 3, anchor: 'L' }] },
       { c0: c.x + 22, w0: 4, swaps: [{ bell: 2, w: 3, anchor: 'L' }] },
     ];
-    row(w, S, [1.8, 4.6, 7.4], px(c.x + 2), 'pat3b');
+    row(w, S, [1.8, 4.4, 6.8], px(c.x + 2), 'pat3b');
     jam(w, c.x + 4, c.x + 26, S);
     sign(w, c.x + 1, 10.4, 3, 'BATCH 3', 'shop', null, 'bell at noon');
   },
@@ -222,7 +222,7 @@ export const actLane2: Act = {
 export const BELL = { T: 3.4, A: 0.7, L: 160, piv: FL - 183, phase: [0, 1.7], off: [20, 8] };
 
 export const ending: Ending = {
-  space: 26,
+  space: 34,
   advice: 'The last stretch is the bell rope: two iron bells swing low over the road. A bell is only in your way near the bottom of its swing. Cross under one while it is out at the far end of its swing, and not while it is coming back; and do not jump.',
   build(w, d) {
     const D = Math.round(d.x / 16);
