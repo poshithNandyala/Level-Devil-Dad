@@ -786,7 +786,8 @@ export function thakaAct(id: string, key: string, bridge = false): Act {
     if (bridge) {
       const ditch = channel(w, c.x + THAKA.beam[0], c.x + THAKA.beam[1], 'bbi-kua', 'water');
       ditch.o.tick = (r) => {
-        r.hazard!.cause = st.tipped ? 'bbi-pathara' : 'bbi-kua';
+        // the tipped stone is its own cause: the swinging stone's hit keeps 'bbi-pathara' (QA fix round 2)
+        r.hazard!.cause = st.tipped ? 'bbi-pathara-tip' : 'bbi-kua';
       };
     }
     onPass(w, c.X(0.5), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });

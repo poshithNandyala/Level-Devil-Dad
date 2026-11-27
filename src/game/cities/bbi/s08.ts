@@ -499,7 +499,10 @@ export function ghurniAct(id: string, key: string, rev = false): Act {
     (w.flags[key] as unknown) = st;
     onPass(w, c.X(1), (w2) => (st.t0 = w2.tick));
     // reversed, what drops you in is a badi flung away at the edge of its swing: the death line says so
-    channel(w, c.x + G.c0, c.x + G.c1, rev ? 'bbi-ghurni' : 'bbi-pakhala', 'water');
+    // (QA fix round 2: only once you have been on a badi; a walk straight into the trough is the pakhala's)
+    let rode = false;
+    const ch = channel(w, c.x + G.c0, c.x + G.c1, 'bbi-pakhala', 'water');
+    if (rev) ch.o.tick = (r) => { r.hazard!.cause = rode ? 'bbi-ghurni' : 'bbi-pakhala'; };
     const om = (2 * Math.PI) / G.per;
     [G.a, G.b].forEach((cx, i) => {
       // badi A starts at the near edge of its circle; B at the near edge of its own, so they meet edge to edge
@@ -529,6 +532,7 @@ export function ghurniAct(id: string, key: string, rev = false): Act {
             const on = r.rides(w2);
             // jumping on while it races through the middle spins you off into the rim
             if (on && !ride.on && v > G.spin) w2.die('bbi-ghurni');
+            if (on) rode = true;
             if (on && ride.since < 0) ride.since = w2.tick;
             if (!on) ride.since = -1;
             ride.on = on;

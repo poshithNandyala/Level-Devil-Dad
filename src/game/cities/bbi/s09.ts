@@ -275,7 +275,8 @@ export const act: Act = {
     // two ways in: a spoke sank under you (you stopped on it), or you hopped short of the next (you hurried)
     const ch = channel(w, c.x + 2, c.x + 24, 'bbi-ara', 'water');
     ch.o.tick = (r) => {
-      r.hazard!.cause = st.sunk ? 'bbi-ara' : 'bbi-ara-gap';
+      // never on spoke 1: neither (QA fix round 2: a walk straight into the water gets its own line)
+      r.hazard!.cause = st.sunk ? 'bbi-ara' : st.t0 < 0 ? 'bbi-ara-in' : 'bbi-ara-gap';
     };
     w.flags.bbi9a = st;
     const spokes: Rig[] = [];

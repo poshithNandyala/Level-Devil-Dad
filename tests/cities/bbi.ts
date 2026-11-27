@@ -890,7 +890,7 @@ const DEATHS: Record<string, Death[]> = {
   ],
   'bbi10-thaka': [
     { what: 'stop it at its top and walk under, as before', cause: 'bbi-kua', steps: (x) => [{ hold: 'R', until: X(x + 2.6), max: 400 }, { hold: '', until: (w) => th(w, 'bbi10th').y < 240 - 28.5, max: 900 }, { hold: 'R', until: done, max: 600 }] },
-    { what: 'stop it at its top and climb on to the stone', cause: 'bbi-pathara', steps: (x) => [{ hold: 'R', until: X(x + 2.6), max: 400 }, { hold: '', until: (w) => th(w, 'bbi10th').y < 240 - 28.5, max: 900 }, { hold: 'R', until: (w) => th(w, 'bbi10th').frozen >= 0, max: 200 }, { hold: 'R', until: X(x + 5.4), max: 300 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: done, max: 600 }] },
+    { what: 'stop it at its top and climb on to the stone', cause: 'bbi-pathara-tip', steps: (x) => [{ hold: 'R', until: X(x + 2.6), max: 400 }, { hold: '', until: (w) => th(w, 'bbi10th').y < 240 - 28.5, max: 900 }, { hold: 'R', until: (w) => th(w, 'bbi10th').frozen >= 0, max: 200 }, { hold: '', until: (w) => Math.abs(w.player.vx) < 1, max: 120, note: 'stop on the plate (QA fix round 2: a standing jump, so a late press does not run him into the stone)' }, leap(() => px(x + 9), 'up on to the raised stone'), { hold: 'R', until: done, max: 600 }] },
   ],
   'bbi10-chhata': [
     { what: 'wait on the first cut-out for a customer', cause: 'bbi-rangapani', steps: (x) => [{ hold: 'R', until: X(x + 0.4), max: 300 }, leap6(cut10(0), 'on to it'), stayOn(cut10(0), done, 'and wait', 1500)] },
