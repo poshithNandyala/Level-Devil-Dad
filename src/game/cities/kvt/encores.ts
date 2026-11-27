@@ -30,6 +30,8 @@ export interface RubbleRect {
   c0: number;
   c1: number;
   top: number;
+  /** a ridge with the lagoon on both sides: the rubble runs off towards the nearer side; the middle tile holds */
+  ridge?: boolean;
 }
 
 /**
@@ -44,6 +46,7 @@ export class RubbleBank extends Entity {
   slides = 0;
   private was = true;
   avalanche = false;
+  private ridgeDir = 0;
   private dust: { x: number; y: number; t: number }[] = [];
   constructor(
     readonly rects: RubbleRect[],
@@ -62,7 +65,7 @@ export class RubbleBank extends Entity {
     const p = w.player;
     if (this.slide > 0) {
       this.slide--;
-      p.moveX(w, (this.avalanche ? 3 : 2) * this.dir);
+      p.moveX(w, (this.avalanche ? 3 : 2) * (this.ridgeDir || this.dir));
       p.vx = 0;
       p.stun = Math.max(p.stun, 2);
       if (this.slide % 3 === 0) this.dust.push({ x: p.cx, y: p.y + p.h, t: w.tick });
@@ -70,6 +73,16 @@ export class RubbleBank extends Entity {
       if (this.slide === 0 && !p.onGround) this.avalanche = true;
       if (this.slide === 0 && this.avalanche && p.onGround && this.on(w)) this.slide = 6;
     } else if (w.state === 'play' && p.onGround && !this.was && this.on(w)) {
+      const r = this.on(w)!;
+      this.ridgeDir = 0;
+      if (r.ridge) {
+        const mid = px(r.c0 + (r.c1 - r.c0 + 1) / 2);
+        if (Math.abs(p.cx - mid) < 8) {
+          this.was = p.onGround;
+          return;
+        }
+        this.ridgeDir = p.cx < mid ? -1 : 1;
+      }
       this.slide = this.avalanche ? 10 : 8;
       this.slides++;
       w.flags.rubble = this.slides;
@@ -111,7 +124,7 @@ export class RubbleBank extends Entity {
     for (const d of this.dust) {
       const k = (w.tick - d.t) / 36;
       ctx.fillStyle = `rgba(240,228,205,${0.9 - k * 0.8})`;
-      for (let i = 0; i < 3; i++) ctx.fillRect(d.x + this.dir * (6 + k * 22 + i * 3), d.y - 2 + k * 10 + i, 2, 2);
+      for (let i = 0; i < 3; i++) ctx.fillRect(d.x + (this.ridgeDir || this.dir) * (6 + k * 22 + i * 3), d.y - 2 + k * 10 + i, 2, 2);
     }
   }
 }
@@ -395,7 +408,30 @@ const downAgain: Act = {
   },
 };
 
-export const kvt09 = { room: stormBankRoom, acts: [overhang, summit, seaWall, downAgain, breaches] };
+const RIDGE = (x: number): RubbleRect[] => Array.from({ length: 6 }, (_, i) => ({ c0: x + 3 + i * 4, c1: x + 5 + i * 4, top: 13, ridge: true }));
+/** KVT-09 act: a thin rubble ridge out across the lagoon, water on both sides. Each heap runs off towards the
+ *  nearer water: land deep, as the bank taught you, and it slides you off the far side. Only the middle holds. */
+const ridge: Act = {
+  id: 'kvt09-varambu',
+  w: 32,
+  advice: 'A thin ridge of rubble heaps with water on both sides: each heap runs off towards the nearer edge, so landing deep slides you off its far side. Land in the middle of each heap; only the middle holds.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x, x + 1, 13, 17, '#');
+    g.pit(x + 2, x + 27);
+    for (const r of RIDGE(x)) g.fill(r.c0, r.c1, r.top, 17, '#');
+    g.fill(x + 28, x + 31, 13, 17, '#');
+  },
+  build: (w, c) => {
+    const { X } = c;
+    pool(w, c.x + 2, c.x + 28, 15.3, { colors: LAGOON });
+    w.add(new RubbleBank(RIDGE(c.x)));
+    sign(w, c.x + 0.2, 13 - 4.4, 3.4, 'VARAMBU', 'warn', null, 'water both sides');
+    onPass(w, X(2), (w2) => taraSays(w2, 'Munpathe pole akathu chaadu! | Land deep, like before!', 2.4));
+  },
+};
+
+export const kvt09 = { room: stormBankRoom, acts: [overhang, summit, seaWall, downAgain, ridge, breaches] };
 
 // ================================================================== KVT-10: the octopus
 const CORAL: Record<string, [string, string]> = {
