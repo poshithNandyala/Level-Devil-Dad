@@ -19,6 +19,7 @@ import type { TimeCard } from '../../src/game/cities/dis/card';
 import type { Stair } from '../../src/game/cities/dis/stair';
 import type { Trap, Wake } from '../../src/game/cities/dis/majuli';
 import type { Bull } from '../../src/game/cities/dis/goru';
+import type { Sluice } from '../../src/game/cities/dis/sluice';
 
 type Out = { move: 'L' | 'R' | ''; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
@@ -387,6 +388,8 @@ const bullLane = (x: number): Pol =>
     if (!clear) return { move: p.cx < px(onA ? x + 9 : x + 18) ? 'R' : '', jump: false };
     return { move: 'R', jump: false };
   });
+const sluice = (w: World) => (w.flags.sluice as Sluice[])[0];
+const drained = (w: World) => { const t = sluice(w).t(w); return t >= 200 && t < 220; };
 const wakes = (w: World) => w.flags.wakes as Wake[];
 const traps = (w: World) => w.flags.traps as Trap[];
 /** on to trap i (from the bank or trap i-1) */
@@ -440,6 +443,7 @@ const ACT_MORE: [string, string, Play, string, string][] = [];
 act('dis10-talatal', 'DIS-10', [(x) => [...hopsUp(x + 2, 6), { hold: 'R', until: and(ground, X(x + 14.2)), max: 400 }, { hold: '', until: done, max: 900 }], 'dis-doba', 'stops on the step before the last to wait for it, as in 04']);
 act('dis07-card', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-gate', 'runs to the exit gate: it is shut before the card’s time'], [(x) => [{ hold: 'R', until: X(x + 25), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'dawdles on the road short of the gate: a corridor']);
 ACT_MORE.push(['dis07-card', 'DIS-07', (x) => [{ hold: 'R', until: X(x + 32), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'waits at the gate for the card: the deer cross there']);
+act('dis09-sluice', 'DIS-09', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-sluice', 'runs straight down the channel: the bell, and the flood'], [(x) => [{ hold: 'R', until: X(x + 4.6), max: 600 }, { hold: '', until: drained, max: 900 }, { hold: 'R', until: X(x + 10.1), max: 300 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: and(ground, X(x + 12)), max: 200 }, { hold: '', until: done, max: 1500 }], 'dis-roof', 'gets up on the embankment and stays there, safe from every flood: the oil slides him back in']);
 act('dis07-goru', 'DIS-07', [(x) => [{ hold: 'R', until: X(x + 6), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-goru', 'stands his ground in the lane: the bull stops, lowers its head and charges'], [(x) => [{ hold: 'R', until: done, max: 1500 }], 'dis-goru-lane', 'runs past the bull while it walks: it turns on him']);
 act('dis05-feast', 'DIS-05', [(x) => [{ hold: 'R', until: X(x + 6.6), max: 600 }, { hold: '', jump: 8, ticks: 8, note: 'up for the pitha on its stand' }, { hold: '', until: done, max: 600 }], 'dis-kol-paat', 'jumps up for a pitha: the leaf tips under the landing'], [(x) => [{ hold: 'R', until: X(x + 5.2), max: 600 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 600 }], 'dis-pit', 'jumps the whole feast at a run and lands at the ditch’s lip, running on into it']);
 act('dis05-machan', 'DIS-05', [(x) => [{ policy: (w) => ({ move: floorAhead(w, 3) ? 'R' : '', jump: false }), until: and(ground, X(x + 16)), max: 1500 }, { hold: '', until: done, max: 900 }], 'dis-machan', 'waits on the last plank for one more: the drum rolls'], [() => [{ hold: 'R', until: done, max: 900 }], 'dis-luit', 'runs on ahead of the carpenter: the far end is not built']);
@@ -835,6 +839,16 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: X(x + 16), max: 600, note: 'take the card, through the first corridor, to the bench' },
     { hold: '', until: (w) => (w.flags.card as TimeCard[])[0].left(w) <= 200, max: 1500, note: 'sit out the card on the bench' },
     { hold: 'R', until: and(ground, X(x + 38)), max: 600, note: 'through the corridors, reaching the gate as it opens' },
+  ]),
+  'dis09-sluice': mark('dis09-sluice', (x) => [
+    { hold: 'R', until: X(x + 4.6), max: 600, note: 'to the channel’s edge' },
+    { hold: '', until: drained, max: 900, note: 'wait for the water to drain' },
+    { hold: 'R', until: X(x + 10.1), max: 300 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'up on the embankment' },
+    { hold: 'R', until: and(ground, X(x + 12)), max: 200 },
+    { hold: '', ticks: 30 },
+    { hold: '', until: drained, max: 900, note: 'the bell, the flood: wait it out up here' },
+    { hold: 'R', until: and(ground, X(x + 24.5)), max: 400, note: 'down and through the gate before the next bell' },
   ]),
   'dis07-goru': mark('dis07-goru', (x) => [{ policy: bullLane(x), until: and(ground, X(x + 28)), max: 4000, note: 'verandah to verandah, out of its lane when it stops' }]),
   'dis05-feast': mark('dis05-feast', (x) => [

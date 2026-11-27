@@ -12,6 +12,7 @@ import { luitTalatal, stair } from './stair';
 import { majuliTraps, majuliWake } from './majuli';
 import { gamFeast, gamMachan } from './feast';
 import { husGoru } from './goru';
+import { rangSluice } from './sluice';
 import { husCard } from './card';
 import { onPass } from '../../levels/trolls';
 import { tour } from '../../levels/tour';
@@ -706,6 +707,6 @@ export const levels = (): LevelDef[] => [
   longStage({ base: majuliRoom(), acts: [majuliWake, majuliTraps], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
   longStage({ base: husoriRoom(), acts: [runUp(bordoisila, 3), runUp(husDhol, 3), husGoru, husCard, chowk], cps: [16], twist: 'dis-uruka-net', par: 90, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
   longStage({ base: gorhRoom(), acts: [gorhJeep, gorhDuiJeep, runUp(gorhBagori, 3)], twist: 'dis-watch-tower', par: 74, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
-  longStage({ base: rangGharRoom(), acts: [rangTug, kaidhara], twist: 'dis-royal-seat', par: 36, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
+  longStage({ base: rangGharRoom(), acts: [rangTug, kaidhara, rangSluice], twist: 'dis-royal-seat', par: 36, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
   longStage({ base: luitRoom(), acts: [runUp(luitDhol, 3), runUp(luitBordoisila, 3), luitTug, luitTalatal, luitGamosa], twist: 'dis-post-bank', par: 63, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
 ];

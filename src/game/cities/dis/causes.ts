@@ -17,6 +17,7 @@ export const causeLines: Record<string, string[]> = {
   'dis-machan': ['Machan! The drum rolled and every plank came down.', 'Keep up with the carpenter, plank by plank, and be off the far end before the roll ends. Never wait on the last plank.'],
   'dis-goru': ['Goru! The bull charged down the lane.', 'When it stops and lowers its head, get out of the lane sideways, up on a verandah, before it charges.'],
   'dis-goru-lane': ['Goru! You ran past the bull and it turned on you.', 'Never pass it in the lane. Wait up on a verandah while it charges past, and go on only once it is walking away.'],
+  'dis-sluice': ['Joysagar! The sluice opened and the channel flooded.', 'When the bell rings, be up on the embankment or past the gate. You can’t cross the whole channel between two bells.'],
   'dis-luit': ['Luit! The sandbar was not there, or it went out from under you.', 'Read the level post. When the siren goes the next bar comes up first, the bar you stand on goes last, and a bar that narrows keeps its left end. The hut never moves.'],
   'dis-basket': ['Tokari! The plucker’s basket swung into you.', 'Stay a few steps behind her and follow. Never hop over her, and when the path is wet wait before it: you can’t stop on it.'],
   'dis-tawa': ['Zui! You fell on the hot pan.', 'Hop only when the next crepe is poured and shiny.'],
