@@ -1,0 +1,8 @@
+   ✓ jump audit (1)
+     ✓ report 63818ms
+
+ Test Files  18 passed | 13 skipped (31)
+      Tests  1698 passed | 20 skipped (1718)
+   Start at  07:45:57
+   Duration  66.08s (tests 79%, transform 10%, setup 9%, import 2%)
+

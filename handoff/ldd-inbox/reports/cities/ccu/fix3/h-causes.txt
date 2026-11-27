@@ -1,0 +1,72 @@
+CCU-01 route won 27.0s cps 8.0,42.0,57.0,75.0,97.0
+   NAIVE: dead ccu-kumir @179 x16.2; replay 0.9s
+   FIX: dead fell @1513 x71.9; replay 2.1s
+   a long jump off the thela’s deck over the chalk river by the door: dead ccu-kumir @2372 x104.6; replay 0.9s
+CCU-05 route won 19.2s cps 27.0,43.6,61.5,91.5
+   NAIVE: dead ccu-murti @522 x8.8; replay 4.3s
+   FIX: dead ccu-ganga @179 x12.7; replay 1.5s
+   a long jump off the first figure in the lane, past the next: dead ccu-ganga @650 x42.7; replay 2.1s
+   resting on the first figure in the lane: dead ccu-murti @1737 x33.4; replay 11.1s
+   waiting on the first figure while they finish in order: dead ccu-murti @1588 x67.9; replay 4.8s
+   a long jump off the first figure by the ghat: dead ccu-ganga @1207 x74.7; replay 1.6s
+CCU-06 route won 50.8s cps 6.5,15.2,28.4,36.4,38.8,52.2,69.8,91.2,104.5,105.5
+   NAIVE: dead ccu-dando @984 x24.6; replay 5.2s
+   FIX: dead ccu-points @2415 x48.6; replay 2.5s
+   staying on the step at the double-line island: dead ccu-dui @5015 x100.3; replay 4.4s
+   climbing on to the roof for the double junction: dead ccu-dando @4160 x87.9; replay 5.4s
+   jumping off the step into the dug-up road before the island: dead ccu-khod @1870 x46.4; replay 0.6s
+   staying on the step at the points island: dead ccu-points @2415 x48.5; replay 2.4s
+CCU-07 route won 72.6s cps 29.0,64.5,102.5,137.0,174.5,215.2,250.0,253.5
+   NAIVE: dead ccu-cha @896 x21.4; replay 7.5s
+   FIX: dead ccu-bojha @457 x13.2; replay 3.8s
+   stopping at the first drain on the causeway: dead ccu-baan @7487 x222.0; replay 3.0s
+   a long jump at the first drain on the causeway: dead ccu-nala @7270 x227.1; replay 1.2s
+   taking the porter who leaves the second pylon at once: dead ccu-cha @5894 x189.3; replay 3.8s
+   staying on the tall porter from the pylon: dead ccu-cha @1770 x52.5; replay 5.7s
+   jumping off the pylon at the first load: dead ccu-gaari @1205 x41.2; replay 1.0s
+   staying on the short porter of the two streams: dead ccu-cha @2684 x89.2; replay 6.2s
+   a long jump off the pylon into the two streams: dead ccu-gaari @2048 x73.1; replay 0.9s
+   standing in the middle of the load when the horn goes: dead ccu-parapet @3236 x117.7; replay 3.6s
+   switching to the short porter before the board, as taught: dead ccu-cha @4753 x160.3; replay 5.8s
+   jumping off the short porter just before his board: dead ccu-gaari @4713 x165.3; replay 5.5s
+   hopping to the porter in front on the horn: dead ccu-gaari @3175 x117.4; replay 3.1s
+   jumping off the second pylon rather than wait: dead ccu-gaari @5614 x186.0; replay 1.5s
+CCU-08 route won 14.1s cps 47.2,75.5
+   NAIVE: dead ccu-dhowa @535 x14.8; replay 4.5s
+   FIX: dead ccu-dhowa @702 x51.9; replay 0.5s
+   waiting by the second adda for the water to stop: dead ccu-dhowa @702 x51.9; replay 0.5s
+CCU-09 route won 36.2s cps 24.5,59.9,82.0,92.8,97.6,113.0,114.2,133.6,158.0,159.5
+   NAIVE: dead ccu-bansh @195 x12.9; replay 1.6s
+   FIX: dead crushed @341 x21.3; replay 2.8s
+   resting on the new panel at the top of the staircase: dead crushed @722 x48.4; replay 3.0s
+   waiting under the canopy for the beat to pass: dead crushed @1294 x71.6; replay 3.8s
+   climbing on to the queue: dead ccu-line @2755 x125.6; replay 1.7s
+   going under the queue: dead ccu-bansh @2699 x123.2; replay 1.2s
+   jumping for the high bamboo before the lift: dead ccu-bansh @1519 x92.5; replay 1.7s
+   resting on the lifted panel under the roof frame: dead crushed @2763 x95.8; replay 7.4s
+   a long jump at the cloth staircase: dead ccu-bansh @521 x36.9; replay 1.3s
+   a long jump at the canopy’s stretch from the block: dead ccu-bansh @938 x67.5; replay 0.9s
+CCU-10 route won 71.2s cps 32.5,35.5,64.0,70.2,98.5,126.7,138.9,141.0,148.7,175.3,205.0,222.0,231.5,264.5,297.5
+   NAIVE: dead ccu-boi @638 x18.7; replay 5.3s
+   FIX: dead ccu-gir @1501 x48.9; replay 3.2s
+   crossing the chalk while he counts, as on the Maidan: dead ccu-kumir @5624 x212.3; replay 0.8s
+   one long jump over the chalk river tonight: dead ccu-nala @5712 x218.7; replay 1.6s
+   running on ahead of the front coming back: dead ccu-baan @3494 x107.7; replay 3.5s
+   turning to run back from the front: dead ccu-nala @3221 x103.3; replay 1.2s
+   running under the canopy as it goes up: dead crushed @3171 x86.8; replay 6.0s
+   a full jump at the gallery from the bamboo: dead ccu-bansh @3005 x88.7; replay 4.6s
+   waiting on the quiet stack, not the one he points at: dead ccu-boi @4276 x132.9; replay 3.8s
+   a full jump at the high stall from the low stack: dead ccu-kada @4041 x137.7; replay 1.9s
+   landing on a cloth top in the pandal being taken down: dead ccu-bansh @5235 x181.6; replay 1.6s
+   waiting on the bamboo under the roof frame: dead crushed @5386 x188.8; replay 2.9s
+   staying on the first porter back over the bridge: dead ccu-cha @6975 x252.5; replay 5.3s
+   staying on the short porter of the second span: dead ccu-cha @7813 x289.2; replay 5.6s
+   staying on the bus past its one “aaste”: dead ccu-gir @2387 x62.2; replay 7.4s
+   a long jump at the drain instead of the bus: dead ccu-nala @1106 x45.7; replay 0.8s
+   a long jump off the first figure, past the next: dead ccu-ganga @4840 x160.7; replay 1.6s
+   resting on the first figure: dead ccu-murti @5451 x154.1; replay 6.7s
+   walking on off the front of the tall porter: dead ccu-gaari @7608 x287.4; replay 3.9s
+   ✓ causes 1788ms
+      Tests  1 passed | 2 skipped (3)
+   Start at  08:04:46
+   Duration  2.67s (tests 70%, transform 14%, setup 13%, import 3%)

@@ -1,0 +1,69 @@
+{
+ "code": "TVM",
+ "moved": [
+  "src/render/backdrops-south.ts:thiruvananthapuram -> src/game/cities/tvm/backdrop.ts",
+  "src/game/levels/tvm.ts -> src/game/cities/tvm/levels.ts",
+  "src/game/entities/kerala.ts -> src/game/cities/tvm/entities.ts"
+ ],
+ "removed": [
+  "src/game/cities.ts:LINES.TVM",
+  "src/game/cities.ts:CHAPTERS TVM city/hello/famous (filled by install)",
+  "src/game/levels/chunks.ts:SKINS.TVM",
+  "src/game/levels/tour.ts:COURSES.TVM",
+  "src/app/citylines.ts:CITY_LINE.TVM",
+  "src/render/renderer.ts:GRADES.TVM",
+  "src/render/art/tiles.ts:CAP.TVM",
+  "src/audio/audio.ts:MUSIC.TVM",
+  "src/render/theme.ts:THEMES.TVM",
+  "src/render/theme.ts:CITY_ORDER TVM (install appends it)",
+  "src/game/entities/props.ts:CAUSE_LINES.drenched",
+  "src/game/levels/endings.ts:OLD_ENDINGS.knock (+ EndingKind)",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case chaaya",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case net",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case parunthu",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case snakeboat"
+ ],
+ "importers": [
+  "src/game/levels/index.ts"
+ ],
+ "inv": {
+  "own": [
+   "src/game/levels/tvm.ts",
+   "src/game/entities/kerala.ts"
+  ],
+  "cause": [
+   "drenched"
+  ],
+  "causeShared": [
+   "crushed<game/entities/group.ts,game/levels/amr.ts,game/levels/blr.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/hyd.ts,game/levels/trolls.ts,game/world.ts",
+   "coconut<game/cities/rnc/skin.ts,game/levels/chunks.ts,game/levels/pdy.ts",
+   "splash<app/app.ts,game/cities/rnc/entities.ts,game/entities/abilities.ts,game/entities/daman.ts,game/entities/lakshadweep.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/amr.ts,game/levels/blr.ts,game/levels/bom.ts,game/levels/chn.ts,game/levels/chunks.ts,game/levels/dmn.ts,game/levels/endings.ts,game/levels/endings2.ts,game/levels/endings3.ts,game/levels/gnr.ts,game/levels/kit.ts,game/levels/kvt.ts,game/levels/pdy.ts,game/levels/pnj.ts,game/player.ts",
+   "burnt<game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/amr.ts,game/levels/chn.ts,game/levels/chunks.ts,game/levels/hyd.ts,game/levels/pdy.ts",
+   "hit<game/entities/tamil.ts,game/entities/traps.ts,game/levels/amr.ts,game/levels/blr.ts,game/levels/chn.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/hyd.ts,game/levels/kit.ts,game/levels/kvt.ts,game/levels/pdy.ts"
+  ],
+  "ending": [
+   "knock"
+  ],
+  "endingShared": [],
+  "thing": [
+   "chaaya",
+   "net",
+   "parunthu",
+   "snakeboat"
+  ],
+  "thingShared": [
+   "gate<game/levels/hyd.ts,rooms/art/props.ts,rooms/delhi.ts",
+   "boulder<game/cities/rnc/skin.ts,game/levels/amr.ts,game/levels/blr.ts,game/levels/chunks.ts,game/levels/endings.ts",
+   "pebble<game/levels/chunks.ts",
+   "redbus<game/levels/blr.ts",
+   "coconut<game/cities/rnc/skin.ts,game/levels/chunks.ts,game/levels/pdy.ts",
+   "scooter<game/cities/rnc/skin.ts,game/entities/traffic.ts,game/levels/blr.ts,game/levels/chunks.ts,game/levels/hyd.ts,game/levels/pdy.ts,game/levels/pnj.ts,render/art/vehicles.ts",
+   "dog<game/cities/rnc/skin.ts,game/entities/goa.ts,game/levels/chunks.ts,game/levels/pnj.ts",
+   "odam<game/levels/endings2.ts,game/levels/kvt.ts,game/levels/pdy.ts,game/levels/tour.ts",
+   "tumbler<game/levels/chn.ts,game/levels/chunks.ts",
+   "crow<game/cities/rnc/skin.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/kvt.ts",
+   "jeep<game/levels/blr.ts,game/levels/chunks.ts,game/levels/kvt.ts",
+   "log<game/levels/amr.ts,game/levels/blr.ts,game/levels/chn.ts"
+  ]
+ }
+}

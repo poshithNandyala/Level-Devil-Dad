@@ -1,0 +1,28 @@
+LDD_N=80 fairness, DIS round 4 (bash scripts/dev/fair.sh DIS). Full run at a740fec+sweep fixes (2679054); re-runs after later changes: DIS-07 (104df19, bull walks longer), DIS-04 (62799c0, laru door), DIS-05 (f40dab6, bamboo act).
+
+== full run
+DIS-01: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  door 100%
+DIS-02: 6t 100%  12t 100%  18t 84%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  door 100%
+DIS-03: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  s6 100%  door 100%
+DIS-04: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  door 100%
+DIS-05: 6t 100%  12t 100%  18t 76%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  s6 100%  s7 100%  door 100%
+DIS-06: 6t 100%  12t 100%  18t 76%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  door 100%
+DIS-07: 6t 83%  12t 96%  18t 68%   stuck: verandah to verandah, out of its lane when it stops x3
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  s6 100%  s7 100%  s8 100%  s9 96%  s10 100%  s11 100%  s12 100%  s13 100%  s14 100%  s15 100%  s16 100%  s17 100%  s18 100%  s19 100%  s20 100%  s21 100%  door 100%
+DIS-08: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  s6 100%  s7 100%  s8 100%  door 100%
+DIS-09: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  s6 100%  s7 100%  s8 100%  door 100%
+DIS-10: 6t 100%  12t 100%  18t 76%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  s6 100%  s7 100%  s8 100%  s9 100%  s10 100%  s11 100%  s12 100%  s13 100%  s14 100%  door 100%
+
+== re-runs
+DIS-07: 6t 100%  12t 100%  18t 80%   (104df19; all stretches 100% at 0-12t)
+DIS-04: 6t 100%  12t 100%  18t 100%  (62799c0)
+DIS-05: 6t 100%  12t 100%  18t 76%   (f40dab6; all stretches 100% at 0-12t)

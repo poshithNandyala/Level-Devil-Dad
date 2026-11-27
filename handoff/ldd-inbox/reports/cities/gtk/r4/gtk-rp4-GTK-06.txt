@@ -1,0 +1,1 @@
+GTK-06 | 0 | 39.5s | 10 cps | longest 8.0s | max replay 9.66s cp3 run+jump@22.12s gtk-taxi | over7.5: cp3=9.66 (run+jump@22.12s gtk-taxi) | calm fails: none | hot: none

@@ -1,0 +1,78 @@
+{
+ "code": "BOM",
+ "moved": [
+  "src/render/backgrounds.ts:mumbai -> src/game/cities/bom/backdrop.ts",
+  "src/game/levels/bom.ts -> src/game/cities/bom/levels.ts"
+ ],
+ "removed": [
+  "src/game/cities.ts:LINES.BOM",
+  "src/game/cities.ts:CHAPTERS BOM city/hello/famous (filled by install)",
+  "src/game/levels/chunks.ts:SKINS.BOM",
+  "src/game/levels/tour.ts:COURSES.BOM",
+  "src/app/citylines.ts:CITY_LINE.BOM",
+  "src/render/renderer.ts:GRADES.BOM",
+  "src/render/art/tiles.ts:CAP.BOM",
+  "src/audio/audio.ts:MUSIC.BOM",
+  "src/render/theme.ts:THEMES.BOM",
+  "src/render/theme.ts:CITY_ORDER BOM (install appends it)",
+  "src/game/entities/props.ts:CAUSE_LINES.spilled",
+  "src/game/levels/endings.ts:OLD_ENDINGS.bollywood (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.kabaddi (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.dahihandi (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.credits (+ EndingKind)",
+  "src/game/levels/endings2.ts:NEW_ENDINGS.dabbacode (+ NewEndingKind)",
+  "src/game/levels/endings2.ts:NEW_ENDINGS.lightwell (+ NewEndingKind)",
+  "src/game/levels/endings2.ts:NEW_ENDINGS.local (+ NewEndingKind)"
+ ],
+ "importers": [
+  "src/game/levels/index.ts",
+  "tests/acts.ts"
+ ],
+ "pruned": [
+  "src/game/levels/endings.ts: dropped {'lock'}",
+  "src/game/levels/endings2.ts: import { Thing } from '../entities/traps';",
+  "src/game/levels/endings2.ts: dropped {'Facade', 'ChawlWall'}",
+  "src/game/levels/endings2.ts: import { px } from './kit';",
+  "src/game/levels/endings2.ts: dropped {'Paint', 'FLOOR', 'tara', 'doorPic', 'npc'}"
+ ],
+ "inv": {
+  "own": [
+   "src/game/levels/bom.ts"
+  ],
+  "cause": [
+   "spilled"
+  ],
+  "causeShared": [
+   "splash<app/app.ts,game/cities/amr/levels.ts,game/cities/blr/levels.ts,game/cities/chn/levels.ts,game/cities/kvt/endings.ts,game/cities/kvt/entities.ts,game/cities/kvt/levels.ts,game/cities/pdy/levels.ts,game/cities/pnj/endings.ts,game/cities/pnj/levels.ts,game/cities/rnc/entities.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/abilities.ts,game/entities/daman.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/chunks.ts,game/levels/dmn.ts,game/levels/endings2.ts,game/levels/endings3.ts,game/levels/gnr.ts,game/levels/kit.ts,game/player.ts",
+   "flood<game/cities/chn/levels.ts,game/entities/mumbai.ts",
+   "caught<game/cities/hyd/levels.ts,game/entities/tamil.ts",
+   "shocked<game/entities/props.ts,render/art/characters.ts,render/renderer.ts"
+  ],
+  "ending": [
+   "bollywood",
+   "kabaddi",
+   "dahihandi",
+   "credits",
+   "dabbacode",
+   "lightwell",
+   "local"
+  ],
+  "endingShared": [
+   "mirror<app/app.ts,game/cities/pdy/levels.ts,game/levels/endings.ts,render/renderer.ts",
+   "lamp<game/cities/blr/levels.ts,game/cities/chn/levels.ts,game/cities/hyd/levels.ts,game/cities/pdy/levels.ts,game/cities/pnj/levels.ts,game/cities/rnc/levels.ts,game/levels/bpl.ts,game/levels/dmn.ts,game/levels/gnr.ts,game/levels/jai.ts,game/levels/rpr.ts"
+  ],
+  "thing": [],
+  "thingShared": [
+   "crate<game/cities/amr/endings.ts,game/cities/chn/endings.ts,game/cities/chn/levels.ts,game/cities/hyd/endings.ts,game/cities/hyd/levels.ts,game/cities/kvt/levels.ts,game/cities/kvt/skin.ts,game/cities/pdy/skin.ts,game/entities/mumbai.ts,game/levels/chunks.ts,game/levels/endings2.ts,game/levels/kit.ts",
+   "shutter<game/levels/twists.ts",
+   "pad<game/cities/amr/levels.ts,game/cities/blr/levels.ts,game/cities/hyd/levels.ts",
+   "board<game/cities/chn/levels.ts,game/cities/pdy/levels.ts,game/entities/auto.ts",
+   "chaicup<game/cities/hyd/levels.ts,game/cities/hyd/skin.ts",
+   "clock<game/cities/hyd/levels.ts,game/cities/pdy/levels.ts",
+   "vada<game/levels/chunks.ts",
+   "cart<game/cities/amr/levels.ts,game/cities/amr/skin.ts,game/cities/pdy/levels.ts,game/cities/rnc/levels.ts,game/entities/mumbai.ts,game/levels/bpl.ts,game/levels/chunks.ts,game/levels/dmn.ts,game/levels/gnr.ts,game/levels/jai.ts,game/levels/rpr.ts",
+   "traincar<game/cities/blr/course.ts,game/cities/chn/levels.ts,game/cities/rnc/course.ts,game/levels/tour.ts",
+   "plank<game/cities/amr/levels.ts,game/cities/pnj/endings.ts,game/entities/bhopal.ts,game/levels/bpl.ts,game/levels/endings.ts,game/levels/twists.ts"
+  ]
+ }
+}

@@ -1,0 +1,90 @@
+CCU-01 L0 stretch from cp4 (x97.0): worst replay 9.2s (stop@26.0s ccu-kumir x103.4)
+CCU-01 L0 i0 clear 27.0s caught 6/4 maxStretch 8.1s worstReplay 9.2s (stop@26.0s ccu-kumir cp4) calm ok
+CCU-01 L0 i180 clear 27.0s caught 6/4 maxStretch 8.1s calm ok
+CCU-01 L6 stretch from cp4 (x97.0): worst replay 9.2s (stop@26.0s ccu-kumir x102.0)
+CCU-01 L6 i0 clear 27.2s caught 6/4 maxStretch 8.2s worstReplay 9.2s (stop@26.0s ccu-kumir cp4) calm ok
+CCU-01 L6 i180 clear 27.2s caught 6/4 maxStretch 8.2s calm ok
+CCU-01 L12 stretch from cp4 (x97.0): worst replay 9.2s (stop@26.3s ccu-kumir x102.6)
+CCU-01 L12 i0 clear 27.3s caught 6/4 maxStretch 8.3s worstReplay 9.2s (stop@26.3s ccu-kumir cp4) calm ok
+CCU-01 L12 i180 clear 27.3s caught 6/4 maxStretch 8.3s calm ok
+CCU-02 L0 stretch from cp0 (x31.5): worst replay 9.0s (run@14.8s ccu-nala x53.7)
+CCU-02 L0 i0 clear 16.9s caught 2/0 maxStretch 10.8s worstReplay 9.0s (run@14.8s ccu-nala cp0) calm ok
+CCU-02 L0 i180 clear 16.9s caught 2/0 maxStretch 10.8s calm ok
+CCU-02 L6 stretch from cp0 (x31.5): worst replay 9.2s (run@15.0s ccu-nala x53.7)
+CCU-02 L6 i0 clear 17.1s caught 2/0 maxStretch 10.9s worstReplay 9.2s (run@15.0s ccu-nala cp0) calm ok
+CCU-02 L6 i180 clear 17.1s caught 2/0 maxStretch 10.9s calm ok
+CCU-02 L12 stretch from cp0 (x31.5): worst replay 9.0s (runjump@14.8s ccu-nala x53.7)
+CCU-02 L12 i0 clear 17.3s caught 2/0 maxStretch 11.0s worstReplay 9.0s (runjump@14.8s ccu-nala cp0) calm ok
+CCU-02 L12 i180 clear 17.3s caught 2/0 maxStretch 11.0s calm ok
+CCU-03 L0 stretch from cp-1 (xstart): worst replay 12.0s (stop@9.3s ccu-muri x22.1)
+CCU-03 L0 stretch from cp0 (x31.8): worst replay 13.6s (stop@24.3s ccu-muri x58.7)
+CCU-03 L0 i0 clear 27.7s caught 3/1 maxStretch 13.8s worstReplay 13.6s (stop@24.3s ccu-muri cp0) calm ok
+CCU-03 L0 i180 clear 29.2s caught 3/1 maxStretch 13.8s calm ok
+CCU-03 L6 stretch from cp-1 (xstart): worst replay 18.7s (stop@15.3s ccu-lonka x25.8)
+CCU-03 L6 stretch from cp0 (x31.8): worst replay 13.6s (stop@29.5s ccu-muri x58.2)
+CCU-03 L6 i0 clear 33.0s caught 3/1 maxStretch 16.1s worstReplay 18.7s (stop@15.3s ccu-lonka cp-1) calm ok
+CCU-03 L6 i180 clear 34.5s caught 3/1 maxStretch 17.6s calm ok
+CCU-03 L12 stretch from cp-1 (xstart): worst replay 15.6s (stop@15.3s ccu-muri x24.6)
+CCU-03 L12 stretch from cp0 (x31.8): worst replay 16.5s (stop@29.8s ccu-lonka x59.2)
+CCU-03 L12 i0 clear 33.2s caught 3/1 maxStretch 16.1s worstReplay 16.5s (stop@29.8s ccu-lonka cp0) calm ok
+CCU-03 L12 i180 clear 34.7s caught 3/1 maxStretch 17.6s calm ok
+CCU-04 L0 i0 clear 17.1s caught 3/1 maxStretch 7.0s worstReplay 6.5s (stop@9.5s ccu-kada cp0) calm ok
+CCU-04 L0 i180 clear 18.6s caught 3/1 maxStretch 7.0s calm ok
+CCU-04 L6 i0 clear 17.6s caught 3/1 maxStretch 7.3s worstReplay 6.5s (run@9.8s ccu-kada cp0) calm ok
+CCU-04 L6 i180 clear 19.1s caught 3/1 maxStretch 7.3s calm ok
+CCU-04 L12 i0 clear 18.2s caught 3/1 maxStretch 7.6s worstReplay 6.8s (run@10.3s ccu-kada cp0) calm ok
+CCU-04 L12 i180 clear 19.7s caught 3/1 maxStretch 7.6s calm ok
+CCU-05 L0 i0 clear 19.2s caught 5/3 maxStretch 7.1s worstReplay 5.8s (stop@7.5s ccu-murti cp1) calm ok
+CCU-05 L0 i180 clear 20.7s caught 5/3 maxStretch 7.1s calm ok
+CCU-05 L6 i0 clear 20.7s caught 5/3 maxStretch 7.2s worstReplay 5.5s (run@18.5s ccu-ganga cp3) calm ok
+CCU-05 L6 i180 clear 22.2s caught 5/3 maxStretch 7.2s calm ok
+CCU-05 L12 i0 clear 22.0s caught 5/3 maxStretch 7.2s worstReplay 5.5s (run@19.8s ccu-ganga cp3) calm ok
+CCU-05 L12 i180 clear 23.5s caught 5/3 maxStretch 7.2s calm ok
+CCU-06 L0 i0 clear 50.8s caught 11/9 maxStretch 8.2s worstReplay 7.3s (run@10.0s ccu-khod cp1) calm ok
+CCU-06 L0 i180 clear 52.2s caught 11/9 maxStretch 8.2s calm ok
+CCU-06 L6 i0 clear 51.0s caught 11/9 maxStretch 8.3s worstReplay 7.2s (run@10.0s ccu-khod cp1) calm ok
+CCU-06 L6 i180 clear 52.5s caught 11/9 maxStretch 8.3s calm ok
+CCU-06 L12 i0 clear 51.5s caught 11/9 maxStretch 8.2s worstReplay 7.1s (run@10.3s ccu-khod cp1) calm ok
+CCU-06 L12 i180 clear 53.0s caught 11/9 maxStretch 8.2s calm ok
+CCU-07 L0 stretch from cp-1 (xstart): worst replay 10.3s (runjump@9.0s ccu-gaari x41.6)
+CCU-07 L0 stretch from cp1 (x64.5): worst replay 8.3s (runjump@23.3s ccu-gaari x112.4)
+CCU-07 L0 stretch from cp2 (x102.5): worst replay 11.6s (runjump@33.8s ccu-cha x147.4)
+CCU-07 L0 stretch from cp3 (x137.0): worst replay 10.3s (run@43.8s ccu-gaari x173.6)
+CCU-07 L0 stretch from cp4 (x174.5): worst replay 13.1s (run@58.0s ccu-gaari x214.0)
+CCU-07 L0 stretch from cp7 (x253.5): worst replay 8.6s (runjump@72.3s ccu-gaari x278.9)
+CCU-07 L0 i0 clear 72.6s caught 9/7 maxStretch 14.0s worstReplay 13.1s (run@58.0s ccu-gaari cp4) calm ok
+CCU-07 L0 i180 clear 74.1s caught 9/7 maxStretch 14.0s calm ok
+CCU-07 L6 stretch from cp-1 (xstart): worst replay 10.3s (runjump@9.0s ccu-gaari x41.1)
+CCU-07 L6 stretch from cp1 (x64.5): worst replay 8.4s (runjump@23.3s ccu-gaari x112.8)
+CCU-07 L6 stretch from cp2 (x102.5): worst replay 11.2s (runjump@33.3s ccu-gaari x147.3)
+CCU-07 L6 stretch from cp3 (x137.0): worst replay 10.2s (run@43.8s ccu-gaari x173.2)
+CCU-07 L6 stretch from cp4 (x174.5): worst replay 13.0s (run@58.0s ccu-gaari x214.1)
+CCU-07 L6 stretch from cp7 (x253.5): worst replay 8.7s (runjump@72.8s ccu-gaari x279.0)
+CCU-07 L6 i0 clear 73.1s caught 9/7 maxStretch 14.0s worstReplay 13.0s (run@58.0s ccu-gaari cp4) calm ok
+CCU-07 L6 i180 clear 74.6s caught 9/7 maxStretch 14.0s calm ok
+CCU-07 L12 stretch from cp-1 (xstart): worst replay 10.5s (runjump@9.3s ccu-gaari x41.6)
+CCU-07 L12 stretch from cp2 (x102.5): worst replay 11.3s (runjump@33.5s ccu-gaari x147.4)
+CCU-07 L12 stretch from cp3 (x137.0): worst replay 10.0s (run@43.8s ccu-gaari x173.3)
+CCU-07 L12 stretch from cp4 (x174.5): worst replay 13.0s (run@58.3s ccu-gaari x214.1)
+CCU-07 L12 stretch from cp5 (x215.2): worst replay 8.1s (run@64.0s ccu-baan x246.7)
+CCU-07 L12 stretch from cp7 (x253.5): worst replay 8.7s (runjump@74.0s ccu-arch x277.8)
+CCU-07 L12 i0 clear 74.1s caught 9/7 maxStretch 14.2s worstReplay 13.0s (run@58.3s ccu-gaari cp4) calm ok
+CCU-07 L12 i180 clear 75.6s caught 9/7 maxStretch 14.2s calm ok
+CCU-08 L0 i0 clear 14.1s caught 3/1 maxStretch 5.6s worstReplay 4.5s (stop@1.3s ccu-dhowa cp-1) calm ok
+CCU-08 L0 i180 clear 15.6s caught 3/1 maxStretch 6.8s calm ok
+CCU-08 L6 i0 clear 14.3s caught 3/1 maxStretch 5.6s worstReplay 6.0s (runjump@2.3s ccu-dhowa cp-1) calm ok
+CCU-08 L6 i180 clear 15.8s caught 3/1 maxStretch 7.0s calm ok
+CCU-08 L12 i0 clear 14.6s caught 3/1 maxStretch 5.7s worstReplay 6.3s (runjump@2.5s ccu-dhowa cp-1) calm ok
+CCU-08 L12 i180 clear 16.1s caught 3/1 maxStretch 7.1s calm ok
+CCU-09 L0 i0 clear 36.2s caught 10/9 maxStretch 6.8s worstReplay 7.4s (stop@19.3s crushed cp3) calm ok
+CCU-09 L0 i180 clear 37.7s caught 10/9 maxStretch 6.8s calm ok
+CCU-09 L6 i0 clear 37.7s caught 10/9 maxStretch 6.9s worstReplay 7.4s (stop@20.3s crushed cp3) calm ok
+CCU-09 L6 i180 clear 39.2s caught 10/9 maxStretch 6.9s calm ok
+CCU-09 L12 i0 clear 39.5s caught 10/9 maxStretch 6.9s worstReplay 7.5s (stop@21.3s crushed cp3) calm ok
+CCU-09 L12 i180 clear 41.0s caught 10/9 maxStretch 6.9s calm ok
+CCU-10 L0 i0 clear 71.2s caught 16/14 maxStretch 8.1s worstReplay 7.5s (runjump@59.5s ccu-gaari cp12) calm ok
+CCU-10 L0 i180 clear 72.7s caught 16/14 maxStretch 9.6s calm ok
+CCU-10 L6 i0 clear 72.7s caught 16/14 maxStretch 8.2s worstReplay 7.5s (runjump@60.8s ccu-gaari cp12) calm ok
+CCU-10 L6 i180 clear 74.2s caught 16/14 maxStretch 9.7s calm ok
+CCU-10 L12 i0 clear 73.9s caught 16/14 maxStretch 8.3s worstReplay 7.5s (runjump@61.8s ccu-gaari cp12) calm ok
+CCU-10 L12 i180 clear 75.4s caught 16/14 maxStretch 9.8s calm ok

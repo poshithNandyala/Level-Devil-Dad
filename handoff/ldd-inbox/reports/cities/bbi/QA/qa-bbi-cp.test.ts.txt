@@ -1,0 +1,34 @@
+import { it } from 'vitest';
+import { LEVELS } from '../../src/game/levels';
+import { World } from '../../src/game/world';
+import { play } from '../runner';
+import { SOLUTIONS, NAIVE, FIX, MISTAKES } from '../solutions';
+// QA scratch: checkpoint times along the route; for each scripted death, time since the last checkpoint passed
+it('qa bbi cp', () => {
+  const orig = World.prototype.step;
+  for (const def of LEVELS.filter((d) => d.id.startsWith('BBI'))) {
+    const runs: [string, { steps: any[] }][] = [['route', { steps: SOLUTIONS[def.id] }]];
+    if (NAIVE[def.id]) runs.push(['naive', NAIVE[def.id]]);
+    if (FIX[def.id]) runs.push(['fix', FIX[def.id]]);
+    (MISTAKES[def.id] ?? []).forEach((m, i) => runs.push([`m${i}`, m]));
+    const out: string[] = [];
+    for (const [k, r] of runs) {
+      const at: number[] = [0];
+      let last = -1;
+      World.prototype.step = function (this: World, i) {
+        const c = this.cp;
+        const res = orig.call(this, i);
+        if (this.cp > c) at.push(this.tick);
+        return res;
+      } as typeof orig;
+      const { w } = play(def, r.steps);
+      World.prototype.step = orig;
+      last = at[at.length - 1];
+      if (k === 'route') {
+        const gaps = at.slice(1).map((t, i) => t - at[i]).concat([w.tick - last]);
+        out.push(`route cps=${at.length - 1} gaps(s)=${gaps.map((g) => (g / 120).toFixed(1)).join(',')}`);
+      } else out.push(`${k}:${w.deathCause} +${((w.tick - last) / 120).toFixed(1)}s`);
+    }
+    console.log(def.id + ' ' + out.join(' | '));
+  }
+});

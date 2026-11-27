@@ -1,0 +1,2 @@
+SVP-10: checked 1232 plays at 11 distinct capture points, fails 0; longest stretch 12.3 s; replay worst 6.83 s [naive:5.45/5.38/5.33 fix:0.83/0.82/0.82 m0:5.97/6.03/6.11 m1:4.38/4.65/4.79 m2:2.86/2.86/2.86 m3:2.86/2.86/2.86 m4:0.83/0.82/0.82 m5:2.26/2.26/2.26 m6:1.28/1.28/1.28 m7:4.07/4.13/4.25 m8:6.64/6.71/6.83 m9:4.53/4.59/4.64 m10:1.98/1.98/1.98]
+(m0 food/log, m1 sit on the luggage, m2 hose over both, m3 hose second stretch, m4 trust the board, m5 green roots, m6 grey then green, m7 wait on the pier, m8 down at once, m9 fritter put down, m10 step off)

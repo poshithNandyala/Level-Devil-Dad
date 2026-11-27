@@ -1,0 +1,13 @@
+import { it } from 'vitest';
+import { LEVELS } from '../../src/game/levels';
+import { play } from '../runner';
+import { SOLUTIONS } from '../solutions';
+// QA scratch: honest route clear time per SHL stage (lag 0 route)
+it.runIf(!!process.env.QAT)('qa shl times', () => {
+  const out: string[] = [];
+  for (const def of LEVELS.filter((d) => d.id.startsWith('SHL'))) {
+    const { w } = play(def, SOLUTIONS[def.id]);
+    out.push(`${def.id} ${w.state} ${(w.tick / 120).toFixed(1)} s cps=${w.checkpoints.length}`);
+  }
+  console.log('TIMES\n' + out.join('\n'));
+});

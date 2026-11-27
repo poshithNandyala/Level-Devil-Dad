@@ -1,0 +1,24 @@
+ADV
+talatal jump from act+15 lag0: play (alive past the vault)
+talatal jump from act+15 lag6: play (alive past the vault)
+talatal jump from act+15 lag12: dis-talatal-ulta@2754 x120.8 (act+19.8) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+15.5 lag0: play (alive past the vault)
+talatal jump from act+15.5 lag6: dis-talatal-ulta@2754 x120.8 (act+19.8) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+15.5 lag12: dis-talatal-ulta@2757 x121.0 (act+20.0) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+16 lag0: dis-talatal-ulta@2754 x120.8 (act+19.8) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+16 lag6: dis-talatal-ulta@2758 x121.1 (act+20.1) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+16 lag12: dis-talatal-ulta@2762 x121.4 (act+20.4) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+16.5 lag0: dis-talatal-ulta@2758 x121.1 (act+20.1) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+16.5 lag6: dis-talatal-ulta@2763 x121.4 (act+20.4) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+16.5 lag12: dis-talatal-ulta@2766 x121.7 (act+20.7) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+17 lag0: dis-talatal-ulta@2766 x121.7 (act+20.7) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+17 lag6: dis-talatal-ulta@2766 x121.7 (act+20.7) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+17 lag12: dis-talatal-ulta@2772 x122.1 (act+21.1) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+17.5 lag0: dis-talatal-ulta@2767 x121.8 (act+20.8) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+17.5 lag6: dis-talatal-ulta@2773 x122.2 (act+21.2) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+17.5 lag12: dis-talatal-ulta@2779 x122.6 (act+21.6) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+18 lag0: dis-talatal-ulta@2774 x122.3 (act+21.3) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+18 lag6: dis-talatal-ulta@2780 x122.7 (act+21.7) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+talatal jump from act+18 lag12: dis-talatal-ulta@2785 x123.1 (act+22.1) | Thum! The cellar passage at the foot of the stair is low, and you hopped up into its vault. / Run down and out at the bottom; don’t hop under the low vault.
+
+ ✓ tests/qa/qa-dis-advice.test.ts (1 test) 438ms

@@ -1,0 +1,19 @@
+
+ RUN  v5.1.0 /local/home/saiposh/personal/ldd-wt/svp
+
+stdout | tests/zz-qa6.test.ts > qa6 lag-captured cpsafe + replay
+QA6
+SVP-05: checked 448 plays at 4 distinct capture points, fails 0; longest stretch 8.4 s; replay worst 2.91 s [naive:1.58/1.68/1.88 fix:2.39/2.48/2.83 m0:2.42/2.52/2.62 m1:1.86/1.96/2.06 m2:2.39/2.48/2.83 m3:2.29/2.44/2.91]
+SVP-06: checked 336 plays at 3 distinct capture points, fails 0; longest stretch 10.0 s; replay worst 1.86 s [naive:1.66/1.76/1.86 fix:1.35/1.35/1.35]
+SVP-07: checked 560 plays at 5 distinct capture points, fails 0; longest stretch 9.1 s; replay worst 5.46 s [naive:4.53/4.63/4.82 fix:2.84/2.77/2.93 m0:1.01/1.01/1.01 m1:1.02/0.97/1.02 m2:4.17/4.17/4.17 m3:5.00/5.31/5.46 m4:3.83/3.90/4.05 m5:1.67/1.67/1.67 m6:4.19/4.19/4.19]
+SVP-09: checked 560 plays at 5 distinct capture points, fails 0; longest stretch 6.0 s; replay worst 3.80 s [naive:1.15/1.20/1.25 fix:2.86/2.86/2.86 m0:2.86/2.86/2.86 m1:2.86/2.86/2.86 m2:3.23/3.22/3.38 m3:3.12/3.12/3.12 m4:3.80/3.80/3.80]
+SVP-10: checked 1120 plays at 10 distinct capture points, fails 0; longest stretch 12.1 s; replay worst 6.21 s [naive:5.74/5.79/5.84 fix:0.83/0.82/0.82 m0:6.05/6.13/6.21 m1:2.87/2.86/2.86 m2:2.86/2.86/2.86 m3:0.60/0.60/0.60 m4:0.83/0.82/0.82 m5:2.26/2.26/2.26 m6:1.29/1.29/1.28 m7:4.54/4.59/4.64 m8:1.98/1.98/1.98]
+
+ ✓ tests/zz-qa6.test.ts (1 test) 47671ms
+   ✓ qa6 lag-captured cpsafe + replay 47670ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  07:17:20
+   Duration  51.70s (tests 93%, transform 6%, setup 1%)
+

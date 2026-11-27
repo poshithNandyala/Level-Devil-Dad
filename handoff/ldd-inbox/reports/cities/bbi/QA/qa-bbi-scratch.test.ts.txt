@@ -1,0 +1,26 @@
+import { it } from 'vitest';
+import { LEVELS } from '../../src/game/levels';
+import { World } from '../../src/game/world';
+import { play } from '../runner';
+import { SOLUTIONS } from '../solutions';
+// QA scratch (not committed): route time, act layout, checkpoints and when the route reaches each act
+it('qa bbi layout', () => {
+  const orig = World.prototype.step;
+  for (const def of LEVELS.filter((d) => d.id.startsWith('BBI'))) {
+    const d = def as unknown as Record<string, unknown>;
+    const marks: [string, number][] = [...(def.parts ?? []).map((p) => [p.kind, p.x0] as [string, number]), ['door', (d.doorX as number) ?? 1e9]];
+    const seen: Record<string, number> = {};
+    World.prototype.step = function (this: World, i) {
+      const r = orig.call(this, i);
+      for (const [k, x] of marks) if (seen[k] === undefined && this.player.x >= x * 16) seen[k] = this.tick;
+      return r;
+    } as typeof orig;
+    const { w } = play(def, SOLUTIONS[def.id]);
+    World.prototype.step = orig;
+    const keys = Object.keys(d).filter((k) => /cp|check|act|lives|par|door/i.test(k));
+    console.log(
+      `${def.id} win=${(w.winTick / 120).toFixed(1)}s par=${d.par} ` + keys.map((k) => `${k}=${JSON.stringify(d[k])}`).join(' ') +
+        '\n   reach: ' + marks.map(([k, x]) => `${k}@${x}:${seen[k] !== undefined ? (seen[k] / 120).toFixed(1) : '?'}`).join('  '),
+    );
+  }
+});

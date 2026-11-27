@@ -1,0 +1,72 @@
+BBI-01: checked 672 plays at 6 distinct capture points, fails 0; longest stretch 12.9 s; replay worst 2.92 s [naive:1.59/1.59/1.58 fix:2.92/2.84/2.84 m0:2.76/2.71/2.66]
+BBI-02: checked 448 plays at 4 distinct capture points, fails 0; longest stretch 8.4 s; replay worst 3.38 s [naive:1.99/2.09/2.19 fix:3.14/3.26/3.38 m0:1.41/1.41/1.41 m1:1.22/1.23/1.22 m2:2.21/2.21/2.21 m3:1.52/1.57/1.62 m4:2.40/2.48/2.54 m5:1.86/1.86/1.86]
+BBI-03: checked 336 plays at 3 distinct capture points, fails 0; longest stretch 10.3 s; replay worst 8.04 s [naive:0.75/0.85/0.95 fix:1.97/2.19/2.40 m0:7.94/7.99/8.04 m1:0.93/0.98/1.02 m2:2.15/2.18/2.31 m3:0.93/0.98/1.02 m4:2.64/2.18/2.76]
+BBI-04: checked 448 plays at 4 distinct capture points, fails 0; longest stretch 12.7 s; replay worst 2.81 s [naive:0.89/0.94/0.99 fix:2.52/2.67/2.81 m0:1.30/1.40/1.50 m1:1.81/1.81/1.80 m2:1.48/1.52/1.57]
+FAIL BBI-05 capture-lag6 idle0 cp8 x143.5 taken@tick3290 Dad x145.4: idle -> crushed
+FAIL BBI-05 capture-lag6 idle0 cp8 x143.5 taken@tick3290 Dad x145.4: run0 -> crushed
+FAIL BBI-05 capture-lag6 idle0 cp8 x143.5 taken@tick3290 Dad x145.4: run6 -> crushed
+FAIL BBI-05 capture-lag6 idle0 cp8 x143.5 taken@tick3290 Dad x145.4: run12 -> crushed
+FAIL BBI-05 capture-lag6 idle37 cp8 x143.5 taken@tick3327 Dad x145.4: idle -> crushed
+FAIL BBI-05 capture-lag6 idle37 cp8 x143.5 taken@tick3327 Dad x145.4: run0 -> crushed
+FAIL BBI-05 capture-lag6 idle37 cp8 x143.5 taken@tick3327 Dad x145.4: run6 -> crushed
+FAIL BBI-05 capture-lag6 idle37 cp8 x143.5 taken@tick3327 Dad x145.4: run12 -> crushed
+FAIL BBI-05 capture-lag6 idle120 cp8 x143.5 taken@tick3410 Dad x145.4: idle -> crushed
+FAIL BBI-05 capture-lag6 idle120 cp8 x143.5 taken@tick3410 Dad x145.4: run0 -> crushed
+FAIL BBI-05 capture-lag6 idle120 cp8 x143.5 taken@tick3410 Dad x145.4: run6 -> crushed
+FAIL BBI-05 capture-lag6 idle120 cp8 x143.5 taken@tick3410 Dad x145.4: run12 -> crushed
+FAIL BBI-05 capture-lag6 idle251 cp8 x143.5 taken@tick3541 Dad x145.4: idle -> crushed
+FAIL BBI-05 capture-lag6 idle251 cp8 x143.5 taken@tick3541 Dad x145.4: run0 -> crushed
+FAIL BBI-05 capture-lag6 idle251 cp8 x143.5 taken@tick3541 Dad x145.4: run6 -> crushed
+FAIL BBI-05 capture-lag6 idle251 cp8 x143.5 taken@tick3541 Dad x145.4: run12 -> crushed
+FAIL BBI-05 capture-lag11 idle0 cp8 x143.5 taken@tick3331 Dad x145.4: idle -> crushed
+FAIL BBI-05 capture-lag11 idle0 cp8 x143.5 taken@tick3331 Dad x145.4: run0 -> crushed
+FAIL BBI-05 capture-lag11 idle0 cp8 x143.5 taken@tick3331 Dad x145.4: run6 -> crushed
+FAIL BBI-05 capture-lag11 idle0 cp8 x143.5 taken@tick3331 Dad x145.4: run12 -> crushed
+FAIL BBI-05 capture-lag11 idle37 cp8 x143.5 taken@tick3368 Dad x145.4: idle -> crushed
+FAIL BBI-05 capture-lag11 idle37 cp8 x143.5 taken@tick3368 Dad x145.4: run0 -> crushed
+FAIL BBI-05 capture-lag11 idle37 cp8 x143.5 taken@tick3368 Dad x145.4: run6 -> crushed
+FAIL BBI-05 capture-lag11 idle37 cp8 x143.5 taken@tick3368 Dad x145.4: run12 -> crushed
+FAIL BBI-05 capture-lag11 idle120 cp8 x143.5 taken@tick3451 Dad x145.4: idle -> crushed
+FAIL BBI-05 capture-lag11 idle120 cp8 x143.5 taken@tick3451 Dad x145.4: run0 -> crushed
+FAIL BBI-05 capture-lag11 idle120 cp8 x143.5 taken@tick3451 Dad x145.4: run6 -> crushed
+FAIL BBI-05 capture-lag11 idle120 cp8 x143.5 taken@tick3451 Dad x145.4: run12 -> crushed
+FAIL BBI-05 capture-lag11 idle251 cp8 x143.5 taken@tick3582 Dad x145.4: idle -> crushed
+FAIL BBI-05 capture-lag11 idle251 cp8 x143.5 taken@tick3582 Dad x145.4: run0 -> crushed
+FAIL BBI-05 capture-lag11 idle251 cp8 x143.5 taken@tick3582 Dad x145.4: run6 -> crushed
+FAIL BBI-05 capture-lag11 idle251 cp8 x143.5 taken@tick3582 Dad x145.4: run12 -> crushed
+FAIL BBI-05 capture-lag12 idle0 cp8 x143.5 taken@tick3341 Dad x145.4: idle -> crushed
+FAIL BBI-05 capture-lag12 idle0 cp8 x143.5 taken@tick3341 Dad x145.4: run0 -> crushed
+FAIL BBI-05 capture-lag12 idle0 cp8 x143.5 taken@tick3341 Dad x145.4: run6 -> crushed
+FAIL BBI-05 capture-lag12 idle0 cp8 x143.5 taken@tick3341 Dad x145.4: run12 -> crushed
+FAIL BBI-05 capture-lag12 idle37 cp8 x143.5 taken@tick3378 Dad x145.4: idle -> crushed
+FAIL BBI-05 capture-lag12 idle37 cp8 x143.5 taken@tick3378 Dad x145.4: run0 -> crushed
+FAIL BBI-05 capture-lag12 idle37 cp8 x143.5 taken@tick3378 Dad x145.4: run6 -> crushed
+FAIL BBI-05 capture-lag12 idle37 cp8 x143.5 taken@tick3378 Dad x145.4: run12 -> crushed
+FAIL BBI-05 capture-lag12 idle120 cp8 x143.5 taken@tick3461 Dad x145.4: idle -> crushed
+FAIL BBI-05 capture-lag12 idle120 cp8 x143.5 taken@tick3461 Dad x145.4: run0 -> crushed
+FAIL BBI-05 capture-lag12 idle120 cp8 x143.5 taken@tick3461 Dad x145.4: run6 -> crushed
+FAIL BBI-05 capture-lag12 idle120 cp8 x143.5 taken@tick3461 Dad x145.4: run12 -> crushed
+FAIL BBI-05 capture-lag12 idle251 cp8 x143.5 taken@tick3592 Dad x145.4: idle -> crushed
+FAIL BBI-05 capture-lag12 idle251 cp8 x143.5 taken@tick3592 Dad x145.4: run0 -> crushed
+FAIL BBI-05 capture-lag12 idle251 cp8 x143.5 taken@tick3592 Dad x145.4: run6 -> crushed
+FAIL BBI-05 capture-lag12 idle251 cp8 x143.5 taken@tick3592 Dad x145.4: run12 -> crushed
+BBI-05: checked 1792 plays at 16 distinct capture points, fails 48; longest stretch 10.2 s; replay worst 9.07 s [naive:1.99/1.78/1.88 fix:0.70/0.71/0.71 m0:2.42/nodeath/nodeath m1:0.72/nodeath/nodeath m2:2.47/2.23/nodeath m3:7.97/8.03/8.06 m4:0.77/0.82/0.87 m5:2.13/2.18/2.26 m6:0.58/0.58/0.58 m7:1.06/nodeath/0.78 m8:1.97/1.97/0.83 m9:0.84/0.90/0.95 m10:0.81/0.81/0.81 m11:6.54/6.59/6.64 m12:1.29/1.30/1.29 m13:6.38/1.53/9.07 m14:4.94/4.94/4.94 m15:1.00/1.01/nodeath m16:1.18/1.43/nodeath m17:1.14/1.31/1.51]
+BBI-06: checked 672 plays at 6 distinct capture points, fails 0; longest stretch 9.4 s; replay worst 10.06 s [naive:1.07/1.12/1.17 fix:3.97/4.03/1.03 m0:1.03/1.03/1.03 m1:10.06/10.06/10.06 m2:0.92/0.92/0.92 m3:1.57/1.57/1.57 m4:1.74/1.81/1.85 m5:4.97/5.03/5.08 m6:4.00/4.02/4.03 m7:0.93/0.93/0.93 m8:3.99/4.00/5.21]
+BBI-07: checked 1680 plays at 15 distinct capture points, fails 0; longest stretch 12.2 s; replay worst 9.03 s [naive:1.35/1.45/1.55 fix:8.93/8.98/9.03 m0:0.58/0.58/0.58 m1:3.02/3.02/3.02 m2:0.58/0.58/0.58 m3:1.86/1.91/1.96 m4:0.92/0.92/0.92 m5:2.90/2.91/2.91 m6:0.78/0.84/0.88 m7:3.93/3.93/3.93 m8:1.76/1.76/1.76 m9:3.05/3.08/3.15 m10:2.38/2.38/2.38 m11:4.33/4.33/4.33 m12:0.57/4.50/4.50 m13:3.09/3.09/3.09 m14:3.29/3.28/3.29 m15:3.04/3.03/3.04 m16:2.99/3.00/2.99 m17:7.61/7.67/7.70 m18:2.52/2.52/2.51 m19:1.96/1.96/1.95 m20:0.58/0.58/0.58 m21:8.23/8.24/8.23 m22:0.59/0.58/0.59 m23:4.07/4.15/4.28 m24:8.53/8.57/8.63]
+FAIL BBI-08 capture-lag6 idle0 cp4 x126.5 taken@tick5060 Dad x135.1: tap0 -> bbi-pakhala
+FAIL BBI-08 capture-lag6 idle0 cp4 x126.5 taken@tick5060 Dad x135.1: tap6 -> bbi-pakhala
+FAIL BBI-08 capture-lag6 idle0 cp4 x126.5 taken@tick5060 Dad x135.1: tap12 -> bbi-pakhala
+FAIL BBI-08 capture-lag6 idle37 cp4 x126.5 taken@tick5097 Dad x135.1: tap0 -> bbi-pakhala
+FAIL BBI-08 capture-lag6 idle37 cp4 x126.5 taken@tick5097 Dad x135.1: tap6 -> bbi-pakhala
+FAIL BBI-08 capture-lag6 idle37 cp4 x126.5 taken@tick5097 Dad x135.1: tap12 -> bbi-pakhala
+FAIL BBI-08 capture-lag6 idle120 cp4 x126.5 taken@tick5180 Dad x135.1: tap0 -> bbi-pakhala
+FAIL BBI-08 capture-lag6 idle120 cp4 x126.5 taken@tick5180 Dad x135.1: tap6 -> bbi-pakhala
+FAIL BBI-08 capture-lag6 idle120 cp4 x126.5 taken@tick5180 Dad x135.1: tap12 -> bbi-pakhala
+FAIL BBI-08 capture-lag6 idle251 cp4 x126.5 taken@tick5311 Dad x135.1: tap0 -> bbi-pakhala
+FAIL BBI-08 capture-lag6 idle251 cp4 x126.5 taken@tick5311 Dad x135.1: tap6 -> bbi-pakhala
+FAIL BBI-08 capture-lag6 idle251 cp4 x126.5 taken@tick5311 Dad x135.1: tap12 -> bbi-pakhala
+BBI-08: checked 560 plays at 5 distinct capture points, fails 12; longest stretch 13.2 s; replay worst 6.21 s [naive:2.62/2.72/2.82 fix:4.72/4.83/4.92 m0:2.21/2.27/2.33 m1:3.01/3.08/2.33 m2:6.21/6.21/6.21 m3:3.83/3.88/3.92 m4:3.79/3.92/4.05 m5:3.66/3.88/3.99 m6:2.20/2.28/2.33 m7:4.00/4.08/4.13]
+BBI-09: checked 784 plays at 7 distinct capture points, fails 0; longest stretch 22.5 s; replay worst 5.85 s [naive:3.58/3.75/3.90 fix:3.54/3.58/2.98 m0:2.69/2.76/nodeath m1:2.80/2.88/nodeath m2:2.84/3.02/3.27 m3:5.45/5.50/5.60 m4:2.94/2.62/nodeath m5:2.99/2.68/nodeath m6:2.95/3.02/nodeath m7:4.32/4.37/4.49 m8:1.21/1.28/1.38 m9:5.21/5.73/5.85 m10:2.26/2.30/2.34]
+BBI-10: checked 1456 plays at 13 distinct capture points, fails 0; longest stretch 12.3 s; replay worst 7.13 s [naive:2.89/2.97/3.08 fix:5.69/5.84/5.98 m0:6.99/7.13/6.92 m1:0.80/0.81/0.80 m2:6.21/6.21/6.21 m3:1.04/1.18/1.27 m4:3.70/3.70/3.70 m5:3.72/3.72/3.71 m6:0.69/0.69/0.69 m7:1.98/2.12/2.27 m8:3.45/3.49/3.58 m9:4.00/4.01/4.00 m10:4.23/4.08/4.08 m11:4.08/4.08/4.08 m12:0.57/0.65/0.70 m13:3.73/3.73/3.73 m14:1.47/1.51/1.56 m15:1.68/1.78/1.52 m16:5.08/5.13/5.17 m17:3.52/3.52/3.52 m18:5.03/5.08/5.15 m19:2.31/2.48/2.65 m20:3.32/3.37/3.41 m21:6.31/6.31/6.30]
+--- after the 05 checkpoint move:
+BBI-05: checked 1792 plays at 16 distinct capture points, fails 0; longest stretch 10.2 s; replay worst 9.07 s [naive:1.99/1.78/1.88 fix:0.70/0.71/0.71 m0:2.42/nodeath/nodeath m1:0.72/nodeath/nodeath m2:2.47/2.23/nodeath m3:7.97/8.03/8.06 m4:0.77/0.82/0.87 m5:2.13/2.18/2.26 m6:0.58/0.58/0.58 m7:2.20/nodeath/1.97 m8:1.97/1.97/0.83 m9:0.84/0.90/0.95 m10:0.81/0.81/0.81 m11:6.54/6.59/6.64 m12:1.29/1.30/1.29 m13:6.38/1.53/9.07 m14:4.94/4.94/4.94 m15:1.00/1.01/nodeath m16:1.18/1.43/nodeath m17:1.14/1.31/1.51]

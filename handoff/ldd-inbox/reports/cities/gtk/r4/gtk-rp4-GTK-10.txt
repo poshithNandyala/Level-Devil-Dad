@@ -1,0 +1,1 @@
+GTK-10 | 0 | 89.7s | 14 cps | longest 12.5s | max replay 12.07s cp9 stop@70.25s gtk-nadi | over7.5: cp6=10.97 (stop@46.25s gtk-deewar); cp8=9.13 (run+jump@62.10s gtk-hiun); cp9=12.07 (stop@70.25s gtk-nadi); cp10=10.57 (run+jump@81.50s gtk-jhadu) | calm fails: none | hot: none

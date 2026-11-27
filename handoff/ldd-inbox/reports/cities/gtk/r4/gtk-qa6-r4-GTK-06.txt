@@ -1,0 +1,1 @@
+GTK-06: checked 1008 plays at 9 distinct capture points, fails 0; longest stretch 8.4 s; replay worst 2.38 s [naive:1.57/1.62/1.67 fix:1.45/1.50/1.11 m0:1.23/1.23/1.23 m1:1.02/1.02/1.02 m2:0.85/1.88/1.96 m3:2.38/1.61/1.66 m4:1.56/1.61/1.66]

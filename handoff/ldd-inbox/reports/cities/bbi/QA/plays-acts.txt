@@ -1,0 +1,630 @@
+CPD BBI-01 cp0@8.3:1.7!(gap) cp1@15.6:14.4(bbi-nala) cp2@33.9:39.1(bbi-nala) cp3@48.3:2.7!(gap) cp4@75.4:0.0!(gap) cp5@92.3:99.0()
+CPD BBI-02 cp0@32.8:22.4(bbi-ball) cp1@68.8:5.2(bbi-turf) cp2@98.8:39.8(bbi-roll-back) cp3@131.8:6.8(bbi-roll-back)
+CPD BBI-03 cp0@32.8:5.2(bbi-rangapani) cp1@56.8:5.2(bbi-rangapani) cp2@83.8:99.0()
+CPD BBI-04 cp0@32.8:4.3!(bbi-agni) cp1@48.8:0.0!(bbi-jhala) cp2@63.8:0.0!(bbi-jhala) cp3@67.8:10.2(bbi-jhala)
+CPD BBI-05 cp0@32.8:4.2!(bbi-jaanta) cp1@44.8:3.9!(bbi-sila) cp2@60.4:12.4(bbi-gadi) cp3@60.9:11.9(bbi-gadi) cp4@82.8:4.2!(bbi-tenda) cp5@101.4:5.4(bbi-chheli) cp6@124.8:3.2!(bbi-jaanta) cp7@133.8:15.2(bbi-jaanta) cp8@153.8:11.9(bbi-pani) cp9@158.8:6.9(bbi-pani) cp10@182.8:3.2!(bbi-patra) cp11@204.9:18.7(bbi-bail) cp12@230.8:12.2(bbi-tenda) cp13@235.3:7.7(bbi-tenda) cp14@257.4:4.6(bbi-jaanta) cp15@278.8:5.2(bbi-jaanta) cp16@295.8:8.2(bbi-sila)
+CPD BBI-06 cp0@32.8:7.2(bbi-ranga) cp1@56.9:6.1(bbi-ranga) cp2@79.1:0.0!(bbi-ranga) cp3@98.8:6.2(bbi-ranga) cp4@119.8:6.2(bbi-ranga) cp5@139.8:8.2(bbi-ranga) cp6@161.8:4.7(bbi-rachh) cp7@185.8:9.2(bbi-tana)
+CPD BBI-07 cp0@32.8:3.2!(bbi-nacha) cp1@58.8:3.2!(bbi-nacha) cp2@74.8:6.2(bbi-nacha) cp3@92.7:4.3!(bbi-nacha) cp4@115.1:4.9(bbi-nacha) cp5@131.8:15.2(bbi-bagudi) cp6@155.8:4.7(bbi-pada) cp7@173.8:7.2(bbi-nacha) cp8@191.8:3.2!(bbi-nacha) cp9@209.8:7.2(bbi-nacha) cp10@232.8:7.2(bbi-nacha) cp11@252.8:9.2(bbi-nacha) cp12@274.9:7.1(bbi-thrown) cp13@304.8:7.2(bbi-nacha) cp14@321.3:5.7(bbi-nacha) cp15@337.8:7.2(bbi-pothi) cp16@377.8:3.2!(bbi-nacha) cp17@403.8:3.2!(bbi-nacha) cp18@424.8:9.2(bbi-kick)
+CPD BBI-08 cp0@32.8:7.2(bbi-pakhala) cp1@56.8:3.2!(bbi-pakhala) cp2@78.8:3.2!(bbi-pakhala) cp3@98.8:3.2!(bbi-pakhala) cp4@129.8:7.2(bbi-pakhala) cp5@156.8:6.2(bbi-pakhala)
+CPD BBI-09 cp0@33.1:1.9!(bbi-khai) cp1@57.1:4.9(bbi-udaya) cp2@101.4:0.0!(bbi-khai) cp3@127.1:1.9!(bbi-ulta) cp4@153.1:4.9(bbi-udaya) cp5@184.8:5.2(bbi-ara) cp6@219.4:12.6(bbi-ghoda)
+CPD BBI-10 cp0@44.9:3.1!(bbi-patra) cp1@66.8:4.3!(bbi-sinha) cp2@92.8:5.2(bbi-rangapani) cp3@120.8:2.2!(bbi-sadha) cp4@142.9:8.1(bbi-ranga) cp5@164.8:4.7(bbi-rachh) cp6@189.8:15.2(bbi-ghera) cp7@213.8:6.2(bbi-nacha) cp8@231.8:3.2!(bbi-nacha) cp9@246.8:7.2(bbi-thrown) cp10@276.8:2.9!(bbi-pani) cp11@296.8:7.2(bbi-pakhala) cp12@320.8:7.2(bbi-ghurni) cp13@341.8:3.2!(bbi-nacha) cp14@357.8:6.2(bbi-khai) cp15@386.1:4.9(bbi-udaya) cp16@420.4:3.6!(bbi-ranga) cp17@430.8:4.2!(bbi-nacha) cp18@448.8:9.2(bbi-kainchi)
+   ✓ qa bbi cp distance 4350ms
+   × qa bbi rec 31ms
+== BBI-01 win=25.4s par=30 lives=- doorX=undefined
+  room: The gardener on the median turns his hose on the road, and his jet chases a dad who walks: the tile it wets slides you straight into the open drain. Stand still and he leaves you alone. Go while he faces his pots, freeze if he turns, and hop the drain. The second gardener has his back to you, but the tile at the lip of the next drain is still wet: jump from the tile before it. Then the steps, the 
+  door(?): 
+== BBI-02 win=26.4s par=35 lives=- doorX=147
+  room: The keeper is your way over the drain: stand on his pads and he dives right across at the ball, carrying you. The ball hits whoever is on his front pad, so ride the back one. The save rebounds the ball on to the far side, off the boards and back at him: stay on him until it has come back to his pad, then step off before he gets up.
+  bbi02-corner@32: A penalty corner: the injector pushes the ball in, the stopper stops it dead, and then it is drag-flicked back the way you came, at chest height. Never wait on the goal side for the flick: cross the stopper’s spot, hopping the still ball, while it sits there.
+  bbi02-dive@68: Another keeper by another drain. Same as before: his back pad, the dive, the rebound off the boards and back, then step off before he gets up.
+  bbi02-chhal@98: A dummy: on the first corner the stopper lets the ball run, and it rolls on along the turf at you. Hop it, then wait for the next corner, where he stops it, and go over the still ball.
+  door(bbi-turf-roll): Match over: the groundsmen are lifting the turf, from both ends at once. A roll only takes turf, so stand on the bare strip where it is already up, and wait for both rolls to stop.
+== BBI-03 win=25.9s par=32 lives=- doorX=96
+  room: A parasol only opens when a customer comes to its shop, one after another along the street. The silk is slippery: you slide to the edge and into the dye. Stand only on the cut-out sewn on top, and it’s in a different place on each one. The third shopkeeper sells his cut-out while you stand on it: don’t wait there, go on to the fourth as soon as it opens.
+  bbi03-gali@32: Another street, shoppers coming back the other way: the far parasol opens first, but it’s too far. Wait on the near one’s cut-out for the middle one, then the far one opens again.
+  bbi03-mela@56: The far end of the street, four more parasols. This time it is the last shopkeeper who sells his cut-out: land on it and hop straight off to the bank.
+  door(bbi-lantern-drop): A big appliqué lantern hangs over the door step. As you come up, the shopkeeper lets it down to show it off, right on the step: stop short, let it come down and go back up, then walk under.
+== BBI-04 win=29.3s par=36 lives=- doorX=80
+  room: Stand still for half a second and the silversmith solders a glowing curl on the tile ahead of you: on the bench it’s a wall that burns while it glows. So don’t stop for the blowtorch: slow down and pass under it between bursts. At the quench trough, stop at the edge: there each curl he adds is a flat piece of bridge. Wait for each to stop glowing, step on, stop again.
+  bbi04-karkhana@32: The rest of the workshop: a torch, a trough, another torch and a trough with a torch hanging over its middle. Keep moving under the torches, stop at each trough’s edge to build the bridge, and wait between bursts before you build past the torch over the second one.
+  door(bbi-curl-stair): The door is up in a filigree box on a high shelf, out of reach. Stand still in front of it: the wall he solders is your step. Let it stop glowing, climb it, jump up.
+== BBI-05 win=60.2s par=72 lives=- doorX=308
+  room: It’s Raja: everything is still, and nothing in the village moves unless you start it. Step on the hand mill, the rice pounder, the grinding stone or the cart and you’ve set it going, with you on it. Touch nothing: jump the channel and the pit from the bank and the straw, climb the step itself, hop the cart. The door isn’t the locked one on the verandah: it’s below, behind the step.
+  bbi05-dhenki@32: The rice pounder lies across the husk pit like a plank: don’t step on it. Get up on the straw and jump the pit from there. Then a step with the grinding stone in front of it: don’t use the slab as a stair, jump straight up the step.
+  bbi05-gadi@58: A bullock cart in the lane with the bullocks lying by it, and a hayloft beam low over the lane after it. Climb on the cart and the bullocks get up and pull it, and you, into the beam. Jump over the cart without touching it and walk on under the beam.
+  bbi05-tenda@82: A wall too high to jump, and the well’s water lift beside it. This once, start a machine on purpose: step on the bucket, ride it up, and step off on to the wall before it swings back down into the well.
+  bbi05-chheli@98: Raja is a holiday for people, not for the goat. Each time it walks along the rice pounder, the pounder’s head swings up over the pit. Wait on the straw until the goat has crossed back to your side, then jump.
+  bbi05-khala@124: The threshing yard, everything close together: jump the channel over its hand mill, hop the cart without touching it, then up on the straw and over the pounder’s pit.
+  bbi05-thaka@158: Someone left the well sweep swinging, and in Raja week nobody will stop it. Its stone sweeps the lane, too wide to get under. Its foot plate stops it where it is: step on the plate when the stone is at its top, never when it is low, and walk under.
+  bbi05-patra@182: Palm leaves over the ditch, all alike. The scribe’s lines only show once his soot is rubbed in: wait for him to pass. The leaves he wrote on hold; the blank ones are rotten. Step on the written ones and jump the blank.
+  bbi05-bail@204: The bullocks lie right across the lane under the hayloft. Touch their cart and they get up and walk on down it, slowly: step back at once and follow them, well behind the cart, until they turn out through the gate.
+  bbi05-mama@230: An uncle keeps the holiday: whatever machine you start, he walks over and stops it, the nearest first, then sits by it a while to grumble. Start the little grinder by the well first and step off it at once; while he deals with it, ride the water lift up the wall.
+  bbi05-ganna@256: The mill shares its belt with the cane crusher over the channel: start the mill and the crusher’s rollers turn too, right where you land. Jump up into the belt on its pulley first to knock it off, then start the mill on its far half.
+  bbi05-chakki@278: A channel too wide to jump, and a big hand mill on the bank. Start it on purpose: stand on its far half, and it spins you forward over the water. On the near half it throws you back.
+  door(bbi-behind-step): The house’s front door up on the verandah is locked, and the grinding roller sits right where you’d land. The door you want is down below, behind the step: walk under the verandah.
+== BBI-06 win=50.0s par=60 lives=- doorX=198
+  room: Each thread over the dye carries one patch you can stand on, and every beat of the loom moves every patch by its own step: hop on them and the next beat takes yours away. Count the beats: one in five, they all line up into the motif, a bridge flush with the floor. But that is when the weaver throws the shuttle across: let it fly past, then walk over before the next beat.
+  bbi06-tana@32: A wider loom, and on its motif beat the shuttle goes across and comes back. Wait for both, then cross before the beat ends.
+  bbi06-sidhi@56: This motif is a staircase, not a bridge: on its beat the patches line up as steps rising to the raised bank. Hop up them, one each, before the beat ends.
+  bbi06-patta@76: Painted panels by the pits. Each one shows the NEXT pit, not the one beside it: the first pit holds all over, and its panel shows the second. Remember it. The panel at the second pit is showing what comes after.
+  bbi06-sutra@98: Two threads on this loom were never dyed: when the motif lines up there’s a hole in it, two threads wide. Let the shuttle go by first, as ever, then walk out and hop the hole.
+  bbi06-rachh@119: Here the beater sweeps the warp at the end of the motif beat. Let the shuttle by, then cross at once: be off the threads before the beater comes.
+  bbi06-tantu@139: This weaver throws the shuttle over and back and the beater follows it straight away: there is no time to walk the motif between them. Snap a thread and she stops both to tie it. Jump up into the plain white thread over the bank, not a coloured one over the pit: a snapped coloured thread pulls the whole motif apart. Then walk the motif.
+  bbi06-palaa@161: The shuttle box at the edge runs from you: come at it and it jumps away over the pit, then comes back along the warp. Don’t wait for it at the edge: when it gets there the beater beats the bank. Jump on where it is, out over the pit, and ride it back and across.
+  door(bbi-motif-door): The door is behind a curtain of warp threads. Only on the motif beat do they part into the door’s shape: walk through then, and don’t be in it when the next beat closes it.
+== BBI-07 win=99.3s par=114 lives=act doorX=437
+  room: While the drum plays, the dancers whirl: there’s nothing to stand on. When it stops they hold a pose: a wheel, then a bridge across the pit, then a tower. Wait for the bridge, but don’t wait for it to finish forming: walk on the moment the drum stops, because when the drummer lifts his sticks and starts again, the pose breaks and throws whoever is on it.
+  bbi07-mardala@32: Two troupes with a little bank between them, each to its own drummer. Cross the first on its bridge, then stand on the bank and wait: the second troupe’s bridge comes in its own time.
+  bbi07-deepa@58: A string of oil lamps hangs low over this pit. The wheel comes first, but its top puts your head in the lamps: wait for the bridge and walk under them.
+  bbi07-bandha@74: A long pit: its bridge only just lasts the walk, so be at the edge when the drum stops and go straight over. Then a high bank: only the wheel pose is tall enough. Jump on to its top when it forms and up to the bank before the drum.
+  bbi07-dui-baja@112: Two drummers: one by you, one across the pit. The troupe follows the one across the pit: go when he stops, not when yours does. And watch his sticks for the restart, not your drummer’s.
+  bbi07-bagudi@131: Bagudi in the yard. The raider’s touch makes you “it”, and the line of boys tackles whoever is it. You can’t hop him: he jumps too. Let him tag you, run back over the chalk line to pass it on, then walk through.
+  bbi07-pada@155: This troupe never lies down: their tower stands at the far end and falls over towards you as the bridge, and its top lands right where you’d wait at the edge. Wait a little way back, by the scuffs, and go the moment it lands: it stands up again soon.
+  bbi07-jodi@173: Two troupes share each pit, half the bridge each, and the half whose drummer stopped first gets up first. Watch which drummer stops first. If it is the far one, go as the near half lands. If it is the near one, step on to his half the moment it lands, even though it ends in mid-air, and walk: the far half lands under your next step.
+  bbi07-gadiba@209: On a drum roll (the bridge shivers first) this line of boys turns over towards the drummer on your bank. If it shivers under you, turn round and walk his way: you ride the turn back to the bank. The next stop has no roll: cross on that one.
+  bbi07-hulahuli@232: The women on the far bank cheer some poses and stay silent for others. A silent bridge is too short to cross; a cheered one holds as long as the cheer. Go at once on a cheered stop: as the cheer ends the boy at the far end rises to bow.
+  bbi07-sajaghara@252: The dancers’ tent is safe while they dance, but at the drum’s stop the spare boys spring out of the pit mouth and leap into it. Wait inside while the drum plays, and at the stop walk straight out of the flap on to the bridge, under their leap. Not at the edge: that is where they come up.
+  bbi07-ghungur@274: Between pieces the lamps go out and the boys whirl in new places in the dark. Don’t go by where you saw them: listen. Jump where the ankle bells ring, walk where it is quiet, and be off the floor before the lamps come back and the next piece sweeps it.
+  bbi07-kachha@304: Look at their waists while they whirl. Pleats tucked up (kachha) means the line rolls the moment it lies down: let that stop go and cross on the next. Loose skirts lie still, but not for long: on those, go at once.
+  bbi07-pothi@337: A palm-leaf screen lies over the pit. Each leaf is pinned at its ends and folds at the hinge in the middle the moment you stand there: hop every hinge, end to end. At the top end, wait for the troupe beyond to stop before you step down on to them.
+  bbi07-shrinkhala@377: One long pit, three troupes and no bank between them. Each drummer stops as you reach his part, and each bridge only lasts the walk over it: once on, keep walking to the far side without stopping.
+  bbi07-dweepa@403: A lamp plinth stands in the middle of this pit. Cross the first troupe’s bridge to it and wait there: the second troupe makes a tower before its bridge comes.
+  door(bbi-pose-gate): The troupe dances across the doorway, and its last pose is a gate over the door. Wait while they whirl; walk through under the gate as soon as the drum stops.
+== BBI-08 win=46.6s par=60 lives=- doorX=171
+  room: The settled rice is a floor only until the water goes in: the jug on the left rim is already tilting, and it tips the moment you step in. Then the grains float apart. Stand on a badi before it pours: badi float. When the second jug on the right rim pours, the badi under it goes under and the current turns: be on the middle one, not the one by the right rim. When the water settles it drifts you bac
+  bbi08-phinga@32: The server on the far bank tosses badi into the trough, faster and further each time: the first lands soft and floats across, the second goes under, and the rest land on your bank. Do not stand and watch: hop on the first as it lands and ride it over.
+  bbi08-bhanwar@56: This bowl is being emptied through a hole by the far rim. The badi still float, but the water carries each one to the hole and down. Ride one, and hop up on to the far rim at the very last moment: any sooner and the rim is out of reach.
+  bbi08-dati@78: The hole in this bowl is only a badi wide, and the far rim is too far from it to reach. Don’t ride your badi to the hole: hop across to the other one, let yours go down and plug the hole, and the water stops.
+  bbi08-dui@98: Four badi and two jugs held over two of them. Watch where the jugs hang and ride one of the other two.
+  bbi08-ghurni@129: The uncle is stirring: every badi goes round. From the side it is slow at the edge of its circle and fast through the middle. Hop on and off only at the slow edge, and do not sit on one for long: his spoon scoops it.
+  door(bbi-leaf-plate): A trough of pakhala before the door with a sal-leaf plate floating in it. Ride the plate across, but step off on to the door’s step before it reaches the far end: there it turns over.
+== BBI-09 win=58.7s par=70 lives=- doorX=234
+  room: The wheel never turns: the plinth does the moving. Stand on the stone horses at its front and the chariot slides across the moat and slams into the temple wall, throwing everyone on it into the carvings. Start it, then jump up on to the wheel’s hub: the hub stands still while the plinth slides under it. Once it has stopped, go up on to the wall.
+  bbi09-ghoda@32: A short chariot and a short slide: the hub comes over almost at once. Be ready on the horses.
+  bbi09-udaya@56: These spokes lie under the water and rise one at a time, each only after you have stood on the one before. Don’t hurry: wait on each until the next is up, then go at once: three seconds on one and it goes back under.
+  bbi09-ratha@98: A second chariot, its hub further along. Start it from the horses, jump up to the hub as it comes over, wait for the slam, then up on to the wall.
+  bbi09-ulta@126: This chariot doesn’t stay: a second after it slams the wall its plinth sinks into the moat. From the hub, go straight up on to the wall; don’t step down on to the stone.
+  bbi09-asta@152: Down to the far bank on rising spokes: each comes up only once you have stood on the one before. Wait for each, and go the moment it is up.
+  bbi09-ara@184: The spokes of a half-sunk wheel are steps up to the terrace, numbered like hours. Once you’re on spoke 1 they sink in order behind you, one every two-thirds of a second: don’t stop to check each one, climb on steadily, one hop after another.
+  door(bbi-horse-gap): The door stands between two stone horses on their own little plinths. Touch a horse and the plinths slide together, closing the gap: jump right over the near horse into the gap without landing on it.
+== BBI-10 win=94.9s par=114 lives=act doorX=461
+  room: Ride the keeper’s back pad: at the flick he dives right across the moat and puts you down by the stone plinth. Hop on to it and it slides for the temple wall: go to its front and jump up on to the wheel’s hub as it comes over, and let the plinth slam under you. Then up on to the wall.
+  bbi10-patra@44: An old manuscript this time: the soot shows the worn lines, and the leaves with writing on are the rotten ones. Wait for the soot, then step only on the blank leaves.
+  bbi10-chheli@66: This goat grazes quietly on the far bank, and when it comes back to your side it charges the straw. Jump while it is away and off the pounder’s beam, never when it comes back.
+  bbi10-chhata@92: Festival day: every parasol is open already, and each one is folded up when its customer comes to buy it. Don’t wait for anyone: cut-out to cut-out, straight across, before the buyers arrive.
+  bbi10-patta@120: Another painter tonight: he paints the pit beside him, not the next one, and the first pit has a rotten plank of its own. Read each panel for its own pit.
+  bbi10-tantu@142: Tonight the plain thread over the bank holds the whole motif together: snap it and the motif comes apart. Snap the first coloured thread instead, as the motif lines up: only its own patch drops, and she stops to tie it.
+  bbi10-palaa@164: The weaver is holding this shuttle for you: it will not run. Step straight on to it and it flies you across. Hang about at the edge waiting for it to run and the beater beats the bank.
+  bbi10-bagudi@189: Bagudi on the stadium lawn, the other way round: the boys let “it” through and tackle anyone else, and only for a moment after the tag. Let him tag you and walk straight through; don’t go back to the line.
+  bbi10-pada@213: Tonight the tower stands at your edge and falls away from you, and it gets up again quickly. Nothing lands on your side: wait right at the edge and go the moment it is down.
+  bbi10-dui-baja@231: Two drummers again, but tonight the one across the pit is out of step: this troupe follows the drummer by you. Go when he stops.
+  bbi10-ghungur@246: Look where the bells hang tonight: on strings from the drummer’s frame, not on the boys. They ring over the empty floor, and the boys whirl in the quiet. Jump where it is quiet, walk under the bells.
+  bbi10-thaka@276: This sweep stands over a ditch. Stopped at its top it leaves you only the ditch, and a raised stone tips if you climb on it. Stop it low: then the stone rests on both rims, and it is your bridge.
+  bbi10-phinga@296: This server starts hard: his first throws land on your bank and the first in the water goes under. He slows down as he goes. Wait back from the rim, then ride the first soft one.
+  bbi10-ghurni@320: Tonight he stirs the other way: every badi idles through the middle of its swing and is flung round at the edges. Hop on, across and off only in the middle.
+  bbi10-deepa@341: The lamps hang right down to the bridge here: walking under them on the bridge burns you. The wheel’s top rides above them: on to the wheel, and off to the far bank before the drum.
+  bbi10-chakra@357: Look at the hub: tonight it stands on a post on the stone and slides with it into the wall. The wheel’s rim above it stays still: from the hub, go up on to the rim before the slam, then down on to the stone and up the wall.
+  bbi10-udaya@385: These spokes rise one after another only while you wait on the bank: step off it and the next one stops. Wait there until the whole stair is up, then climb it straight up: three seconds on one and it goes back under.
+  bbi10-tana@417: The weaver is away: no shuttle today, cross on the motif. Then this drummer plays while his troupe holds the pose: go when the bridge forms, never at his stop.
+  door(bbi-ribbon-snip): A ribbon across the gate, and a pair of ceremonial scissors snipping at it every couple of seconds. Wait while they close, then walk through as they open.
+   ✓ qa bbi acts 4203ms
+   ✓ rooms (60)
+     ✓ MUM-2 Rush Hour (4)
+       ✓ human timing clears it 90%+ of the time 604ms
+     ✓ MUM-3 Weighing Machine (4)
+       ✓ human timing clears it 90%+ of the time 853ms
+     ✓ MUM-4 Footbridge (4)
+       ✓ human timing clears it 90%+ of the time 483ms
+     ✓ MUM-5 Last Local (4)
+       ✓ human timing clears it 90%+ of the time 608ms
+     ✓ BLR-1 Auto! (4)
+       ✓ human timing clears it 90%+ of the time 717ms
+     ✓ BLR-3 Hail It (4)
+       ✓ human timing clears it 90%+ of the time 519ms
+     ✓ BLR-4 Hold Still (4)
+       ✓ human timing clears it 90%+ of the time 359ms
+     ✓ BLR-5 Silk Board (4)
+       ✓ human timing clears it 90%+ of the time 732ms
+     ✓ DEL-1 No Jumping (4)
+       ✓ human timing clears it 90%+ of the time 476ms
+     ✓ DEL-2 Walkway (4)
+       ✓ human timing clears it 90%+ of the time 397ms
+     ✓ DEL-3 Ulta Pulta (4)
+       ✓ human timing clears it 90%+ of the time 584ms
+     ✓ DEL-4 Tap Your Card (4)
+       ✓ human timing clears it 90%+ of the time 510ms
+     ✓ DEL-5 Rajiv Chowk (4)
+       ✓ human timing clears it 90%+ of the time 353ms
+   reach: door@1000000000:?
+   reach: bbi02-corner@32:5.5  bbi02-dive@68:9.7  bbi02-chhal@98:14.6  door@147:?
+   reach: bbi03-gali@32:6.7  bbi03-mela@56:14.1  door@96:?
+   reach: bbi04-karkhana@32:10.4  door@80:?
+   reach: bbi05-dhenki@32:3.6  bbi05-gadi@58:6.7  bbi05-tenda@82:9.4  bbi05-chheli@98:15.9  bbi05-khala@124:23.9  bbi05-thaka@158:27.9  bbi05-patra@182:31.2  bbi05-bail@204:40.1  bbi05-mama@230:47.8  bbi05-ganna@256:54.8  bbi05-chakki@278:57.4  door@308:?
+   reach: bbi06-tana@32:7.1  bbi06-sidhi@56:14.2  bbi06-patta@76:19.6  bbi06-sutra@98:22.4  bbi06-rachh@119:28.4  bbi06-tantu@139:34.4  bbi06-palaa@161:39.8  door@198:?
+   reach: bbi07-mardala@32:7.1  bbi07-deepa@58:12.5  bbi07-bandha@74:18.8  bbi07-dui-baja@112:31.0  bbi07-bagudi@131:34.5  bbi07-pada@155:39.0  bbi07-jodi@173:43.1  bbi07-gadiba@209:50.2  bbi07-hulahuli@232:57.4  bbi07-sajaghara@252:63.0  bbi07-ghungur@274:66.8  bbi07-kachha@304:70.2  bbi07-pothi@337:79.5  bbi07-shrinkhala@377:85.3  bbi07-dweepa@403:90.5  door@437:?
+   reach: bbi08-phinga@32:10.6  bbi08-bhanwar@56:15.5  bbi08-dati@78:22.2  bbi08-dui@98:27.0  bbi08-ghurni@129:38.5  door@171:?
+   reach: bbi09-ghoda@32:4.8  bbi09-udaya@56:8.7  bbi09-ratha@98:28.1  bbi09-ulta@126:32.5  bbi09-asta@152:36.7  bbi09-ara@184:52.1  door@234:?
+   reach: bbi10-patra@44:6.9  bbi10-chheli@66:15.8  bbi10-chhata@92:19.9  bbi10-patta@120:23.5  bbi10-tantu@142:26.5  bbi10-palaa@164:31.8  bbi10-bagudi@189:34.8  bbi10-pada@213:37.5  bbi10-dui-baja@231:41.5  bbi10-ghungur@246:44.5  bbi10-thaka@276:48.0  bbi10-phinga@296:51.8  bbi10-ghurni@320:59.5  bbi10-deepa@341:65.4  bbi10-chakra@357:68.8  bbi10-udaya@385:73.3  bbi10-tana@417:82.6  door@461:?
+   ✓ qa bbi layout 4046ms
+   ✓ frozen behaviour (138)
+     ✓ TVM (11)
+       ✓ TVM-01 behaves as frozen (re-freeze on purpose: LDD_REFREEZE=TVM) 520ms
+       ✓ TVM-10 behaves as frozen (re-freeze on purpose: LDD_REFREEZE=TVM) 303ms
+     ✓ KVT (9)
+       ✓ KVT-07 behaves as frozen (re-freeze on purpose: LDD_REFREEZE=KVT) 490ms
+     ✓ RPR (9)
+       ✓ RPR-04 behaves as frozen (re-freeze on purpose: LDD_REFREEZE=RPR) 642ms
+     ✓ RNC (9)
+       ✓ RNC-04 behaves as frozen (re-freeze on purpose: LDD_REFREEZE=RNC) 341ms
+   × qa bbi cp 31522ms
+REC BBI-01 route won  t=3054 x=111.6 
+REC BBI-01 naive dead bbi-nala t=353 x=29.7 
+REC BBI-01 fix dead bbi-nala t=1671 x=72.7 
+REC BBI-01 m0 dead bbi-nala t=481 x=29.8 keep walking past him while he faces the road, as Tara says
+REC BBI-02 route won  t=3167 x=146.6 
+REC BBI-02 naive dead bbi-ball t=239 x=18.5 
+REC BBI-02 fix dead bbi-rebound t=377 x=26.0 
+REC BBI-02 m0 dead bbi-roll t=2916 x=143.5 door: walk on to the door
+REC BBI-02 m1 dead bbi-roll-back t=2893 x=136.2 door: wait back on the grass for the rolls
+REC BBI-02 m2 dead bbi-ball t=932 x=51.5 bbi02-corner: walk straight on
+REC BBI-02 m3 dead bbi-ball t=1344 x=81.5 bbi02-dive: stand on the keeper’s front pad
+REC BBI-02 m4 dead bbi-rebound t=1449 x=86.6 bbi02-dive: off the keeper the moment he lands
+REC BBI-02 m5 dead bbi-ball t=1979 x=114.2 bbi02-chhal: wait at the stopper for the ball to stop
+REC BBI-03 route won  t=3105 x=95.6 
+REC BBI-03 naive dead bbi-rangapani t=90 x=6.8 
+REC BBI-03 fix dead bbi-silk t=188 x=6.1 
+REC BBI-03 m0 dead bbi-peeled t=857 x=17.3 wait on the third parasol’s cut-out
+REC BBI-03 m1 dead bbi-rangapani t=922 x=40.3 bbi03-gali: jump for the first parasol at once
+REC BBI-03 m2 dead bbi-silk t=1069 x=39.1 bbi03-gali: wait for the customer, land on the silk away from the cut-out
+REC BBI-03 m3 dead bbi-rangapani t=1805 x=64.3 bbi03-mela: jump for the first parasol at once
+REC BBI-03 m4 dead bbi-silk t=2010 x=67.3 bbi03-mela: wait for the customer, land on the silk away from the cut-out
+REC BBI-04 route won  t=3516 x=79.6 
+REC BBI-04 naive dead bbi-agni t=107 x=8.7 
+REC BBI-04 fix dead bbi-kunda t=303 x=19.6 
+REC BBI-04 m0 dead bbi-jhala t=156 x=7.3 stop and wait for the torch, then go
+REC BBI-04 m1 dead bbi-agni t=1468 x=36.9 bbi04-karkhana: stop under the first torch to look
+REC BBI-04 m2 dead bbi-kunda t=1428 x=45.1 bbi04-karkhana: keep moving and jump the trough
+REC BBI-05 route won  t=7222 x=307.6 
+REC BBI-05 naive dead bbi-jaanta t=239 x=13.9 
+REC BBI-05 fix dead bbi-sila t=7165 x=303.4 
+REC BBI-05 m0 dead bbi-gadi t=1118 x=72.3 climb on the cart and ride it
+REC BBI-05 m1 dead bbi-sila t=689 x=48.3 bbi05-dhenki: jump the pit, then use the stone as a stair
+REC BBI-05 m2 dead bbi-gadi t=1124 x=72.3 bbi05-gadi: climb on to the cart
+REC BBI-05 m3 dead bbi-tenda t=1990 x=88.9 bbi05-tenda: stay on the bucket
+REC BBI-05 m4 dead bbi-chheli t=2035 x=106.4 bbi05-chheli: jump the pit from the straw at once
+REC BBI-05 m5 dead bbi-sinha t=2198 x=111.6 bbi05-chheli: jump once the pounder lies flat
+REC BBI-05 m6 dead bbi-jaanta t=2946 x=128.4 bbi05-khala: walk on into the yard
+REC BBI-05 m7 dead crushed t=3264 x=145.4 bbi05-khala: jump the mill, then climb over the cart
+REC BBI-05 m8 dead bbi-pathara t=3588 x=175.4 bbi05-thaka: touch nothing: go under the stone between sweeps
+REC BBI-05 m9 dead bbi-pani t=3453 x=165.5 bbi05-thaka: stop it the moment you reach the plate
+REC BBI-05 m10 dead bbi-patra t=3843 x=189.3 bbi05-patra: walk straight on
+REC BBI-05 m11 dead bbi-khali t=4531 x=189.3 bbi05-patra: wait for the soot, then walk straight on
+REC BBI-05 m12 dead bbi-bail t=4975 x=211.6 bbi05-bail: push on past the cart
+REC BBI-05 m13 dead bbi-mama t=6504 x=244.9 bbi05-mama: ride the water lift, as before
+REC BBI-05 m14 dead bbi-dhakka t=6331 x=243.7 bbi05-mama: start the grinder and wait by it to see what he does
+REC BBI-05 m15 dead bbi-ganna t=6736 x=270.6 bbi05-ganna: start the mill and ride it over, as before
+REC BBI-05 m16 dead bbi-dhan t=6795 x=265.5 bbi05-ganna: knock the belt off, then jump the channel yourself
+REC BBI-05 m17 dead bbi-dhan t=7022 x=287.5 bbi05-chakki: jump the channel from the bank
+REC BBI-06 route won  t=6006 x=197.6 
+REC BBI-06 naive dead bbi-ranga t=128 x=10.3 
+REC BBI-06 fix dead bbi-shuttle t=476 x=9.1 
+REC BBI-06 m0 dead bbi-ranga t=977 x=41.2 bbi06-tana: walk straight on
+REC BBI-06 m1 dead bbi-shuttle t=1419 x=41.6 bbi06-tana: step on the moment the motif lines up, and look
+REC BBI-06 m2 dead bbi-ranga t=1820 x=64.3 bbi06-sidhi: walk straight on
+REC BBI-06 m3 dead bbi-sadha t=2570 x=92.3 bbi06-patta: walk straight over both pits
+REC BBI-06 m4 dead bbi-chitra t=2590 x=91.7 bbi06-patta: follow the panel beside the second pit
+REC BBI-06 m5 dead bbi-sutra t=3283 x=110.3 bbi06-sutra: let the shuttle by, then walk across
+REC BBI-06 m6 dead bbi-shuttle t=3166 x=105.9 bbi06-sutra: go at once and hop the hole
+REC BBI-06 m7 dead bbi-ranga t=3517 x=127.3 bbi06-rachh: walk straight on
+REC BBI-06 m8 dead bbi-shuttle t=3884 x=126.1 bbi06-rachh: step on the moment the motif lines up, and look
+REC BBI-06 m9 dead bbi-tantu t=4617 x=150.4 bbi06-tantu: snap the nearest thread, from the edge
+REC BBI-06 m10 dead bbi-rachh t=4684 x=147.4 bbi06-tantu: leave the loom alone and time the shuttle
+REC BBI-06 m11 dead bbi-ranga t=4928 x=172.3 bbi06-palaa: run at the shuttle and jump on
+REC BBI-06 m12 dead bbi-rachh t=5268 x=167.7 bbi06-palaa: wait at the edge for it to come back to you
+REC BBI-07 route won  t=11916 x=436.7 
+REC BBI-07 naive dead bbi-nacha t=162 x=12.7 
+REC BBI-07 fix dead bbi-thrown t=737 x=15.2 
+REC BBI-07 m0 dead bbi-nacha t=926 x=37.3 bbi07-mardala: walk straight on
+REC BBI-07 m1 dead bbi-thrown t=1219 x=37.8 bbi07-mardala: wait for the whole bridge, then stop on it
+REC BBI-07 m2 dead bbi-nacha t=1573 x=63.3 bbi07-deepa: walk straight on
+REC BBI-07 m3 dead bbi-deepa t=1726 x=62.3 bbi07-deepa: stand on the wheel
+REC BBI-07 m4 dead bbi-nacha t=2370 x=82.2 bbi07-bandha: walk straight on
+REC BBI-07 m5 dead bbi-thrown t=3354 x=101.3 bbi07-bandha: take the second troupe’s bridge to the high bank
+REC BBI-07 m6 dead bbi-nacha t=3846 x=121.3 bbi07-dui-baja: go when the drummer by you stops
+REC BBI-07 m7 dead bbi-thrown t=4225 x=121.7 bbi07-dui-baja: go on the far drummer’s stop, but take your time
+REC BBI-07 m8 dead bbi-bagudi t=4358 x=146.6 bbi07-bagudi: walk straight on
+REC BBI-07 m9 dead bbi-chhuin t=4513 x=146.6 bbi07-bagudi: hop the raider
+REC BBI-07 m10 dead bbi-pada t=4963 x=161.4 bbi07-pada: wait at the edge for the bridge
+REC BBI-07 m11 dead bbi-thrown t=5197 x=167.1 bbi07-pada: wait well back, then go when it lands
+REC BBI-07 m12 dead bbi-nacha t=5748 x=196.2 bbi07-jodi: wait for the whole bridge, then walk
+REC BBI-07 m13 dead bbi-adha t=6008 x=198.8 bbi07-jodi: go the moment the second half lands
+REC BBI-07 m14 dead bbi-ulta-gadi t=6420 x=227.4 bbi07-gadiba: go at the stop and walk on through the roll
+REC BBI-07 m15 dead bbi-gadi-tala t=6390 x=219.7 bbi07-gadiba: stand still on it when it shivers
+REC BBI-07 m16 dead bbi-thrown t=7249 x=245.1 bbi07-hulahuli: go at the first stop, as taught
+REC BBI-07 m17 dead bbi-kick t=7551 x=246.6 bbi07-hulahuli: wait for the cheer to swell, then go
+REC BBI-07 m18 dead bbi-saja t=7864 x=258.4 bbi07-sajaghara: shelter in the tent and wait there for the bridge
+REC BBI-07 m19 dead bbi-dauda t=7797 x=261.4 bbi07-sajaghara: wait at the edge, ready to go at the stop
+REC BBI-07 m20 dead bbi-nacha t=8159 x=284.6 bbi07-ghungur: walk through where you saw the gaps
+REC BBI-07 m21 dead bbi-thrown t=8711 x=281.6 bbi07-ghungur: wait at the edge for the lamps
+REC BBI-07 m22 dead bbi-kachha t=8766 x=318.4 bbi07-kachha: go on the first stop, as taught
+REC BBI-07 m23 dead bbi-thrown t=9591 x=331.2 bbi07-kachha: wait for each troupe to settle before you trust it
+REC BBI-07 m24 dead bbi-pothi t=9697 x=347.9 bbi07-pothi: walk over the screen
+REC BBI-07 m25 dead bbi-nacha t=9967 x=367.8 bbi07-pothi: hop the hinges and keep going
+REC BBI-07 m26 dead bbi-nacha t=10315 x=382.3 bbi07-shrinkhala: walk straight on
+REC BBI-07 m27 dead bbi-thrown t=10765 x=382.8 bbi07-shrinkhala: wait for the whole bridge, then stop on it
+REC BBI-07 m28 dead bbi-nacha t=10932 x=408.3 bbi07-dweepa: walk straight on
+REC BBI-07 m29 dead bbi-nacha t=11253 x=416.3 bbi07-dweepa: leave the plinth for the second troupe’s first pose
+REC BBI-07 m30 dead bbi-thrown t=11693 x=417.2 bbi07-dweepa: rest on the second bridge too
+REC BBI-08 route won  t=5588 x=170.7 
+REC BBI-08 naive dead bbi-pakhala t=314 x=16.3 
+REC BBI-08 fix dead bbi-dhara t=566 x=23.3 
+REC BBI-08 m0 dead bbi-badi t=1785 x=39.0 bbi08-phinga: stand at the rim and read his throws
+REC BBI-08 m1 dead bbi-buda t=1790 x=44.0 bbi08-phinga: let the first go by, then ride the second
+REC BBI-08 m2 dead bbi-bhanwar t=2610 x=70.1 bbi08-bhanwar: stay on the badi
+REC BBI-08 m3 dead bbi-pakhala t=2324 x=69.9 bbi08-bhanwar: hop for the far rim early
+REC BBI-08 m4 dead bbi-bhanwar t=3126 x=87.0 bbi08-dati: stay on your badi
+REC BBI-08 m5 dead bbi-pakhala t=3114 x=91.2 bbi08-dati: hop for the far rim at the last moment
+REC BBI-08 m6 dead bbi-pakhala t=3510 x=111.0 bbi08-dui: walk across the settled rice
+REC BBI-08 m7 dead bbi-dhara t=3726 x=108.5 bbi08-dui: ride the badi the second jug pushes under
+REC BBI-08 m8 dead bbi-ghurni t=5148 x=139.2 bbi08-ghurni: jump on the first badi as soon as it is in reach
+REC BBI-08 m9 dead bbi-chamacha t=5312 x=140.3 bbi08-ghurni: get on at the edge and wait for the stir to stop
+REC BBI-09 route won  t=7048 x=233.6 
+REC BBI-09 naive dead bbi-chakka t=430 x=25.2 
+REC BBI-09 fix dead bbi-ara t=6684 x=196.6 
+REC BBI-09 m0 dead bbi-chakka t=900 x=49.2 bbi09-ghoda: ride the chariot from its horses
+REC BBI-09 m1 dead bbi-khai t=913 x=39.1 bbi09-ghoda: jump back off the plinth before it slams
+REC BBI-09 m2 dead bbi-udaya t=1392 x=65.9 bbi09-udaya: climb the spokes fast, as at the sinking ones
+REC BBI-09 m3 dead bbi-dooba t=1705 x=63.7 bbi09-udaya: wait on each spoke to be sure of it
+REC BBI-09 m4 dead bbi-chakka t=3766 x=119.2 bbi09-ratha: ride the chariot from its horses
+REC BBI-09 m5 dead bbi-khai t=3772 x=106.6 bbi09-ratha: jump back off the plinth before it slams
+REC BBI-09 m6 dead bbi-chakka t=4267 x=145.3 bbi09-ulta: ride the chariot from its horses
+REC BBI-09 m7 dead bbi-ulta t=4431 x=138.8 bbi09-ulta: step down on to the stone after the slam
+REC BBI-09 m8 dead bbi-udaya t=4559 x=163.0 bbi09-asta: hop down on to spoke 1 at once
+REC BBI-09 m9 dead bbi-dooba t=5039 x=159.4 bbi09-asta: wait on each spoke to be sure of it
+REC BBI-09 m10 dead bbi-ara t=6530 x=191.7 bbi09-ara: stop on spoke 1 to make sure of it
+REC BBI-10 route won  t=11390 x=460.6 
+REC BBI-10 naive dead bbi-ball t=347 x=16.6 
+REC BBI-10 fix dead bbi-chakka t=683 x=35.3 
+REC BBI-10 m0 dead bbi-likhita t=1666 x=50.7 bbi10-patra: wait for the soot, then step on the written leaves
+REC BBI-10 m1 dead bbi-patra t=923 x=51.3 bbi10-patra: walk straight on
+REC BBI-10 m2 dead bbi-sinha t=2648 x=76.3 bbi10-chheli: wait on the straw for the goat to come back to your side
+REC BBI-10 m3 dead bbi-chheli t=2028 x=74.4 bbi10-chheli: jump while the goat is on the pounder
+REC BBI-10 m4 dead bbi-rangapani t=2830 x=100.4 bbi10-chhata: wait on the first cut-out for a customer
+REC BBI-10 m5 dead bbi-silk t=2832 x=103.1 bbi10-chhata: wait for the customer, land on the silk away from the cut-out
+REC BBI-10 m6 dead bbi-sadha t=2909 x=126.3 bbi10-patta: walk over the first pit, as before
+REC BBI-10 m7 dead bbi-chitra t=3063 x=133.8 bbi10-patta: cross the second by the panel you passed
+REC BBI-10 m8 dead bbi-ganthi t=3670 x=152.3 bbi10-tantu: snap the plain thread, as before
+REC BBI-10 m9 dead bbi-rachh t=3742 x=150.4 bbi10-tantu: leave the loom alone and time the shuttle
+REC BBI-10 m10 dead bbi-rachh t=4038 x=170.6 bbi10-palaa: let it run, and wait for it to come back, as before
+REC BBI-10 m11 dead bbi-ranga t=3977 x=174.2 bbi10-palaa: jump out to where it came back last time
+REC BBI-10 m12 dead bbi-bagudi t=4589 x=204.6 bbi10-bagudi: tagged, back over the line to pass it on
+REC BBI-10 m13 dead bbi-ghera t=4656 x=205.0 bbi10-bagudi: tagged, then wait to see what the boys do
+REC BBI-10 m14 dead bbi-nacha t=5014 x=226.4 bbi10-pada: wait back by the scuffs, as before
+REC BBI-10 m15 dead bbi-thrown t=4994 x=222.2 bbi10-pada: go from the edge, then stop on it to rest
+REC BBI-10 m16 dead bbi-nacha t=5047 x=236.3 bbi10-dui-baja: go when the drummer across the pit stops
+REC BBI-10 m17 dead bbi-thrown t=5426 x=236.6 bbi10-dui-baja: go on the near drummer’s stop, but take your time
+REC BBI-10 m18 dead bbi-nacha t=5532 x=259.6 bbi10-ghungur: jump the bells and walk the quiet, as before
+REC BBI-10 m19 dead bbi-thrown t=6042 x=253.6 bbi10-ghungur: wait at the edge for the lamps
+REC BBI-10 m20 dead bbi-kua t=5935 x=284.3 bbi10-thaka: stop it at its top and walk under, as before
+REC BBI-10 m21 dead bbi-pathara t=5962 x=286.3 bbi10-thaka: stop it at its top and climb on to the stone
+REC BBI-10 m22 dead bbi-badi t=6454 x=302.8 bbi10-phinga: to the rim at once and ride the first, as before
+REC BBI-10 m23 dead bbi-buda t=6772 x=308.3 bbi10-phinga: wait back, then ride the first one in the water
+REC BBI-10 m24 dead bbi-ghurni t=7750 x=332.6 bbi10-ghurni: hop on at the slow edge, as before
+REC BBI-10 m25 dead bbi-chamacha t=7860 x=330.7 bbi10-ghurni: get on in the middle and wait for the stir to stop
+REC BBI-10 m26 dead bbi-deepa t=8463 x=346.5 bbi10-deepa: wait for the bridge and walk under the lamps
+REC BBI-10 m27 dead bbi-thrown t=8277 x=347.8 bbi10-deepa: ride the wheel and stay on it
+REC BBI-10 m28 dead bbi-chakka t=8645 x=378.3 bbi10-chakra: wait on the hub for the slam, as before
+REC BBI-10 m29 dead bbi-khai t=8658 x=368.1 bbi10-chakra: jump back off the plinth before it slams
+REC BBI-10 m30 dead bbi-dooba t=9403 x=392.7 bbi10-udaya: on to spoke 1 as soon as it is up, and wait for the next
+REC BBI-10 m31 dead bbi-udaya t=9076 x=396.4 bbi10-udaya: from spoke 1, jump on for where spoke 2 comes up
+REC BBI-10 m32 dead bbi-nacha t=10888 x=436.3 bbi10-tana: go at the troupe drummer’s stop
+REC BBI-10 m33 dead bbi-thrown t=11246 x=437.2 bbi10-tana: take the bridge, then rest on it
+   × qa bbi rec2 32455ms
+   ✓ hidden checkpoints (142)
+     ✓ TVM-01: route passes all 3, replay is exact 615ms
+     ✓ TVM-04: route passes all 1, replay is exact 400ms
+     ✓ TVM-09: route passes all 9, replay is exact 744ms
+     ✓ TVM-10: route passes all 18, replay is exact 1018ms
+     ✓ KVT-06: route passes all 3, replay is exact 396ms
+     ✓ KVT-07: route passes all 3, replay is exact 547ms
+     ✓ PNJ-06: route passes all 5, replay is exact 330ms
+     ✓ GNR-08: route passes all 4, replay is exact 305ms
+     ✓ JAI-08: route passes all 5, replay is exact 333ms
+     ✓ BPL-04: route passes all 2, replay is exact 529ms
+     ✓ BPL-07: route passes all 3, replay is exact 724ms
+     ✓ BPL-08: route passes all 5, replay is exact 904ms
+     ✓ RPR-04: route passes all 3, replay is exact 6012ms
+     ✓ RPR-06: route passes all 4, replay is exact 463ms
+     ✓ RPR-08: route passes all 5, replay is exact 922ms
+     ✓ RNC-03: route passes all 3, replay is exact 509ms
+     ✓ RNC-04: route passes all 3, replay is exact 1114ms
+     ✓ RNC-06: route passes all 3, replay is exact 314ms
+     ✓ PAT-03: route passes all 4, replay is exact 310ms
+     ✓ PAT-05: route passes all 6, replay is exact 858ms
+     ✓ PAT-06: route passes all 14, replay is exact 622ms
+     ✓ PAT-07: route passes all 19, replay is exact 724ms
+     ✓ PAT-09: route passes all 9, replay is exact 1036ms
+     ✓ PAT-10: route passes all 15, replay is exact 1900ms
+     ✓ BBI-05: route passes all 17, replay is exact 636ms
+     ✓ BBI-06: route passes all 8, replay is exact 1009ms
+     ✓ BBI-07: route passes all 19, replay is exact 2164ms
+     ✓ BBI-08: route passes all 6, replay is exact 573ms
+     ✓ BBI-09: route passes all 7, replay is exact 793ms
+     ✓ BBI-10: route passes all 19, replay is exact 2247ms
+   ✓ stages (927)
+     ✓ TVM-10 (22)
+       ✓ is deterministic 318ms
+       ✓ beatable for every rival variant 317ms
+     ✓ BOM-07 (4)
+       ✓ is deterministic 428ms
+       ✓ beatable for every rival variant 695ms
+     ✓ BOM-08 (4)
+       ✓ is deterministic 435ms
+       ✓ beatable for every rival variant 326ms
+     ✓ DMN-03 (4)
+       ✓ beatable for every rival variant 352ms
+     ✓ GNR-05 (4)
+       ✓ beatable for every rival variant 396ms
+     ✓ GNR-07 (4)
+       ✓ is beatable with the scripted solution 916ms
+       ✓ is deterministic 850ms
+       ✓ beatable for every rival variant 1636ms
+     ✓ GNR-08 (4)
+       ✓ is beatable with the scripted solution 499ms
+       ✓ is deterministic 508ms
+       ✓ beatable for every rival variant 425ms
+     ✓ RPR-04 (4)
+       ✓ is beatable with the scripted solution 834ms
+       ✓ is deterministic 1448ms
+       ✓ beatable for every rival variant 2349ms
+     ✓ RPR-06 (4)
+       ✓ beatable for every rival variant 341ms
+     ✓ RPR-08 (4)
+       ✓ is deterministic 320ms
+     ✓ PAT-05 (8)
+       ✓ is deterministic 320ms
+       ✓ beatable for every rival variant 405ms
+     ✓ PAT-06 (10)
+       ✓ beatable for every rival variant 375ms
+     ✓ PAT-07 (13)
+       ✓ beatable for every rival variant 360ms
+     ✓ PAT-10 (14)
+       ✓ is beatable with the scripted solution 321ms
+       ✓ is deterministic 678ms
+       ✓ beatable for every rival variant 856ms
+     ✓ BBI-05 (24)
+       ✓ beatable for every rival variant 320ms
+     ✓ BBI-06 (19)
+       ✓ is beatable with the scripted solution 348ms
+       ✓ is deterministic 476ms
+       ✓ beatable for every rival variant 517ms
+     ✓ BBI-07 (37)
+       ✓ is beatable with the scripted solution 461ms
+       ✓ is deterministic 683ms
+       ✓ beatable for every rival variant 982ms
+       ✓ punishes: bbi07-dweepa: walk straight on 300ms
+       ✓ punishes: bbi07-dweepa: leave the plinth for the second troupe’s first pose 369ms
+       ✓ punishes: bbi07-dweepa: rest on the second bridge too 307ms
+     ✓ BBI-10 (40)
+       ✓ is beatable with the scripted solution 388ms
+       ✓ is deterministic 788ms
+       ✓ beatable for every rival variant 1004ms
+     8 ms -> 2.44
+    58 ms -> 2.44
+    83 ms -> 2.44
+   117 ms -> 2.44
+   150 ms -> 2.81
+   200 ms -> 3.25
+   250 ms -> 3.56
+   333 ms -> 3.75
+  TVM-01 Swagatham: 8ms clean over the wall and its glass | 8ms and over the glass on the road | 8ms climb out of the ditch | 8ms a step up | 8ms a step up | 8ms hop the parked ride | 8ms hop off: the landing gives way | 8ms jump the puddle: it is a pothole | 8ms up on the deck | 192ms a long jump on to the ice
+  TVM-02 Aanavandi Express: 8ms on to the roof | 8ms off before it turns back
+  TVM-03 Chaaya Later: 8ms jump the steam (spikes inside) | 8ms up on the counter | 142ms off before the end drops | 350ms over the painted floor, long: spikes come up where a hop lands | 8ms hop the broken glasses on the way back
+  TVM-04 Thenga Trajectory: 8ms hop the roll | 8ms little hop to bait the gap coconut | 8ms over the gap | 8ms hop roll one | 8ms hop roll two | 8ms on to the trunk | 8ms hop the fronds: a coir pit under them | 8ms a little hop: the far bank backs away | 8ms now over the gap
+  TVM-05 Fort Gate Forward: 8ms | 8ms | 8ms | 8ms off the last stone, long: past the mud on the bank | 8ms over the spikes (far from the dog)
+  TVM-06 Cheena Vala: 8ms | 8ms | 8ms | 8ms | 8ms onto the last net | 258ms it dips at once: straight off to the jetty | 8ms | 8ms | 8ms | 8ms off the boats on to the jetty | 8ms spikes in the boards
+  TVM-07 Munnar Hairpins: 8ms a spike on the road | 8ms up the first terrace | 8ms the middle terrace | 8ms straight on: it gives way | 233ms a big jump over it | 8ms up on the ridge | 8ms spike pit one | 8ms spike pit two | 8ms spike pit three | 8ms over the first rock as soon as it lands | 8ms leap past the step: it drops if you land on it
+  TVM-08 Vallam Kali: 8ms up on to the bridge | 150ms the tall bridge: hold jump | 8ms the low bridge after it: do hop this one
+  TVM-09 Kovalam Flags: 8ms up on the rocks | 8ms up on the rocks | 8ms up on the rocks | 8ms over the pool again, on | 8ms up on the rocks | 8ms up on the rocks
+  TVM-10 Dhara: 142ms over the oil and the trough, from before the oil | 8ms a little hop over it, short of the oil | 142ms over the oil and the kindi | 8ms over the trough | 8ms over the oil by the palm | 8ms over the booster | 8ms over the last stage | 8ms up on the rocks | 8ms up on the rocks | 8ms a short hop, short of the oil | 133ms over the oil and the kindi | 192ms over the oil and the last trough | 8ms up on the rocks | 8ms up on the rocks | 242ms a long jump on to the ice | 242ms over the oil and the kindi
+  KVT-01 Swagatham, Billam: 8ms onto the first stone | 8ms the next stone | 8ms the next stone | 8ms the next stone | 8ms the next stone | 8ms a low wall | 8ms hop the parked ride | 8ms a step up | 8ms a step up | 8ms a shallow ditch | 8ms up on the deck
+  KVT-02 Odam Gone: 8ms onto the jetty | 8ms over the rotten plank | 8ms the real gap
+  KVT-03 Supari Light: 8ms | 8ms | 8ms | 8ms | 8ms to the island | 133ms over the fake door | 8ms the last gap is real
+  KVT-04 Agatti Airstrip: 8ms runway light one | 8ms runway light two | 8ms runway light three | 8ms first pit, with the wind behind you | 8ms to the little island | 133ms off it, over the spikes
+  KVT-05 Minicoy Tuna: 8ms on to the boat | 8ms on to the shore | 8ms first step | 8ms second step, straight up | 8ms third step, straight up | 8ms top of the lighthouse | 8ms off onto the pier: a little hop (a big one meets the pulley)
+  KVT-06 Phar Mungal: 8ms up the rock | 8ms up to the rim | 8ms up the rock | 8ms up to the rim
+  KVT-07 Thengu Kayaru: 8ms jump at the palm: grab it | 8ms leap for the palm in the water | 8ms leap to the next one | 8ms and jump for the far bank | 8ms jump for the first palm | 8ms jump for the bare trunk | 8ms leap for the next crown | 8ms jump for the bare trunk | 8ms leap for the next crown | 8ms for the bank | 8ms grab the young palm | 8ms grab the second one | 8ms leap for the bank before it tips you in
+  KVT-08 Billam Ottam: 8ms hop the rock
+  CHN-01 Vanakkam Chennai: 8ms hop the parked ride | 8ms a shallow ditch | 8ms a step up | 8ms a step up | 8ms a step up | 8ms a step up | 8ms a post | 8ms a post | 8ms a post | 8ms a low wall | 8ms up on the deck
+  CHN-02 Kudam Queue: 8ms onto the first pots | 8ms skip pot number three | 8ms onto the lorry | 8ms over pots one and two, straight onto pot three
+  CHN-03 Subway Splash: 8ms onto the drum, now | 8ms onto the balcony
+  CHN-04 Degree Kaapi: 8ms onto the shady ledge | 8ms
+  CHN-05 Agni Mirage: 8ms the first shimmer is a hole | 8ms the shimmer after it | 8ms onto the big black patch | 8ms
+  CHN-06 Madurai Malli: 8ms on to the first jasmine string | 8ms quick, it snaps | 8ms | 8ms off the drain | 8ms over the gap between surges | 8ms over the petals | 167ms up on the ledge: both ends are going off
+  CHN-07 Thanjavur Bommai: 8ms on to the first doll | 8ms up on the stone | 158ms and over the wall | 8ms onto the fallen stone | 8ms
+  CHN-08 Pamban Paalam: 8ms up the step | 8ms up on the platform | 8ms onto the tunnel before the train goes in
+  PDY-01 Bienvenue: 8ms a post | 8ms a post | 8ms a post | 8ms a post | 8ms a post | 8ms a shallow ditch | 8ms hop the parked ride | 8ms a step up | 8ms jump and catch it | 8ms a shallow ditch | 8ms up on the deck
+  PDY-02 Rock Beach: 8ms | 8ms | 8ms | 8ms | 8ms the dark pool is deep | 8ms over the whole turtle pool
+  PDY-03 Yellow Wall Jam: 8ms onto the scooter | 8ms straight on to the awning | 8ms up on the wall | 8ms over the flower pot | 8ms jump the street that says walk | 8ms the honest sign: a real gap
+  PDY-04 Six O’Clock: 8ms over the first socket | 8ms | 8ms | 8ms over the last socket too | 8ms | 8ms over the barrier | 8ms
+  PDY-05 Grand Canal: 8ms hop the coconut cart | 8ms the loose cobble again
+  PDY-06 Paradise Beach: 8ms out of the dip | 8ms | 8ms | 8ms on to the umbrella | 8ms again: this time it bounces | 8ms a hop under the second palm brings its coconut down | 142ms over the urchins
+  PDY-07 Serenity Surf: 8ms on to board 1 | 8ms on to board 2 | 8ms on to board 3 | 8ms on to board 4 | 8ms on to board 5 | 8ms on to the rock: now the sea rises | 8ms tower step one | 8ms step two | 8ms step three | 125ms up on the first rock | 125ms over the second rock
+  PDY-08 Quatorze Juillet: 8ms over the first street | 8ms over the second street | 8ms on to the lantern | 8ms on to the high roof | 8ms down on to the last roof
+  BLR-01 Namaskara Bengaluru: 8ms a low wall | 8ms a step up | 8ms a step up | 8ms hop the parked ride | 8ms jump the tile that never loads | 8ms a post | 8ms a post | 8ms up on the deck
+  BLR-02 Green Man: 8ms hop on the arriving car | 8ms onto the building | 8ms up on to the metro line | 8ms the gap between the gates | 8ms stamp on the mat
+  BLR-03 Namma Metro: 8ms onto bus | 8ms up the steps | 8ms | 8ms onto the deck | 217ms the piece that comes in 2027
+  BLR-04 Silk Board: 8ms onto bus | 8ms over the sign | 8ms over the branch | 8ms onto the ledge | 8ms onto the scooter | 8ms up onto the auto | 8ms down onto the jeep | 8ms straight on to the bus before the jeep pulls away | 8ms off the bus
+  BLR-05 Garden City Remote: 8ms jump in place: the auto comes under you | 8ms onto the roof | 8ms small hops: the glass roof is low | 8ms small hops: the glass roof is low | 8ms small hops: the glass roof is low | 8ms small hops: the glass roof is low | 8ms small hops: the glass roof is low
+  BLR-06 Deepalankara: 8ms on to the running lights | 8ms up before it runs backwards | 8ms | 8ms | 8ms | 8ms
+  BLR-07 Hampi Harigolu: 8ms | 8ms | 8ms | 8ms | 8ms
+  BLR-08 Jog Jalapatha: 8ms | 8ms | 8ms | 8ms | 8ms | 8ms off the wet stones
+  AMR-01 Swagatham Amaravati: 8ms a shallow ditch | 8ms hop the parked ride | 8ms hop past the aunty’s plate | 8ms onto the first pier | 8ms | 8ms | 150ms the long jump over the missing pier | 8ms on to the far bank | 8ms a low wall | 8ms a step up | 8ms a step up | 8ms a step up | 8ms up on the deck
+  AMR-02 Mirchi Mild: 8ms hop the first chilli heap | 8ms over the spikes, into the last heap | 8ms the first pit
+  AMR-03 Barrage Gates: 8ms jump long | 8ms jump long | 8ms jump long | 8ms jump long
+  AMR-04 Bezawada Blaze: 8ms | 8ms | 8ms | 8ms | 8ms | 8ms
+  AMR-05 Benz Circle: 8ms hop the drain | 8ms up on the island | 8ms hop the punugulu | 8ms hop the punugulu | 8ms hop the punugulu | 8ms hop the punugulu | 8ms hop the punugulu | 8ms hop the punugulu | 8ms hop the speed breaker | 8ms and the next
+  AMR-06 Gandikota: 8ms over the gap in the bridge | 8ms to the next hook before this one drops
+  AMR-07 Belum Guhalu: 8ms | 8ms | 8ms | 8ms | 8ms up into the cave | 8ms out of the trench
+  AMR-08 Vizag Beach Road: 8ms up on to the submarine | 8ms | 8ms
+  HYD-01 Khush Aamdeed: 8ms hop the parked ride | 8ms a low wall | 8ms a step up | 8ms a step up | 8ms a step up | 8ms a step up | 8ms a step up | 8ms a shallow ditch | 8ms a post | 8ms a post | 8ms up on the deck
+  HYD-02 Auto Wala: 8ms
+  HYD-03 Biryani Bait: 8ms | 8ms onto pot | 8ms onto tower | 8ms over the third whistle
+  HYD-04 Sharmila Auto: 
+  HYD-05 Charminar Chase: 8ms onto P1 | 8ms onto P2 | 8ms onto balcony | 8ms over fake door
+  HYD-06 Golconda Taali: 8ms clap on the stone | 8ms | 8ms | 8ms | 8ms | 8ms | 8ms | 8ms | 8ms
+  HYD-07 Laad Bazaar: 8ms | 8ms | 8ms skip the last string
+  HYD-08 Ramoji Retake: 8ms up on the catwalk, not the plywood | 8ms
+  PNJ-01 Amchem Goem: 8ms onto the first stone | 8ms the next stone | 8ms the next stone | 8ms the next stone | 8ms a low wall | 8ms hop the parked ride | 8ms a step up | 8ms a step up | 8ms a step up | 8ms up on the deck
+  PNJ-02 Fontainhas Gossip: 8ms on to the balcão | 8ms stand on it | 8ms up the step | 8ms up to her balcony
+  PNJ-03 Goal!: 8ms over the defenders
+  PNJ-04 Susegad: 8ms over the flowerpot | 8ms a short hop over the pothole: short of the cat | 8ms a short hop over the pothole, landing short of the cat | 8ms a long jump over the cat’s whole ring | 8ms a short hop, short of the uncle
+  PNJ-05 Rendeiro: 8ms up the step | 8ms up to the palm | 8ms up to the first palm
+  PNJ-06 Casino Royale: 
+  PNJ-07 Miramar Parasail: 
+  PNJ-08 Viva Carnaval: 
+  BOM-01 Aamchi Mumbai: 8ms a post | 8ms a post | 8ms a post | 8ms a shallow ditch | 8ms hop the parked ride | 8ms a low wall | 8ms a step up | 8ms a step up | 8ms up on the deck
+  BOM-02 Dabbawala Shuffle: 8ms onto the cart | 192ms onto the sinking platform | 183ms quickly off it | 8ms to the second belt
+  BOM-03 Fast Local: 8ms up on the first roof | 8ms | 8ms | 8ms | 8ms | 8ms
+  BOM-04 Monsoon Special: 8ms onto crate 1 | 217ms onto the drum | 367ms onto crate 3 | 175ms onto the exit ledge | 8ms | 8ms | 8ms
+  BOM-05 Last Train to Gateway: 275ms hop to the middle platform | 133ms over Tara's packed door | 8ms over the EXIT door: it sends you back
+  BOM-06 Chawl Chadhai: 
+  BOM-07 Dabba Express: 8ms up the crates | 8ms on to the wall
+  BOM-08 Double Role: 8ms you over the crate, him over the gap | 8ms the gap (he jumps too)
+  DMN-01 Daman Darshan: 8ms a post | 8ms a post | 8ms a post | 8ms a shallow ditch | 8ms a low wall | 8ms a step up | 8ms a step up | 8ms a step up | 8ms up on the deck
+  DMN-02 Nani To Moti: 
+  DMN-03 Barf Kharkhanu: 
+  DMN-04 Haath Ma Haath: 
+  DMN-05 Panikotha: 
+  DMN-06 Machhi Bazaar: 
+  DMN-07 Warli Rang: 
+  DMN-08 Diu Durg: 
+  GNR-01 Kem Cho Gandhinagar: 8ms a post | 8ms a post | 8ms a post | 8ms a post | 8ms a step up | 8ms a step up | 8ms hop the parked ride | 8ms a shallow ditch | 8ms up on the deck
+  GNR-02 Kai Po Che!: 8ms up on to the first roof: vault | 8ms across the tin, plant on the concrete: vault | 8ms under the low string: vault | 8ms off the last of the concrete: vault
+  GNR-03 Adalaj Ni Vav: 
+  GNR-04 Indroda: 
+  GNR-05 Sasan Gir: 
+  GNR-06 Mor: 
+  GNR-07 Garba Raas: 
+  GNR-08 GIFT City: 8ms on to the podium under the kite string: vault
+  JAI-01 Padharo Mhare Des: 8ms a post | 8ms a post | 8ms a post | 8ms a step up | 8ms a step up | 8ms a step up | 8ms hop the parked ride | 8ms a shallow ditch | 8ms up on the deck
+  JAI-02 Kathputli: 
+  JAI-03 Hawa Mahal: 
+  JAI-04 Jantar Mantar: 
+  JAI-05 Maniharon ka Rasta: 
+  JAI-06 Kachchhi Ghodi: 
+  JAI-07 Balloon ki Raat: 
+  JAI-08 Amer: 
+  BPL-01 Ko Khan, Bhopal!: 8ms a step up | 8ms a step up | 8ms a step up | 8ms a post | 8ms a post | 8ms a post | 8ms a shallow ditch | 8ms hop the parked ride | 8ms up on the deck
+  BPL-02 Bada Talab: 
+  BPL-03 Bhimbetka: 
+  BPL-04 Zari ka Dhaaga: 125ms up the step first | 8ms through the sitara on to the top | 142ms back up on to the middle level | 8ms hop to the block | 133ms up to the top
+  BPL-05 Jal Tarang: 
+  BPL-06 Batolebaaz: 
+  BPL-07 BHEL: 
+  BPL-08 Bhojtal: 125ms up the step | 8ms through the sitara
+  RPR-01 Jai Johar, Raipur!: 8ms a post | 8ms a post | 8ms a post | 8ms a shallow ditch | 8ms a step up | 8ms a step up | 8ms a step up | 8ms hop the parked ride | 8ms up on the deck
+  RPR-02 Hareli: 
+  RPR-03 Ghadi Chowk: 
+  RPR-04 Dhan ka Katora: 
+  RPR-05 Bhaunra: 
+  RPR-06 Kosa: 
+  RPR-07 Chapda: 
+  RPR-08 Bastar Dussehra: 
+  RNC-01 Johar, Ranchi!: 8ms a shallow ditch | 8ms a step up | 8ms a step up | 8ms a step up | 8ms a post | 8ms a post | 8ms a post | 8ms hop the parked ride | 8ms up on the deck
+  RNC-02 Dhuska: 
+  RNC-03 Teer: 
+  RNC-04 Rugra: 8ms hop the termite mound
+  RNC-05 Chhau: 8ms jump up at the mask | 8ms jump up at the mask | 8ms jump up at the mask | 8ms jump up at the mask
+  RNC-06 Dokra: 
+  RNC-07 Hundru: 125ms over the crack on to the next rock
+  RNC-08 Toofan: 8ms jump up at the mask
+  PAT-01 Prannam, Patna!: 8ms a shallow ditch | 8ms a step up | 8ms a step up | 8ms a post | 8ms a post | 8ms a post | 8ms hop the parked cart | 8ms up on the kerb board | 8ms the low wall | 8ms up on the deck
+  PAT-02 Litti ki Aanch: 
+  PAT-03 Ashok Rajpath: 8ms across to the narrowed one | 8ms across to the last hoarding | 8ms on to the second | 8ms across to the third | 8ms on to the fourth | 8ms off to the far bank
+  PAT-04 Golghar: 8ms the first step | 8ms the second step | 8ms the third step | 8ms the fourth step | 8ms the first step | 8ms the second step | 8ms the third step | 8ms the fourth step
+  PAT-05 Pipa Pul: 
+  PAT-06 Setu ka Jod: 8ms the seam with no plate: jump, deck to deck | 8ms plate 2 is a tarp (two sacks) | 8ms so is 4 | 8ms and 6
+  PAT-07 Tempo: 
+  PAT-08 Nalanda: 8ms jump the hatch with 2 bricks | 8ms and the one with 4 | 8ms and the one with 1 | 8ms hop the last cell’s well | 8ms jump the hatch with 3 bricks | 8ms and the one with 1 | 8ms hop the last cell’s well
+  PAT-09 Sonepur Mela: 
+  PAT-10 Setu se Golghar: 8ms the first step | 8ms the second step | 8ms the third step | 8ms the fourth step
+  BBI-01 Namaskara Bhubaneswar: 8ms the ditch | 8ms over the drain | 8ms a step up | 8ms a step up | 8ms a post | 8ms a post | 8ms a post | 8ms hop the parked cart | 8ms jump from the tile before the wet one | 8ms up on the deck
+  BBI-02 Hockey: 8ms up on the keeper | 8ms hop the still ball at the stopper | 8ms up on the keeper | 8ms hop it | 8ms over the still ball
+  BBI-03 Chandua: 
+  BBI-04 Tarakasi: 
+  BBI-05 Raja: 8ms run and jump the channel, over the still mill | 8ms up on the straw | 8ms jump the husk pit from the straw | 8ms from right against the stone, straight up the step | 8ms right over the cart | 8ms on to the bucket | 8ms up on the straw | 8ms jump the pit from the straw | 8ms jump the channel over the mill | 8ms right over the cart, touching nothing | 8ms up on the straw | 8ms over the pounder’s pit from the straw | 8ms on to the bucket | 8ms straight up into the belt | 8ms hop on to the mill
+  BBI-06 Bandha: 8ms hop the undyed thread | 8ms up into it: it snaps
+  BBI-07 Gotipua: 8ms over the bells at 7 | 8ms over the bells at 13 | 8ms over the bells at 19 | 8ms over hinge 1 | 8ms over hinge 2 | 8ms over hinge 3 | 8ms over hinge 4
+  BBI-08 Pakhala: 8ms up on the rim | 8ms up on the rim | 8ms up on to the far rim at the last moment | 8ms up on the rim | 8ms up on to the far rim | 8ms up on the rim
+  BBI-09 Chakka: 8ms up on the plinth | 8ms up on the horses | 8ms up on the plinth | 8ms up on the horses | 8ms up on the plinth | 8ms up on the horses | 8ms up on the plinth | 8ms up on the horses
+  BBI-10 Kalinga: 8ms up on the keeper | 8ms hop on to the plinth | 8ms up on the straw | 8ms jump the pit from the straw | 8ms up into the first coloured thread | 8ms over the quiet spot | 8ms over the quiet spot | 8ms up on the stone | 8ms up on the plinth | 8ms up on the horses | 8ms up on to the still rim
+   ✓ jump audit (1)
+     ✓ report 103514ms
+   ✓ checkpoints are safe to respawn at (142)
+     ✓ TVM-01: idle, run and tap-jump at lag 0/6/12 788ms
+     ✓ TVM-02: idle, run and tap-jump at lag 0/6/12 366ms
+     ✓ TVM-04: idle, run and tap-jump at lag 0/6/12 519ms
+     ✓ TVM-06: idle, run and tap-jump at lag 0/6/12 365ms
+     ✓ TVM-07: idle, run and tap-jump at lag 0/6/12 608ms
+     ✓ TVM-09: idle, run and tap-jump at lag 0/6/12 2519ms
+     ✓ TVM-10: idle, run and tap-jump at lag 0/6/12 7819ms
+     ✓ KVT-07: idle 1.5 s (allow-listed city) 317ms
+     ✓ AMR-04: idle 1.5 s (allow-listed city) 622ms
+     ✓ AMR-06: idle 1.5 s (allow-listed city) 397ms
+     ✓ AMR-07: idle 1.5 s (allow-listed city) 481ms
+     ✓ AMR-08: idle 1.5 s (allow-listed city) 532ms
+     ✓ HYD-02: idle 1.5 s (allow-listed city) 469ms
+     ✓ PNJ-02: idle 1.5 s (allow-listed city) 336ms
+     ✓ PNJ-06: idle 1.5 s (allow-listed city) 457ms
+     ✓ PNJ-08: idle 1.5 s (allow-listed city) 357ms
+     ✓ BOM-04: idle 1.5 s (allow-listed city) 312ms
+     ✓ BOM-06: idle 1.5 s (allow-listed city) 304ms
+     ✓ BOM-07: idle 1.5 s (allow-listed city) 761ms
+     ✓ BOM-08: idle 1.5 s (allow-listed city) 422ms
+     ✓ DMN-08: idle 1.5 s (allow-listed city) 375ms
+     ✓ GNR-04: idle 1.5 s (allow-listed city) 337ms
+     ✓ GNR-07: idle 1.5 s (allow-listed city) 607ms
+     ✓ GNR-08: idle 1.5 s (allow-listed city) 713ms
+     ✓ JAI-08: idle 1.5 s (allow-listed city) 394ms
+     ✓ RPR-04: idle 1.5 s (allow-listed city) 3502ms
+     ✓ RPR-08: idle 1.5 s (allow-listed city) 383ms
+     ✓ RNC-04: idle 1.5 s (allow-listed city) 422ms
+     ✓ PAT-02: idle, run and tap-jump at lag 0/6/12 739ms
+     ✓ PAT-03: idle, run and tap-jump at lag 0/6/12 799ms
+     ✓ PAT-04: idle, run and tap-jump at lag 0/6/12 738ms
+     ✓ PAT-05: idle, run and tap-jump at lag 0/6/12 4135ms
+     ✓ PAT-06: idle, run and tap-jump at lag 0/6/12 5390ms
+     ✓ PAT-07: idle, run and tap-jump at lag 0/6/12 8466ms
+     ✓ PAT-09: idle, run and tap-jump at lag 0/6/12 2920ms
+     ✓ PAT-10: idle, run and tap-jump at lag 0/6/12 13469ms
+     ✓ BBI-01: idle, run and tap-jump at lag 0/6/12 323ms
+     ✓ BBI-03: idle, run and tap-jump at lag 0/6/12 362ms
+     ✓ BBI-04: idle, run and tap-jump at lag 0/6/12 656ms
+     ✓ BBI-05: idle, run and tap-jump at lag 0/6/12 5478ms
+     ✓ BBI-06: idle, run and tap-jump at lag 0/6/12 3123ms
+     ✓ BBI-07: idle, run and tap-jump at lag 0/6/12 18025ms
+     ✓ BBI-08: idle, run and tap-jump at lag 0/6/12 1631ms
+     ✓ BBI-09: idle, run and tap-jump at lag 0/6/12 2183ms
+     ✓ BBI-10: idle, run and tap-jump at lag 0/6/12 16677ms
+      5| import { SOLUTIONS, NAIVE, FIX, MISTAKES } from '../solutions';
+      6| // QA scratch: checkpoint times along the route; for each scripted dea…
+      7| it('qa bbi cp', () => {
+       | ^
+      8|   const orig = World.prototype.step;
+      9|   for (const def of LEVELS.filter((d) => d.id.startsWith('BBI'))) {
+     16|       const rec = (globalThis as any).__lddRec as number[];
+     17|       (globalThis as any).__lddRec = undefined;
+     18|       writeFileSync(`/tmp/qa-bbi-rec/${def.id}__${k}.json`, JSON.strin…
+       |       ^
+     19|       console.log(`${def.id} ${k} ${w.state} ${w.deathCause} t=${(w.ti…
+     20|     }
+      5| import { SOLUTIONS, NAIVE, FIX, MISTAKES } from '../solutions';
+      6| // QA scratch round 2: record route + NAIVE/FIX/MISTAKES for BBI into …
+      7| it('qa bbi rec2', () => {
+       | ^
+      8|   mkdirSync('/tmp/qa-bbi-rec2', { recursive: true });
+      9|   for (const def of LEVELS.filter((d) => d.id.startsWith('BBI'))) {
+      Tests  3 failed | 1876 passed | 22 skipped (1901)
+   Start at  07:34:29
+   Duration  128.53s (tests 80%, transform 12%, setup 6%, import 1%)

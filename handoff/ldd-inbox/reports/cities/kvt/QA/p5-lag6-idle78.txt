@@ -1,0 +1,66 @@
+KVT-09 cp-1 x1.5 at 0.0s stretch 0.0s
+KVT-09 cp0 x34.5 at 6.3s stretch 6.3s
+KVT-09 cp1 x76.5 at 14.1s stretch 7.7s
+KVT-09 cp2 x136.5 at 25.3s stretch 11.2s
+KVT-09 cp3 x186.5 at 34.9s stretch 9.6s
+KVT-09 cp4 x228.5 at 41.9s stretch 7.0s
+KVT-09 cp5 x280.5 at 51.0s stretch 9.2s
+KVT-09 cp6 x324.5 at 59.4s stretch 8.4s
+KVT-09 cp7 x363.5 at 64.8s stretch 5.5s
+KVT-09 door stretch 3.0s total 67.8s
+KVT-09 cp1: tap-jump fwd then idle: DIES splash after 0.42s at x79.6
+KVT-09 cp4: run 0.3s then idle: DIES splash after 0.45s at x230.3
+KVT-09 stretch from cp-1: worst replay 6.8s (run+jump@6.0s -> splash x38.8)
+KVT-09 stretch from cp0: worst replay 8.2s (run+jump@12.0s -> splash x80.7)
+KVT-09 stretch from cp1: worst replay 11.0s (stop@24.8s -> splash x132.2)
+KVT-09 stretch from cp2: worst replay 8.0s (run on@32.5s -> splash x170.7)
+KVT-09 stretch from cp3: worst replay 5.8s (stop@40.5s -> splash x219.6)
+KVT-09 stretch from cp4: worst replay 8.7s (stop@50.0s -> splash x275.1)
+KVT-09 stretch from cp5: worst replay 9.1s (run+jump@59.3s -> splash x331.7)
+KVT-09 stretch from cp6: worst replay 4.4s (stop@63.3s -> splash x351.7)
+KVT-09 stretch from cp7: worst replay 1.2s (stop@65.8s -> splash x371.3)
+KVT-10 cp-1 x1.5 at 0.0s stretch 0.0s
+KVT-10 cp0 x32.5 at 4.2s stretch 4.2s
+KVT-10 cp1 x66.5 at 8.1s stretch 3.9s
+KVT-10 cp2 x100.5 at 12.8s stretch 4.8s
+KVT-10 cp3 x130.5 at 18.1s stretch 5.3s
+KVT-10 cp4 x172.5 at 28.0s stretch 10.0s
+KVT-10 cp5 x224.5 at 36.3s stretch 8.3s
+KVT-10 cp6 x254.5 at 41.2s stretch 4.9s
+KVT-10 cp7 x280.5 at 48.5s stretch 7.3s
+KVT-10 cp8 x316.5 at 55.8s stretch 7.3s
+KVT-10 cp9 x338.5 at 60.2s stretch 4.4s
+KVT-10 cp10 x362.5 at 66.1s stretch 5.9s
+KVT-10 cp11 x406.5 at 71.1s stretch 5.0s
+KVT-10 cp12 x428.5 at 73.6s stretch 2.5s
+KVT-10 cp13 x452.5 at 77.9s stretch 4.3s
+KVT-10 cp14 x472.5 at 80.2s stretch 2.3s
+KVT-10 cp15 x502.5 at 86.9s stretch 6.7s
+KVT-10 cp16 x525.5 at 93.3s stretch 6.3s
+KVT-10 door stretch 1.4s total 94.6s
+KVT-10 cp0: tap-jump fwd then idle: DIES splash after 0.42s at x35.6
+KVT-10 cp2: tap-jump fwd then idle: DIES splash after 0.42s at x103.6
+KVT-10 cp5: run 0.3s then idle: DIES splash after 0.34s at x227.2
+KVT-10 cp5: tap-jump fwd then idle: DIES splash after 0.42s at x227.6
+KVT-10 cp8: tap-jump fwd then idle: DIES splash after 0.42s at x319.6
+KVT-10 cp9: tap-jump fwd then idle: DIES splash after 0.42s at x341.6
+KVT-10 cp10: tap-jump fwd then idle: DIES splash after 0.42s at x365.6
+KVT-10 cp15: tap-jump fwd then idle: DIES splash after 0.42s at x505.6
+KVT-10 stretch from cp-1: worst replay 4.6s (run+jump@3.8s -> splash x35.7)
+KVT-10 stretch from cp0: worst replay 3.1s (run+jump@4.5s -> splash x59.7)
+KVT-10 stretch from cp1: worst replay 5.3s (run+jump@11.5s -> splash x104.7)
+KVT-10 stretch from cp2: worst replay 2.5s (stop@14.5s -> splash x103.9)
+KVT-10 stretch from cp3: worst replay 9.7s (stop@27.5s -> splash x168.4)
+KVT-10 stretch from cp4: worst replay 10.1s (run+jump@36.0s -> splash x236.5)
+KVT-10 stretch from cp5: worst replay 3.2s (stop@39.0s -> splash x235.6)
+KVT-10 stretch from cp6: worst replay 8.1s (run+jump@47.5s -> splash x288.8)
+KVT-10 stretch from cp7: worst replay 7.9s (run+jump@54.3s -> splash x321.7)
+KVT-10 stretch from cp8: worst replay 4.5s (run+jump@59.3s -> splash x341.8)
+KVT-10 stretch from cp9: worst replay 7.2s (stop@65.3s -> splash x355.4)
+KVT-10 stretch from cp10: worst replay 4.9s (stop@69.8s -> splash x395.2)
+KVT-10 stretch from cp11: worst replay 2.2s (stop@73.0s -> splash x423.6)
+KVT-10 stretch from cp12: worst replay 3.2s (stop@75.3s -> splash x436.6)
+KVT-10 stretch from cp13: worst replay 1.6s (stop@79.3s -> splash x464.3)
+KVT-10 stretch from cp14: worst replay 7.0s (run+jump@85.8s -> splash x506.2)
+KVT-10 stretch from cp15: worst replay 5.9s (stop@92.5s -> splash x521.3)
+KVT-10 stretch from cp16: worst replay 1.3s (stop@94.3s -> kvt-octopus x533.8)

@@ -1,0 +1,28 @@
+DIS-01 | room | windows 21 | identical repeats 4 | most repeated: 2x 1.0s [stop=- run=- jump=dis-spill]
+DIS-02 | room | windows 7 | identical repeats 1 | most repeated: 2x 1.5s [stop=- run=dis-luit jump=dis-luit]
+DIS-02 | dis02-chapori | windows 10 | identical repeats 4 | most repeated: 3x 0.5s [stop=dis-luit run=dis-luit jump=dis-luit]
+DIS-03 | room | windows 6 | identical repeats 1 | most repeated: 2x 2.0s [stop=- run=- jump=dis-basket]
+DIS-03 | dis03-bagan | windows 10 | identical repeats 4 | most repeated: 3x 0.5s [stop=- run=dis-basket jump=-]
+DIS-04 | room | windows 5 | identical repeats 1 | most repeated: 2x 1.0s [stop=- run=dis-tawa jump=dis-tawa]
+DIS-04 | dis04-bhogali | windows 11 | identical repeats 2 | most repeated: 3x 0.5s [stop=dis-tawa run=dis-tawa jump=dis-tawa]
+DIS-05 | room | windows 5 | identical repeats 1 | most repeated: 2x 0.5s [stop=- run=dis-gamosa jump=dis-gamosa]
+DIS-05 | dis05-atithi | windows 5 | identical repeats 0
+DIS-06 | room | windows 8 | identical repeats 0
+DIS-07 | room | windows 2 | identical repeats 0
+DIS-07 | dis07-bordoisila | windows 6 | identical repeats 1 | most repeated: 2x 0.5s [stop=- run=dis-bordoisila jump=dis-pukhuri]
+DIS-07 | dis07-dhol | windows 7 | identical repeats 0
+DIS-07 | dis07-dheki | windows 9 | identical repeats 1 | most repeated: 2x 0.5s [stop=- run=dis-dheki jump=dis-dheki]
+DIS-07 | dis07-card | windows 8 | identical repeats 1 | most repeated: 2x 1.0s [stop=- run=dis-gate jump=dis-gate]
+DIS-07 | dis07-chowk | windows 7 | identical repeats 1 | most repeated: 2x 0.5s [stop=dis-gate run=dis-gate jump=dis-gate]
+DIS-08 | room | windows 4 | identical repeats 0
+DIS-08 | dis08-jeep | windows 4 | identical repeats 0
+DIS-08 | dis08-bagori | windows 7 | identical repeats 0
+DIS-09 | room | windows 7 | identical repeats 1 | most repeated: 2x 0.5s [stop=- run=- jump=dis-khaal]
+DIS-09 | dis09-tug | windows 6 | identical repeats 1 | most repeated: 2x 2.0s [stop=- run=dis-khaal jump=dis-khaal]
+DIS-09 | dis09-chaal | windows 8 | identical repeats 3 | most repeated: 3x 0.5s [stop=- run=dis-roof jump=-]
+DIS-10 | room | windows 8 | identical repeats 0
+DIS-10 | dis10-dhol | windows 11 | identical repeats 3 | most repeated: 3x 0.5s [stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri]
+DIS-10 | dis10-bordoisila | windows 5 | identical repeats 0
+DIS-10 | dis10-tug | windows 10 | identical repeats 1 | most repeated: 2x 0.5s [stop=- run=dis-khaal jump=dis-rope]
+DIS-10 | dis10-thanda | windows 6 | identical repeats 1 | most repeated: 2x 0.5s [stop=- run=dis-tel jump=dis-basket]
+DIS-10 | dis10-gamosa | windows 9 | identical repeats 3 | most repeated: 3x 0.5s [stop=- run=dis-gamosa jump=dis-basket]

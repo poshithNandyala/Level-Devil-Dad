@@ -1,0 +1,79 @@
+{
+ "code": "GNR",
+ "moved": [
+  "src/render/backdrops-west.ts:gandhinagar -> src/game/cities/gnr/backdrop.ts",
+  "src/game/levels/gnr.ts -> src/game/cities/gnr/levels.ts",
+  "src/game/entities/gujarat.ts -> src/game/cities/gnr/entities.ts"
+ ],
+ "removed": [
+  "src/game/cities.ts:LINES.GNR",
+  "src/game/cities.ts:CHAPTERS GNR city/hello/famous (filled by install)",
+  "src/game/levels/chunks.ts:SKINS.GNR",
+  "src/game/levels/tour.ts:COURSES.GNR",
+  "src/app/citylines.ts:CITY_LINE.GNR",
+  "src/render/renderer.ts:GRADES.GNR",
+  "src/render/art/tiles.ts:CAP.GNR",
+  "src/audio/audio.ts:MUSIC.GNR",
+  "src/render/theme.ts:THEMES.GNR",
+  "src/render/theme.ts:CITY_ORDER GNR (install appends it)",
+  "src/game/entities/props.ts:CAUSE_LINES.manja",
+  "src/game/entities/props.ts:CAUSE_LINES.stomped",
+  "src/game/entities/props.ts:CAUSE_LINES.mauled",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.setu (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.milan (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.safari (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.kichad (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.pravesh (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.herd (+ WestEndingKind)",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case dhokla"
+ ],
+ "importers": [
+  "src/game/cities/gnr/endings.ts",
+  "src/game/levels/endings3.ts",
+  "src/game/levels/index.ts",
+  "tests/west.ts",
+  "tests/fair-gnr07.test.ts"
+ ],
+ "pruned": [
+  "src/game/levels/endings3.ts: dropped {'person'}",
+  "src/game/levels/endings3.ts: dropped {'GarbaRing', 'FeatherPickup', 'Thorns', 'Lion', 'Feathers', 'Peacock', 'tinArt', 'Dino', 'Bamboo'}"
+ ],
+ "inv": {
+  "own": [
+   "src/game/levels/gnr.ts",
+   "src/game/entities/gujarat.ts"
+  ],
+  "cause": [
+   "manja",
+   "stomped",
+   "mauled"
+  ],
+  "causeShared": [
+   "splash<app/app.ts,game/cities/amr/levels.ts,game/cities/blr/levels.ts,game/cities/bom/levels.ts,game/cities/chn/levels.ts,game/cities/dmn/endings.ts,game/cities/dmn/entities.ts,game/cities/dmn/levels.ts,game/cities/kvt/endings.ts,game/cities/kvt/entities.ts,game/cities/kvt/levels.ts,game/cities/pdy/levels.ts,game/cities/pnj/endings.ts,game/cities/pnj/levels.ts,game/cities/rnc/entities.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/abilities.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/chunks.ts,game/levels/endings2.ts,game/levels/endings3.ts,game/levels/kit.ts,game/player.ts",
+   "thorns<game/entities/raipur.ts,game/levels/endings3.ts",
+   "garba<render/scenes.ts",
+   "crash<game/levels/endings3.ts"
+  ],
+  "ending": [
+   "setu",
+   "milan",
+   "safari",
+   "kichad",
+   "pravesh",
+   "herd"
+  ],
+  "endingShared": [
+   "lamp<game/cities/blr/levels.ts,game/cities/bom/levels.ts,game/cities/chn/levels.ts,game/cities/dmn/levels.ts,game/cities/hyd/levels.ts,game/cities/pdy/levels.ts,game/cities/pnj/levels.ts,game/cities/rnc/levels.ts,game/levels/bpl.ts,game/levels/jai.ts,game/levels/rpr.ts",
+   "jali<game/levels/endings3.ts"
+  ],
+  "thing": [
+   "dhokla"
+  ],
+  "thingShared": [
+   "flowers<game/cities/chn/levels.ts,game/cities/hyd/levels.ts,game/cities/pdy/levels.ts,game/levels/endings.ts",
+   "rock<game/cities/amr/levels.ts,game/cities/blr/levels.ts,game/cities/hyd/levels.ts,game/cities/pdy/levels.ts,game/levels/bpl.ts,game/levels/jai.ts,render/scenes.ts",
+   "cart<game/cities/amr/levels.ts,game/cities/amr/skin.ts,game/cities/bom/levels.ts,game/cities/bom/skin.ts,game/cities/dmn/levels.ts,game/cities/pdy/levels.ts,game/cities/rnc/levels.ts,game/entities/mumbai.ts,game/levels/bpl.ts,game/levels/jai.ts,game/levels/rpr.ts",
+   "bulbs<game/cities/blr/levels.ts,game/cities/hyd/levels.ts,game/levels/jai.ts"
+  ]
+ }
+}

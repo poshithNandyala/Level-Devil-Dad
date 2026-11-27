@@ -1,0 +1,24 @@
+checks 4032, route fails 0
+DIES x1: KVT-04 cp0 tapLong fell +1.48s
+DIES x24: KVT-07 cp0 tapLong splash +0.75s
+DIES x24: KVT-08 cp0 tapLong splash +0.82s
+DIES x24: KVT-08 cp1 tapLong splash +0.83s
+DIES x11: KVT-08 cp2 tapLong spikes +0.59s
+DIES x13: KVT-08 cp2 tapLong spikes +0.58s
+DIES x24: KVT-09 cp0 tapLong splash +0.70s
+DIES x24: KVT-09 cp2 tapLong splash +0.69s
+DIES x24: KVT-09 cp5 tapLong splash +1.09s
+DIES x24: KVT-09 cp8 tapLong splash +0.88s
+DIES x24: KVT-10 cp0 tapLong splash +0.70s
+DIES x24: KVT-10 cp1 tapLong splash +0.81s
+DIES x24: KVT-10 cp2 tapLong splash +0.69s
+DIES x24: KVT-10 cp3 tapLong kvt-hatchling +1.41s
+DIES x24: KVT-10 cp8 tapLong kvt-bitten +0.55s
+DIES x24: KVT-10 cp9 tapLong splash +0.69s
+DIES x24: KVT-10 cp11 tapLong splash +0.70s
+DIES x10: KVT-10 cp12 tapLong splash +0.69s
+DIES x24: KVT-10 cp13 tapLong splash +0.70s
+DIES x24: KVT-10 cp17 tapLong splash +0.98s
+DIES x18: KVT-10 cp18 tapLong splash +1.37s
+DIES x14: KVT-10 cp12 tapLong splash +0.70s
+DIES x6: KVT-10 cp18 tapLong splash +1.38s

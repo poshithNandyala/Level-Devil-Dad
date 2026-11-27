@@ -1,0 +1,52 @@
+SVP-01 | NAIVE | svp-baha@586
+SVP-01 | FIX | svp-baha@1298
+SVP-02 | NAIVE | svp-aari@434
+SVP-02 | FIX | svp-kichad@2063
+SVP-03 | NAIVE | svp-magar@272
+SVP-03 | FIX | svp-magar2@741
+SVP-04 | NAIVE | svp-hiran@354
+SVP-04 | FIX | svp-hiran2@1550
+SVP-05 | NAIVE | svp-nazar@190
+SVP-05 | FIX | svp-chuna@3137
+SVP-05 | M: stand on the footprints, then step out on to the ledge | svp-nazar@2587
+SVP-05 | M: up the signboard for the height | svp-nazar2@2520
+SVP-05 | M: hop everything in the cave | svp-chuna@3137
+SVP-05 | M: wait out the first drip, then hop the wall without waiting | svp-chuna2@4110
+SVP-06 | NAIVE | svp-kichad@199
+SVP-06 | FIX | svp-kichad2@1309
+SVP-07 | NAIVE | svp-saman@544
+SVP-07 | FIX | svp-bheed@776
+SVP-07 | M: into the trench, straight out again and on to the quay | svp-jahaz@684
+SVP-07 | M: on to the first ship with everyone else | svp-jahaz@920
+SVP-07 | M: sit down on the luggage like everyone | svp-bheed@2553
+SVP-07 | M: out of the trench the moment the real call comes | svp-bheed@2413
+SVP-07 | M: sit down on the luggage like everyone, a third time | svp-bheed@3241
+SVP-07 | M: wait right behind the bus for it to leave | svp-bus@4133
+SVP-07 | M: over the bus and on down the lane ahead of it | svp-bus-aage@4436
+SVP-08 | NAIVE | svp-baarish@217
+SVP-08 | FIX | svp-nala@10013
+SVP-08 | M: to the lee end by the wind, as the awnings taught | svp-chhajja@5380
+SVP-08 | M: the high end of the first stall, then the lee end by the wind at the second | svp-chhajja2@7181
+SVP-08 | M: stay at the end that was dry for the first rain, not listening | svp-baarish@8365
+SVP-08 | M: by the sound at the first section, then toward the drumming at the second | svp-baarish3@9039
+SVP-08 | M: shelter against the first building you come to, the short shop | svp-baarish@3423
+SVP-08 | M: the tall house right, then the two-storey one instead of the three | svp-baarish2@3754
+SVP-09 | NAIVE | svp-eent@138
+SVP-09 | FIX | svp-eent2@550
+SVP-09 | M: walk under both arches, the easy way | svp-nali@2739
+SVP-09 | M: one arch over, one under, then under both in the next stretch | svp-nali2@3150
+SVP-09 | M: let go under the middle of the pontoon | svp-hull@3648
+SVP-09 | M: walk the seabed to the end and let go there | svp-pankha@3730
+SVP-10 | NAIVE | svp-aari@654
+SVP-10 | FIX | svp-magar3@1290
+SVP-10 | M: food put down, then ride the middle of the log | svp-aari@717
+SVP-10 | M: sit down on the luggage like everyone | svp-bheed@4754
+SVP-10 | M: over both arches, as the reef taught | svp-nali@5803
+SVP-10 | M: under in the first stretch, then over the arches of the second | svp-nali2@6214
+SVP-10 | M: trust the board: its arrow is stuck on the middle log, so the gaps look safe | svp-magar3@1290
+SVP-10 | M: along the green roots, as the cellar taught | svp-eent3@3786
+SVP-10 | M: the first creek by the grey roots, the second by the green | svp-eent4@4047
+SVP-10 | M: wait in the open on the pier: there is no trench tonight | svp-bheed@4717
+SVP-10 | M: up on the tall stack for the first crowd, down at once, and out into the one coming back | svp-bheed2@5026
+SVP-10 | M: put the fritter down at the stall, as before, and take the boat | svp-hiran3@6888
+SVP-10 | M: carry the fritter to the edge and step off while the boat is away | fell@6581

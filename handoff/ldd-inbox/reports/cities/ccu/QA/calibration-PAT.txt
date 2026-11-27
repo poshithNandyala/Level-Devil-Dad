@@ -1,0 +1,12 @@
+PAT-05 L0 stretch from cp1 (x70.5): worst replay 14.6s (stop@25.0s pat-pipa x78.4)
+PAT-05 L0 stretch from cp5 (x177.5): worst replay 8.3s (runjump@52.8s pat-ganga x186.0)
+PAT-05 L0 i0 clear 52.9s caught 7/5 maxStretch 17.2s worstReplay 14.6s (stop@25.0s pat-pipa cp1) calm ok
+PAT-07 L0 stretch from cp4 (x149.5): worst replay 10.3s (run@46.3s pat-torana x186.3)
+PAT-07 L0 stretch from cp10 (x300.0): worst replay 10.2s (run@93.3s pat-dhakka x338.9)
+PAT-07 L0 stretch from cp15 (x453.5): worst replay 10.5s (stop@128.3s pat-rassi x465.8)
+PAT-07 L0 i0 clear 130.8s caught 17/15 maxStretch 15.0s worstReplay 10.5s (stop@128.3s pat-rassi cp15) calm cp0x32.5 idle4 DIES pat-dhakka +2.68s; cp0x32.5 tap DIES pat-dhakka +2.68s; cp1x52.0 idle4 DIES pat-dhakka +2.38s; cp1x52.0 run.3 DIES pat-dhakka +2.38s; cp1x52.0 tap DIES pat-dhakka +2.38s; cp6x220.0 run.3 DIES pat-dhakka +1.18s; cp6x220.0 tap DIES pat-dhakka +1.18s; cp8x257.0 idle4 DIES pat-dhakka +1.81s; cp10x300.0 idle4 DIES pat-dhakka +1.78s; cp10x300.0 tap DIES pat-dhakka +1.78s; cp11x348.0 run.3 DIES pat-torana +1.18s; cp11x348.0 tap DIES pat-torana +1.18s; cp12x378.5 idle4 DIES pat-dhakka +2.28s; cp12x378.5 run.3 DIES pat-dhakka +2.28s; cp12x378.5 tap DIES pat-dhakka +2.28s; cp13x386.0 run.3 DIES pat-dhakka +0.38s; cp13x386.0 tap DIES pat-dhakka +0.41s; cp14x408.0 run.3 DIES pat-torana +1.18s; cp14x408.0 tap DIES pat-torana +1.18s
+PAT-10 L0 stretch from cp2 (x140.5): worst replay 10.3s (runjump@25.8s pat-pipa x159.3)
+PAT-10 L0 stretch from cp5 (x207.5): worst replay 12.1s (runjump@41.5s pat-bojh x252.3)
+PAT-10 L0 stretch from cp6 (x240.5): worst replay 10.6s (run@49.3s pat-bojh x248.7)
+PAT-10 L0 stretch from cp8 (x286.0): worst replay 10.6s (stop@64.3s pat-torana x309.9)
+PAT-10 L0 i0 clear 99.7s caught 16/14 maxStretch 11.5s worstReplay 12.1s (runjump@41.5s pat-bojh cp5) calm cp9x312.0 idle4 DIES pat-dhakka +1.58s; cp9x312.0 run.3 DIES pat-torana +0.13s; cp9x312.0 tap DIES pat-torana +0.41s

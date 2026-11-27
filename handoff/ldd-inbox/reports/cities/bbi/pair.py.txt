@@ -1,0 +1,46 @@
+# QA fix F6 scratch: from qa-bbi6's DL (death log) and NM (mistake names) lines on stdin, print the pairing table:
+# every scripted play's cause@tick at lag 0/6/12, whether its cause holds across lags, and for each act whether its
+# two plays die to two causes at two ticks at every lag.
+import re, sys
+deaths, names = {}, {}
+for line in sys.stdin:
+    line = line.strip()
+    m = re.match(r'DL (\S+) (\S+) lag(\d+) (.*)', line)
+    if m:
+        sid, k, lag, rest = m.groups()
+        c = re.search(r'died: (\S+) @(\d+) tick(\d+)', rest)
+        deaths.setdefault((sid, k), {})[int(lag)] = (c.group(1), int(c.group(3))) if c else ('STALL', -1)
+        continue
+    m = re.match(r'NM (\S+) (\S+) (.*)', line)
+    if m:
+        names[(m.group(1), m.group(2))] = m.group(3)
+def cell(v):
+    return f'{v[0]}@{v[1]}' if v[1] >= 0 else v[0]
+acts = {}
+print('| Stage | Play | Act: play | lag 0 | lag 6 | lag 12 | Own cause at every lag |')
+print('| --- | --- | --- | --- | --- | --- | --- |')
+bad = 0
+for (sid, k), d in sorted(deaths.items(), key=lambda kv: (kv[0][0], int(kv[0][1][1:]) if kv[0][1][1:].isdigit() else -1)):
+    nm = names.get((sid, k), k)
+    act = nm.split(':')[0] if ':' in nm else f'{sid} {k}'
+    acts.setdefault((sid, act), []).append(d)
+    ok = len({v[0] for v in d.values()}) == 1 and 'STALL' not in {v[0] for v in d.values()}
+    bad += not ok
+    print(f'| {sid} | {k} | {nm} | {cell(d.get(0, ("?", -1)))} | {cell(d.get(6, ("?", -1)))} | {cell(d.get(12, ("?", -1)))} | {"yes" if ok else "NO"} |')
+print()
+print('| Stage | Act | lag 0 | lag 6 | lag 12 |')
+print('| --- | --- | --- | --- | --- |')
+pbad = 0
+for (sid, act), ds in sorted(acts.items()):
+    if len(ds) != 2 or ':' not in [*names.values(), ''][0] and False:
+        pass
+    if len(ds) != 2:
+        continue
+    row = []
+    for lag in (0, 6, 12):
+        a, b = ds[0].get(lag), ds[1].get(lag)
+        two = a and b and a[0] != b[0] and a[1] != b[1] and 'STALL' not in (a[0], b[0])
+        pbad += not two
+        row.append(('two' if two else 'ONE/STALL') + f' ({cell(a)} / {cell(b)})')
+    print(f'| {sid} | {act} | ' + ' | '.join(row) + ' |')
+print(f'\nPLAYS NOT HOLDING {bad}; PAIR-LAGS NOT TWO {pbad}')

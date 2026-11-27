@@ -1,0 +1,17 @@
+
+> level-devil-dad@0.17.2 build:single
+> vite build --mode single
+
+vite v8.3.7 building client environment for single...
+transforming...
+✓ 389 modules transformed.
+rendering chunks...
+[plugin vite:singlefile] 
+
+[plugin vite:singlefile] Inlining: index-UItIiEpt.js
+[plugin vite:singlefile] Inlining: style-CEIV1xg8.css
+dist-single/index.html  1,524.32 kB
+
+✓ built in 989ms
+BLR-04
+no errors

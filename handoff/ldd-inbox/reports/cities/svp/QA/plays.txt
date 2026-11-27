@@ -1,0 +1,20 @@
+SVP-05 | room FIX: footprints, dawdle 2.75 s, go | dead svp-nazar@573 x14.8
+SVP-05 | dekho NAIVE: run and hop through | dead svp-nazar@627 x42.8
+SVP-05 | dekho view 3: stand at the bench, not the prints | dead svp-nazar@1386 x72.8
+SVP-05 | door: walk at the dashed door | ERROR SVP-05: step 33 (to the door) timed out at x=4134,y=226
+SVP-06 | room FIX: jump for the cliff from the tip | dead svp-kichad@521 x21.4
+SVP-06 | door: walk at it | ERROR SVP-06: step 14 (to the door) timed out at x=1510,y=226
+SVP-07 | ghat FIX: jump for the second ship as it comes in | ERROR SVP-07: step 6 () timed out at x=591,y=226
+SVP-07 | teesra NAIVE: out behind the first crowd | dead svp-bus@3796 x167.4
+SVP-07 | door: walk on to the ship | ERROR SVP-07: step 25 (to the window and the ship) timed out at x=3510,y=226
+SVP-08 | room FIX: right end of the first awning, stay | dead svp-baarish@726 x9.6
+SVP-09 | room FIX: step across where the root was | dead svp-eent2@555 x40.9
+SVP-09 | pul NAIVE: hop along every root, grey too | dead svp-eent2@550 x40.9
+SVP-09 | door: walk/hop at it | ERROR SVP-09: step 32 () timed out at x=4166,y=187
+SVP-10 | nadi: hop the logs at once | dead svp-magar3@1290 x39.4
+SVP-10 | door: carry the fritter to the gate | ERROR SVP-10: step 35 (to the gate with food) timed out at x=4646,y=226
+SVP-07 | teesra: out behind the first crowd after 0 ticks, then walk on to x+46 and stop | dead svp-bheed@3708 x158.2
+SVP-07 | teesra: out behind the first crowd after 30 ticks, then walk on to x+46 and stop | dead svp-bheed@3708 x158.2
+SVP-07 | teesra: out behind the first crowd after 60 ticks, then walk on to x+46 and stop | dead svp-bheed@3708 x158.2
+SVP-07 | teesra: out behind the first crowd after 120 ticks, then walk on to x+46 and stop | dead svp-bheed@3708 x158.2
+SVP-07 | teesra: out behind the first crowd after 200 ticks, then walk on to x+46 and stop | dead svp-bheed@3630 x148.1

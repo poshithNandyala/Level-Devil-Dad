@@ -1,0 +1,59 @@
+// QA round 2 scratch (not committed): jump-hold bands at the 06 nest door and the 09 wall door, over take-off positions
+// (a lagged press moves the take-off later along the run, so the take-off sweep stands in for lag 0..12 ticks).
+import { it } from 'vitest';
+import { LEVELS } from '../src/game/levels';
+import type { World } from '../src/game/world';
+import { play, X, and, ground, type Step } from './runner';
+import { test as T } from './cities/svp';
+
+const S: Record<string, Step[]> = {};
+T.solutions(S as any, () => {});
+const AR = T.actRoutes as Record<string, (x: number) => Step[]>;
+function toDoor(id: string): { steps: Step[]; D: number } {
+  const def = LEVELS.find((l) => l.id === id)!;
+  const out: Step[] = [...S[id]];
+  for (const p of (def as any).parts ?? []) out.push(...AR[p.kind](p.x0));
+  return { steps: out, D: (def as any).doorX };
+}
+const HOLDS = [3, 4, 6, 8, 10, 12, 14, 15, 16, 17, 18, 19, 20, 22, 24, 30];
+
+it.runIf(!!process.env.QAD)('door bands', () => {
+  const out: string[] = [];
+  for (const [id, offs] of (process.env.QAD === 't' ? [] : [['SVP-06', [10.6, 10.2, 9.8, 9.6, 9.4, 9.2, 9.0, 8.8]], ['SVP-09', [7.2, 6.8, 6.6, 6.4, 6.2, 6.0, 5.8]]]) as [string, number[]][]) {
+    const def = LEVELS.find((l) => l.id === id)!;
+    const { steps, D } = toDoor(id);
+    out.push(`${id} door at tile ${D}; rows = take-off tile (D - k), cols = jump hold ticks ${HOLDS.join(' ')}`);
+    for (const k of offs) {
+      const row: string[] = [];
+      for (const H of HOLDS) {
+        const st: Step[] = [
+          ...steps,
+          { hold: 'R', until: and(ground, X(D - k)), max: 900 },
+          { hold: 'R', jump: H, ticks: H, long: true } as Step,
+          { hold: 'R', until: (w: World) => w.state !== 'play', max: 600 },
+        ];
+        try {
+          const { w } = play(def, st);
+          row.push(w.state === 'won' ? 'W' : w.state === 'dead' ? (w.deathCause ?? 'd').replace('svp-', '') : 'stuck');
+        } catch (e) {
+          row.push('stuck');
+        }
+      }
+      out.push(`  D-${k.toFixed(1)}: ${row.join(' ')}`);
+    }
+  }
+  // 05 turtle: walk the beach / one hop at various distances before the turtle
+  {
+    const id = 'SVP-05';
+    const def = LEVELS.find((l) => l.id === id)!;
+    const { steps, D } = toDoor(id);
+    const row: string[] = [];
+    for (const k of [10, 9, 8.5, 8, 7.5, 7, 6, 5, 3, 2, 1]) {
+      const st: Step[] = [...steps, { hold: 'R', until: and(ground, X(D - 12)), max: 900 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: and(ground, X(D - k)), max: 900 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: (w: World) => w.state !== 'play', max: 900 }];
+      try { const { w } = play(def, st); row.push(`hop@D-${k}:${w.state === 'dead' ? w.deathCause : w.state}`); } catch { row.push(`hop@D-${k}:stuck`); }
+    }
+    try { const { w } = play(def, [...steps, { hold: 'R', until: (w: World) => w.state !== 'play', max: 900 }]); row.push(`walk:${w.state}`); } catch { row.push('walk:stuck'); }
+    out.push(`SVP-05 turtle door (turtle at D-4): ${row.join(' ')}`);
+  }
+  console.log('QAD\n' + out.join('\n'));
+}, 900000);

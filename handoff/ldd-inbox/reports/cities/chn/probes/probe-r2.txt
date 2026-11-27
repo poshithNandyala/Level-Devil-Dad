@@ -1,0 +1,53 @@
+CHN-01: route won tick 1904 (15.9 s) cps 17.5,29.5,57.5,68.5,79.0 par 30
+  NAIVE: dead chn-sundal tick 1012 x 75.6 (expected chn-sundal)
+  FIX: dead chn-sooda tick 1075 x 77.3 (expected chn-sooda)
+  wait for the hand to go up, then go (the lift follows the hand): dead chn-sooda tick 1075 x 76.4 (expected chn-sooda)
+  hop the cart like the parked auto: dead chn-sundal tick 1012 x 75.6 (expected chn-sundal)
+  stand where the pot bubbles: dead burnt tick 1368 x 86.6 (expected burnt)
+CHN-02: route won tick 1432 (11.9 s) cps 32.5,65.5 par 17
+  NAIVE: dead hit tick 149 x 12.8 (expected hit)
+  FIX: dead hit tick 737 x 39.8 (expected hit)
+CHN-03: route won tick 2202 (18.4 s) cps 44.5,79.5 par 15
+  NAIVE: dead flood tick 188 x 13.4 (expected flood)
+CHN-04: route won tick 1430 (11.9 s) cps 28.5,67.5 par 17
+  NAIVE: dead fell tick 176 x 11.9 (expected fell)
+  FIX: dead hit tick 870 x 55.1 (expected hit)
+CHN-05: route won tick 1044 (8.7 s) cps 39.5,65.5 par 15
+  NAIVE: dead hit tick 254 x 22.4 (expected hit)
+  FIX: dead fell tick 630 x 48.6 (expected fell)
+CHN-06: route won tick 1429 (11.9 s) cps 32.5,69.5 par 15
+  NAIVE: dead fell tick 123 x 10.9 (expected fell)
+CHN-07: route won tick 1384 (11.5 s) cps 32.5,63.5 par 17
+  NAIVE: dead fell tick 95 x 8.8 (expected fell)
+  FIX: dead spikes tick 865 x 53.5 (expected spikes)
+CHN-08: route won tick 2066 (17.2 s) cps 32.5,73.5 par 19
+  NAIVE: dead splash tick 64 x 5.6 (expected splash)
+CHN-09: route won tick 3788 (31.6 s) cps 32.5,62.5,92.5,122.5,152.5,181.5 par 43
+  NAIVE: dead chn-ennai tick 211 x 16.3 (expected chn-ennai)
+  FIX: dead chn-karandi tick 385 x 8.1 (expected chn-karandi)
+  run straight into the oil: dead chn-ennai tick 66 x 5.7 (expected chn-ennai)
+  ladle A1: hop straight on to the dark spiral: dead chn-karandi tick 782 x 46.8 (expected chn-karandi)
+  ladle A2: wait on the first spiral for the dark one to go: dead chn-sottu tick 845 x 39.1 (expected chn-sottu)
+  eye A1: run straight across the big spiral: dead chn-ennai tick 1680 x 73.9 (expected chn-ennai)
+  eye A2: hop the eye at once, under the press: dead chn-achu tick 1686 x 74.4 (expected chn-achu)
+  thenkuzhal A1 (the room taught it): wait for it to go golden: dead chn-karandi tick 2591 x 99.2 (expected chn-karandi)
+  thenkuzhal A2: it never turns, so step on at once: dead chn-ennai tick 2340 x 107.3 (expected chn-ennai)
+  row A1: run on to the row as it is laid: dead chn-ennai tick 2761 x 126.8 (expected chn-ennai)
+  row A2: wait for golden, step on, and stop for a look: dead chn-karandi tick 3081 x 129.0 (expected chn-karandi)
+  taste A1 (the room taught it): land on the near end and wait there: dead chn-kai tick 3400 x 159.2 (expected chn-kai)
+  taste A2: land, get past the near end on to the middle, and wait there: dead chn-karandi tick 3484 x 164.4 (expected chn-karandi)
+  door: stop in front of the pale curtain to let it fry: dead burnt tick 3741 x 186.9 (expected burnt)
+CHN-10: route won tick 3677 (30.6 s) cps 32.5,62.5,88.5,114.5,144.5,173.5 par 40
+  NAIVE: dead chn-comb tick 217 x 9.4 (expected chn-comb)
+  FIX: dead chn-fountain tick 242 x 10.9 (expected chn-fountain)
+  leap from the kerb over the escalator: dead chn-fountain tick 180 x 14.6 (expected chn-fountain)
+  family A1 (the room taught it): hop back off when they board: dead chn-trolley tick 1288 x 38.1 (expected chn-trolley)
+  polished floor A1 (the beach road taught it): hop the shimmer, walk the dark patch: dead chn-kinaru tick 1758 x 68.8 (expected chn-kinaru)
+  down escalator A1: step on while it is empty: dead chn-comb tick 2560 x 123.1 (expected chn-comb)
+  display A1 (the kitchen taught it): stand on the golden one: dead chn-plaster tick 3311 x 155.9 (expected chn-plaster)
+  billing A1 (the queue taught it): hop on to the second trolley to skip the third: dead chn-rolled tick 2257 x 105.2 (expected chn-rolled)
+  billing A2: stand on the loaded first trolley and look: dead chn-tipped tick 2183 x 97.2 (expected chn-tipped)
+   ✓ chn probe 674ms
+      Tests  1 passed (1)
+   Start at  09:45:43
+   Duration  2.11s (transform 42%, tests 34%, setup 19%, import 4%)

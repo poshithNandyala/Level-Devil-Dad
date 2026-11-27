@@ -1,0 +1,45 @@
+(b) BBI-07 bbi07-mardala      naive=bbi-nacha@72 fix=bbi-thrown@365 -> ok
+(b) BBI-07 bbi07-deepa        naive=bbi-nacha@72 fix=bbi-deepa@225 -> ok
+(b) BBI-07 bbi07-bandha       naive=bbi-nacha@113 fix=bbi-thrown@1097 -> ok
+(b) BBI-07 bbi07-dui-baja     naive=bbi-nacha@127 fix=bbi-thrown@506 -> ok
+(b) BBI-07 bbi07-bagudi       naive=bbi-bagudi@214 fix=bbi-chhuin@369 -> ok
+(b) BBI-07 bbi07-pada         naive=bbi-pada@287 fix=bbi-thrown@521 -> ok
+(b) BBI-07 bbi07-jodi         naive=bbi-nacha@573 fix=bbi-adha@833 -> ok
+(b) BBI-07 bbi07-gadiba       naive=bbi-ulta-gadi@397 fix=bbi-gadi-tala@367 -> ok
+(b) BBI-07 bbi07-hulahuli     naive=bbi-thrown@362 fix=bbi-kick@664 -> ok
+(b) BBI-07 bbi07-sajaghara    naive=bbi-saja@305 fix=bbi-dauda@238 -> ok
+(b) BBI-07 bbi07-ghungur      naive=bbi-nacha@145 fix=bbi-thrown@697 -> ok
+(b) BBI-07 bbi07-kachha       naive=bbi-kachha@341 fix=bbi-thrown@1166 -> ok
+(b) BBI-07 bbi07-pothi        naive=bbi-pothi@153 fix=bbi-nacha@423 -> ok
+(b) BBI-07 bbi07-shrinkhala   naive=bbi-nacha@73 fix=bbi-thrown@523 -> ok
+(b) BBI-07 bbi07-dweepa       naive=bbi-nacha@73 fix=bbi-thrown@834 -> ok
+(a) BBI-07 window bbi-nacha|bbi-thrown (wait for the whole bridge, then stop on it) x2 [bbi07-mardala, bbi07-shrinkhala] -> ok
+(a) BBI-07 window bbi-nacha|bbi-deepa (stand on the wheel) x1 [bbi07-deepa] -> ok
+(a) BBI-07 window bbi-nacha|bbi-thrown (take the second troupe’s bridge to the high bank) x1 [bbi07-bandha] -> ok
+(a) BBI-07 window bbi-nacha|bbi-thrown (go on the far drummer’s stop, but take your time) x1 [bbi07-dui-baja] -> ok
+(a) BBI-07 window bbi-bagudi|bbi-chhuin (hop the raider) x1 [bbi07-bagudi] -> ok
+(a) BBI-07 window bbi-pada|bbi-thrown (wait well back, then go when it lands) x1 [bbi07-pada] -> ok
+(a) BBI-07 window bbi-nacha|bbi-adha (go the moment the second half lands) x1 [bbi07-jodi] -> ok
+(a) BBI-07 window bbi-ulta-gadi|bbi-gadi-tala (stand still on it when it shivers) x1 [bbi07-gadiba] -> ok
+(a) BBI-07 window bbi-thrown|bbi-kick (wait for the cheer to swell, then go) x1 [bbi07-hulahuli] -> ok
+(a) BBI-07 window bbi-saja|bbi-dauda (wait at the edge, ready to go at the stop) x1 [bbi07-sajaghara] -> ok
+(a) BBI-07 window bbi-nacha|bbi-thrown (wait at the edge for the lamps) x1 [bbi07-ghungur] -> ok
+(a) BBI-07 window bbi-kachha|bbi-thrown (wait for each troupe to settle before you trust it) x1 [bbi07-kachha] -> ok
+(a) BBI-07 window bbi-pothi|bbi-nacha (hop the hinges and keep going) x1 [bbi07-pothi] -> ok
+(a) BBI-07 window bbi-nacha|bbi-thrown (rest on the second bridge too) x1 [bbi07-dweepa] -> ok
+probe (a) repeats beyond one momentum beat: 0; probe (b) acts failing: 0
+RT BBI-01 won 25.4 s
+RT BBI-02 won 26.4 s
+RT BBI-03 won 25.9 s
+RT BBI-04 won 29.3 s
+RT BBI-05 won 60.2 s
+RT BBI-06 won 50.0 s
+RT BBI-07 won 99.3 s
+RT BBI-08 won 46.6 s
+RT BBI-09 won 58.7 s
+RT BBI-10 won 94.9 s
+stretch BBI-07: longest 7.2 s between calm spots
+replay BBI-07 lag  0: longest 6.6 s (bbi07-gadiba: go at the stop and walk on through the roll)
+replay BBI-07 lag  6: longest 6.6 s (bbi07-gadiba: go at the stop and walk on through the roll)
+replay BBI-07 lag 12: longest 6.7 s (bbi07-gadiba: go at the stop and walk on through the roll)
+replay worst: 6.7 s

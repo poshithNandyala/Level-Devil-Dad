@@ -1,0 +1,71 @@
+{
+ "code": "BLR",
+ "moved": [
+  "src/render/backgrounds.ts:bengaluru -> src/game/cities/blr/backdrop.ts",
+  "src/game/levels/blr.ts -> src/game/cities/blr/levels.ts",
+  "src/game/entities/karnataka.ts -> src/game/cities/blr/entities.ts"
+ ],
+ "removed": [
+  "src/game/cities.ts:LINES.BLR",
+  "src/game/cities.ts:CHAPTERS BLR city/hello/famous (filled by install)",
+  "src/game/levels/chunks.ts:SKINS.BLR",
+  "src/game/levels/tour.ts:COURSES.BLR",
+  "src/app/citylines.ts:CITY_LINE.BLR",
+  "src/render/renderer.ts:GRADES.BLR",
+  "src/render/art/tiles.ts:CAP.BLR",
+  "src/audio/audio.ts:MUSIC.BLR",
+  "src/render/theme.ts:THEMES.BLR",
+  "src/render/theme.ts:CITY_ORDER BLR (install appends it)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.revolve (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.pull (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.wrap (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.cctv (+ EndingKind)",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case leaf",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case coracle"
+ ],
+ "importers": [
+  "src/game/levels/index.ts"
+ ],
+ "inv": {
+  "own": [
+   "src/game/levels/blr.ts",
+   "src/game/entities/karnataka.ts"
+  ],
+  "cause": [],
+  "causeShared": [
+   "spikes<game/cities/chn/levels.ts,game/cities/kvt/endings.ts,game/cities/kvt/levels.ts,game/cities/pdy/levels.ts,game/entities/basics.ts,game/levels/amr.ts,game/levels/endings.ts,game/levels/twists.ts,game/world.ts",
+   "crushed<game/cities/chn/endings.ts,game/cities/pdy/endings.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/group.ts,game/levels/amr.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/hyd.ts,game/levels/trolls.ts,game/world.ts",
+   "splash<app/app.ts,game/cities/chn/levels.ts,game/cities/kvt/endings.ts,game/cities/kvt/entities.ts,game/cities/kvt/levels.ts,game/cities/pdy/levels.ts,game/cities/rnc/entities.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/abilities.ts,game/entities/daman.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/amr.ts,game/levels/bom.ts,game/levels/chunks.ts,game/levels/dmn.ts,game/levels/endings2.ts,game/levels/endings3.ts,game/levels/gnr.ts,game/levels/kit.ts,game/levels/pnj.ts,game/player.ts",
+   "hit<game/cities/chn/levels.ts,game/cities/kvt/endings.ts,game/cities/kvt/levels.ts,game/cities/pdy/levels.ts,game/cities/tvm/levels.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/amr.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/hyd.ts,game/levels/kit.ts"
+  ],
+  "ending": [
+   "revolve",
+   "pull",
+   "wrap",
+   "cctv"
+  ],
+  "endingShared": [
+   "loading<game/cities/kvt/levels.ts,game/levels/endings.ts",
+   "lamp<game/cities/chn/levels.ts,game/cities/pdy/levels.ts,game/cities/rnc/levels.ts,game/levels/bom.ts,game/levels/bpl.ts,game/levels/dmn.ts,game/levels/gnr.ts,game/levels/hyd.ts,game/levels/jai.ts,game/levels/pnj.ts,game/levels/rpr.ts",
+   "invisible<game/levels/endings.ts"
+  ],
+  "thing": [
+   "leaf",
+   "coracle"
+  ],
+  "thingShared": [
+   "boulder<game/cities/pdy/endings.ts,game/cities/rnc/skin.ts,game/cities/tvm/levels.ts,game/cities/tvm/skin.ts,game/levels/amr.ts,game/levels/chunks.ts",
+   "barricade<game/levels/hyd.ts",
+   "pad<game/levels/amr.ts,game/levels/bom.ts,game/levels/hyd.ts",
+   "redbus<game/cities/tvm/levels.ts",
+   "scooter<game/cities/chn/skin.ts,game/cities/pdy/levels.ts,game/cities/rnc/skin.ts,game/cities/tvm/levels.ts,game/entities/traffic.ts,game/levels/chunks.ts,game/levels/hyd.ts,game/levels/pnj.ts,render/art/vehicles.ts",
+   "shareauto<game/cities/chn/levels.ts",
+   "pillar<game/cities/chn/endings.ts,game/cities/chn/levels.ts,game/levels/endings2.ts",
+   "rock<game/cities/pdy/levels.ts,game/levels/amr.ts,game/levels/bpl.ts,game/levels/gnr.ts,game/levels/hyd.ts,game/levels/jai.ts,render/scenes.ts",
+   "kaapi<game/cities/chn/levels.ts",
+   "jeep<game/cities/kvt/levels.ts,game/cities/kvt/skin.ts,game/cities/tvm/levels.ts,game/cities/tvm/skin.ts",
+   "bulbs<game/levels/gnr.ts,game/levels/hyd.ts,game/levels/jai.ts",
+   "log<game/cities/chn/levels.ts,game/cities/tvm/levels.ts,game/levels/amr.ts"
+  ]
+ }
+}

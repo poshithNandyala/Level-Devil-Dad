@@ -1,0 +1,144 @@
+LABELS
+DIS-01 naive [dis-spill]  | fix [dis-pool] 
+  m0 [dis-spill] steps off the deck as the second boy comes: his tray
+  m1 [dis-spill] goes past him before he has stopped at the bench: his tray swings out in front of him
+  m2 [dis-spill] waits on where he stood to watch him pour: he picks the tray up and walks on into him
+DIS-02 naive [dis-luit]  | fix [-] 
+  m0 [dis-luit] waits on the first bar for ever: it sinks once the next one is up
+  m1 [dis-luit] second scripted death, same trap (one play: the sandbars have one hazard, the river under a bar that is not there: every wrong move is a wrong bar)
+  m2 [dis-bhutbhuti] dis02-bhutbhuti: hops off the bar’s far end on the ferry’s horn: no bar is there
+  m3 [dis-char-sink] dis02-bhutbhuti (fix): waits out the horn at the bar’s far end without moving: it narrows under him
+DIS-03 naive [dis-basket]  | fix [-] 
+  m0 [dis-basket] follows her too close on the wet path and slides into her basket
+  m1 [dis-basket] second scripted death, same trap (one play: the tea row has one hazard, the plucker’s basket: too close, too early or over her all meet it)
+DIS-04 naive [dis-talatal]  | fix [dis-doba] 
+  m0 [dis-kup] dis04-batah: goes down the stairwell with the light in it: the flooded vault
+  m1 [dis-garh] dis04-batah (fix): learns the lit well is flooded and takes the first dark one: it has fallen in
+DIS-05 naive [dis-gamosa]  | fix [-] 
+  m0 [dis-gamosa] dis05-atithi: walks straight on into it
+  m1 [dis-beam] dis05-sanko: jumps the nala he remembers: the low beam
+  m2 [dis-sanko-pit] dis05-sanko (fix): backs off to find a host to take a gamosa: the ditch behind
+  m3 [dis-kol-paat] dis05-feast: jumps up for a pitha: the leaf tips under the landing
+  m4 [dis-pit] dis05-feast (fix): jumps the whole feast at a run and lands at the ditch’s lip, running on into it
+  m5 [dis-kaath] dis05-kaath: hops the first split the ordinary way: it slides ahead under his landing
+  m6 [dis-kaath-gamosa] dis05-kaath (fix): stops to let the split settle: the wife catches him with the third gamosa and, blind, he walks into the ditch
+  m7 [dis-machan] dis05-machan: waits on the last plank for one more: the drum rolls
+  m8 [dis-machan-luit] dis05-machan (fix): runs on ahead of the carpenter: the far end is not built
+DIS-06 naive [dis-porcupine]  | fix [dis-bank] 
+  m0 [dis-flag-luit] dis06-flag: hops to the flag over the water: the river
+  m1 [dis-ghat-gamosa] dis06-flag (fix): goes to where the flag was: the ghat man’s third gamosa, and blind he walks off the plank’s end
+  m2 [dis-dhal] dis06-wake: runs to outrun the wake
+  m3 [dis-wake-bank] dis06-wake (fix): waits for the wake on the undercut bank and hops it: the landing breaks the slab off
+  m4 [dis-dirru] dis06-traps: stands on the first trap as on a floor: it rings and is hoisted
+  m5 [dis-tip] dis06-traps (fix): hops on at the ring to the next trap: it is still slack and tips
+DIS-07 naive [dis-gate]  | fix [dis-dhol-sink] 
+  m0 [dis-horin] dis07-card: waits at the gate for the card: the deer cross there
+  m1 [dis-gate] dis07-chowk: walks straight on into it
+  m2 [dis-pukhuri] dis07-dhol: runs and jumps across the planks
+  m3 [dis-card-gate] dis07-card: runs to the exit gate: it is shut before the card’s time
+  m4 [dis-horin] dis07-card (fix): dawdles on the road short of the gate: a corridor
+  m5 [dis-pat] dis07-rope: walks straight across: the middle is whipped under him
+  m6 [dis-paakoni] dis07-rope (fix): crosses the middle between strokes, then waits at the twisters’ end as at an anchor: they step back with it
+  m7 [dis-herd] dis07-cart: stops on the cart to take a pitha: carried into the stakes
+  m8 [dis-cart-pukhuri] dis07-cart (fix): runs straight along the cart without stopping: off its front into the pond
+  m9 [dis-pepa-gate] dis07-pepa: runs after the group that is leaving: the gate has shut behind it
+  m10 [dis-stakes] dis07-pepa (fix): waits right under the gate for the coming group: the stakes come down as it arrives
+  m11 [dis-lathi] dis07-tekeli: stands still in the open by him: they shout his side
+  m12 [dis-lathi-ghur] dis07-tekeli (fix): runs through past him on the shout: across into the shouted side as he swings
+  m13 [dis-goru] dis07-goru: stands his ground in the lane: the bull stops, lowers its head and charges
+  m14 [dis-goru-lane] dis07-goru (fix): drops back into the lane to get past the bull while it walks: it is in its lane, and he is trampled
+DIS-08 naive [dis-beel]  | fix [dis-gorh] 
+  m0 [dis-bogoli] dis08-bogoli: walks into the grass with the egrets up: the rhino is charging
+  m1 [dis-jui] dis08-bogoli (fix): waits a whole round of the egrets: the rangers’ burn has come back through the grass
+  m2 [dis-beel] dis08-jeep: walks into the tall grass
+  m3 [dis-gorh] dis08-jeep (fix): waits at the edge of the grass, where the second jeep is
+  m4 [dis-gorh] dis08-duijeep: waits at the grass edge for the loud jeep’s charge: the rhino comes for the near one, at him
+  m5 [dis-beel] dis08-duijeep (fix): walks into the grass toward the loud jeep’s line before any charge
+  m6 [dis-gorh] dis08-bagori: stays on the bank: the rhino comes from behind
+  m7 [dis-gorh-adha] dis08-bagori (fix): off the hay as soon as the rhino stops halfway
+DIS-09 naive [dis-roof]  | fix [dis-gutter] 
+  m0 [dis-roof] dis09-chaal: stops on the oil before the rib
+  m1 [dis-khaal] dis09-tug: runs straight on over the ditch
+  m2 [dis-rope] dis09-tug (fix): goes the moment the rope is taut, whoever is winning
+  m3 [dis-sluice] dis09-sluice: runs straight down the channel: the bell, and the flood
+  m4 [dis-sluice-tel] dis09-sluice (fix): gets up on the embankment and stays there, safe from every flood: the oil slides him back in
+  m5 [dis-tel-gola] dis09-tunnels: skips the tunnels and runs the oiled beam: the oil balls
+  m6 [dis-vault] dis09-tunnels (fix): takes the first tunnel and runs on: the next grate is still down, off the pier into the vault
+DIS-10 naive [dis-ulta]  | fix [dis-rope-ulta] 
+  m0 [dis-pukhuri-lahe] dis10-dhol: runs and jumps across the planks
+  m1 [dis-dhol-lahe] dis10-dhol (fix): hops on the quick tempo from 07 after the drummer has slowed: the next plank is not up, he comes down on his own as it sinks
+  m2 [dis-doba-ulta] dis10-talatal: stops on the step before the last to wait for it, as in 04
+  m3 [dis-khaal-ulta] dis10-tug: runs straight on over the ditch
+  m4 [dis-agot] room: waits on the bank as the first bar goes, then jumps for the new bar’s outline before it is up
+  m5 [dis-basket-ulta] door: waits on the bank to follow the plucker, as in 03: she walks into him
+  m6 [dis-path-agot] door: runs on ahead of her: the bars that far ahead are not up yet
+CAUSES 67
+  dis-spill: Chah! The tea boy’s tray tipped hot lal chah on you. / Don’t touch him while he carries the tray. Wait back from the bench he stops at, and walk past him only while his tray is down and he is pouring.
+  dis-pool: Chah! You hopped him and landed in the tea he spilled. / Don’t hop the tea boy. Wait back from the bench until he has set his tray down to pour, then walk past him.
+  dis-porcupine: Bah! The spur is only bamboo poles: you slipped through into the river. / Don’t stand on the spur. Jump over it to the sand step on its downstream side, once the step is up.
+  dis-horin: Horin! A hog deer crossed the road through you. / Cross each marked corridor between deer, and spend the card’s time on the bench under the tree: no corridor reaches it. Leave the bench so you reach the gate just as the card says GO.
+  dis-card-gate: Gate! It stays shut before the time on your card. / Don’t hurry to the gate. Spend the card’s time on the bench under the tree, off every deer crossing, then walk to the gate.
+  dis-talatal: Talatal! The bottom step was gone, and you went down the shaft. / Don’t race the stair to the bottom. Stop on the step before the last: it is the one that comes back up. Wait on it as it rises.
+  dis-doba: Doba! The landing went into the flooded vault, and you with it. / Don’t wait at the top. Go down with the falling stair, keeping ahead of it, and stop on the step before the last.
+  dis-doba-ulta: Doba! These steps fell from the bottom up, and you waited on one. / This stair goes the other way: race straight down it and jump to the far side before the fall reaches you.
+  dis-talatal-ulta: Talatal! These steps fell from the bottom up, and the fall reached you. / Race straight down without stopping, and jump to the far side from the last step.
+  dis-dhal: Dhal! The ferry’s wake ran you down. / You can’t outrun it. Drop into the hollow behind the spur, its lee, and let the wake run over you; then go. Run on past the lee and the wake comes back off the far spur.
+  dis-wake-bank: Paar! You hopped the wake on the undercut bank, and your landing broke the slab off. / Don’t meet the wake on the bank. Hop over the spur into its lee and let the wake run over you.
+  dis-dirru: Dirru! The trap was hoisted up to the beam with you on it. / A ringing bell means that trap is about to go up. Leave a ringing trap for a silent one.
+  dis-tip: Polo! The trap had just come down, still slack on its rope, and it tipped under you. / When a bell rings, wait a moment for the next trap to settle on its rope, then hop to it.
+  dis-kol-paat: Kol paat! You jumped for a pitha and the banana leaf tipped under you. / The feast is the floor: walk across on the leaves, and never land on one.
+  dis-pit: Gat! You jumped right over the feast, into the ditch beyond. / Walk across the leaves, then hop the ditch from its edge.
+  dis-sanko-pit: Gat! You backed off for a host, and the ditch behind you was there. / Don’t go back. The nala ahead has been bridged since you saw it (look at the bamboo’s shadow): walk on across.
+  dis-machan: Machan! The drum rolled and every plank came down. / Keep up with the carpenter, plank by plank, and be off the far end before the roll ends. Never wait on the last plank.
+  dis-machan-luit: Luit! You ran on ahead of the carpenter: the far end was not built yet. / Stay just behind his planking, a plank at a time, and step off the far end before the drum roll.
+  dis-goru: Goru! The bull charged down the lane. / When it stops and lowers its head, get out of the lane sideways, up on a verandah, before it charges.
+  dis-goru-lane: Goru! You ran past the bull and it turned on you. / Never pass it in the lane. Wait up on a verandah while it charges past, and go on only once it is walking away.
+  dis-sluice: Joysagar! The sluice opened and the channel flooded. / When the bell rings, be up on the embankment or past the gate. You can’t cross the whole channel between two bells.
+  dis-sluice-tel: Tel! You stayed on the oiled embankment, and it slid you back into the channel. / The embankment is for the flood only: come down as soon as the channel has drained.
+  dis-lathi: Lathi! The stick came down where the crowd was shouting, and you stood there. / He swings where they shout. Stand on the side they are NOT shouting.
+  dis-lathi-ghur: Lathi! You ran across into the side they were shouting, as he turned on it. / Never cross on to the shouted side. Move to the other side on each shout, and go past him once his swing is behind you.
+  dis-beam: Thum! You jumped the nala you remembered, into the low beam of the wedding machan. / A bamboo has been laid over the nala since you saw it: its shadow lies past the nala’s end. Walk across.
+  dis-stakes: Khuti! The hosts dropped the guard stakes in front of the gate as the singers arrived. / Wait for the coming group back from the gate, not right under it, and go through inside its ring.
+  dis-pepa-gate: Gate! You ran after the group that was leaving, and the gate shut behind it. / That group won’t stop for you. Wait back from the gate for the group that is coming, and go through in its ring.
+  dis-pat: Pat! The twisters whipped the rope, and the middle threw you into the channel. / The rope is still next to the post and whipped in the middle. Wait by the post, and cross the middle right after a stroke.
+  dis-paakoni: Paakoni! The twisters stepped back and took their end of the rope with you on it. / The far end moves with the twisters. Step off it on to the bank; never wait there.
+  dis-herd: Thela! You stopped on the cart and it carried you into the stakes. / Never stop on the rolling cart. Walk forward along it and jump up on to the jetty as it runs under it.
+  dis-cart-pukhuri: Pukhuri! You ran off the front of the cart into the pond. / Walk along the cart, not at a run, and jump up on to the jetty as the cart passes under it.
+  dis-kaath: Kaath! The bamboo split slid under your landing. / Each split slides the moment you jump at it, and the first one slides ahead. Hop short, down where it was, then over it where it stopped. The second slides back toward you: an ordinary hop clears it.
+  dis-kaath-gamosa: Gamosa! You stopped to let the split settle, and his wife caught you with a third gamosa: you could not see the ditch. / Don’t wait for a split. Hop short on to where the first one was as it slides, then straight over it.
+  dis-japi-gat: Gat! The ditch past the splits. / After the second split, hop the ditch from its edge.
+  dis-flag-luit: Luit! You hopped to the flag: it stands over the water now. / The ghat man moves the flag as the river rises; the gangplank stays. Hop over him and run-jump from the plank’s end to the bank.
+  dis-ghat-gamosa: Gamosa! You went where the flag was, into the ghat man’s arms: three on you, and you could not see the plank’s end. / You need not take his gamosa: hop over him, then run-jump from the plank’s end to the bank.
+  dis-bogoli: Gorh! The egrets were up: the rhino was charging under them. / The white egrets sit on the hidden rhino’s back. While they sit it lies still: walk through. When they rise, wait at the edge of the grass.
+  dis-jui: Jui! The rangers’ burn came back through the grass. / They light it at the far end when the egrets next go up. Cross the first time the egrets settle; don’t wait a whole round.
+  dis-vault: Garh! The grate was still down, and you ran on off the pier into the vault. / Each tunnel mouth brings you up a step behind the next one, and its grate lifts a moment later. Stop, wait for it, then walk in. On the last pier wait for the plank bridge.
+  dis-tel-gola: Gola! An oil ball rolled along the beam into you. / The oiled beam over the vault is no short cut. Take the tunnel mouths, one at a time.
+  dis-char-sink: Luit! The bar narrowed under you while you stood at its far end. / A bar you land on narrows, and its left end stays: walk back along it while you wait. Then hop at the real siren, when the level post turns.
+  dis-bhutbhuti: Luit! That was the ferry’s horn, not the siren: no bar came up. / Watch the level post: on the horn it does not move. Stay on your bar until the real siren and the new bar.
+  dis-kup: Doba! The light in that well was daylight off the water in the flooded vault. / A glowing stairwell is lit from the water below. Of the dark ones, go down the one your lamp’s flame leans toward: the draught runs that way.
+  dis-garh: Garh! That stairwell had fallen in. / The lit well is the flooded vault, and one dark one has fallen in. Watch your lamp: its flame leans toward the well the draught runs into. Go down that one.
+  dis-luit: Luit! The sandbar was not there, or it went out from under you. / Read the level post. When the siren goes the next bar comes up first, the bar you stand on goes last, and a bar that narrows keeps its left end. The hut never moves.
+  dis-ulta: Ulta! This time the bar you stood on went under first. / On this side of the far post the order is turned round: at the siren wait on the bank, not on the bar, and go when the new bar is up.
+  dis-agot: Luit! The new bar was not up yet. / It comes up only after the old one has gone, and slowly. Wait on the bank until it is all the way up.
+  dis-basket: Tokari! The plucker’s basket swung into you. / Stay a few steps behind her and follow. Never hop over her, and when the path is wet wait before it: you can’t stop on it.
+  dis-basket-ulta: Tokari! You waited to follow her, and she walked into you. / This path sinks behind her: the bars rise a few steps ahead of her. Go in front of her.
+  dis-path-agot: Luit! You ran too far ahead of her: the bars there were not up yet. / Stay a few steps in front of her, close enough that the bar under you is up.
+  dis-laru: Laru! A rolling laru ball got you. / Hop each ball as it rolls at you.
+  dis-gamosa: Gamosa! Three gamosas on you and you could not see the pit. / Every host who touches you adds one. At three the cloth hides your feet: hop over the next giver, or walk into a host in a red sash to give one away.
+  dis-bank: Paar! The river took the bank before you got across. / The river takes the slab in front of each bamboo spur early, and builds silt behind it. Wait for the sand step behind the spur, then jump over the slab and the spur on to it.
+  dis-gate: Gate! The bamboo stakes got you. / The gate opens only while the husori group is stopped at it and you are inside its ring. Walk with them, and stay in the ring till the gate is open.
+  dis-beel: Beel! There is no floor under the tall grass. / Don’t step into grass that has not been flattened. A rhino flattens a strip when it charges at the jeep’s dust: wait, then walk its strip.
+  dis-gorh-adha: Gorh! It had only stopped halfway: you came down off the hay into it. / Stay up on the hay until both charges have gone past: the jeep at the far end sends it on.
+  dis-gorh: Gorh! You were in the rhino’s way. / It charges straight at the dust, along the grass and the bank. Stay clear of the line between where it starts and the dust, or climb up out of its way.
+  dis-roof: Gola! A ball rolled down the oiled roof into you. / Don’t stand or land on the oil. Stop on the grip pad before a rib, take a run, and jump the rib and the oil together on to the next pad.
+  dis-gutter: Gola! The upper eave is the gutter, and its ball rolled down it into you. / The pavilion’s side only leads to the gutter. Stay on the roof: stop on each grip pad, take a run, and leap the rib and the oil.
+  dis-pukhuri: Dhol! The plank sank on the beat, and you went into the pond. / Hop one plank on every beat of the dhol. When his arms go faster the beat has quickened: hop at once, every time.
+  dis-pukhuri-lahe: Dhol! You ran at the planks: they rise only on his beat. / Hop one plank per beat, and this drummer is slowing down: hop only when the next plank is up.
+  dis-dhol-sink: Dhol! You stayed too long: the plank sank under your feet. / Each plank sinks a moment after the next one rises. Hop on the beat he plays now, not later and not on the beat you remember.
+  dis-dhol-lahe: Dhol! He slowed down and you kept the quick beat: the next plank was not up. / Watch his arms: when they slow, wait for each plank to be up before you hop.
+  dis-khaal: Khaal! The rope was slack, and you went into the ditch. / The rope is a floor only while the teams pull it taut. Wait at the edge until it is taut and the far team’s flag is up.
+  dis-khaal-ulta: Khaal! The rope was slack when you ran on to it. / Wait at the edge until it is taut and the far team, in green caps now, is winning; then cross at once.
+  dis-rope: Rosi! The winning team pulled the rope out from under you. / The taut rope slides toward the team that is winning. Get on only when the far team’s red flag is up, and cross at once.
+  dis-rope-ulta: Rosi! You went on red, and red is the near team now: it pulled the rope back with you on it. / The teams changed ends. Go when the far team, in green caps, is winning.
+
+ ✓ tests/qa/qa-dis-labels.test.ts (1 test) 6ms

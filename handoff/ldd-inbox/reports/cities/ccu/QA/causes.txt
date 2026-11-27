@@ -1,0 +1,65 @@
+ RUN  v5.1.0 /local/home/saiposh/personal/ldd-wt/qa-ccu
+stdout | tests/qa-ccu.test.ts > causes
+CCU-05 route won 52.0s cps 32.5,58.5,92.5,136.5,162.5,187.5
+   NAIVE: dead ccu-phata @183 x12.4; replay 1.5s
+   FIX: dead ccu-murti @522 x8.8; replay 4.3s
+   walking off the high dry figure on to the one two steps lower: dead ccu-phata @701 x43.7; replay 1.5s
+   jumping the ghat mud from the step: dead ccu-ganga @1625 x100.4; replay 1.1s
+   stepping off the carried figure as soon as it moves: dead ccu-ganga @1987 x101.9; replay 4.1s
+   hopping straight on to the straw figure: dead ccu-khor @4098 x166.4; replay 0.5s
+   waiting on the painted figure for the potter: dead ccu-murti @4537 x164.1; replay 4.2s
+CCU-06 route won 62.8s cps 18.0,28.0,33.0,40.0,54.0,70.0,86.0,103.5,127.5
+   NAIVE: dead ccu-dando @791 x24.6; replay 2.6s
+   FIX: dead ccu-points @2150 x48.4; replay 2.4s
+   staying on the step at the double-line island: dead ccu-dui @5494 x100.3; replay 7.7s
+   climbing on to the roof for the double junction: dead ccu-dando @4692 x87.8; replay 1.0s
+CCU-07 route won 94.1s cps 32.5,80.5,124.5,138.0,160.0,184.5,198.0,220.0,280.0,284.5,312.5,351.5
+   NAIVE: dead ccu-cha @896 x21.4; replay 7.5s
+   FIX: dead ccu-bojha @457 x13.2; replay 3.8s
+   staying on the first porter of the dusk span: dead ccu-cha @4869 x148.5; replay 4.4s
+   staying on the second porter of the dusk span: dead ccu-cha @5433 x170.3; replay 3.1s
+   staying on the first porter of the upside-down span: dead ccu-cha @6867 x212.1; replay 5.9s
+   staying on the tall porter of the upside-down span: dead ccu-cha @7327 x230.2; replay 3.2s
+   stopping at the first drain on the causeway: dead ccu-baan @7790 x252.0; replay 7.1s
+   a long jump at the first drain on the causeway: dead ccu-nala @7646 x257.1; replay 5.9s
+   waiting on the ghat steps for the launch to come up to you: dead ccu-baan @8576 x289.0; replay 4.0s
+   a full jump from the launch at the jetty, without the tide: dead ccu-ghat @8262 x297.4; replay 1.4s
+   taking the porter who leaves the second pylon at once: dead ccu-cha @9382 x327.4; replay 3.6s
+CCU-08 route won 44.8s cps 49.5,79.5,113.5,122.2,144.5,175.5
+   NAIVE: dead ccu-dhowa @535 x14.8; replay 4.5s
+   FIX: dead ccu-khod @1283 x94.1; replay 1.7s
+   waiting by the second adda for the water to stop: dead ccu-dhowa @702 x51.9; replay 0.3s
+   stopping to eat as soon as you reach the phuchka man: dead ccu-dhowa @3953 x154.2; replay 4.0s
+   climbing over the crowd round the phuchka man: dead ccu-bhid @3646 x157.2; replay 1.5s
+   jumping the first break in the lane: dead ccu-khod @2387 x127.7; replay 1.6s
+   sitting on after the tea seller has gone by: dead ccu-khod @3930 x125.3; replay 6.4s
+CCU-09 route won 53.6s cps 32.5,62.5,115.5,128.5,161.4,179.0,191.4,209.0,212.5,241.5
+   NAIVE: dead ccu-bansh @195 x12.9; replay 1.6s
+   FIX: dead crushed @341 x21.3; replay 2.8s
+   resting on the new panel at the top of the staircase: dead crushed @722 x48.4; replay 1.9s
+   waiting under the canopy for the beat to pass: dead crushed @2250 x137.5; replay 3.5s
+   climbing on to the queue: dead ccu-line @4954 x218.8; replay 0.8s
+   going under the queue: dead ccu-bansh @4956 x218.8; replay 0.8s
+   jumping for the high bamboo before the lift: dead ccu-bansh @2476 x158.5; replay 5.4s
+   resting on the lifted panel under the roof frame: dead crushed @3720 x161.8; replay 7.0s
+CCU-10 route won 94.7s cps 32.5,35.5,98.5,116.5,142.5,175.5,206.5,230.5,254.5,278.5,285.4,310.5,324.0,346.0,369.5
+   NAIVE: dead ccu-boi @682 x17.9; replay 5.7s
+   FIX: dead ccu-nala @1703 x49.2; replay 3.8s
+   running on ahead of the front coming back: dead ccu-baan @5632 x151.7; replay 3.5s
+   turning to run back from the front: dead ccu-nala @5360 x147.3; replay 1.3s
+   running under the canopy as it goes up: dead crushed @5306 x130.8; replay 5.6s
+   a full jump at the gallery from the bamboo: dead ccu-bansh @5144 x132.7; replay 4.2s
+   waiting on the quiet stack, not the one he points at: dead ccu-boi @6880 x210.9; replay 3.6s
+   a full jump at the high stall from the low stack: dead ccu-kada @6650 x215.7; replay 1.7s
+   waiting on a clay figure while the potter scrapes: dead ccu-khor @8296 x256.9; replay 1.8s
+   one long jump over the clay figures: dead ccu-ganga @8152 x258.7; replay 0.6s
+   landing on a cloth top in the pandal being taken down: dead ccu-bansh @8626 x283.7; replay 1.4s
+   waiting on the bamboo under the roof frame: dead crushed @8775 x290.8; replay 1.6s
+   staying on the first porter back over the bridge: dead ccu-cha @9891 x334.5; replay 4.1s
+   staying on the short porter back over the bridge: dead ccu-cha @10445 x356.4; replay 3.0s
+ ✓ tests/qa-ccu.test.ts (2 tests | 1 skipped) 2733ms
+   ✓ causes 2732ms
+ Test Files  1 passed (1)
+      Tests  1 passed | 1 skipped (2)
+   Start at  01:58:02
+   Duration  3.95s (tests 71%, transform 14%, setup 13%, import 2%)

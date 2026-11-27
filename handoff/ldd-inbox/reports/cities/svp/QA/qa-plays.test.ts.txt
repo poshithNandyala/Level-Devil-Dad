@@ -1,0 +1,125 @@
+// QA scratch (not committed): plays the builder did not script, run with the plain runner and the lagged model.
+import { it } from 'vitest';
+import { LEVELS } from '../src/game/levels';
+import type { World } from '../src/game/world';
+import { play, X, and, ground, type Step } from './runner';
+import { test as T } from './cities/svp';
+
+const px = (t: number) => t * 16;
+const S: Record<string, Step[]> = {};
+T.solutions(S as any, () => {});
+const AR = T.actRoutes as Record<string, (x: number) => Step[]>;
+function atAct(id: string, act: string, then: (x: number) => Step[]): Step[] {
+  const def = LEVELS.find((l) => l.id === id)!;
+  const out: Step[] = [...S[id]];
+  for (const p of (def as any).parts ?? []) {
+    if (p.kind === act) return [...out, ...then(p.x0)];
+    out.push(...AR[p.kind](p.x0));
+  }
+  throw new Error(id + ' no act ' + act);
+}
+function allActs(id: string): Step[] {
+  const def = LEVELS.find((l) => l.id === id)!;
+  const out: Step[] = [...S[id]];
+  for (const p of (def as any).parts ?? []) out.push(...AR[p.kind](p.x0));
+  return out;
+}
+const toEnd = (note: string): Step => ({ hold: 'R', until: (w: World) => w.state !== 'play', max: 3000, note });
+function hopEdges(): Step {
+  let jt = 0;
+  return {
+    policy: (w: World) => {
+      const p = w.player;
+      if (jt > 0) { jt--; return { move: 'R', jump: true }; }
+      if (p.onGround && (!w.solidAt(p.x + p.w + 6, p.y + p.h + 2, 2, 2) || w.solidAt(p.x + p.w + 4, p.y + 3, 2, p.h - 8))) { jt = 11; return { move: 'R', jump: true }; }
+      return { move: 'R', jump: false };
+    },
+    until: (w: World) => w.state !== 'play',
+    max: 4000,
+  } as Step;
+}
+const go = (m: 'L' | 'R' | '') => ({ move: m, jump: false });
+const toward = (w: World, x: number, s = 2) => (w.player.cx < x - s ? 'R' : w.player.cx > x + s ? 'L' : '') as 'L' | 'R' | '';
+
+const PLAYS: [string, string, () => Step[]][] = [
+  // 05 room: the original FIX (stand on the footprints, dawdle 330 ticks, go)
+  ['SVP-05', 'room FIX: footprints, dawdle 2.75 s, go', () => [{ policy: (w) => go(toward(w, (w.flags.vp as any).spot)), until: (w) => (w.flags.vp as any).aligned > 0, max: 900 } as Step, { hold: '', ticks: 330 }, hopEdges()]],
+  // 05 dekho: hop through without standing anywhere
+  ['SVP-05', 'dekho NAIVE: run and hop through', () => atAct('SVP-05', 'svp05-dekho', () => [hopEdges()])],
+  // 05 dekho: view 3, stand at the bench (3 tiles before the footprints) like the room taught, then go
+  ['SVP-05', 'dekho view 3: stand at the bench, not the prints', () => atAct('SVP-05', 'svp05-dekho', (x) => {
+    const r = AR['svp05-dekho'](x);
+    return [...r.slice(0, 4), { policy: (w) => go(toward(w, px(x + 29) + 8)), until: (w) => Math.abs(w.player.cx - (px(x + 29) + 8)) < 3 && w.player.onGround, max: 900 } as Step, { hold: '', ticks: 240 }, hopEdges()];
+  })],
+  // 05 door: walk to the door without standing on the prints
+  ['SVP-05', 'door: walk at the dashed door', () => [...allActs('SVP-05'), toEnd('to the door')]],
+  // 06 room: the original FIX (out on the bent branch, jump from the tip)
+  ['SVP-06', 'room FIX: jump for the cliff from the tip', () => {
+    const fl = (w: World) => w.flags.flock as any, bg = (w: World) => w.flags.bough as any;
+    return [
+      { policy: (w) => go(toward(w, 172, 3)), until: (w) => fl(w).weight >= 0.95 && Math.abs(w.player.cx - 172) < 6, max: 2400 } as Step,
+      { hold: 'R', jump: 14, until: (w) => w.standing(bg(w).plat.solid), max: 200 },
+      { hold: 'R', until: (w) => w.player.x >= bg(w).x1 - 14, max: 400 },
+      { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true } as Step,
+    ];
+  }],
+  ['SVP-06', 'door: walk at it', () => [...allActs('SVP-06'), toEnd('to the door')]],
+  // 07 ghat: after the first ship has gone, jump for the second before it docks
+  ['SVP-07', 'ghat FIX: jump for the second ship as it comes in', () => atAct('SVP-07', 'svp07-ghat', (x) => [
+    { hold: 'R', until: and(ground, X(x + 4)), max: 600 },
+    { policy: (w) => go(toward(w, px(x + 6) - 12, 3)), until: (w) => !(w.flags.ships as any[])[0].docked && (w.flags.ships as any[])[0].x > px(x + 9), max: 3600 } as Step,
+    { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 900, long: true } as Step,
+  ])],
+  // 07 teesra: out behind the first crowd, as the room taught
+  ['SVP-07', 'teesra NAIVE: out behind the first crowd', () => atAct('SVP-07', 'svp07-teesra', (x) => [
+    { ...hopEdges(), until: and(ground, X(x + 12.5)) } as Step,
+    { hold: 'R', until: (w) => w.player.onGround && w.player.y + w.player.h > 255, max: 600 },
+    { hold: '', until: (w) => { const hs = w.flags.halls as any[]; return hs[hs.length - 1].crowd.done; }, max: 4000 },
+    { hold: 'R', jump: 14, until: (w) => w.player.onGround && w.player.y + w.player.h <= 241 && w.player.x >= px(x + 26), max: 300 },
+    toEnd('on to the quay'),
+  ])],
+  // 07 door: step on to the docked ship
+  ['SVP-07', 'door: walk on to the ship', () => [...allActs('SVP-07'), toEnd('to the window and the ship')]],
+  // 08 room: the original FIX (shelter at the right end of the first awning and stay)
+  ['SVP-08', 'room FIX: right end of the first awning, stay', () => [{ policy: (w) => go(toward(w, 6 * 16 + 80 - 19)), until: (w) => w.state !== 'play', max: 3000 } as Step]],
+  // 09 room: the original FIX (step across where the swinging root was)
+  ['SVP-09', 'room FIX: step across where the root was', () => {
+    const roots = (w: World) => w.flags.roots as any[];
+    return [
+      { hold: 'R', until: X(7.6), max: 400 },
+      { hold: 'R', jump: 14, until: (w) => w.standing(roots(w)[0].plat.solid), max: 200 },
+      { policy: (w) => go(toward(w, roots(w)[0].plat.x + 40)), until: (w) => roots(w)[1].plat.x - (roots(w)[0].plat.x + roots(w)[0].plat.w) >= 28 && (roots(w)[1].plat.solid.velX ?? 0) > 0 && Math.abs(w.player.cx - (roots(w)[0].plat.x + 40)) < 4, max: 1200 } as Step,
+      { hold: 'R', jump: 6, until: (w) => w.state !== 'play', max: 600 },
+    ];
+  }],
+  // 09 pul: hop every root including the grey step
+  ['SVP-09', 'pul NAIVE: hop along every root, grey too', () => atAct('SVP-09', 'svp09-pul', () => [hopEdges()])],
+  ['SVP-09', 'door: walk/hop at it', () => [...allActs('SVP-09'), hopEdges()]],
+  // 10 nadi: wait for the board to point away (as 03 taught) and go; and a ripple reader who jumps too early
+  ['SVP-10', 'nadi: hop the logs at once', () => atAct('SVP-10', 'svp10-nadi', () => [hopEdges()])],
+  ['SVP-10', 'door: carry the fritter to the gate', () => [...allActs('SVP-10'), toEnd('to the gate with food')]],
+  ...[0, 30, 60, 120, 200].map((d): [string, string, () => Step[]] => ['SVP-07', `teesra: out behind the first crowd after ${d} ticks, then walk on to x+46 and stop`, () => atAct('SVP-07', 'svp07-teesra', (x) => [
+    { ...hopEdges(), until: and(ground, X(x + 12.5)) } as Step,
+    { hold: 'R', until: (w) => w.player.onGround && w.player.y + w.player.h > 255, max: 600 },
+    { hold: '', until: (w) => { const hs = w.flags.halls as any[]; return hs[hs.length - 1].crowd.done; }, max: 4000 },
+    { hold: '', ticks: d + 1 },
+    { hold: 'R', jump: 14, until: (w) => w.player.onGround && w.player.y + w.player.h <= 241 && w.player.x >= px(x + 26), max: 300 },
+    { hold: 'R', until: X(x + 46), max: 900 },
+    { hold: '', ticks: 600 },
+  ])]),
+];
+
+
+it.runIf(!!process.env.QAP)('qa plays', () => {
+  const out: string[] = [];
+  for (const [id, what, mk] of PLAYS) {
+    const def = LEVELS.find((l) => l.id === id)!;
+    try {
+      const { w } = play(def, mk());
+      out.push(`${id} | ${what} | ${w.state}${w.state === 'dead' ? ' ' + w.deathCause : ''}@${w.tick} x${(w.player.x / 16).toFixed(1)}`);
+    } catch (e) {
+      out.push(`${id} | ${what} | ERROR ${(e as Error).message.slice(0, 160)}`);
+    }
+  }
+  console.log('QAP\n' + out.join('\n'));
+}, 600000);

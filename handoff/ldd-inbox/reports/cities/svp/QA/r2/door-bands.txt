@@ -1,0 +1,19 @@
+SVP-06 door at tile 92; rows = take-off tile (D - k), cols = jump hold ticks 3 4 6 8 10 12 14 15 16 17 18 19 20 22 24 30
+  D-10.6: kichad kichad kichad kichad kichad kichad kichad kichad kichad kichad kichad W W W bhaunra bhaunra
+  D-10.2: W W W W W W W W W W W W W W bhaunra bhaunra
+  D-9.8: W W W W W W W W W W W W W W bhaunra bhaunra
+  D-9.6: W W W W W W W W W W W W W W bhaunra bhaunra
+  D-9.4: W W W W W W W W W W W W W W bhaunra bhaunra
+  D-9.2: W W W W W W W W W W W W W W bhaunra bhaunra
+  D-9.0: W W W W W W W W W W W W W W bhaunra bhaunra
+  D-8.8: W W W W W W W W W W W W W W bhaunra bhaunra
+SVP-09 door at tile 201; rows = take-off tile (D - k), cols = jump hold ticks 3 4 6 8 10 12 14 15 16 17 18 19 20 22 24 30
+  D-7.2: eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 W
+  D-6.8: eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 W W
+  D-6.6: eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 W W
+  D-6.4: eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 W W W
+  D-6.2: eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 W W W W W
+  D-6.0: eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 W W W W W W
+  D-5.8: eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 eent5 W W W W W W W
+SVP-05 turtle door (turtle at D-4): hop@D-10:svp-kachua hop@D-9:svp-kachua hop@D-8.5:svp-kachua hop@D-8:svp-kachua hop@D-7.5:svp-kachua hop@D-7:svp-kachua hop@D-6:svp-kachua hop@D-5:svp-kachua hop@D-3:svp-kachua hop@D-2:svp-kachua hop@D-1:svp-kachua walk:stuck
+SVP-05 turtle door (turtle at D-4): hop@D-10:svp-kachua hop@D-9:svp-kachua hop@D-8.5:svp-kachua hop@D-8:svp-kachua hop@D-7.5:svp-kachua hop@D-7:svp-kachua hop@D-6:svp-kachua hop@D-5:svp-kachua hop@D-3:svp-kachua hop@D-2:svp-kachua hop@D-1:svp-kachua walk:stuck

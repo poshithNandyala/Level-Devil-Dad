@@ -1,0 +1,20 @@
+GTK-01: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  door 100%
+GTK-02: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  door 100%
+GTK-03: 6t 100%  12t 100%  18t 98%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  door 100%
+GTK-04: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  door 100%
+GTK-05: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  s6 100%  s7 100%  s8 100%  s9 100%  s10 100%  s11 100%  s12 100%  s13 100%  door 100%
+GTK-06: 6t 100%  12t 100%  18t 76%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  s6 100%  s7 100%  s8 100%  door 100%
+GTK-07: 6t 100%  12t 100%  18t 76%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  s6 100%  s7 100%  door 100%
+GTK-08: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  door 100%
+GTK-09: 6t 100%  12t 100%  18t 93%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  door 100%
+GTK-10: 6t 100%  12t 100%  18t 76%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  s6 100%  s7 100%  s8 100%  s9 100%  s10 100%  s11 100%  s12 100%  door 100%

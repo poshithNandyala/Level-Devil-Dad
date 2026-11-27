@@ -1,0 +1,49 @@
+Cannot open directory /local/p4clients/pkgbuild-const/workspace/src/NodeJSOpenssl/build/private/install/ssl/certs to load OpenSSL certificates.
+Cannot open directory /local/p4clients/pkgbuild-const/workspace/src/NodeJSOpenssl/build/private/install/ssl/certs to load OpenSSL certificates.
+
+ RUN  v5.1.0 /local/home/saiposh/personal/ldd-wt/qa-bbi
+
+stdout | tests/qa/qa-bbi-walk45.test.ts > qa bbi walk 4.5
+W45 BBI-01 cps=6 clear
+W45 BBI-02 cps=4 
+  cp1@68.2 tapwalk -> bbi-ball at +13.5 tiles, 1.47 s
+  cp3@131.2 walk -> bbi-roll-back at +4.7 tiles, 1.17 s
+  cp3@131.2 tapwalk -> bbi-roll-back at +4.8 tiles, 1.19 s
+W45 BBI-03 cps=3 clear
+W45 BBI-04 cps=4 
+  cp1@48.2 walk -> bbi-agni at +4.8 tiles, 1.12 s
+  cp1@48.2 tapwalk -> bbi-agni at +4.7 tiles, 1.12 s
+W45 BBI-05 cps=17 
+  cp0@32.2 tapwalk -> bbi-dhenki at +5.1 tiles, 0.97 s
+  cp6@124.2 walk -> bbi-jaanta at +4.2 tiles, 0.62 s
+  cp6@124.2 tapwalk -> bbi-jaanta at +4.2 tiles, 0.63 s
+W45 BBI-06 cps=8 clear
+W45 BBI-07 cps=19 
+  cp0@32.2 walk -> bbi-nacha at +4.9 tiles, 0.62 s
+  cp0@32.2 tapwalk -> bbi-nacha at +4.9 tiles, 0.63 s
+  cp1@58.2 walk -> bbi-nacha at +4.9 tiles, 0.62 s
+  cp1@58.2 tapwalk -> bbi-nacha at +5.0 tiles, 0.63 s
+  cp8@191.2 walk -> bbi-nacha at +4.9 tiles, 0.61 s
+  cp8@191.2 tapwalk -> bbi-nacha at +4.9 tiles, 0.63 s
+  cp16@377.2 walk -> bbi-nacha at +4.9 tiles, 0.62 s
+  cp16@377.2 tapwalk -> bbi-nacha at +4.9 tiles, 0.62 s
+  cp17@403.2 walk -> bbi-nacha at +5.0 tiles, 0.63 s
+  cp17@403.2 tapwalk -> bbi-nacha at +4.9 tiles, 0.63 s
+W45 BBI-08 cps=6 clear
+W45 BBI-09 cps=7 clear
+W45 BBI-10 cps=19 
+  cp8@231.2 walk -> bbi-nacha at +4.9 tiles, 0.62 s
+  cp8@231.2 tapwalk -> bbi-nacha at +5.0 tiles, 0.63 s
+  cp13@341.2 walk -> bbi-nacha at +4.9 tiles, 0.61 s
+  cp13@341.2 tapwalk -> bbi-nacha at +4.9 tiles, 0.63 s
+  cp16@419.8 walk -> bbi-ranga at +5.1 tiles, 0.66 s
+  cp16@419.8 tapwalk -> bbi-ranga at +5.1 tiles, 0.67 s
+
+ ✓ tests/qa/qa-bbi-walk45.test.ts (1 test) 13369ms
+   ✓ qa bbi walk 4.5 13368ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  07:58:17
+   Duration  14.57s (tests 93%, transform 4%, setup 2%, import 1%)
+

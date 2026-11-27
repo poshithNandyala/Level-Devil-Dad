@@ -1,0 +1,24 @@
+// scratch probe (not committed): for CHN-09 and CHN-10, every scripted play's death cause and absolute tick, plus
+// the route's clear time and its checkpoints, so the same-tick FIX and identical-window tables can be written.
+import { it } from 'vitest';
+import { LEVEL_BY_ID } from '../../src/game/levels';
+import { SOLUTIONS, NAIVE, FIX, MISTAKES } from '../solutions';
+import { play } from '../runner';
+
+it.runIf(!!process.env.CHN_PROBE)('chn probe', () => {
+  const out: string[] = [];
+  for (const id of (process.env.CHN_PROBE_IDS ?? 'CHN-01,CHN-09,CHN-10').split(',')) {
+    const def = LEVEL_BY_ID.get(id)!;
+    const { w } = play(def, SOLUTIONS[id]);
+    out.push(`${id}: route ${w.state} tick ${w.winTick} (${(w.winTick / 120).toFixed(1)} s) cps ${w.checkpoints.map((c) => (c / 16).toFixed(1)).join(',')} par ${def.par}`);
+    const plays: [string, { steps: any[]; cause?: string }][] = [];
+    if (NAIVE[id]) plays.push(['NAIVE', NAIVE[id]]);
+    if (FIX[id]) plays.push(['FIX', FIX[id]]);
+    (MISTAKES[id] ?? []).forEach((m) => plays.push([m.what, m]));
+    for (const [k, p] of plays) {
+      const r = play(def, p.steps).w;
+      out.push(`  ${k}: ${r.state} ${r.deathCause ?? ''} tick ${r.tick} x ${(r.player.x / 16).toFixed(1)} (expected ${p.cause ?? '-'})`);
+    }
+  }
+  console.log('PROBE\n' + out.join('\n'));
+});

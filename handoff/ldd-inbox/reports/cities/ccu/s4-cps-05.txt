@@ -1,0 +1,10 @@
+CCU-05 L0 stretch from cp0 (x27.0): worst replay 8.1s (stop@7.5s ccu-murti x58.1)
+CCU-05 L0 i0 clear 19.2s caught 4/2 maxStretch 7.1s worstReplay 8.1s (stop@7.5s ccu-murti cp0) calm ok
+CCU-05 L0 i180 clear 20.7s caught 4/2 maxStretch 7.1s calm ok
+CCU-05 L6 stretch from cp0 (x27.0): worst replay 8.2s (stop@8.5s ccu-murti x59.1)
+CCU-05 L6 i0 clear 20.7s caught 4/2 maxStretch 7.2s worstReplay 8.2s (stop@8.5s ccu-murti cp0) calm ok
+CCU-05 L6 i180 clear 22.2s caught 4/2 maxStretch 7.2s calm ok
+CCU-05 L12 stretch from cp0 (x27.0): worst replay 8.1s (stop@9.3s ccu-murti x58.8)
+CCU-05 L12 i0 clear 22.0s caught 4/2 maxStretch 7.2s worstReplay 8.1s (stop@9.3s ccu-murti cp0) calm ok
+CCU-05 L12 i180 clear 23.5s caught 4/2 maxStretch 7.2s calm ok
+      Tests  1 passed | 2 skipped (3)

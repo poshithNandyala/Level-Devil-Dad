@@ -1,0 +1,119 @@
+
+ RUN  v5.1.0 /local/home/saiposh/personal/ldd-wt/chn
+
+stdout | tests/qa/qa6-chn.test.ts > qa6 lag-captured cpsafe + replay
+QA6
+CHN-01: checked 560 plays at 5 distinct capture points, fails 0; longest stretch 6.0 s; replay worst 1.44 s [naive:0.79/0.86/0.91 fix:1.32/1.38/1.43 m0:1.32/1.38/1.44 m1:0.79/0.86/0.91 m2:0.97/1.30/1.38]
+CHN-02 lag6 idle0: route did not win (died: hit @14)
+CHN-02 lag6 idle37: route did not win (died: hit @14)
+CHN-02 lag6 idle120: route did not win (died: hit @14)
+CHN-02 lag6 idle251: route did not win (died: hit @14)
+CHN-02 lag11 idle0: route did not win (died: hit @14)
+CHN-02 lag11 idle37: route did not win (died: hit @14)
+CHN-02 lag11 idle120: route did not win (died: hit @14)
+CHN-02 lag11 idle251: route did not win (died: hit @14)
+CHN-02 lag12 idle0: route did not win (died: splash @15)
+CHN-02 lag12 idle37: route did not win (died: splash @15)
+CHN-02 lag12 idle120: route did not win (died: splash @15)
+CHN-02 lag12 idle251: route did not win (died: splash @15)
+CHN-02: checked 56 plays at 2 distinct capture points, fails 0; longest stretch 5.9 s; replay worst 1.73 s [naive:1.13/1.18/1.23 fix:1.40/1.48/1.73]
+CHN-03 lag6 idle0: route did not win (died: flood @13)
+CHN-03 lag6 idle37: route did not win (died: flood @13)
+CHN-03 lag6 idle120: route did not win (died: flood @13)
+CHN-03 lag6 idle251: route did not win (died: flood @13)
+CHN-03 lag11 idle0: route did not win (died: flood @13)
+CHN-03 lag11 idle37: route did not win (died: flood @13)
+CHN-03 lag11 idle120: route did not win (died: flood @13)
+CHN-03 lag11 idle251: route did not win (died: flood @13)
+CHN-03 lag12 idle0: route did not win (died: flood @13)
+CHN-03 lag12 idle37: route did not win (died: flood @13)
+CHN-03 lag12 idle120: route did not win (died: flood @13)
+CHN-03 lag12 idle251: route did not win (died: flood @13)
+CHN-03: checked 56 plays at 2 distinct capture points, fails 0; longest stretch 7.9 s; replay worst 1.42 s [naive:1.32/1.37/1.42]
+CHN-04 lag6 idle0: route did not win (died: burnt @21)
+CHN-04 lag6 idle37: route did not win (died: burnt @21)
+CHN-04 lag6 idle120: route did not win (died: burnt @21)
+CHN-04 lag6 idle251: route did not win (died: burnt @21)
+CHN-04 lag11 idle0: route did not win (died: burnt @21)
+CHN-04 lag11 idle37: route did not win (died: burnt @21)
+CHN-04 lag11 idle120: route did not win (died: burnt @22)
+CHN-04 lag11 idle251: route did not win (died: burnt @21)
+CHN-04 lag12 idle0: route did not win (died: burnt @21)
+CHN-04 lag12 idle37: route did not win (died: burnt @21)
+CHN-04 lag12 idle120: route did not win (died: burnt @22)
+CHN-04 lag12 idle251: route did not win (died: burnt @21)
+CHN-04: checked 56 plays at 2 distinct capture points, fails 0; longest stretch 5.3 s; replay worst 3.08 s [naive:1.47/1.57/1.67 fix:3.08/2.19/2.24]
+CHN-05 lag0 idle120: route did not win (died: hit @75)
+FAIL CHN-05 capture-lag0 idle251 cp0 x32.5 taken@tick669 Dad x38.7: tap0 -> fell
+FAIL CHN-05 capture-lag0 idle251 cp0 x32.5 taken@tick669 Dad x38.7: tap6 -> fell
+FAIL CHN-05 capture-lag0 idle251 cp0 x32.5 taken@tick669 Dad x38.7: tap12 -> fell
+FAIL CHN-05 capture-lag6 idle251 cp0 x32.5 taken@tick675 Dad x38.7: tap0 -> fell
+FAIL CHN-05 capture-lag6 idle251 cp0 x32.5 taken@tick675 Dad x38.7: tap6 -> fell
+FAIL CHN-05 capture-lag6 idle251 cp0 x32.5 taken@tick675 Dad x38.7: tap12 -> fell
+CHN-05 lag11 idle120: route did not win (died: hit @77)
+CHN-05 lag11 idle251: route did not win (died: hit @6)
+CHN-05 lag12 idle0: route did not win (died: hit @21)
+CHN-05 lag12 idle37: route did not win (died: hit @18)
+CHN-05 lag12 idle120: route did not win (died: hit @12)
+CHN-05 lag12 idle251: route did not win (died: hit @6)
+CHN-05: checked 154 plays at 2 distinct capture points, fails 6; longest stretch 5.6 s; replay worst 2.12 s [naive:2.12/2.12/2.12 fix:1.90/1.90/2.12]
+CHN-06 lag6 idle0: route did not win (stuck: the door: chn-rangoli)
+CHN-06 lag6 idle37: route did not win (stuck: the door: chn-rangoli)
+CHN-06 lag6 idle120: route did not win (stuck: the door: chn-rangoli)
+CHN-06 lag6 idle251: route did not win (died: fell @22)
+CHN-06 lag11 idle0: route did not win (stuck: the door: chn-rangoli)
+CHN-06 lag11 idle37: route did not win (stuck: the door: chn-rangoli)
+CHN-06 lag11 idle120: route did not win (stuck: the door: chn-rangoli)
+CHN-06 lag11 idle251: route did not win (died: fell @21)
+CHN-06 lag12 idle0: route did not win (stuck: the door: chn-rangoli)
+CHN-06 lag12 idle37: route did not win (stuck: the door: chn-rangoli)
+CHN-06 lag12 idle120: route did not win (died: fell @22)
+CHN-06 lag12 idle251: route did not win (died: fell @21)
+CHN-06: checked 168 plays at 2 distinct capture points, fails 0; longest stretch 32.3 s; replay worst 1.13 s [naive:1.02/1.07/1.13]
+CHN-07 lag0 idle37: route did not win (died: fell @15)
+CHN-07 lag0 idle120: route did not win (died: fell @15)
+CHN-07 lag6 idle0: route did not win (died: fell @15)
+CHN-07 lag6 idle37: route did not win (died: fell @15)
+CHN-07 lag6 idle120: route did not win (died: fell @15)
+CHN-07 lag6 idle251: route did not win (died: fell @25)
+CHN-07 lag11 idle0: route did not win (died: fell @15)
+CHN-07 lag11 idle37: route did not win (died: fell @15)
+CHN-07 lag11 idle120: route did not win (died: fell @9)
+CHN-07 lag11 idle251: route did not win (died: fell @12)
+CHN-07 lag12 idle0: route did not win (died: fell @15)
+CHN-07 lag12 idle37: route did not win (died: fell @15)
+CHN-07 lag12 idle120: route did not win (died: fell @12)
+CHN-07 lag12 idle251: route did not win (died: fell @12)
+CHN-07: checked 28 plays at 2 distinct capture points, fails 0; longest stretch 6.1 s; replay worst 3.33 s [naive:0.79/0.84/0.89 fix:3.33/2.25/2.35]
+CHN-08 lag11 idle0: route did not win (stuck: the door, and whatever it does)
+CHN-08 lag11 idle37: route did not win (stuck: the door, and whatever it does)
+CHN-08 lag11 idle120: route did not win (stuck: the door, and whatever it does)
+CHN-08 lag11 idle251: route did not win (stuck: the door, and whatever it does)
+CHN-08 lag12 idle0: route did not win (stuck: the door, and whatever it does)
+CHN-08 lag12 idle37: route did not win (stuck: the door, and whatever it does)
+CHN-08 lag12 idle120: route did not win (stuck: the door, and whatever it does)
+CHN-08 lag12 idle251: route did not win (stuck: the door, and whatever it does)
+CHN-08: checked 224 plays at 2 distinct capture points, fails 0; longest stretch 17.3 s; replay worst 0.63 s [naive:0.53/0.58/0.63]
+CHN-09: checked 672 plays at 6 distinct capture points, fails 0; longest stretch 8.1 s; replay worst 4.57 s [naive:1.76/1.86/1.96 fix:3.21/3.26/3.31 m0:0.55/0.60/0.65 m1:1.68/1.73/1.77 m2:2.20/2.25/2.29 m3:1.34/1.34/1.34 m4:1.39/1.39/1.39 m5:4.47/4.53/4.57 m6:2.38/2.48/2.58 m7:0.52/0.52/0.52 m8:3.18/3.18/3.18 m9:1.27/1.32/1.37 m10:1.98/2.02/2.07 m11:0.80/0.80/0.80]
+CHN-10: checked 560 plays at 5 distinct capture points, fails 0; longest stretch 11.6 s; replay worst 3.78 s [naive:1.81/1.86/1.91 fix:2.02/2.11/2.20 m0:1.50/1.54/1.58 m1:1.81/1.95/2.40 m2:0.76/0.72/0.78 m3:1.13/1.12/3.78 m4:1.34/1.34/1.34]
+POLICY ERRORS (shared tests/acts.ts policy threw under lag; probe steered R):
+CHN-03 lag0 idle251 x71.5 hop the floating things: Cannot read properties of undefined (reading 'x')
+CHN-03 lag0 idle251 x71.5 hop the floating things: Cannot read properties of undefined (reading 'x')
+CHN-03 lag0 idle251 x71.6 hop the floating things: Cannot read properties of undefined (reading 'x')
+CHN-03 lag0 idle251 x71.6 hop the floating things: Cannot read properties of undefined (reading 'x')
+CHN-03 lag0 idle251 x71.7 hop the floating things: Cannot read properties of undefined (reading 'x')
+CHN-03 lag0 idle251 x71.8 hop the floating things: Cannot read properties of undefined (reading 'x')
+CHN-03 lag0 idle251 x71.8 hop the floating things: Cannot read properties of undefined (reading 'x')
+CHN-03 lag0 idle251 x71.8 hop the floating things: Cannot read properties of undefined (reading 'x')
+CHN-03 lag0 idle251 x71.8 hop the floating things: Cannot read properties of undefined (reading 'x')
+CHN-03 lag0 idle251 x71.9 hop the floating things: Cannot read properties of undefined (reading 'x')
+(10 total)
+
+ ✓ tests/qa/qa6-chn.test.ts (1 test) 33470ms
+   ✓ qa6 lag-captured cpsafe + replay 33468ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  08:12:30
+   Duration  35.77s (tests 94%, transform 3%, setup 3%)
+

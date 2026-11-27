@@ -1,0 +1,1 @@
+GTK-07 | 0 | 44.9s | 9 cps | longest 8.5s | max replay 9.29s cp4 run+jump@31.87s gtk-badal | over7.5: cp4=9.29 (run+jump@31.87s gtk-badal); cp5=7.59 (run+jump@37.67s gtk-badal) | calm fails: none | hot: none

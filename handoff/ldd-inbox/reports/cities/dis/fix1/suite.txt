@@ -1,0 +1,270 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.1.0 [39m[90m/local/home/saiposh/personal/ldd-wt/dis[39m
+
+[90mstdout[2m | tests/abilities.test.ts[2m > [22m[2mswimming[2m > [22m[2msinks when idle, floats when held, a stroke lifts
+[22m[39msink/s [33m27[39m stroke rise [33m20[39m
+
+[90mstdout[2m | tests/abilities.test.ts[2m > [22m[2mchawl walls[2m > [22m[2mkicks up between two walls
+[22m[39mclimbed [33m190[39m
+
+ [32m✓[39m tests/abilities.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+ [32m✓[39m tests/ten-stages.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32m✓[39m tests/allocation.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32m✓[39m tests/lives.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 125[2mms[22m[39m
+ [32m✓[39m tests/items.test.ts [2m([22m[2m142 tests[22m[2m)[22m[32m 190[2mms[22m[39m
+ [2m[90m↓[39m[22m tests/fair.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+ [32m✓[39m tests/stale.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 442[2mms[22m[39m
+ [32m✓[39m tests/modules.test.ts [2m([22m[2m190 tests[22m[2m)[22m[33m 388[2mms[22m[39m
+[90mstdout[2m | tests/physics.test.ts[2m > [22m[2mplayer physics[2m > [22m[2mfull jump height and distance
+[22m[39mjump height 60px (3.75 tiles), distance 90px (5.63 tiles), airtime 0.642s
+
+[90mstdout[2m | tests/physics.test.ts[2m > [22m[2mplayer physics[2m > [22m[2ma quick tap clears two tiles, a full hold goes much higher
+[22m[39mtap 2.44 tiles, full 3.75 tiles
+
+ [32m✓[39m tests/physics.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+ [32m✓[39m tests/room-human.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m tests/room-trace.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m tests/hazard-audit.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+ [2m[90m↓[39m[22m tests/acttrace.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+ [2m[90m↓[39m[22m tests/cpcount.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+ [2m[90m↓[39m[22m tests/dbg2.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+ [2m[90m↓[39m[22m tests/cpfind.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+ [2m[90m↓[39m[22m tests/debug.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+ [2m[90m↓[39m[22m tests/endrec.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+ [32m✓[39m tests/chunks.test.ts [2m([22m[2m88 tests[22m[2m)[22m[33m 2156[2mms[22m[39m
+ [2m[90m↓[39m[22m tests/fair-gnr07.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+ [2m[90m↓[39m[22m tests/endtrace.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+ [2m[90m↓[39m[22m tests/perf.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+ [2m[90m↓[39m[22m tests/par.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+ [2m[90m↓[39m[22m tests/showmap.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+ [2m[90m↓[39m[22m tests/cities/tvm/probe.test.ts [2m([22m[2m8 tests[22m[2m | [22m[33m8 skipped[39m[2m)[22m
+ [32m✓[39m tests/rooms.test.ts [2m([22m[2m60 tests[22m[2m)[22m[33m 4426[2mms[22m[39m
+   [32m✓[39m rooms [2m(60)[22m
+     [32m✓[39m MUM-1 Mind the Gap [2m(4)[22m
+       [33m[2m✓[22m[39m human timing clears it 90%+ of the time[33m 340[2mms[22m[39m
+     [32m✓[39m MUM-2 Rush Hour [2m(4)[22m
+       [33m[2m✓[22m[39m human timing clears it 90%+ of the time[33m 504[2mms[22m[39m
+     [32m✓[39m MUM-3 Weighing Machine [2m(4)[22m
+       [33m[2m✓[22m[39m human timing clears it 90%+ of the time[33m 557[2mms[22m[39m
+     [32m✓[39m MUM-4 Footbridge [2m(4)[22m
+       [33m[2m✓[22m[39m human timing clears it 90%+ of the time[33m 471[2mms[22m[39m
+     [32m✓[39m MUM-5 Last Local [2m(4)[22m
+       [33m[2m✓[22m[39m human timing clears it 90%+ of the time[33m 367[2mms[22m[39m
+     [32m✓[39m DEL-5 Rajiv Chowk [2m(4)[22m
+       [33m[2m✓[22m[39m human timing clears it 90%+ of the time[33m 311[2mms[22m[39m
+ [32m✓[39m tests/frozen-behaviour.test.ts [2m([22m[2m138 tests[22m[2m)[22m[33m 6519[2mms[22m[39m
+   [32m✓[39m frozen behaviour [2m(138)[22m
+     [32m✓[39m TVM [2m(11)[22m
+       [33m[2m✓[22m[39m TVM-01 behaves as frozen (re-freeze on purpose: LDD_REFREEZE=TVM)[33m 351[2mms[22m[39m
+     [32m✓[39m RPR [2m(9)[22m
+       [33m[2m✓[22m[39m RPR-04 behaves as frozen (re-freeze on purpose: LDD_REFREEZE=RPR)[33m 544[2mms[22m[39m
+ [32m✓[39m tests/checkpoints.test.ts [2m([22m[2m142 tests[22m[2m)[22m[33m 17458[2mms[22m[39m
+   [32m✓[39m hidden checkpoints [2m(142)[22m
+     [33m[2m✓[22m[39m TVM-01: route passes all 3, replay is exact[33m 581[2mms[22m[39m
+     [33m[2m✓[22m[39m TVM-10: route passes all 18, replay is exact[33m 485[2mms[22m[39m
+     [33m[2m✓[22m[39m KVT-07: route passes all 3, replay is exact[33m 323[2mms[22m[39m
+     [33m[2m✓[22m[39m RPR-04: route passes all 3, replay is exact[33m 1956[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-05: route passes all 6, replay is exact[33m 432[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-06: route passes all 14, replay is exact[33m 498[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-07: route passes all 19, replay is exact[33m 572[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-09: route passes all 9, replay is exact[33m 413[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-10: route passes all 15, replay is exact[33m 1217[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-07: route passes all 25, replay is exact[33m 334[2mms[22m[39m
+ [32m✓[39m tests/levels.test.ts [2m([22m[2m855 tests[22m[2m)[22m[33m 25598[2mms[22m[39m
+   [32m✓[39m stages [2m(855)[22m
+     [32m✓[39m GNR-07 [2m(4)[22m
+       [33m[2m✓[22m[39m beatable for every rival variant[33m 396[2mms[22m[39m
+     [32m✓[39m RPR-04 [2m(4)[22m
+       [33m[2m✓[22m[39m is beatable with the scripted solution[33m 543[2mms[22m[39m
+       [33m[2m✓[22m[39m is deterministic[33m 867[2mms[22m[39m
+       [33m[2m✓[22m[39m beatable for every rival variant[33m 1777[2mms[22m[39m
+     [32m✓[39m PAT-10 [2m(14)[22m
+       [33m[2m✓[22m[39m is deterministic[33m 305[2mms[22m[39m
+       [33m[2m✓[22m[39m beatable for every rival variant[33m 496[2mms[22m[39m
+[90mstdout[2m | tests/jumpaudit.test.ts[2m > [22m[2mjump audit[2m > [22m[2mreport
+[22m[39mhold (ms) -> jump height (tiles)
+     8 ms -> 2.44
+    58 ms -> 2.44
+    83 ms -> 2.44
+   117 ms -> 2.44
+   150 ms -> 2.81
+   200 ms -> 3.25
+   250 ms -> 3.56
+   333 ms -> 3.75
+
+per stage: shortest hold that still clears each jump of the proven route
+  TVM-01 Swagatham: 8ms clean over the wall and its glass | 8ms and over the glass on the road | 8ms climb out of the ditch | 8ms a step up | 8ms a step up | 8ms hop the parked ride | 8ms hop off: the landing gives way | 8ms jump the puddle: it is a pothole | 8ms up on the deck | 192ms a long jump on to the ice
+  TVM-02 Aanavandi Express: 8ms on to the roof | 8ms off before it turns back
+  TVM-03 Chaaya Later: 8ms jump the steam (spikes inside) | 8ms up on the counter | 142ms off before the end drops | 350ms over the painted floor, long: spikes come up where a hop lands | 8ms hop the broken glasses on the way back
+  TVM-04 Thenga Trajectory: 8ms hop the roll | 8ms little hop to bait the gap coconut | 8ms over the gap | 8ms hop roll one | 8ms hop roll two | 8ms on to the trunk | 8ms hop the fronds: a coir pit under them | 8ms a little hop: the far bank backs away | 8ms now over the gap
+  TVM-05 Fort Gate Forward: 8ms | 8ms | 8ms | 8ms off the last stone, long: past the mud on the bank | 8ms over the spikes (far from the dog)
+  TVM-06 Cheena Vala: 8ms | 8ms | 8ms | 8ms | 8ms onto the last net | 258ms it dips at once: straight off to the jetty | 8ms | 8ms | 8ms | 8ms off the boats on to the jetty | 8ms spikes in the boards
+  TVM-07 Munnar Hairpins: 8ms a spike on the road | 8ms up the first terrace | 8ms the middle terrace | 8ms straight on: it gives way | 233ms a big jump over it | 8ms up on the ridge | 8ms spike pit one | 8ms spike pit two | 8ms spike pit three | 8ms over the first rock as soon as it lands | 8ms leap past the step: it drops if you land on it
+  TVM-08 Vallam Kali: 8ms up on to the bridge | 150ms the tall bridge: hold jump | 8ms the low bridge after it: do hop this one
+  TVM-09 Kovalam Flags: 8ms up on the rocks | 8ms up on the rocks | 8ms up on the rocks | 8ms over the pool again, on | 8ms up on the rocks | 8ms up on the rocks
+  TVM-10 Dhara: 142ms over the oil and the trough, from before the oil | 8ms a little hop over it, short of the oil | 142ms over the oil and the kindi | 8ms over the trough | 8ms over the oil by the palm | 8ms over the booster | 8ms over the last stage | 8ms up on the rocks | 8ms up on the rocks | 8ms a short hop, short of the oil | 133ms over the oil and the kindi | 192ms over the oil and the last trough | 8ms up on the rocks | 8ms up on the rocks | 242ms a long jump on to the ice | 242ms over the oil and the kindi
+  KVT-01 Swagatham, Billam: 8ms onto the first stone | 8ms the next stone | 8ms the next stone | 8ms the next stone | 8ms the next stone | 8ms a low wall | 8ms hop the parked ride | 8ms a step up | 8ms a step up | 8ms a shallow ditch | 8ms up on the deck
+  KVT-02 Odam Gone: 8ms onto the jetty | 8ms over the rotten plank | 8ms the real gap
+  KVT-03 Supari Light: 8ms | 8ms | 8ms | 8ms | 8ms to the island | 133ms over the fake door | 8ms the last gap is real
+  KVT-04 Agatti Airstrip: 8ms runway light one | 8ms runway light two | 8ms runway light three | 8ms first pit, with the wind behind you | 8ms to the little island | 133ms off it, over the spikes
+  KVT-05 Minicoy Tuna: 8ms on to the boat | 8ms on to the shore | 8ms first step | 8ms second step, straight up | 8ms third step, straight up | 8ms top of the lighthouse | 8ms off onto the pier: a little hop (a big one meets the pulley)
+  KVT-06 Phar Mungal: 8ms up the rock | 8ms up to the rim | 8ms up the rock | 8ms up to the rim
+  KVT-07 Thengu Kayaru: 8ms jump at the palm: grab it | 8ms leap for the palm in the water | 8ms leap to the next one | 8ms and jump for the far bank | 8ms jump for the first palm | 8ms jump for the bare trunk | 8ms leap for the next crown | 8ms jump for the bare trunk | 8ms leap for the next crown | 8ms for the bank | 8ms grab the young palm | 8ms grab the second one | 8ms leap for the bank before it tips you in
+  KVT-08 Billam Ottam: 8ms hop the rock
+  CHN-01 Vanakkam Chennai: 8ms hop the parked ride | 8ms a shallow ditch | 8ms a step up | 8ms a step up | 8ms a step up | 8ms a step up | 8ms a post | 8ms a post | 8ms a post | 8ms a low wall | 8ms up on the deck
+  CHN-02 Kudam Queue: 8ms onto the first pots | 8ms skip pot number three | 8ms onto the lorry | 8ms over pots one and two, straight onto pot three
+  CHN-03 Subway Splash: 8ms onto the drum, now | 8ms onto the balcony
+  CHN-04 Degree Kaapi: 8ms onto the shady ledge | 8ms
+  CHN-05 Agni Mirage: 8ms the first shimmer is a hole | 8ms the shimmer after it | 8ms onto the big black patch | 8ms
+  CHN-06 Madurai Malli: 8ms on to the first jasmine string | 8ms quick, it snaps | 8ms | 8ms off the drain | 8ms over the gap between surges | 8ms over the petals | 167ms up on the ledge: both ends are going off
+  CHN-07 Thanjavur Bommai: 8ms on to the first doll | 8ms up on the stone | 158ms and over the wall | 8ms onto the fallen stone | 8ms
+  CHN-08 Pamban Paalam: 8ms up the step | 8ms up on the platform | 8ms onto the tunnel before the train goes in
+  PDY-01 Bienvenue: 8ms a post | 8ms a post | 8ms a post | 8ms a post | 8ms a post | 8ms a shallow ditch | 8ms hop the parked ride | 8ms a step up | 8ms jump and catch it | 8ms a shallow ditch | 8ms up on the deck
+  PDY-02 Rock Beach: 8ms | 8ms | 8ms | 8ms | 8ms the dark pool is deep | 8ms over the whole turtle pool
+  PDY-03 Yellow Wall Jam: 8ms onto the scooter | 8ms straight on to the awning | 8ms up on the wall | 8ms over the flower pot | 8ms jump the street that says walk | 8ms the honest sign: a real gap
+  PDY-04 Six O’Clock: 8ms over the first socket | 8ms | 8ms | 8ms over the last socket too | 8ms | 8ms over the barrier | 8ms
+  PDY-05 Grand Canal: 8ms hop the coconut cart | 8ms the loose cobble again
+  PDY-06 Paradise Beach: 8ms out of the dip | 8ms | 8ms | 8ms on to the umbrella | 8ms again: this time it bounces | 8ms a hop under the second palm brings its coconut down | 142ms over the urchins
+  PDY-07 Serenity Surf: 8ms on to board 1 | 8ms on to board 2 | 8ms on to board 3 | 8ms on to board 4 | 8ms on to board 5 | 8ms on to the rock: now the sea rises | 8ms tower step one | 8ms step two | 8ms step three | 125ms up on the first rock | 125ms over the second rock
+  PDY-08 Quatorze Juillet: 8ms over the first street | 8ms over the second street | 8ms on to the lantern | 8ms on to the high roof | 8ms down on to the last roof
+  BLR-01 Namaskara Bengaluru: 8ms a low wall | 8ms a step up | 8ms a step up | 8ms hop the parked ride | 8ms jump the tile that never loads | 8ms a post | 8ms a post | 8ms up on the deck
+  BLR-02 Green Man: 8ms hop on the arriving car | 8ms onto the building | 8ms up on to the metro line | 8ms the gap between the gates | 8ms stamp on the mat
+  BLR-03 Namma Metro: 8ms onto bus | 8ms up the steps | 8ms | 8ms onto the deck | 217ms the piece that comes in 2027
+  BLR-04 Silk Board: 8ms onto bus | 8ms over the sign | 8ms over the branch | 8ms onto the ledge | 8ms onto the scooter | 8ms up onto the auto | 8ms down onto the jeep | 8ms straight on to the bus before the jeep pulls away | 8ms off the bus
+  BLR-05 Garden City Remote: 8ms jump in place: the auto comes under you | 8ms onto the roof | 8ms small hops: the glass roof is low | 8ms small hops: the glass roof is low | 8ms small hops: the glass roof is low | 8ms small hops: the glass roof is low | 8ms small hops: the glass roof is low
+  BLR-06 Deepalankara: 8ms on to the running lights | 8ms up before it runs backwards | 8ms | 8ms | 8ms | 8ms
+  BLR-07 Hampi Harigolu: 8ms | 8ms | 8ms | 8ms | 8ms
+  BLR-08 Jog Jalapatha: 8ms | 8ms | 8ms | 8ms | 8ms | 8ms off the wet stones
+  AMR-01 Swagatham Amaravati: 8ms a shallow ditch | 8ms hop the parked ride | 8ms hop past the aunty’s plate | 8ms onto the first pier | 8ms | 8ms | 150ms the long jump over the missing pier | 8ms on to the far bank | 8ms a low wall | 8ms a step up | 8ms a step up | 8ms a step up | 8ms up on the deck
+  AMR-02 Mirchi Mild: 8ms hop the first chilli heap | 8ms over the spikes, into the last heap | 8ms the first pit
+  AMR-03 Barrage Gates: 8ms jump long | 8ms jump long | 8ms jump long | 8ms jump long
+  AMR-04 Bezawada Blaze: 8ms | 8ms | 8ms | 8ms | 8ms | 8ms
+  AMR-05 Benz Circle: 8ms hop the drain | 8ms up on the island | 8ms hop the punugulu | 8ms hop the punugulu | 8ms hop the punugulu | 8ms hop the punugulu | 8ms hop the punugulu | 8ms hop the punugulu | 8ms hop the speed breaker | 8ms and the next
+  AMR-06 Gandikota: 8ms over the gap in the bridge | 8ms to the next hook before this one drops
+  AMR-07 Belum Guhalu: 8ms | 8ms | 8ms | 8ms | 8ms up into the cave | 8ms out of the trench
+  AMR-08 Vizag Beach Road: 8ms up on to the submarine | 8ms | 8ms
+  HYD-01 Khush Aamdeed: 8ms hop the parked ride | 8ms a low wall | 8ms a step up | 8ms a step up | 8ms a step up | 8ms a step up | 8ms a step up | 8ms a shallow ditch | 8ms a post | 8ms a post | 8ms up on the deck
+  HYD-02 Auto Wala: 8ms
+  HYD-03 Biryani Bait: 8ms | 8ms onto pot | 8ms onto tower | 8ms over the third whistle
+  HYD-04 Sharmila Auto: 
+  HYD-05 Charminar Chase: 8ms onto P1 | 8ms onto P2 | 8ms onto balcony | 8ms over fake door
+  HYD-06 Golconda Taali: 8ms clap on the stone | 8ms | 8ms | 8ms | 8ms | 8ms | 8ms | 8ms | 8ms
+  HYD-07 Laad Bazaar: 8ms | 8ms | 8ms skip the last string
+  HYD-08 Ramoji Retake: 8ms up on the catwalk, not the plywood | 8ms
+  PNJ-01 Amchem Goem: 8ms onto the first stone | 8ms the next stone | 8ms the next stone | 8ms the next stone | 8ms a low wall | 8ms hop the parked ride | 8ms a step up | 8ms a step up | 8ms a step up | 8ms up on the deck
+  PNJ-02 Fontainhas Gossip: 8ms on to the balcão | 8ms stand on it | 8ms up the step | 8ms up to her balcony
+  PNJ-03 Goal!: 8ms over the defenders
+  PNJ-04 Susegad: 8ms over the flowerpot | 8ms a short hop over the pothole: short of the cat | 8ms a short hop over the pothole, landing short of the cat | 8ms a long jump over the cat’s whole ring | 8ms a short hop, short of the uncle
+  PNJ-05 Rendeiro: 8ms up the step | 8ms up to the palm | 8ms up to the first palm
+  PNJ-06 Casino Royale: 
+  PNJ-07 Miramar Parasail: 
+  PNJ-08 Viva Carnaval: 
+  BOM-01 Aamchi Mumbai: 8ms a post | 8ms a post | 8ms a post | 8ms a shallow ditch | 8ms hop the parked ride | 8ms a low wall | 8ms a step up | 8ms a step up | 8ms up on the deck
+  BOM-02 Dabbawala Shuffle: 8ms onto the cart | 192ms onto the sinking platform | 183ms quickly off it | 8ms to the second belt
+  BOM-03 Fast Local: 8ms up on the first roof | 8ms | 8ms | 8ms | 8ms | 8ms
+  BOM-04 Monsoon Special: 8ms onto crate 1 | 217ms onto the drum | 367ms onto crate 3 | 175ms onto the exit ledge | 8ms | 8ms | 8ms
+  BOM-05 Last Train to Gateway: 275ms hop to the middle platform | 133ms over Tara's packed door | 8ms over the EXIT door: it sends you back
+  BOM-06 Chawl Chadhai: 
+  BOM-07 Dabba Express: 8ms up the crates | 8ms on to the wall
+  BOM-08 Double Role: 8ms you over the crate, him over the gap | 8ms the gap (he jumps too)
+  DMN-01 Daman Darshan: 8ms a post | 8ms a post | 8ms a post | 8ms a shallow ditch | 8ms a low wall | 8ms a step up | 8ms a step up | 8ms a step up | 8ms up on the deck
+  DMN-02 Nani To Moti: 
+  DMN-03 Barf Kharkhanu: 
+  DMN-04 Haath Ma Haath: 
+  DMN-05 Panikotha: 
+  DMN-06 Machhi Bazaar: 
+  DMN-07 Warli Rang: 
+  DMN-08 Diu Durg: 
+  GNR-01 Kem Cho Gandhinagar: 8ms a post | 8ms a post | 8ms a post | 8ms a post | 8ms a step up | 8ms a step up | 8ms hop the parked ride | 8ms a shallow ditch | 8ms up on the deck
+  GNR-02 Kai Po Che!: 8ms up on to the first roof: vault | 8ms across the tin, plant on the concrete: vault | 8ms under the low string: vault | 8ms off the last of the concrete: vault
+  GNR-03 Adalaj Ni Vav: 
+  GNR-04 Indroda: 
+  GNR-05 Sasan Gir: 
+  GNR-06 Mor: 
+  GNR-07 Garba Raas: 
+  GNR-08 GIFT City: 8ms on to the podium under the kite string: vault
+  JAI-01 Padharo Mhare Des: 8ms a post | 8ms a post | 8ms a post | 8ms a step up | 8ms a step up | 8ms a step up | 8ms hop the parked ride | 8ms a shallow ditch | 8ms up on the deck
+  JAI-02 Kathputli: 
+  JAI-03 Hawa Mahal: 
+  JAI-04 Jantar Mantar: 
+  JAI-05 Maniharon ka Rasta: 
+  JAI-06 Kachchhi Ghodi: 
+  JAI-07 Balloon ki Raat: 
+  JAI-08 Amer: 
+  BPL-01 Ko Khan, Bhopal!: 8ms a step up | 8ms a step up | 8ms a step up | 8ms a post | 8ms a post | 8ms a post | 8ms a shallow ditch | 8ms hop the parked ride | 8ms up on the deck
+  BPL-02 Bada Talab: 
+  BPL-03 Bhimbetka: 
+  BPL-04 Zari ka Dhaaga: 125ms up the step first | 8ms through the sitara on to the top | 142ms back up on to the middle level | 8ms hop to the block | 133ms up to the top
+  BPL-05 Jal Tarang: 
+  BPL-06 Batolebaaz: 
+  BPL-07 BHEL: 
+  BPL-08 Bhojtal: 125ms up the step | 8ms through the sitara
+  RPR-01 Jai Johar, Raipur!: 8ms a post | 8ms a post | 8ms a post | 8ms a shallow ditch | 8ms a step up | 8ms a step up | 8ms a step up | 8ms hop the parked ride | 8ms up on the deck
+  RPR-02 Hareli: 
+  RPR-03 Ghadi Chowk: 
+  RPR-04 Dhan ka Katora: 
+  RPR-05 Bhaunra: 
+  RPR-06 Kosa: 
+  RPR-07 Chapda: 
+  RPR-08 Bastar Dussehra: 
+  RNC-01 Johar, Ranchi!: 8ms a shallow ditch | 8ms a step up | 8ms a step up | 8ms a step up | 8ms a post | 8ms a post | 8ms a post | 8ms hop the parked ride | 8ms up on the deck
+  RNC-02 Dhuska: 
+  RNC-03 Teer: 
+  RNC-04 Rugra: 8ms hop the termite mound
+  RNC-05 Chhau: 8ms jump up at the mask | 8ms jump up at the mask | 8ms jump up at the mask | 8ms jump up at the mask
+  RNC-06 Dokra: 
+  RNC-07 Hundru: 125ms over the crack on to the next rock
+  RNC-08 Toofan: 8ms jump up at the mask
+  PAT-01 Prannam, Patna!: 8ms a shallow ditch | 8ms a step up | 8ms a step up | 8ms a post | 8ms a post | 8ms a post | 8ms hop the parked cart | 8ms up on the kerb board | 8ms the low wall | 8ms up on the deck
+  PAT-02 Litti ki Aanch: 
+  PAT-03 Ashok Rajpath: 8ms across to the narrowed one | 8ms across to the last hoarding | 8ms on to the second | 8ms across to the third | 8ms on to the fourth | 8ms off to the far bank
+  PAT-04 Golghar: 8ms the first step | 8ms the second step | 8ms the third step | 8ms the fourth step | 8ms the first step | 8ms the second step | 8ms the third step | 8ms the fourth step
+  PAT-05 Pipa Pul: 
+  PAT-06 Setu ka Jod: 8ms the seam with no plate: jump, deck to deck | 8ms plate 2 is a tarp (two sacks) | 8ms so is 4 | 8ms and 6
+  PAT-07 Tempo: 
+  PAT-08 Nalanda: 8ms jump the hatch with 2 bricks | 8ms and the one with 4 | 8ms and the one with 1 | 8ms hop the last cell’s well | 8ms jump the hatch with 3 bricks | 8ms and the one with 1 | 8ms hop the last cell’s well
+  PAT-09 Sonepur Mela: 
+  PAT-10 Setu se Golghar: 8ms the first step | 8ms the second step | 8ms the third step | 8ms the fourth step
+  DIS-01 Nomoskar Guwahati: 8ms a post | 8ms a post | 8ms a post | 8ms a shallow ditch | 8ms a step up | 8ms a step up | 8ms hop the parked ride | 8ms up on the deck
+  DIS-02 Char: 8ms on to the first bar | 8ms on to the new bar | 8ms on to the last bar | 8ms on to the far bank | 8ms on to the first bar | 8ms on to the big bar | 8ms across to the hut, which never moves | 8ms on to the last bar | 8ms on to the far bank | 8ms on to the long bar | 8ms on to the new bar | 8ms to the bank
+  DIS-03 Duta Paat, Ekta Kuhi: 
+  DIS-04 Talatal: 8ms up on to the landing: the stair starts to fall | 8ms over to the far side | 8ms over the lit well: the flooded vault | 8ms over the first dark well: the flame leans on past it
+  DIS-05 Gamosa: 8ms up on the platform | 8ms over the pit | 8ms up on the platform | 8ms over the pit | 8ms hop over the host who is holding out a gamosa | 8ms over the second pit | 8ms over the third pit | 8ms over the ditch | 8ms hop the ditch | 8ms a short hop: down where the first split was, as it slides ahead | 8ms over the first split where it stopped, at once | 8ms an ordinary hop over the second: it slides back under me | 8ms over the ditch
+  DIS-06 Majuli ka Paar: 8ms over the slab and the spur on to the step | 125ms over the slab and the spur on to the step | 8ms over the spur into its lee | 8ms on to the next trap | 8ms on to the next trap | 8ms on to the next trap | 8ms down on the gangplank | 8ms over the ghat man and his gamosa | 8ms run-jump from the plank’s end across to the bank, past the flag
+  DIS-07 Husori: 8ms up on to the jetty as the cart runs under it
+  DIS-08 Gorh: 8ms up on the haystack
+  DIS-09 Rang Ghar: 317ms over the rib and the oil, on to the next pad | 317ms and the next | 317ms and the last | 317ms over the rib and the oil | 317ms and the next | 317ms and the next | 317ms and the last | 8ms up on the embankment
+  DIS-10 Luit: 8ms on to the new bar | 8ms on to the last bar | 8ms on to the far bank
+
+ [32m✓[39m tests/jumpaudit.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 38182[2mms[22m[39m
+   [32m✓[39m jump audit [2m(1)[22m
+     [33m[2m✓[22m[39m report[33m 38180[2mms[22m[39m
+ [32m✓[39m tests/cpsafe.test.ts [2m([22m[2m142 tests[22m[2m)[22m[33m 52764[2mms[22m[39m
+   [32m✓[39m checkpoints are safe to respawn at [2m(142)[22m
+     [33m[2m✓[22m[39m TVM-01: idle, run and tap-jump at lag 0/6/12[33m 690[2mms[22m[39m
+     [33m[2m✓[22m[39m TVM-04: idle, run and tap-jump at lag 0/6/12[33m 392[2mms[22m[39m
+     [33m[2m✓[22m[39m TVM-09: idle, run and tap-jump at lag 0/6/12[33m 963[2mms[22m[39m
+     [33m[2m✓[22m[39m TVM-10: idle, run and tap-jump at lag 0/6/12[33m 4801[2mms[22m[39m
+     [33m[2m✓[22m[39m RPR-04: idle 1.5 s (allow-listed city)[33m 1438[2mms[22m[39m
+     [33m[2m✓[22m[39m RNC-04: idle 1.5 s (allow-listed city)[33m 302[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-02: idle, run and tap-jump at lag 0/6/12[33m 409[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-03: idle, run and tap-jump at lag 0/6/12[33m 484[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-04: idle, run and tap-jump at lag 0/6/12[33m 390[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-05: idle, run and tap-jump at lag 0/6/12[33m 2299[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-06: idle, run and tap-jump at lag 0/6/12[33m 2820[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-07: idle, run and tap-jump at lag 0/6/12[33m 4933[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-09: idle, run and tap-jump at lag 0/6/12[33m 1860[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-10: idle, run and tap-jump at lag 0/6/12[33m 11557[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-02: idle, run and tap-jump at lag 0/6/12[33m 402[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-05: idle, run and tap-jump at lag 0/6/12[33m 860[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-06: idle, run and tap-jump at lag 0/6/12[33m 456[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-07: idle, run and tap-jump at lag 0/6/12[33m 4890[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-08: idle, run and tap-jump at lag 0/6/12[33m 1914[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-09: idle, run and tap-jump at lag 0/6/12[33m 1726[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-10: idle, run and tap-jump at lag 0/6/12[33m 1194[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m18 passed[39m[22m[2m | [22m[33m13 skipped[39m[90m (31)[39m
+[2m      Tests [22m [1m[32m1801 passed[39m[22m[2m | [22m[33m20 skipped[39m[90m (1821)[39m
+[2m   Start at [22m 08:48:23
+[2m   Duration [22m 55.68s[2m (tests 75%, setup 11%, transform 11%, import 2%)[22m
+

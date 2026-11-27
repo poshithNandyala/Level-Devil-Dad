@@ -1,0 +1,1 @@
+GTK-04: checked 448 plays at 4 distinct capture points, fails 0; longest stretch 8.8 s; replay worst 7.63 s [naive:2.89/2.94/2.99 fix:6.86/6.97/7.26 m0:1.63/1.63/1.63 m1:5.19/5.72/5.17 m2:1.63/1.63/1.63 m3:7.08/7.63/6.78]

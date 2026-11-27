@@ -1,0 +1,4 @@
+
+> level-devil-dad@0.16.14 fair
+> bash scripts/dev/fair.sh GTK
+

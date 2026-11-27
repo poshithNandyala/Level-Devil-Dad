@@ -1,0 +1,81 @@
+{
+ "code": "RPR",
+ "moved": [
+  "src/render/backdrops-west.ts:raipur -> src/game/cities/rpr/backdrop.ts",
+  "src/game/levels/rpr.ts -> src/game/cities/rpr/levels.ts",
+  "src/game/entities/raipur.ts -> src/game/cities/rpr/entities.ts"
+ ],
+ "removed": [
+  "src/game/cities.ts:LINES.RPR",
+  "src/game/cities.ts:CHAPTERS RPR city/hello/famous (filled by install)",
+  "src/game/levels/chunks.ts:SKINS.RPR",
+  "src/game/levels/tour.ts:COURSES.RPR",
+  "src/app/citylines.ts:CITY_LINE.RPR",
+  "src/render/renderer.ts:GRADES.RPR",
+  "src/render/art/tiles.ts:CAP.RPR",
+  "src/audio/audio.ts:MUSIC.RPR",
+  "src/render/theme.ts:THEMES.RPR",
+  "src/render/theme.ts:CITY_ORDER RPR (install appends it)",
+  "src/game/entities/props.ts:CAUSE_LINES.daldal",
+  "src/game/entities/props.ts:CAUSE_LINES.kaanta",
+  "src/game/entities/props.ts:CAUSE_LINES.bhanwra",
+  "src/game/entities/props.ts:CAUSE_LINES.baaj",
+  "src/game/entities/props.ts:CAUSE_LINES.chapda",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.utar (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.ghanta (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.khisko (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.lattu (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.reel (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.gud (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.rath (+ WestEndingKind)",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case chila"
+ ],
+ "importers": [
+  "src/game/cities/rpr/endings.ts",
+  "src/game/levels/endings3.ts",
+  "src/game/levels/index.ts",
+  "tests/west.ts"
+ ],
+ "pruned": [
+  "src/game/levels/endings3.ts: dropped {'Entity'}",
+  "src/game/levels/endings3.ts: import { Solid } from '../body';",
+  "src/game/levels/endings3.ts: import { px } from './kit';",
+  "src/game/levels/endings3.ts: dropped {'tara', 'FLOOR', 'Paint', 'lock'}",
+  "src/game/levels/endings3.ts: import { Chapda, Gedi, Ghadi, Heap, Kaante, Kosa, Mud, Sack, Top, clockFace } from '../cities/rpr/entities';",
+  "src/render/backdrops-west.ts: import type { Theme } from './theme';"
+ ],
+ "inv": {
+  "own": [
+   "src/game/levels/rpr.ts",
+   "src/game/entities/raipur.ts"
+  ],
+  "cause": [
+   "daldal",
+   "kaanta",
+   "bhanwra",
+   "baaj",
+   "chapda"
+  ],
+  "causeShared": [
+   "thorns<game/cities/gnr/endings.ts,game/cities/gnr/entities.ts"
+  ],
+  "ending": [
+   "utar",
+   "ghanta",
+   "khisko",
+   "lattu",
+   "reel",
+   "gud",
+   "rath"
+  ],
+  "endingShared": [
+   "lamp<game/cities/blr/levels.ts,game/cities/bom/levels.ts,game/cities/bpl/levels.ts,game/cities/chn/levels.ts,game/cities/dmn/levels.ts,game/cities/gnr/levels.ts,game/cities/hyd/levels.ts,game/cities/jai/levels.ts,game/cities/pdy/levels.ts,game/cities/pnj/levels.ts,game/cities/rnc/levels.ts"
+  ],
+  "thing": [
+   "chila"
+  ],
+  "thingShared": [
+   "cart<game/cities/amr/levels.ts,game/cities/amr/skin.ts,game/cities/bom/levels.ts,game/cities/bom/skin.ts,game/cities/bpl/levels.ts,game/cities/dmn/levels.ts,game/cities/gnr/levels.ts,game/cities/jai/levels.ts,game/cities/pdy/levels.ts,game/cities/rnc/levels.ts,game/entities/mumbai.ts"
+  ]
+ }
+}

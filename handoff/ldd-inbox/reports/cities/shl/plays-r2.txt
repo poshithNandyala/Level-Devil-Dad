@@ -1,0 +1,83 @@
+SHL-01 route: won  tick 1624
+SHL-01 naive: dead shl-slap tick 878
+SHL-01 fix: dead shl-lyoh tick 1237
+SHL-02 route: won  tick 4068
+SHL-02 naive: dead shl-edge tick 146
+SHL-02 fix: dead shl-dum tick 161
+SHL-02 m0: dead shl-edge tick 900
+SHL-02 m1: dead shl-dum tick 1513
+SHL-03 route: won  tick 3033
+SHL-03 naive: dead shl-sway tick 240
+SHL-03 fix: dead shl-wake tick 1077
+SHL-03 m0: dead shl-sway tick 1269
+SHL-03 m1: dead shl-slip tick 2043
+SHL-04 route: won  tick 1491
+SHL-04 naive: dead shl-slap tick 92
+SHL-04 fix: dead shl-dieng tick 221
+SHL-04 m0: dead shl-slap tick 627
+SHL-04 m1: dead shl-slap tick 1176
+SHL-04 m2: dead shl-lintel tick 1003
+SHL-05 route: won  tick 3733
+SHL-05 naive: dead shl-um tick 175
+SHL-05 fix: dead shl-wah tick 636
+SHL-05 m0: dead shl-um tick 1303
+SHL-05 m1: dead shl-pung tick 2129
+SHL-05 m2: dead shl-wah tick 2989
+SHL-05 m3: dead shl-um tick 3365
+SHL-06 route: won  tick 4230
+SHL-06 naive: dead shl-gorge tick 213
+SHL-06 fix: dead shl-spray tick 703
+SHL-06 m0: dead shl-gorge tick 1042
+SHL-06 m1: dead shl-gorge tick 487
+SHL-06 m2: dead shl-jri tick 3446
+SHL-06 m3: dead shl-gorge tick 2570
+SHL-06 m4: dead shl-jri tick 2613
+SHL-07 route: won  tick 6029
+SHL-07 naive: dead shl-shut tick 283
+SHL-07 fix: dead shl-maw tick 276
+SHL-07 m0: dead shl-maw tick 1455
+SHL-07 m1: dead shl-maw tick 1762
+SHL-07 m2: dead shl-shut tick 1799
+SHL-07 m3: dead shl-shut tick 3070
+SHL-07 m4: dead shl-maw tick 3573
+SHL-07 m5: dead shl-shut tick 4051
+SHL-07 m6: dead shl-maw tick 4662
+SHL-07 m7: dead shl-shut tick 4993
+SHL-07 m8: dead shl-stump tick 5021
+SHL-08 route: won  tick 7068
+SHL-08 naive: dead shl-soaked tick 501
+SHL-08 fix: dead shl-spout tick 728
+SHL-08 m0: dead shl-soaked tick 1777
+SHL-08 m1: dead shl-leak tick 1581
+SHL-08 m2: dead shl-soaked tick 2424
+SHL-08 m3: dead shl-runoff tick 2536
+SHL-08 m4: dead shl-soaked tick 3978
+SHL-08 m5: dead shl-bucket tick 4027
+SHL-08 m6: dead shl-soaked tick 5309
+SHL-08 m7: dead shl-spout tick 5027
+SHL-09 route: won  tick 3456
+SHL-09 naive: dead shl-nala tick 76
+SHL-09 fix: dead shl-closed tick 142
+SHL-09 m0: dead shl-closed tick 582
+SHL-09 m1: dead shl-nala tick 871
+SHL-09 m2: dead shl-closed tick 978
+SHL-09 m3: dead shl-closed tick 1266
+SHL-09 m4: dead shl-shift tick 1733
+SHL-09 m5: dead shl-closed tick 1569
+SHL-09 m6: dead shl-pack tick 2172
+SHL-09 m7: dead shl-closed tick 2090
+SHL-09 m8: dead shl-nala tick 2878
+SHL-09 m9: dead shl-closed tick 2943
+SHL-10 route: won  tick 3376
+SHL-10 naive: dead shl-truedrop tick 106
+SHL-10 fix: dead shl-lyoh tick 271
+SHL-10 m0: dead shl-lintel tick 356
+SHL-10 m1: dead shl-drip tick 439
+SHL-10 m2: dead shl-liar tick 825
+SHL-10 m3: dead shl-wah tick 1080
+SHL-10 m4: dead shl-gorge tick 1303
+SHL-10 m5: dead shl-jri tick 1324
+SHL-10 m6: dead shl-wet tick 2192
+SHL-10 m7: dead shl-shut tick 2839
+SHL-10 m8: dead shl-sway tick 2667
+SHL-10 m9: dead shl-shift tick 2873

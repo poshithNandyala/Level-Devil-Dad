@@ -1,0 +1,19 @@
+CCU-07 route won 72.6s cps 29.0,64.5,102.5,137.0,174.5,215.2,250.0,253.5
+   NAIVE: dead ccu-cha @896 x21.4; replay 7.5s
+   FIX: dead ccu-bojha @457 x13.2; replay 3.8s
+   stopping at the second drain on the causeway: dead ccu-baan @7618 x225.9; replay 4.1s
+   a long jump at the first drain on the causeway: dead ccu-nala @7270 x227.1; replay 1.2s
+   taking the porter who leaves the second pylon at once: dead ccu-cha @5894 x189.3; replay 3.8s
+   staying on the tall porter from the pylon: dead ccu-cha @1770 x52.5; replay 5.7s
+   jumping off the pylon at the first load: dead ccu-gaari @1205 x41.2; replay 1.0s
+   staying on the short porter of the two streams: dead ccu-cha @2684 x89.2; replay 6.2s
+   a long jump off the pylon into the two streams: dead ccu-gaari @2048 x73.1; replay 0.9s
+   standing in the middle of the load when the horn goes: dead ccu-parapet @3236 x117.7; replay 3.6s
+   switching to the short porter before the board, as taught: dead ccu-cha @4753 x160.3; replay 5.8s
+   jumping off the short porter just before his board: dead ccu-gaari @4713 x165.3; replay 5.5s
+   hopping to the porter in front on the horn: dead ccu-gaari @3175 x117.4; replay 3.1s
+   jumping off the second pylon rather than wait: dead ccu-gaari @5614 x186.0; replay 1.5s
+   ✓ causes 539ms
+      Tests  1 passed | 2 skipped (3)
+   Start at  08:09:34
+   Duration  1.43s (tests 41%, transform 26%, setup 26%, import 6%)

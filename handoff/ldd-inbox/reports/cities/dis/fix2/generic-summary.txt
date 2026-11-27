@@ -1,0 +1,73 @@
+15 DIS-02 dis02-bhutbhuti | dis-char-gat
+3 DIS-02 dis02-bhutbhuti | dis-luit
+18 DIS-02 dis02-chapori | dis-luit
+15 DIS-03 dis03-bagan | dis-basket
+3 DIS-03 dis03-bagan | stuck (blocked, alive)
+3 DIS-04 dis04-batah | dis-doba
+12 DIS-04 dis04-batah | dis-kup
+3 DIS-04 dis04-batah | won
+12 DIS-05 dis05-atithi | dis-gamosa
+6 DIS-05 dis05-atithi | dis-gamosa-gat
+12 DIS-05 dis05-feast | dis-feast-gat
+1 DIS-05 dis05-feast | dis-kaath
+2 DIS-05 dis05-feast | dis-kol-paat
+3 DIS-05 dis05-feast | dis-sanko-pit
+3 DIS-05 dis05-kaath | dis-feast-back
+3 DIS-05 dis05-kaath | dis-kaath
+12 DIS-05 dis05-kaath | dis-kaath-walk
+3 DIS-05 dis05-machan | dis-japi-gat
+15 DIS-05 dis05-machan | dis-machan-luit
+1 DIS-05 dis05-sanko | dis-beam
+3 DIS-05 dis05-sanko | dis-gamosa-gat
+14 DIS-05 dis05-sanko | dis-sanko-gat
+3 DIS-06 dis06-flag | dis-garmur
+12 DIS-06 dis06-flag | dis-ghat-gamosa
+3 DIS-06 dis06-flag | play
+15 DIS-06 dis06-traps | dis-garmur
+3 DIS-06 dis06-traps | stuck (blocked, alive)
+15 DIS-06 dis06-wake | dis-dhal
+3 DIS-06 dis06-wake | dis-porcupine
+15 DIS-07 dis07-card | dis-card-gate
+3 DIS-07 dis07-card | dis-goru-lane
+12 DIS-07 dis07-cart | dis-cart-pukhuri
+3 DIS-07 dis07-cart | dis-gate
+3 DIS-07 dis07-cart | dis-horin
+3 DIS-07 dis07-chowk | dis-cart-pukhuri
+15 DIS-07 dis07-chowk | dis-gate
+15 DIS-07 dis07-dhol | dis-pukhuri
+3 DIS-07 dis07-dhol | stuck (blocked, alive)
+12 DIS-07 dis07-goru | dis-goru
+2 DIS-07 dis07-goru | dis-goru-lane
+1 DIS-07 dis07-goru | dis-lathi-ghur
+3 DIS-07 dis07-goru | dis-pat
+15 DIS-07 dis07-pepa | dis-pepa-gate
+3 DIS-07 dis07-pepa | stuck (blocked, alive)
+3 DIS-07 dis07-rope | dis-dhol-sink
+15 DIS-07 dis07-rope | dis-pat
+3 DIS-07 dis07-tekeli | dis-goru
+15 DIS-07 dis07-tekeli | dis-lathi-ghur
+15 DIS-08 dis08-bagori | dis-bagori-beel
+3 DIS-08 dis08-bagori | dis-jui
+15 DIS-08 dis08-bogoli | dis-bogoli
+3 DIS-08 dis08-bogoli | stuck (blocked, alive)
+15 DIS-08 dis08-duijeep | dis-beel
+3 DIS-08 dis08-duijeep | stuck (blocked, alive)
+15 DIS-08 dis08-jeep | dis-beel
+3 DIS-08 dis08-jeep | stuck (blocked, alive)
+3 DIS-09 dis09-chaal | dis-khaal
+3 DIS-09 dis09-chaal | dis-roof
+12 DIS-09 dis09-chaal | stuck (blocked, alive)
+3 DIS-09 dis09-sluice | dis-roof
+15 DIS-09 dis09-sluice | dis-sluice
+15 DIS-09 dis09-tug | dis-khaal
+3 DIS-09 dis09-tug | dis-roof
+3 DIS-09 dis09-tunnels | dis-sluice
+3 DIS-09 dis09-tunnels | dis-tel-gola
+12 DIS-09 dis09-tunnels | dis-vault
+15 DIS-10 dis10-dhol | dis-pukhuri-lahe
+3 DIS-10 dis10-dhol | stuck (blocked, alive)
+3 DIS-10 dis10-talatal | dis-khaal-ulta
+3 DIS-10 dis10-talatal | dis-talatal-ulta
+12 DIS-10 dis10-talatal | stuck (blocked, alive)
+15 DIS-10 dis10-tug | dis-khaal-ulta
+3 DIS-10 dis10-tug | dis-pukhuri-lahe

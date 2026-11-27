@@ -1,0 +1,79 @@
+{
+ "code": "PDY",
+ "moved": [
+  "src/render/backdrops-south.ts:puducherry -> src/game/cities/pdy/backdrop.ts",
+  "src/game/levels/pdy.ts -> src/game/cities/pdy/levels.ts"
+ ],
+ "removed": [
+  "src/game/cities.ts:LINES.PDY",
+  "src/game/cities.ts:CHAPTERS PDY city/hello/famous (filled by install)",
+  "src/game/levels/chunks.ts:SKINS.PDY",
+  "src/game/levels/tour.ts:COURSES.PDY",
+  "src/app/citylines.ts:CITY_LINE.PDY",
+  "src/render/renderer.ts:GRADES.PDY",
+  "src/render/art/tiles.ts:CAP.PDY",
+  "src/audio/audio.ts:MUSIC.PDY",
+  "src/render/theme.ts:THEMES.PDY",
+  "src/render/theme.ts:CITY_ORDER PDY (install appends it)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.bells (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.fakewin (+ EndingKind)",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case bollard",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case awning",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case umbrella",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case croissant",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case lights",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case surfboard",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case rocket"
+ ],
+ "importers": [
+  "src/game/levels/index.ts"
+ ],
+ "inv": {
+  "own": [
+   "src/game/levels/pdy.ts"
+  ],
+  "cause": [],
+  "causeShared": [
+   "spikes<game/cities/chn/levels.ts,game/cities/kvt/endings.ts,game/cities/kvt/levels.ts,game/entities/basics.ts,game/levels/amr.ts,game/levels/blr.ts,game/levels/endings.ts,game/levels/twists.ts,game/world.ts",
+   "coconut<game/cities/kvt/skin.ts,game/cities/rnc/skin.ts,game/cities/tvm/levels.ts,game/cities/tvm/skin.ts,game/levels/chunks.ts",
+   "splash<app/app.ts,game/cities/chn/levels.ts,game/cities/kvt/endings.ts,game/cities/kvt/entities.ts,game/cities/kvt/levels.ts,game/cities/rnc/entities.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/abilities.ts,game/entities/daman.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/amr.ts,game/levels/blr.ts,game/levels/bom.ts,game/levels/chunks.ts,game/levels/dmn.ts,game/levels/endings2.ts,game/levels/endings3.ts,game/levels/gnr.ts,game/levels/kit.ts,game/levels/pnj.ts,game/player.ts",
+   "burnt<game/cities/chn/levels.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/amr.ts,game/levels/chunks.ts,game/levels/hyd.ts",
+   "hit<game/cities/chn/levels.ts,game/cities/kvt/endings.ts,game/cities/kvt/levels.ts,game/cities/tvm/levels.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/amr.ts,game/levels/blr.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/hyd.ts,game/levels/kit.ts"
+  ],
+  "ending": [
+   "bells",
+   "fakewin"
+  ],
+  "endingShared": [
+   "shuffle<game/levels/endings.ts",
+   "mirror<app/app.ts,game/levels/bom.ts,game/levels/endings.ts,render/renderer.ts",
+   "lamp<game/cities/chn/levels.ts,game/cities/rnc/levels.ts,game/levels/blr.ts,game/levels/bom.ts,game/levels/bpl.ts,game/levels/dmn.ts,game/levels/gnr.ts,game/levels/hyd.ts,game/levels/jai.ts,game/levels/pnj.ts,game/levels/rpr.ts",
+   "mime<game/levels/endings.ts"
+  ],
+  "thing": [
+   "bollard",
+   "awning",
+   "umbrella",
+   "croissant",
+   "lights",
+   "surfboard",
+   "rocket"
+  ],
+  "thingShared": [
+   "board<game/cities/chn/levels.ts,game/entities/auto.ts,game/levels/bom.ts",
+   "coconut<game/cities/kvt/skin.ts,game/cities/rnc/skin.ts,game/cities/tvm/levels.ts,game/cities/tvm/skin.ts,game/levels/chunks.ts",
+   "scooter<game/cities/chn/skin.ts,game/cities/rnc/skin.ts,game/cities/tvm/levels.ts,game/entities/traffic.ts,game/levels/blr.ts,game/levels/chunks.ts,game/levels/hyd.ts,game/levels/pnj.ts,render/art/vehicles.ts",
+   "odam<game/cities/kvt/endings.ts,game/cities/kvt/levels.ts,game/cities/tvm/course.ts,game/cities/tvm/levels.ts,game/levels/tour.ts",
+   "lighthouse<game/cities/chn/levels.ts,game/cities/kvt/levels.ts,game/levels/amr.ts,render/scenes.ts",
+   "kudam<game/cities/chn/levels.ts,game/cities/chn/skin.ts,game/levels/chunks.ts",
+   "cyclist<game/levels/chunks.ts",
+   "flowers<game/cities/chn/levels.ts,game/levels/endings.ts,game/levels/gnr.ts,game/levels/hyd.ts",
+   "rock<game/levels/amr.ts,game/levels/blr.ts,game/levels/bpl.ts,game/levels/gnr.ts,game/levels/hyd.ts,game/levels/jai.ts,render/scenes.ts",
+   "clock<game/levels/bom.ts,game/levels/hyd.ts",
+   "cart<game/cities/rnc/levels.ts,game/entities/mumbai.ts,game/levels/amr.ts,game/levels/bom.ts,game/levels/bpl.ts,game/levels/chunks.ts,game/levels/dmn.ts,game/levels/gnr.ts,game/levels/jai.ts,game/levels/rpr.ts",
+   "spikerow<game/cities/kvt/levels.ts,game/levels/endings.ts,game/levels/twists.ts",
+   "lantern<game/levels/amr.ts",
+   "spark<render/particles.ts,rooms/art/fx.ts"
+  ]
+ }
+}

@@ -1,0 +1,37 @@
+P3
+SVP-01 | NAIVE | svp-baha@586
+SVP-01 | FIX | svp-baha@1298
+SVP-02 | NAIVE | svp-aari@434
+SVP-02 | FIX | svp-kichad@2063
+SVP-03 | NAIVE | svp-magar@272
+SVP-03 | FIX | svp-magar2@741
+SVP-04 | NAIVE | svp-hiran@354
+SVP-04 | FIX | svp-hiran2@1881
+SVP-05 | NAIVE | svp-nazar@190
+SVP-05 | FIX | svp-rassi@2482
+SVP-05 | M: hop everything in the cave | svp-chuna@5296
+SVP-05 | M: wait out the first drip, then hop the wall without waiting | svp-chuna2@6510
+SVP-05 | M: run to the edge and jump for the tied-up boat | svp-rassi@2482
+SVP-05 | M: over the first creek by the rope, then run for the second boat and jump from the edge | svp-rassi2@3586
+SVP-06 | NAIVE | svp-kichad@199
+SVP-06 | FIX | svp-kichad2@2115
+SVP-07 | NAIVE | svp-saman@844
+SVP-07 | FIX | svp-bheed@1076
+SVP-07 | M: into the trench, straight out again and on to the quay | svp-jahaz@684
+SVP-07 | M: on to the first ship with everyone else | svp-jahaz@1220
+SVP-07 | M: sit down on the luggage like everyone | svp-bheed@4060
+SVP-07 | M: out of the trench the moment the real call comes | svp-bheed@3849
+SVP-07 | M: sit down on the luggage like everyone, a third time | svp-bheed@5575
+SVP-08 | NAIVE | svp-baarish@354
+SVP-08 | FIX | svp-nala@4164
+SVP-09 | NAIVE | svp-eent@138
+SVP-09 | FIX | svp-eent2@509
+SVP-10 | NAIVE | svp-aari@687
+SVP-10 | FIX | svp-magar2@1370
+SVP-10 | M: food put down, then ride the middle of the log | svp-aari@757
+SVP-10 | M: walk the brick floor of the cellar | svp-eent2@3513
+SVP-10 | M: sit down on the luggage like everyone | svp-bheed@7153
+SVP-10 | M: carry the food to the edge and hop there waiting for the boat | svp-hiran2@10525
+SVP-10 | M: run to the edge and jump for the tied-up boat | svp-rassi@7566
+SVP-10 | M: over the first creek by the rope, then run for the second boat and jump from the edge | svp-rassi2@8670
+

@@ -1,0 +1,80 @@
+{
+ "code": "KVT",
+ "moved": [
+  "src/render/backdrops-south.ts:kavaratti -> src/game/cities/kvt/backdrop.ts",
+  "src/game/levels/kvt.ts -> src/game/cities/kvt/levels.ts",
+  "src/game/entities/lakshadweep.ts -> src/game/cities/kvt/entities.ts"
+ ],
+ "removed": [
+  "src/game/cities.ts:LINES.KVT",
+  "src/game/cities.ts:CHAPTERS KVT city/hello/famous (filled by install)",
+  "src/game/levels/chunks.ts:SKINS.KVT",
+  "src/game/levels/tour.ts:COURSES.KVT",
+  "src/app/citylines.ts:CITY_LINE.KVT",
+  "src/render/renderer.ts:GRADES.KVT",
+  "src/render/art/tiles.ts:CAP.KVT",
+  "src/audio/audio.ts:MUSIC.KVT",
+  "src/render/theme.ts:THEMES.KVT",
+  "src/render/theme.ts:CITY_ORDER KVT (install appends it)",
+  "src/game/entities/props.ts:CAUSE_LINES.pinched",
+  "src/game/entities/props.ts:CAUSE_LINES.stung",
+  "src/game/entities/props.ts:CAUSE_LINES.bitten",
+  "src/game/levels/endings.ts:OLD_ENDINGS.reflection (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.glider (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.trapdoor (+ EndingKind)",
+  "src/game/levels/endings2.ts:NEW_ENDINGS.footsteps (+ NewEndingKind)",
+  "src/game/levels/endings2.ts:NEW_ENDINGS.pushoff (+ NewEndingKind)",
+  "src/game/levels/endings2.ts:NEW_ENDINGS.safetystop (+ NewEndingKind)",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case tuna"
+ ],
+ "importers": [
+  "src/game/levels/index.ts",
+  "tests/solutions.ts",
+  "tests/acts.ts",
+  "tests/frozen/v0.16.13.ts"
+ ],
+ "inv": {
+  "own": [
+   "src/game/levels/kvt.ts",
+   "src/game/entities/lakshadweep.ts"
+  ],
+  "cause": [
+   "pinched",
+   "stung",
+   "bitten"
+  ],
+  "causeShared": [
+   "spikes<game/entities/basics.ts,game/levels/amr.ts,game/levels/blr.ts,game/levels/chn.ts,game/levels/endings.ts,game/levels/endings2.ts,game/levels/pdy.ts,game/levels/twists.ts,game/world.ts",
+   "splash<app/app.ts,game/cities/rnc/entities.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/abilities.ts,game/entities/daman.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/amr.ts,game/levels/blr.ts,game/levels/bom.ts,game/levels/chn.ts,game/levels/chunks.ts,game/levels/dmn.ts,game/levels/endings.ts,game/levels/endings2.ts,game/levels/endings3.ts,game/levels/gnr.ts,game/levels/kit.ts,game/levels/pdy.ts,game/levels/pnj.ts,game/player.ts",
+   "hit<game/cities/tvm/levels.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/amr.ts,game/levels/blr.ts,game/levels/chn.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/hyd.ts,game/levels/kit.ts,game/levels/pdy.ts"
+  ],
+  "ending": [
+   "reflection",
+   "glider",
+   "trapdoor",
+   "footsteps",
+   "pushoff",
+   "safetystop"
+  ],
+  "endingShared": [
+   "loading<game/entities/karnataka.ts,game/levels/endings.ts"
+  ],
+  "thing": [
+   "tuna"
+  ],
+  "thingShared": [
+   "crate<game/entities/mumbai.ts,game/levels/bom.ts,game/levels/chn.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/endings2.ts,game/levels/hyd.ts,game/levels/kit.ts",
+   "beam<game/levels/endings3.ts",
+   "odam<game/cities/tvm/course.ts,game/cities/tvm/levels.ts,game/levels/endings2.ts,game/levels/pdy.ts,game/levels/tour.ts",
+   "crab<game/levels/chunks.ts",
+   "coral<render/art/things.ts",
+   "shell<game/cities/rnc/endings.ts,game/cities/rnc/entities.ts",
+   "lighthouse<game/levels/amr.ts,game/levels/chn.ts,game/levels/pdy.ts,render/scenes.ts",
+   "jetty<game/levels/dmn.ts,game/levels/endings3.ts,game/levels/pnj.ts",
+   "spikerow<game/levels/endings.ts,game/levels/pdy.ts,game/levels/twists.ts",
+   "crow<game/cities/rnc/skin.ts,game/cities/tvm/levels.ts,game/cities/tvm/skin.ts,game/levels/chunks.ts,game/levels/endings.ts",
+   "jeep<game/cities/tvm/levels.ts,game/cities/tvm/skin.ts,game/levels/blr.ts,game/levels/chunks.ts",
+   "ferry<game/cities/rnc/course.ts,game/cities/tvm/course.ts,game/levels/tour.ts"
+  ]
+ }
+}

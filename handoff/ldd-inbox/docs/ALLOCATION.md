@@ -1,0 +1,743 @@
+# ALLOCATION v2: who builds which idea (Level Devil Dad)
+
+**v2, 2026-11-27.** Applies the 12 fixes of reports/ALLOCATION-REVIEW.md; every changed slot is listed in ALLOCATION-V2-CHANGES.md. v1 F numbers are kept; new families are F418-F446.
+
+Written 2026-11-27 by the uniqueness allocator. Inputs: TROLL-BIBLE.md, 21 city bibles (LEH included), MECHANICS.md, CITIES.md. Working index: allocation-work/index.md. Machine form: allocation.json (full A2/A3 and closest-idea text per slot; this file clips those two columns for size).
+
+**Result.** 36 cities, 419 idea families in use (v2), each with exactly one owner city and one row below; 0 duplicate (family, betrayal) pairs; 0 betrayal types repeated inside a city; 21 new cities hold 10 stages + 2 reserves; 15 shipped cities get an encore pair (09-10), one new tour betrayal and one new seventh-death theme. Shape per new city: 01 tour, 02-04 standard, 05-06 long, 07 marathon, 08 HWIK ("how would I know"), 09 `tough` (60-90 s, 4-5 beats, 3-4 checkpoints), 10 finale. At most 2 HWIK per city, never adjacent, never 01, 09 or 10. Where a bible proposed two marathons the second runs as slot 09, shape `tough`; a HWIK at slot 05 is also the long stage (`HWIK (long 60-90 s)`).
+
+**Caveat.** 'FRESH' concepts and 'unverified' places were added by the allocator where retired ideas left a hole; each needs a source before build.
+
+## 1. Idea families (numbered, one owner each)
+
+Numbers F001+ run in this order: shipped cities (their 8 stages, below), then each shipped city's new tour betrayal and encore pair (section 3), then the 21 new cities in section 2 (slots then reserves). The owner of a family is the city whose block defines it; a family never appears in two blocks.
+
+- **TVM** (shipped, 8): F001 soaked-road-rocket-boosters; F002 bus-roof-bells-flyover-slabs; F003 tea-pour-double-pull; F004 coconut-drop-on-stoppers; F005 fort-gate-second-portcullis; F006 fishing-net-counterweight; F007 hairpin-jeeps-mist-pits; F008 snake-boat-low-bridges
+- **KVT** (shipped, 8): F009 turtle-nest-spread; F010 jetty-planks-tide; F011 lighthouse-beam-bridge; F012 airstrip-tailwind; F013 tuna-fly-over; F014 reef-air-meter-eels; F015 palm-climb-crabs; F016 lagoon-run-sandbar-dolphins
+- **CHN** (shipped, 8): F017 pongal-pot-boil-over; F018 pot-queue-places; F019 subway-flood; F020 filter-coffee-cricket; F021 mirage-exit; F022 jasmine-crowd-push; F023 nodding-dolls; F024 lifting-bridge-train-roof
+- **PDY** (shipped, 8): F025 kepi-chase; F026 rock-beach-waves; F027 yellow-wall-jam; F028 closing-time-beach-road; F029 canal-bridge-opinions; F030 paradise-tide; F031 surf-school; F032 bastille-rooftops
+- **BLR** (shipped, 8): F033 loading-bridge-99; F034 green-man-signal; F035 metro-opening-soon; F036 silk-board-jam; F037 glasshouse-remote; F038 palace-powercut-lights; F039 hampi-boulder-coracle; F040 jog-falls-cascade
+- **AMR** (shipped, 8): F041 full-stomach-short-jump; F042 chilli-powder-clouds; F043 barrage-gates-watch-feet; F044 tar-road-roller-heat; F045 benz-circle-humps; F046 gandikota-rope-bridge; F047 belum-cave-dark; F048 vizag-ropeway
+- **HYD** (shipped, 8): F049 tour-irani-chai; F050 auto-wala-shadow; F051 biryani-cooker-bait; F052 shy-autos-statue; F053 kite-chase-pakka-exit; F054 golconda-echo-clap; F055 bangle-boxes-shuffle; F056 film-set-retake
+- **PNJ** (shipped, 8): F057 ferry-poi-tour; F058 gossip-bubbles-platforms; F059 football-ground-volley-header; F060 siesta-sleepers; F061 toddy-rope-recoil; F062 roulette-colour-floors; F063 parasail-towed; F064 carnival-freeze-floats
+- **BOM** (shipped, 8): F065 tour-local-trains; F066 dabba-cart-shuffle; F067 packed-train-shove; F068 monsoon-manholes-treadmills; F069 last-train-doors; F070 chawl-wall-kicks; F071 dabba-carry-holi; F072 twin-mirror-mela
+- **DMN** (shipped, 8): F073 tour-forts-fish-racks; F074 pedal-boat-channel; F075 ice-factory-melting; F076 plank-hand-to-hand; F077 rope-ferry-mash; F078 fish-market-weighing; F079 warli-painted-path; F080 diu-fort-tricks
+- **GNR** (shipped, 8): F081 tour-sector-peacocks; F082 kite-pole-vault; F083 stepwell-sunbeams; F084 dino-shockwaves; F085 lions-stalk-when-back-turned; F086 peacock-feather-flaps-mud; F087 garba-dance-rings; F088 candle-chart-floor
+- **JAI** (shipped, 8): F089 tour-pink-city; F090 puppet-strings-beat-hops; F091 pot-tower-on-head; F092 marble-bowl-swing-yantra; F093 bangle-roll-glass; F094 dummy-horse-never-stops; F095 balloon-wind-layers; F096 elephant-ride-amer
+- **BPL** (shipped, 8): F097 tour-two-lakes; F098 skipping-stone-lake; F099 painted-real-worlds-stencils; F100 gold-thread-you-are-needle; F101 bowls-bounce-grows; F102 tall-tales-come-true; F103 iron-carry-crane-magnets; F104 bhojtal-lake
+- **RPR** (shipped, 8): F105 tour-rice-bowl; F106 stilts-mud; F107 clock-time-only-when-moving; F108 rice-poured-into-hills; F109 spinning-top-platforms; F110 cocoon-from-standing-still; F111 ant-bridges; F112 dussehra-chariot-pull
+- **RNC** (shipped, 8): F113 tour-waterfall-city; F114 dhuska-flipped-scooped; F115 arrow-straw-boss-steps; F116 lightning-rugra-lifts; F117 chhau-masks-roles; F118 lost-wax-hollow-window; F119 long-fall-kills-rule; F120 storm-over-falls-tallest
+
+## 2. New cities: 10 slots + 2 reserves each
+
+Columns: slot, concept id (bible id; names are in the city bible), family (F number and key), betrayal keys, shape, A2 / A3 chain, closest shipped idea and why this one differs. 'hidden checkpoints' marks marathons.
+
+**PAT · Patna**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | PAT-01 | F166 crowd-carried-by-vehicle | sidestep-surge | tour | A2 kerb when horn sounds; A3 wait behind the tempo; the surge carries you at most under one screen back | BOM-03 shove-out: crowd moves along the street and you sidestep; carry capped under one screen (v2, review 10) |
+| 02 | PAT-05 | F167 ember-floor-poker-targets-food | poker-targets-food | std | A2 stand on uncracked ash;… | RNC-02 dhuska: floor stays… |
+| 03 | PAT-F2 | F418 hoarding-swap-at-class-bell | B8, banner-swap-width | std | A2 at the class bell stand on the hoarding whose rolled-up replacement above it is wider; A3 the new batch banner is narrower than the old (B8), step off to the next before it is pulled taut | B8 shrinking supports (FREE) / PDY-03 signs act: floor width is the banner printed above, swapped on a bell that never moves Dad (not TVM-02) |
+| 04 | PAT-02 | F169 one-way-stairs-rising-grain | one-way-porters | std | A2 down the other spiral; A3… | RPR-04 rice hills: floor rises… |
+| 05 | PAT-04 | F170 float-sinks-under-load | load-sinks | long | A2 wait on high section; A3… | DMN-06 weighing: chain of floats,… |
+| 06 | PAT-03 | F419 setu-joint-missing-plate | missing-plate | long | A2 count the expansion plates, the joint with no plate drops you; A3 the missing plate is the one after the truck (the bob is flavour only) | CHN-08 lifting bridge: a counted gap, not a tilt by weight (v2, review 6) |
+| 07 | PAT-07 | F172 vehicle-leans-to-rider-side | lean-balance, parked-gap-closes | marathon | A2 stand road side; A3 the gap between two parked tempos closes when a third backs in, cross before its reverse light; hidden checkpoints | TVM-02 bus bells: no conductor signal; tilt follows where riders stand, parked tempos close the gap (v2, review 4) |
+| 08 | PAT-11 | F176 count-bricks-routes-cells | count-routing | HWIK | A2 count the bricks over each cell door, N bricks puts you out N cells along; A3 zero bricks is the door; tell: brick count drawn over every door, one rule, one death | `invisible`/`fakewin`: counting rule, no pick-the-door (was PAT R1; v2 replaces Sattu, review 3/7) |
+| 09 | PAT-10 | F174 moving-gap-behind-rider | moving-gap, gondola-swing | tough | A2 follow the horse; A3 skip an occupied gondola; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable | GNR-07 garba, JAI-06 horse: you ride nothing, you move in a gap |
+| 10 | PAT-12 | F420 finale-setu-plate-count | plate-count-under-cart | finale | callbacks only: setu joints (plate count), pontoon cart, Golghar stairs, tempo; twist: the plate count from slot 06 is read while riding the pontoon cart | (own callbacks): twist combines PAT slot 06 plate count + slot 05 pontoon (v2, review 9) |
+| R1 | PAT-F3 Agam Kuan (the well) | F421 well-returns-what-falls | returns-later | reserve | A2 what drops into the well comes back up later as a step; A3 the bucket you dropped comes up under the ledge you jump from (FRESH, Agam Kuan lore unverified) | RNC-02 dhuska come up: delayed return of what you dropped |
+| R2 | PAT-F1 Kumhrar (pillar hall) | F177 polished-pillar-stumps-slick | polish-slick | reserve | A2 walk the rough… | TVM-03…: surface finish… |
+
+**LKO · Lucknow**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | LKO-F1 | F422 sold-bolt-hooked-out-sideways | B3, bolt-unrolls-curtain | tour | A2 the shopkeeper's bamboo hook rises to the bolt before it is pulled, hop off when the hook touches; A3 the pulled bolt unrolls down across the lane, pass under it before its end reaches the floor | CCU slot 04 stack-pulled-from-bottom: here the bolt slides out sideways on a visible hook (B3), no customer choice, no height drop; never needs standing still |
+| 02 | LKO-02 | F179 politeness-bow-sets-order | bow-order | std | A2 bow then they go; FIX dad… | CHN-02 queue: order set by… |
+| 03 | LKO-04 | F180 print-washed-stitch-remains | wash-remains | std | A2 cross on white; FIX second wash takes jali; A3 cross on solid stitch (v2: no stitcher-ahead act) | BPL-04/DMN-07: pattern state, you never sew |
+| 04 | LKO-05 | F181 sun-direction-sinks-foam | light-sinks | std | A2 shady side first; FIX tray lid lets sun in; A3 follow the shadow line: the rule is the DIRECTION the light comes from, not melt over time | DMN-03 melting ice: driven by light direction not time (LKO is the only sun-direction owner) |
+| 05 | LKO-08 | F182 flatten-platforms-build-low-lane | flatten-lane | long | A2 flatten a row first; A3… | crumbling floors: it lowers,… |
+| 06 | LKO-06 | F183 sound-draws-dancer-spin | sound-draws | long | A2 land on silent strips; A3… | JAI-02 beats: your sound draws… |
+| 07 | LKO-07 | F184 pace-sets-crowd-shape | pace-crowd, ladder-block | marathon | A2 walk; FIX walker is under… | PNJ-08 freeze,…: your speed sets… |
+| 08 | LKO-03 | F185 entry-height-routes-level | enter-height | HWIK | A2 walk in; A3 one arch has… | `fakewin`/`invisi…: no fake door,… |
+| 09 | LKO-10 | F186 flag-colour-steers-flock | flag-signal | long | A2 watch the flag; A3 flag… | chasers (crows): flock obeys a… |
+| 10 | LKO-12 | F187 finale-bow-meets-bells | bow-vs-bells | finale | callbacks only: doorways,… | (own callbacks): politeness… |
+| R1 | LKO-09 Taj (generic dome) | F188 distance-scales-world | distance-scale | reserve | A2 jump from the… | `tiny`: distance… |
+| R2 | LKO-11 Pachisi Court | F189 throw-count-limits-moves | count-moves | reserve | A2 wait for a bigger… | PNJ-06…: count-based… |
+
+**CCU · Kolkata**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | CCU-01 | F190 rail-groove-sticks-foot | groove-catch | tour | A2 land between rails; A3… | GNR-06 mud: one-beat catch… |
+| 02 | CCU-02 | F191 exit-moving-vehicle-on-shout | exit-facing-forward | std | A2 step off on aaste facing… | TVM-02 bells: you exit a… |
+| 03 | CCU-F2 | F423 shake-tin-sorts-big-pieces-up | shake-sorts-up, B35 | std | A2 stand on the peanuts: each shake of the tin lifts big pieces and sinks the puffed rice; A3 a green chilli (big, spiky) rises where you landed after the second shake, step to the next peanut (B35); Dad never eats | GNR-08 platforms that rise when you jump: here the vendor's shake (tin tilts first) sorts by size; no feeding, no pause |
+| 04 | CCU-04 | F193 stack-pulled-from-bottom | stack-drops-one-height | std | A2 stand on a quiet stack;… | crumbling floors: customer chooses… |
+| 05 | CCU-05 | F424 painted-figure-carried-out | paint-done-departs, dry-cracks-from-height | long | A2 stand on figures the paint line has not passed the waist of; when the paint reaches the crown the figure is carried out of the lane; A3 a dry pale layer cracks if you land on it from a height, hop down short | B6 scaffold with a deadline / `lamp`: the visible paint line on the figure itself is the timer; no straw-is-air, nobody builds ahead (generic figures, no deities) |
+| 06 | CCU-03 | F195 pole-swings-at-junction | pole-sweep, points-switch | long | A2 drop to the step at… | bom03-wire/CHN-08: the swinging… |
+| 07 | CCU-07 | F196 head-load-platforms | carry-platform, porter-rests | marathon | A2 ride loads going your… | DMN-04 plank…: two streams,… |
+| 08 | CCU-08 | F197 stand-still-held-by-chat | held-until-event | HWIK | A2 never stop on the rok; A3… | RPR-03: social trap… |
+| 09 | CCU-09 | F198 cloth-panel-covers-foothold | build-order-wall | tough | A2 climb where cloth is tied; A3 opening-night queue shifts holds; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable | CHN-08: cover goes up where your foothold was (OWNS family; DIS-07 retired) |
+| 10 | CCU-12 | F199 finale-book-bundle-loads | customers-ask-mid-crossing | finale | callbacks only: bus, tram… | (own callbacks): customers ask… |
+| R1 | CCU-11 Kumir-danga | F200 safe-call-window | safe-call-window | reserve | A2 call land only for… | `mime`: chalk squares,… |
+| R2 | CCU-F1 Hooghly bore | F201 tidal-bore-front | bore-front | reserve | A2 ride behind the… | DMN/PDY-06…: a travelling… |
+
+**BBI · Bhubaneswar**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | BBI-01 | F202 aimed-hose-slick-follows-waiter | aimed-slide | tour | A2 pass while he faces pots;… | TVM-01 soaked road: aimed and… |
+| 02 | BBI-02 | F203 keeper-pads-carry-you | carried-by-actor | std | A2 stand on far pad; FIX… | PNJ-03/penalty: keeper carries… |
+| 03 | BBI-03 | F204 cutout-safe-on-open-parasol | safe-shape | std | A2 wait for a customer; A3… | blinkers: a customer opens… |
+| 04 | BBI-10 | F205 standing-builds-blocker | stand-builds-block | std | A2 keep moving; A3 stop only… | RPR-06 cocoon: built in front,… |
+| 05 | BBI-09 | F206 idle-world-you-start-it | idle-world | HWIK (long 60-90 s) | A2 touch nothing; A3 door behind house step; tell: still machines | --- stillness is the rule |
+| 06 | BBI-05 | F207 loom-beat-aligns-threads | beat-align | long | A2 count beats until motif… | GNR-08 scroll: alignment of… |
+| 07 | BBI-08 | F208 troupe-pose-platform-shapes | pose-shapes | marathon | A2 wait for the bridge pose;… | GNR-07/RNC-05: shapes chosen by… |
+| 08 | BBI-F3 | F425 pakhala-pour-floats-grains | pour-floats | HWIK | A2 the settled rice in the bowl is floor until the water is poured, then the grains float apart; stand on the badi (fried lump) before the jug tips; A3 the second pour comes from the other rim, the badi drifts, hop to the next one; tell: the jug at the rim, tilting, from the first frame | floods (TVM-02), RPR-04 rice hills: one visible pour floats the floor apart; no moving reveal (BBI.md street food: pakhala) |
+| 09 | BBI-06 | F210 world-slides-hub-stays-still | hub-still | long | A2 stand on wheel hub; A3… | moving…: obvious wheel is… |
+| 10 | BBI-12 | F426 finale-pads-onto-plinth | pads-to-plinth | finale | callbacks only: pads, parasols, ikat, plinth hub, troupe; twist = BBI slot 02 keeper pads + slot 09 hub: the keeper's pads carry you on to the sliding plinth, step to the hub | (own callbacks): no soot reveal (BBI slot 08 recast) |
+| R1 | BBI-F1 Bagudi (tag) | F212 tag-it-passes-to-you | it-passes | reserve | A2 tag back at the line; A3 (FRESH, from bible games list) | chasers: 'it' is passed to you |
+| R2 | BBI-04 Talapatra | F427 stylus-cut-lines-soot | soot-after | reserve | A2 follow behind the stylus (reserve only; DDN slot 05 owns reveal-by-weather) | `invisible`: reveal after you pass |
+| R3 | BBI-F2 Pattachitra panels | F213 painted-panel-previews-next | preview-panel | reserve | A2 read the panel before stepping (FRESH, craft in bible) | AGT-06: preview is a painting |
+
+**GTK · Gangtok**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | GTK-01 | F214 sweeper-sweeps-ground-things | sweep-arc | tour | A2 step on a bench; A3 swing… | treadmills: arc sweep, only… |
+| 02 | GTK-05 | F215 tier-cycle-top-to-bottom | tier-cycle | std | A2 stand on second tier; FIX… | `revolve`: stack cycles top… |
+| 03 | GTK-08 | F216 inspector-confiscates-thin-bags | inspector-removes | std | A2 stitched handles; A3… | fake floors: inspector… |
+| 04 | GTK-02 | F217 floor-numbering-by-entrance | numbering | std | A2 take stairs and count;… | BOM-06 chawl…: numbering… |
+| 05 | GTK-04 | F218 dropped-litter-warden-pause | rule-broken-by-jump | HWIK (long 60-90 s) | A2 walk past a bin; A3 bins full, use the next; tell: wrapper in hand | CHN-02 queue: rule broken by your jump |
+| 06 | GTK-03 | F219 shortcut-stairs-one-loop-low | topology | long | A2 stair up to loop above;… | BOM-06: topology on a… |
+| 07 | GTK-07 | F220 fog-hides-edge-rope-gaps | fog-edge | marathon | A2 follow the kerb rope,… | mist (kit): fog hides an… |
+| 08 | GTK-F2 | F225 cabins-cross-at-midpoint | cabin-cross | HWIK | A2 ride the cabin; it is a shuttle that turns back at the middle station; A3 hop to the other cabin only as they pass at mid; tell: two cabins and the middle station visible from the start | BOM trains: cabins swap at mid; no decoy twin (FRESH: Gangtok ropeway) |
+| 09 | GTK-10 | F222 ride-animal-fixed-loop | ride-fixed-loop | long | A2 get off far side; A3… | JAI-08 elephant: fixed loop, no… |
+| 10 | GTK-12 | F223 finale-two-roads-count-in-fog | count-in-fog | finale | callbacks only: floors,… | (own callbacks): cannot see… |
+| R1 | GTK-F1 Handmade paper | F224 pulp-sheet-dries-stiff | pulp-dries | reserve | A2 wet sheet holds; A3… | RNC-02: sheet stiffens… |
+| R2 | GTK-F3 MG Marg benches | F428 bench-row-reserved-by-sign | bench-reserved | reserve | A2 stand only on benches without the reserved card (FRESH, weak) | PDY-03 signs: an honest sign |
+
+**DIS · Dispur/Guwahati**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | DIS-01 | F226 carrier-spills-on-contact | carrier-spill | tour | A2 let him pass river side;… | TVM-03 tea pour: moving carrier,… |
+| 02 | DIS-02 | F227 sandbars-relocate-by-level-post | level-post-relocate | std | A2 step on the next bar; FIX… | KVT-08 sandbar: bars move by a… |
+| 03 | DIS-04 | F228 plucked-row-steps-down | crop-floor-lowers | std | A2 walk behind a plucker; A3… | JAI-03 pots: floor is the crop |
+| 04 | DIS-09 | F229 set-crepe-rolls-you-up | roll-by-shine | std | A2 stand on shiny liquid… | RNC-02 dhuska: rolled from an… |
+| 05 | DIS-11 | F230 gamosas-hide-feet-camera | overloaded-blind | HWIK (long 60-90 s) | A2 walk into the next host to give one away; A3 last gamosa is the latch; tell: hosts put cloth on you | LKO-02 bow: give-away by walking into them, not standing still |
+| 06 | DIS-03 | F231 bank-retreats-in-slabs | retreating-bank | long | A2 cross at a run; A3 ladder… | TVM-04 shyLedge: slabs go toward… |
+| 07 | DIS-06 | F232 join-moving-group-to-pass-gate | join-group | marathon | A2 join the circle; A3 leave… | DMN-04 plank: you belong to a… |
+| 08 | DIS-08 | F233 follow-flattened-strip | follow-flattened | HWIK | A2 follow the flattened strip; A3 second strip other way; tell: engine noise backdrop AND a dust plume rising where the noise is (visual twin) | GNR-05 lions: animal charges at something else; readable muted |
+| 09 | DIS-10 | F234 roof-curve-slides-stop-at-ribs | slope-ribs | long | A2 climb the pavilion side;… | PNJ gangway: slope with rib… |
+| 10 | DIS-12 | F235 finale-level-post-far-bank | level-post-far-bank | finale | callbacks only: char,… | (own callbacks): level post only… |
+| R1 | DIS-R1 Uruka net | F236 net-pulled-in-by-group | group-net | reserve | A2 cross before the… | TVM-06 nets: people pull it |
+| R2 | DIS-R2 Muga reel | F237 cocoon-reeled-up | cocoon-reel | reserve | A2 hop on the cocoon… | RPR-06 cocoon: reeled up not… |
+
+**SVP · Sri Vijaya Puram**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | SVP-01 | F238 lane-sheet-flow-push | sheet-flow | tour | A2 wait under awning; A3… | TVM-02 floods: shallow sheet… |
+| 02 | SVP-02 | F239 cut-floor-saw-carriage | cut-floor | std | A2 stand on log centre; FIX… | rollers: you stand on the… |
+| 03 | SVP-06 | F240 warning-board-arrow-turns | honest-moving-sign | std | A2 stay in shallow water; A3… | `fake`: an honest sign… |
+| 04 | SVP-04 | F241 food-holder-followed-by-deer | carry-attracts | std | A2 drop the food; FIX herd… | chasers/`herd`: you pick being… |
+| 05 | SVP-11 | F242 picture-aligns-ledge-from-spot | viewpoint-align | HWIK (long 60-90 s) | A2 stand at the bench spot; A3 door only on the note; tell: bench | `invisible`: view alignment |
+| 06 | SVP-07 | F243 bird-weight-bends-tree | crowd-weight-bends | long | A2 wait for dusk; A3 horn… | KVT-07 bending…: crowd weight by… |
+| 07 | SVP-10 | F244 luggage-stacks-as-floor | crowd-belongings-floor | marathon | A2 be at jetty edge on call;… | CHN-02: belongings are… |
+| 08 | SVP-08 | F245 rain-direction-reverses-awnings | second-season | HWIK | A2 shelter under the other awnings; A3 first-pass road is a river; tell: before the second monsoon the cloud bank and slanting rain lines show on the opposite horizon, and every awning tilts to the new side | --- rain direction as rule; the visual tell is the rain slant and awning tilt, not the replay |
+| 09 | SVP-03 | F246 brick-crumbles-roots-hold | visual-rule-brick-root | long | A2 stand on roots; A3 one… | crumbling floors: visual rule… |
+| 10 | SVP-12 | F247 finale-food-through-sawmill | food-through-sawmill | finale | callbacks only: saw, roots,… | (own callbacks): deer food in the… |
+| R1 | SVP-09 Choona | F248 knocked-formation-drips | knock-drip | reserve | A2 do not knock (weak) | AMR-07: knock makes… |
+| R2 | SVP-F1 Mooring rope | F249 mooring-rope-throw-pull | rope-throw | reserve | A2 be at the bollard… | PNJ-05 ropes: thrown line |
+
+**SHL · Shillong**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | SHL-T | F250 fake-first-raindrop | fake-first-drop | tour | A2 stay out of the cloud… | TVM-01 tarp: first drop is… |
+| 02 | SHL-07 | F251 cloud-bank-platform-thins-edge | cloud-platform | std | A2 cross where it is lit; A3… | mist…: cloud is a… |
+| 03 | SHL-08 | F252 bridge-swing-matches-step-cadence | cadence-swing | std | A2 walk at the swing rhythm;… | JAI-03 tower,…: sway is your own… |
+| 04 | SHL-01 | F253 wide-gear-hitbox | wide-gear | std | A2 take it off at the arch;… | `tiny`: body wider, gear… |
+| 05 | SHL-10 | F429 one-stream-schedule-mark | hidden-schedule | HWIK (long 60-90 s) | A2 cross the one stream when its bank mark is dry (a white line on the rock shows the dry level); A3 the stream refills two beats after the mark is uncovered, cross on the mark, not after; tell: the mark is drawn from the first frame | RNC-07/`khoh`: one stream, one visible mark; no choice among seven (SHL-10 Seven Sisters) |
+| 06 | SHL-02 | F255 choose-guide-root-grows | choose-grow | long | A2 guide the shortest root;… | DMN-07/RPR-04: you choose the… |
+| 07 | SHL-04 | F256 drip-growth-gate-pairs | drip-growth | marathon | A2 tap a stalactite; A3 tap… | kit rising walls: growth caused by… |
+| 08 | SHL-05 | F257 tank-fills-when-not-under-rain | cloud-meter | HWIK | A2 stand outside cloud… | tarp TVM-01/RNC-04: cloud is a… |
+| 09 | SHL-06 | F258 day-cycle-rearranged-stalls | day-cycle | tough | A2 read today's colour; A3 sign changed at last row; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable | PNJ-06/HYD-07: fixed day cycle by your progress |
+| 10 | SHL-12 | F430 finale-cadence-bridge-day-stalls | stalls-on-swaying-span | finale | callbacks only: knup, root, drip, market, Dawki bridge; twist = SHL slot 03 cadence sway + slot 09 day-cycle stalls: the rest stalls rearrange at each checkpoint on a span that sways to your step | (own callbacks): RNC-07 no fall rule |
+| R1 | SHL-03 Full Sumo | F260 gather-followers-then-deliver | gather-deliver | reserve | A2 walk, do not run;… | DMN-04/BOM-03: followers… |
+| R2 | SHL-11 Soundcheck | F261 amp-volume-dial-pushes | dial | reserve | A2 lower dial after… | GNR-04…: you control… |
+
+**ITA · Itanagar**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | ITA-T | F262 brick-hop-mortar-vs-loose | brick-pop | tour | A2 skip the loose one; A3… | TVM-03 painted…: brick tells |
+| 02 | ITA-02 | F263 one-lane-bridge-oncoming-bays | oncoming-bay | std | A2 wait at first bay; A3… | TVM-03 scooters,…: walking load, bays |
+| 03 | ITA-06 | F264 living-platforms-graze-cycle | graze-cycle | std | A2 wait for the lead's lift;… | PNJ-02 bubbles,…: living platforms… |
+| 04 | ITA-07 | F265 fruit-rolls-into-baskets-as-steps | fruit-steps | std | A2 shake from lower tree; A3… | TVM-04 coconuts: fruit is steps… |
+| 05 | ITA-08 | F266 fig-ripeness-drops-platforms | ripeness-timeline | long | A2 read colour; A3 colour… | KVT-07 bending…: ripeness timeline |
+| 06 | ITA-04 | F267 linked-tanks-lever-order | lever-water-order | long | A2 lever order from the end;… | DMN-05 tide,…: water moved by… |
+| 07 | ITA-09 | F268 push-heavy-slope-object | push-in-bursts | marathon | A2 push in bursts; A3 second… | BPL-07 magnets: pushing a… |
+| 08 | ITA-10 | F431 raft-poles-spread-under-weight | poles-spread | HWIK | A2 stand across the poles, never along one: along one the lashing gives and the poles spread apart; A3 the last raft has one loose lashing, cross it in one hop; tell: lashings drawn on every raft, the loose one frayed | PAT slot 05 pontoon sinks under load: here the floor splits sideways, nothing sinks or tilts (ITA.md concept 10, the bible's own HWIK) |
+| 09 | ITA-03 | F270 pull-brick-pile-slumps | pull-brick-slump | long | A2 pull from the top; A3 top… | RPR-07/RNC-02: you remove… |
+| 10 | ITA-12 | F432 finale-bricks-on-one-lane-bridge | brick-bridge-oncoming | finale | callbacks only: one-lane bridge, bricks, sluice, fruit baskets; twist = ITA slot 02 one-lane bridge + slot 09 pull-brick slump: the oncoming porter carries bricks and the pile slumps into the passing bay | (own callbacks): no sun line |
+| R1 | ITA-F1 Tipi orchids | F272 orchid-ledge-opens-by-dew | orchid-dew | reserve | A2 wait for dew (FRESH) | KOH-06: ledge blooms by humidity |
+| R2 | ITA-F2 Bamboo flute | F273 flute-hole-platforms | flute-holes | reserve | A2 hear which hole (FRESH) | `bells`: holes covered change platforms |
+| R3 | ITA-11 Convoy gate | F433 convoy-gate-direction-alternates | direction-gate | reserve | A2 go with your direction's convoy; A3 the gate turns mid-convoy | BLR signals: direction, not stop/go |
+
+**KOH · Kohima**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | KOH-T | F274 rolling-handrail-rod | grab-rolls | tour | A2 skip the rod; A3 walk | treadmills: rail rolls you a… |
+| 02 | KOH-05 | F275 tug-rope-bridge-drifts | team-drift | std | A2 walk the drift; A3… | PNJ-05/DMN-05: team contest… |
+| 03 | KOH-07 | F276 helper-launched-by-your-jump | helper-launched | std | A2 jump from the lowest… | `salaami`/cannon: helper is… |
+| 04 | KOH-06 | F277 bloom-wave-platforms-cold-slows | bloom-wave | std | A2 follow the wave; A3 wave… | blinkers/DMN-03: travelling wave… |
+| 05 | KOH-02 | F278 crew-beat-log-platform | crew-surge | long | A2 step on after the shout;… | DMN-05/JAI-02: beat belongs to… |
+| 06 | KOH-03 | F279 sloped-noisy-tin-roofs | noisy-floor | long | A2 cross thatch first; A3… | BOM-06: sloped roofs… |
+| 07 | KOH-01 | F280 downhill-cart-lean-steer | cart-steer | marathon | A2 lean into each bend early, there is no brake; A3 slick hairpin spins you, lean out of it; hidden checkpoints | JAI-05/TVM-02, SXR slot 09: lean-steer only, no brake (SXR owns brake-only) |
+| 08 | KOH-04 | F281 carried-scent-repels | scent-selective | HWIK | A2 lid off here, on there;… | cocoon RPR-06: scent repels… |
+| 09 | KOH-11 | F282 five-houses-opposite-rules | rule-flip-per-room | tough | A2 rule of house N opposite of N-1; A3 house 5 uses both; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable | PNJ-06: five rule sets in one yard |
+| 10 | KOH-12 | F283 finale-run-to-hornbill-ground | hornbill-ground-run | finale | callbacks only: cart, log,… | (own callbacks): one run |
+| R1 | KOH-F1 Pulie Badze pole | F284 greased-pole-climb | greased-pole | reserve | A2 grip the dry… | PNJ-05: slippery pole |
+| R2 | KOH-F2 Tragopan zoo | F285 shy-bird-shows-safe-ledge | shy-bird | reserve | A2 follow its glance… | `monkey`: animal shows… |
+
+**IMP · Imphal**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | IMP-T | F286 inward-only-gate | one-way-gate | tour | A2 go round; A3 moat far… | `backdoor`: gate direction |
+| 02 | IMP-04 | F287 thrown-net-circle-closes | closing-circle | std | A2 keep moving; A3 he throws… | TVM-06 nets: thrown circle… |
+| 03 | IMP-06 | F288 shears-trim-tier | trim-tier | std | A2 climb behind the shears;… | RNC-02/dropping…: trimmer removes… |
+| 04 | IMP-09 | F289 dew-beads-roll-leaf-tilt | tilt-by-drops | std | A2 stand at the rim; A3 next… | PNJ gangway: rolling drops push |
+| 05 | IMP-02 | F290 drifting-mats-merge-seam | merge-seam | long | A2 wait for the click; A3… | BOM-04 crates: waiting makes a… |
+| 06 | IMP-01 | F291 animal-scout-firm-patches | animal-scout | long | A2 wait for it to turn back;… | RPR-07/`footsteps`: animal tests the… |
+| 07 | IMP-03 | F292 phumdi-detach-reground | detach-ground | marathon | A2 cross while grounded; A3… | TVM-02/DMN-05…: ground detaches… |
+| 08 | IMP-05 | F293 price-order-stalls | ordered-by-number | HWIK | A2 step in rising price; A3… | PNJ-06 roulette: order set by a… |
+| 09 | IMP-08 | F294 steed-stamina-gallop-walk | stamina | tough | A2 walk soft ground; A3 last chukker no trough; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable | JAI-06: stamina and rest |
+| 10 | IMP-12 | F295 finale-lake-at-dusk | lake-dusk-run | finale | callbacks only: deer path,… | (own callbacks): one run |
+| R1 | IMP-11 Ngaa Ing | F296 funnel-easy-in-hard-out | funnel | reserve | A2 swim the outside;… | `trapdoor`: funnel built… |
+| R2 | IMP-10 Mallet | F297 mallet-angle-by-tile-position | mallet-launch | reserve | A2 stand at lip; A3… | `cannon`: angle is your… |
+
+**AIZ · Aizawl**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | AIZ-T | F298 roof-reveal-underfoot | roof-step-down | tour | A2 skip the edge; A3 roof ends | BOM-06: you were on a roof |
+| 02 | AIZ-02 | F299 house-doors-open-into-stair | door-timetable | std | A2 wait behind lower door;… | kit shutters: doors open… |
+| 03 | AIZ-06 | F300 grade-changes-speed-and-jump | grade-speed | std | A2 walk down; A3 tarp hides… | PNJ gangway/GNR-06: grade not push |
+| 04 | AIZ-07 | F301 cling-slows-until-salt | cling-slow | std | A2 keep moving; A3 leaf… | RPR-07 ants: cling that slows |
+| 05 | AIZ-05 | F302 far-ridge-headlight-tell | far-tell | HWIK (long 60-90 s) | A2 look at far ridge; A3 near-side headlight; tell: sweeping lights on ridge | TVM-03/BLR-04: tell from another place on screen |
+| 06 | AIZ-04 | F303 scissoring-pole-pairs-on-beat | beat-poles | long | A2 step on second beat; A3… | kit sword…: poles on the… |
+| 07 | AIZ-01 | F304 descending-stacked-house | descend-rooms | marathon | A2 drop only through open… | `lightwell`/BOM-06: descending level… |
+| 08 | AIZ-03 | F305 stopping-brings-carrying-help | help-by-stopping | HWIK | A2 fall at the marked mat;… | `herd`/`reel`: help triggered… |
+| 09 | AIZ-F1 | F306 string-platform-ripple | string-ripple | long | A2 step between frets; A3… | BPL-04 thread: strings sag, you… |
+| 10 | AIZ-12 | F307 finale-festival-night | festival-night | finale | callbacks only: stacked… | (own callbacks): no dancers at risk |
+| R1 | AIZ-08 Puan | F308 woven-band-shift | band-shift | reserve | A2 read ahead (weak) | PNJ-06: band colour… |
+| R2 | AIZ-F2 Khumbeu cap | F309 hat-shelter-radius | hat-shelter | reserve | A2 stay under the cap… | DDN-01: cap shelter |
+
+**AGT · Agartala**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | AGT-T | F310 fountain-jet-lifts-safe-tile | safe-tile-jet | tour | A2 stand off the jet base;… | `geyser` kit: jet lifts the… |
+| 02 | AGT-02 | F311 battery-gauge-platform | gauge-platform | std | A2 change at the stand; A3… | TVM-02/HYD-04: finite gauge… |
+| 03 | AGT-F4 | F434 latex-cup-tips-when-full | fill-tips | std | A2 stand on the emptiest cup (fill level visible on every cup); A3 your weight makes the drip run faster, so hop on, never rest | `lamp`/B39: the fill level is an honest clock on each foothold; nobody walks ahead of you (AGT.md seed 5, rubber plantations) |
+| 04 | AGT-04 | F313 over-under-weave-height | height-pattern | std | A2 count cells from edge; A3… | PNJ-06: height not colour |
+| 05 | AGT-01 | F314 sticky-now-solid-later | sticky-then-solid | HWIK (long 60-90 s) | A2 step only on grey; A3 cup tips and re-wets; tell: white vs grey | tar kit/DMN-03: liquid trap now, floor later |
+| 06 | AGT-06 | F315 beam-telegraphs-next-jet | beam-telegraph | long | A2 read the beam not the… | kit spouts/PNJ-06: beam telegraphs… |
+| 07 | AGT-07 | F316 boat-wake-covers-stair-step | wake-covers | marathon | A2 climb wet steps first; A3… | DMN-05: wake covers one… |
+| 08 | AGT-F1 | F317 duck-column-pace-on-bund | duck-pace | HWIK | A2 march in the ducks' footprints at duck pace (the column walks round the soft patches of the bund); A3 the last duck steps off at the sluice and its prints end, jump the sluice; tell: footprints on the bund, visible from the start | PNJ-08: the column's own prints are the safe floor; one unknown (soft bund), one move after one death (FRESH: fish farming is in AGT.md; ducks on bunds need a source) |
+| 09 | AGT-05 | F318 thrown-fruit-chain-steps | thrown-chain | std | A2 stand in thrower's gap;… | TVM-04/DMN-04: arcs you can use |
+| 10 | AGT-12 | F319 finale-lake-to-palace | lake-palace-run | finale | callbacks only: latex,… | (own callbacks): one run |
+| R1 | AGT-F2 Carrom | F320 flicked-by-striker | flicked | reserve | A2 stay off the… | `cannon`: you are a piece |
+| R2 | AGT-F3 Evening popcorn | F321 popped-kernels-launch | popcorn | reserve | A2 step between pops… | kit shots: timed |
+
+**DEL · New Delhi**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | DEL-T | F322 lawn-shortcut-sprinkler | shortcut-sprinkler | tour | A2 walk the path; A3 rotary… | rollers kit: shortcut is the… |
+| 02 | DEL-03 | F323 rebuild-scattered-stack-stairs | rebuild-stack | std | A2 largest first; A3 last… | RPR-04/kit shots: steps rebuilt… |
+| 03 | DEL-04 | F435 gali-stalls-out-in-shutter-order | shutter-stall-out | std | A2 pass each shop before its shutter is up (shutters rise in a visible order down the lane); A3 the last shop opens from inside, its stall comes out first | kit rising walls: the lane narrows by shop opening order, never because you stand |
+| 04 | DEL-08 | F325 timed-cling-hot-clay-wall | timed-cling | std | A2 stick hop stick; A3 wall… | BOM-06 wall kicks: timed cling |
+| 05 | DEL-06 | F326 hang-traverse-live-hum | hang-traverse | HWIK (long 60-90 s) | A2 swap at the knot; A3 knot is dead end; tell: hum taught once; needs hang state | HYD-05 manja/KVT-07: hang verb, live wire by hum |
+| 06 | DEL-09 | F327 carried-wet-state-oil-spits | carried-state | long | A2 dry on the mat; A3 mat… | CHN-01 Pongal pot: player carries… |
+| 07 | DEL-01 | F328 wraparound-lap-count | wrap-lap | marathon | A2 count laps by lamp posts;… | AMR-05: world wraps, lap… |
+| 08 | DEL-02 | F329 horn-ring-code-reading | code-reading | HWIK | A2 read the rhythm, not the loudness: each vehicle's indicator blinks in its horn rhythm (visual twin); A3 two vehicles share a code; no guide line (guide never describes an unmet trap); NO fog (GTK owns) | BLR-04/TVM-07: hazards telegraphed by horn + blink code |
+| 09 | DEL-05 | F330 old-plan-is-safe-route | old-plan-route | tough | A2 remember last section; A3 seventh mirrors first at new scale; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable | BPL-03/`dejavu`: built on ruins, old layout is answer |
+| 10 | DEL-12 | F331 finale-hop-on-bus-loop | bus-loop | finale | callbacks only: ring wrap,… | (own callbacks): bus loop |
+| R1 | DEL-11 Rehri Train | F332 push-cart-train | cart-train | reserve | A2 ride then step off… | BOM-02: chained carts |
+| R2 | DEL-F1 Golgappa | F333 hollow-shell-cracks-fills | hollow-shell | reserve | A2 tap shell (FRESH) | RNC-02: shell as boat |
+
+**CHP · Chandigarh (Punjab)**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | CHP-01 | F334 missing-sector-sign-is-a-gap | missing-number-gap | tour | A2 count signs, no 13 no… | fake floors…: tell is a… |
+| 02 | CHP-03 | F335 ability-removed-running-hurts | ability-removed | std | A2 walk; A3 jutti toes steer… | RPR-02/`tiny`: removed ability… |
+| 03 | CHP-09 | F336 churn-reverses-on-rope-pull | reverse-fling | std | A2 jump off as it slows; A3… | `clockhand`/RPR-05: turn reverses on… |
+| 04 | CHP-07 | F344 crop-band-hides-furrows | crop-cover | std | A2 watch the stalks bend where a furrow is; A3 a band of taller stalks hides a second furrow behind the first, hop long; no scarecrow lie | TVM-07/kit mist: cover is a crop band at fixed height (SVP slot 04 owns carry-attracts) |
+| 05 | CHP-10 | F338 solid-only-from-shining-side | approach-direction | HWIK (long 60-90 s) | A2 approach shining tiles; A3 bagh section flips; tell: shine | PNJ-02/PNJ-06: solidity by horizontal approach |
+| 06 | CHP-02 | F339 broken-tiles-carry-forward | break-as-resource | long | A2 break every tile on… | kit crumbling: breaking is a… |
+| 07 | CHP-06 | F340 built-bridge-taken-from-far-end | bridge-taken-back | marathon | A2 cross before the sun… | `lamp`/PDY-04: window is a… |
+| 08 | CHP-08 | F341 rule-written-on-the-thing | literal-slogan | HWIK | A2 read the tailgate; A3… | BLR signals/AMR-05: rules written on… |
+| 09 | CHP-04 | F342 veil-hides-floor-when-still | speed-hider | std | A2 look while moving; A3… | kit mist/CHN-05: hider is on Dad,… |
+| 10 | CHP-12 | F343 finale-wedding-blind-walk | veil-and-shoes | finale | callbacks only: veil, notes, logs, phulkari, churn, barefoot; twist = CHP slot 09 veil (floor hidden when still) + slot 02 barefoot (running hurts): walk, never stop, never run | (own callbacks): two own ideas combined, no horse/groom door |
+| R1 | CHP-11 Kikli | F345 edge-on-gate-pair | edge-on-gate | reserve | A2 pass on edge-on beat; A3 crowd surges to rail | GNR-07: pair arm span sweeps |
+| R2 | CHP-F1 Sukhna boat club rails | F436 lake-rail-gap-by-boat-count | rail-count | reserve | A2 count the boats out (FRESH) | KVT boats: counted, never ridden |
+
+**CHH · Chandigarh (Haryana)**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | CHH-01 | F346 bridge-laid-by-routine | routine-bridge | tour | A2 wait for noon by the… | DMN-04/`drawbridg…: bridge laid by a… |
+| 02 | CHH-04 | F347 rope-sweeps-hop-doubles | rope-sweep | std | A2 hop on swish; A3 whistle… | JAI-02: you choose the… |
+| 03 | CHH-05 | F348 potter-lifts-then-pinches | shaped-lift | std | A2 jump at the pinch; A3… | kit lifts/RPR-04: lift shaped by… |
+| 04 | CHH-06 | F349 turntable-swaps-your-ends | end-swap | std | A2 stand on the far end; A3… | `revolve`/BLR-05: rotation swaps… |
+| 05 | CHH-09 | F437 tara-strides-wrong-unit | unit-trap | HWIK (long 60-90 s) | A2 Tara says "ten of Tau's steps" and you pace your own; A3 Tau's stick steps are shorter, pace the foot marks; tell: Tau's foot marks in the dust; the guide stays true | BPL-06: the lie is Tara's (only Tara lies); the unit is the trap |
+| 06 | CHH-03 | F351 throw-back-by-runup-length | throw-back | long | A2 wait for him to bend; A3… | `salaami`/JAI-08: throw reverses… |
+| 07 | CHH-02 | F438 buffalo-platforms-sink-on-herder-call | animal-platform-call | marathon | A2 cross while the herder boy on the bank is silent; A3 at his two-finger whistle the calf sinks first; hidden checkpoints | KVT-08 dolphins: platforms dip on a visible herder call, not a sun cue |
+| 08 | CHH-08 | F353 assemble-ride-from-parts | assemble-ride | HWIK | A2 pick parts in your order;… | rides that leave: you build the ride |
+| 09 | CHH-10 | F354 carried-starter-sets-floor | starter-sets | tough | A2 touch wait step; A3 churned pot behind, keep last jaman; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable | DMN-07/DMN-03: set by carried starter after delay |
+| 10 | CHH-12 | F355 finale-ragini-on-turntable | crowd-on-turntable | finale | callbacks only: buffalo,… | (own callbacks): crowd turns with… |
+| R1 | CHH-07 Ragini | F356 crowd-height-by-sound-side | crowd-sound | reserve | A2 walk the singing side | BOM-03/CHN-06: crowd height… |
+| R2 | CHH-11 Chhaj | F357 grain-column-chaff-hides-edge | column-tell | reserve | A2 stand in chaff | kit shots: toss direction… |
+
+**DDN · Dehradun**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | DDN-01 | F358 umbrella-dome-solid-at-tip | one-solid-point | tour | A2 land at the tip; A3… | TVM-01 tarp: curved dome one… |
+| 02 | DDN-02 | F359 wet-path-safe-crust-hollow | wet-is-safe | std | A2 walk in the water; A3… | fake floors/TVM-04: tell is where… |
+| 03 | DDN-04 | F360 one-platform-becomes-slices | slice-gaps | std | A2 stand on a score mark; A3… | RNC-02/TVM-03: one platform… |
+| 04 | DDN-09 | F361 probe-before-jump-current-shifts | probe-depth | std | A2 watch the paddle; A3 jump… | RNC-07: tell is a probe,… |
+| 05 | DDN-06 | F362 rain-splash-reveals-glass | rain-reveal | HWIK (long 60-90 s) | A2 wait for rain; A3 shower moves on; tell: splashes | KVT-02/`invisible`: reveal is weather that moves |
+| 06 | DDN-08 | F363 children-markers-show-real-step | follow-marker | long | A2 stay behind children; A3… | `fakewin`/`paintw…: moving markers… |
+| 07 | DDN-03 | F364 position-holds-or-frees-raft | position-holds-frees | marathon | A2 move to back only when… | PNJ-07/DMN-02: position holds… |
+| 08 | DDN-07 | F365 ground-on-sightlines-between-pillars | sightline-ground | HWIK | A2 walk pillar to pillar; A3… | DMN-07/KVT-03: floor is… |
+| 09 | DDN-F1 | F366 tree-ring-steps | ring-width-reads-years | long | A2 thick rings are wet years… | RPR-04: rings as steps |
+| 10 | DDN-12 | F367 finale-valley-run | valley-run | finale | callbacks only: rain over… | (own callbacks): one run |
+| R1 | DDN-F2 Sahastradhara crust | F368 mineral-crust-grows | crust-grows | reserve | A2 step before it… | DMN-03: grows then holds |
+| R2 | DDN-F3 Ghanta Ghar faces | F369 six-faces-different-time-tell | six-faces | reserve | A2 read the face that… | `clockhand`/R…: six faces |
+
+**SML · Shimla**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | SML-01 | F370 lift-door-opens-behind | door-behind | tour | A2 turn round at the top; A3… | `pull`/`slidedoor`: door on the… |
+| 02 | SML-03 | F371 sun-sheet-slides-drip-tell | sun-sheet | std | A2 pass before the drips; A3… | TVM-04 coconuts: fall from a… |
+| 03 | SML-04 | F372 growing-roller-ends-as-platform | growing-roller | std | A2 meet it early; A3 second… | kit rollers/amr03: hazard grows… |
+| 04 | SML-06 | F373 slow-body-fills-lane-niche-shelter | niche-shelter | std | A2 find the niches; A3… | BOM-06: safe spots are… |
+| 05 | SML-11 | F374 beam-holds-where-stone-above | weight-above | HWIK (long 60-90 s) | A2 stand on beams with stone above; A3 mason removes stone; tell: wall courses | BOM-06: strength follows weight above |
+| 06 | SML-F1 | F375 mule-train-accordion | mule-accordion | long | A2 stay behind the leader's… | chasers: train stops when… |
+| 07 | SML-02 | F376 own-steps-pack-the-snow | pack-by-stepping | marathon | A2 step, step back, step further: snow stepped twice holds, once is soft; A3 the porter's track ahead looks packed but was stepped once, pack it again; no sun beat (see conflict 12); hidden checkpoints | DMN-07 painted path: here only YOUR double step makes floor; nothing fades behind you and nobody builds ahead |
+| 08 | SML-08 | F377 capacity-rule-second-lift | capacity-rule | HWIK | A2 count the queue; A3… | BLR-01: capacity rule |
+| 09 | SML-10 | F378 flowing-flock-floor | flock-carries | tough | A2 jump off at the gap; A3 whistle reverses flock; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable | `herd`/CHN-06: flock carries you (OWNS flock floor) |
+| 10 | SML-12 | F379 finale-winter-run | winter-run | finale | callbacks only: lift door behind (01), roof sheet drip (02), snowball (03), porter niches (04), flock (09); twist: the Gaddi flock (09) comes down the stair-lane the porter fills (04), use his niches | (own callbacks): twist = SML slot 04 + slot 09 |
+| R1 | SML-F2 Apple grading | F380 sorting-chute-by-size | sorting-chute | reserve | A2 ride the right… | kit rollers: sorted by size |
+| R2 | SML-F3 Wool skein | F381 skein-winds-up | skein-winds | reserve | A2 step off as it… | `clockhand`: winds |
+
+**JMU · Jammu**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | JMU-01 | F382 loose-heap-slides-back | heap-slide | tour | A2 go round; A3 kulcha lid… | kit…: heap slides you… |
+| 02 | JMU-04 | F383 struck-branch-pole-raised-first | struck-platform | std | A2 stand between strokes; A3… | TVM-04 coconuts: the platform is… |
+| 03 | JMU-06 | F384 growing-slick-ring-from-source | growing-slick | std | A2 cross before rings meet;… | DMN-03/tar: slick grows… |
+| 04 | JMU-07 | F385 water-swells-steps-after-delay | swell-steps | std | A2 stand where water was… | RPR-04: delayed growth… |
+| 05 | JMU-05 | F386 layer-peel-per-landing | layer-count | HWIK (long 60-90 s) | A2 count layers on the edge; A3 fresh slab stacked on thin one; tell: edge lines (OWNS layer-peel; PAT-09 retired) | kit crumbling/BLR-01: countable life read on the edge |
+| 06 | JMU-08 | F387 dam-redirects-water | dam-redirect | long | A2 dam so the pool is behind… | TVM-02/DMN-05: you move a stone… |
+| 07 | JMU-02 | F388 tier-opposite-traffic-switchbacks | tier-opposite | marathon | A2 look at the tier below;… | TVM-07: route crosses… |
+| 08 | JMU-10 | F389 hidden-spin-read-from-trail | read-trail | HWIK | A2 read the flour trail; A3… | `clockhand`/RPR-05: direction… |
+| 09 | JMU-03 | F390 lights-ahead-signal-oncoming | light-ahead | tough | A2 wait in a dark lay-by; A3 lights fail; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable | BLR-06: light is information that runs ahead |
+| 10 | JMU-12 | F391 finale-feast-run | feast-run | finale | callbacks only: walnuts,… | (own callbacks): tunnel lights… |
+| R1 | JMU-09 Nehar | F392 one-way-conveyor-ghat-exits | conveyor-exits | reserve | A2 get out at the… | kit…: one-way water… |
+| R2 | JMU-11 Bhutta | F393 flare-wave-crosses-cobs | flare-wave | reserve | A2 follow one cob behind | `lamp`: a wave across… |
+
+**SXR · Srinagar**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | SXR-01 | F394 boats-follow-the-stander | follow-the-stander | tour | A2 stand then cross; A3 Tara… | KVT/PNJ/DMN boats: boats come to… |
+| 02 | SXR-02 | F395 floating-garden-firm-at-stakes | firm-points | std | A2 step stake to stake; A3… | KVT-08/DMN-04: firmness at… |
+| 03 | SXR-06 | F396 diners-take-servings-in-turn | circle-order | std | A2 move against the eating… | blinkers: order round a… |
+| 04 | SXR-08 | F397 rakes-push-soft-heaps | moving-soft-obstacle | std | A2 walk behind a rake; A3… | TVM-04 fronds: leaves are a… |
+| 05 | SXR-F1 | F405 cut-stem-sinks-leaf | cut-stem-sinks | HWIK (long 60-90 s) | A2 hop leaf to leaf ahead of the harvester's boat; A3 a cut leaf floats one beat then sinks, never wait on it; tell: the harvester and his cut stems are on screen from the start | IMP slot 09: harvest sinks leaves; no decoy twin (FRESH: nadru harvest on the Dal) |
+| 06 | SXR-09 | F399 rope-arc-boat-swing | rope-arc | long | A2 board near, ride back; A3… | `tipjetty`/gangway: swing by where… |
+| 07 | SXR-03 | F400 boats-lock-into-floor | boats-lock-floor | marathon | A2 cross pair by pair; A3… | rides that leave: crowd of boats… |
+| 08 | SXR-04 | F401 spoken-count-colour-knots | spoken-rule | HWIK | A2 count the chant; A3 next row mid-step; tell: the chant AND the talim (the weaver's written colour code) hung over each row, readable without sound or Kashmiri | PNJ-06/CHP slot 08: the rule is the talim the weaver reads |
+| 09 | SXR-05 | F402 brake-only-downhill | brake-only | tough | A2 brake into bumps; A3 puller swings you to lower run; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable | JAI-06/DMN-03: only control is a brake (OWNS ski slope) |
+| 10 | SXR-12 | F403 finale-dal-evening | dal-evening | finale | callbacks only: touts,… | (own callbacks): kitchen-boat… |
+| R1 | SXR-11 Samovar | F404 seller-fed-hazard-lands-near-side | fed-hazard-side | reserve | A2 stand far side of… | TVM-03: seller's… |
+| R2 | SXR-F2 Hanji houseboat ladder | F439 houseboat-plank-lifts-on-wake | plank-wake | reserve | A2 cross the plank between wakes (FRESH) | KVT-02 jetty planks: lifted, not broken |
+
+**LEH · Leh**
+| # | Concept | Family | Betrayals | Shape | A2 / A3 chain | Closest shipped: why different |
+|---|---|---|---|---|---|---|
+| 01 | LEH-F2 | F440 water-turn-switches-channel | water-turn, B4 | tour | A2 walk the dry field channel; A3 the wooden gate twitches, then turns two beats later and the water comes to your channel (B4), step up on to the bund | TVM-02/BOM-04 floods, LEH slot 06 nala: the level never rises; which channel carries water switches at a visible gate (LEH.md seed 13) |
+| 02 | LEH-07 | F407 animal-rise-order-tips-rider | rise-order | std | A2 stand in the dip; A3 step… | JAI-08/`safari`: standing/kneeling… |
+| 03 | LEH-08 | F408 ricochet-readable-from-first-bounce | ricochet | std | A2 read the angle; A3 slap… | kit shots/CHN-04: ricochet off banks |
+| 04 | LEH-04 | F409 day-night-growing-structure | day-night-structure | std | A2 climb at night between… | kit rising/RPR-04: player picks the… |
+| 05 | LEH-05 | F410 drawing-lies-about-slope | drawing-lies | HWIK (long 60-90 s) | A2 trust the rolling apricot; A3 horizon tilts, stream shows level; tell: apricot rolls | `gravity`: gravity never changes, only the drawing |
+| 06 | LEH-06 | F411 sun-clock-stream-level | sun-clock | long | A2 cross in the morning; A3… | TVM-02/BOM-04/tid…: clock is sun… |
+| 07 | LEH-02 | F412 altitude-bands-jump-ceiling | altitude-ceiling | marathon | A2 rest at each band's… | KVT-06/AMR-01: ceiling set by… |
+| 08 | LEH-09 | F413 platforms-as-missing-stars | negative-space | HWIK | A2 read gaps in stars; A3… | BLR-06/`invisible…: platforms known… |
+| 09 | LEH-03 | F414 ice-colour-grades-thickness | ice-colour | tough | A2 read colour; A3 sledge cracks floes, no way back; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable | DMN-03/TVM-01: three grades by colour plus a current line (OWNS river ice) |
+| 10 | LEH-12 | F415 finale-high-pass | high-pass | finale | callbacks only: thin air,… | (own callbacks): stars show last… |
+| R1 | LEH-11 Sangam | F416 two-waters-colour-tell | two-waters | reserve | A2 wade brown… | KVT-06: two kinds of… |
+| R2 | LEH-F1 Seabuckthorn | F417 thorn-snag-slows | thorn-snag | reserve | A2 pass the thin side… | RPR-07: snag slows |
+
+## 3. Shipped cities: encore pair, new tour betrayal, new seventh-death theme
+
+Encores are stage 09 (tough, knowable) and 10 (closing stage, may call back its own city). Each tour betrayal uses a bible FREE type that no other tour uses. Seventh-death lines currently all reuse "Thala for a reason"; each city gets its own theme (line text needs a native check). Source checks were run 2026-11-27 against the linked pages (keyword present on the page where noted).
+
+**TVM** ([page](https://en.wikivoyage.org/wiki/Thiruvananthapuram)). Tour 01, new betrayal F121 (B4): Connemara market: fish-ice slab twitches 16 px, then slides 3 tiles two beats later.
+- 09 TVM-09 Kovalam Flags · F136 flag-strip-shifts / strip-shift: lifeguard flags mark the safe strip; he moves them each wave and the strip you trusted is now the drift. [WV Thiruvananthapuram (Kovalam found)]
+- 10 TVM-10 Dhara · F137 pendulum-oil-slick / offset-swing: a swinging oil pot drips where it passes the middle; the pot hangs off-centre so the slick is not under it. [WV Thiruvananthapuram (Ayurveda found)]
+- Seventh-death theme: the chaaya-kada chechi counts seven glasses of tea (line concept; Malayalam check).
+
+**KVT** ([page](https://en.wikivoyage.org/wiki/Lakshadweep)). Tour 01, new betrayal F122 (B8): jetty coral step shrinks from 3 tiles to 1 as the tide drops; never under 1 tile.
+- 09 KVT-09 Kalpeni Storm Bank · F441 storm-bank-rubble-slides / rubble-slide: the coral-rubble storm bank slides one tile toward the lagoon with every step; climb it on the diagonal, never straight up. [WP Kalpeni (storm bank of coral debris; source check needed)] (v2)
+- 10 KVT-10 Octopus Hole · F139 camouflage-twin-creature / camouflage-twin: an octopus matches the coral colour; its hole is the safe ledge, the colour that moves is the creature. [WV Lakshadweep (octopus found)]
+- Seventh-death theme: the boat-board strikes out the seventh departure.
+
+**CHN** ([page](https://en.wikivoyage.org/wiki/Chennai)). Tour 01, new betrayal F123 (B16): sundal cart rolls the promenade: contact is a ride across a 6-tile gap, same sprite as a hazard cart.
+- 09 CHN-09 Murukku Press · F140 extruded-spiral-strand / extrude-set: a press lays a spiral strand; fresh strand is soft, fried strand holds. [everyday life, no page hit (unverified)]
+- 10 CHN-10 Spencer Escalators · F141 stair-direction-by-load / escalator-flip: the escalator reverses when more than one shopper steps on. [WV Chennai (Spencer found)]
+- Seventh-death theme: the kaapi tumbler is topped up the seventh time.
+
+**PDY** ([page](https://en.wikivoyage.org/wiki/Pondicherry)). Tour 01, new betrayal F124 (B20): painted yellow landing square on the Promenade shifts one tile right after you commit to the jump.
+- 09 PDY-09 Pétanque · F142 nearest-to-jack-safe / moving-target-tile: the tile nearest the jack (cochonnet) is safe; a thrown boule moves the jack. [MECHANICS.md lists pétanque as unused]
+- 10 PDY-10 Touch-Me-Not · F143 fold-on-touch-leaf / fold-under-weight: mimosa leaves fold when stepped on and reopen after a count. [WV Pondicherry (Botanical Garden found)]
+- Seventh-death theme: the pétanque scoreboard reads seven-nil (French numeral).
+
+**BLR** ([page](https://en.wikivoyage.org/wiki/Bangalore)). Tour 01, new betrayal F125 (B5): Cubbon Park bandstand tiles return on a 1.5 s beat; the fifth flashes outline-only and is real one beat later.
+- 09 BLR-09 Cogwheel Hall · F144 meshing-cog-teeth / mesh-gap: platforms are the teeth of two meshing gears; cross only at the mesh. [WV Bangalore (Visvesvaraya found)]
+- 10 BLR-10 Kadalekai Parishe · F145 stirred-hot-sand-reveals / sand-roast-reveal: stirring the roasting sand brings groundnut platforms up; still sand is soft. [WP Kadalekai Parishe (found)]
+- Seventh-death theme: the metro board says next train in seven minutes.
+
+**AMR** ([page](https://en.wikivoyage.org/wiki/Amaravati)). Tour 01, new betrayal F126 (B12): chilli sacks tumble in a wave behind you at less than run speed; stopping lets it catch you.
+- 09 AMR-09 Kondapalli Lathe · F146 lathe-shrinks-radius / radius-shrink: the wood turns on a lathe and the chisel thins the platform as it passes; never under 1 tile. [WP Kondapalli Toys (found)]
+- 10 AMR-10 Satavahana Coins · F147 walk-on-coins / B18: a row of old coins is the floor: walking on them holds, jumping to collect drops you. [WV Amaravati (Satavahana found)]
+- Seventh-death theme: the chilli-heat scale says seven out of ten.
+
+**HYD** ([page](https://en.wikivoyage.org/wiki/Hyderabad)). Tour 01, new betrayal F127 (B19): a trail of Osmania biscuits herds you along a cart floor that moves 150 px/s for 2 s; row ends on solid ground.
+- 09 HYD-09 Irani Chai · F442 dunked-biscuit-softens-on-count / dunk-soft: Osmania biscuits dunked in the chai are footholds that go soft three beats after they go in; the waiter dunks in a visible order. [WP Hyderabadi cuisine (Irani chai, Osmania biscuit; source check needed)] (v2)
+- 10 HYD-10 Salar Jung Clock · F149 automaton-on-the-hour / hourly-figure: a mechanical figure steps out on the hour and carries you one lane. [WP Salar Jung Museum (clock found)]
+- Seventh-death theme: the seventh dum on the biryani pot.
+
+**PNJ** ([page](https://en.wikivoyage.org/wiki/Panaji)). Tour 01, new betrayal F128 (B24): on the ferry ramp Up and Down swap roles for its length: Down jumps, Up lifts a plank; one-frame icon cue.
+- 09 PNJ-09 Azulejo Slide · F150 sliding-tile-floor / slide-into-gap: the tile floor slides into the one empty slot when you step; plan the order. [WV Panaji (azulejo, Fontainhas found)]
+- 10 PNJ-10 Shell Windows · F151 translucent-pane-reveals / see-through-pane: shell panes show the room behind; only the lit pane has a floor. [WV Panaji (shell found, window detail unverified)]
+- Seventh-death theme: the church bell strikes seven over the siesta (sete).
+
+**BOM** ([page](https://en.wikivoyage.org/wiki/Mumbai)). Tour 01, new betrayal F129 (B23): Marine Drive tetrapod rows flip safe/unsafe at each wave gap; 0.2 s shake is the cue.
+- 09 BOM-09 Dhobi Ghat · F152 wet-sheet-curtain-wall / wet-sheet-sag: wet sheets hung on lines sag into walls and bridges as they dry. [WV Mumbai (washing found, Dhobi name not on page)]
+- 10 BOM-10 Colaba Haggle · F153 walk-away-lowers-height / walk-away-lowers: a stall step sinks the further you walk away, rises when you return. [WV Mumbai (Colaba, haggle found)]
+- Seventh-death theme: the dabba code on the lid reads the seven-fifteen local.
+
+**DMN** ([page](https://en.wikipedia.org/wiki/Daman,_India)). Tour 01, new betrayal F130 (B11): a fish-rack spike slides aside 16 px as you jump; second one slides the other way.
+- 09 DMN-09 Dredger · F154 bucket-chain-lift / bucket-lift: a bucket-chain dredger lifts buckets as platforms; empty ones tip. [page not reachable in check; WP Daman pending]
+- 10 DMN-10 Seaface Binoculars · F155 coin-binocular-preview / preview-window: a coin binocular shows the platforms ahead for ten seconds. [page not reachable in check; WP Daman pending]
+- Seventh-death theme: the fish scale reads seven kilos.
+
+**GNR** ([page](https://en.wikipedia.org/wiki/Gandhinagar)). Tour 01, new betrayal F131 (B17): a lawn mower patrols a sector lawn, pauses 1 s, grows and chases at 150 px/s.
+- 09 GNR-09 GIFT City Chutes · F443 full-bin-chute-pulls-down / chute-when-full: bin lids are footholds; when a bin's fill gauge reaches full the vacuum chute pulls the lid and whatever stands on it down the pipe. [WP GIFT City (automated waste collection; source check needed)] (v2)
+- 10 GNR-10 Kalol Pumpjack · F157 nodding-pump-arm / pump-arm-beat: pump arms nod; ride one up, step off before it nods back. [WP Kalol, Gandhinagar (found)]
+- Seventh-death theme: the seventh round of the garba circle (saatmo fero).
+
+**JAI** ([page](https://en.wikivoyage.org/wiki/Jaipur)). Tour 01, new betrayal F132 (B30): arcade arches rearrange after each archway; two seconds of calm on arrival.
+- 09 JAI-09 Marble Lane · F158 chip-reveal-steps / chip-reveal: a statue is chipped as you stand; the chip reveals the step. [WV Jaipur (marble found)]
+- 10 JAI-10 Johari Sieve · F159 sieve-holes-slide / sieve-slide: a gem sieve is shaken; holes slide under you; line the solid bars up. [WV Jaipur (Johari found)]
+- Seventh-death theme: the puppeteer pulls the string a seventh time.
+
+**BPL** ([page](https://en.wikipedia.org/wiki/Bhopal)). Tour 01, new betrayal F133 (B10): a lake-mist footbridge is walkable though drawn as a gap (floor FREE part).
+- 09 BPL-09 Bhimbetka Shelters · F444 rock-shelter-refuge-wave / B13: a rockfall wave runs along the cliff; the rock-shelter overhangs are refuges, and running past the last shelter sends a second wave back the other way (B13). [WP Bhopal / Bhimbetka rock shelters (UNESCO, 45 km from Bhopal; source check needed; no paintings used as floor)] (v2)
+- 10 BPL-10 Batua · F161 drawstring-mouth-closes / drawstring-close: the purse mouth closes on a pull; cross while it is open. [WP Bhopal (batua found)]
+- Seventh-death theme: Surma Bhopali tells the story the seventh time and it has grown.
+
+**RPR** ([page](https://en.wikipedia.org/wiki/Raipur)). Tour 01, new betrayal F134 (B6): rice-mill hopper scaffold: platforms appear every 1.25 s then all drop at 6.5 s; cue 1 s before.
+- 09 RPR-09 Steel Ladle · F162 swinging-ladle-crane / ladle-swing: a ladle crane swings its load; the cold side is the step. [WP Raipur (Bhilai found)]
+- 10 RPR-10 Raut Nacha · F445 raut-sticks-clash-high-low / stick-clash: cowherd dancers clash sticks high on one beat and low on the next; the crossed pair is a bar you stand on only on the high beat. [WP Raut Nacha (source check needed)] (v2)
+- Seventh-death theme: the grain measure is filled the seventh time.
+
+**RNC** ([page](https://en.wikivoyage.org/wiki/Ranchi)). Tour 01, new betrayal F135 (B40): a hidden item appears only after you fall into the gap on purpose (optional).
+- 09 RNC-09 Lac (Namkum) · F446 lac-sheet-softens-near-fire / lac-soft: lac sticks laid as a bridge bend under you near the brazier and hold hard away from it; the brazier is carried along the bridge. [WP Ranchi (lac research institute at Namkum; source check needed)] (v2)
+- 10 RNC-10 Sal Plates · F165 leaf-plates-pressed-shapes / press-shape: leaf plates are pressed into bowls; bowls are the steps. [everyday life (unverified)]
+- Seventh-death theme: the seventh rock on the waterfall path is counted.
+
+## 4. Uniqueness proof
+
+- Key = (family, betrayal). Every row in sections 1-3 is one key and every family has one owner, so no pair can repeat; `allocation-work/check.py` asserts it on allocation.json (v2: 36 cities, 419 families in use, 429 pairs, 0 duplicates). F numbers of v1 families are unchanged; v2 families are F418-F446; a retired family keeps its old number out of use.
+- Per-city check: no betrayal key twice inside a city (reserves included), at most 2 HWIK, never adjacent, never 01, 09 or 10.
+- A key test proves only that no key string repeats. v2 also removed the same *experience* under different keys (ALLOCATION-REVIEW findings 1-10; ALLOCATION-V2-CHANGES.md lists every slot touched).
+
+| City | Stages | Distinct betrayal keys | HWIK slots | Marathon | Tough 09 | Tour | Result |
+|---|---|---|---|---|---|---|---|
+| PAT | 10+2 | 15/15 | 08 | 07 | 09 | 01 | ok |
+| LKO | 10+2 | 14/14 | 08 | 07 | - | 01 | ok |
+| CCU | 10+2 | 16/16 | 08 | 07 | 09 | 01 | ok |
+| BBI | 10+3 | 13/13 | 05,08 | 07 | - | 01 | ok |
+| GTK | 10+2 | 12/12 | 05,08 | 07 | - | 01 | ok |
+| DIS | 10+2 | 12/12 | 05,08 | 07 | - | 01 | ok |
+| SVP | 10+2 | 12/12 | 05,08 | 07 | - | 01 | ok |
+| SHL | 10+2 | 12/12 | 05,08 | 07 | 09 | 01 | ok |
+| ITA | 10+3 | 13/13 | 08 | 07 | - | 01 | ok |
+| KOH | 10+2 | 12/12 | 08 | 07 | 09 | 01 | ok |
+| IMP | 10+2 | 12/12 | 08 | 07 | 09 | 01 | ok |
+| AIZ | 10+2 | 12/12 | 05,08 | 07 | - | 01 | ok |
+| AGT | 10+2 | 12/12 | 05,08 | 07 | - | 01 | ok |
+| DEL | 10+2 | 12/12 | 05,08 | 07 | 09 | 01 | ok |
+| CHP | 10+2 | 12/12 | 05,08 | 07 | - | 01 | ok |
+| CHH | 10+2 | 12/12 | 05,08 | 07 | 09 | 01 | ok |
+| DDN | 10+2 | 12/12 | 05,08 | 07 | - | 01 | ok |
+| SML | 10+2 | 12/12 | 05,08 | 07 | 09 | 01 | ok |
+| JMU | 10+2 | 12/12 | 05,08 | 07 | 09 | 01 | ok |
+| SXR | 10+2 | 12/12 | 05,08 | 07 | 09 | 01 | ok |
+| LEH | 10+2 | 13/13 | 05,08 | 07 | 09 | 01 | ok |
+| TVM KVT CHN PDY BLR AMR HYD PNJ BOM DMN GNR JAI BPL RPR RNC | 8 shipped + 2 encore + new tour | 11/11 each | shipped | 08 | encore | new | ok |
+
+**Almost-used ideas builders reach for** (ids are `CITY slot NN (concept)`)
+
+| Idea a builder will reach for | Owner (do not build elsewhere) |
+|---|---|
+| bow, or stand still to be polite | LKO slot 02 (LKO-02 Pehle Aap) |
+| stand still and someone holds you or the space closes on you | CCU slot 08 (CCU-08 Adda), BBI slot 04 (BBI-10 Tarakasi), AIZ slot 08 (AIZ-03 helpers); LKO slot 01, LEH slot 01, CCU slot 03 and DEL slot 03 were recast away from it in v2 |
+| a crowd as a floor or a gap you follow | PAT slot 09 (PAT-10 moving gap), LKO slot 07 (LKO-07 pace), DIS slot 07 (DIS-06 join group), CCU slot 07 (CCU-07 head loads), SVP slot 07 (SVP-10 luggage) |
+| a painted, printed or woven pattern decides what is solid | LKO slot 03 (LKO-04 Chhapa: the wash changes it on a timer). Kept because the rule differs: BBI slot 06 (BBI-05 ikat: beats align threads), AGT slot 04 (AGT-04 weave height), SXR slot 08 (SXR-04 the talim count). Shipped: BPL-03. Never a new one |
+| a person builds or covers the floor ahead of you | CCU slot 09 (CCU-09 Pandal); shipped DMN-07. SML slot 07 (SML-02) is your own double step, nobody else's |
+| a vendor feeds Dad and his body changes | AMR-01 (shipped). No new city has one |
+| a conductor's signal moves the vehicle | TVM-02 (shipped). CCU slot 02 (CCU-02 Aaste) is exiting on a shout, not a signal code |
+| floor tilts or sinks toward the weight | PAT slot 05 (PAT-04 pontoon), PAT slot 07 (PAT-07 tempo lean), SVP slot 06 (SVP-07 birds bend tree); shipped DMN-06. PAT slot 06 is now a plate count, not a bob |
+| which side the light comes from decides which floor holds | LKO slot 04 (LKO-05 Makhan Malai), the only one |
+| the sun's height is the clock (time of day) | SML slot 02 (SML-03 roof sheet), LEH slot 04 (LEH-04 ice stupa), LEH slot 06 (LEH-06 nala), CHP slot 07 (CHP-06 sky-colour clock); each a different object; CHH slot 07, ITA slot 10 and SML slot 07 lost their sun beats in v2 |
+| a moving reveal shows invisible floor | DDN slot 05 (DDN-06 rain splash); shipped BPL tour B10 is a walkable gap, not a reveal |
+| fog or mist | GTK slot 07 (GTK-07) |
+| a swaying bridge | SHL slot 03 (SHL-08 Dawki) |
+| hang from wires | DEL slot 05 (DEL-06) |
+| floats that sink under load | PAT slot 05 (PAT-04); ITA slot 08 (ITA-10 raft) splits sideways, never sinks |
+| a churn | CHP slot 03 (CHP-09) |
+| a wrestler | CHH slot 06 (CHH-03) |
+| a flock | SML slot 09 (SML-10) as floor; LKO slot 09 (LKO-10) steered by a flag |
+| peeling layers | JMU slot 05 (JMU-05) |
+| a sweeping brush | GTK slot 01 (GTK-01) |
+| animals or a crowd follow what you carry | SVP slot 04 (SVP-04 deer); IMP slot 06 (IMP-01 scout) shows firm ground, it does not follow you |
+| a door that opens one way | IMP slot 01 (IMP-T) |
+| a drum beat moves dancers | BBI slot 07 (BBI-08 Gotipua), KOH slot 05 (KOH-02 log haul) |
+| a downhill ride | SXR slot 09 (SXR-05: brake only); KOH slot 07 (KOH-01: lean only, no brake) |
+| a turning wheel as platforms | BBI slot 09 (BBI-06: the wheel is still, the plinth moves); shipped `clockhand`, RPR-05; BLR encore 09 cogs |
+| sorted by size | CCU slot 03 (CCU-F2 jhalmuri tin); SML R1 apple chute is reserve only and must not ship beside it |
+| decoy twin, fake floor, shelter trap, delayed second trap | taken (B1, B35-B37); GTK slot 08 and SXR slot 05 replaced in v2 |
+| read a number or a count | GTK slot 04 (GTK-02), IMP slot 08 (IMP-05), PAT slot 08 (PAT-11 Nalanda bricks), SXR slot 08 (SXR-04), PAT slot 06 (PAT-03 plate count) |
+| escalator or lift | SML slot 01 (SML-01), SML slot 08 (SML-08), CHN encore 10 |
+
+## 5. Conflicts handed over, and the others found
+
+1. **Kolkata pandal cloth vs Assam bhelaghar thatch.** CCU slot 09 (CCU-09 Pandal) owns `cloth-panel-covers-foothold`; DIS concept DIS-07 is retired; DIS gets the Uruka net (R1). Reason: the pandal is a city-wide structure; the bhelaghar is tied to a burning rite the bible says never to show as a trap. v2: PAT slot 03's painter beat is gone, so the pandal is the only maker-ahead stage.
+2. **Lucknow "pehle aap" bow vs Assam gamosa give-away.** LKO slot 02 (LKO-02) owns `politeness-bow-sets-order`. DIS slot 05 (DIS-11) gives a gamosa away by walking into the next host, never by standing still. v2: LKO slot 01 is now the Chowk cloth bolts, so LKO no longer repeats its own rule in adjacent stages.
+3. **Andaman deer vs Gangtok farm dog.** SVP slot 04 (SVP-04) owns `food-holder-followed-by-deer`; GTK concept GTK-09 is retired. v2: CHP slot 04's kid tide (same experience) is replaced by CHP-07 Sarson.
+
+Further clashes, each resolved the same way (owner kept, the other retired or recast):
+
+4. Sweeper brush: GTK slot 01 (GTK-01) keeps it; SHL concept SHL-09 retired.
+5. Adda: CCU slot 08 (CCU-08) keeps it; AGT concept AGT-09 retired; CCU slot 03 phuchka replaced (v2).
+6. Churn: CHP slot 03 (CHP-09) keeps it; LEH concept LEH-10 retired.
+7. Flock as floor: SML slot 09 (SML-10) keeps it; BBI-11 and DDN-10 retired (LKO slot 09, LKO-10, is a flag steering a flock).
+8. Stack pulled from the bottom: CCU slot 04 (CCU-04) keeps it; SML-09 and CCU-10 retired.
+9. Layers peeled by landing: JMU slot 05 (JMU-05) keeps it; PAT-09 retired.
+10. Bridge sway by cadence: SHL slot 03 (SHL-08) keeps it; DDN-05 retired.
+11. Wade the wet, crust beside breaks: DDN slot 02 (DDN-02) keeps it; SVP-05 retired.
+12. Sun: LKO slot 04 (LKO-05) is the one owner of light direction; the sun-as-clock row in section 4 lists four other stages, each a different object, and "never a sixth" is dropped. CHH slot 07 (sun cue to herder call), ITA slot 10 (sun line to bricks on the bridge) and SML slot 07 (sun melt removed) were recast in v2. ITA-05, SML-05, KOH-09 stay retired.
+13. Fog: GTK slot 07 (GTK-07) owns it; DEL slot 08 (DEL-02) and PAT slot 06 (PAT-03) have none. PAT slot 10 no longer reads truck lights (JMU slot 09 owns lights ahead).
+14. Door that opens one way: IMP slot 01 (IMP-T) owns it; PAT slot 04's door is at the dome base; IMP-07 retired.
+15. Floats under load: PAT slot 05 (PAT-04) owns it; ITA-10's raft returns at ITA slot 08 only as poles that split sideways.
+16. Wrestling: CHH slot 06 (CHH-03) owns it; KOH-08 retired.
+17. Pattern decides the floor: LKO slot 03 (LKO-04) owns it in the first wave. PAT slot 03 (PAT-06 Madhubani), BPL encore 09 (Gond dots), GNR encore 09 (Bandhani) and BBI slot 10's soot twist are retired. BBI slot 06, AGT slot 04 and SXR slot 08 stay because the solid part is decided by a beat, a height and a spoken count, not by the picture.
+18. Dancers as platforms on a drum: BBI slot 07 (BBI-08) owns it; DIS-05 retired.
+19. Read-a-number puzzles: AGT-08 retired. PAT-11 Nalanda moved from reserve to PAT slot 08 (HWIK) in v2, replacing Sattu.
+20. Vehicle lean by rider side: PAT slot 07 (PAT-07) owns it (v1 called this "height by load"); DDN-11 retired.
+21. Decoy twin (B37, used by TVM-01): GTK slot 03 (GTK-08) is an inspector who removes bags; v2 replaces GTK slot 08 churpi and SXR slot 05 paper box, both still B37.
+22. Unverifiable or off-place: LKO-09 Taj and LKO-11 Pachisi are reserves only.
+23. (v2) Forced food: AMR-01 owns being fed. PAT slot 08 Sattu and CCU slot 03 phuchka are retired.
+24. (v2) Maker ahead: AGT slot 03 mat and KVT encore 09 coir are replaced; LKO slot 03 has no stitcher act; CCU slot 05's potter no longer adds clay ahead of you.
+
+## 6. How a builder uses this file
+
+1. Find your city in section 2 (new) or section 3 (shipped). Slots 01-10 are your stages in order; R1, R2 (R3) are reserves. Read the full A2/A3 and closest text in `allocation.json`; the tables here clip v1 rows (changed v2 rows are printed in full).
+2. Build only the concept in your slot. The family and betrayal columns are your key: nobody else owns it. If a reserve is needed, take R1 then R2; never an idea from another city's table.
+3. Before coding, grep the nouns and verbs of your idea (TROLL-BIBLE section G) and read the almost-used table in section 4; owners there are named `CITY slot NN (concept)`. If your idea is near one, change the mechanic, not the dressing.
+4. Chains: A2 is the obvious fix and dies to a different trap, A3 is one move. HWIK slots name their tell and must satisfy TROLL-BIBLE section D (one unknown, a visible tell readable muted, one move after one death, the guide never describes an unmet trap). Build exactly the HWIK slots your city is allocated (some cities have two, at 05 and 08); do not add another. Never repeat a betrayal type inside your city.
+5. Shapes: `tour`, `std`, `long`, `marathon` (slot 07 only, 2-3 min, hidden checkpoints), `tough` (slot 09: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable), `HWIK`, and `HWIK (long 60-90 s)` at slot 05 (it is also the long stage, 3-4 checkpoints). Slot 10 calls back only your own city; the chain names the two own ideas its twist combines.
+6. **Door endings and act ids (v2 rule).** Every stage declares `meta.ending`: a kebab-case key for its door-ending idea, prefixed with the city code (`pat-plate-gap`, not `plate`). The idea must be new against MECHANICS.md's "Door endings" list and the `advice:` lines in `src/game/levels/endings*.ts` (an idea counts as used under a new name) and against every other city's endings. Act ids follow `<city><slot>-<word>` (`pat07-tempos`) and are new against MECHANICS.md's Acts list and every other city; one per id, never reused. The allocation does not assign endings or acts; grep before you pick. The same rule is in `allocation.json` under the top-level `rules` object.
+7. Gate: in the game repo copy `docs/allocation.json` from ldd-inbox first, then run `npm test` (`tests/allocation.test.ts` skips if the file is missing). In ldd-inbox, `python3 allocation-work/check.py` checks the same duplicate rules.
+
+
+---
+
+# ALLOCATION v3: new acts for the short stages of DIS, BBI, LKO, CCU, GTK, SVP
+
+**v3, 2026-11-27 (written 10:30-11:05 IST by the allocator, work item it_756725d4).** v2 above is unchanged. v3 adds act-level
+assignments (families F447+) for the six cities whose honest cuts left stages under their floors, and records the registry
+(`DECISIONS.md`) that every assignment was checked against. Machine form: `allocation-v3.json` (= `allocation.json` + a `v3` list per
+city + DIS slot 06's label moved to `silt-behind-the-spur`). The repo copy of `allocation.json` is the integrator's to land.
+
+**How the acts were chosen.** Free archetypes first (TROLL-BIBLE B-ids), then unbuilt research candidates that pass the decision test,
+then new ideas from the city bibles. Every assignment was checked against all 865 rows of `DECISIONS.md`; no two v3 assignments
+share a decision, and none shares one with a shipped or in-flight part (the collisions found on the way are in `DECISIONS.md` §5 and
+change some branches' current acts: those cuts are counted in the "now" column below). Finales get **no new families**: a finale is
+callbacks that break rules taught in 01-09, so each finale row below only names which rules there now are to break, and how.
+"Engine" marks an idea that needs a change outside the city module (`player.ts`, input, climb); those are **not assigned**, only listed.
+
+**Rulings applied (conductor, 10:50 IST, DECISIONS.md §5 rows marked RULED).** S1 DIS-04 room cut → F448; S2 `gtk03-kagaz` cut → F482 is GTK-03's replacement; S3 `ccu09-uthan`/`uthan2` cut, GTK-02 keeps `ulta`; S4 `ccu05-uthon` cut, `lane` recast; S5 CCU tour bite recast; S6 `ccu07-baan` cut → F481 + F502; S7 `svp05-rassi`/`svp10-rassi` cut → F503; S8/S9 DIS-10 and DIS-07 doors recast (rows below); S10 BBI-01 tell recast; S11 `shaam` needs a which-awning-next tell; S12 both shelter beats stay labelled; I1-I4 as recommended; I5 DIS keeps the still-point decision on a new object (DIS-07 row below); W2-W4 as written. V1 applied for KVT-09 (F453 withdrawn from DIS-06).
+
+**Built from v3 while this file was being written (tips re-read 05:05 UTC):** LKO `lko06-tihai` (F473), `lko07-dukaan` (F474), `lko08-toota` (F478), `lko09-girah` (F480); BBI `bbi05-mama` (F464); DIS `dis10-talatal` (the 04 Talatal rule's finale break, bottom-first); GTK cut `kagaz` (S2) and `bhatti` (S3) and recast `peeche` (I3). The registry rows carry them.\n\n**Sizes.** A rule act adds about 10-15 s; a marathon needs a momentum beat, a shelter beat and a sound beat among its acts. "Now" is the
+scripted clear time after the §5 cuts (estimated where the branch has not re-measured). Est. seconds are the act's own share.
+
+**Current times (route, s) and floors:**
+
+| City | 02 | 03 | 04 | 05 (≥60) | 06 (≥60) | 07 (≥120) | 08 (≥60) | 09 (≥60) | 10 (≥90) |
+|---|---|---|---|---|---|---|---|---|---|
+| DIS | 19.1 | 40.2 | 18.6, room TAKEN | 12.4 | 10.2 | 64.4 | 38.7 | 21.8 | 42.5 |
+| BBI | 26.4 | 26.7 | 29.3 | 51.4 (+`ganna` since) | 38.2 | 65.2 | 43.1 | 55.1 | 47.9 |
+| LKO | 25.3 | 25.2 | 26.4 | 39.3 | 37.4 | 70.7 → ~50 after §5 I1, I2, S11 | 34.1 | 55.4 | 58.4 |
+| CCU (est.) | ~23 | ~28 | ~17 | ~37 → ~25 after S4 (RULED) | 62.8 | ~84 → ~72 after S6 (RULED) | ~30 | 53.6 → ~45 after S3 (RULED) | ~84 |
+| GTK | 34.9 → ~27 after S3 | 25.8 → ~22 after S2 | 25.2 | 54.9 | 39.5 | 73.1 | 52.6 | 69.5 | 91.2 |
+| SVP | 25.8 | 26.1 | 25.8 | 63.5 → ~50 after S7 | 36.1 | ~45 | 41.3 | ~35 (with `nali`) | 98.6 |
+| KVT (encores only) | shipped | shipped | shipped | shipped | shipped | shipped | shipped | 36.7 (tough, fix 1 cut `irangal`, `kuzhi` and padding) | 93.1 |
+
+Each row below: **family** · DECISION · source · the city's real place (bible §2/§3) · NAIVE → X / FIX → Y (different causes) · est. s.
+
+## DIS · Dispur/Guwahati (needs: 02 +6, 04 new room, 05 +48, 06 +50, 07 +56, 08 +21, 09 +38, 10 +47)
+
+| Stage | Family (F#) | DECISION | Source | Place | NAIVE → / FIX → | Est. s |
+|---|---|---|---|---|---|---|
+| 02 Char | F447 `false-cue-among-true` | Count the sirens: the bhutbhuti ferry's horn sounds like the level siren but moves no bar, so a bar you step to on the horn is not there yet. | B5 (cadence, then a liar) | Umananda ferry ghat beside the chars (bible §2: 10-minute ferry) | step off on the horn → river `dis-luit` / wait out the horn without moving → your bar narrows under you `dis-char-sink` (02's own clock) | 11 |
+| 04 **new room** (replaces Til Pitha, TAKEN) | F448 `collapsing-stair-penultimate-rises` | Talatal Ghar's stair down falls step by step in order as you descend; racing it dies, and the step before the last RISES back and is the way: wait on it as it comes up. | B7 (staircase that eats itself; rising penultimate) | Talatal Ghar, Sivasagar (Ahom palace, floors below ground, bible §2) | run down ahead of the fall → the bottom step is gone `dis-talatal` / wait at the top for it to finish → the top landing sinks into the flooded vault `dis-doba` | room 25-30; name it "Talatal"; the door is the builder's (grep first); `dis10-thanda` must change with it (see 10) |
+| 05 Gamosa | F449 `pickup-row-is-floor` | The Uruka feast laid on banana leaves is a row of pithas: they are the FLOOR; jumping to collect one tips the leaf. Walk on the feast. | B18 (semantic coin: the pickup row is solid ground) | Uruka night feast, Bhogali Bihu eve (bible §3; the meji itself is never a trap) | jump for a pitha → the leaf tips `dis-kol-paat` / hop the whole row → land in the giver behind it: third gamosa, blind, pit `dis-gamosa` | 12 |
+| 05 Gamosa | F450 `scaffold-deadline-collapse` | The Bihu machan stage is being planked ahead of you a plank every ~1.25 s, and at the drum roll (1 s cue) every plank drops: never wait on a safe-looking plank; be across before the roll. | B6 (scaffold with a deadline; the deadline collapse is the free part) | Latasil field Bihu stage, Guwahati (bible §3 Bihu functions) | wait on a plank for the next → all drop `dis-machan` / sprint ahead of the planking → the far end is not built, river `dis-luit` | 12 |
+| 05 Gamosa | F451 `spike-slides-under-jump` | A sharpened bamboo split from the japi-maker's stall slides one tile the moment you jump at it, under your landing; the next slides the other way: jump where it will NOT be. | B11 (spike that slides aside, visible) | Japi and bamboo craft stalls, Fancy Bazar (bible §2) | jump over the split → it slides under you `dis-kaath` / wait for it to settle → the host behind catches up: third gamosa, blind `dis-gamosa` | 10 |
+| 05 Gamosa | F452 `remembered-gap-is-bridged` | With three gamosas on you cannot see your feet, and the gap you saw before the cloth came has since had a bamboo laid over it (its shadow shows past the gap's drawn end): WALK it. | B10 (invisible bridge: the gap is walkable; floor part is free) | A wedding yard's bamboo bridge over the nala, Jorhat (bible §3 weddings) | jump the remembered gap → head into the low machan beam `dis-beam` / back off to find a taker → the pit behind you `dis-pit` | 10 |
+| 06 Majuli ka Paar | (withdrawn) `shover-is-the-ride`: V1 applied, KVT-09 F496 owns the B16 thought; DIS-06 ends ~48 s with F454-F456 and plain beats | The bamboo raft (bhur) the current drives along the bank shoves anything on the slab into the spur; land ON it and it carries you 176 px to the next silt step: the shove is the ride. | B16 (block that pushes: contact is a ride) | Kamalabari ferry ghat rafts, Majuli (bible §2) | dodge back from the raft → pinned on the spur `dis-bhur` / hop over it → land on the slab the river takes `dis-bank` | 12 |
+| 06 Majuli ka Paar | F454 `refuge-not-flight` | A ferry's wake runs along the bank; the spur's lee is the one refuge, and running past the lee brings a reverse wake: shelter, wait, then go. | B13 (wave with a refuge; reverse wave on fleeing past it) | Aphalamukh ghat, Majuli (bible §2) | outrun the wake → caught `dis-dhal` / hop the wave → the slab the river takes `dis-bank` | 12 |
+| 06 Majuli ka Paar | F455 `marker-moves-floor-stays` | The ghat man moves the red landing flag up the bank as the water rises; the plank is where it was: land where the plank is, not where the flag is. | B20 (coin that moves: trust the support) | Majuli ghat landing (bible §2) | jump to the flag → gap `dis-luit` / jump to where the flag WAS → the ghat man dragging it is a giver host, third gamosa (05 callback, only if 05 is before 06; else `dis-pit`) | 10 |
+| 06 Majuli ka Paar | F456 `bell-names-the-moving-platform` | Fish traps on pulleys line the channel; the one whose bell rings is the one about to be hoisted: a ringing trap you leave, a silent trap is floor. (A sound beat for a long stage.) | new (bible §3 fishing: polo/jakoi traps) | Garmur fishing channel, Majuli | stand on the ringing trap → hoisted into the beam `dis-dirru` / hop at the ring to the next → its slack rope tips it `dis-tip` | 12 |
+| 07 Husori (marathon) | RULED I5: `dis07-dheki` keeps its decision, new object | The still point on a thing worked by other people: a bell-metal disc hammered by three smiths in turn, the centre where no hammer falls is the one still tile; cross between falls and leave when the tongs rise (the dheki lever goes to BBI). Alternate object: the dhol-maker tightening his drum, hammers round the rim, the skin's centre still. | IDEAS-2 C6 re-skinned (the builder had rejected C6 only because the dheki already held the decision) | Sarthebari bell-metal workshop, Barpeta (bible §3 crafts; U for the hammering pattern) | stand near a smith → his hammer `dis-hatudi` / wait on the anvil's edge for all three to stop → the tongs lift the disc with you `dis-sarai` | 0 (re-skin, same length) |
+| 07 Husori (marathon) | RULED S9: door `dis-uruka-net` recast | The fishers pull the net in on a cadence: cross only while they rest between pulls (a cadence read, not "don't stop on it"). | 07's own door | Uruka pond | | 0 |
+| 07 Husori (marathon) | F457 `join-the-approaching-not-the-leaving` | A husori group leaving a yard will not stop for you; the one you HEAR coming (pepa getting louder) will: wait for the pipe, then step into its ring as it arrives. **Sound beat.** | new (bible §3 pepa, husori) | Village yards, Nalbari | run after the leaving group → the gate shuts on you `dis-gate` / wait under the gate for the coming group → its stakes drop as they arrive `dis-stakes` | 12 |
+| 07 Husori (marathon) | F458 `pause-before-charge` | The Goru Bihu bull patrols the lane; when it stops and lowers its head you have one second to be out of its lane before it charges. | B17 (patrol that turns into a chase after a visible pause) | Goru Bihu bathing day lane by the river (bible §3) | stand your ground → charged `dis-goru` / run past it while it walks → it turns and charges a mover too; the answer is leave its lane sideways `dis-goru-lane` | 12 |
+| 07 Husori (marathon) | F459 `treat-trail-herds` | The host lays a trail of pitha along the husori's bamboo cart floor; the floor moves off at 150 px/s for 2 s: take the treats without stopping, or skip them. | B19 (coin trail that herds on to a moving floor) | Husori yard, Barpeta | stop to pick one → carried into the stakes `dis-herd` / skip the trail along the bank → the bank is the gate's shut side `dis-gate` | 10 |
+| 07 Husori (marathon) | F460 `shout-steers-hazard` | Tekeli bhonga: a blindfolded man swings his stick where the crowd shouts "left/right"; stand where they are NOT shouting. | new (bible §3 Bhogali games) | Uruka field games | stand still in the open → struck `dis-lathi` / run through on the shout side → struck as he turns `dis-lathi-ghur` (different tick/cause tag) | 10 |
+| 08 Gorh (HWIK) | F461 `birds-up-means-charge` | The only sign of a hidden rhino in the grass is the egrets rising off its back: cross a stretch while they sit, never while they are up. | new (bible §2 Kaziranga) | Kaziranga, Bagori range | cross while the egrets fly → trampled `dis-gorh` / wait for the egrets to fly before crossing (reversed read) → the grass burns from the far side (ranger's controlled burn) `dis-jui` | 12 |
+| 08 Gorh (HWIK) | labelled twist of the room (no new family) | Two jeeps rev; the rhino charges the NEARER noise, not the louder: stand off the strip the nearer jeep makes. | 08's own rule, second read | Kohora range | 10 |
+| 09 Rang Ghar (tough) | F462 `portal-chain-backwards` | The Ahom tunnels: each mouth warps you to the next mouth one step BACK; six in a chain, and the exit only appears 2.7 s after the chain is walked. Walk the chain. | B28 (portal chain; a visible portal object is free; `w.warp` exists) | Talatal Ghar tunnels, Sivasagar (said to run to the Dikhow) | skip the tunnels and run the roof → rib and oil `dis-roof` / take one and run ahead → the next mouth is not open yet, the vault `dis-khaal` | 15 |
+| 09 Rang Ghar (tough) | F463 `bell-opens-the-sluice` | Joysagar's sluice opens on the tank bell; the channel below it floods a beat later: on the bell be past the gate or up on the embankment. | new (bible §2 Sivasagar tanks) | Joysagar tank embankment | stand in the channel at the bell → flood `dis-sluice` / climb the embankment early → it is the oiled roof's foot, pushed back in `dis-roof` | 10 |
+| 09 Rang Ghar (tough) | (not assigned) `read-the-winner-twice` | buffalo fight / elephant fight: the pair shoves toward the loser | same thought as `dis09-tug` (read who is winning): do not build | | 0 |
+| 10 Luit (finale) | RULED S8: door `dis-post-bank` recast | The bars rise AHEAD of the plucker and she sinks them as she passes: go in front of her, which breaks 03's "follow behind". | 10's own door | the Luit at the plucker's path | | 0 |
+| 10 Luit (finale) | callbacks only | New rules to break: 02 liar horn ("every cue is real now: the horn moves the bars too"), 04 Talatal ("the steps fall bottom-first: race down"; `dis10-thanda` goes, 04's shine rule is gone), 05 feast ("the leaves are not floor: jump for them"), 05 machan ("planks drop one by one in order: walk behind the drop"), 06 raft ("it shoves and does not carry: dodge"), 06 lee ("the lee is where the wake comes back: outrun it"), 07 bull ("the pause is a feint"), 08 egrets ("they rise for the jeep; the rhino sleeps"), 09 tunnels ("the chain runs forward; the exit was at the first mouth"). Pick 5-6 at ~8 s. Door: recast per §5 S8. | law 7 | | 45 |
+
+Not assigned (engine): C2 Saraighat decks (ladder climb), C7 thin-brick steps and F2 ribs (half-tile step-up).
+DIS-01 stays at 22.6 s (2.4 s under its band; a second tea boy is the same decision). DIS-03 is at its floor.
+
+## BBI · Bhubaneswar (needs: 05 +9 (less `ganna`), 06 +22, 07 +55 incl. a sound beat, 08 +17, 09 +5, 10 +42)
+
+| Stage | Family (F#) | DECISION | Source | Place | NAIVE → / FIX → | Est. s |
+|---|---|---|---|---|---|---|
+| 01 tour | RULED S10 | The gardener's jet follows the WALKER and spares the stopper (the old tell, waiting is targeted, was TVM-04's); the wet-tile slide stays. | | | | 0 |
+| 05 Raja | F464 `bait-the-switcher` | The uncle switches off any machine you start; start a second one as bait so he walks there while you ride the one you need. | candidate C5 (unbuilt) | Raja week threshing yard, Cuttack district (bible §3) | ride the first machine → he stops it under you, you drop `bbi-chacha` / touch nothing and walk → the idle crusher's channel (05's room) `bbi-khai` | 12 (needs a walking NPC inside the module; not engine) |
+| 06 Bandha | F465 `break-plain-thread-to-stall` | Snap a thread on purpose to stall the shuttle, and choose a plain warp thread, not one of the motif: a motif thread is the bridge you stand on. | candidate C8 (unbuilt) | Sambalpur ikat loom (bible §2) | snap the nearest (motif) thread → the bridge opens under you `bbi-sutra` / never touch the loom and time the shuttle → the beater `bbi-rachh` | 12 |
+| 06 Bandha | F466 `portal-that-runs` | The flying shuttle is a box you can ride across; aim at it and it jumps 160 px away then sweeps left: step into where it IS now, or take the low route under the warp. | B29 (portal that runs) | the same loom's shuttle race | run at it → it jumps, you run into the dye trough `bbi-ranga` / wait for it to come → the beater sweeps `bbi-rachh` (different tick) | 12 |
+| 07 Gotipua (marathon) | F498 `rolling-bridge-walk-with-turn` | On a drum roll the bridge (gadiba) turns over toward the drummer: be walking the way it turns, and never stand on it. | IDEAS-3 B1 (built `bbi07-gadiba`, 04:49 UTC) | Raghurajpur night performance | stand on the bridge → rolled off `bbi-gadiba` / walk against the turn → carried over the far edge `bbi-thrown` | 12 (built) |
+| 07 Gotipua (marathon) | F499 `tent-safe-while-they-dance` | The dancers' dressing tent is safe only while they dance; at the drum's stop the boys who are not in the pose run into it. **Shelter beat.** | IDEAS-3 B2 (built `bbi07-sajaghara`, 04:55 UTC) | Raghurajpur | shelter in the tent through the stop → trampled `bbi-sajaghara` / stay out on the floor at the stop → the pose restart throws `bbi-thrown` | 12 (built) |
+| 07 Gotipua (marathon) | (conditional) `forecast-cue-names-pose` | The drum's last stroke before the stop names the NEXT pose: move on the stroke, before you can see the shape. | IDEAS-3 B3 (built `bbi07-gum-ta`, 04:42 UTC) | Raghurajpur | wait to see the shape → one beat late, thrown / step off on every stroke → the tower's pit | **Not assigned unless ruled:** acting on a forecast cue is DIS-02's kept family (DECISIONS.md §5b I9, §6). If the conductor rules forecast cues one-per-city, this is BBI-07's sound beat and F467 becomes a reserve; otherwise cut `gum-ta` and F467 is the sound beat. |
+| 07 Gotipua (marathon) | F495 `pleats-tell-the-roll` | A troupe with its pleats tucked up (kachha) will roll; a loose-skirted troupe lies still: look at the waists before you trust a pose as floor. A tell beat for the HWIK moment. | IDEAS-3 B4 (unbuilt) | Raghurajpur | trust the tucked-up troupe as floor → it rolls `bbi-gadiba` / wait for every troupe to settle → the restart throws `bbi-thrown` | 8 |
+| 07 Gotipua (marathon) | F500 `first-stopped-first-restarts` | Two troupes make one bridge from two halves; the half whose drummer stopped first is the half that restarts first: cross from the later half. | IDEAS-3 B5 (built `bbi07-jodi`, 04:44 UTC) | Raghurajpur | cross from the earlier half → it restarts under you `bbi-thrown` / wait for both to restart and re-form → the drum roll rolls the bridge `bbi-gadiba` | 12 (built) |
+| 07 Gotipua (marathon) | F501 `cheer-length-is-hold-length` | A pose the women cheer (hulahuli) holds as long as their cheer and not a beat longer; a pose met with silence does not hold at all. | IDEAS-3 B6 (built `bbi07-hulahuli`, 04:4x UTC) | Raghurajpur | cross a silent pose → it drops `bbi-nacha` / linger past the cheer's end → thrown `bbi-thrown` | 12 (built) |
+| 07 Gotipua (marathon) | F467 `quiet-means-clear` | Lamps out between pieces: the whirling boys are heard, not seen; cross where the ghungur are quiet. **Sound beat** (the beat B3 would take if ruled in). Note for the builder: F501 reads silence the other way (a silent pose does not hold); the two are different decisions (one locates, one times) but the polarity flip should be taught, not sprung. | new (bible §3 gotipua) | Raghurajpur night performance (bible §2) | cross where you last saw a gap → whirled `bbi-nacha` / wait for the lamps → the restart throws `bbi-thrown` | 12 |
+| 07 Gotipua (marathon) | F468 `accordion-folds-at-hinge` (**reserve**, not needed once B1-B6 hold) | The folded talapatra screen behind the stage opens as a stepped platform: its leaves hold at their ends and fold shut at the hinge: never stand on a hinge (the opposite of Daman's tipping planks). | new (bible §2 Raghurajpur talapatra) | Raghurajpur | land on the hinge → folded `bbi-patra-bhanga` / hop end to end fast → the restart throws `bbi-thrown` | 12 (reserve) |
+| 08 Pakhala (HWIK) | F469 `vortex-outer-edge-slow` | The uncle stirs: every badi circles; the outer ring is slow and the middle fast. Hop between badi only at the slow outer edge. | new (bible §3 pakhala) | Pakhala dibasa table (20 March) | hop across the middle → spun into the rim `bbi-ghurni` / wait on a badi for the stir to stop → his spoon scoops it `bbi-chamacha` | 12 |
+| 08 Pakhala (HWIK) | F470 `throws-accelerate-if-you-wait` | The server tosses badi into the bowl; the longer you wait at the rim the faster they come; the first three seconds are readable: go at once and ride the first. | B21 (bad coins that accelerate) | Cuttack dahibara-aloodum cart row (bible §2) | wait to read the pattern → hit `bbi-badi` / hop every throw → the second jug (08's room) `bbi-pakhala` | 10 |
+| 09 Chakka | no new family | +2 spokes and one plain beat on `bbi09-udaya`, labelled 09's momentum beat (+5 s). | 09's own | Konark | | 5 |
+| 10 Kalinga (finale) | callbacks only | New rules to break: 02 keeper ("the back pad throws now; ride the front"), 06 shuttle-portal ("the shuttle stops for you: step in"), 06 thread ("snap a motif thread: the plain one is holding you"), 07 quiet ("silence is the whirl; the bells are tied to the drum"), 07 hinge ("tonight the hinges are nailed and the ends are loose"), 08 vortex ("the stir reversed: the middle is slow"), 08 throws ("they slow down: wait"), 05 bait ("the uncle switches it ON"), 09 hub ("the hub slides, the rim stays"). Pick 6 at ~7 s. | law 7 | | 42 |
+
+Struck candidates: C12 (two-beat pour = B4, TVM-01 tour), C9, C10 (weakest), IDEAS-3 chaali (= `lko07-julus`); IDEAS-3 B3 gum-ta is conditional on a ruling (I9). BBI 02-04 are at their floors. Built from v3 by 05:05 UTC: `bbi05-mama` (F464), `bbi05-ganna` (C6), and the finale callbacks `bbi10-udaya`, `bbi10-chheli`, `bbi10-patta`, `bbi10-thaka`.
+
+## LKO · Lucknow (needs after §5: 05 +21, 06 +23, 07 +70 incl. a sound beat, 08 +26, 09 +5, 10 +32)
+
+| Stage | Family (F#) | DECISION | Source | Place | NAIVE → / FIX → | Est. s |
+|---|---|---|---|---|---|---|
+| 05 Galouti | F471 `hop-at-the-turn` | The cook turns the skewers: hop under them the moment they turn flat, not when they have been still a while (a still skewer is about to turn). | candidate 5.2 | Tunday Kababi lane, Chowk (bible §3) | hop under a still skewer → it turns into you `lko-seekh` / wait on the heap for a long still → the heap squashes and the tawa burns through `lko-tawa` | 9 (**class check**: the window opens on the cook's TURN; `ghee` opens on his POUR; the conductor rules whether that is one thought) |
+| 05 Galouti | none found | 05 ends ~48 s: no second Lucknow food decision passed the registry (dastarkhwan seating = maker ahead; basket-chaat rim = B8; dum lid = HYD-03; tray offered = retired forced food). Accept, or research. | | | 0 |
+| 06 Kathak | F472 `control-flip-toggles-on-cue` | The guru's rule: the student mirrors her. At every stamp (sam) Dad's left and right swap, and swap back at the next: treat each stamp as a state change. | B23 (flip that toggles at cues; `flipControls` exists, the toggle is level logic) | Kathak class, Lucknow gharana (bible §3) | keep pressing the old way after a stamp → into the strip `lko-ghungroo` / stop after each stamp to re-check → standing still is a bow, she spins to you `lko-chakkar` | 12 |
+| 06 Kathak | F473 `third-repeat-is-the-one` | Tihai: a phrase played three times ends on sam, when EVERY strip rings; on the third repeat be off all strips, not only the silent ones. | candidate 6.1 | the same stage | treat the third like the first two → all strips ring `lko-ghungroo` / leave the stage floor for the takht early → the musicians' takht is being carried (set change) `lko-takht` | 10 |
+| 07 Hazratganj (marathon) | F474 `pass-on-the-attention-side` | A window-shopper steps back from the glass without looking: pass on the WINDOW side (where he is looking), not the open side (where he steps). | candidate 7.3 | Hazratganj arcades (bible §2) | pass on the open side → shoved into the nala `lko-nala` / wait for him to finish → the awning comes down (07's shaam) `lko-shamiyana` | 10 |
+| 07 Hazratganj (marathon) | F475 `sound-names-the-side` | A tonga comes up behind you ringing its bell on the side it will pass: step to the OTHER side. **Sound beat.** | new (bible §3 Hazratganj evening) | Hazratganj carriageway | stand still (PAT-04's answer) → run down `lko-tonga` / step to the bell side → run down, other wheel `lko-tonga-ulta` | 10 |
+| 07 Hazratganj (marathon) | F476 `crowd-gathers-under-light` | At dusk the lamps come on one by one and the strollers gather under each lit lamp: a lit lamp's circle is a wall; take the dark stretch before its lamp lights (the lamplighter's order is readable). | new (bible §2 lamp posts) | Hazratganj | walk under the lit lamp → the crowd shoves you in `lko-nala` / run the dark stretch → the lamplighter's ladder swings (`batti`'s cause) `lko-seedhi` | 10 |
+| 07 Hazratganj (marathon) | none found | 07 ends ~80 s: about 40 s short. Struck: 7.4 (same class as 7.3), 7.5 pigeons (waiting is targeted = TVM-04), 7.6 (a scene), `kohra` (I1), `chhidkav` (I2), `shaam` (S11 unless it gets a tell). A research pass on town life (not crowds) is needed. | | | 0 |
+| 08 Bhool Bhulaiya (HWIK) | F477 `portals-rearrange-after-warp` | The hall doors warp you across the maze, and after every warp the arches have moved: two seconds of calm on arrival, then re-read before you jump. | B30 (portals that rearrange) | Bhool Bhulaiya (bible §2, generic old maze) | jump the arch you remember → the well `lko-kuan` / run on without a warp → the gallery ends `lko-bhool` | 12 |
+| 08 Bhool Bhulaiya (HWIK) | F478 `whole-arch-lifts` | An arch must be whole to lift you a floor: a broken arch is only a doorway, so skip it and jump the next. | candidate 8.2 (ladder beat) | the same gallery | jump the broken arch → no lift, the well `lko-kuan` / walk every arch → the hook roof when the next whole one lifts you walking? no: walking never lifts; the floor ends `lko-bhool` | 8 |
+| 08 Bhool Bhulaiya (HWIK) | F479 `keep-off-the-wall` | The whispering gallery: a word at the wall is heard at the far end and the guard there turns; walk the middle of the gallery though the handrail is on the wall side. | candidate 8.3 | the same gallery | walk by the rail → heard, the guard's gate drops `lko-sargoshi` / run the middle → the dark stretch's hole (roshandan) `lko-roshandan` | 8 |
+| 09 Kabootarbazi | F480 `tumble-is-not-landing` | Girahbaaz pigeons tumble in the air; a tumble is not a landing, so keep crossing on red through a tumble. | candidate 9.2 | pigeon rooftops, old city (bible §3) | stop at the tumble → the flag turns white, they land on you `lko-kabootar` / cross on white "while they tumble" → they land `lko-chhat` | 8 |
+| 10 Lakhnavi Tehzeeb (finale) | callbacks only | Breaks to add: 04 by 07 ("the lamplighter's light moves: keep on its far side", 10.2), 09 ("grain beats the flag", 10.4), 08 with roshandan ("only lit arches lift", 10.6), 06 ("the stamp no longer flips"; "she stops at two"), 08 ("the maze stays put after the warp: run"), 07 ("the bell rings on the side he won't pass"). Fold `julus` and `galiyara` (§5 W2). Struck: 10.3 (03's own read), 10.5 (DIS owns the cold maker). | law 7 | | 32 |
+
+## CCU · Kolkata (needs after §5: 05 +30, 07 +48 incl. a sound beat, 08 +30, 09 +12, 10 +6)
+
+| Stage | Family (F#) | DECISION | Source | Place | NAIVE → / FIX → | Est. s |
+|---|---|---|---|---|---|---|
+| 01 tour | RULED S5 | The tour bite is recast (how you arrive on the rail was `kvt02-glass`); the kumir chalk river (cross only while he counts) stays as the tour's bite. | | | | 0 |
+| 05 Kumartuli | none legal (RULED S4: `uthon` cut, `lane` paint-line only → ~25 s) | Every Kumartuli seed left is a taken thought: bare frames you pass through (RNC-06 hollow window), wet clay sinks (mud), sprayed-vs-dry (S4), load height (07's `dui`), the chala lowered (ceiling drop). **Recommendation:** make 05 a standard slot (25-45 s) on the paint-line rule alone and promote 06 Trolley Pole (62.8 s) to the long slot; a slot swap is the conductor's. | | | 0 |
+| 07 Howrah (marathon) | F481 `horn-shifts-the-carrier` | A lorry's horn behind makes the porters step toward the parapet: the load you ride moves one tile out; stand on its inner half or go over the rail. **Sound beat.** | new (bible §2 Howrah Bridge traffic) | Howrah Bridge footpath | stand centred on the load → tipped over the parapet `ccu-parapet` / hop to the next load on the horn → it steps too, you land between `ccu-gaari` | 12 |
+| 07 Howrah (marathon) | F502 `board-takes-one` | A CHA board seats one porter: when two loads head for the same board, the first to reach it sets down and the second does NOT stop, so ride the second past the board (the room taught "switch before the board"; here the board is taken and your porter walks on). | new (07's own relay, the opposite answer from the same cue) | Howrah Bridge footpath, the chai boards | switch before the board as taught → the second porter was going on, you drop between loads `ccu-bojha` / stay on the first porter → he sets down at the board under the taxi lane `ccu-cha` | 10 |
+| 07 Howrah (marathon) | (not assigned) `flower-sacks-in-flight` | Mallick Ghat: sacks thrown lorry-to-stall as platforms in flight | = B16 ride-the-shover (DIS-06 F453): do not build | | 0 |
+| 07 Howrah (marathon) | none further | 07 ends ~94 s after S6 (baan cut, ~72 s) + F481 + F502; W4 cuts `ulto` when these land (−10 s). The taxi jam is GTK-06's occupancy read (F484). Struck: the bore (S6), station announcements (readability), bridge pigeons (KVT-04 gull), the bhishti's spray (I2 class). | | | 0 |
+| 08 Adda (HWIK) | none legal | Struck: argue-loud/quiet (= BBI F467 quiet-means-clear), page-turn window (lamp), carrom coins (B11, DIS), load-shedding (BLR-06), rain moves the adda (slide). 08 stays ~30-35 s: thin. **Recommendation:** reshape 08 as `std` (the WTF beat alone is a standard stage's worth) or accept. | | | 0 |
+| 09 Pandal (tough) | no new family | RULED S3 cuts both `uthan` and `uthan2` (→ ~45 s); stretch `line` by two beats as 09's labelled momentum beat (+5 s) → ~50 s; `chala` stays. No legal pandal rule left (the lashing man is 09's own maker-ahead again). | 09's own | | 5 |
+| 10 Kolkata Kolkata (finale) | callbacks only | One more break: 01's kumir ("he counts backwards tonight: cross when he STOPS"). ~8 s → ~92 s. | law 7 | | 8 |
+
+## GTK · Gangtok (needs after §5: 03 +3, 05 +5, 06 +20, 07 +47 incl. a sound beat, 08 +7)
+
+| Stage | Family (F#) | DECISION | Source | Place | NAIVE → / FIX → | Est. s |
+|---|---|---|---|---|---|---|
+| 03 Plastic Nahin | F482 `busy-warden-window` (RULED S2: `kagaz` cut, this is 03's replacement, ~30 s) | Pass the inspector while he is writing someone else's fine; his lifting restarts when the pen stops. | candidate 9 (moved from 05 to 03, which loses `kagaz` in §5 S2) | MG Marg checkpoint (bible §2) | pass while he looks up → your bag is lifted `gtk-jaanch` / wait for him to finish → the jhora bag you wait on is polythene `gtk-polythene` | 8 |
+| 05 MG Marg ka Niyam (HWIK) | F483 `lamp-warming-tell` | Jump with the wrapper only in a patch whose lamp is still cold: a glowing filament means that patch is about to be lit and policed. | candidate 8 | MG Marg at dusk | jump under a glowing lamp → fined `gtk-jurmana` / wait for the lamp to light fully then go → the sweeper's stroke `gtk-jhadu` | 10 |
+| 06 Seedhi | F484 `occupied-means-it-moves` | Read occupancy before you pass: a taxi with one seat left is about to pull out across the stair foot, and a house with its lights on throws you out of its through-door; the empty taxi and the dark house are the way. | candidate 10 + 11 merged (the one thought: occupied things act) | taxi stand and switchback houses on the slope (bible §2) | pass the nearly-full taxi → `gtk-taxi` / take the lit house's door → the gully `gtk-khaai` | 14 |
+| 06 Seedhi | none further | 06 ends ~54 s. Struck: light-through (LKO-8.1 class), schoolkids/doko porters (PAT-04), sleeping dogs (PNJ-04), wet landing (DMN-03). Accept or research. | | | 0 |
+| 07 Badal (marathon) | F485 `walk-to-sound` | In the cloud a mule's bell marks the road: walk to the sound, not along the rope, where the rope has gone with the slide. **Sound beat.** | candidate 1 | NH10 mule train in cloud (bible §3) | follow the rope → the slid road `gtk-badal` / stand and wait for the bell to come to you → the mule walks you off the kerb `gtk-khachar` | 12 |
+| 07 Badal (marathon) | F486 `drip-line-shelter` | When the rain comes, stand on a drip line: it proves a roof above you the fog hides; the awning you remember has gone. **Shelter beat** (replaces `thau` if §5 S12 is ruled strictly). | candidate 2 | MG Marg side lanes | run to the remembered awning → the gap where it was `gtk-khaai` / stand in the open and wait → soaked and slid `gtk-chiplo` | 12 |
+| 07 Badal (marathon) | F487 `fog-hides-ceiling` | Under a drip line jump low: the fog hides the balcony above, not the floor. | candidate 3 (the twist on 2) | the same lane | full jump → the balcony `gtk-balcony` / walk the stretch → the kerb gap `gtk-khaai` | 8 |
+| 07 Badal (marathon) | F488 `count-flash-to-thunder` | Count flash to thunder: cross the open stretch only while the count is longer than the crossing; shelter while it is shorter. | candidate 6 | the ridge road above town (bible §2 monsoon) | cross on a short count → struck `gtk-bijuli` / shelter for ever → the shelter is the cloud-hidden kerb (07's room) `gtk-badal` | 12 |
+| 08 Ropeway (HWIK) | F489 `door-side-boarding` | Board from the door side; if the cabin arrives with its door facing away, walk round the station to the far platform. | candidate 12 | Deorali ropeway station (bible §2) | board the near side → the blind side has no door, you fall `gtk-ropeway` / wait for the next cabin → it is the one that rides back into the shed (08's room) `gtk-ropeway` (different tick) | 10 |
+
+Struck: candidate 4 (loud/quiet = BBI F467), 5 (read-then-go = `lko07-photo`), 13 (alternate to 12), 7 (a tell). GTK-02 keeps `ulta`, drops `bhatti` (§5 S3) and stays in band at ~27 s.
+
+## SVP · Sri Vijaya Puram (needs after §5: 05 +10, 06 +24, 07 +75, 08 +19, 09 +25; 03 door recast)
+
+| Stage | Family (F#) | DECISION | Source | Place | NAIVE → / FIX → | Est. s |
+|---|---|---|---|---|---|---|
+| 03 Magarmachh door | no new family | Recast `svp-board-bridge` (§5 I4): the board's own arrow (03's rule) points at the door's log while the croc is under it; the door is safe when the arrow points away. | 03's own | | 0 |
+| 05 Note Ki Tasveer (HWIK) | F503 `eye-height-not-footprints` | The painted footprints at the last bench are for someone taller: from the ground the picture never lines up (the horizon on the note sits above the trees); stand on the bench behind the footprints to match the eye height, and the slabs appear. The HWIK read: the note's horizon tells the height. | new (05's own rule on a second axis) | North Bay viewpoint, the ₹20-note view (bible §2) | stand on the footprints and step out → no slab `svp-nazar` / climb the signboard pole for height → the slabs appear too far down the slope, out of a tap's reach `svp-door` | 10 |
+| 05 Note Ki Tasveer (HWIK) | RULED S7 | `svp05-rassi` and `svp10-rassi` cut; the caves (R1) stay; 05 ≈ 60 s with F503. | | | | 0 |
+| 06 Tote | F490 `refraction-aim-beyond` | The submerged ledge is not where it looks: aim beyond it by the amount the boatman's pole bends at the water line. | candidate 5 | Baratang mangrove creek at dusk (bible §2) | jump where the ledge looks → short, into the creek `svp-nadi` / wait for the pole to straighten → the parrots land, the branch you wait on bends under (06's room) `svp-tote` | 12 |
+| 06 Tote | none further | 06 ends ~48 s. Struck: mudskippers as a firm-mud tell (= `kvt-footsteps`), prop roots on a dropping tide (tides), branch bend order (second window). | | | 0 |
+| 07 Ship Late Hai (marathon) | F491 `exit-shelter-same-side` | The arch shelter: leave it by the side you entered; the far side is where the rush comes round. **Shelter beat.** | candidate 3 | Haddo wharf arches (bible §3 ferries) | leave by the far side → the crowd `svp-bheed` / stay in the arch → the luggage stack beside it is the floor that goes (07's room) `svp-saman` | 12 |
+| 07 Ship Late Hai (marathon) | none further | 07 ends ~57 s: about 60 s short. No momentum or sound beat passed: the horn pattern = TVM-02 bells; a rising mooring line = GNR-04 waves; trolleys = rollers; the three-language call is a readability add; a late runner = PAT-04. The bible's sea is exhausted; the research needed is town life (Aberdeen Bazaar, Chatham mill, Ross ruins). | | | 0 |
+| 08 Do Monsoon (HWIK) | F492 `read-roof-slope` | Under a roof, read the slope, not the wind: a lean-to sheds its water on its low side whichever way the rain comes. | candidate 6 | Aberdeen Bazaar eaves (bible §2) | stand to leeward by the wind → the slope's run-off `svp-chhajja` / stand to windward → the rain `svp-baarish` | 10 |
+| 08 Do Monsoon (HWIK) | F493 `drumming-roof-names-the-rain-side` | Under the covered market the rain is heard, not seen: the tin roof that drums is taking the rain, so its lee edge is dry. **Sound beat.** | new (bible §2 Aberdeen Bazaar) | Aberdeen Bazaar covered market | step out under the quiet roof's edge → the rain is on that side `svp-baarish` / wait under the drumming roof → the gutter floods (08's door rule) `svp-nala` | 10 |
+| 09 Jad (long) | F494 `release-point-vertical` | The weight belt: the way up is a straight line and the hull above has one hatch; from which spot on the seabed you let go decides it. | candidate 4 | North Bay sea walk pontoon (bible §2) | let go under the pontoon's middle → the hull `svp-hull` / walk the seabed to the edge and surface → the propeller `svp-pankha` | 12 |
+| 09 Jad (long) | none further | 09 ends ~47 s. Struck: wrapped trusses (09's own root rule), tanks (`hauz`, removed), the deer (04). | | | 0 |
+| 10 Dweep (finale) | callbacks only | RULED S7: `svp10-rassi` goes. W7: turn the replays into breaks: `nadi` ("the board is stale: the croc moved and nobody turned it; read the ripples"), `jad` ("the green root is the one that swings away; the grey one is dry-rooted in brick and holds"), `saman` ("the luggage is lashed for the storm: it stays after the call; the crowd is the floor that goes"), `ghat` ("the deer are tied: carry the food"), `rassi` (goes with S7). | law 7 | | 0 |
+
+## KVT · Kavaratti (encore 09 only: 36.7 s against 60; conductor's addition 10:30 IST)
+
+KVT-09's acts after fix round 1 and their decisions (FIX-1.md B4): room, on the slide walk to the far end and tap up; `pavizham` under the lip a tap, never a
+full leap; `kodumudi` narrow steps take the far tile, over the summit walk off, never hop down; `kadalbhitti` a heap you land deep on, a lone block you jump
+whole; `varambu` on a ridge only the middle holds; `murivu` jump well past the cut; door, three hops slide the heap off, the fourth tips you in. `irangal` and
+`kuzhi` were cut as repeats. Every one of those treats the slide as a penalty to compensate; the two acts below make the slide the tool, then make it persist.
+
+| Stage | Family (F#) | DECISION | Source | Place | NAIVE → / FIX → | Est. s |
+|---|---|---|---|---|---|---|
+| 09 Kalpeni Kadalkara (tough) | F496 `slide-is-the-ride` | A beach-rock lip too low to leap under (09's `pavizham`) with the next ledge beyond a tap's reach: land SHORT on purpose and let two landings slide you under the lip to the ledge's foot; on the ridge after it, land on the side of the heap you want to travel: the slide is how you move, not only what you avoid. | B16 (block that pushes: contact is a ride); contested with DIS-06 F453, §5e V1 | Kalpeni's eastern storm bank under the cemented beach-rock lip (KVT.md source check: Wikipedia, 1847 storm debris) | tap-jump for the ledge as `pavizham` taught → hits the lip `spikes` / walk off the step to avoid any slide (`kodumudi`'s answer) → the ledge is out of reach and the slide stops at the lip's foot over the pool: splash | 14 |
+| 09 Kalpeni Kadalkara (tough) | F497 `place-the-heap-for-the-way-back` | The route doubles back along the crest, and every heap you slide stays where it went: on the way out, slide each heap on purpose to where you will need it on the way back; a heap slid off the crest is gone. | new (09's own physics made persistent) | the crest of the storm bank above Koomel bay, out along the sea side and back along the lagoon side | climb clean, far tile every time (as taught) → on the way back the heaps sit under the lip, the gap is a full leap into the pool: splash / slide every heap as far as it goes → the third goes off the crest into the lagoon and the way back has no step: fall on to beach rock `kvt-rock` | 12 |
+
+Closest in the registry and why these differ: `bbi-curl-stair` (make the floor by your own side effect, at once) vs F497 (plan a return over floor you moved);
+RNC-07 (the falling water is the way down) vs F496 (the slide is steered by where you land; it is not entered, it is aimed). KVT-10 already breaks 09's rules
+(`kvt10-kallu`: land in the middle of the step; the octopus is the far tile); F496/F497 give it two more to break if the finale ever needs them.
+
+## Summary
+
+| City | New families | Est. added s | Stages still short after v3 (est.) |
+|---|---|---|---|
+| DIS | 16 (F447-F452, F454-F463; F453 withdrawn) + new 04 room + dheki re-skin | 02 +11, 04 room, 05 +44, 06 +44, 07 +56, 08 +22, 09 +25, 10 +45 | 06 (~48 s), 09 (~47 s), 05 (~56 s): plain beats or accept |
+| BBI | 12 (F464-F470, F495, F498-F501; F468 reserve) + 09 beat | 05 +12, 06 +24, 07: IDEAS-3 B1 B2 B5 B6 built (~48) + F495 8 + F467 12, 08 +22, 09 +5, 10 +42 | none (07 ≈ 133 s; ≈ 121 s if gum-ta is cut and F467 not yet built) |
+| LKO | 10 (F471-F480) | 05 +9, 06 +22, 07 +30, 08 +28, 09 +8, 10 +32 | 05 (~48 s), 07 (~80 s) |
+| CCU | 2 (F481, F502) + 09 beat | 07 +22, 09 +5, 10 +8 | 05 (~25 s, swap slots?), 07 (~94 s, ~84 after W4), 08 (~30 s), 09 (~50 s) |
+| GTK | 8 (F482-F489) | 03 +8 (S2 replacement), 05 +10, 06 +14, 07 +44, 08 +10 | 06 (~54 s) |
+| SVP | 6 (F490-F494, F503) | 05 +10, 06 +12, 07 +12, 08 +20, 09 +12 | 06 (~48 s), 07 (~57 s), 09 (~47 s) |
+| KVT | 2 (F496-F497) | 09 +26 | none (09 ≈ 63 s; V1 applied for KVT) |
+
+Archetypes used by v3: B5, B6, B7, B10, B11, B13, B16, B17, B18, B19, B20, B21, B23, B28, B29, B30. Families: F447-F503 (57; F453 withdrawn, F468 a reserve). Left free on purpose: B12 (spike wave = PDY-04's "never stop"),
+B24 and B34 (input changes: engine), B33 (identity swap: a render trick, no decision), B40 (optional secrets, never for length).
+Cross-city pairs inside v3 are in DECISIONS.md §5e (V1 raft vs slide: one owner; V2 the six sound beats, kept apart). Cross-city collisions avoided inside v3: one sound-locates owner per thought (GTK walks TO the bell, BBI avoids the sounding spot, DIS stands opposite the shout, LKO reads the side,
+SVP hears the rain side, CCU's horn moves the carrier); one occupancy read (GTK-06); one accelerating hail (BBI-08); one portal idea per city (DIS chain, BBI runner, LKO rearrange).

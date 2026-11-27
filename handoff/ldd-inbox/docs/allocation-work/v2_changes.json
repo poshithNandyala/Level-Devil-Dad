@@ -1,0 +1,366 @@
+[
+ [
+  "BPL",
+  "09 (encore)",
+  "BPL-09 dots-only-stepping-stones [dot-path]",
+  "BPL-09 rock-shelter-refuge-wave [B13]",
+  "1"
+ ],
+ [
+  "GNR",
+  "09 (encore)",
+  "GNR-09 tie-dye-reveals-on-untie [untie-reveal]",
+  "GNR-09 full-bin-chute-pulls-down [chute-when-full]",
+  "1"
+ ],
+ [
+  "KVT",
+  "09 (encore)",
+  "KVT-09 rope-laid-behind [laid-behind]",
+  "KVT-09 storm-bank-rubble-slides [rubble-slide]",
+  "2"
+ ],
+ [
+  "AGT",
+  "03",
+  "AGT-03 mat-unrolled-ahead-rolled-behind [unroll-roll]",
+  "AGT-F4 latex-cup-tips-when-full [fill-tips]",
+  "2"
+ ],
+ [
+  "SML",
+  "07",
+  "SML-02 own-steps-pack-the-snow [pack-by-stepping]",
+  "SML-02 own-steps-pack-the-snow [pack-by-stepping]",
+  "2 (kept, own-steps rule)"
+ ],
+ [
+  "LEH",
+  "01",
+  "LEH-01 greeting-moves-people [greet-moves]",
+  "LEH-F2 water-turn-switches-channel [water-turn, B4]",
+  "5"
+ ],
+ [
+  "DEL",
+  "03",
+  "DEL-04 lane-narrows-when-you-stand [space-by-standing]",
+  "DEL-04 gali-stalls-out-in-shutter-order [shutter-stall-out]",
+  "5"
+ ],
+ [
+  "AGT",
+  "08",
+  "AGT-F1 duck-column-pace-on-bund [duck-pace]",
+  "AGT-F1 duck-column-pace-on-bund [duck-pace]",
+  "7"
+ ],
+ [
+  "SHL",
+  "05",
+  "SHL-10 hidden-schedule-seven-streams [hidden-schedule]",
+  "SHL-10 one-stream-schedule-mark [hidden-schedule]",
+  "7"
+ ],
+ [
+  "SVP",
+  "08",
+  "SVP-08 rain-direction-reverses-awnings [second-season]",
+  "SVP-08 rain-direction-reverses-awnings [second-season]",
+  "7"
+ ],
+ [
+  "DIS",
+  "08",
+  "DIS-08 follow-flattened-strip [follow-flattened]",
+  "DIS-08 follow-flattened-strip [follow-flattened]",
+  "7"
+ ],
+ [
+  "DEL",
+  "08",
+  "DEL-02 horn-ring-code-reading [code-reading]",
+  "DEL-02 horn-ring-code-reading [code-reading]",
+  "7"
+ ],
+ [
+  "SXR",
+  "08",
+  "SXR-04 spoken-count-colour-knots [spoken-rule]",
+  "SXR-04 spoken-count-colour-knots [spoken-rule]",
+  "7"
+ ],
+ [
+  "CHH",
+  "05",
+  "CHH-09 guide-true-words-wrong-unit [unit-trap]",
+  "CHH-09 tara-strides-wrong-unit [unit-trap]",
+  "7"
+ ],
+ [
+  "SML",
+  "10",
+  "SML-12 finale-winter-run [winter-run]",
+  "SML-12 finale-winter-run [winter-run]",
+  "9"
+ ],
+ [
+  "CHP",
+  "10",
+  "CHP-12 finale-wedding-blind-walk [veil-and-shoes]",
+  "CHP-12 finale-wedding-blind-walk [veil-and-shoes]",
+  "9"
+ ],
+ [
+  "ITA",
+  "10",
+  "ITA-12 finale-sun-line-reveals-door [sun-line-door]",
+  "ITA-12 finale-bricks-on-one-lane-bridge [brick-bridge-oncoming]",
+  "9 / 12 (sun)"
+ ],
+ [
+  "SHL",
+  "10",
+  "SHL-12 finale-landing-tilts-rest-stall [landing-tilt]",
+  "SHL-12 finale-cadence-bridge-day-stalls [stalls-on-swaying-span]",
+  "9"
+ ],
+ [
+  "BBI",
+  "10",
+  "BBI-12 finale-soot-reveals-ikat [soot-ikat]",
+  "BBI-12 finale-pads-onto-plinth [pads-to-plinth]",
+  "1 / 12"
+ ],
+ [
+  "KOH",
+  "07",
+  "KOH-01 downhill-cart-lean-steer [cart-steer]",
+  "KOH-01 downhill-cart-lean-steer [cart-steer]",
+  "10/12"
+ ],
+ [
+  "CHP",
+  "04",
+  "CHP-05 summon-by-touch-kid-tide [summon-by-touch]",
+  "CHP-07 crop-band-hides-furrows [crop-cover]",
+  "10/12"
+ ],
+ [
+  "SXR",
+  "05",
+  "SXR-07 paper-box-skids-wood-holds [skid-weightless]",
+  "SXR-F1 cut-stem-sinks-leaf [cut-stem-sinks]",
+  "10/12"
+ ],
+ [
+  "GTK",
+  "08",
+  "GTK-06 dull-block-never-breaks [dull-safe]",
+  "GTK-F2 cabins-cross-at-midpoint [cabin-cross]",
+  "10/12"
+ ],
+ [
+  "RPR",
+  "10 (encore)",
+  "RPR-10 wheel-spoke-steps [spoke-steps]",
+  "RPR-10 raut-sticks-clash-high-low [stick-clash]",
+  "10/12"
+ ],
+ [
+  "HYD",
+  "09 (encore)",
+  "HYD-09 clam-gate-pearl-step [clam-gate]",
+  "HYD-09 dunked-biscuit-softens-on-count [dunk-soft]",
+  "10/12"
+ ],
+ [
+  "RNC",
+  "09 (encore)",
+  "RNC-09 press-hammer-beat [hammer-beat]",
+  "RNC-09 lac-sheet-softens-near-fire [lac-soft]",
+  "10/12"
+ ],
+ [
+  "CHH",
+  "07",
+  "CHH-02 buffalo-platforms-sink-on-sun-cue [animal-platform-weather]",
+  "CHH-02 buffalo-platforms-sink-on-herder-call [animal-platform-call]",
+  "12"
+ ],
+ [
+  "PAT",
+  "09",
+  "shape marathon",
+  "shape tough (60-90 s, 4-5 beats, 3-4 checkpoints)",
+  "8/9"
+ ],
+ [
+  "CCU",
+  "09",
+  "shape marathon",
+  "shape tough (60-90 s, 4-5 beats, 3-4 checkpoints)",
+  "8/9"
+ ],
+ [
+  "BBI",
+  "05",
+  "shape HWIK",
+  "shape HWIK (long 60-90 s)",
+  "8/9"
+ ],
+ [
+  "GTK",
+  "05",
+  "shape HWIK",
+  "shape HWIK (long 60-90 s)",
+  "8/9"
+ ],
+ [
+  "DIS",
+  "05",
+  "shape HWIK",
+  "shape HWIK (long 60-90 s)",
+  "8/9"
+ ],
+ [
+  "SVP",
+  "05",
+  "shape HWIK",
+  "shape HWIK (long 60-90 s)",
+  "8/9"
+ ],
+ [
+  "SHL",
+  "09",
+  "shape marathon",
+  "shape tough (60-90 s, 4-5 beats, 3-4 checkpoints)",
+  "8/9"
+ ],
+ [
+  "KOH",
+  "09",
+  "shape marathon",
+  "shape tough (60-90 s, 4-5 beats, 3-4 checkpoints)",
+  "8/9"
+ ],
+ [
+  "IMP",
+  "09",
+  "shape marathon",
+  "shape tough (60-90 s, 4-5 beats, 3-4 checkpoints)",
+  "8/9"
+ ],
+ [
+  "AIZ",
+  "05",
+  "shape HWIK",
+  "shape HWIK (long 60-90 s)",
+  "8/9"
+ ],
+ [
+  "AGT",
+  "05",
+  "shape HWIK",
+  "shape HWIK (long 60-90 s)",
+  "8/9"
+ ],
+ [
+  "DEL",
+  "05",
+  "shape HWIK",
+  "shape HWIK (long 60-90 s)",
+  "8/9"
+ ],
+ [
+  "DEL",
+  "09",
+  "shape marathon",
+  "shape tough (60-90 s, 4-5 beats, 3-4 checkpoints)",
+  "8/9"
+ ],
+ [
+  "CHP",
+  "05",
+  "shape HWIK",
+  "shape HWIK (long 60-90 s)",
+  "8/9"
+ ],
+ [
+  "CHH",
+  "09",
+  "shape marathon",
+  "shape tough (60-90 s, 4-5 beats, 3-4 checkpoints)",
+  "8/9"
+ ],
+ [
+  "DDN",
+  "05",
+  "shape HWIK",
+  "shape HWIK (long 60-90 s)",
+  "8/9"
+ ],
+ [
+  "SML",
+  "05",
+  "shape HWIK",
+  "shape HWIK (long 60-90 s)",
+  "8/9"
+ ],
+ [
+  "SML",
+  "09",
+  "shape marathon",
+  "shape tough (60-90 s, 4-5 beats, 3-4 checkpoints)",
+  "8/9"
+ ],
+ [
+  "JMU",
+  "05",
+  "shape HWIK",
+  "shape HWIK (long 60-90 s)",
+  "8/9"
+ ],
+ [
+  "JMU",
+  "09",
+  "shape marathon",
+  "shape tough (60-90 s, 4-5 beats, 3-4 checkpoints)",
+  "8/9"
+ ],
+ [
+  "SXR",
+  "09",
+  "shape marathon",
+  "shape tough (60-90 s, 4-5 beats, 3-4 checkpoints)",
+  "8/9"
+ ],
+ [
+  "LEH",
+  "05",
+  "shape HWIK",
+  "shape HWIK (long 60-90 s)",
+  "8/9"
+ ],
+ [
+  "LEH",
+  "09",
+  "shape marathon",
+  "shape tough (60-90 s, 4-5 beats, 3-4 checkpoints)",
+  "8/9"
+ ],
+ [
+  "BBI",
+  "08",
+  "BBI-04 invisible-cuts-revealed-after [reveal-after]",
+  "BBI-F3 pakhala-pour-floats-grains [pour-floats]",
+  "10/12"
+ ],
+ [
+  "ITA",
+  "08",
+  "ITA-01 torch-circle-reveals-floors [light-radius]",
+  "ITA-10 raft-poles-spread-under-weight [poles-spread]",
+  "10/12"
+ ]
+]

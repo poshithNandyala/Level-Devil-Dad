@@ -1,0 +1,44 @@
+import { it } from 'vitest';
+import { LEVELS } from '../../src/game/levels';
+import { World } from '../../src/game/world';
+import { INFO } from '../helpers';
+import { play } from '../runner';
+import { SOLUTIONS } from '../solutions';
+// QA scratch: for each checkpoint, where the route stands when it takes it, and the distance (tiles) to the first
+// static hazard box (any entity with a hazard and an x/w, on or off) or floor gap ahead on Dad's row
+it('qa bbi cp distance', () => {
+  const orig = World.prototype.step;
+  for (const def of LEVELS.filter((d) => d.id.startsWith('BBI'))) {
+    const takes: { cp: number; x: number; y: number }[] = [];
+    World.prototype.step = function (this: World, i) {
+      const c = this.cp;
+      const r = orig.call(this, i);
+      if (this.cp > c) takes.push({ cp: this.cp, x: this.player.x + this.player.w, y: this.player.y + this.player.h });
+      return r;
+    } as typeof orig;
+    const { w } = play(def, SOLUTIONS[def.id]);
+    World.prototype.step = orig;
+    const boxes = (w.entities as any[]).filter((e) => e.hazard && typeof e.x === 'number' && typeof e.w === 'number' && typeof e.y === 'number' && typeof e.h === 'number');
+    const out: string[] = [];
+    for (const t of takes) {
+      let best = 99, what = '';
+      for (const b of boxes) {
+        if (b.x + b.w <= t.x) continue;
+        if (b.y > t.y + 48 || b.y + b.h < t.y - 64) continue;
+        const d = Math.max(0, b.x - t.x) / 16;
+        if (d < best) { best = d; what = b.hazard.cause; }
+      }
+      // floor gap on Dad's row
+      const ty = Math.floor((t.y + 2) / 16);
+      for (let tx = Math.floor(t.x / 16); tx < Math.floor(t.x / 16) + 12; tx++) {
+        if (!w.isSolidTile(w.tileAt(tx, ty)) && !w.isSolidTile(w.tileAt(tx, ty + 1))) {
+          const d = Math.max(0, tx * 16 - t.x) / 16;
+          if (d < best) { best = d; what = 'gap'; }
+          break;
+        }
+      }
+      out.push(`cp${t.cp}@${(t.x / 16).toFixed(1)}:${best.toFixed(1)}${best < 4.5 ? '!' : ''}(${what})`);
+    }
+    console.log(`CPD ${def.id} ${out.join(' ')}`);
+  }
+});

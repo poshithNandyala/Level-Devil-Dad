@@ -1,0 +1,6 @@
+CCU-07 L0 i0 clear 72.6s caught 9/7 maxStretch 14.0s worstReplay 13.1s (run@58.0s ccu-gaari cp4) calm ok
+CCU-07 L0 i180 clear 74.1s caught 9/7 maxStretch 14.0s calm ok
+CCU-07 L6 i0 clear 73.1s caught 9/7 maxStretch 14.0s worstReplay 13.0s (run@58.0s ccu-gaari cp4) calm ok
+CCU-07 L6 i180 clear 74.6s caught 9/7 maxStretch 14.0s calm ok
+CCU-07 L12 i0 clear 74.1s caught 9/7 maxStretch 14.2s worstReplay 13.0s (run@58.3s ccu-gaari cp4) calm ok
+CCU-07 L12 i180 clear 75.6s caught 9/7 maxStretch 14.2s calm ok

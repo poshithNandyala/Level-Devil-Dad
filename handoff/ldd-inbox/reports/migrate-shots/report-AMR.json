@@ -1,0 +1,83 @@
+{
+ "code": "AMR",
+ "moved": [
+  "src/render/backdrops-south.ts:amaravati -> src/game/cities/amr/backdrop.ts",
+  "src/game/levels/amr.ts -> src/game/cities/amr/levels.ts",
+  "src/game/entities/andhra.ts -> src/game/cities/amr/entities.ts"
+ ],
+ "removed": [
+  "src/game/cities.ts:LINES.AMR",
+  "src/game/cities.ts:CHAPTERS AMR city/hello/famous (filled by install)",
+  "src/game/levels/chunks.ts:SKINS.AMR",
+  "src/game/levels/tour.ts:COURSES.AMR",
+  "src/app/citylines.ts:CITY_LINE.AMR",
+  "src/render/renderer.ts:GRADES.AMR",
+  "src/render/art/tiles.ts:CAP.AMR",
+  "src/audio/audio.ts:MUSIC.AMR",
+  "src/render/theme.ts:THEMES.AMR",
+  "src/render/theme.ts:CITY_ORDER AMR (install appends it)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.key (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.speed (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.dejavu (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.whirlwind (+ EndingKind)",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case punugulu",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case sluice",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case deg",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case roadroller",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case stalactite",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case cablecar",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case sub"
+ ],
+ "importers": [
+  "src/game/levels/index.ts"
+ ],
+ "inv": {
+  "own": [
+   "src/game/levels/amr.ts",
+   "src/game/entities/andhra.ts"
+  ],
+  "cause": [],
+  "causeShared": [
+   "spikes<game/cities/blr/levels.ts,game/cities/chn/levels.ts,game/cities/kvt/endings.ts,game/cities/kvt/levels.ts,game/cities/pdy/levels.ts,game/entities/basics.ts,game/levels/endings.ts,game/levels/twists.ts,game/world.ts",
+   "crushed<game/cities/blr/levels.ts,game/cities/chn/endings.ts,game/cities/pdy/endings.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/group.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/hyd.ts,game/levels/trolls.ts,game/world.ts",
+   "splash<app/app.ts,game/cities/blr/levels.ts,game/cities/chn/levels.ts,game/cities/kvt/endings.ts,game/cities/kvt/entities.ts,game/cities/kvt/levels.ts,game/cities/pdy/levels.ts,game/cities/rnc/entities.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/abilities.ts,game/entities/daman.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/bom.ts,game/levels/chunks.ts,game/levels/dmn.ts,game/levels/endings2.ts,game/levels/endings3.ts,game/levels/gnr.ts,game/levels/kit.ts,game/levels/pnj.ts,game/player.ts",
+   "burnt<game/cities/chn/levels.ts,game/cities/pdy/levels.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/chunks.ts,game/levels/hyd.ts",
+   "hit<game/cities/blr/levels.ts,game/cities/chn/levels.ts,game/cities/kvt/endings.ts,game/cities/kvt/levels.ts,game/cities/pdy/levels.ts,game/cities/tvm/levels.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/hyd.ts,game/levels/kit.ts"
+  ],
+  "ending": [
+   "key",
+   "speed",
+   "dejavu",
+   "whirlwind"
+  ],
+  "endingShared": [
+   "swing<game/levels/endings.ts",
+   "mirchi<game/levels/chunks.ts",
+   "monkey<game/entities/props.ts,game/levels/endings.ts"
+  ],
+  "thing": [
+   "punugulu",
+   "sluice",
+   "deg",
+   "roadroller",
+   "stalactite",
+   "cablecar",
+   "sub"
+  ],
+  "thingShared": [
+   "boulder<game/cities/blr/levels.ts,game/cities/blr/skin.ts,game/cities/pdy/endings.ts,game/cities/rnc/skin.ts,game/cities/tvm/levels.ts,game/cities/tvm/skin.ts,game/levels/chunks.ts",
+   "pad<game/cities/blr/levels.ts,game/levels/bom.ts,game/levels/hyd.ts",
+   "lighthouse<game/cities/chn/levels.ts,game/cities/kvt/levels.ts,game/cities/pdy/levels.ts,render/scenes.ts",
+   "rock<game/cities/blr/levels.ts,game/cities/pdy/levels.ts,game/levels/bpl.ts,game/levels/gnr.ts,game/levels/hyd.ts,game/levels/jai.ts,render/scenes.ts",
+   "hook<render/art/things.ts",
+   "chilli<game/levels/chunks.ts",
+   "doll<game/cities/chn/levels.ts",
+   "mirchi<game/levels/chunks.ts",
+   "cart<game/cities/pdy/levels.ts,game/cities/rnc/levels.ts,game/entities/mumbai.ts,game/levels/bom.ts,game/levels/bpl.ts,game/levels/chunks.ts,game/levels/dmn.ts,game/levels/gnr.ts,game/levels/jai.ts,game/levels/rpr.ts",
+   "lantern<game/cities/pdy/levels.ts",
+   "log<game/cities/blr/levels.ts,game/cities/chn/levels.ts,game/cities/tvm/levels.ts",
+   "bat<game/levels/chunks.ts",
+   "plank<game/entities/bhopal.ts,game/levels/bom.ts,game/levels/bpl.ts,game/levels/endings.ts,game/levels/endings3.ts,game/levels/twists.ts"
+  ]
+ }
+}

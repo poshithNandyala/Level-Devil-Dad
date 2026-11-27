@@ -1,0 +1,71 @@
+{
+ "code": "DMN",
+ "moved": [
+  "src/render/backdrops-west.ts:daman -> src/game/cities/dmn/backdrop.ts",
+  "src/game/levels/dmn.ts -> src/game/cities/dmn/levels.ts",
+  "src/game/entities/daman.ts -> src/game/cities/dmn/entities.ts"
+ ],
+ "removed": [
+  "src/game/cities.ts:LINES.DMN",
+  "src/game/cities.ts:CHAPTERS DMN city/hello/famous (filled by install)",
+  "src/game/levels/chunks.ts:SKINS.DMN",
+  "src/game/levels/tour.ts:COURSES.DMN",
+  "src/app/citylines.ts:CITY_LINE.DMN",
+  "src/render/renderer.ts:GRADES.DMN",
+  "src/render/art/tiles.ts:CAP.DMN",
+  "src/audio/audio.ts:MUSIC.DMN",
+  "src/render/theme.ts:THEMES.DMN",
+  "src/render/theme.ts:CITY_ORDER DMN (install appends it)",
+  "src/game/entities/props.ts:CAUSE_LINES.moored",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.customs (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.coldstore (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.flag (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.drawbridge (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.slidedoor (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.paintwall (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.tipjetty (+ WestEndingKind)",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case bombil"
+ ],
+ "importers": [
+  "src/game/levels/index.ts",
+  "tests/west.ts"
+ ],
+ "pruned": [
+  "src/game/levels/endings3.ts: dropped {'type Climbable'}",
+  "src/game/levels/endings3.ts: dropped {'secs'}",
+  "src/game/levels/endings3.ts: dropped {'RIVER'}",
+  "src/render/backdrops-west.ts: import { palm } from './backdrops-south';"
+ ],
+ "inv": {
+  "own": [
+   "src/game/levels/dmn.ts",
+   "src/game/entities/daman.ts"
+  ],
+  "cause": [
+   "moored"
+  ],
+  "causeShared": [
+   "splash<app/app.ts,game/cities/amr/levels.ts,game/cities/blr/levels.ts,game/cities/bom/levels.ts,game/cities/chn/levels.ts,game/cities/kvt/endings.ts,game/cities/kvt/entities.ts,game/cities/kvt/levels.ts,game/cities/pdy/levels.ts,game/cities/pnj/endings.ts,game/cities/pnj/levels.ts,game/cities/rnc/entities.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/abilities.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/chunks.ts,game/levels/endings2.ts,game/levels/endings3.ts,game/levels/gnr.ts,game/levels/kit.ts,game/player.ts",
+   "frozen<game/levels/endings3.ts"
+  ],
+  "ending": [
+   "customs",
+   "coldstore",
+   "flag",
+   "drawbridge",
+   "slidedoor",
+   "paintwall",
+   "tipjetty"
+  ],
+  "endingShared": [
+   "lamp<game/cities/blr/levels.ts,game/cities/bom/levels.ts,game/cities/chn/levels.ts,game/cities/hyd/levels.ts,game/cities/pdy/levels.ts,game/cities/pnj/levels.ts,game/cities/rnc/levels.ts,game/levels/bpl.ts,game/levels/gnr.ts,game/levels/jai.ts,game/levels/rpr.ts"
+  ],
+  "thing": [
+   "bombil"
+  ],
+  "thingShared": [
+   "jetty<game/cities/kvt/levels.ts,game/cities/pnj/endings.ts,game/cities/pnj/levels.ts,game/levels/endings3.ts",
+   "cart<game/cities/amr/levels.ts,game/cities/amr/skin.ts,game/cities/bom/levels.ts,game/cities/bom/skin.ts,game/cities/pdy/levels.ts,game/cities/rnc/levels.ts,game/entities/mumbai.ts,game/levels/bpl.ts,game/levels/gnr.ts,game/levels/jai.ts,game/levels/rpr.ts"
+  ]
+ }
+}

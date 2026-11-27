@@ -1,0 +1,73 @@
+DIS-01 naive -> dis-spill | fix -> dis-pool
+  m0 [dis-spill] steps off the deck as the second boy comes: his tray
+  m1 [dis-spill] goes past him before he has stopped at the bench: his tray swings out in front of him
+  m2 [dis-spill] waits on where he stood to watch him pour: he picks the tray up and walks on into him
+DIS-02 naive -> dis-luit | fix -> -
+  m0 [dis-luit] waits on the first bar for ever: it sinks once the next one is up
+  m1 [dis-luit] second scripted death, same trap (one play: the sandbars have one hazard, the river under a bar that is not there: every wrong move is a wrong bar)
+  m2 [dis-bhutbhuti] dis02-bhutbhuti: hops off the bar’s far end on the ferry’s horn: no bar is there
+  m3 [dis-char-sink] dis02-bhutbhuti (fix): waits out the horn at the bar’s far end without moving: it narrows under him
+DIS-03 naive -> dis-basket | fix -> -
+  m0 [dis-basket] follows her too close on the wet path and slides into her basket
+  m1 [dis-basket] second scripted death, same trap (one play: the tea row has one hazard, the plucker’s basket: too close, too early or over her all meet it)
+DIS-04 naive -> dis-talatal | fix -> dis-doba
+  m0 [dis-kup] dis04-batah: goes down the stairwell with the light in it: the flooded vault
+  m1 [dis-garh] dis04-batah (fix): learns the lit well is flooded and takes the first dark one: it has fallen in
+DIS-05 naive -> dis-gamosa | fix -> -
+  m0 [dis-gamosa] dis05-atithi: walks straight on into it
+  m1 [dis-beam] dis05-sanko: jumps the nala he remembers: the low beam
+  m2 [dis-sanko-pit] dis05-sanko (fix): backs off to find a host to take a gamosa: the ditch behind
+  m3 [dis-kol-paat] dis05-feast: jumps up for a pitha: the leaf tips under the landing
+  m4 [dis-pit] dis05-feast (fix): jumps the whole feast at a run and lands at the ditch’s lip, running on into it
+  m5 [dis-kaath] dis05-kaath: hops the first split the ordinary way: it slides ahead under his landing
+  m6 [dis-kaath-gamosa] dis05-kaath (fix): stops to let the split settle: the wife catches him with the third gamosa and, blind, he walks into the ditch
+  m7 [dis-machan] dis05-machan: waits on the last plank for one more: the drum rolls
+  m8 [dis-machan-luit] dis05-machan (fix): runs on ahead of the carpenter: the far end is not built
+DIS-06 naive -> dis-porcupine | fix -> dis-bank
+  m0 [dis-flag-luit] dis06-flag: hops to the flag over the water: the river
+  m1 [dis-ghat-gamosa] dis06-flag (fix): goes to where the flag was: the ghat man’s third gamosa, and blind he walks off the plank’s end
+  m2 [dis-dhal] dis06-wake: runs to outrun the wake
+  m3 [dis-wake-bank] dis06-wake (fix): waits for the wake on the undercut bank and hops it: the landing breaks the slab off
+  m4 [dis-dirru] dis06-traps: stands on the first trap as on a floor: it rings and is hoisted
+  m5 [dis-tip] dis06-traps (fix): hops on at the ring to the next trap: it is still slack and tips
+DIS-07 naive -> dis-gate | fix -> dis-dhol-sink
+  m0 [dis-horin] dis07-card: waits at the gate for the card: the deer cross there
+  m1 [dis-gate] dis07-chowk: walks straight on into it
+  m2 [dis-pukhuri] dis07-dhol: runs and jumps across the planks
+  m3 [dis-card-gate] dis07-card: runs to the exit gate: it is shut before the card’s time
+  m4 [dis-horin] dis07-card (fix): dawdles on the road short of the gate: a corridor
+  m5 [dis-pat] dis07-rope: walks straight across: the middle is whipped under him
+  m6 [dis-paakoni] dis07-rope (fix): crosses the middle between strokes, then waits at the twisters’ end as at an anchor: they step back with it
+  m7 [dis-herd] dis07-cart: stops on the cart to take a pitha: carried into the stakes
+  m8 [dis-cart-pukhuri] dis07-cart (fix): runs straight along the cart without stopping: off its front into the pond
+  m9 [dis-pepa-gate] dis07-pepa: runs after the group that is leaving: the gate has shut behind it
+  m10 [dis-stakes] dis07-pepa (fix): waits right under the gate for the coming group: the stakes come down as it arrives
+  m11 [dis-lathi] dis07-tekeli: stands still in the open by him: they shout his side
+  m12 [dis-lathi-ghur] dis07-tekeli (fix): runs through past him on the shout: across into the shouted side as he swings
+  m13 [dis-goru] dis07-goru: stands his ground in the lane: the bull stops, lowers its head and charges
+  m14 [dis-goru-lane] dis07-goru (fix): drops back into the lane to get past the bull while it walks: it is in its lane, and he is trampled
+DIS-08 naive -> dis-beel | fix -> dis-gorh
+  m0 [dis-bogoli] dis08-bogoli: walks into the grass with the egrets up: the rhino is charging
+  m1 [dis-jui] dis08-bogoli (fix): waits a whole round of the egrets: the rangers’ burn has come back through the grass
+  m2 [dis-beel] dis08-jeep: walks into the tall grass
+  m3 [dis-gorh] dis08-jeep (fix): waits at the edge of the grass, where the second jeep is
+  m4 [dis-gorh] dis08-duijeep: waits at the grass edge for the loud jeep’s charge: the rhino comes for the near one, at him
+  m5 [dis-beel] dis08-duijeep (fix): walks into the grass toward the loud jeep’s line before any charge
+  m6 [dis-gorh] dis08-bagori: stays on the bank: the rhino comes from behind
+  m7 [dis-gorh-adha] dis08-bagori (fix): off the hay as soon as the rhino stops halfway
+DIS-09 naive -> dis-roof | fix -> dis-gutter
+  m0 [dis-roof] dis09-chaal: stops on the oil before the rib
+  m1 [dis-khaal] dis09-tug: runs straight on over the ditch
+  m2 [dis-rope] dis09-tug (fix): goes the moment the rope is taut, whoever is winning
+  m3 [dis-sluice] dis09-sluice: runs straight down the channel: the bell, and the flood
+  m4 [dis-sluice-tel] dis09-sluice (fix): gets up on the embankment and stays there, safe from every flood: the oil slides him back in
+  m5 [dis-tel-gola] dis09-tunnels: skips the tunnels and runs the oiled beam: the oil balls
+  m6 [dis-vault] dis09-tunnels (fix): takes the first tunnel and runs on: the next grate is still down, off the pier into the vault
+DIS-10 naive -> dis-ulta | fix -> dis-rope-ulta
+  m0 [dis-pukhuri-lahe] dis10-dhol: runs and jumps across the planks
+  m1 [dis-dhol-lahe] dis10-dhol (fix): hops on the quick tempo from 07 after the drummer has slowed: the next plank is not up, he comes down on his own as it sinks
+  m2 [dis-doba-ulta] dis10-talatal: stops on the step before the last to wait for it, as in 04
+  m3 [dis-khaal-ulta] dis10-tug: runs straight on over the ditch
+  m4 [dis-agot] room: waits on the bank as the first bar goes, then jumps for the new bar’s outline before it is up
+  m5 [dis-basket-ulta] door: waits on the bank to follow the plucker, as in 03: she walks into him
+  m6 [dis-path-agot] door: runs on ahead of her: the bars that far ahead are not up yet

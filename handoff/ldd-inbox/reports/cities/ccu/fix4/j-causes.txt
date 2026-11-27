@@ -1,0 +1,82 @@
+CCU-01 route won 24.5s cps 8.0,42.0,57.0,75.0,97.0
+   NAIVE | ccu-kumir@179 | ccu-kumir@185 | ccu-kumir@191
+   FIX | fell@1478 | fell@1526 | fell@1574
+   a long jump off the thela’s deck over the chalk river by the door | ccu-kumir@2372 | ccu-kumir@2394 | ccu-kumir@2412
+CCU-02 route won 15.2s cps 31.5
+   NAIVE | ccu-gir@232 | ccu-gir@238 | ccu-gir@244
+   FIX | ccu-nala@414 | ccu-nala@420 | ccu-nala@426
+   stepping off backwards on the crawl | ccu-ulto@699 | ccu-ulto@705 | ccu-ulto@711
+CCU-03 route won 27.7s cps 31.8,61.5
+   NAIVE | ccu-muri@574 | ccu-muri@580 | ccu-muri@586
+   FIX | ccu-lonka@618 | ccu-lonka@622 | ccu-lonka@628
+CCU-04 route won 17.1s cps 30.5,55.5
+   NAIVE | ccu-boi@151 | ccu-kada@165 | ccu-kada@243
+   FIX | ccu-kada@194 | ccu-kada@209 | ccu-kada@225
+   waiting on the short stack in front of the tall pile | ccu-boi@653 | ccu-boi@667 | ccu-boi@698
+CCU-05 route won 19.2s cps 27.0,43.6,61.5,91.5
+   NAIVE | ccu-murti@522 | ccu-murti@528 | ccu-murti@534
+   FIX | ccu-ganga@179 | ccu-ganga@185 | ccu-ganga@198
+   a long jump off the first figure in the lane, past the next | ccu-ganga@650 | ccu-ganga@712 | ccu-ganga@785
+   resting on the first figure in the lane | ccu-murti@1737 | ccu-murti@1799 | ccu-murti@1851
+   waiting on the first figure while they finish in order | ccu-murti@1588 | ccu-murti@1718 | ccu-murti@1838
+   a long jump off the first figure by the ghat | ccu-ganga@1207 | ccu-ganga@1352 | ccu-ganga@1483
+CCU-06 route won 50.8s cps 6.5,15.2,28.4,36.4,38.8,52.2,69.8,91.2,104.5,105.5
+   NAIVE | ccu-dando@984 | ccu-dando@992 | ccu-dando@994
+   FIX | ccu-points@2415 | ccu-points@2436 | ccu-points@2460
+   staying on the step at the double-line island | ccu-dui@5015 | ccu-dui@5037 | ccu-dui@5086
+   climbing on to the roof for the double junction | ccu-dando@4160 | ccu-dando@4185 | ccu-dando@4234
+   jumping off the step into the dug-up road before the island | ccu-khod@1870 | ccu-khod@1914 | ccu-khod@1941
+CCU-07 route won 70.1s cps 28.3,29.0,64.5,99.5,102.5,129.0,139.0,167.5,174.5,192.4,215.2,250.0,253.5
+   NAIVE | ccu-cha@896 | ccu-cha@908 | ccu-cha@920
+   FIX | ccu-bojha@457 | ccu-bojha@477 | ccu-bojha@495
+   stopping at the second drain on the causeway | ccu-baan@7315 | ccu-baan@7362 | ccu-baan@7405
+   a long jump at the first drain on the causeway | ccu-nala@6967 | ccu-nala@7020 | ccu-nala@7069
+   taking the porter who leaves the second pylon at once | ccu-cha@5469 | ccu-cha@5502 | ccu-cha@5537
+   staying on the tall porter from the pylon | ccu-cha@1770 | ccu-cha@1759 | ccu-cha@1751
+   jumping off the pylon at the first load | ccu-gaari@1205 | ccu-gaari@1223 | ccu-gaari@1259
+   staying on the short porter of the two streams | ccu-cha@2684 | ccu-cha@2676 | ccu-cha@2680
+   a long jump off the pylon into the two streams | ccu-gaari@2048 | ccu-gaari@2040 | ccu-gaari@2038
+   standing in the middle of the load when the horn goes | ccu-parapet@3236 | ccu-parapet@3238 | ccu-parapet@3265
+   switching to the short porter before the board, as taught | ccu-cha@4560 | ccu-cha@4574 | ccu-cha@4582
+   jumping off the short porter just before his board | ccu-gaari@4520 | ccu-gaari@4540 | ccu-gaari@4554
+   hopping to the porter in front on the horn | ccu-gaari@3175 | ccu-gaari@3183 | ccu-gaari@3216
+   jumping off the second pylon rather than wait | ccu-gaari@5188 | ccu-gaari@5215 | ccu-gaari@5244
+CCU-08 route won 14.1s cps 47.2,75.5
+   NAIVE | ccu-adda@535 | ccu-adda@555 | ccu-adda@573
+   FIX | ccu-dhowa@702 | ccu-dhowa@722 | ccu-dhowa@740
+   waiting by the second adda for the water to stop | ccu-dhowa@702 | ccu-dhowa@722 | ccu-dhowa@740
+CCU-09 route won 36.2s cps 24.5,59.9,82.0,92.8,97.6,113.0,114.2,133.6,158.0,159.5
+   NAIVE | ccu-bansh@195 | stuck(stuck: ) | stuck(stuck: )
+   FIX | crushed@341 | crushed@383 | crushed@425
+   resting on the new panel at the top of the staircase | crushed@722 | crushed@784 | crushed@863
+   waiting under the canopy for the beat to pass | crushed@1294 | crushed@1357 | crushed@1435
+   climbing on to the queue | ccu-line@2755 | ccu-line@2899 | ccu-line@3062
+   going under the queue | ccu-bansh@2699 | ccu-bansh@2829 | ccu-bansh@2980
+   jumping for the high bamboo before the lift | ccu-bansh@1519 | ccu-bansh@1639 | ccu-bansh@1772
+   resting on the lifted panel under the roof frame | crushed@2763 | crushed@2882 | crushed@3021
+   a long jump at the cloth staircase | ccu-bansh@521 | ccu-bansh@607 | ccu-bansh@658
+   a long jump at the canopy’s stretch from the block | ccu-bansh@938 | ccu-bansh@1007 | ccu-bansh@1090
+CCU-10 route won 71.2s cps 32.5,35.5,64.0,70.2,98.5,126.7,138.9,141.0,148.7,175.3,205.0,222.0,231.5,264.5,297.5
+   NAIVE | ccu-boi@638 | ccu-boi@650 | ccu-boi@662
+   FIX | ccu-gir@1501 | ccu-gir@1513 | ccu-gir@1525
+   crossing the chalk while he counts, as on the Maidan | ccu-kumir10@5624 | ccu-kumir10@5786 | ccu-kumir10@5885
+   one long jump over the chalk river tonight | ccu-danga@5712 | ccu-danga@5866 | ccu-kumir10@5871
+   running on ahead of the front coming back | ccu-phire@3494 | ccu-phire@3527 | ccu-phire@3558
+   turning to run back from the front | ccu-nala@3221 | ccu-nala@3269 | ccu-nala@3312
+   running under the canopy as it goes up | crushed@3171 | crushed@3193 | crushed@3214
+   a full jump at the gallery from the bamboo | ccu-bansh@3005 | ccu-bansh@3039 | ccu-bansh@3061
+   waiting on the quiet stack, not the one he points at | ccu-pherot@4276 | ccu-pherot@4313 | ccu-pherot@4350
+   a full jump at the high stall from the low stack | ccu-kada@4041 | ccu-kada@4095 | ccu-kada@4140
+   landing on a cloth top in the pandal being taken down | ccu-khola@5235 | ccu-khola@5347 | ccu-khola@5434
+   waiting on the bamboo under the roof frame | crushed@5386 | crushed@5509 | crushed@5567
+   staying on the first porter back over the bridge | ccu-cha@6975 | ccu-cha@7146 | ccu-cha@7258
+   staying on the short porter of the second span | ccu-cha@7813 | ccu-cha@7989 | ccu-cha@8112
+   staying on the bus past its one “aaste” | ccu-depot@2387 | ccu-depot@2404 | ccu-depot@2419
+   a long jump at the drain instead of the bus | ccu-nala@1106 | ccu-nala@1124 | ccu-nala@1167
+   a long jump off the first figure, past the next | ccu-ganga@4840 | ccu-ganga@4903 | ccu-ganga@4921
+   resting on the first figure | ccu-murti@5451 | ccu-murti@5498 | ccu-murti@5518
+   walking on off the front of the tall porter | ccu-gaari@7608 | ccu-gaari@7798 | ccu-gaari@7938
+   ✓ causes 4124ms
+      Tests  1 passed | 2 skipped (3)
+   Start at  09:21:15
+   Duration  5.42s (tests 78%, transform 14%, setup 6%, import 1%)

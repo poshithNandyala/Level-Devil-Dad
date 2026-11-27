@@ -1,0 +1,83 @@
+DIS-01 | room | dis-spill@1143 | dis-pool@1189
+DIS-01 | steps off the deck as the second boy comes: his tray | dis-spill@1860
+DIS-01 | goes past him before he has stopped at the bench: his tray swings out in front of him | dis-spill@1374
+DIS-01 | waits on where he stood to watch him pour: he picks the tray up and walks on into him | dis-spill@1858
+DIS-01 | route | 22.6 s
+DIS-02 | room | dis-luit@237 | -
+DIS-02 | waits on the first bar for ever: it sinks once the next one is up | dis-luit@486
+DIS-02 | second scripted death, same trap (one play: the sandbars have one hazard, the river under a bar that is not there: every wrong move is a wrong bar) | dis-luit@760
+DIS-02 | dis02-bhutbhuti: hops off the bar’s far end on the ferry’s horn: no bar is there | dis-bhutbhuti@2020
+DIS-02 | dis02-bhutbhuti (fix): waits out the horn at the bar’s far end without moving: it narrows under him | dis-char-sink@2085
+DIS-02 | route | 21.9 s
+DIS-03 | room | dis-basket@67 | -
+DIS-03 | follows her too close on the wet path and slides into her basket | dis-basket@2625
+DIS-03 | second scripted death, same trap (one play: the tea row has one hazard, the plucker’s basket: too close, too early or over her all meet it) | dis-basket@94
+DIS-03 | route | 33.6 s
+DIS-04 | room | dis-talatal@314 | dis-doba@478
+DIS-04 | dis04-batah: goes down the stairwell with the light in it: the flooded vault | dis-kup@711
+DIS-04 | dis04-batah (fix): learns the lit well is flooded and takes the first dark one: it has fallen in | dis-garh@780
+DIS-04 | route | 11.2 s
+DIS-05 | room | dis-gamosa@247 | -
+DIS-05 | dis05-atithi: walks straight on into it | dis-gamosa@699
+DIS-05 | dis05-sanko: jumps the nala he remembers: the low beam | dis-beam@1378
+DIS-05 | dis05-sanko (fix): backs off to find a host to take a gamosa: the ditch behind | dis-sanko-pit@1456
+DIS-05 | dis05-feast: jumps up for a pitha: the leaf tips under the landing | dis-kol-paat@1704
+DIS-05 | dis05-feast (fix): jumps the whole feast at a run and lands at the ditch’s lip, running on into it | dis-pit@1710
+DIS-05 | dis05-kaath: hops the first split the ordinary way: it slides ahead under his landing | dis-kaath@1998
+DIS-05 | dis05-kaath (fix): stops to let the split settle: the wife catches him with the third gamosa and, blind, he walks into the ditch | dis-kaath-gamosa@2421
+DIS-05 | dis05-machan: waits on the last plank for one more: the drum rolls | dis-machan@3022
+DIS-05 | dis05-machan (fix): runs on ahead of the carpenter: the far end is not built | dis-machan-luit@2373
+DIS-05 | route | 32.0 s
+DIS-06 | room | dis-porcupine@199 | dis-bank@215
+DIS-06 | dis06-flag: hops to the flag over the water: the river | dis-flag-luit@2333
+DIS-06 | dis06-flag (fix): goes to where the flag was: the ghat man’s third gamosa, and blind he walks off the plank’s end | dis-ghat-gamosa@2307
+DIS-06 | dis06-wake: runs to outrun the wake | dis-dhal@900
+DIS-06 | dis06-wake (fix): waits for the wake on the undercut bank and hops it: the landing breaks the slab off | dis-wake-bank@920
+DIS-06 | dis06-traps: stands on the first trap as on a floor: it rings and is hoisted | dis-dirru@1714
+DIS-06 | dis06-traps (fix): hops on at the ring to the next trap: it is still slack and tips | dis-tip@1654
+DIS-06 | route | 24.3 s
+DIS-07 | room | dis-gate@277 | dis-dhol-sink@1964
+DIS-07 | dis07-card: waits at the gate for the card: the deer cross there | dis-horin@5964
+DIS-07 | dis07-chowk: walks straight on into it | dis-gate@6897
+DIS-07 | dis07-dhol: runs and jumps across the planks | dis-pukhuri@1232
+DIS-07 | dis07-card: runs to the exit gate: it is shut before the card’s time | dis-card-gate@5649
+DIS-07 | dis07-card (fix): dawdles on the road short of the gate: a corridor | dis-horin@5814
+DIS-07 | dis07-rope: walks straight across: the middle is whipped under him | dis-pat@2315
+DIS-07 | dis07-rope (fix): crosses the middle between strokes, then waits at the twisters’ end as at an anchor: they step back with it | dis-paakoni@2635
+DIS-07 | dis07-cart: stops on the cart to take a pitha: carried into the stakes | dis-herd@6487
+DIS-07 | dis07-cart (fix): runs straight along the cart without stopping: off its front into the pond | dis-cart-pukhuri@6477
+DIS-07 | dis07-pepa: runs after the group that is leaving: the gate has shut behind it | dis-pepa-gate@9445
+DIS-07 | dis07-pepa (fix): waits right under the gate for the coming group: the stakes come down as it arrives | dis-stakes@10198
+DIS-07 | dis07-tekeli: stands still in the open by him: they shout his side | dis-lathi@4966
+DIS-07 | dis07-tekeli (fix): runs through past him on the shout: across into the shouted side as he swings | dis-lathi-ghur@4839
+DIS-07 | dis07-goru: stands his ground in the lane: the bull stops, lowers its head and charges | dis-goru@3433
+DIS-07 | dis07-goru (fix): drops back into the lane to get past the bull while it walks: it is in its lane, and he is trampled | dis-goru-lane@3509
+DIS-07 | route | 88.0 s
+DIS-08 | room | dis-beel@109 | dis-gorh@433
+DIS-08 | dis08-bogoli: walks into the grass with the egrets up: the rhino is charging | dis-bogoli@3270
+DIS-08 | dis08-bogoli (fix): waits a whole round of the egrets: the rangers’ burn has come back through the grass | dis-jui@3766
+DIS-08 | dis08-jeep: walks into the tall grass | dis-beel@1013
+DIS-08 | dis08-jeep (fix): waits at the edge of the grass, where the second jeep is | dis-gorh@1699
+DIS-08 | dis08-duijeep: waits at the grass edge for the loud jeep’s charge: the rhino comes for the near one, at him | dis-gorh@2709
+DIS-08 | dis08-duijeep (fix): walks into the grass toward the loud jeep’s line before any charge | dis-beel@2427
+DIS-08 | dis08-bagori: stays on the bank: the rhino comes from behind | dis-gorh@3909
+DIS-08 | dis08-bagori (fix): off the hay as soon as the rhino stops halfway | dis-gorh-adha@4644
+DIS-08 | route | 44.6 s
+DIS-09 | room | dis-roof@201 | dis-gutter@119
+DIS-09 | dis09-chaal: stops on the oil before the rib | dis-roof@1980
+DIS-09 | dis09-tug: runs straight on over the ditch | dis-khaal@722
+DIS-09 | dis09-tug (fix): goes the moment the rope is taut, whoever is winning | dis-rope@1017
+DIS-09 | dis09-sluice: runs straight down the channel: the bell, and the flood | dis-sluice@2327
+DIS-09 | dis09-sluice (fix): gets up on the embankment and stays there, safe from every flood: the oil slides him back in | dis-sluice-tel@2999
+DIS-09 | dis09-tunnels: skips the tunnels and runs the oiled beam: the oil balls | dis-tel-gola@3194
+DIS-09 | dis09-tunnels (fix): takes the first tunnel and runs on: the next grate is still down, off the pier into the vault | dis-vault@3178
+DIS-09 | route | 34.6 s
+DIS-10 | room | dis-ulta@219 | dis-rope-ulta@2672
+DIS-10 | dis10-dhol: runs and jumps across the planks | dis-pukhuri-lahe@1336
+DIS-10 | dis10-dhol (fix): hops on the quick tempo from 07 after the drummer has slowed: the next plank is not up, he comes down on his own as it sinks | dis-dhol-lahe@1384
+DIS-10 | dis10-talatal: stops on the step before the last to wait for it, as in 04 | dis-doba-ulta@3546
+DIS-10 | dis10-tug: runs straight on over the ditch | dis-khaal-ulta@2377
+DIS-10 | room: waits on the bank as the first bar goes, then jumps for the new bar’s outline before it is up | dis-agot@264
+DIS-10 | door: waits on the bank to follow the plucker, as in 03: she walks into him | dis-basket-ulta@4010
+DIS-10 | door: runs on ahead of her: the bars that far ahead are not up yet | dis-path-agot@3768
+DIS-10 | route | 40.5 s

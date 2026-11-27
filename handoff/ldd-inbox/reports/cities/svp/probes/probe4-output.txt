@@ -1,0 +1,124 @@
+P4
+SVP-01 route 30.1s, 4 stretches:
+  s0 0.0-3.5s len 3.5s  worst replay 1.6s run+jump@1.3s svp-baha
+  s1 3.5-19.4s len 15.9s  worst replay 13.0s stop@16.3s fell
+  s2 19.4-27.7s len 8.3s  worst replay 0.0s 
+  s3 27.7-30.1s len 2.4s  worst replay 0.0s 
+  calm lag 0: ok
+  calm lag 4: ok
+  calm lag 8: ok
+  calm lag 12: ok
+SVP-02 route 25.8s, 4 stretches:
+  s0 0.0-10.3s len 10.3s  worst replay 8.2s run@7.8s svp-kichad
+  s1 10.3-10.6s len 0.3s  worst replay 1.0s run@10.5s svp-kichad
+  s2 10.6-19.5s len 8.9s  worst replay 5.3s run@15.5s svp-kichad
+  s3 19.5-25.8s len 6.3s  worst replay 5.6s run+jump@24.8s svp-lakdi
+  calm lag 0: ok
+  calm lag 4: ok
+  calm lag 8: ok
+  calm lag 12: ok
+SVP-03 route 26.1s, 7 stretches:
+  s0 0.0-5.3s len 5.3s  worst replay 6.2s stop@3.0s svp-magar
+  s1 5.3-5.4s len 0.1s  worst replay 0.0s 
+  s2 5.4-10.3s len 4.9s  worst replay 5.2s run+jump@10.3s svp-magar2
+  s3 10.3-14.4s len 4.1s  worst replay 4.4s run+jump@14.0s svp-magar2
+  s4 14.4-18.4s len 4.1s  worst replay 4.4s run+jump@18.0s svp-magar2
+  s5 18.4-23.3s len 4.8s  worst replay 1.0s run+jump@22.5s svp-magar
+  s6 23.3-26.1s len 2.8s  worst replay 1.5s run@24.5s svp-magar
+  calm lag 0: ok
+  calm lag 4: ok
+  calm lag 8: ok
+  calm lag 12: ok
+SVP-04 route 25.8s, 4 stretches:
+  s0 0.0-12.1s len 12.1s  worst replay 10.4s run+jump@10.0s fell
+  s1 12.1-12.2s len 0.1s  worst replay 0.0s 
+  s2 12.2-23.7s len 11.5s  worst replay 9.5s run+jump@21.3s fell
+  s3 23.7-25.8s len 2.1s  worst replay 0.0s 
+  calm lag 0: ok
+  calm lag 4: ok
+  calm lag 8: ok
+  calm lag 12: ok
+SVP-05 route 63.5s, 12 stretches:
+  s0 0.0-4.0s len 4.0s  worst replay 3.7s stop@1.8s svp-nazar
+  s1 4.0-6.2s len 2.2s  worst replay 3.5s stop@5.5s svp-nazar
+  s2 6.2-8.3s len 2.1s  worst replay 3.1s stop@7.3s svp-nazar
+  s3 8.3-11.8s len 3.5s  worst replay 4.3s run+jump@9.8s svp-nazar
+  s4 11.8-15.4s len 3.6s  worst replay 4.4s run+jump@14.8s svp-nazar
+  s5 15.4-19.1s len 3.7s  worst replay 4.1s stop@16.5s svp-nazar
+  s6 19.1-28.7s len 9.6s  worst replay 7.4s run@25.8s svp-rassi
+  s7 28.7-41.0s len 12.3s  worst replay 10.4s run+jump@38.3s svp-rassi2
+  s8 41.0-41.8s len 0.7s  worst replay 2.6s run+jump@41.3s svp-chuna
+  s9 41.8-52.0s len 10.2s  worst replay 9.1s run+jump@50.0s svp-chuna
+  s10 52.0-61.6s len 9.7s  worst replay 8.2s run+jump@59.8s fell
+  s11 61.6-63.5s len 1.9s  worst replay 0.0s 
+  calm lag 0: ok
+  calm lag 4: ok
+  calm lag 8: ok
+  calm lag 12: ok
+SVP-06 route 36.1s, 4 stretches:
+  s0 0.0-14.6s len 14.6s  worst replay 13.3s run@12.8s svp-kichad
+  s1 14.6-17.2s len 2.6s  worst replay 3.1s run+jump@16.3s svp-kichad2
+  s2 17.2-31.3s len 14.1s  worst replay 12.6s run@29.3s svp-kichad2
+  s3 31.3-36.1s len 4.8s  worst replay 0.0s 
+  calm lag 0: ok
+  calm lag 4: ok
+  calm lag 8: ok
+  calm lag 12: ok
+SVP-07 route 58.9s, 9 stretches:
+  s0 0.0-2.7s len 2.7s  worst replay 7.2s stop@2.3s svp-bheed
+  s1 2.7-9.2s len 6.5s  worst replay 5.4s run+jump@8.0s svp-bheed
+  s2 9.2-20.4s len 11.2s  worst replay 10.2s stop@19.0s svp-jahaz
+  s3 20.4-22.3s len 1.9s  worst replay 0.0s 
+  s4 22.3-25.2s len 3.0s  worst replay 0.0s 
+  s5 25.2-35.7s len 10.5s  worst replay 7.8s run+jump@33.0s svp-bheed
+  s6 35.7-38.7s len 3.0s  worst replay 0.0s 
+  s7 38.7-53.1s len 14.4s  worst replay 12.7s run+jump@49.5s svp-bheed
+  s8 53.1-58.9s len 5.8s  worst replay 0.0s 
+  calm lag 0: ok
+  calm lag 4: ok
+  calm lag 8: ok
+  calm lag 12: ok
+SVP-08 route 41.3s, 4 stretches:
+  s0 0.0-8.6s len 8.6s  worst replay 10.8s stop@5.0s svp-baarish
+  s1 8.6-24.1s len 15.5s  worst replay 18.2s stop@21.0s svp-baarish
+  s2 24.1-33.0s len 8.9s  worst replay 10.7s stop@29.0s svp-baarish
+  s3 33.0-41.3s len 8.3s  worst replay 9.8s stop@37.0s svp-baarish
+  calm lag 0: ok
+  calm lag 4: ok
+  calm lag 8: ok
+  calm lag 12: ok
+SVP-09 route 24.9s, 6 stretches:
+  s0 0.0-4.0s len 4.0s  worst replay 2.8s stop@2.0s svp-eent
+  s1 4.0-6.1s len 2.1s  worst replay 2.3s stop@5.3s svp-eent2
+  s2 6.1-11.1s len 4.9s  worst replay 5.2s stop@10.3s svp-eent2
+  s3 11.1-14.1s len 3.1s  worst replay 3.3s run+jump@12.5s svp-eent2
+  s4 14.1-22.9s len 8.8s  worst replay 8.3s run@21.5s svp-eent2
+  s5 22.9-24.9s len 2.0s  worst replay 0.0s 
+  calm lag 0: ok
+  calm lag 4: ok
+  calm lag 8: ok
+  calm lag 12: ok
+SVP-10 route 98.6s, 18 stretches:
+  s0 0.0-10.6s len 10.6s  worst replay 8.5s run@8.0s svp-kichad
+  s1 10.6-10.6s len 0.1s  worst replay 0.0s 
+  s2 10.6-15.5s len 4.9s  worst replay 5.2s run+jump@15.5s svp-magar2
+  s3 15.5-19.6s len 4.0s  worst replay 4.4s run+jump@19.5s svp-magar2
+  s4 19.6-23.7s len 4.1s  worst replay 4.5s run+jump@23.3s svp-magar2
+  s5 23.7-29.0s len 5.3s  worst replay 2.1s run+jump@27.5s svp-eent2
+  s6 29.0-31.1s len 2.1s  worst replay 2.3s stop@30.3s svp-eent2
+  s7 31.1-36.1s len 4.9s  worst replay 5.1s stop@35.3s svp-eent2
+  s8 36.1-39.2s len 3.1s  worst replay 3.8s run+jump@37.3s svp-eent2
+  s9 39.2-48.0s len 8.9s  worst replay 8.3s run@46.5s svp-eent2
+  s10 48.0-51.0s len 3.0s  worst replay 1.0s run+jump@48.8s svp-rassi
+  s11 51.0-61.5s len 10.5s  worst replay 7.8s run+jump@58.8s svp-bheed
+  s12 61.5-71.1s len 9.6s  worst replay 10.1s run+jump@69.8s svp-rassi2
+  s13 71.1-83.4s len 12.3s  worst replay 10.3s run+jump@80.5s svp-rassi2
+  s14 83.4-84.1s len 0.7s  worst replay 2.0s run+jump@83.5s fell
+  s15 84.1-84.2s len 0.1s  worst replay 0.0s 
+  s16 84.2-95.7s len 11.5s  worst replay 9.5s run+jump@93.3s fell
+  s17 95.7-98.6s len 2.9s  worst replay 0.0s 
+  calm lag 0: ok
+  calm lag 4: ok
+  calm lag 8: ok
+  calm lag 12: ok
+

@@ -1,0 +1,132 @@
+(b) BBI-02 bbi02-corner       naive=bbi-ball@267 fix=- -> NO FIX
+(b) BBI-02 bbi02-dive         naive=bbi-ball@186 fix=bbi-rebound@291 -> ok
+(b) BBI-02 bbi02-chhal        naive=bbi-ball@170 fix=- -> NO FIX
+(a) BBI-02 window bbi-ball|?                   x2 [bbi02-corner, bbi02-chhal] -> ok (one momentum repeat)
+(a) BBI-02 window bbi-ball|bbi-rebound (off the keeper the moment he lands) x1 [bbi02-dive] -> ok
+(b) BBI-03 bbi03-gali         naive=bbi-rangapani@59 fix=bbi-silk@206 -> ok
+(b) BBI-03 bbi03-mela         naive=bbi-rangapani@59 fix=bbi-silk@266 -> ok
+(a) BBI-03 window bbi-rangapani|bbi-silk (wait for the customer, land on the silk away from the cut-out) x2 [bbi03-gali, bbi03-mela] -> ok (one momentum repeat)
+(b) BBI-04 bbi04-karkhana     naive=- fix=- -> NO DEATHS
+(a) BBI-04 window no per-act deaths: bbi04-karkhana x1 [bbi04-karkhana] -> ok
+(b) BBI-05 bbi05-dhenki       naive=- fix=- -> NO DEATHS
+(b) BBI-05 bbi05-gadi         naive=- fix=- -> NO DEATHS
+(b) BBI-05 bbi05-tenda        naive=bbi-tenda@959 fix=- -> NO FIX
+(b) BBI-05 bbi05-chheli       naive=bbi-chheli@130 fix=bbi-sinha@293 -> ok
+(b) BBI-05 bbi05-khala        naive=- fix=- -> NO DEATHS
+(b) BBI-05 bbi05-patra        naive=bbi-patra@100 fix=bbi-khali@787 -> ok
+(b) BBI-05 bbi05-bail         naive=bbi-bail@103 fix=- -> NO FIX
+(b) BBI-05 bbi05-chakki       naive=bbi-dhan@141 fix=- -> NO FIX
+(a) BBI-05 window no per-act deaths: bbi05-dhenki x1 [bbi05-dhenki] -> ok
+(a) BBI-05 window no per-act deaths: bbi05-gadi x1 [bbi05-gadi] -> ok
+(a) BBI-05 window bbi-tenda|?                  x1 [bbi05-tenda] -> ok
+(a) BBI-05 window bbi-chheli|bbi-sinha (jump once the pounder lies flat) x1 [bbi05-chheli] -> ok
+(a) BBI-05 window no per-act deaths: bbi05-khala x1 [bbi05-khala] -> ok
+(a) BBI-05 window bbi-patra|bbi-khali (wait for the soot, then walk straight on) x1 [bbi05-patra] -> ok
+(a) BBI-05 window bbi-bail|?                   x1 [bbi05-bail] -> ok
+(a) BBI-05 window bbi-dhan|?                   x1 [bbi05-chakki] -> ok
+(b) BBI-06 bbi06-tana         naive=bbi-ranga@72 fix=bbi-shuttle@1154 -> ok
+(b) BBI-06 bbi06-sidhi        naive=bbi-ranga@58 fix=- -> NO FIX
+(b) BBI-06 bbi06-patta        naive=bbi-sadha@223 fix=bbi-chitra@243 -> ok
+(b) BBI-06 bbi06-sutra        naive=bbi-sutra@544 fix=bbi-shuttle@427 -> ok
+(b) BBI-06 bbi06-sari         naive=bbi-dhua@191 fix=bbi-sari@294 -> ok
+(b) BBI-06 bbi06-rachh        naive=bbi-ranga@48 fix=bbi-shuttle@425 -> ok
+(a) BBI-06 window bbi-ranga|bbi-shuttle (step on the moment the motif lines up, and look) x2 [bbi06-tana, bbi06-rachh] -> ok (one momentum repeat)
+(a) BBI-06 window bbi-ranga|?                  x1 [bbi06-sidhi] -> ok
+(a) BBI-06 window bbi-sadha|bbi-chitra (follow the panel beside the second pit) x1 [bbi06-patta] -> ok
+(a) BBI-06 window bbi-sutra|bbi-shuttle (go at once and hop the hole) x1 [bbi06-sutra] -> ok
+(a) BBI-06 window bbi-dhua|bbi-sari (keep bouncing until high enough) x1 [bbi06-sari] -> ok
+(b) BBI-07 bbi07-mardala      naive=bbi-nacha@72 fix=bbi-thrown@365 -> ok
+(b) BBI-07 bbi07-deepa        naive=bbi-nacha@72 fix=bbi-deepa@225 -> ok
+(b) BBI-07 bbi07-bandha       naive=bbi-nacha@59 fix=- -> NO FIX
+(b) BBI-07 bbi07-dui-baja     naive=bbi-nacha@72 fix=bbi-thrown@451 -> ok
+(b) BBI-07 bbi07-bagudi       naive=bbi-bagudi@213 fix=bbi-chhuin@366 -> ok
+(b) BBI-07 bbi07-pada         naive=bbi-pada@287 fix=bbi-thrown@521 -> ok
+(b) BBI-07 bbi07-shrinkhala   naive=bbi-nacha@72 fix=bbi-thrown@991 -> ok
+(b) BBI-07 bbi07-dweepa       naive=bbi-nacha@71 fix=bbi-thrown@1026 -> ok
+(a) BBI-07 window bbi-nacha|bbi-thrown (wait for the whole bridge, then stop on it) x2 [bbi07-mardala, bbi07-shrinkhala] -> ok
+(a) BBI-07 window bbi-nacha|bbi-deepa (stand on the wheel) x1 [bbi07-deepa] -> ok
+(a) BBI-07 window bbi-nacha|?                  x1 [bbi07-bandha] -> ok
+(a) BBI-07 window bbi-nacha|bbi-thrown (go on the far drummer’s stop, but take your time) x1 [bbi07-dui-baja] -> ok
+(a) BBI-07 window bbi-bagudi|bbi-chhuin (hop the raider) x1 [bbi07-bagudi] -> ok
+(a) BBI-07 window bbi-pada|bbi-thrown (wait well back, then go when it lands) x1 [bbi07-pada] -> ok
+(a) BBI-07 window bbi-nacha|bbi-thrown (rest on the second bridge too) x1 [bbi07-dweepa] -> ok
+(b) BBI-08 bbi08-kansa        naive=bbi-pakhala@267 fix=bbi-dhara@363 -> ok
+(b) BBI-08 bbi08-bhanwar      naive=bbi-bhanwar@748 fix=bbi-pakhala@462 -> ok
+(b) BBI-08 bbi08-dui          naive=bbi-pakhala@267 fix=bbi-dhara@483 -> ok
+(a) BBI-08 window bbi-pakhala|bbi-dhara (ride the badi the second jug pushes under) x2 [bbi08-kansa, bbi08-dui] -> ok (one momentum repeat)
+(a) BBI-08 window bbi-bhanwar|bbi-pakhala (hop for the far rim early) x1 [bbi08-bhanwar] -> ok
+(b) BBI-09 bbi09-ghoda        naive=bbi-chakka@330 fix=- -> NO FIX
+(b) BBI-09 bbi09-udaya        naive=bbi-udaya@293 fix=- -> NO FIX
+(b) BBI-09 bbi09-ratha        naive=bbi-chakka@392 fix=- -> NO FIX
+(b) BBI-09 bbi09-jhadu        naive=bbi-jhadu@36 fix=bbi-pheri@785 -> ok
+(b) BBI-09 bbi09-ulta         naive=bbi-chakka@361 fix=bbi-ulta@525 -> ok
+(b) BBI-09 bbi09-asta         naive=- fix=- -> NO DEATHS
+(b) BBI-09 bbi09-ara          naive=- fix=- -> NO DEATHS
+(a) BBI-09 window bbi-chakka|?                 x2 [bbi09-ghoda, bbi09-ratha] -> ok (one momentum repeat)
+(a) BBI-09 window bbi-udaya|?                  x1 [bbi09-udaya] -> ok
+(a) BBI-09 window bbi-jhadu|bbi-pheri (follow the broom out and keep walking) x1 [bbi09-jhadu] -> ok
+(a) BBI-09 window bbi-chakka|bbi-ulta (step down on to the stone after the slam) x1 [bbi09-ulta] -> ok
+(a) BBI-09 window no per-act deaths: bbi09-asta x1 [bbi09-asta] -> ok
+(a) BBI-09 window no per-act deaths: bbi09-ara x1 [bbi09-ara] -> ok
+(b) BBI-10 bbi10-chhata       naive=bbi-rangapani@59 fix=bbi-silk@266 -> ok
+(b) BBI-10 bbi10-sidhi        naive=bbi-ranga@59 fix=- -> NO FIX
+(b) BBI-10 bbi10-tana         naive=bbi-ranga@58 fix=bbi-shuttle@444 -> ok
+(b) BBI-10 bbi10-khela        naive=bbi-ball@180 fix=bbi-rebound@272 -> ok
+(b) BBI-10 bbi10-deepa        naive=bbi-nacha@71 fix=- -> NO FIX
+(b) BBI-10 bbi10-bunakar      naive=bbi-ranga@58 fix=bbi-shuttle@436 -> ok
+(b) BBI-10 bbi10-nacha        naive=bbi-nacha@58 fix=- -> NO FIX
+(b) BBI-10 bbi10-udaya        naive=bbi-udaya@290 fix=- -> NO FIX
+(b) BBI-10 bbi10-konark       naive=bbi-chakka@374 fix=- -> NO FIX
+(b) BBI-10 bbi10-shrinkhala   naive=bbi-nacha@72 fix=bbi-thrown@896 -> ok
+(b) BBI-10 bbi10-mela         naive=bbi-nacha@58 fix=bbi-thrown@354 -> ok
+(b) BBI-10 bbi10-ratha        naive=bbi-chakka@387 fix=- -> NO FIX
+(a) BBI-10 window bbi-rangapani|bbi-silk (wait for the customer, land on the silk away from the cut-out) x1 [bbi10-chhata] -> ok
+(a) BBI-10 window bbi-ranga|?                  x1 [bbi10-sidhi] -> ok
+(a) BBI-10 window bbi-ranga|bbi-shuttle (step on the moment the motif lines up, and look) x2 [bbi10-tana, bbi10-bunakar] -> ok (one momentum repeat)
+(a) BBI-10 window bbi-ball|bbi-rebound (off the keeper the moment he lands) x1 [bbi10-khela] -> ok
+(a) BBI-10 window bbi-nacha|?                  x2 [bbi10-deepa, bbi10-nacha] -> ok (one momentum repeat)
+(a) BBI-10 window bbi-udaya|?                  x1 [bbi10-udaya] -> ok
+(a) BBI-10 window bbi-chakka|?                 x2 [bbi10-konark, bbi10-ratha] -> ok (one momentum repeat)
+(a) BBI-10 window bbi-nacha|bbi-thrown (wait for the whole bridge, then stop on it) x2 [bbi10-shrinkhala, bbi10-mela] -> ok (one momentum repeat)
+probe (a) repeats beyond one momentum beat: 0; probe (b) acts failing: 22
+RT BBI-01 won 25.4 s
+RT BBI-02 won 25.7 s
+RT BBI-03 won 25.8 s
+RT BBI-04 won 29.3 s
+RT BBI-05 won 47.7 s
+RT BBI-06 won 39.8 s
+RT BBI-07 won 64.3 s
+RT BBI-08 won 38.3 s
+RT BBI-09 won 61.0 s
+RT BBI-10 won 93.0 s
+replay BBI-01 lag  0: longest 7.6 s (stop and wait for the gardener, as Tara says)
+replay BBI-01 lag  6: longest 7.6 s (stop and wait for the gardener, as Tara says)
+replay BBI-01 lag 12: longest 7.6 s (stop and wait for the gardener, as Tara says)
+replay BBI-02 lag  0: longest 5.8 s (bbi02-chhal: wait at the stopper for the ball to stop)
+replay BBI-02 lag  6: longest 5.9 s (bbi02-chhal: wait at the stopper for the ball to stop)
+replay BBI-02 lag 12: longest 5.9 s (bbi02-chhal: wait at the stopper for the ball to stop)
+replay BBI-03 lag  0: longest 5.3 s (wait on the third parasol’s cut-out)
+replay BBI-03 lag  6: longest 5.4 s (wait on the third parasol’s cut-out)
+replay BBI-03 lag 12: longest 5.5 s (wait on the third parasol’s cut-out)
+replay BBI-04 lag  0: longest 0.7 s (stop and wait for the torch, then go)
+replay BBI-04 lag  6: longest 1.2 s (stop and wait for the torch, then go)
+replay BBI-04 lag 12: longest 1.2 s (stop and wait for the torch, then go)
+replay BBI-05 lag  0: longest 6.7 s (bbi05-patra: walk straight on)
+replay BBI-05 lag  6: longest 6.8 s (bbi05-patra: walk straight on)
+replay BBI-05 lag 12: longest 7.0 s (bbi05-patra: walk straight on)
+replay BBI-06 lag  0: longest 4.9 s (bbi06-tana: walk straight on)
+replay BBI-06 lag  6: longest 5.0 s (bbi06-tana: walk straight on)
+replay BBI-06 lag 12: longest 5.0 s (bbi06-tana: walk straight on)
+replay BBI-07 lag  0: longest 7.0 s (bbi07-dweepa: rest on the second bridge too)
+replay BBI-07 lag  6: longest 7.1 s (bbi07-dweepa: rest on the second bridge too)
+replay BBI-07 lag 12: longest 7.2 s (bbi07-dweepa: rest on the second bridge too)
+replay BBI-08 lag  0: longest 6.5 s (bbi08-kansa: ride the badi the second jug pushes under)
+replay BBI-08 lag  6: longest 6.7 s (bbi08-kansa: ride the badi the second jug pushes under)
+replay BBI-08 lag 12: longest 6.8 s (bbi08-kansa: ride the badi the second jug pushes under)
+replay BBI-09 lag  0: longest 6.6 s (bbi09-jhadu: follow the broom out and keep walking)
+replay BBI-09 lag  6: longest 6.6 s (bbi09-jhadu: follow the broom out and keep walking)
+replay BBI-09 lag 12: longest 6.6 s (bbi09-jhadu: follow the broom out and keep walking)
+replay BBI-10 lag  0: longest 5.9 s (bbi10-shrinkhala: wait for the whole bridge, then stop on it)
+replay BBI-10 lag  6: longest 5.9 s (bbi10-shrinkhala: wait for the whole bridge, then stop on it)
+replay BBI-10 lag 12: longest 6.0 s (bbi10-shrinkhala: wait for the whole bridge, then stop on it)
+replay worst: 7.6 s

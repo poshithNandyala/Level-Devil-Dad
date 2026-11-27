@@ -1,0 +1,41 @@
+CCU-05 L0 stretch from cp2 (x92.5): worst replay 18.3s (runjump@29.8s ccu-ganga x144.7)
+CCU-05 L0 stretch from cp4 (x162.5): worst replay 11.0s (stop@44.0s ccu-ganga x180.4)
+CCU-05 L0 i0 clear 52.0s caught 7/5 maxStretch 17.4s worstReplay 18.3s (runjump@29.8s ccu-ganga cp2) calm cp3x136.5 run.3 DIES ccu-ganga +0.46s
+CCU-05 L12 stretch from cp2 (x92.5): worst replay 18.7s (runjump@32.8s ccu-ganga x144.7)
+CCU-05 L12 stretch from cp4 (x162.5): worst replay 11.3s (stop@48.3s ccu-ganga x181.5)
+CCU-05 L12 i0 clear 56.3s caught 7/5 maxStretch 17.8s worstReplay 18.7s (runjump@32.8s ccu-ganga cp2) calm cp1x58.5 tap DIES ccu-murti +2.67s; cp3x136.5 run.3 DIES ccu-ganga +0.46s
+CCU-06 L0 stretch from cp3 (x40.0): worst replay 15.0s (runjump@27.0s ccu-khod x65.6)
+CCU-06 L0 stretch from cp7 (x103.5): worst replay 12.8s (runjump@56.5s ccu-khod x138.7)
+CCU-06 L0 i0 clear 62.8s caught 10/8 maxStretch 14.8s worstReplay 15.0s (runjump@27.0s ccu-khod cp3) calm cp0x18.0 run.3 DIES ccu-khod +0.25s; cp0x18.0 tap DIES ccu-dando +2.59s; cp1x28.0 run.3 DIES ccu-khod +0.26s; cp2x33.0 run.3 DIES ccu-khod +0.25s; cp3x40.0 run.3 DIES ccu-khod +0.42s; cp3x40.0 tap DIES ccu-khod +0.43s; cp4x54.0 run.3 DIES ccu-khod +0.37s; cp4x54.0 tap DIES ccu-dando +2.39s; cp5x70.0 run.3 DIES ccu-khod +0.37s; cp6x86.0 run.3 DIES ccu-khod +0.36s; cp6x86.0 tap DIES ccu-dando +1.02s; cp7x103.5 tap DIES ccu-dui +0.36s; cp8x127.5 run.3 DIES ccu-khod +0.37s; cp8x127.5 tap DIES ccu-dando +3.06s
+CCU-06 L12 stretch from cp3 (x40.0): worst replay 14.7s (runjump@27.3s ccu-khod x65.3)
+CCU-06 L12 stretch from cp7 (x103.5): worst replay 12.6s (runjump@56.8s ccu-khod x138.7)
+CCU-06 L12 i0 clear 63.3s caught 10/8 maxStretch 14.6s worstReplay 14.7s (runjump@27.3s ccu-khod cp3) calm cp0x18.0 run.3 DIES ccu-khod +0.29s; cp0x18.0 tap DIES ccu-dando +2.51s; cp1x28.0 run.3 DIES ccu-khod +0.29s; cp3x40.0 run.3 DIES ccu-khod +0.42s; cp3x40.0 tap DIES ccu-khod +0.43s; cp4x54.0 run.3 DIES ccu-khod +0.33s; cp4x54.0 tap DIES ccu-dando +2.46s; cp5x70.0 run.3 DIES ccu-khod +0.33s; cp6x86.0 run.3 DIES ccu-khod +0.33s; cp6x86.0 tap DIES ccu-dando +1.09s; cp7x103.5 tap DIES ccu-dui +0.36s; cp8x127.5 run.3 DIES ccu-khod +0.33s; cp8x127.5 tap DIES ccu-dando +3.12s
+CCU-07 L0 stretch from cp-1 (xstart): worst replay 10.3s (runjump@9.0s ccu-gaari x41.6)
+CCU-07 L0 stretch from cp0 (x32.5): worst replay 13.1s (runjump@22.0s ccu-gaari x89.0)
+CCU-07 L0 stretch from cp1 (x80.5): worst replay 10.8s (runjump@32.0s ccu-gaari x133.8)
+CCU-07 L0 stretch from cp7 (x220.0): worst replay 12.1s (run@66.0s ccu-baan x276.7)
+CCU-07 L0 stretch from cp9 (x284.5): worst replay 8.3s (runjump@73.3s ccu-gaari x322.8)
+CCU-07 L0 stretch from cp10 (x312.5): worst replay 13.9s (runjump@88.0s ccu-gaari x357.1)
+CCU-07 L0 i0 clear 94.1s caught 13/11 maxStretch 13.4s worstReplay 13.9s (runjump@88.0s ccu-gaari cp10) calm cp0x32.5 run.3 DIES ccu-gaari +0.38s; cp2x124.5 run.3 DIES ccu-gaari +0.38s; cp3x138.0 run.3 DIES ccu-gaari +0.34s; cp3x138.0 tap DIES ccu-gaari +0.51s; cp4x160.0 idle4 DIES ccu-cha +3.10s; cp4x160.0 run.3 DIES ccu-gaari +0.28s; cp4x160.0 tap DIES ccu-gaari +0.45s; cp5x184.5 tap DIES ccu-gaari +0.53s; cp6x198.0 run.3 DIES ccu-gaari +0.32s; cp6x198.0 tap DIES ccu-gaari +0.45s; cp7x220.0 idle4 DIES ccu-cha +3.26s; cp7x220.0 run.3 DIES ccu-gaari +0.43s; cp7x220.0 tap DIES ccu-gaari +0.51s; cp11x351.5 run.3 DIES ccu-gaari +0.40s; cp11x351.5 tap DIES ccu-gaari +0.51s
+CCU-07 L12 stretch from cp-1 (xstart): worst replay 10.5s (runjump@9.3s ccu-gaari x41.6)
+CCU-07 L12 stretch from cp0 (x32.5): worst replay 13.7s (runjump@22.5s ccu-gaari x89.2)
+CCU-07 L12 stretch from cp1 (x80.5): worst replay 11.1s (runjump@32.8s ccu-gaari x133.5)
+CCU-07 L12 stretch from cp7 (x220.0): worst replay 12.1s (run@67.5s ccu-baan x276.7)
+CCU-07 L12 stretch from cp10 (x312.5): worst replay 13.9s (runjump@90.5s ccu-gaari x356.9)
+CCU-07 L12 i0 clear 96.7s caught 13/11 maxStretch 13.5s worstReplay 13.9s (runjump@90.5s ccu-gaari cp10) calm cp2x124.5 run.3 DIES ccu-gaari +0.40s; cp3x138.0 run.3 DIES ccu-gaari +0.39s; cp3x138.0 tap DIES ccu-gaari +0.51s; cp4x160.0 idle4 DIES ccu-cha +3.07s; cp4x160.0 run.3 DIES ccu-gaari +0.30s; cp4x160.0 tap DIES ccu-gaari +0.45s; cp5x184.5 tap DIES ccu-gaari +0.63s; cp6x198.0 run.3 DIES ccu-gaari +0.32s; cp6x198.0 tap DIES ccu-gaari +0.45s; cp7x220.0 idle4 DIES ccu-cha +3.19s; cp7x220.0 tap DIES ccu-gaari +0.51s; cp11x351.5 run.3 DIES ccu-gaari +0.44s; cp11x351.5 tap DIES ccu-gaari +0.51s
+CCU-08 L0 stretch from cp4 (x144.5): worst replay 11.0s (stop@36.0s ccu-dhowa x154.0)
+CCU-08 L0 i0 clear 44.8s caught 7/5 maxStretch 10.3s worstReplay 11.0s (stop@36.0s ccu-dhowa cp4) calm cp0x49.5 run.3 DIES ccu-dhowa +0.29s; cp0x49.5 tap DIES ccu-dhowa +0.38s
+CCU-08 L12 stretch from cp4 (x144.5): worst replay 11.0s (stop@36.8s ccu-dhowa x154.1)
+CCU-08 L12 i0 clear 45.9s caught 7/5 maxStretch 10.5s worstReplay 11.0s (stop@36.8s ccu-dhowa cp4) calm cp0x49.5 run.3 DIES ccu-dhowa +0.29s; cp0x49.5 tap DIES ccu-dhowa +0.38s
+CCU-09 L0 stretch from cp3 (x128.5): worst replay 9.4s (runjump@23.3s ccu-bansh x168.8)
+CCU-09 L0 stretch from cp8 (x212.5): worst replay 10.7s (run@50.8s ccu-bansh x237.2)
+CCU-09 L0 i0 clear 53.6s caught 11/9 maxStretch 11.6s worstReplay 10.7s (run@50.8s ccu-bansh cp8) calm cp0x32.5 run.3 DIES ccu-bansh +0.38s; cp1x62.5 run.3 DIES ccu-bansh +0.38s; cp1x62.5 tap DIES ccu-bansh +0.50s; cp3x128.5 run.3 DIES ccu-bansh +0.38s; cp4x161.4 run.3 DIES ccu-bansh +0.67s; cp4x161.4 tap DIES ccu-bansh +0.73s; cp6x191.4 run.3 DIES ccu-bansh +0.67s; cp6x191.4 tap DIES ccu-bansh +0.73s; cp8x212.5 run.3 DIES ccu-bansh +0.28s
+CCU-09 L12 stretch from cp3 (x128.5): worst replay 10.2s (runjump@26.3s ccu-bansh x169.2)
+CCU-09 L12 stretch from cp8 (x212.5): worst replay 11.0s (run@54.3s ccu-bansh x237.2)
+CCU-09 L12 i0 clear 57.8s caught 11/9 maxStretch 12.1s worstReplay 11.0s (run@54.3s ccu-bansh cp8) calm cp0x32.5 run.3 DIES ccu-bansh +0.35s; cp1x62.5 run.3 DIES ccu-bansh +0.35s; cp3x128.5 run.3 DIES ccu-bansh +0.29s; cp3x128.5 tap DIES ccu-bansh +0.47s; cp4x161.4 run.3 DIES ccu-bansh +0.57s; cp4x161.4 tap DIES ccu-bansh +0.73s; cp6x191.4 run.3 DIES ccu-bansh +0.58s; cp6x191.4 tap DIES ccu-bansh +0.73s; cp8x212.5 tap DIES ccu-bansh +0.49s
+CCU-10 L0 stretch from cp1 (x35.5): worst replay 17.0s (run@34.3s ccu-khod x93.6)
+CCU-10 L0 stretch from cp6 (x206.5): worst replay 12.2s (runjump@63.3s ccu-ganga x242.7)
+CCU-10 L0 i0 clear 94.7s caught 16/14 maxStretch 18.9s worstReplay 17.0s (run@34.3s ccu-khod cp1) calm cp3x116.5 run.3 DIES ccu-bansh +0.28s; cp6x206.5 run.3 DIES ccu-kada +0.36s; cp6x206.5 tap DIES ccu-kada +0.43s; cp7x230.5 run.3 DIES ccu-ganga +0.40s; cp7x230.5 tap DIES ccu-murti +3.08s; cp8x254.5 run.3 DIES ccu-ganga +0.24s; cp8x254.5 tap DIES ccu-khor +1.79s; cp9x278.5 run.3 DIES ccu-bansh +0.28s; cp9x278.5 tap DIES ccu-bansh +0.47s; cp10x285.4 run.3 DIES ccu-bansh +0.42s; cp10x285.4 tap DIES ccu-bansh +0.82s; cp12x324.0 run.3 DIES ccu-gaari +0.33s; cp12x324.0 tap DIES ccu-gaari +0.51s; cp13x346.0 idle4 DIES ccu-cha +2.98s; cp13x346.0 run.3 DIES ccu-gaari +0.28s; cp13x346.0 tap DIES ccu-gaari +0.45s
+CCU-10 L12 stretch from cp1 (x35.5): worst replay 17.1s (run@34.8s ccu-khod x93.7)
+CCU-10 L12 stretch from cp6 (x206.5): worst replay 12.1s (runjump@64.3s ccu-ganga x242.7)
+CCU-10 L12 i0 clear 97.8s caught 16/14 maxStretch 19.0s worstReplay 17.1s (run@34.8s ccu-khod cp1) calm cp3x116.5 tap DIES ccu-bansh +0.49s; cp6x206.5 run.3 DIES ccu-kada +0.37s; cp6x206.5 tap DIES ccu-kada +0.43s; cp7x230.5 run.3 DIES ccu-ganga +0.44s; cp7x230.5 tap DIES ccu-murti +2.98s; cp8x254.5 run.3 DIES ccu-ganga +0.24s; cp8x254.5 tap DIES ccu-khor +1.78s; cp9x278.5 tap DIES ccu-bansh +0.49s; cp10x285.4 run.3 DIES ccu-bansh +0.37s; cp10x285.4 tap DIES ccu-bansh +0.82s; cp12x324.0 idle4 DIES ccu-cha +3.94s; cp12x324.0 run.3 DIES ccu-gaari +0.40s; cp12x324.0 tap DIES ccu-gaari +0.51s; cp13x346.0 idle4 DIES ccu-cha +2.94s; cp13x346.0 run.3 DIES ccu-gaari +0.30s; cp13x346.0 tap DIES ccu-gaari +0.45s

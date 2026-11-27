@@ -1,0 +1,1 @@
+GTK-08 | 0 | 27.9s | 4 cps | longest 9.6s | max replay 6.52s cp1 run on@24.75s gtk-khaai | over7.5: none | calm fails: none | hot: none

@@ -1,0 +1,178 @@
+(b) BBI-02 bbi02-corner       naive=bbi-ball@267 fix=- -> NO FIX
+(b) BBI-02 bbi02-dive         naive=bbi-ball@186 fix=bbi-rebound@291 -> ok
+(b) BBI-02 bbi02-chhal        naive=bbi-ball@225 fix=- -> NO FIX
+(a) BBI-02 window bbi-ball|?                   x2 [bbi02-corner, bbi02-chhal] -> ok (one momentum repeat)
+(a) BBI-02 window bbi-ball|bbi-rebound (off the keeper the moment he lands) x1 [bbi02-dive] -> ok
+(b) BBI-03 bbi03-gali         naive=bbi-rangapani@114 fix=bbi-silk@261 -> ok
+(b) BBI-03 bbi03-mela         naive=bbi-rangapani@114 fix=bbi-silk@319 -> ok
+(a) BBI-03 window bbi-rangapani|bbi-silk (wait for the customer, land on the silk away from the cut-out) x2 [bbi03-gali, bbi03-mela] -> ok (one momentum repeat)
+(b) BBI-04 bbi04-karkhana     naive=bbi-agni@220 fix=bbi-kunda@180 -> ok
+(a) BBI-04 window bbi-agni|bbi-kunda (keep moving and jump the trough) x1 [bbi04-karkhana] -> ok
+(b) BBI-05 bbi05-dhenki       naive=bbi-sila@262 fix=- -> NO FIX
+(b) BBI-05 bbi05-gadi         naive=bbi-gadi@326 fix=- -> NO FIX
+(b) BBI-05 bbi05-tenda        naive=bbi-tenda@863 fix=- -> NO FIX
+(b) BBI-05 bbi05-chheli       naive=bbi-chheli@130 fix=bbi-sinha@293 -> ok
+(b) BBI-05 bbi05-khala        naive=bbi-jaanta@72 fix=crushed@390 -> ok
+(b) BBI-05 bbi05-thaka        naive=bbi-pathara@239 fix=bbi-pani@104 -> ok
+(b) BBI-05 bbi05-patra        naive=bbi-patra@100 fix=bbi-khali@788 -> ok
+(b) BBI-05 bbi05-bail         naive=bbi-bail@158 fix=- -> NO FIX
+(b) BBI-05 bbi05-mama         naive=bbi-mama@768 fix=bbi-dhakka@595 -> ok
+(b) BBI-05 bbi05-ganna        naive=bbi-ganna@156 fix=bbi-dhan@215 -> ok
+(b) BBI-05 bbi05-chakki       naive=bbi-dhan@139 fix=- -> NO FIX
+(a) BBI-05 window bbi-sila|?                   x1 [bbi05-dhenki] -> ok
+(a) BBI-05 window bbi-gadi|?                   x1 [bbi05-gadi] -> ok
+(a) BBI-05 window bbi-tenda|?                  x1 [bbi05-tenda] -> ok
+(a) BBI-05 window bbi-chheli|bbi-sinha (jump once the pounder lies flat) x1 [bbi05-chheli] -> ok
+(a) BBI-05 window bbi-jaanta|crushed (jump the mill, then climb over the cart) x1 [bbi05-khala] -> ok
+(a) BBI-05 window bbi-pathara|bbi-pani (stop it the moment you reach the plate) x1 [bbi05-thaka] -> ok
+(a) BBI-05 window bbi-patra|bbi-khali (wait for the soot, then walk straight on) x1 [bbi05-patra] -> ok
+(a) BBI-05 window bbi-bail|?                   x1 [bbi05-bail] -> ok
+(a) BBI-05 window bbi-mama|bbi-dhakka (start the grinder and wait by it to see what he does) x1 [bbi05-mama] -> ok
+(a) BBI-05 window bbi-ganna|bbi-dhan (knock the belt off, then jump the channel yourself) x1 [bbi05-ganna] -> ok
+(a) BBI-05 window bbi-dhan|?                   x1 [bbi05-chakki] -> ok
+(b) BBI-06 bbi06-tana         naive=bbi-ranga@126 fix=bbi-shuttle@568 -> ok
+(b) BBI-06 bbi06-sidhi        naive=bbi-ranga@113 fix=- -> NO FIX
+(b) BBI-06 bbi06-patta        naive=bbi-sadha@223 fix=bbi-chitra@243 -> ok
+(b) BBI-06 bbi06-sutra        naive=bbi-sutra@599 fix=bbi-shuttle@482 -> ok
+(b) BBI-06 bbi06-rachh        naive=bbi-ranga@114 fix=bbi-shuttle@481 -> ok
+(b) BBI-06 bbi06-tantu        naive=bbi-tantu@495 fix=bbi-rachh@562 -> ok
+(b) BBI-06 bbi06-palaa        naive=bbi-ranga@155 fix=bbi-rachh@495 -> ok
+(a) BBI-06 window bbi-ranga|bbi-shuttle (step on the moment the motif lines up, and look) x2 [bbi06-tana, bbi06-rachh] -> ok (one momentum repeat)
+(a) BBI-06 window bbi-ranga|?                  x1 [bbi06-sidhi] -> ok
+(a) BBI-06 window bbi-sadha|bbi-chitra (follow the panel beside the second pit) x1 [bbi06-patta] -> ok
+(a) BBI-06 window bbi-sutra|bbi-shuttle (go at once and hop the hole) x1 [bbi06-sutra] -> ok
+(a) BBI-06 window bbi-tantu|bbi-rachh (leave the loom alone and time the shuttle) x1 [bbi06-tantu] -> ok
+(a) BBI-06 window bbi-ranga|bbi-rachh (wait at the edge for it to come back to you) x1 [bbi06-palaa] -> ok
+(b) BBI-07 bbi07-mardala      naive=bbi-nacha@72 fix=bbi-thrown@365 -> ok
+(b) BBI-07 bbi07-deepa        naive=bbi-nacha@72 fix=bbi-deepa@225 -> ok
+(b) BBI-07 bbi07-bandha       naive=bbi-nacha@113 fix=bbi-thrown@1097 -> ok
+(b) BBI-07 bbi07-dui-baja     naive=bbi-nacha@127 fix=bbi-thrown@506 -> ok
+(b) BBI-07 bbi07-bagudi       naive=bbi-bagudi@214 fix=bbi-chhuin@369 -> ok
+(b) BBI-07 bbi07-pada         naive=bbi-pada@287 fix=bbi-thrown@521 -> ok
+(b) BBI-07 bbi07-jodi         naive=bbi-nacha@573 fix=bbi-adha@833 -> ok
+(b) BBI-07 bbi07-gadiba       naive=bbi-ulta-gadi@397 fix=bbi-gadi-tala@367 -> ok
+(b) BBI-07 bbi07-hulahuli     naive=bbi-thrown@362 fix=bbi-kick@664 -> ok
+(b) BBI-07 bbi07-sajaghara    naive=bbi-saja@305 fix=bbi-dauda@238 -> ok
+(b) BBI-07 bbi07-ghungur      naive=bbi-nacha@145 fix=bbi-thrown@697 -> ok
+(b) BBI-07 bbi07-kachha       naive=bbi-kachha@341 fix=bbi-thrown@1166 -> ok
+(b) BBI-07 bbi07-shrinkhala   naive=bbi-nacha@73 fix=bbi-thrown@524 -> ok
+(b) BBI-07 bbi07-dweepa       naive=bbi-nacha@73 fix=bbi-thrown@833 -> ok
+(a) BBI-07 window bbi-nacha|bbi-thrown (wait for the whole bridge, then stop on it) x2 [bbi07-mardala, bbi07-shrinkhala] -> ok
+(a) BBI-07 window bbi-nacha|bbi-deepa (stand on the wheel) x1 [bbi07-deepa] -> ok
+(a) BBI-07 window bbi-nacha|bbi-thrown (take the second troupe’s bridge to the high bank) x1 [bbi07-bandha] -> ok
+(a) BBI-07 window bbi-nacha|bbi-thrown (go on the far drummer’s stop, but take your time) x1 [bbi07-dui-baja] -> ok
+(a) BBI-07 window bbi-bagudi|bbi-chhuin (hop the raider) x1 [bbi07-bagudi] -> ok
+(a) BBI-07 window bbi-pada|bbi-thrown (wait well back, then go when it lands) x1 [bbi07-pada] -> ok
+(a) BBI-07 window bbi-nacha|bbi-adha (go the moment the second half lands) x1 [bbi07-jodi] -> ok
+(a) BBI-07 window bbi-ulta-gadi|bbi-gadi-tala (stand still on it when it shivers) x1 [bbi07-gadiba] -> ok
+(a) BBI-07 window bbi-thrown|bbi-kick (wait for the cheer to swell, then go) x1 [bbi07-hulahuli] -> ok
+(a) BBI-07 window bbi-saja|bbi-dauda (wait at the edge, ready to go at the stop) x1 [bbi07-sajaghara] -> ok
+(a) BBI-07 window bbi-nacha|bbi-thrown (wait at the edge for the lamps) x1 [bbi07-ghungur] -> ok
+(a) BBI-07 window bbi-kachha|bbi-thrown (wait for each troupe to settle before you trust it) x1 [bbi07-kachha] -> ok
+(a) BBI-07 window bbi-nacha|bbi-thrown (rest on the second bridge too) x1 [bbi07-dweepa] -> ok
+(b) BBI-08 bbi08-phinga       naive=bbi-badi@514 fix=bbi-buda@519 -> ok
+(b) BBI-08 bbi08-bhanwar      naive=bbi-bhanwar@748 fix=bbi-pakhala@462 -> ok
+(b) BBI-08 bbi08-dati         naive=bbi-bhanwar@457 fix=bbi-pakhala@445 -> ok
+(b) BBI-08 bbi08-dui          naive=bbi-pakhala@267 fix=bbi-dhara@483 -> ok
+(b) BBI-08 bbi08-ghurni       naive=bbi-ghurni@522 fix=bbi-chamacha@686 -> ok
+(a) BBI-08 window bbi-badi|bbi-buda (let the first go by, then ride the second) x1 [bbi08-phinga] -> ok
+(a) BBI-08 window bbi-bhanwar|bbi-pakhala (hop for the far rim early) x1 [bbi08-bhanwar] -> ok
+(a) BBI-08 window bbi-bhanwar|bbi-pakhala (hop for the far rim at the last moment) x1 [bbi08-dati] -> ok
+(a) BBI-08 window bbi-pakhala|bbi-dhara (ride the badi the second jug pushes under) x1 [bbi08-dui] -> ok
+(a) BBI-08 window bbi-ghurni|bbi-chamacha (get on at the edge and wait for the stir to stop) x1 [bbi08-ghurni] -> ok
+(b) BBI-09 bbi09-ghoda        naive=bbi-chakka@330 fix=bbi-khai@343 -> ok
+(b) BBI-09 bbi09-udaya        naive=bbi-udaya@348 fix=bbi-dooba@661 -> ok
+(b) BBI-09 bbi09-ratha        naive=bbi-chakka@391 fix=bbi-khai@397 -> ok
+(b) BBI-09 bbi09-ulta         naive=bbi-chakka@361 fix=bbi-ulta@525 -> ok
+(b) BBI-09 bbi09-asta         naive=bbi-udaya@152 fix=bbi-dooba@632 -> ok
+(b) BBI-09 bbi09-ara          naive=bbi-ara@273 fix=- -> NO FIX
+(a) BBI-09 window bbi-chakka|bbi-khai (jump back off the plinth before it slams) x2 [bbi09-ghoda, bbi09-ratha] -> ok (one momentum repeat)
+(a) BBI-09 window bbi-udaya|bbi-dooba (wait on each spoke to be sure of it) x2 [bbi09-udaya, bbi09-asta] -> ok (one momentum repeat)
+(a) BBI-09 window bbi-chakka|bbi-ulta (step down on to the stone after the slam) x1 [bbi09-ulta] -> ok
+(a) BBI-09 window bbi-ara|?                    x1 [bbi09-ara] -> ok
+(b) BBI-10 bbi10-patra        naive=bbi-likhita@842 fix=bbi-patra@99 -> ok
+(b) BBI-10 bbi10-chheli       naive=bbi-sinha@747 fix=bbi-chheli@127 -> ok
+(b) BBI-10 bbi10-chhata       naive=bbi-rangapani@446 fix=bbi-silk@448 -> ok
+(b) BBI-10 bbi10-patta        naive=bbi-sadha@86 fix=bbi-chitra@240 -> ok
+(b) BBI-10 bbi10-tantu        naive=bbi-ganthi@489 fix=bbi-rachh@561 -> ok
+(b) BBI-10 bbi10-palaa        naive=bbi-rachh@217 fix=bbi-ranga@156 -> ok
+(b) BBI-10 bbi10-bagudi       naive=bbi-bagudi@415 fix=bbi-ghera@482 -> ok
+(b) BBI-10 bbi10-pada         naive=bbi-nacha@511 fix=bbi-thrown@491 -> ok
+(b) BBI-10 bbi10-dui-baja     naive=bbi-nacha@72 fix=bbi-thrown@451 -> ok
+(b) BBI-10 bbi10-ghungur      naive=bbi-nacha@186 fix=bbi-thrown@696 -> ok
+(b) BBI-10 bbi10-thaka        naive=bbi-kua@178 fix=bbi-pathara@205 -> ok
+(b) BBI-10 bbi10-phinga       naive=bbi-badi@236 fix=bbi-buda@554 -> ok
+(b) BBI-10 bbi10-ghurni       naive=bbi-ghurni@616 fix=bbi-chamacha@726 -> ok
+(b) BBI-10 bbi10-deepa        naive=bbi-deepa@612 fix=bbi-thrown@426 -> ok
+(b) BBI-10 bbi10-chakra       naive=bbi-chakka@384 fix=bbi-khai@397 -> ok
+(b) BBI-10 bbi10-udaya        naive=bbi-dooba@606 fix=bbi-udaya@279 -> ok
+(b) BBI-10 bbi10-tana         naive=bbi-nacha@977 fix=bbi-thrown@1335 -> ok
+(a) BBI-10 window bbi-likhita|bbi-patra (walk straight on) x1 [bbi10-patra] -> ok
+(a) BBI-10 window bbi-sinha|bbi-chheli (jump while the goat is on the pounder) x1 [bbi10-chheli] -> ok
+(a) BBI-10 window bbi-rangapani|bbi-silk (wait for the customer, land on the silk away from the cut-out) x1 [bbi10-chhata] -> ok
+(a) BBI-10 window bbi-sadha|bbi-chitra (cross the second by the panel you passed) x1 [bbi10-patta] -> ok
+(a) BBI-10 window bbi-ganthi|bbi-rachh (leave the loom alone and time the shuttle) x1 [bbi10-tantu] -> ok
+(a) BBI-10 window bbi-rachh|bbi-ranga (jump out to where it came back last time) x1 [bbi10-palaa] -> ok
+(a) BBI-10 window bbi-bagudi|bbi-ghera (tagged, then wait to see what the boys do) x1 [bbi10-bagudi] -> ok
+(a) BBI-10 window bbi-nacha|bbi-thrown (go from the edge, then stop on it to rest) x1 [bbi10-pada] -> ok
+(a) BBI-10 window bbi-nacha|bbi-thrown (go on the near drummer’s stop, but take your time) x1 [bbi10-dui-baja] -> ok
+(a) BBI-10 window bbi-nacha|bbi-thrown (wait at the edge for the lamps) x1 [bbi10-ghungur] -> ok
+(a) BBI-10 window bbi-kua|bbi-pathara (stop it at its top and climb on to the stone) x1 [bbi10-thaka] -> ok
+(a) BBI-10 window bbi-badi|bbi-buda (wait back, then ride the first one in the water) x1 [bbi10-phinga] -> ok
+(a) BBI-10 window bbi-ghurni|bbi-chamacha (get on in the middle and wait for the stir to stop) x1 [bbi10-ghurni] -> ok
+(a) BBI-10 window bbi-deepa|bbi-thrown (ride the wheel and stay on it) x1 [bbi10-deepa] -> ok
+(a) BBI-10 window bbi-chakka|bbi-khai (jump back off the plinth before it slams) x1 [bbi10-chakra] -> ok
+(a) BBI-10 window bbi-dooba|bbi-udaya (from spoke 1, jump on for where spoke 2 comes up) x1 [bbi10-udaya] -> ok
+(a) BBI-10 window bbi-nacha|bbi-thrown (take the bridge, then rest on it) x1 [bbi10-tana] -> ok
+probe (a) repeats beyond one momentum beat: 0; probe (b) acts failing: 9
+RT BBI-01 won 25.4 s
+RT BBI-02 won 26.4 s
+RT BBI-03 won 25.9 s
+RT BBI-04 won 29.3 s
+RT BBI-05 won 60.2 s
+RT BBI-06 won 50.0 s
+RT BBI-07 won 93.5 s
+RT BBI-08 won 46.6 s
+RT BBI-09 won 58.7 s
+RT BBI-10 won 94.9 s
+stretch BBI-01: longest 8.4 s between calm spots
+replay BBI-01 lag  0: longest 1.6 s (keep walking past him while he faces the road, as Tara says)
+replay BBI-01 lag  6: longest 1.6 s (keep walking past him while he faces the road, as Tara says)
+replay BBI-01 lag 12: longest 1.6 s (keep walking past him while he faces the road, as Tara says)
+stretch BBI-02: longest 8.3 s between calm spots
+replay BBI-02 lag  0: longest 6.3 s (bbi02-chhal: wait at the stopper for the ball to stop)
+replay BBI-02 lag  6: longest 6.3 s (bbi02-chhal: wait at the stopper for the ball to stop)
+replay BBI-02 lag 12: longest 6.4 s (bbi02-chhal: wait at the stopper for the ball to stop)
+stretch BBI-03: longest 8.2 s between calm spots
+replay BBI-03 lag  0: longest 4.5 s (wait on the third parasol’s cut-out)
+replay BBI-03 lag  6: longest 4.6 s (wait on the third parasol’s cut-out)
+replay BBI-03 lag 12: longest 4.7 s (wait on the third parasol’s cut-out)
+stretch BBI-04: longest 10.4 s between calm spots
+replay BBI-04 lag  0: longest 5.1 s (bbi04-karkhana: keep moving and jump the trough)
+replay BBI-04 lag  6: longest 5.2 s (bbi04-karkhana: keep moving and jump the trough)
+replay BBI-04 lag 12: longest 5.2 s (bbi04-karkhana: keep moving and jump the trough)
+stretch BBI-05: longest 8.9 s between calm spots
+replay BBI-05 lag  0: longest 6.7 s (bbi05-patra: walk straight on)
+replay BBI-05 lag  6: longest 6.8 s (bbi05-patra: walk straight on)
+replay BBI-05 lag 12: longest 7.1 s (bbi05-patra: walk straight on)
+stretch BBI-06: longest 7.1 s between calm spots
+replay BBI-06 lag  0: longest 5.4 s (bbi06-tana: step on the moment the motif lines up, and look)
+replay BBI-06 lag  6: longest 5.5 s (bbi06-tana: step on the moment the motif lines up, and look)
+replay BBI-06 lag 12: longest 5.5 s (bbi06-tana: step on the moment the motif lines up, and look)
+stretch BBI-07: longest 7.2 s between calm spots
+replay BBI-07 lag  0: longest 6.6 s (bbi07-gadiba: go at the stop and walk on through the roll)
+replay BBI-07 lag  6: longest 6.6 s (bbi07-gadiba: go at the stop and walk on through the roll)
+replay BBI-07 lag 12: longest 6.7 s (bbi07-gadiba: go at the stop and walk on through the roll)
+stretch BBI-08: longest 11.5 s between calm spots
+replay BBI-08 lag  0: longest 5.8 s (bbi08-bhanwar: stay on the badi)
+replay BBI-08 lag  6: longest 5.9 s (bbi08-bhanwar: stay on the badi)
+replay BBI-08 lag 12: longest 5.8 s (bbi08-bhanwar: stay on the badi)
+stretch BBI-09: longest 19.7 s between calm spots
+replay BBI-09 lag  0: longest 5.2 s (bbi09-asta: hop down on to spoke 1 at once)
+replay BBI-09 lag  6: longest 4.2 s (bbi09-asta: hop down on to spoke 1 at once)
+replay BBI-09 lag 12: longest 4.4 s (bbi09-asta: hop down on to spoke 1 at once)
+stretch BBI-10: longest 9.6 s between calm spots
+replay BBI-10 lag  0: longest 6.7 s (bbi10-patra: walk straight on)
+replay BBI-10 lag  6: longest 6.8 s (bbi10-patra: walk straight on)
+replay BBI-10 lag 12: longest 6.5 s (bbi10-patra: walk straight on)
+replay worst: 7.1 s

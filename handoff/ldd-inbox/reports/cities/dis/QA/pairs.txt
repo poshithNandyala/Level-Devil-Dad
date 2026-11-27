@@ -1,0 +1,85 @@
+DIS-01: plays 672 caps 6 fails 0 longest 8.7 s replay worst 7.13 s
+DIS-02: plays 560 caps 5 fails 0 longest 9.4 s replay worst 6.53 s
+DIS-03: plays 784 caps 7 fails 0 longest 9.6 s replay worst 6.29 s
+DIS-04: plays 224 caps 2 fails 0 longest 7.9 s replay worst 4.38 s
+DIS-05: plays 1232 caps 11 fails 0 longest 8.3 s replay worst 6.41 s
+DIS-06: plays 896 caps 8 fails 0 longest 8.1 s replay worst 4.72 s
+DIS-07: plays 3136 caps 28 fails 0 longest 16.7 s replay worst 7.17 s
+DIS-08: plays 1232 caps 11 fails 0 longest 10.1 s replay worst 6.25 s
+DIS-09: plays 1232 caps 11 fails 0 longest 8.6 s replay worst 6.37 s
+DIS-10: plays 1680 caps 15 fails 0 longest 9.9 s replay worst 3.87 s
+DIS-02 dis02-bhutbhuti lag0: baited dis-luit@2020 other dis-char-sink@2085
+DIS-02 dis02-bhutbhuti lag6: baited dis-luit@2050 other dis-char-sink@2109
+DIS-02 dis02-bhutbhuti lag12: baited dis-luit@2085 other dis-char-sink@2137
+DIS-04 dis04-batah lag0: baited dis-kup@711 other dis-garh@780
+DIS-04 dis04-batah lag6: baited dis-kup@730 other dis-garh@799
+DIS-04 dis04-batah lag12: baited dis-kup@761 other dis-garh@829
+DIS-05 dis05-sanko lag0: baited dis-beam@1378 other dis-pit@1456
+DIS-05 dis05-sanko lag6: baited dis-beam@1390 other dis-pit@1464
+DIS-05 dis05-sanko lag12: baited dis-beam@1402 other dis-pit@1476
+DIS-05 dis05-feast lag0: baited dis-kol-paat@1704 other dis-pit@1710
+DIS-05 dis05-feast lag6: baited dis-kol-paat@1716 other dis-pit@1717
+DIS-05 dis05-feast lag12: baited dis-kol-paat@1728 other dis-pit@1723
+DIS-05 dis05-kaath lag0: baited dis-kaath@1998 other dis-gamosa@2421
+DIS-05 dis05-kaath lag6: baited dis-kaath@2008 other dis-gamosa@2443
+SAME DIS-05 dis05-kaath lag12: baited dis-kaath@2020 other dis-kaath@2272
+DIS-05 dis05-machan lag0: baited dis-machan@3022 other dis-luit@2373
+DIS-05 dis05-machan lag6: baited dis-machan@3028 other dis-luit@2379
+DIS-05 dis05-machan lag12: baited dis-machan@3034 other dis-luit@2385
+DIS-06 dis06-flag lag0: baited dis-luit@2309 other dis-gamosa@2283
+DIS-06 dis06-flag lag6: baited dis-luit@2322 other dis-gamosa@2290
+SAME DIS-06 dis06-flag lag12: baited dis-gamosa@2379 other dis-gamosa@2339
+DIS-06 dis06-wake lag0: baited dis-dhal@900 other dis-bank@920
+DIS-06 dis06-wake lag6: baited dis-dhal@906 other dis-bank@932
+DIS-06 dis06-wake lag12: baited dis-dhal@912 other dis-bank@944
+DIS-06 dis06-traps lag0: baited dis-dirru@1714 other dis-tip@1656
+DIS-06 dis06-traps lag6: baited dis-dirru@1726 other dis-tip@1673
+SAME DIS-06 dis06-traps lag12: baited dis-dirru@1738 other dis-dirru@2008
+SAME DIS-07 dis07-card lag0: baited dis-horin@6692 other dis-horin@6542
+SAME DIS-07 dis07-card lag6: baited dis-horin@6744 other dis-horin@6594
+SAME DIS-07 dis07-card lag12: baited dis-horin@6799 other dis-horin@6649
+DIS-07 dis07-dhol lag0: baited dis-pukhuri@1960 other dis-dhol-sink@2692
+DIS-07 dis07-dhol lag6: baited dis-pukhuri@1978 other dis-dhol-sink@2626
+DIS-07 dis07-dhol lag12: baited dis-pukhuri@1996 other dis-dhol-sink@2644
+DIS-07 dis07-rope lag0: baited dis-pat@3044 other dis-paakoni@3364
+DIS-07 dis07-rope lag6: baited dis-pat@3067 other dis-paakoni@3387
+DIS-07 dis07-rope lag12: baited dis-pat@3104 other dis-paakoni@3424
+DIS-07 dis07-cart lag0: baited dis-herd@7215 other dis-pukhuri@7205
+DIS-07 dis07-cart lag6: baited dis-herd@7274 other dis-gate@7622
+DIS-07 dis07-cart lag12: baited dis-herd@7335 other dis-gate@7683
+DIS-07 dis07-pepa lag0: baited dis-gate@10173 other dis-stakes@10926
+DIS-07 dis07-pepa lag6: baited dis-gate@10231 other dis-stakes@10984
+DIS-07 dis07-pepa lag12: baited dis-gate@10292 other dis-stakes@11045
+DIS-07 dis07-tekeli lag0: baited dis-lathi@5693 other dis-lathi-ghur@5566
+DIS-07 dis07-tekeli lag6: baited dis-lathi@5740 other dis-lathi-ghur@5613
+DIS-07 dis07-tekeli lag12: baited dis-lathi@5789 other dis-lathi-ghur@5662
+DIS-07 dis07-goru lag0: baited dis-goru@4162 other dis-goru-lane@4238
+DIS-07 dis07-goru lag6: baited dis-goru@4190 other dis-goru-lane@4273
+DIS-07 dis07-goru lag12: baited dis-goru@4233 other dis-goru-lane@4327
+DIS-08 dis08-bogoli lag0: baited dis-bogoli@3270 other dis-jui@3766
+DIS-08 dis08-bogoli lag6: baited dis-bogoli@3294 other dis-jui@3797
+DIS-08 dis08-bogoli lag12: baited dis-bogoli@3318 other dis-jui@3827
+DIS-08 dis08-jeep lag0: baited dis-beel@1013 other dis-gorh@1699
+DIS-08 dis08-jeep lag6: baited dis-beel@1025 other dis-gorh@1711
+DIS-08 dis08-jeep lag12: baited dis-beel@1037 other dis-gorh@1723
+DIS-08 dis08-duijeep lag0: baited dis-gorh@2709 other dis-beel@2427
+DIS-08 dis08-duijeep lag6: baited dis-gorh@2727 other dis-beel@2445
+DIS-08 dis08-duijeep lag12: baited dis-gorh@2745 other dis-beel@2463
+DIS-08 dis08-bagori lag0: baited dis-gorh@3909 other dis-beel@4792
+DIS-08 dis08-bagori lag6: baited dis-gorh@3939 other dis-beel@4828
+DIS-08 dis08-bagori lag12: baited dis-gorh@3969 other dis-beel@4865
+DIS-09 dis09-tug lag0: baited dis-khaal@722 other dis-rope@1017
+DIS-09 dis09-tug lag6: baited dis-khaal@782 other dis-rope@1080
+DIS-09 dis09-tug lag12: baited dis-khaal@805 other dis-rope@1108
+DIS-09 dis09-sluice lag0: baited dis-sluice@2327 other dis-roof@2999
+DIS-09 dis09-sluice lag6: baited dis-sluice@2470 other dis-roof@3153
+DIS-09 dis09-sluice lag12: baited dis-sluice@2515 other dis-roof@3211
+DIS-09 dis09-tunnels lag0: baited dis-roof@3131 other dis-vault@3178
+DIS-09 dis09-tunnels lag6: baited dis-roof@3296 other dis-vault@3335
+SAME DIS-09 dis09-tunnels lag12: baited dis-vault@3390 other dis-vault@3392
+DIS-10 dis10-dhol lag0: baited dis-pukhuri@995 other dis-dhol-sink@1043
+DIS-10 dis10-dhol lag6: baited dis-pukhuri@1007 other dis-dhol-sink@1055
+SAME DIS-10 dis10-dhol lag12: baited dis-pukhuri@1019 other dis-pukhuri@1033
+DIS-10 dis10-bordoisila lag0: baited dis-bordoisila@2106 other dis-bhoral@2198
+DIS-10 dis10-bordoisila lag6: baited dis-bordoisila@2129 other dis-bhoral@2215
+DIS-10 dis10-bordoisila lag12: baited dis-bordoisila@2154 other dis-bhoral@2234

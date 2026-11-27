@@ -1,0 +1,31 @@
+import { it } from 'vitest';
+import { LEVELS } from '../../src/game/levels';
+import { SOLUTIONS } from '../solutions';
+import { play, type Step } from '../runner';
+import { causeLines } from '../../src/game/cities/dis/causes';
+// QA round 3 scratch: play what dis-doba-ulta advises in 10 talatal ("race straight down it and jump to the far side"):
+// the route down the stair, then a jump from the last step(s), at a few take-off points, each at lag 0/6/12 (late start)
+it.runIf(!!process.env.QAA)('qa dis advice plays', () => {
+  const out: string[] = [];
+  const def = LEVELS.find((d) => d.id === 'DIS-10')!;
+  const route = SOLUTIONS['DIS-10'];
+  const x0 = def.parts!.find((p) => p.kind === 'dis10-talatal')!.x0;
+  const i = route.findIndex((s) => (s.note ?? '').startsWith('straight down and out'));
+  for (const at of [15.0, 15.5, 16.0, 16.5, 17.0, 17.5, 18.0])
+    for (const lag of [0, 6, 12]) {
+      const st: Step[] = [
+        ...route.slice(0, i),
+        { hold: 'R', until: (w) => w.player.cx >= (x0 + at) * 16, max: 600 },
+        ...(lag ? [{ hold: 'R', ticks: lag } as Step] : []),
+        { hold: 'R', jump: 14, ticks: 14, note: 'jump to the far side' },
+        { hold: 'R', until: (w) => w.state !== 'play' || w.player.cx >= (x0 + 26) * 16, max: 600 },
+      ];
+      let r = '';
+      try {
+        const { w } = play(def, st);
+        r = w.state === 'dead' ? `${w.deathCause}@${w.tick} x${(w.player.cx / 16).toFixed(1)} (act+${(w.player.cx / 16 - x0).toFixed(1)}) | ${(causeLines[w.deathCause!] ?? []).join(' / ')}` : `${w.state} (alive past the vault)`;
+      } catch (e) { r = 'stuck'; }
+      out.push(`talatal jump from act+${at} lag${lag}: ${r}`);
+    }
+  console.log('ADV\n' + out.join('\n'));
+}, 600000);

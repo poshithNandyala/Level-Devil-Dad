@@ -1,0 +1,15 @@
+import { it } from 'vitest';
+import { LEVELS } from '../../src/game/levels';
+import { play } from '../runner';
+import { SOLUTIONS } from '../solutions';
+// QA scratch: every BBI part (room, acts, door) with its advice line, and route time to each act start
+it('qa bbi acts', () => {
+  for (const def of LEVELS.filter((d) => d.id.startsWith('BBI'))) {
+    const d = def as any;
+    const { w } = play(def, SOLUTIONS[def.id]);
+    const hp: string[] = d.hintParts ?? [def.hint];
+    const names = ['room', ...(def.parts ?? []).map((p) => `${p.kind}@${p.x0}`), `door(${d.ending ?? d.twist ?? '?'})`];
+    console.log(`== ${def.id} win=${(w.winTick / 120).toFixed(1)}s par=${d.par} lives=${d.lives ?? '-'} doorX=${d.doorX}`);
+    names.forEach((n, i) => console.log(`  ${n}: ${(hp[i] ?? (i === 0 ? def.hint : '')).slice(0, 400)}`));
+  }
+});

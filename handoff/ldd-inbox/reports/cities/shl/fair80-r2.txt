@@ -1,0 +1,20 @@
+SHL-01: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  door 100%
+SHL-02: 6t 100%  12t 100%  18t 88%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  door 100%
+SHL-03: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  door 100%
+SHL-04: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  door 100%
+SHL-05: 6t 100%  12t 99%  18t 81%   died: shl-wah @82 x1
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 99%  s4 100%  s5 100%  s6 100%  door 100%
+SHL-06: 6t 100%  12t 100%  18t 84%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  s6 100%  door 100%
+SHL-07: 6t 100%  12t 100%  18t 93%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  s6 100%  s7 100%  s8 100%  s9 100%  s10 100%  door 100%
+SHL-08: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  door 100%
+SHL-09: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  s6 100%  s7 100%  door 100%
+SHL-10: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  s6 100%  s7 100%  door 100%

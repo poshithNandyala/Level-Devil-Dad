@@ -1,0 +1,32 @@
+SHL-01 route: RESULT won  tick 1624
+SHL-01 naive: RESULT dead shl-slap tick 878
+SHL-01 fix: RESULT dead shl-lyoh tick 1237
+SHL-02 route: RESULT won  tick 4996
+SHL-02 naive: RESULT dead shl-edge tick 146
+SHL-02 fix: RESULT dead shl-dum tick 161
+SHL-02 m0: RESULT dead shl-edge tick 1759
+SHL-02 m1: RESULT dead shl-dum tick 2289
+SHL-03 route: RESULT won  tick 3033
+SHL-03 naive: RESULT dead shl-sway tick 240
+SHL-03 fix: RESULT dead shl-wake tick 1077
+SHL-03 m0: RESULT dead shl-wake tick 1077
+SHL-03 m1: RESULT dead shl-slip tick 2043
+SHL-04 route: RESULT won  tick 1491
+SHL-04 naive: RESULT dead shl-slap tick 92
+SHL-04 fix: RESULT dead shl-dieng tick 221
+SHL-04 m0: RESULT dead shl-slap tick 627
+SHL-04 m1: RESULT dead shl-dieng tick 221
+SHL-04 m2: RESULT dead shl-slap tick 1176
+SHL-04 m3: RESULT dead shl-lintel tick 1003
+SHL-05 route: RESULT won  tick 2593
+SHL-05 naive: RESULT dead shl-um tick 175
+SHL-05 fix: RESULT dead shl-wah tick 636
+SHL-05 m0: RESULT dead shl-um tick 1303
+SHL-05 m1: RESULT dead shl-pung tick 2129
+SHL-06 route: RESULT won  tick 2824
+SHL-06 naive: RESULT dead shl-gorge tick 213
+SHL-06 fix: RESULT dead shl-spray tick 703
+SHL-06 m0: RESULT dead shl-gorge tick 1042
+SHL-06 m1: RESULT dead shl-gorge tick 487
+SHL-06 m2: RESULT dead shl-jri tick 2040
+SHL-07 route: RESULT won tick 2332; naive: shl-shut@283; fix: shl-maw@276; m0: shl-maw@1680

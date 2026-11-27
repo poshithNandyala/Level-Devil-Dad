@@ -1,0 +1,1 @@
+GTK-02 | 0 | 21.3s | 5 cps | longest 9.8s | max replay 7.30s cp1 stop@12.75s gtk-bhaap | over7.5: none | calm fails: none | hot: none

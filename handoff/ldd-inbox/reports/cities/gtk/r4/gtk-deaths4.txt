@@ -1,0 +1,52 @@
+GTK-01 | (room) | NAIVE | gtk-jhadu @ 784 | FIX | -
+GTK-01 | (room) | the bench works, so walk on at the second sweeper | gtk-jhadu @ 1139
+GTK-02 | (room) | NAIVE | gtk-bhaap @ 839 | FIX | gtk-dhakkan @ 324
+GTK-02 | gtk02-ulta | ride the top tier and stay on | gtk-bhaap @ 1856 | let the top tier go, get on the second | gtk-dhakkan @ 1341
+GTK-03 | (room) | NAIVE | gtk-polythene @ 215 | FIX | gtk-jaanch @ 1532
+GTK-03 | gtk03-ulto | on to every bag | gtk-polythene @ 1337
+GTK-03 | gtk03-jaldi | a look at the stitches on each bag | gtk-jaanch @ 2028
+GTK-04 | (room) | NAIVE | gtk-galat-tala @ 347 | FIX | gtk-jhora @ 823
+GTK-04 | gtk04-upar | out of the first door you meet | gtk-jhora @ 1356 | three flights up, as in the first house | gtk-galat-tala @ 1784
+GTK-04 | gtk04-beech | out of the first door you meet | gtk-jhora @ 2349 | all the way up to G, as in the last house | gtk-galat-tala @ 3003
+GTK-05 | (room) | NAIVE | gtk-jurmana @ 213 | FIX | gtk-jurmana @ 458
+GTK-05 | gtk05-peeche | straight on, wrapper in hand | gtk-jurmana @ 5657 | wait for two, then bin it in the first one he emptied | gtk-jurmana @ 6594
+GTK-05 | gtk05-do | straight on, wrapper in hand | gtk-jurmana @ 3955
+GTK-05 | gtk05-kachra | straight on, wrapper in hand | gtk-jurmana @ 1762
+GTK-05 | gtk05-chabutra | up on the bench and on to the bed | gtk-jurmana @ 3800
+GTK-05 | gtk05-jhadu | behind the stroke, then on with what it brought you | gtk-jurmana @ 4796
+GTK-05 | gtk05-aarakshit | walk on past the sweeper | gtk-jhadu @ 2513 | up on the bench, as at the tour | gtk-aarakshit @ 2871
+GTK-06 | (room) | NAIVE | gtk-taxi @ 188 | FIX | gtk-chhat @ 610
+GTK-06 | gtk06-modh | straight on, past the stand | gtk-taxi @ 1030
+GTK-06 | gtk06-ulta | straight on, past the stand | gtk-taxi @ 1530
+GTK-06 | gtk06-adda | straight on, past the stand | gtk-taxi @ 2979
+GTK-06 | gtk06-upar2 | go as soon as the first taxi is in | gtk-taxi @ 3663
+GTK-06 | gtk06-chhatein | walk off the roof without a hop | gtk-khaai @ 4205
+GTK-07 | (room) | NAIVE | gtk-badal @ 129 | FIX | gtk-deewar @ 1814
+GTK-07 | gtk07-chiya | no stop at the stall: straight on into the cloud | gtk-badal @ 2908 | wait once, then walk on blind past the second stall | gtk-badal @ 3920
+GTK-07 | gtk07-jaldi | walk, don’t jump: the holes are right there | gtk-badal @ 4736
+GTK-08 | (room) | NAIVE | gtk-khaai @ 168 | FIX | gtk-ropeway @ 872
+GTK-08 | gtk08-saamne | round to the far platform, as at the first station | gtk-khaai @ 1451 | round, then wait there for the next cabin | gtk-ropeway @ 2000
+GTK-09 | (room) | NAIVE | gtk-photo @ 663 | FIX | gtk-nadi @ 1564
+GTK-09 | gtk09-dophoto | walk across the shore | gtk-hiun @ 2615 | stay on for one photo, off at the second: surely that’s the end | gtk-photo @ 3854 | stay on past the bank, as through both photos | gtk-nadi @ 4630
+GTK-09 | gtk09-chamri | off when it stops for the photo | gtk-photo @ 2407 | stay on, as on the first yak | gtk-nadi @ 2697
+GTK-09 | gtk09-barf | stay off the lake ice: walk the snow | gtk-hiun @ 4530
+GTK-09 | gtk09-chattan | walk across the shore | gtk-hiun @ 6079 | ride it to the end, as on the first yak | gtk-hiun @ 7289
+GTK-10 | (room) | NAIVE | gtk-galat-tala @ 347 | FIX | gtk-jurmana @ 996
+GTK-10 | gtk10-peechha | the bin ahead is full: jump the holes anyway | gtk-jurmana @ 3204
+GTK-10 | gtk10-jhola | on to every bag | gtk-polythene @ 3845 | cloth only, straight at him as in Lal Market | gtk-jaanch @ 4321
+GTK-10 | gtk10-baadal | behind the cloud the road looks whole: walk it | gtk-deewar @ 4382
+GTK-10 | gtk10-antim | straight on, out of the first door | gtk-galat-tala @ 6158 | count the doors: the basement | gtk-jhora @ 6634
+GTK-10 | gtk10-tar | jump for the other cabin before they meet | gtk-khaai @ 6821
+GTK-10 | gtk10-chauri | walk across the shore | gtk-hiun @ 7507 | off the yak when it stops for the photo | gtk-photo @ 8026 | stay on past the bank | gtk-nadi @ 8903
+GTK-10 | gtk10-jhadu | walk on past the sweeper | gtk-jhadu @ 10027 | up on the bench at each sweeper, as at the first | gtk-aarakshit @ 10594
+GTK-10 | gtk10-stool | up on the stool and straight on to the steamer | gtk-jurmana @ 9052
+GTK-01 29.7s | 
+GTK-02 21.3s | 0:x0=8.1s 1:x32=11.2s 2:x63.5=2.0s
+GTK-03 21.7s | 0:x0=4.3s 1:x32=5.1s 2:x68=5.9s 3:x104=4.8s 4:x139.5=1.5s
+GTK-04 25.2s | 0:x0=5.8s 1:x32=3.4s 2:x60=8.2s 3:x85=6.0s 4:x111.5=1.8s
+GTK-05 53.2s | 0:x0=5.3s 1:x32=6.3s 2:x78=8.4s 3:x112=5.0s 4:x148=4.9s 5:x178=5.5s 6:x208=7.1s 7:x238=8.3s 8:x273.5=2.3s
+GTK-06 39.5s | 0:x0=3.4s 1:x32=3.9s 2:x66=4.4s 3:x96=11.8s 4:x132=4.4s 5:x162=5.6s 6:x194=4.1s 7:x229.5=1.9s
+GTK-07 44.9s | 0:x0=3.5s 1:x32=7.0s 2:x72=3.7s 3:x104=4.6s 4:x144=4.6s 5:x184=15.5s 6:x244=4.5s 7:x283.5=1.6s
+GTK-08 27.9s | 0:x0=9.3s 1:x32=9.4s 2:x64=7.7s 3:x97.5=1.5s
+GTK-09 64.9s | 0:x0=11.6s 1:x32=9.4s 2:x66=16.1s 3:x106=12.9s 4:x146=6.6s 5:x181.5=8.3s
+GTK-10 89.7s | 0:x0=5.7s 1:x32=6.5s 2:x64=3.4s 3:x94=5.3s 4:x124=3.2s 5:x152=5.4s 6:x186=5.9s 7:x222=12.4s 8:x262=6.0s 9:x293=7.8s 10:x327=11.3s 11:x359=9.7s 12:x389=4.8s 13:x422.5=2.2s

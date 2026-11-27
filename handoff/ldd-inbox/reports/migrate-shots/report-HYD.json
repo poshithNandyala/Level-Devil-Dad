@@ -1,0 +1,74 @@
+{
+ "code": "HYD",
+ "moved": [
+  "src/render/backgrounds.ts:hyderabad -> src/game/cities/hyd/backdrop.ts",
+  "src/game/levels/hyd.ts -> src/game/cities/hyd/levels.ts"
+ ],
+ "removed": [
+  "src/game/cities.ts:LINES.HYD",
+  "src/game/cities.ts:CHAPTERS HYD city/hello/famous (filled by install)",
+  "src/game/levels/chunks.ts:SKINS.HYD",
+  "src/game/levels/tour.ts:COURSES.HYD",
+  "src/app/citylines.ts:CITY_LINE.HYD",
+  "src/render/renderer.ts:GRADES.HYD",
+  "src/render/art/tiles.ts:CAP.HYD",
+  "src/audio/audio.ts:MUSIC.HYD",
+  "src/render/theme.ts:THEMES.HYD",
+  "src/render/theme.ts:CITY_ORDER HYD (install appends it)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.otp (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.biryani (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.gravity (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.tiny (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.cannon (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.backdoor (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.slowmo (+ EndingKind)",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case bangle",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case cannonball"
+ ],
+ "importers": [
+  "src/game/levels/index.ts"
+ ],
+ "inv": {
+  "own": [
+   "src/game/levels/hyd.ts"
+  ],
+  "cause": [],
+  "causeShared": [
+   "crushed<game/cities/amr/levels.ts,game/cities/blr/levels.ts,game/cities/chn/endings.ts,game/cities/pdy/endings.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/group.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/trolls.ts,game/world.ts",
+   "burnt<game/cities/amr/levels.ts,game/cities/chn/levels.ts,game/cities/pdy/levels.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/chunks.ts",
+   "hit<game/cities/amr/endings.ts,game/cities/amr/levels.ts,game/cities/blr/levels.ts,game/cities/chn/levels.ts,game/cities/kvt/endings.ts,game/cities/kvt/levels.ts,game/cities/pdy/levels.ts,game/cities/tvm/levels.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/kit.ts",
+   "caught<game/entities/tamil.ts,game/levels/bom.ts"
+  ],
+  "ending": [
+   "otp",
+   "biryani",
+   "gravity",
+   "tiny",
+   "cannon",
+   "backdoor",
+   "slowmo"
+  ],
+  "endingShared": [
+   "lamp<game/cities/blr/levels.ts,game/cities/chn/levels.ts,game/cities/pdy/levels.ts,game/cities/rnc/levels.ts,game/levels/bom.ts,game/levels/bpl.ts,game/levels/dmn.ts,game/levels/gnr.ts,game/levels/jai.ts,game/levels/pnj.ts,game/levels/rpr.ts"
+  ],
+  "thing": [
+   "bangle",
+   "cannonball"
+  ],
+  "thingShared": [
+   "crate<game/cities/amr/endings.ts,game/cities/chn/endings.ts,game/cities/chn/levels.ts,game/cities/kvt/levels.ts,game/cities/kvt/skin.ts,game/cities/pdy/skin.ts,game/entities/mumbai.ts,game/levels/bom.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/endings2.ts,game/levels/kit.ts",
+   "gate<game/cities/tvm/levels.ts,rooms/art/props.ts,rooms/delhi.ts",
+   "barricade<game/cities/blr/levels.ts",
+   "pad<game/cities/amr/levels.ts,game/cities/blr/levels.ts,game/levels/bom.ts",
+   "scooter<game/cities/blr/levels.ts,game/cities/blr/skin.ts,game/cities/chn/skin.ts,game/cities/pdy/levels.ts,game/cities/rnc/skin.ts,game/cities/tvm/levels.ts,game/entities/traffic.ts,game/levels/chunks.ts,game/levels/pnj.ts,render/art/vehicles.ts",
+   "kite<game/cities/chn/levels.ts",
+   "flowers<game/cities/chn/levels.ts,game/cities/pdy/levels.ts,game/levels/endings.ts,game/levels/gnr.ts",
+   "rock<game/cities/amr/levels.ts,game/cities/blr/levels.ts,game/cities/pdy/levels.ts,game/levels/bpl.ts,game/levels/gnr.ts,game/levels/jai.ts,render/scenes.ts",
+   "spout<game/cities/chn/levels.ts",
+   "chaicup<game/levels/bom.ts,game/levels/chunks.ts",
+   "clock<game/cities/pdy/levels.ts,game/levels/bom.ts",
+   "garland<game/cities/chn/levels.ts",
+   "bulbs<game/cities/blr/levels.ts,game/levels/gnr.ts,game/levels/jai.ts"
+  ]
+ }
+}

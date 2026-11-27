@@ -1,0 +1,42 @@
+v22.21.1
+TSC_OK
+ [32m✓[39m tests/jumpaudit.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 58293[2mms[22m[39m
+   [32m✓[39m jump audit [2m(1)[22m
+     [33m[2m✓[22m[39m report[33m 58284[2mms[22m[39m
+ [32m✓[39m tests/cpsafe.test.ts [2m([22m[2m142 tests[22m[2m)[22m[33m 73741[2mms[22m[39m
+   [32m✓[39m checkpoints are safe to respawn at [2m(142)[22m
+     [33m[2m✓[22m[39m TVM-01: idle, run and tap-jump at lag 0/6/12[33m 2580[2mms[22m[39m
+     [33m[2m✓[22m[39m TVM-02: idle, run and tap-jump at lag 0/6/12[33m 399[2mms[22m[39m
+     [33m[2m✓[22m[39m TVM-04: idle, run and tap-jump at lag 0/6/12[33m 793[2mms[22m[39m
+     [33m[2m✓[22m[39m TVM-05: idle, run and tap-jump at lag 0/6/12[33m 345[2mms[22m[39m
+     [33m[2m✓[22m[39m TVM-06: idle, run and tap-jump at lag 0/6/12[33m 404[2mms[22m[39m
+     [33m[2m✓[22m[39m TVM-09: idle, run and tap-jump at lag 0/6/12[33m 1424[2mms[22m[39m
+     [33m[2m✓[22m[39m TVM-10: idle, run and tap-jump at lag 0/6/12[33m 7587[2mms[22m[39m
+     [33m[2m✓[22m[39m KVT-06: idle 1.5 s (allow-listed city)[33m 462[2mms[22m[39m
+     [33m[2m✓[22m[39m KVT-07: idle 1.5 s (allow-listed city)[33m 494[2mms[22m[39m
+     [33m[2m✓[22m[39m PNJ-06: idle 1.5 s (allow-listed city)[33m 319[2mms[22m[39m
+     [33m[2m✓[22m[39m GNR-08: idle 1.5 s (allow-listed city)[33m 361[2mms[22m[39m
+     [33m[2m✓[22m[39m RPR-04: idle 1.5 s (allow-listed city)[33m 1864[2mms[22m[39m
+     [33m[2m✓[22m[39m RPR-08: idle 1.5 s (allow-listed city)[33m 361[2mms[22m[39m
+     [33m[2m✓[22m[39m RNC-04: idle 1.5 s (allow-listed city)[33m 327[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-02: idle, run and tap-jump at lag 0/6/12[33m 440[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-03: idle, run and tap-jump at lag 0/6/12[33m 545[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-04: idle, run and tap-jump at lag 0/6/12[33m 464[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-05: idle, run and tap-jump at lag 0/6/12[33m 3459[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-06: idle, run and tap-jump at lag 0/6/12[33m 4623[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-07: idle, run and tap-jump at lag 0/6/12[33m 6915[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-09: idle, run and tap-jump at lag 0/6/12[33m 2357[2mms[22m[39m
+     [33m[2m✓[22m[39m PAT-10: idle, run and tap-jump at lag 0/6/12[33m 12226[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-03: idle, run and tap-jump at lag 0/6/12[33m 342[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-05: idle, run and tap-jump at lag 0/6/12[33m 743[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-06: idle, run and tap-jump at lag 0/6/12[33m 415[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-07: idle, run and tap-jump at lag 0/6/12[33m 8804[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-08: idle, run and tap-jump at lag 0/6/12[33m 1780[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-09: idle, run and tap-jump at lag 0/6/12[33m 937[2mms[22m[39m
+     [33m[2m✓[22m[39m DIS-10: idle, run and tap-jump at lag 0/6/12[33m 1395[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m18 passed[39m[22m[2m | [22m[33m13 skipped[39m[90m (31)[39m
+[2m      Tests [22m [1m[32m1808 passed[39m[22m[2m | [22m[33m20 skipped[39m[90m (1828)[39m
+[2m   Start at [22m 07:34:46
+[2m   Duration [22m 85.97s[2m (tests 55%, transform 31%, setup 12%, import 2%)[22m
+

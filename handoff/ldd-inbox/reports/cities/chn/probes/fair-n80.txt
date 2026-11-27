@@ -1,0 +1,18 @@
+CHN-01: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  door 100%
+CHN-02: 6t 64%  12t 28%  18t 38%   died: hit @14 x49, died: splash @15 x9
+  stretches at 0-12t (bar 95% each): s0 28%  s1 100%  door 100%
+CHN-04: 6t 79%  12t 35%  18t 40%   died: burnt @21 x35, died: burnt @22 x17
+  stretches at 0-12t (bar 95% each): s0 35%  s1 100%  door 100%
+CHN-05: 6t 71%  12t 66%  18t 50%   died: hit @75 x1, died: hit @4 x13, died: hit @6 x2, died: hit @11 x1, died: hit @12 x2, died: hit @13 x2, died: hit @14 x1, died: hit @16 x1, died: hit @5 x4
+  stretches at 0-12t (bar 95% each): s0 68%  s1 100%  door 98%
+CHN-06: 6t 78%  12t 30%  18t 35%   died: fell @22 x18, died: fell @21 x9, stuck: the door: chn-rangoli x29
+  stretches at 0-12t (bar 95% each): s0 66%  s1 100%  door 45%
+CHN-07: 6t 1%  12t 0%  18t 0%   died: fell @15 x26, died: fell @25 x19, died: fell @19 x12, died: spikes @51 x8, died: fell @12 x13, died: fell @16 x1, died: fell @9 x1
+  stretches at 0-12t (bar 95% each): s0 10%  door 0%
+CHN-08: 6t 93%  12t 41%  18t 43%   died: hit @4 x15, stuck: the door, and whatever it does x32
+  stretches at 0-12t (bar 95% each): s0 81%  s1 100%  door 51%
+CHN-09: 6t 100%  12t 100%  18t 76%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  door 100%
+CHN-10: 6t 100%  12t 100%  18t 96%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  door 100%

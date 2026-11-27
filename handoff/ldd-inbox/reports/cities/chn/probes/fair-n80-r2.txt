@@ -1,0 +1,20 @@
+CHN-01: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  door 100%
+CHN-02: 6t 100%  12t 98%  18t 79%   died: splash @20 x2
+  stretches at 0-12t (bar 95% each): s0 98%  s1 100%  door 100%
+CHN-03: 6t 100%  12t 91%  18t 83%   died: gored @89 x2, died: flood @50 x1, died: flood @49 x1, died: gored @90 x2, died: flood @51 x1
+  stretches at 0-12t (bar 95% each): s0 100%  s1 96%  door 95%
+CHN-04: 6t 100%  12t 100%  18t 83%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  door 100%
+CHN-05: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  door 100%
+CHN-06: 6t 100%  12t 100%  18t 76%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  door 100%
+CHN-07: 6t 100%  12t 99%  18t 93%   died: fell @23 x1
+  stretches at 0-12t (bar 95% each): s0 99%  s1 100%  door 100%
+CHN-08: 6t 100%  12t 100%  18t 100%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  door 100%
+CHN-09: 6t 100%  12t 100%  18t 76%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  door 100%
+CHN-10: 6t 99%  12t 100%  18t 94%   
+  stretches at 0-12t (bar 95% each): s0 100%  s1 100%  s2 100%  s3 100%  s4 100%  s5 100%  door 100%

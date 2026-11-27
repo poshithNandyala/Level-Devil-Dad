@@ -1,0 +1,152 @@
+BBI-01 fix lag0:bbi-nala@x72t1671 lag6:bbi-nala@x72t1697 lag12:bbi-nala@x72t1715 
+BBI-01 m0 lag0:bbi-nala@x29t481 lag6:bbi-nala@x29t487 lag12:bbi-nala@x29t493 
+BBI-01 naive lag0:bbi-nala@x29t353 lag6:bbi-nala@x29t359 lag12:bbi-nala@x29t364 
+BBI-02 fix lag0:bbi-rebound@x26t377 lag6:bbi-rebound@x25t391 lag12:bbi-rebound@x25t405 
+BBI-02 m0 lag0:bbi-roll@x143t2916 lag6:bbi-roll@x143t2953 lag12:bbi-roll@x143t2984 
+BBI-02 m1 lag0:bbi-roll-back@x136t2893 lag6:bbi-roll-back@x136t2932 lag12:bbi-roll-back@x136t2961 
+BBI-02 m2 lag0:bbi-ball@x51t932 lag6:bbi-ball@x51t950 lag12:bbi-ball@x51t966 
+BBI-02 m3 lag0:bbi-ball@x81t1344 lag6:bbi-ball@x81t1368 lag12:bbi-ball@x81t1389 
+BBI-02 m4 lag0:bbi-rebound@x86t1449 lag6:bbi-rebound@x86t1476 lag12:bbi-rebound@x86t1500 
+BBI-02 m5 lag0:bbi-ball@x114t1979 lag6:bbi-ball@x114t2009 lag12:bbi-ball@x114t2035 
+BBI-02 naive lag0:bbi-ball@x18t239 lag6:bbi-ball@x18t251 lag12:bbi-ball@x18t263 
+BBI-03 fix lag0:bbi-silk@x6t188 lag6:bbi-silk@x6t215 lag12:bbi-silk@x6t240 
+BBI-03 m0 lag0:bbi-peeled@x17t857 lag6:bbi-peeled@x17t863 lag12:bbi-peeled@x16t869 
+BBI-03 m1 lag0:bbi-rangapani@x40t922 lag6:bbi-rangapani@x40t967 lag12:bbi-rangapani@x41t1015 
+BBI-03 m2 lag0:bbi-silk@x39t1069 lag6:bbi-silk@x39t1111 lag12:bbi-silk@x39t1169 
+BBI-03 m3 lag0:bbi-rangapani@x64t1805 lag6:bbi-rangapani@x64t1883 lag12:bbi-rangapani@x65t1970 
+BBI-03 m4 lag0:bbi-silk@x67t2010 lag6:bbi-silk@x67t2027 lag12:bbi-silk@x67t2178 
+BBI-03 naive lag0:bbi-rangapani@x6t90 lag6:bbi-rangapani@x12t166 lag12:bbi-rangapani@x12t172 
+BBI-04 fix lag0:bbi-kunda@x19t303 lag6:bbi-kunda@x20t321 lag12:bbi-kunda@x20t337 
+BBI-04 m0 lag0:bbi-jhala@x7t156 lag6:bbi-jhala@x7t168 lag12:bbi-jhala@x7t180 
+BBI-04 m1 lag0:bbi-agni@x36t1468 lag6:bbi-agni@x36t1480 lag12:bbi-agni@x36t1489 
+BBI-04 m2 lag0:bbi-kunda@x45t1428 lag6:bbi-kunda@x45t1446 lag12:bbi-kunda@x46t1462 
+BBI-04 naive lag0:bbi-agni@x8t107 lag6:bbi-agni@x8t113 lag12:bbi-agni@x8t119 
+BBI-05 fix lag0:bbi-sila@x303t7165 lag6:bbi-sila@x303t7344 lag12:bbi-sila@x303t7474 
+BBI-05 m0 lag0:bbi-gadi@x72t1118 lag6:NODEATH@x-1t-1 lag12:NODEATH@x-1t-1 CHANGES
+BBI-05 m1 lag0:bbi-sila@x48t689 lag6:NODEATH@x-1t-1 lag12:NODEATH@x-1t-1 CHANGES
+BBI-05 m10 lag0:bbi-patra@x189t3843 lag6:bbi-patra@x189t3912 lag12:bbi-patra@x189t3975 
+BBI-05 m11 lag0:bbi-khali@x189t4531 lag6:bbi-khali@x189t4606 lag12:bbi-khali@x189t4675 
+BBI-05 m12 lag0:bbi-bail@x211t4975 lag6:bbi-bail@x211t5113 lag12:bbi-bail@x211t5251 
+BBI-05 m13 lag0:bbi-mama@x244t6504 lag6:bbi-tenda@x243t6067 lag12:bbi-tenda@x245t6945 CHANGES
+BBI-05 m14 lag0:bbi-dhakka@x243t6331 lag6:bbi-dhakka@x243t6476 lag12:bbi-dhakka@x243t6617 
+BBI-05 m15 lag0:bbi-ganna@x270t6736 lag6:bbi-ganna@x270t6894 lag12:NODEATH@x-1t-1 CHANGES
+BBI-05 m16 lag0:bbi-dhan@x265t6795 lag6:bbi-dhan@x265t6987 lag12:NODEATH@x-1t-1 CHANGES
+BBI-05 m17 lag0:bbi-dhan@x287t7022 lag6:bbi-dhan@x287t7214 lag12:bbi-dhan@x288t7359 
+BBI-05 m2 lag0:bbi-gadi@x72t1124 lag6:bbi-gadi@x72t1114 lag12:NODEATH@x-1t-1 CHANGES
+BBI-05 m3 lag0:bbi-tenda@x88t1990 lag6:bbi-tenda@x88t2021 lag12:bbi-tenda@x89t2049 
+BBI-05 m4 lag0:bbi-chheli@x106t2035 lag6:bbi-chheli@x106t2086 lag12:bbi-chheli@x106t2131 
+BBI-05 m5 lag0:bbi-sinha@x111t2198 lag6:bbi-sinha@x111t2250 lag12:bbi-sinha@x111t2298 
+BBI-05 m6 lag0:bbi-jaanta@x128t2946 lag6:bbi-jaanta@x128t2997 lag12:bbi-jaanta@x128t3042 
+BBI-05 m7 lag0:crushed@x145t3264 lag6:NODEATH@x-1t-1 lag12:crushed@x145t3332 CHANGES
+BBI-05 m8 lag0:bbi-pathara@x175t3588 lag6:bbi-pathara@x174t3651 lag12:bbi-pani@x165t3572 CHANGES
+BBI-05 m9 lag0:bbi-pani@x165t3453 lag6:bbi-pani@x165t3523 lag12:bbi-pani@x165t3586 
+BBI-05 naive lag0:bbi-jaanta@x13t239 lag6:bbi-jaanta@x12t214 lag12:bbi-jaanta@x12t225 
+BBI-06 fix lag0:bbi-shuttle@x9t476 lag6:bbi-shuttle@x8t484 lag12:bbi-ranga@x41t940 CHANGES
+BBI-06 m0 lag0:bbi-ranga@x41t977 lag6:bbi-ranga@x41t989 lag12:bbi-ranga@x41t1001 
+BBI-06 m1 lag0:bbi-shuttle@x41t1419 lag6:bbi-shuttle@x41t1431 lag12:bbi-shuttle@x41t1443 
+BBI-06 m10 lag0:bbi-rachh@x147t4684 lag6:bbi-rachh@x146t4753 lag12:bbi-ranga@x155t4963 CHANGES
+BBI-06 m11 lag0:bbi-ranga@x172t4928 lag6:bbi-ranga@x172t5008 lag12:bbi-ranga@x173t5102 
+BBI-06 m12 lag0:bbi-rachh@x167t5268 lag6:bbi-rachh@x167t5342 lag12:bbi-rachh@x167t5430 
+BBI-06 m2 lag0:bbi-ranga@x64t1820 lag6:bbi-ranga@x64t1838 lag12:bbi-ranga@x64t1856 
+BBI-06 m3 lag0:bbi-sadha@x92t2570 lag6:bbi-sadha@x92t2594 lag12:bbi-sadha@x92t2633 
+BBI-06 m4 lag0:bbi-chitra@x91t2590 lag6:bbi-chitra@x91t2622 lag12:bbi-chitra@x91t2667 
+BBI-06 m5 lag0:bbi-sutra@x110t3283 lag6:bbi-sutra@x110t3346 lag12:bbi-sutra@x110t3422 
+BBI-06 m6 lag0:bbi-shuttle@x105t3166 lag6:bbi-shuttle@x105t3225 lag12:bbi-shuttle@x105t3295 
+BBI-06 m7 lag0:bbi-ranga@x127t3517 lag6:bbi-ranga@x127t3580 lag12:bbi-ranga@x127t3655 
+BBI-06 m8 lag0:bbi-shuttle@x126t3884 lag6:bbi-shuttle@x125t3949 lag12:bbi-rachh@x128t4185 CHANGES
+BBI-06 m9 lag0:bbi-tantu@x150t4617 lag6:bbi-tantu@x150t4692 lag12:bbi-tantu@x150t4780 
+BBI-06 naive lag0:bbi-ranga@x10t128 lag6:bbi-ranga@x10t134 lag12:bbi-ranga@x10t140 
+BBI-07 fix lag0:bbi-thrown@x15t737 lag6:bbi-thrown@x14t743 lag12:bbi-thrown@x14t749 
+BBI-07 m0 lag0:bbi-nacha@x37t926 lag6:bbi-nacha@x37t938 lag12:bbi-nacha@x37t950 
+BBI-07 m1 lag0:bbi-thrown@x37t1219 lag6:bbi-thrown@x37t1231 lag12:bbi-thrown@x37t1243 
+BBI-07 m10 lag0:bbi-pada@x161t4963 lag6:bbi-pada@x161t5039 lag12:bbi-pada@x161t5106 
+BBI-07 m11 lag0:bbi-thrown@x167t5197 lag6:bbi-thrown@x166t5273 lag12:bbi-thrown@x166t5340 
+BBI-07 m12 lag0:bbi-nacha@x196t5748 lag6:bbi-thrown@x189t5799 lag12:bbi-thrown@x189t5872 CHANGES
+BBI-07 m13 lag0:bbi-adha@x198t6008 lag6:bbi-adha@x198t6096 lag12:bbi-adha@x197t6175 
+BBI-07 m14 lag0:bbi-ulta-gadi@x227t6420 lag6:bbi-ulta-gadi@x227t6514 lag12:bbi-ulta-gadi@x226t6599 
+BBI-07 m15 lag0:bbi-gadi-tala@x219t6390 lag6:bbi-gadi-tala@x219t6484 lag12:bbi-gadi-tala@x219t6569 
+BBI-07 m16 lag0:bbi-thrown@x245t7249 lag6:bbi-thrown@x244t7350 lag12:bbi-thrown@x244t7440 
+BBI-07 m17 lag0:bbi-kick@x246t7551 lag6:bbi-kick@x246t7658 lag12:bbi-kick@x246t7753 
+BBI-07 m18 lag0:bbi-saja@x258t7864 lag6:bbi-saja@x258t7971 lag12:bbi-saja@x258t8066 
+BBI-07 m19 lag0:bbi-dauda@x261t7797 lag6:bbi-dauda@x261t7904 lag12:bbi-dauda@x261t7999 
+BBI-07 m2 lag0:bbi-nacha@x63t1573 lag6:bbi-nacha@x63t1591 lag12:bbi-nacha@x63t1609 
+BBI-07 m20 lag0:bbi-nacha@x284t8159 lag6:bbi-nacha@x284t8272 lag12:bbi-nacha@x284t8373 
+BBI-07 m21 lag0:bbi-thrown@x281t8711 lag6:bbi-thrown@x281t8829 lag12:bbi-thrown@x281t8937 
+BBI-07 m22 lag0:bbi-kachha@x318t8766 lag6:bbi-kachha@x318t8879 lag12:bbi-kachha@x317t8980 
+BBI-07 m23 lag0:bbi-thrown@x331t9591 lag6:bbi-thrown@x330t9711 lag12:bbi-thrown@x330t9817 
+BBI-07 m24 lag0:bbi-pothi@x347t9697 lag6:bbi-pothi@x347t9823 lag12:bbi-pothi@x347t9935 
+BBI-07 m25 lag0:bbi-nacha@x367t9967 lag6:bbi-nacha@x367t10093 lag12:bbi-nacha@x367t10205 
+BBI-07 m26 lag0:bbi-nacha@x382t10315 lag6:bbi-nacha@x382t10441 lag12:bbi-nacha@x382t10553 
+BBI-07 m27 lag0:bbi-thrown@x382t10765 lag6:bbi-thrown@x382t10892 lag12:bbi-thrown@x382t11003 
+BBI-07 m28 lag0:bbi-nacha@x408t10932 lag6:bbi-nacha@x408t11065 lag12:bbi-nacha@x408t11182 
+BBI-07 m29 lag0:bbi-nacha@x416t11253 lag6:bbi-nacha@x416t11397 lag12:bbi-nacha@x416t11527 
+BBI-07 m3 lag0:bbi-deepa@x62t1726 lag6:bbi-deepa@x62t1750 lag12:bbi-deepa@x62t1774 
+BBI-07 m30 lag0:bbi-thrown@x417t11693 lag6:bbi-thrown@x417t11831 lag12:bbi-thrown@x417t11955 
+BBI-07 m4 lag0:bbi-nacha@x82t2370 lag6:bbi-nacha@x82t2394 lag12:bbi-nacha@x82t2418 
+BBI-07 m5 lag0:bbi-thrown@x101t3354 lag6:bbi-thrown@x101t3384 lag12:bbi-thrown@x101t3414 
+BBI-07 m6 lag0:bbi-nacha@x121t3846 lag6:bbi-nacha@x121t3918 lag12:bbi-nacha@x121t3972 
+BBI-07 m7 lag0:bbi-thrown@x121t4225 lag6:bbi-thrown@x121t4289 lag12:bbi-thrown@x121t4338 
+BBI-07 m8 lag0:bbi-bagudi@x146t4358 lag6:bbi-bagudi@x146t4428 lag12:bbi-bagudi@x146t4483 
+BBI-07 m9 lag0:bbi-chhuin@x146t4513 lag6:bbi-chhuin@x146t4587 lag12:bbi-chhuin@x146t4650 
+BBI-07 naive lag0:bbi-nacha@x12t162 lag6:bbi-nacha@x13t174 lag12:bbi-nacha@x13t186 
+BBI-08 fix lag0:bbi-dhara@x23t566 lag6:bbi-dhara@x23t579 lag12:bbi-dhara@x23t591 
+BBI-08 m0 lag0:bbi-badi@x39t1785 lag6:bbi-badi@x39t1826 lag12:bbi-buda@x43t1852 CHANGES
+BBI-08 m1 lag0:bbi-buda@x44t1790 lag6:bbi-buda@x44t1834 lag12:bbi-buda@x43t1852 
+BBI-08 m2 lag0:bbi-bhanwar@x70t2610 lag6:bbi-bhanwar@x69t2659 lag12:bbi-bhanwar@x70t2684 
+BBI-08 m3 lag0:bbi-pakhala@x69t2324 lag6:bbi-pakhala@x69t2379 lag12:bbi-pakhala@x70t2410 
+BBI-08 m4 lag0:bbi-bhanwar@x87t3126 lag6:bbi-bhanwar@x86t3201 lag12:bbi-bhanwar@x87t3243 
+BBI-08 m5 lag0:bbi-pakhala@x91t3114 lag6:bbi-pakhala@x91t3195 lag12:bbi-pakhala@x91t3236 
+BBI-08 m6 lag0:bbi-pakhala@x111t3510 lag6:bbi-pakhala@x111t3601 lag12:bbi-pakhala@x111t3655 
+BBI-08 m7 lag0:bbi-dhara@x108t3726 lag6:bbi-dhara@x108t3817 lag12:bbi-dhara@x108t3871 
+BBI-08 m8 lag0:bbi-ghurni@x139t5148 lag6:bbi-ghurni@x139t5262 lag12:bbi-ghurni@x139t5330 
+BBI-08 m9 lag0:bbi-chamacha@x140t5312 lag6:bbi-chamacha@x140t5427 lag12:bbi-chamacha@x140t5494 
+BBI-08 naive lag0:bbi-pakhala@x16t314 lag6:bbi-pakhala@x16t326 lag12:bbi-pakhala@x16t338 
+BBI-09 fix lag0:bbi-ara@x196t6684 lag6:bbi-ara@x196t7054 lag12:bbi-ara@x194t7356 
+BBI-09 m0 lag0:bbi-chakka@x49t900 lag6:bbi-chakka@x49t937 lag12:NODEATH@x-1t-1 CHANGES
+BBI-09 m1 lag0:bbi-khai@x39t913 lag6:bbi-khai@x39t951 lag12:NODEATH@x-1t-1 CHANGES
+BBI-09 m10 lag0:bbi-ara@x191t6530 lag6:bbi-ara@x191t6900 lag12:bbi-ara@x191t7279 
+BBI-09 m2 lag0:bbi-udaya@x65t1392 lag6:bbi-udaya@x66t1474 lag12:bbi-udaya@x66t1558 
+BBI-09 m3 lag0:bbi-dooba@x63t1705 lag6:bbi-dooba@x63t1772 lag12:bbi-dooba@x63t1837 
+BBI-09 m4 lag0:bbi-chakka@x119t3766 lag6:bbi-chakka@x119t3959 lag12:NODEATH@x-1t-1 CHANGES
+BBI-09 m5 lag0:bbi-khai@x106t3772 lag6:bbi-khai@x106t3967 lag12:NODEATH@x-1t-1 CHANGES
+BBI-09 m6 lag0:bbi-chakka@x145t4267 lag6:bbi-chakka@x145t4476 lag12:NODEATH@x-1t-1 CHANGES
+BBI-09 m7 lag0:bbi-ulta@x138t4431 lag6:bbi-ulta@x138t4638 lag12:bbi-ulta@x138t4876 
+BBI-09 m8 lag0:bbi-udaya@x163t4559 lag6:bbi-udaya@x162t4785 lag12:bbi-udaya@x163t5036 
+BBI-09 m9 lag0:bbi-dooba@x159t5039 lag6:bbi-dooba@x159t5319 lag12:bbi-dooba@x159t5573 
+BBI-09 naive lag0:bbi-chakka@x25t430 lag6:bbi-chakka@x25t450 lag12:bbi-chakka@x25t468 
+BBI-10 fix lag0:bbi-chakka@x35t683 lag6:bbi-chakka@x35t701 lag12:bbi-chakka@x35t718 
+BBI-10 m0 lag0:bbi-likhita@x50t1666 lag6:bbi-likhita@x50t1706 lag12:bbi-likhita@x50t1729 
+BBI-10 m1 lag0:bbi-patra@x51t923 lag6:bbi-patra@x51t947 lag12:bbi-patra@x51t994 
+BBI-10 m10 lag0:bbi-rachh@x170t4038 lag6:bbi-rachh@x171t4244 lag12:bbi-rachh@x171t4428 
+BBI-10 m11 lag0:bbi-ranga@x174t3977 lag6:bbi-ranga@x174t4188 lag12:bbi-ranga@x174t4383 
+BBI-10 m12 lag0:bbi-bagudi@x204t4589 lag6:bbi-bagudi@x204t4814 lag12:bbi-bagudi@x204t5022 
+BBI-10 m13 lag0:bbi-ghera@x205t4656 lag6:bbi-ghera@x205t4876 lag12:bbi-ghera@x205t5071 
+BBI-10 m14 lag0:bbi-nacha@x226t5014 lag6:bbi-thrown@x226t5214 lag12:bbi-thrown@x225t5409 CHANGES
+BBI-10 m15 lag0:bbi-thrown@x222t4994 lag6:bbi-thrown@x222t5214 lag12:bbi-thrown@x222t5409 
+BBI-10 m16 lag0:bbi-nacha@x236t5047 lag6:bbi-nacha@x236t5281 lag12:bbi-nacha@x236t5488 
+BBI-10 m17 lag0:bbi-thrown@x236t5426 lag6:bbi-thrown@x236t5652 lag12:bbi-thrown@x236t5853 
+BBI-10 m18 lag0:bbi-nacha@x259t5532 lag6:bbi-nacha@x259t5763 lag12:bbi-nacha@x259t5971 
+BBI-10 m19 lag0:bbi-thrown@x253t6042 lag6:bbi-thrown@x253t6280 lag12:bbi-thrown@x253t6492 
+BBI-10 m2 lag0:bbi-sinha@x76t2648 lag6:bbi-sinha@x76t2743 lag12:bbi-sinha@x76t2800 
+BBI-10 m20 lag0:bbi-kua@x284t5935 lag6:bbi-kua@x284t6173 lag12:bbi-kua@x284t6386 
+BBI-10 m21 lag0:bbi-pathara@x286t5962 lag6:bbi-pathara@x286t6206 lag12:bbi-pathara@x282t6382 
+BBI-10 m22 lag0:bbi-badi@x302t6454 lag6:bbi-badi@x302t6698 lag12:bbi-badi@x302t6920 
+BBI-10 m23 lag0:bbi-buda@x308t6772 lag6:bbi-buda@x308t7016 lag12:bbi-pakhala@x308t7231 CHANGES
+BBI-10 m24 lag0:bbi-ghurni@x332t7750 lag6:bbi-ghurni@x332t8009 lag12:bbi-ghurni@x332t8242 
+BBI-10 m25 lag0:bbi-chamacha@x330t7860 lag6:bbi-chamacha@x330t8124 lag12:bbi-chamacha@x331t8361 
+BBI-10 m26 lag0:bbi-deepa@x346t8463 lag6:bbi-deepa@x346t8747 lag12:bbi-deepa@x346t9002 
+BBI-10 m27 lag0:bbi-thrown@x347t8277 lag6:bbi-thrown@x348t8555 lag12:bbi-thrown@x347t8804 
+BBI-10 m28 lag0:bbi-chakka@x378t8645 lag6:bbi-chakka@x378t8949 lag12:bbi-chakka@x378t9285 
+BBI-10 m29 lag0:bbi-khai@x368t8658 lag6:bbi-khai@x368t8965 lag12:NODEATH@x-1t-1 CHANGES
+BBI-10 m3 lag0:bbi-chheli@x74t2028 lag6:bbi-chheli@x74t2140 lag12:bbi-chheli@x74t2207 
+BBI-10 m30 lag0:bbi-dooba@x392t9403 lag6:bbi-dooba@x392t9730 lag12:bbi-dooba@x392t10102 
+BBI-10 m31 lag0:bbi-udaya@x396t9076 lag6:bbi-udaya@x396t9417 lag12:bbi-udaya@x396t9801 
+BBI-10 m32 lag0:bbi-nacha@x436t10888 lag6:bbi-nacha@x436t11365 lag12:bbi-nacha@x436t11910 
+BBI-10 m33 lag0:bbi-thrown@x437t11246 lag6:bbi-thrown@x437t11717 lag12:bbi-thrown@x437t12257 
+BBI-10 m4 lag0:bbi-rangapani@x100t2830 lag6:bbi-rangapani@x100t2931 lag12:bbi-rangapani@x100t2994 
+BBI-10 m5 lag0:bbi-silk@x103t2832 lag6:bbi-silk@x103t2933 lag12:bbi-silk@x103t2995 
+BBI-10 m6 lag0:bbi-sadha@x126t2909 lag6:bbi-sadha@x126t3068 lag12:bbi-sadha@x126t3205 
+BBI-10 m7 lag0:bbi-chitra@x133t3063 lag6:bbi-chitra@x133t3239 lag12:bbi-chitra@x133t3394 
+BBI-10 m8 lag0:bbi-ganthi@x152t3670 lag6:bbi-ganthi@x152t3874 lag12:bbi-ganthi@x152t4059 
+BBI-10 m9 lag0:bbi-rachh@x150t3742 lag6:bbi-rachh@x149t3941 lag12:bbi-ranga@x158t4248 CHANGES
+BBI-10 naive lag0:bbi-ball@x16t347 lag6:bbi-ball@x16t356 lag12:bbi-ball@x16t370 

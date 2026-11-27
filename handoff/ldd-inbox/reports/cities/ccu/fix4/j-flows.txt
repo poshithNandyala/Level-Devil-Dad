@@ -1,0 +1,3 @@
+Cannot open directory /local/p4clients/pkgbuild-const/workspace/src/NodeJSOpenssl/build/private/install/ssl/certs to load OpenSSL certificates.
+BLR-04
+no errors

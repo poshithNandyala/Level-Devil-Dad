@@ -1,0 +1,8 @@
+     ✓ DIS-05: idle, run and tap-jump at lag 0/6/12 718ms
+     ✓ DIS-06: idle, run and tap-jump at lag 0/6/12 410ms
+     ✓ DIS-07: idle, run and tap-jump at lag 0/6/12 4600ms
+     ✓ DIS-08: idle, run and tap-jump at lag 0/6/12 1279ms
+     ✓ DIS-09: idle, run and tap-jump at lag 0/6/12 946ms
+     ✓ DIS-10: idle, run and tap-jump at lag 0/6/12 1343ms
+ Test Files  1 passed (1)
+      Tests  10 passed | 132 skipped (142)

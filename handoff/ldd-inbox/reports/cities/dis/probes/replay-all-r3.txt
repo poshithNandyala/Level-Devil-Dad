@@ -1,0 +1,719 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.1.0 [39m[90m/local/home/saiposh/personal/ldd-wt/dis[39m
+
+[90mstdout[2m | tests/zz-dis-replay.test.ts[2m > [22m[2mdis replay probe
+[22m[39mT DIS-01 0.0 3.5 stop=- run=- jump=dis-spill
+T DIS-01 0.5 7.7 stop=- run=- jump=dis-spill
+T DIS-01 1.0 12.1 stop=- run=- jump=dis-spill
+T DIS-01 1.5 15.7 stop=- run=- jump=dis-pool
+T DIS-01 2.0 19.5 stop=- run=- jump=dis-spill
+T DIS-01 2.5 23.9 stop=- run=- jump=dis-pool
+T DIS-01 3.0 28.3 stop=- run=- jump=dis-pool
+T DIS-01 3.5 32.6 stop=- run=- jump=dis-pool
+T DIS-01 4.0 37.0 stop=- run=- jump=dis-spill
+T DIS-01 4.5 41.4 stop=- run=- jump=dis-spill
+T DIS-01 5.0 45.8 stop=- run=- jump=dis-spill
+T DIS-01 5.5 50.1 stop=- run=- jump=dis-pool
+T DIS-01 6.0 54.5 stop=- run=dis-spill jump=dis-pool
+T DIS-01 6.5 58.9 stop=- run=dis-spill jump=dis-spill
+T DIS-01 7.0 63.3 stop=- run=dis-spill jump=dis-spill
+T DIS-01 7.5 67.6 stop=- run=dis-spill jump=dis-pool
+T DIS-01 8.0 72.0 stop=dis-spill run=dis-spill jump=dis-pool
+T DIS-01 8.5 76.4 stop=dis-spill run=dis-spill jump=dis-spill
+T DIS-01 9.0 76.5 stop=dis-spill run=dis-spill jump=dis-pool
+T DIS-01 9.5 76.5 stop=dis-spill run=dis-spill jump=dis-pool
+T DIS-01 10.0 76.5 stop=dis-spill run=dis-spill jump=dis-spill
+T DIS-01 10.5 76.5 stop=dis-spill run=dis-spill jump=dis-spill
+T DIS-01 11.0 76.5 stop=dis-spill run=dis-spill jump=dis-spill
+T DIS-01 11.5 76.5 stop=dis-spill run=dis-spill jump=dis-pool
+T DIS-01 12.0 76.5 stop=dis-spill run=- jump=dis-pool
+T DIS-01 12.5 80.1 stop=dis-spill run=- jump=dis-spill
+T DIS-01 13.0 84.4 stop=- run=- jump=dis-spill
+T DIS-01 13.5 88.8 stop=- run=- jump=dis-spill
+T DIS-01 14.0 93.2 stop=- run=dis-spill jump=dis-pool
+T DIS-01 14.5 97.6 stop=- run=dis-spill jump=dis-pool
+T DIS-01 15.0 98.9 stop=- run=dis-spill jump=dis-spill
+T DIS-01 15.5 98.9 stop=- run=dis-spill jump=dis-spill
+T DIS-01 16.0 98.9 stop=- run=dis-spill jump=dis-spill
+T DIS-01 16.5 98.9 stop=- run=dis-spill jump=dis-spill
+T DIS-01 17.0 98.9 stop=- run=dis-spill jump=dis-spill
+T DIS-01 17.5 98.9 stop=- run=dis-spill jump=dis-spill
+T DIS-01 18.0 98.9 stop=- run=dis-spill jump=dis-spill
+T DIS-01 18.5 98.9 stop=- run=dis-spill jump=dis-pool
+T DIS-01 19.0 98.9 stop=- run=dis-spill jump=dis-pool
+T DIS-01 19.5 98.9 stop=- run=dis-spill jump=dis-pool
+T DIS-01 20.0 98.9 stop=- run=dis-spill jump=dis-pool
+T DIS-01 20.5 98.9 stop=- run=dis-spill jump=-
+T DIS-01 21.0 98.9 stop=- run=- jump=-
+T DIS-01 21.5 102.1 stop=- run=- jump=-
+T DIS-01 22.0 106.5 stop=- run=- jump=-
+T DIS-01 22.5 110.9 stop=- run=- jump=-
+OUT DIS-01 end 22.6 cps 2.9 5.5 6.5 8.3 12.8 21.2
+s-1 0.0-2.9 len 2.9 | lag0 1.2 lag6 0.6 lag12 0.6 | cap 2/3/3 | jump@1.0:dis-spill@9.4->cp3
+s0 2.9-5.5 len 2.6 | lag0 1.2 lag6 1.2 lag12 0.6 | cap 3/2/2 | jump@4.0:dis-spill@9.5->cp3
+s1 5.5-6.5 len 0.9 | lag0 0.6 lag6 0.6 lag12 0.6 | cap 1/2/2 | jump@6.0:dis-pool@10.0->cp4
+s2 6.5-8.3 len 1.9 | lag0 1.5 lag6 1.6 lag12 1.6 | cap 2/2/1 | stop@8.0:dis-spill@17.8->cp2
+s3 8.3-12.8 len 4.4 | lag0 4.2 lag6 4.2 lag12 4.3 | cap 3/4/4 | stop@12.5:dis-spill@14.6->cp3
+s4 12.8-21.2 len 8.4 | lag0 7.2 lag6 7.3 lag12 7.3 | cap 2/1/2 | jump@20.0:dis-pool@20.8->cp4
+captures(lag12) 14: jump@0.0 from cp-1: save cp4:dis-spill; jump@2.0 from cp-1: save cp4:dis-spill; jump@2.5 from cp-1: save cp4:dis-spill; jump@3.5 from cp0: save cp4:dis-spill; jump@4.5 from cp0: save cp4:dis-spill; jump@5.5 from cp1: save cp4:dis-spill
+ACT DIS-02 dis02-chapori 32
+T DIS-02 0.0 1.5 stop=- run=dis-luit jump=dis-luit
+T DIS-02 0.5 5.7 stop=- run=dis-luit jump=dis-luit
+T DIS-02 1.0 10.1 stop=dis-luit run=dis-luit jump=dis-luit
+T DIS-02 1.5 10.3 stop=dis-luit run=dis-luit jump=dis-luit
+T DIS-02 2.0 10.3 stop=dis-luit run=dis-luit jump=dis-luit
+T DIS-02 2.5 14.6 stop=dis-luit run=dis-luit jump=dis-luit
+T DIS-02 3.0 16.5 stop=- run=dis-luit jump=dis-luit
+T DIS-02 3.5 16.5 stop=- run=dis-luit jump=dis-luit
+T DIS-02 4.0 16.5 stop=- run=dis-luit jump=dis-luit
+T DIS-02 4.5 16.5 stop=- run=dis-luit jump=-
+T DIS-02 5.0 16.5 stop=- run=dis-luit jump=dis-luit
+T DIS-02 5.5 18.6 stop=dis-luit run=dis-luit jump=dis-luit
+T DIS-02 6.0 22.9 stop=- run=dis-luit jump=dis-luit
+T DIS-02 6.5 27.3 stop=- run=dis-luit jump=dis-luit
+T DIS-02 7.0 31.7 stop=- run=dis-luit jump=dis-luit
+T DIS-02 7.5 36.1 stop=- run=dis-luit jump=dis-luit
+T DIS-02 8.0 40.4 stop=dis-luit run=dis-luit jump=dis-luit
+T DIS-02 8.5 44.8 stop=- run=dis-luit jump=dis-luit
+T DIS-02 9.0 49.2 stop=dis-luit run=dis-luit jump=dis-luit
+T DIS-02 9.5 52.3 stop=- run=dis-luit jump=dis-luit
+T DIS-02 10.0 52.3 stop=- run=dis-luit jump=dis-luit
+T DIS-02 10.5 52.3 stop=- run=dis-luit jump=dis-luit
+T DIS-02 11.0 52.3 stop=- run=dis-luit jump=dis-luit
+T DIS-02 11.5 52.3 stop=- run=dis-luit jump=dis-luit
+T DIS-02 12.0 52.3 stop=- run=dis-luit jump=dis-luit
+T DIS-02 12.5 52.3 stop=- run=dis-luit jump=dis-luit
+T DIS-02 13.0 56.4 stop=- run=dis-luit jump=dis-luit
+T DIS-02 13.5 60.8 stop=- run=dis-luit jump=dis-luit
+T DIS-02 14.0 65.1 stop=- run=dis-luit jump=dis-luit
+T DIS-02 14.5 69.5 stop=- run=dis-luit jump=dis-luit
+T DIS-02 15.0 73.9 stop=- run=dis-luit jump=dis-luit
+T DIS-02 15.5 78.3 stop=dis-luit run=dis-luit jump=dis-luit
+T DIS-02 16.0 81.4 stop=- run=dis-luit jump=dis-luit
+T DIS-02 16.5 81.4 stop=- run=dis-luit jump=dis-luit
+T DIS-02 17.0 82.8 stop=- run=dis-luit jump=-
+T DIS-02 17.5 87.1 stop=dis-luit run=dis-luit jump=-
+T DIS-02 18.0 91.5 stop=- run=dis-luit jump=-
+T DIS-02 18.5 95.9 stop=- run=- jump=-
+T DIS-02 19.0 98.7 stop=- run=- jump=-
+OUT DIS-02 end 19.1 cps 7.1 9.3 14.7
+s-1 0.0-7.1 len 7.1 | lag0 6.0 lag6 6.0 lag12 6.1 | cap 1/0/0 | run@6.0:dis-luit@6.4->cp-1
+s0 7.1-9.3 len 2.2 | lag0 1.9 lag6 1.9 lag12 2.0 | cap 0/0/0 | stop@9.0:dis-luit@9.4->cp0
+s1 9.3-14.7 len 5.4 | lag0 4.7 lag6 4.7 lag12 4.8 | cap 0/0/0 | stop@14.0:dis-luit@14.5->cp1
+s2 14.7-19.1 len 4.4 | lag0 3.3 lag6 3.3 lag12 3.4 | cap 0/0/0 | stop@18.0:dis-luit@18.5->cp2
+captures(lag12) 0
+ACT DIS-03 dis03-bagan 32
+T DIS-03 0.0 1.5 stop=- run=dis-basket jump=dis-basket
+T DIS-03 0.5 3.2 stop=- run=dis-basket jump=dis-basket
+T DIS-03 1.0 4.2 stop=- run=dis-basket jump=dis-basket
+T DIS-03 1.5 5.2 stop=- run=dis-basket jump=dis-basket
+T DIS-03 2.0 6.2 stop=- run=dis-basket jump=dis-basket
+T DIS-03 2.5 7.2 stop=- run=dis-basket jump=dis-basket
+T DIS-03 3.0 8.2 stop=- run=dis-basket jump=dis-basket
+T DIS-03 3.5 9.2 stop=- run=dis-basket jump=dis-basket
+T DIS-03 4.0 9.6 stop=- run=dis-basket jump=dis-basket
+T DIS-03 4.5 9.6 stop=- run=dis-basket jump=dis-basket
+T DIS-03 5.0 9.8 stop=- run=- jump=dis-basket
+T DIS-03 5.5 10.7 stop=- run=- jump=dis-basket
+T DIS-03 6.0 11.8 stop=- run=- jump=dis-basket
+T DIS-03 6.5 12.7 stop=- run=- jump=dis-basket
+T DIS-03 7.0 13.8 stop=- run=dis-basket jump=dis-basket
+T DIS-03 7.5 14.8 stop=- run=dis-basket jump=dis-basket
+T DIS-03 8.0 15.7 stop=- run=dis-basket jump=dis-basket
+T DIS-03 8.5 16.8 stop=- run=dis-basket jump=dis-basket
+T DIS-03 9.0 17.6 stop=- run=dis-basket jump=dis-basket
+T DIS-03 9.5 17.6 stop=- run=dis-basket jump=dis-basket
+T DIS-03 10.0 17.6 stop=- run=dis-basket jump=dis-basket
+T DIS-03 10.5 18.2 stop=- run=- jump=dis-basket
+T DIS-03 11.0 19.2 stop=- run=- jump=dis-basket
+T DIS-03 11.5 20.3 stop=- run=- jump=dis-basket
+T DIS-03 12.0 21.3 stop=- run=- jump=dis-basket
+T DIS-03 12.5 22.2 stop=- run=dis-basket jump=dis-basket
+T DIS-03 13.0 23.3 stop=- run=dis-basket jump=dis-basket
+T DIS-03 13.5 24.2 stop=- run=dis-basket jump=dis-basket
+T DIS-03 14.0 25.2 stop=- run=dis-basket jump=dis-basket
+T DIS-03 14.5 26.2 stop=- run=dis-basket jump=dis-basket
+T DIS-03 15.0 27.3 stop=- run=dis-basket jump=dis-basket
+T DIS-03 15.5 30.9 stop=- run=dis-basket jump=-
+T DIS-03 16.0 34.1 stop=- run=dis-basket jump=dis-basket
+T DIS-03 16.5 35.1 stop=- run=dis-basket jump=dis-basket
+T DIS-03 17.0 36.1 stop=- run=dis-basket jump=dis-basket
+T DIS-03 17.5 37.1 stop=- run=dis-basket jump=dis-basket
+T DIS-03 18.0 38.1 stop=- run=dis-basket jump=dis-basket
+T DIS-03 18.5 38.4 stop=- run=dis-basket jump=dis-basket
+T DIS-03 19.0 38.4 stop=- run=dis-basket jump=dis-basket
+T DIS-03 19.5 40.4 stop=- run=dis-basket jump=dis-basket
+T DIS-03 20.0 42.1 stop=- run=dis-basket jump=dis-basket
+T DIS-03 20.5 43.1 stop=- run=dis-basket jump=dis-basket
+T DIS-03 21.0 44.1 stop=- run=dis-basket jump=dis-basket
+T DIS-03 21.5 45.1 stop=- run=dis-basket jump=dis-basket
+T DIS-03 22.0 45.6 stop=- run=dis-basket jump=dis-basket
+T DIS-03 22.5 45.6 stop=- run=dis-basket jump=-
+T DIS-03 23.0 45.6 stop=- run=- jump=dis-basket
+T DIS-03 23.5 46.6 stop=- run=- jump=dis-basket
+T DIS-03 24.0 47.6 stop=- run=- jump=dis-basket
+T DIS-03 24.5 48.6 stop=- run=- jump=dis-basket
+T DIS-03 25.0 49.6 stop=- run=dis-basket jump=dis-basket
+T DIS-03 25.5 50.6 stop=- run=dis-basket jump=dis-basket
+T DIS-03 26.0 51.6 stop=- run=dis-basket jump=dis-basket
+T DIS-03 26.5 52.6 stop=- run=dis-basket jump=dis-basket
+T DIS-03 27.0 53.6 stop=- run=dis-basket jump=dis-basket
+T DIS-03 27.5 54.6 stop=- run=dis-basket jump=dis-basket
+T DIS-03 28.0 54.6 stop=- run=dis-basket jump=-
+T DIS-03 28.5 54.6 stop=- run=dis-basket jump=dis-basket
+T DIS-03 29.0 55.1 stop=- run=- jump=dis-basket
+T DIS-03 29.5 56.1 stop=- run=- jump=dis-basket
+T DIS-03 30.0 57.1 stop=- run=- jump=dis-basket
+T DIS-03 30.5 58.1 stop=- run=- jump=dis-basket
+T DIS-03 31.0 59.2 stop=- run=dis-basket jump=-
+T DIS-03 31.5 60.1 stop=- run=dis-basket jump=dis-basket
+T DIS-03 32.0 61.1 stop=- run=- jump=-
+T DIS-03 32.5 64.3 stop=- run=- jump=-
+T DIS-03 33.0 68.7 stop=- run=- jump=-
+T DIS-03 33.5 73.1 stop=- run=- jump=-
+T DIS-03 34.0 77.4 stop=- run=- jump=-
+T DIS-03 34.5 81.8 stop=- run=- jump=-
+T DIS-03 35.0 83.7 stop=- run=- jump=-
+T DIS-03 35.5 83.7 stop=- run=- jump=-
+T DIS-03 36.0 83.7 stop=- run=- jump=-
+T DIS-03 36.5 83.7 stop=- run=- jump=-
+T DIS-03 37.0 83.7 stop=- run=- jump=-
+T DIS-03 37.5 83.7 stop=- run=- jump=-
+T DIS-03 38.0 84.6 stop=- run=- jump=-
+T DIS-03 38.5 85.6 stop=dis-reel run=- jump=-
+T DIS-03 39.0 86.1 stop=dis-reel run=- jump=-
+T DIS-03 39.5 86.1 stop=dis-reel run=- jump=-
+T DIS-03 40.0 87.3 stop=- run=- jump=-
+OUT DIS-03 end 40.2 cps 7.4 15.7 16.7 23.4 29.7 32.6 34.5
+s-1 0.0-7.4 len 7.4 | lag0 7.0 lag6 6.5 lag12 6.6 | cap 0/0/0 | jump@6.5:dis-basket@7.2->cp-1
+s0 7.4-15.7 len 8.3 | lag0 7.1 lag6 7.2 lag12 7.2 | cap 0/0/1 | run@14.5:dis-basket@15.0->cp0
+s1 15.7-16.7 len 1.0 | lag0 0.8 lag6 0.9 lag12 0.9 | cap 0/0/0 | jump@16.5:dis-basket@17.2->cp1
+s2 16.7-23.4 len 6.8 | lag0 6.3 lag6 6.4 lag12 6.4 | cap 0/0/0 | jump@23.0:dis-basket@23.6->cp2
+s3 23.4-29.7 len 6.3 | lag0 6.1 lag6 6.1 lag12 6.2 | cap 1/1/1 | jump@29.5:dis-basket@30.1->cp3
+s4 29.7-32.6 len 2.9 | lag0 1.8 lag6 1.9 lag12 1.9 | cap 0/0/0 | run@31.5:dis-basket@32.0->cp4
+s6 34.5-40.2 len 5.7 | lag0 5.0 lag6 5.0 lag12 5.1 | cap 0/0/0 | stop@39.5:dis-reel@40.6->cp6
+captures(lag12) 2: jump@15.5 from cp0: save cp2:dis-basket; run@27.0 from cp3: save cp4:dis-basket
+ACT DIS-04 dis04-bhogali 32
+T DIS-04 0.0 1.5 stop=- run=dis-tawa jump=dis-tawa
+T DIS-04 0.5 5.7 stop=- run=dis-tawa jump=dis-tawa
+T DIS-04 1.0 10.1 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 1.5 10.3 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 2.0 10.3 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 2.5 10.3 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 3.0 12.8 stop=dis-tawa run=dis-tawa jump=dis-tawa
+T DIS-04 3.5 15.2 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 4.0 15.2 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 4.5 15.2 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 5.0 16.9 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 5.5 21.3 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 6.0 25.6 stop=- run=dis-tawa jump=dis-tawa
+T DIS-04 6.5 30.0 stop=- run=dis-tawa jump=dis-tawa
+T DIS-04 7.0 34.4 stop=- run=dis-tawa jump=dis-tawa
+T DIS-04 7.5 38.8 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 8.0 41.1 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 8.5 42.1 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 9.0 46.3 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 9.5 46.3 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 10.0 50.1 stop=dis-tawa run=dis-tawa jump=dis-tawa
+T DIS-04 10.5 53.1 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 11.0 55.6 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 11.5 59.9 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 12.0 64.3 stop=dis-tawa run=dis-tawa jump=dis-tawa
+T DIS-04 12.5 68.7 stop=- run=dis-tawa jump=dis-tawa
+T DIS-04 13.0 73.1 stop=- run=dis-tawa jump=dis-tawa
+T DIS-04 13.5 77.4 stop=- run=dis-tawa jump=dis-tawa
+T DIS-04 14.0 81.8 stop=dis-tawa run=dis-tawa jump=dis-tawa
+T DIS-04 14.5 84.2 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 15.0 84.2 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 15.5 84.3 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 16.0 88.6 stop=dis-roll run=dis-tawa jump=dis-tawa
+T DIS-04 16.5 90.1 stop=dis-roll run=dis-tawa jump=-
+T DIS-04 17.0 90.1 stop=dis-roll run=- jump=-
+T DIS-04 17.5 93.1 stop=dis-roll run=- jump=-
+T DIS-04 18.0 97.4 stop=dis-laru run=- jump=-
+T DIS-04 18.5 101.8 stop=- run=- jump=-
+OUT DIS-04 end 18.6 cps 6.8 6.9 12.8
+s-1 0.0-6.8 len 6.8 | lag0 5.5 lag6 5.5 lag12 5.6 | cap 1/0/0 | stop@5.5:dis-roll@8.1->cp-1
+s1 6.9-12.8 len 5.9 | lag0 5.1 lag6 5.1 lag12 5.2 | cap 0/0/0 | stop@12.0:dis-tawa@12.3->cp1
+s2 12.8-18.6 len 5.8 | lag0 5.2 lag6 5.2 lag12 5.3 | cap 0/0/0 | stop@18.0:dis-laru@19.9->cp2
+captures(lag12) 0
+ACT DIS-05 dis05-atithi 32
+T DIS-05 0.0 1.5 stop=- run=dis-gamosa jump=dis-gamosa
+T DIS-05 0.5 5.7 stop=- run=dis-gamosa jump=-
+T DIS-05 1.0 10.1 stop=- run=dis-gamosa jump=-
+T DIS-05 1.5 14.4 stop=- run=dis-gamosa jump=-
+T DIS-05 2.0 18.8 stop=dis-gamosa run=dis-gamosa jump=dis-gamosa
+T DIS-05 2.5 23.2 stop=- run=dis-gamosa jump=dis-gamosa
+T DIS-05 3.0 27.6 stop=- run=dis-gamosa jump=-
+T DIS-05 3.5 31.9 stop=- run=dis-gamosa jump=-
+T DIS-05 4.0 36.3 stop=- run=dis-gamosa jump=-
+T DIS-05 4.5 40.7 stop=- run=dis-gamosa jump=dis-gamosa
+T DIS-05 5.0 45.1 stop=- run=dis-gamosa jump=dis-gamosa
+T DIS-05 5.5 49.4 stop=- run=dis-gamosa jump=-
+T DIS-05 6.0 53.8 stop=- run=dis-gamosa jump=-
+T DIS-05 6.5 58.2 stop=- run=dis-gamosa jump=-
+T DIS-05 7.0 62.6 stop=dis-gamosa run=dis-gamosa jump=-
+T DIS-05 7.5 66.9 stop=- run=dis-gamosa jump=-
+T DIS-05 8.0 71.3 stop=- run=dis-gamosa jump=-
+T DIS-05 8.5 75.7 stop=- run=- jump=-
+T DIS-05 9.0 80.1 stop=- run=- jump=-
+T DIS-05 9.5 84.4 stop=- run=- jump=-
+T DIS-05 10.0 88.8 stop=- run=- jump=-
+T DIS-05 10.5 93.2 stop=- run=- jump=-
+T DIS-05 11.0 97.6 stop=- run=- jump=-
+T DIS-05 11.5 101.9 stop=- run=- jump=-
+T DIS-05 12.0 106.3 stop=- run=- jump=-
+OUT DIS-05 end 12.4 cps 3.6 5.2 7.3 10.1
+s-1 0.0-3.6 len 3.6 | lag0 2.0 lag6 1.9 lag12 1.9 | cap 1/1/0 | jump@0.5:dis-gamosa@5.8->cp0
+s0 3.6-5.2 len 1.6 | lag0 1.4 lag6 1.5 lag12 1.5 | cap 0/0/0 | jump@5.0:dis-gamosa@5.8->cp0
+s1 5.2-7.3 len 2.2 | lag0 1.8 lag6 1.9 lag12 1.4 | cap 0/0/0 | run@6.5:dis-gamosa@7.1->cp1
+s2 7.3-10.1 len 2.7 | lag0 0.7 lag6 0.7 lag12 0.8 | cap 0/0/0 | run@8.0:dis-gamosa@8.3->cp2
+captures(lag12) 0
+T DIS-06 0.0 1.5 stop=- run=dis-porcupine jump=dis-bank
+T DIS-06 0.5 5.7 stop=- run=dis-porcupine jump=dis-bank
+T DIS-06 1.0 10.1 stop=- run=dis-porcupine jump=dis-porcupine
+T DIS-06 1.5 12.8 stop=- run=dis-porcupine jump=dis-bank
+T DIS-06 2.0 12.8 stop=- run=dis-bank jump=dis-bank
+T DIS-06 2.5 14.6 stop=dis-porcupine run=dis-porcupine jump=dis-bank
+T DIS-06 3.0 17.4 stop=- run=dis-bank jump=dis-bank
+T DIS-06 3.5 17.4 stop=- run=dis-bank jump=-
+T DIS-06 4.0 17.7 stop=- run=dis-bank jump=-
+T DIS-06 4.5 22.1 stop=- run=- jump=-
+T DIS-06 5.0 26.4 stop=- run=- jump=-
+T DIS-06 5.5 30.8 stop=- run=- jump=-
+T DIS-06 6.0 35.1 stop=- run=- jump=-
+T DIS-06 6.5 39.5 stop=- run=- jump=-
+T DIS-06 7.0 43.9 stop=- run=- jump=-
+T DIS-06 7.5 48.3 stop=- run=- jump=-
+T DIS-06 8.0 50.2 stop=- run=- jump=-
+T DIS-06 8.5 50.2 stop=- run=- jump=-
+T DIS-06 9.0 51.0 stop=- run=- jump=-
+T DIS-06 9.5 55.4 stop=- run=- jump=-
+T DIS-06 10.0 59.8 stop=- run=- jump=-
+OUT DIS-06 end 10.0 cps 5.6
+s-1 0.0-5.6 len 5.6 | lag0 4.0 lag6 4.0 lag12 4.1 | cap 0/0/0 | run@4.0:dis-bank@4.3->cp-1
+captures(lag12) 0
+ACT DIS-07 dis07-bordoisila 32
+ACT DIS-07 dis07-dhol 58
+ACT DIS-07 dis07-dheki 99
+ACT DIS-07 dis07-card 137
+ACT DIS-07 dis07-chowk 177
+T DIS-07 0.0 1.5 stop=- run=dis-gate jump=dis-gate
+T DIS-07 0.5 5.7 stop=- run=dis-gate jump=dis-gate
+T DIS-07 1.0 10.1 stop=- run=dis-gate jump=dis-gate
+T DIS-07 1.5 14.4 stop=- run=dis-gate jump=dis-gate
+T DIS-07 2.0 18.8 stop=- run=dis-gate jump=dis-gate
+T DIS-07 2.5 20.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 3.0 20.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 3.5 20.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 4.0 20.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 4.5 20.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 5.0 20.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 5.5 20.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 6.0 20.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 6.5 20.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 7.0 20.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 7.5 20.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 8.0 23.1 stop=- run=dis-bordoisila jump=dis-pukhuri
+T DIS-07 8.5 27.5 stop=- run=dis-bordoisila jump=dis-pukhuri
+T DIS-07 9.0 31.9 stop=- run=dis-bordoisila jump=dis-pukhuri
+T DIS-07 9.5 36.3 stop=- run=dis-bordoisila jump=dis-bordoisila
+T DIS-07 10.0 40.6 stop=- run=dis-bordoisila jump=dis-bordoisila
+T DIS-07 10.5 41.1 stop=- run=dis-bordoisila jump=dis-bordoisila
+T DIS-07 11.0 41.1 stop=- run=dis-hail jump=dis-hail
+T DIS-07 11.5 41.1 stop=- run=dis-hail jump=dis-hail
+T DIS-07 12.0 41.1 stop=- run=dis-hail jump=dis-hail
+T DIS-07 12.5 41.1 stop=- run=dis-hail jump=dis-hail
+T DIS-07 13.0 41.1 stop=- run=dis-bordoisila jump=dis-pukhuri
+T DIS-07 13.5 44.2 stop=- run=dis-bordoisila jump=dis-bordoisila
+T DIS-07 14.0 48.6 stop=- run=dis-bordoisila jump=dis-pukhuri
+T DIS-07 14.5 52.9 stop=- run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 15.0 57.3 stop=- run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 15.5 61.7 stop=- run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 16.0 66.1 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 16.5 66.6 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 17.0 68.3 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 17.5 69.7 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 18.0 71.4 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 18.5 72.7 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 19.0 74.4 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 19.5 75.7 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 20.0 77.4 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 20.5 78.7 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 21.0 80.4 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 21.5 81.8 stop=dis-pukhuri run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 22.0 84.7 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 22.5 87.3 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-07 23.0 88.5 stop=dis-pukhuri run=dis-pukhuri jump=dis-dheki
+T DIS-07 23.5 90.7 stop=dis-dhol-sink run=dis-dheki jump=dis-dheki
+T DIS-07 24.0 93.9 stop=- run=dis-dheki jump=dis-dheki
+T DIS-07 24.5 98.3 stop=- run=dis-dheki jump=dis-dheki
+T DIS-07 25.0 102.7 stop=- run=dis-dheki jump=dis-dheki
+T DIS-07 25.5 107.1 stop=dis-dheki-tail run=dis-dheki jump=dis-dheki
+T DIS-07 26.0 108.7 stop=- run=dis-dheki jump=dis-dheki
+T DIS-07 26.5 111.2 stop=dis-dheki run=dis-dheki jump=dis-dheki
+T DIS-07 27.0 115.6 stop=dis-dheki-tail run=dis-dheki jump=dis-dheki
+T DIS-07 27.5 117.8 stop=dis-dheki run=dis-dheki jump=dis-dheki
+T DIS-07 28.0 122.1 stop=- run=dis-dheki jump=dis-dheki
+T DIS-07 28.5 126.5 stop=- run=dis-dheki jump=dis-gate
+T DIS-07 29.0 130.9 stop=- run=dis-dheki jump=dis-gate
+T DIS-07 29.5 131.6 stop=- run=dis-dheki jump=dis-gate
+T DIS-07 30.0 131.6 stop=- run=dis-dheki jump=dis-gate
+T DIS-07 30.5 132.0 stop=- run=dis-gate jump=dis-gate
+T DIS-07 31.0 136.4 stop=- run=dis-gate jump=dis-gate
+T DIS-07 31.5 140.8 stop=- run=dis-gate jump=dis-gate
+T DIS-07 32.0 145.1 stop=dis-horin run=dis-gate jump=dis-gate
+T DIS-07 32.5 149.5 stop=- run=dis-gate jump=dis-gate
+T DIS-07 33.0 153.5 stop=- run=dis-gate jump=dis-gate
+T DIS-07 33.5 153.5 stop=- run=dis-gate jump=dis-gate
+T DIS-07 34.0 153.5 stop=- run=dis-gate jump=dis-gate
+T DIS-07 34.5 153.5 stop=- run=dis-gate jump=dis-gate
+T DIS-07 35.0 153.5 stop=- run=dis-horin jump=dis-horin
+T DIS-07 35.5 153.5 stop=- run=dis-horin jump=dis-horin
+T DIS-07 36.0 153.5 stop=- run=dis-horin jump=dis-horin
+T DIS-07 36.5 153.5 stop=- run=dis-horin jump=dis-gate
+T DIS-07 37.0 153.5 stop=- run=dis-gate jump=dis-gate
+T DIS-07 37.5 156.4 stop=- run=dis-gate jump=dis-gate
+T DIS-07 38.0 160.8 stop=dis-horin run=dis-gate jump=dis-gate
+T DIS-07 38.5 165.1 stop=dis-horin run=dis-gate jump=dis-gate
+T DIS-07 39.0 169.5 stop=dis-horin run=dis-gate jump=dis-gate
+T DIS-07 39.5 173.9 stop=- run=dis-gate jump=dis-gate
+T DIS-07 40.0 178.3 stop=- run=dis-gate jump=dis-gate
+T DIS-07 40.5 182.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 41.0 187.0 stop=- run=dis-gate jump=dis-gate
+T DIS-07 41.5 191.4 stop=- run=dis-gate jump=dis-gate
+T DIS-07 42.0 195.8 stop=- run=dis-gate jump=dis-gate
+T DIS-07 42.5 197.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 43.0 197.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 43.5 197.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 44.0 197.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 44.5 197.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 45.0 197.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 45.5 201.3 stop=- run=dis-gate jump=dis-gate
+T DIS-07 46.0 205.7 stop=- run=dis-gate jump=dis-gate
+T DIS-07 46.5 210.1 stop=- run=dis-gate jump=dis-gate
+T DIS-07 47.0 214.4 stop=- run=dis-gate jump=dis-gate
+T DIS-07 47.5 218.8 stop=- run=dis-gate jump=dis-gate
+T DIS-07 48.0 221.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 48.5 221.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 49.0 221.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 49.5 221.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 50.0 221.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 50.5 221.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 51.0 221.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 51.5 221.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 52.0 221.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 52.5 221.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 53.0 221.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 53.5 221.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 54.0 221.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 54.5 225.1 stop=- run=dis-gate jump=dis-gate
+T DIS-07 55.0 229.4 stop=- run=dis-gate jump=dis-gate
+T DIS-07 55.5 233.8 stop=- run=dis-gate jump=dis-gate
+T DIS-07 56.0 238.2 stop=- run=dis-gate jump=dis-gate
+T DIS-07 56.5 242.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 57.0 245.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 57.5 245.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 58.0 245.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 58.5 245.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 59.0 245.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 59.5 245.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 60.0 245.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 60.5 245.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 61.0 245.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 61.5 245.6 stop=- run=dis-gate jump=dis-gate
+T DIS-07 62.0 245.9 stop=- run=- jump=-
+T DIS-07 62.5 250.3 stop=- run=- jump=-
+T DIS-07 63.0 254.7 stop=- run=- jump=-
+T DIS-07 63.5 259.1 stop=- run=- jump=-
+T DIS-07 64.0 263.4 stop=dis-net run=- jump=-
+T DIS-07 64.5 267.8 stop=dis-net run=- jump=-
+T DIS-07 65.0 272.2 stop=- run=- jump=-
+OUT DIS-07 end 65.1 cps 1.7 9.1 9.2 14.8 15.1 15.3 24.2 24.6 24.8 28.2 31.1 31.3 33.0 39.9 41.5 41.8 46.9 47.4 55.7 56.4 62.5
+s-1 0.0-1.7 len 1.7 | lag0 0.6 lag6 0.6 lag12 0.6 | cap 1/0/0 | run@0.0:dis-gate@2.3->cp0
+s0 1.7-9.1 len 7.4 | lag0 5.8 lag6 5.4 lag12 5.4 | cap 0/0/0 | run@7.0:dis-gate@7.2->cp0
+s1 9.1-9.2 len 0.1 | lag0 -1.0 lag6 -1.0 lag12 1.5 | cap 0/0/0 | run@9.0:dis-bordoisila@10.7->cp2
+s2 9.2-14.8 len 5.6 | lag0 4.8 lag6 4.9 lag12 4.9 | cap 0/0/1 | stop@14.0:dis-bordoisila@14.4->cp2
+s3 14.8-15.1 len 0.3 | lag0 1.1 lag6 1.1 lag12 1.1 | cap 0/0/0 | run@15.0:dis-pukhuri@16.3->cp5
+s5 15.3-24.2 len 8.9 | lag0 8.2 lag6 8.3 lag12 8.3 | cap 1/1/1 | stop@23.5:dis-pukhuri@24.0->cp5
+s6 24.2-24.6 len 0.5 | lag0 1.1 lag6 1.1 lag12 1.1 | cap 0/0/0 | run@24.5:dis-dheki@25.9->cp8
+s8 24.8-28.2 len 3.4 | lag0 2.7 lag6 2.8 lag12 2.8 | cap 2/2/1 | stop@27.5:dis-dheki@28.4->cp8
+s9 28.2-31.1 len 3.0 | lag0 2.0 lag6 2.4 lag12 2.4 | cap 0/0/0 | stop@30.5:dis-dheki@31.4->cp9
+s11 31.3-33.0 len 1.7 | lag0 2.0 lag6 2.0 lag12 2.0 | cap 0/0/0 | run@31.5:dis-gate@34.9->cp12
+s12 33.0-39.9 len 6.9 | lag0 6.0 lag6 6.1 lag12 6.1 | cap 1/1/1 | stop@39.0:dis-horin@42.6->cp12
+s13 39.9-41.5 len 1.6 | lag0 0.6 lag6 0.6 lag12 0.6 | cap 1/0/0 | run@40.0:dis-gate@42.3->cp15
+s14 41.5-41.8 len 0.2 | lag0 -1.0 lag6 0.6 lag12 0.6 | cap 0/0/0 | run@41.5:dis-gate@42.3->cp15
+s15 41.8-46.9 len 5.1 | lag0 2.8 lag6 2.8 lag12 2.9 | cap 0/0/0 | run@44.5:dis-gate@44.7->cp15
+s16 46.9-47.4 len 0.5 | lag0 0.6 lag6 0.6 lag12 0.6 | cap 0/0/0 | run@47.0:dis-gate@47.9->cp17
+s17 47.4-55.7 len 8.3 | lag0 6.1 lag6 6.2 lag12 6.2 | cap 1/0/0 | run@53.5:dis-gate@53.7->cp17
+s18 55.7-56.4 len 0.7 | lag0 0.6 lag6 0.6 lag12 0.6 | cap 0/0/0 | run@56.0:dis-gate@57.0->cp19
+s19 56.4-62.5 len 6.1 | lag0 5.1 lag6 5.7 lag12 5.7 | cap 0/0/0 | stop@62.0:dis-gate@63.4->cp19
+s20 62.5-65.1 len 2.6 | lag0 2.0 lag6 2.0 lag12 1.6 | cap 0/0/0 | stop@64.0:dis-net@65.5->cp20
+captures(lag12) 4: jump@14.5 from cp2: save cp5:dis-dhol-sink; jump@24.0 from cp5: save cp8:dis-dheki-tail; jump@28.0 from cp8: save cp9:dis-dheki-tail; jump@37.0 from cp12: save cp15:dis-gate
+ACT DIS-08 dis08-jeep 32
+ACT DIS-08 dis08-bagori 72
+T DIS-08 0.0 1.5 stop=- run=dis-beel jump=dis-beel
+T DIS-08 0.5 3.8 stop=- run=dis-beel jump=dis-beel
+T DIS-08 1.0 3.8 stop=- run=dis-beel jump=dis-beel
+T DIS-08 1.5 3.8 stop=- run=dis-beel jump=dis-beel
+T DIS-08 2.0 3.8 stop=- run=dis-beel jump=dis-beel
+T DIS-08 2.5 3.8 stop=- run=dis-beel jump=dis-beel
+T DIS-08 3.0 3.8 stop=- run=dis-gorh jump=dis-gorh
+T DIS-08 3.5 3.8 stop=- run=dis-gorh jump=dis-gorh
+T DIS-08 4.0 3.8 stop=- run=dis-gorh jump=dis-beel
+T DIS-08 4.5 3.8 stop=- run=dis-beel jump=dis-beel
+T DIS-08 5.0 8.1 stop=- run=dis-beel jump=dis-beel
+T DIS-08 5.5 12.5 stop=- run=dis-beel jump=dis-beel
+T DIS-08 6.0 16.9 stop=- run=dis-beel jump=dis-beel
+T DIS-08 6.5 21.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 7.0 25.6 stop=- run=dis-beel jump=dis-beel
+T DIS-08 7.5 30.0 stop=- run=dis-beel jump=dis-beel
+T DIS-08 8.0 33.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 8.5 33.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 9.0 33.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 9.5 33.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 10.0 33.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 10.5 33.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 11.0 33.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 11.5 33.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 12.0 33.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 12.5 33.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 13.0 33.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 13.5 33.3 stop=- run=dis-gorh jump=dis-gorh
+T DIS-08 14.0 33.3 stop=- run=dis-gorh jump=dis-gorh
+T DIS-08 14.5 33.3 stop=- run=dis-gorh jump=dis-beel
+T DIS-08 15.0 33.6 stop=- run=dis-beel jump=dis-beel
+T DIS-08 15.5 37.9 stop=- run=dis-beel jump=dis-beel
+T DIS-08 16.0 42.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 16.5 46.7 stop=- run=dis-beel jump=dis-beel
+T DIS-08 17.0 51.1 stop=- run=dis-beel jump=dis-beel
+T DIS-08 17.5 55.4 stop=- run=dis-beel jump=dis-beel
+T DIS-08 18.0 59.8 stop=- run=dis-beel jump=dis-beel
+T DIS-08 18.5 64.2 stop=- run=dis-beel jump=dis-beel
+T DIS-08 19.0 68.6 stop=- run=dis-beel jump=dis-beel
+T DIS-08 19.5 72.9 stop=- run=dis-beel jump=dis-beel
+T DIS-08 20.0 77.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 20.5 78.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 21.0 78.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 21.5 78.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 22.0 78.3 stop=- run=dis-gorh jump=dis-gorh
+T DIS-08 22.5 78.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 23.0 78.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 23.5 78.3 stop=- run=dis-gorh jump=dis-gorh
+T DIS-08 24.0 78.3 stop=- run=dis-gorh jump=dis-beel
+T DIS-08 24.5 78.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 25.0 78.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 25.5 78.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 26.0 78.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 26.5 78.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 27.0 78.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 27.5 78.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 28.0 78.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 28.5 80.9 stop=- run=dis-beel jump=dis-beel
+T DIS-08 29.0 85.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 29.5 89.6 stop=- run=dis-beel jump=dis-beel
+T DIS-08 30.0 94.0 stop=- run=dis-beel jump=dis-beel
+T DIS-08 30.5 98.4 stop=- run=dis-beel jump=dis-beel
+T DIS-08 31.0 102.8 stop=- run=dis-beel jump=dis-beel
+T DIS-08 31.5 107.1 stop=- run=dis-beel jump=dis-beel
+T DIS-08 32.0 111.5 stop=- run=dis-beel jump=dis-beel
+T DIS-08 32.5 115.9 stop=- run=dis-beel jump=dis-beel
+T DIS-08 33.0 120.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 33.5 121.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 34.0 121.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 34.5 121.3 stop=- run=dis-beel jump=dis-beel
+T DIS-08 35.0 121.3 stop=- run=dis-beel jump=dis-gorh
+T DIS-08 35.5 121.3 stop=- run=dis-gorh jump=-
+T DIS-08 36.0 121.3 stop=- run=dis-gorh jump=-
+T DIS-08 36.5 121.3 stop=- run=dis-gorh jump=-
+T DIS-08 37.0 124.8 stop=- run=dis-gorh jump=-
+T DIS-08 37.5 129.2 stop=- run=dis-gorh jump=-
+T DIS-08 38.0 133.6 stop=- run=dis-gorh jump=-
+T DIS-08 38.5 137.9 stop=dis-gorh run=dis-gorh jump=-
+T DIS-08 39.0 142.3 stop=dis-gorh run=dis-gorh jump=-
+T DIS-08 39.5 145.4 stop=- run=- jump=-
+OUT DIS-08 end 39.9 cps 7.8 15.0 19.5 19.6 32.8
+s-1 0.0-7.8 len 7.8 | lag0 4.5 lag6 4.5 lag12 7.1 | cap 1/2/2 | jump@7.0:dis-beel@8.4->cp-1
+s0 7.8-15.0 len 7.2 | lag0 6.2 lag6 6.3 lag12 6.3 | cap 0/0/0 | jump@14.0:dis-gorh@14.7->cp0
+s1 15.0-19.5 len 4.5 | lag0 1.9 lag6 1.9 lag12 1.9 | cap 0/0/0 | jump@15.0:dis-beel@21.6->cp3
+s2 19.5-19.6 len 0.1 | lag0 1.6 lag6 1.6 lag12 -1.0 | cap 0/0/0 | 
+s3 19.6-32.8 len 13.2 | lag0 11.9 lag6 10.0 lag12 12.5 | cap 0/1/0 | jump@32.0:dis-beel@33.4->cp3
+s4 32.8-39.9 len 7.1 | lag0 6.2 lag6 6.2 lag12 6.3 | cap 0/0/0 | stop@39.0:dis-gorh@40.7->cp4
+captures(lag12) 2: jump@4.0 from cp-1: save cp1:dis-beel; jump@5.0 from cp-1: save cp1:dis-beel
+ACT DIS-09 dis09-tug 32
+ACT DIS-09 dis09-chaal 66
+T DIS-09 0.0 1.5 stop=- run=- jump=dis-khaal
+T DIS-09 0.5 3.8 stop=- run=- jump=dis-khaal
+T DIS-09 1.0 5.2 stop=- run=- jump=dis-khaal
+T DIS-09 1.5 7.8 stop=- run=dis-roof jump=dis-roof
+T DIS-09 2.0 12.2 stop=- run=- jump=dis-khaal
+T DIS-09 2.5 15.6 stop=- run=dis-roof jump=dis-khaal
+T DIS-09 3.0 19.3 stop=- run=- jump=dis-khaal
+T DIS-09 3.5 23.3 stop=dis-roof run=dis-roof jump=dis-khaal
+T DIS-09 4.0 27.7 stop=- run=dis-khaal jump=dis-khaal
+T DIS-09 4.5 32.1 stop=- run=dis-khaal jump=dis-khaal
+T DIS-09 5.0 36.4 stop=- run=dis-khaal jump=dis-khaal
+T DIS-09 5.5 40.8 stop=- run=dis-khaal jump=dis-khaal
+T DIS-09 6.0 43.4 stop=- run=dis-khaal jump=dis-khaal
+T DIS-09 6.5 43.4 stop=- run=dis-khaal jump=dis-rope
+T DIS-09 7.0 43.4 stop=- run=dis-rope jump=dis-rope
+T DIS-09 7.5 43.4 stop=- run=dis-rope jump=dis-rope
+T DIS-09 8.0 43.4 stop=- run=dis-rope jump=dis-rope
+T DIS-09 8.5 43.4 stop=- run=dis-khaal jump=dis-khaal
+T DIS-09 9.0 43.4 stop=- run=dis-khaal jump=dis-khaal
+T DIS-09 9.5 43.4 stop=- run=dis-khaal jump=dis-khaal
+T DIS-09 10.0 43.4 stop=- run=dis-khaal jump=dis-khaal
+T DIS-09 10.5 43.4 stop=- run=- jump=-
+T DIS-09 11.0 46.4 stop=dis-khaal run=- jump=dis-roof
+T DIS-09 11.5 52.3 stop=- run=- jump=-
+T DIS-09 12.0 57.4 stop=- run=- jump=dis-roof
+T DIS-09 12.5 61.8 stop=- run=- jump=dis-roof
+T DIS-09 13.0 66.2 stop=- run=- jump=dis-roof
+T DIS-09 13.5 69.5 stop=- run=- jump=-
+T DIS-09 14.0 70.8 stop=- run=- jump=dis-roof
+T DIS-09 14.5 72.7 stop=- run=- jump=dis-roof
+T DIS-09 15.0 77.1 stop=dis-roof run=- jump=-
+T DIS-09 15.5 80.4 stop=- run=dis-roof jump=-
+T DIS-09 16.0 84.8 stop=- run=- jump=-
+T DIS-09 16.5 88.3 stop=- run=dis-roof jump=-
+T DIS-09 17.0 92.4 stop=- run=- jump=-
+T DIS-09 17.5 96.0 stop=dis-roof run=dis-roof jump=-
+T DIS-09 18.0 100.4 stop=- run=- jump=-
+T DIS-09 18.5 104.8 stop=- run=- jump=-
+T DIS-09 19.0 109.1 stop=- run=- jump=-
+T DIS-09 19.5 113.5 stop=- run=- jump=-
+T DIS-09 20.0 117.9 stop=dis-roof run=- jump=-
+T DIS-09 20.5 122.3 stop=- run=dis-roof jump=-
+T DIS-09 21.0 126.6 stop=- run=- jump=-
+T DIS-09 21.5 130.3 stop=- run=- jump=-
+OUT DIS-09 end 21.8 cps 4.6 4.7 12.6 13.0 14.5 16.3 18.6
+s-1 0.0-4.6 len 4.6 | lag0 3.5 lag6 3.5 lag12 3.6 | cap 0/0/0 | stop@3.5:dis-roof@5.2->cp-1
+s0 4.6-4.7 len 0.1 | lag0 -1.0 lag6 -1.0 lag12 1.3 | cap 0/0/0 | run@4.5:dis-khaal@6.0->cp1
+s1 4.7-12.6 len 7.9 | lag0 6.3 lag6 6.4 lag12 6.4 | cap 0/0/0 | stop@11.0:dis-khaal@13.3->cp1
+s2 12.6-13.0 len 0.5 | lag0 0.6 lag6 -1.0 lag12 1.9 | cap 1/0/0 | jump@12.5:dis-roof@15.8->cp4
+s3 13.0-14.5 len 1.4 | lag0 1.0 lag6 1.0 lag12 1.3 | cap 0/1/0 | jump@13.0:dis-roof@15.0->cp4
+s4 14.5-16.3 len 1.8 | lag0 1.3 lag6 1.3 lag12 1.3 | cap 0/1/1 | jump@14.5:dis-roof@19.7->cp6
+s5 16.3-18.6 len 2.3 | lag0 1.2 lag6 1.3 lag12 1.3 | cap 0/0/0 | stop@17.5:dis-roof@18.3->cp5
+s6 18.6-21.8 len 3.2 | lag0 1.9 lag6 2.0 lag12 2.0 | cap 0/0/0 | run@20.5:dis-roof@22.3->cp6
+captures(lag12) 1: jump@14.5 from cp4: save cp5:dis-roof
+ACT DIS-10 dis10-dhol 32
+ACT DIS-10 dis10-bordoisila 67
+ACT DIS-10 dis10-tug 100
+ACT DIS-10 dis10-thanda 134
+ACT DIS-10 dis10-gamosa 164
+T DIS-10 0.0 1.5 stop=- run=dis-luit jump=dis-luit
+T DIS-10 0.5 5.7 stop=- run=dis-luit jump=dis-luit
+T DIS-10 1.0 10.1 stop=dis-luit run=dis-luit jump=dis-luit
+T DIS-10 1.5 10.3 stop=dis-luit run=dis-luit jump=dis-luit
+T DIS-10 2.0 10.3 stop=dis-luit run=dis-luit jump=dis-luit
+T DIS-10 2.5 14.6 stop=dis-luit run=dis-luit jump=dis-luit
+T DIS-10 3.0 16.5 stop=- run=dis-luit jump=dis-luit
+T DIS-10 3.5 16.5 stop=- run=dis-luit jump=dis-luit
+T DIS-10 4.0 16.5 stop=- run=dis-luit jump=dis-luit
+T DIS-10 4.5 16.5 stop=- run=dis-luit jump=-
+T DIS-10 5.0 16.5 stop=- run=dis-luit jump=dis-luit
+T DIS-10 5.5 18.6 stop=dis-luit run=dis-luit jump=dis-bordoisila
+T DIS-10 6.0 22.9 stop=- run=dis-luit jump=dis-pukhuri
+T DIS-10 6.5 27.3 stop=- run=dis-pukhuri jump=dis-pukhuri
+T DIS-10 7.0 31.7 stop=- run=dis-pukhuri jump=dis-pukhuri
+T DIS-10 7.5 36.1 stop=- run=dis-pukhuri jump=dis-pukhuri
+T DIS-10 8.0 40.4 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-10 8.5 40.8 stop=dis-pukhuri run=dis-pukhuri jump=dis-pukhuri
+T DIS-10 9.0 43.7 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-10 9.5 46.6 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-10 10.0 47.8 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-10 10.5 49.7 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-10 11.0 52.7 stop=dis-dhol-sink run=dis-pukhuri jump=dis-bordoisila
+T DIS-10 11.5 52.7 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-10 12.0 53.8 stop=dis-dhol-sink run=dis-pukhuri jump=dis-bordoisila
+T DIS-10 12.5 55.6 stop=dis-dhol-sink run=dis-pukhuri jump=dis-bordoisila
+T DIS-10 13.0 55.6 stop=dis-dhol-sink run=dis-pukhuri jump=dis-pukhuri
+T DIS-10 13.5 58.5 stop=dis-dhol-sink run=dis-pukhuri jump=dis-bordoisila
+T DIS-10 14.0 58.7 stop=dis-dhol-sink run=dis-pukhuri jump=dis-bordoisila
+T DIS-10 14.5 58.9 stop=dis-pukhuri run=dis-bordoisila jump=dis-bordoisila
+T DIS-10 15.0 63.1 stop=- run=dis-bordoisila jump=dis-bordoisila
+T DIS-10 15.5 67.4 stop=- run=dis-bordoisila jump=dis-bordoisila
+T DIS-10 16.0 71.8 stop=- run=dis-bordoisila jump=dis-bordoisila
+T DIS-10 16.5 76.2 stop=dis-bhoral run=dis-bordoisila jump=dis-bordoisila
+T DIS-10 17.0 80.1 stop=dis-bordoisila run=dis-bordoisila jump=dis-bordoisila
+T DIS-10 17.5 80.1 stop=dis-bordoisila run=dis-bordoisila jump=dis-bordoisila
+T DIS-10 18.0 80.6 stop=dis-bordoisila run=dis-bordoisila jump=dis-khaal
+T DIS-10 18.5 91.9 stop=- run=dis-khaal jump=dis-khaal
+T DIS-10 19.0 96.3 stop=- run=dis-khaal jump=dis-khaal
+T DIS-10 19.5 100.7 stop=- run=dis-khaal jump=dis-khaal
+T DIS-10 20.0 105.1 stop=- run=dis-khaal jump=dis-khaal
+T DIS-10 20.5 109.4 stop=- run=dis-khaal jump=dis-khaal
+T DIS-10 21.0 111.4 stop=- run=dis-khaal jump=dis-khaal
+T DIS-10 21.5 111.4 stop=- run=dis-khaal jump=dis-rope
+T DIS-10 22.0 111.4 stop=- run=dis-rope jump=dis-rope
+T DIS-10 22.5 111.4 stop=- run=dis-rope jump=dis-rope
+T DIS-10 23.0 111.4 stop=- run=dis-rope jump=dis-rope
+T DIS-10 23.5 111.4 stop=- run=dis-khaal jump=dis-rope
+T DIS-10 24.0 111.4 stop=- run=dis-khaal jump=dis-khaal
+T DIS-10 24.5 111.4 stop=- run=dis-khaal jump=dis-khaal
+T DIS-10 25.0 111.4 stop=- run=dis-khaal jump=dis-tel
+T DIS-10 25.5 111.4 stop=- run=dis-tel jump=dis-tel
+T DIS-10 26.0 115.3 stop=dis-khaal run=dis-tel jump=dis-tel
+T DIS-10 26.5 121.2 stop=- run=dis-tel jump=dis-tel
+T DIS-10 27.0 126.1 stop=- run=dis-tel jump=dis-tel
+T DIS-10 27.5 130.5 stop=- run=dis-tel jump=dis-gamosa
+T DIS-10 28.0 134.9 stop=- run=dis-tel jump=dis-basket
+T DIS-10 28.5 139.3 stop=- run=dis-tel jump=dis-tel
+T DIS-10 29.0 143.6 stop=dis-tel run=dis-tel jump=dis-tel
+T DIS-10 29.5 148.0 stop=dis-tel run=dis-tel jump=dis-gamosa
+T DIS-10 30.0 152.4 stop=- run=dis-tel jump=dis-luit
+T DIS-10 30.5 156.8 stop=- run=dis-gamosa jump=dis-basket
+T DIS-10 31.0 161.1 stop=- run=dis-gamosa jump=dis-basket
+T DIS-10 31.5 165.5 stop=- run=dis-gamosa jump=dis-luit
+T DIS-10 32.0 169.9 stop=- run=dis-gamosa jump=dis-gamosa
+T DIS-10 32.5 174.3 stop=- run=dis-gamosa jump=dis-basket
+T DIS-10 33.0 178.6 stop=- run=dis-gamosa jump=dis-gamosa
+T DIS-10 33.5 183.0 stop=- run=dis-gamosa jump=dis-basket
+T DIS-10 34.0 187.4 stop=- run=dis-basket jump=dis-luit
+T DIS-10 34.5 191.8 stop=- run=dis-basket jump=dis-basket
+T DIS-10 35.0 196.1 stop=- run=dis-basket jump=dis-basket
+T DIS-10 35.5 200.5 stop=- run=dis-basket jump=dis-basket
+T DIS-10 36.0 204.9 stop=dis-luit run=dis-basket jump=dis-luit
+T DIS-10 36.5 207.8 stop=dis-luit run=dis-basket jump=dis-basket
+T DIS-10 37.0 209.2 stop=dis-luit run=dis-basket jump=dis-basket
+T DIS-10 37.5 210.4 stop=dis-luit run=dis-basket jump=dis-basket
+T DIS-10 38.0 211.8 stop=dis-luit run=dis-basket jump=dis-basket
+T DIS-10 38.5 213.1 stop=dis-luit run=dis-basket jump=dis-basket
+T DIS-10 39.0 214.4 stop=dis-luit run=dis-basket jump=dis-basket
+T DIS-10 39.5 215.7 stop=dis-luit run=dis-basket jump=dis-basket
+T DIS-10 40.0 217.1 stop=dis-luit run=dis-basket jump=dis-basket
+T DIS-10 40.5 218.4 stop=dis-luit run=dis-basket jump=dis-basket
+T DIS-10 41.0 219.6 stop=dis-luit run=dis-basket jump=dis-basket
+T DIS-10 41.5 221.0 stop=dis-luit run=dis-basket jump=dis-basket
+T DIS-10 42.0 222.2 stop=dis-luit run=dis-basket jump=dis-basket
+T DIS-10 42.5 223.6 stop=dis-luit run=dis-basket jump=dis-basket
+T DIS-10 43.0 224.9 stop=dis-luit run=dis-basket jump=dis-basket
+T DIS-10 43.5 226.2 stop=dis-luit run=- jump=-
+T DIS-10 44.0 228.0 stop=dis-luit run=- jump=-
+T DIS-10 44.5 232.4 stop=- run=- jump=-
+OUT DIS-10 end 44.7 cps 7.1 7.2 15.1 15.5 15.6 19.0 19.5 19.6 27.5 28.0 28.1 31.4 31.4 34.7 35.0
+s-1 0.0-7.1 len 7.1 | lag0 6.0 lag6 6.0 lag12 6.1 | cap 0/0/0 | run@6.0:dis-luit@6.4->cp-1
+s0 7.1-7.2 len 0.1 | lag0 -1.0 lag6 -1.0 lag12 1.1 | cap 0/0/0 | run@7.0:dis-pukhuri@8.3->cp1
+s1 7.2-15.1 len 7.8 | lag0 7.3 lag6 7.3 lag12 6.9 | cap 0/0/0 | stop@14.0:dis-dhol-sink@14.7->cp1
+s2 15.1-15.5 len 0.5 | lag0 1.7 lag6 -1.0 lag12 2.0 | cap 0/0/0 | jump@15.0:dis-bordoisila@17.7->cp4
+s3 15.5-15.6 len 0.1 | lag0 -1.0 lag6 1.7 lag12 1.7 | cap 0/0/0 | run@15.5:dis-bordoisila@17.3->cp4
+s4 15.6-19.0 len 3.4 | lag0 2.4 lag6 2.4 lag12 2.0 | cap 0/0/0 | stop@17.5:dis-bordoisila@18.2->cp4
+s5 19.0-19.5 len 0.4 | lag0 -1.0 lag6 1.3 lag12 1.3 | cap 0/0/0 | run@19.0:dis-khaal@20.9->cp7
+s6 19.5-19.6 len 0.1 | lag0 1.3 lag6 1.3 lag12 -1.0 | cap 0/0/0 | 
+s7 19.6-27.5 len 7.9 | lag0 6.4 lag6 6.5 lag12 6.5 | cap 0/0/0 | stop@26.0:dis-khaal@28.2->cp7
+s8 27.5-28.0 len 0.5 | lag0 -1.0 lag6 1.9 lag12 1.9 | cap 0/0/0 | jump@27.5:dis-tel@30.2->cp10
+s9 28.0-28.1 len 0.1 | lag0 1.9 lag6 1.9 lag12 -1.0 | cap 0/0/0 | 
+s10 28.1-31.4 len 3.3 | lag0 2.5 lag6 2.5 lag12 2.5 | cap 0/0/0 | run@30.0:dis-gamosa@34.0->cp12
+s12 31.4-34.7 len 3.3 | lag0 2.6 lag6 2.6 lag12 2.6 | cap 0/0/0 | jump@32.0:dis-luit@38.0->cp14
+s14 35.0-44.7 len 9.7 | lag0 9.0 lag6 9.1 lag12 9.1 | cap 0/0/0 | stop@44.0:dis-luit@47.3->cp14
+captures(lag12) 0
+
+
+ [32m✓[39m tests/zz-dis-replay.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 92521[2mms[22m[39m
+   [33m[2m✓[22m[39m dis replay probe[33m 92519[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m   Start at [22m 03:55:34
+[2m   Duration [22m 93.91s[2m (tests 99%, transform 1%)[22m
+

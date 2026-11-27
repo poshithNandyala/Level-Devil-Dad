@@ -1,0 +1,78 @@
+{
+ "code": "CHN",
+ "moved": [
+  "src/render/backdrops-south.ts:chennai -> src/game/cities/chn/backdrop.ts",
+  "src/game/levels/chn.ts -> src/game/cities/chn/levels.ts"
+ ],
+ "removed": [
+  "src/game/cities.ts:LINES.CHN",
+  "src/game/cities.ts:CHAPTERS CHN city/hello/famous (filled by install)",
+  "src/game/levels/chunks.ts:SKINS.CHN",
+  "src/game/levels/tour.ts:COURSES.CHN",
+  "src/app/citylines.ts:CITY_LINE.CHN",
+  "src/render/renderer.ts:GRADES.CHN",
+  "src/render/art/tiles.ts:CAP.CHN",
+  "src/audio/audio.ts:MUSIC.CHN",
+  "src/render/theme.ts:THEMES.CHN",
+  "src/render/theme.ts:CITY_ORDER CHN (install appends it)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.token (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.bull (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.catch (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.rangoli (+ EndingKind)",
+  "src/game/levels/endings.ts:OLD_ENDINGS.tips (+ EndingKind)",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case lorry",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case mirage",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case loco",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case ball"
+ ],
+ "importers": [
+  "src/game/levels/index.ts"
+ ],
+ "inv": {
+  "own": [
+   "src/game/levels/chn.ts"
+  ],
+  "cause": [],
+  "causeShared": [
+   "spikes<game/cities/kvt/endings.ts,game/cities/kvt/levels.ts,game/entities/basics.ts,game/levels/amr.ts,game/levels/blr.ts,game/levels/endings.ts,game/levels/pdy.ts,game/levels/twists.ts,game/world.ts",
+   "splash<app/app.ts,game/cities/kvt/endings.ts,game/cities/kvt/entities.ts,game/cities/kvt/levels.ts,game/cities/rnc/entities.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/abilities.ts,game/entities/daman.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/amr.ts,game/levels/blr.ts,game/levels/bom.ts,game/levels/chunks.ts,game/levels/dmn.ts,game/levels/endings2.ts,game/levels/endings3.ts,game/levels/gnr.ts,game/levels/kit.ts,game/levels/pdy.ts,game/levels/pnj.ts,game/player.ts",
+   "flood<game/entities/mumbai.ts,game/levels/bom.ts",
+   "burnt<game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/amr.ts,game/levels/chunks.ts,game/levels/hyd.ts,game/levels/pdy.ts",
+   "hit<game/cities/kvt/endings.ts,game/cities/kvt/levels.ts,game/cities/tvm/levels.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/amr.ts,game/levels/blr.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/hyd.ts,game/levels/kit.ts,game/levels/pdy.ts"
+  ],
+  "ending": [
+   "token",
+   "bull",
+   "catch",
+   "rangoli",
+   "tips"
+  ],
+  "endingShared": [
+   "lamp<game/cities/rnc/levels.ts,game/levels/blr.ts,game/levels/bom.ts,game/levels/bpl.ts,game/levels/dmn.ts,game/levels/gnr.ts,game/levels/hyd.ts,game/levels/jai.ts,game/levels/pdy.ts,game/levels/pnj.ts,game/levels/rpr.ts"
+  ],
+  "thing": [
+   "lorry",
+   "mirage",
+   "loco",
+   "ball"
+  ],
+  "thingShared": [
+   "crate<game/cities/kvt/levels.ts,game/cities/kvt/skin.ts,game/entities/mumbai.ts,game/levels/bom.ts,game/levels/chunks.ts,game/levels/endings.ts,game/levels/endings2.ts,game/levels/hyd.ts,game/levels/kit.ts",
+   "slab<game/entities/mumbai.ts,game/levels/endings.ts,rooms/kit.ts",
+   "board<game/entities/auto.ts,game/levels/bom.ts,game/levels/pdy.ts",
+   "lighthouse<game/cities/kvt/levels.ts,game/levels/amr.ts,game/levels/pdy.ts,render/scenes.ts",
+   "shareauto<game/levels/blr.ts",
+   "kudam<game/levels/chunks.ts,game/levels/pdy.ts",
+   "kite<game/levels/hyd.ts",
+   "tumbler<game/cities/tvm/levels.ts,game/levels/chunks.ts",
+   "pillar<game/levels/blr.ts,game/levels/endings.ts,game/levels/endings2.ts",
+   "flowers<game/levels/endings.ts,game/levels/gnr.ts,game/levels/hyd.ts,game/levels/pdy.ts",
+   "spout<game/levels/hyd.ts",
+   "doll<game/levels/amr.ts",
+   "kaapi<game/levels/blr.ts",
+   "garland<game/levels/hyd.ts",
+   "traincar<game/cities/rnc/course.ts,game/levels/bom.ts,game/levels/tour.ts",
+   "log<game/cities/tvm/levels.ts,game/levels/amr.ts,game/levels/blr.ts"
+  ]
+ }
+}

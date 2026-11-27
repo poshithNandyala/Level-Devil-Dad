@@ -1,0 +1,128 @@
+// DIS round 3 probe: three-lag checkpoint replay and the late-checkpoint (capture) counter.
+// Copy to tests/zz-dis-replay.test.ts, run with LDD_DIS_PROBE=1 [LDD_IDS=DIS-01,...], delete after. Not a shared test.
+//
+// Route = the stage solution, recorded as inputs. Checkpoint times = the route tick each checkpoint is passed.
+// Every 0.5 s along the route, the player stops (no input), runs (holds right) or jumps (holds right, hops on landing),
+// L ticks after the moment (L = 0, 6, 12: a late reaction), for up to 12 s or until he dies.
+// For a death: respawn checkpoint = w.cp at death. If it is the checkpoint held when he deviated, the replay is the
+// route time from that checkpoint to the moment he deviated (what he has to play again). If he passed a later
+// checkpoint during the wrong move, the replay is the time from passing it to the death.
+// Stretch k = the deviation started between checkpoint k and k+1. A stretch's replay at lag L = its worst replay.
+// Capture = the game saves a checkpoint from the attempt that first passes it (src/app/session.ts: inputs up to the
+// pass). If the wrong move passes a checkpoint the route had not passed yet, that save is his state at the pass. The
+// probe replays that save and stands still 1.5 s (the cpsafe test's rule): if he dies, the save is a capture (he
+// respawns into a lost state, a checkpoint past the point of no return). Bar: 0 captures at lag 12.
+import { it } from 'vitest';
+import { LEVELS } from '../src/game/levels';
+import { World, NO_INPUT, type InputState } from '../src/game/world';
+import { decodeInput } from '../src/game/replay';
+import { INFO } from './helpers';
+import { play } from './runner';
+import { SOLUTIONS } from './solutions';
+
+const T = 120;
+it.runIf(!!process.env.LDD_DIS_PROBE)('dis replay probe', () => {
+  const ids = (process.env.LDD_IDS ?? '').split(',').filter(Boolean);
+  const out: string[] = [];
+  for (const def of LEVELS.filter((l) => l.id.startsWith('DIS-') && (!ids.length || ids.includes(l.id)))) {
+    (globalThis as any).__lddRec = [];
+    play(def, SOLUTIONS[def.id]);
+    const rec = (globalThis as any).__lddRec as number[];
+    (globalThis as any).__lddRec = undefined;
+    // route pass: checkpoint pass ticks, and a snapshot-free prefix replay by re-running
+    const w0 = new World(def, INFO);
+    def.build?.(w0);
+    const cpT: number[] = [0];
+    const cpAt: number[] = [];
+    for (let i = 0; i < rec.length && w0.state === 'play'; i++) {
+      const c = w0.cp;
+      w0.step(decodeInput(rec[i]));
+      w0.events.length = 0;
+      for (let q = c + 1; q <= w0.cp; q++) cpT[q] = w0.tick;
+      cpAt.push(w0.cp);
+    }
+    const end = w0.tick;
+    const n = cpT.length; // stretches 0..n-1 (cp index -1 is the start; w.cp starts at -1 or 0?)
+    const base = new World(def, INFO);
+    const cp0 = base.cp;
+    type Row = { worst: number[]; why: string[]; cap: number[] };
+    const rows = new Map<number, Row>();
+    const sig: string[] = [];
+    // route x at each tick, for the act spans
+    const xs: number[] = [];
+    {
+      const w1 = new World(def, INFO);
+      def.build?.(w1);
+      for (let i = 0; i < rec.length && w1.state === 'play'; i++) { w1.step(decodeInput(rec[i])); w1.events.length = 0; xs.push(w1.player.cx); }
+    }
+    const capList: string[] = [];
+    for (let t = 0; t < end; t += T / 2) {
+      const sg: string[] = [];
+      for (const [li, L] of [0, 6, 12].entries()) {
+        for (const mv of ['stop', 'run', 'jump'] as const) {
+          const w = new World(def, INFO);
+          def.build?.(w);
+          let i = 0;
+          for (; i < t + L && i < rec.length && w.state === 'play'; i++) {
+            w.step(decodeInput(rec[i]));
+            w.events.length = 0;
+          }
+          if (w.state !== 'play') continue;
+          const startCp = w.cp;
+          let passT = -1;
+          const dev: InputState[] = [];
+          let capHit = '';
+          for (let k = 0; k < 12 * T && w.state === 'play'; k++) {
+            const c0 = w.cp;
+            const inp: InputState =
+              mv === 'stop' ? NO_INPUT : mv === 'run' ? { ...NO_INPUT, right: true } : { ...NO_INPUT, right: true, jump: true, jumpPressed: w.player.onGround };
+            dev.push(inp);
+            w.step(inp);
+            w.events.length = 0;
+            if (w.cp > c0) {
+              passT = w.tick;
+              if (w.state === 'play' && !capHit) {
+                const s2 = new World(def, INFO);
+                def.build?.(s2);
+                for (let q = 0; q < i && s2.state === 'play'; q++) { s2.step(decodeInput(rec[q])); s2.events.length = 0; }
+                for (const d of dev) { if (s2.state !== 'play') break; s2.step(d); s2.events.length = 0; }
+                for (let q = 0; q < 180 && s2.state === 'play'; q++) { s2.step(NO_INPUT); s2.events.length = 0; }
+                if (s2.state === 'dead') capHit = `cp${w.cp}:${s2.deathCause}`;
+              }
+            }
+          }
+          if (L === 0) sg.push(`${mv}=${w.state === 'dead' ? w.deathCause : '-'}`);
+          if (w.state !== 'dead') continue;
+          const at = w.cp;
+          const later = at > startCp && passT >= 0;
+          const rp = later ? (w.deathTick - passT) / T : Math.max(0, t + L - (cpT[at] ?? 0)) / T;
+          const r = rows.get(startCp) ?? { worst: [-1, -1, -1], why: ['', '', ''], cap: [0, 0, 0] };
+          if (capHit) {
+            r.cap[li]++;
+            if (L === 12) capList.push(`${mv}@${(t / T).toFixed(1)} from cp${startCp}: save ${capHit}`);
+          }
+          if (rp > r.worst[li]) {
+            r.worst[li] = rp;
+            r.why[li] = `${mv}@${(t / T).toFixed(1)}:${w.deathCause}@${(w.deathTick / T).toFixed(1)}->cp${at}`;
+          }
+          rows.set(startCp, r);
+        }
+      }
+      sig.push(`T ${def.id} ${(t / T).toFixed(1)} ${((xs[t] ?? 0) / 16).toFixed(1)} ${sg.join(' ')}`);
+    }
+    for (const p of def.parts ?? []) out.push(`ACT ${def.id} ${p.kind} ${p.x0}`);
+    out.push(...sig);
+    out.push(`OUT ${def.id} end ${(end / T).toFixed(1)} cps ${cpT.slice(0).map((x) => (x / T).toFixed(1)).join(' ')}`);
+    for (const k of [...rows.keys()].sort((a, b) => a - b)) {
+      const r = rows.get(k)!;
+      const a = (cpT[k] ?? 0) / T;
+      const b = (cpT[k + 1] ?? end) / T;
+      out.push(`s${k} ${a.toFixed(1)}-${b.toFixed(1)} len ${(b - a).toFixed(1)} | lag0 ${r.worst[0].toFixed(1)} lag6 ${r.worst[1].toFixed(1)} lag12 ${r.worst[2].toFixed(1)} | cap ${r.cap.join('/')} | ${r.why[2]}`);
+    }
+    out.push(`captures(lag12) ${capList.length}${capList.length ? ': ' + capList.slice(0, 6).join('; ') : ''}`);
+    void n;
+    console.log(out.join('\n'));
+    out.length = 0;
+  }
+  console.log(out.join('\n'));
+}, 3_600_000);

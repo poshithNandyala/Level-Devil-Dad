@@ -1,0 +1,153 @@
+Cannot open directory /local/p4clients/pkgbuild-const/workspace/src/NodeJSOpenssl/build/private/install/ssl/certs to load OpenSSL certificates.
+Cannot open directory /local/p4clients/pkgbuild-const/workspace/src/NodeJSOpenssl/build/private/install/ssl/certs to load OpenSSL certificates.
+
+ RUN  v5.1.0 /local/home/saiposh/personal/ldd-wt/qa-bbi
+
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > TVM-01: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > TVM-02: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > TVM-03: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > TVM-04: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > TVM-05: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > TVM-06: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > TVM-07: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > TVM-08: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > TVM-09: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > TVM-10: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > KVT-01: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > KVT-02: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > KVT-03: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > KVT-04: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > KVT-05: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > KVT-06: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > KVT-07: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > KVT-08: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > CHN-01: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > CHN-02: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > CHN-03: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > CHN-04: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > CHN-05: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > CHN-06: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > CHN-07: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > CHN-08: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PDY-01: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PDY-02: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PDY-03: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PDY-04: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PDY-05: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PDY-06: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PDY-07: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PDY-08: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BLR-01: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BLR-02: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BLR-03: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BLR-04: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BLR-05: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BLR-06: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BLR-07: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BLR-08: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > AMR-01: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > AMR-02: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > AMR-03: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > AMR-04: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > AMR-05: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > AMR-06: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > AMR-07: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > AMR-08: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > HYD-01: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > HYD-02: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > HYD-03: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > HYD-04: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > HYD-05: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > HYD-06: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > HYD-07: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > HYD-08: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PNJ-01: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PNJ-02: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PNJ-03: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PNJ-04: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PNJ-05: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PNJ-06: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PNJ-07: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PNJ-08: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BOM-01: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BOM-02: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BOM-03: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BOM-04: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BOM-05: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BOM-06: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BOM-07: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BOM-08: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > DMN-01: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > DMN-02: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > DMN-03: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > DMN-04: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > DMN-05: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > DMN-06: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > DMN-07: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > DMN-08: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > GNR-01: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > GNR-02: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > GNR-03: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > GNR-04: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > GNR-05: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > GNR-06: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > GNR-07: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > GNR-08: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > JAI-01: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > JAI-02: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > JAI-03: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > JAI-04: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > JAI-05: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > JAI-06: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > JAI-07: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > JAI-08: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BPL-01: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BPL-02: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BPL-03: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BPL-04: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BPL-05: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BPL-06: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BPL-07: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BPL-08: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RPR-01: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RPR-02: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RPR-03: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RPR-04: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RPR-05: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RPR-06: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RPR-07: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RPR-08: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RNC-01: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RNC-02: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RNC-03: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RNC-04: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RNC-05: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RNC-06: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RNC-07: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > RNC-08: idle 1.5 s (allow-listed city)
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PAT-01: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PAT-02: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PAT-03: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PAT-04: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PAT-05: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PAT-06: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PAT-07: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PAT-08: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PAT-09: idle, run and tap-jump at lag 0/6/12
+ ↓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > PAT-10: idle, run and tap-jump at lag 0/6/12
+ ✓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BBI-01: idle, run and tap-jump at lag 0/6/12 324ms
+ ✓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BBI-02: idle, run and tap-jump at lag 0/6/12 259ms
+ ✓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BBI-03: idle, run and tap-jump at lag 0/6/12 310ms
+ ✓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BBI-04: idle, run and tap-jump at lag 0/6/12 425ms
+ ✓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BBI-05: idle, run and tap-jump at lag 0/6/12 3718ms
+ ✓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BBI-06: idle, run and tap-jump at lag 0/6/12 2682ms
+ ✓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BBI-07: idle, run and tap-jump at lag 0/6/12 14394ms
+ ✓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BBI-08: idle, run and tap-jump at lag 0/6/12 1289ms
+ ✓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BBI-09: idle, run and tap-jump at lag 0/6/12 1754ms
+ ✓ tests/cpsafe.test.ts > checkpoints are safe to respawn at > BBI-10: idle, run and tap-jump at lag 0/6/12 17098ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed | 132 skipped (142)
+   Start at  07:38:04
+   Duration  43.51s (tests 97%, transform 1%, setup 1%, import 1%)
+

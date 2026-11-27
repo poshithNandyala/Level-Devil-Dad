@@ -1,0 +1,362 @@
+
+ RUN  v5.1.0 /local/home/saiposh/personal/ldd-wt/svp
+
+stdout | tests/zz-qa6.test.ts > qa6 lag-captured cpsafe + replay
+QA6
+SVP-01: checked 336 plays at 3 distinct capture points, fails 0; longest stretch 16.1 s; replay worst 7.76 s [naive:1.31/1.31/1.46 fix:7.32/7.42/7.76]
+SVP-02: checked 448 plays at 4 distinct capture points, fails 0; longest stretch 9.8 s; replay worst 6.63 s [naive:3.01/3.01/3.01 fix:6.63/6.63/6.63]
+FAIL SVP-03 capture-lag11 idle0 cp1 x41.6 taken@tick1285 Dad x45.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle0 cp1 x41.6 taken@tick1285 Dad x45.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle0 cp1 x41.6 taken@tick1285 Dad x45.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle0 cp2 x47.6 taken@tick1770 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle0 cp2 x47.6 taken@tick1770 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle0 cp2 x47.6 taken@tick1770 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle0 cp3 x53.6 taken@tick2256 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle0 cp3 x53.6 taken@tick2256 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle0 cp3 x53.6 taken@tick2256 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle37 cp1 x41.6 taken@tick1322 Dad x45.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle37 cp1 x41.6 taken@tick1322 Dad x45.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle37 cp1 x41.6 taken@tick1322 Dad x45.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle37 cp2 x47.6 taken@tick1807 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle37 cp2 x47.6 taken@tick1807 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle37 cp2 x47.6 taken@tick1807 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle37 cp3 x53.6 taken@tick2293 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle37 cp3 x53.6 taken@tick2293 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle37 cp3 x53.6 taken@tick2293 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle120 cp1 x41.6 taken@tick1405 Dad x45.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle120 cp1 x41.6 taken@tick1405 Dad x45.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle120 cp1 x41.6 taken@tick1405 Dad x45.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle120 cp2 x47.6 taken@tick1890 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle120 cp2 x47.6 taken@tick1890 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle120 cp2 x47.6 taken@tick1890 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle120 cp3 x53.6 taken@tick2376 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle120 cp3 x53.6 taken@tick2376 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle120 cp3 x53.6 taken@tick2376 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle251 cp1 x41.6 taken@tick1536 Dad x45.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle251 cp1 x41.6 taken@tick1536 Dad x45.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle251 cp1 x41.6 taken@tick1536 Dad x45.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle251 cp2 x47.6 taken@tick2021 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle251 cp2 x47.6 taken@tick2021 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle251 cp2 x47.6 taken@tick2021 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle251 cp3 x53.6 taken@tick2507 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle251 cp3 x53.6 taken@tick2507 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag11 idle251 cp3 x53.6 taken@tick2507 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp1 x41.6 taken@tick1299 Dad x45.4: run0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp1 x41.6 taken@tick1299 Dad x45.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp1 x41.6 taken@tick1299 Dad x45.4: run6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp1 x41.6 taken@tick1299 Dad x45.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp1 x41.6 taken@tick1299 Dad x45.4: run12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp1 x41.6 taken@tick1299 Dad x45.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp2 x47.6 taken@tick1770 Dad x51.4: run0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp2 x47.6 taken@tick1770 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp2 x47.6 taken@tick1770 Dad x51.4: run6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp2 x47.6 taken@tick1770 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp2 x47.6 taken@tick1770 Dad x51.4: run12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp2 x47.6 taken@tick1770 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp3 x53.6 taken@tick2258 Dad x57.4: run0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp3 x53.6 taken@tick2258 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp3 x53.6 taken@tick2258 Dad x57.4: run6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp3 x53.6 taken@tick2258 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp3 x53.6 taken@tick2258 Dad x57.4: run12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle0 cp3 x53.6 taken@tick2258 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp1 x41.6 taken@tick1336 Dad x45.4: run0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp1 x41.6 taken@tick1336 Dad x45.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp1 x41.6 taken@tick1336 Dad x45.4: run6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp1 x41.6 taken@tick1336 Dad x45.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp1 x41.6 taken@tick1336 Dad x45.4: run12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp1 x41.6 taken@tick1336 Dad x45.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp2 x47.6 taken@tick1807 Dad x51.4: run0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp2 x47.6 taken@tick1807 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp2 x47.6 taken@tick1807 Dad x51.4: run6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp2 x47.6 taken@tick1807 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp2 x47.6 taken@tick1807 Dad x51.4: run12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp2 x47.6 taken@tick1807 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp3 x53.6 taken@tick2295 Dad x57.4: run0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp3 x53.6 taken@tick2295 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp3 x53.6 taken@tick2295 Dad x57.4: run6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp3 x53.6 taken@tick2295 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp3 x53.6 taken@tick2295 Dad x57.4: run12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle37 cp3 x53.6 taken@tick2295 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp1 x41.6 taken@tick1419 Dad x45.4: run0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp1 x41.6 taken@tick1419 Dad x45.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp1 x41.6 taken@tick1419 Dad x45.4: run6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp1 x41.6 taken@tick1419 Dad x45.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp1 x41.6 taken@tick1419 Dad x45.4: run12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp1 x41.6 taken@tick1419 Dad x45.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp2 x47.6 taken@tick1890 Dad x51.4: run0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp2 x47.6 taken@tick1890 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp2 x47.6 taken@tick1890 Dad x51.4: run6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp2 x47.6 taken@tick1890 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp2 x47.6 taken@tick1890 Dad x51.4: run12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp2 x47.6 taken@tick1890 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp3 x53.6 taken@tick2378 Dad x57.4: run0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp3 x53.6 taken@tick2378 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp3 x53.6 taken@tick2378 Dad x57.4: run6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp3 x53.6 taken@tick2378 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp3 x53.6 taken@tick2378 Dad x57.4: run12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle120 cp3 x53.6 taken@tick2378 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp1 x41.6 taken@tick1550 Dad x45.4: run0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp1 x41.6 taken@tick1550 Dad x45.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp1 x41.6 taken@tick1550 Dad x45.4: run6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp1 x41.6 taken@tick1550 Dad x45.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp1 x41.6 taken@tick1550 Dad x45.4: run12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp1 x41.6 taken@tick1550 Dad x45.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp2 x47.6 taken@tick2021 Dad x51.4: run0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp2 x47.6 taken@tick2021 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp2 x47.6 taken@tick2021 Dad x51.4: run6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp2 x47.6 taken@tick2021 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp2 x47.6 taken@tick2021 Dad x51.4: run12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp2 x47.6 taken@tick2021 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp3 x53.6 taken@tick2509 Dad x57.4: run0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp3 x53.6 taken@tick2509 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp3 x53.6 taken@tick2509 Dad x57.4: run6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp3 x53.6 taken@tick2509 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp3 x53.6 taken@tick2509 Dad x57.4: run12 -> svp-magar2
+FAIL SVP-03 capture-lag12 idle251 cp3 x53.6 taken@tick2509 Dad x57.4: tap12 -> svp-magar2
+SVP-03: checked 560 plays at 5 distinct capture points, fails 108; longest stretch 7.8 s; replay worst 2.27 s [naive:2.27/2.15/2.20 fix:0.82/0.83/0.83]
+SVP-04: checked 336 plays at 3 distinct capture points, fails 0; longest stretch 11.6 s; replay worst 3.72 s [naive:2.95/3.05/3.15 fix:3.51/3.67/3.72]
+SVP-05: checked 1232 plays at 11 distinct capture points, fails 0; longest stretch 9.9 s; replay worst 2.91 s [naive:1.58/1.68/1.88 fix:1.54/1.59/1.63 m0:2.38/2.48/2.83 m1:2.29/2.44/2.91 m2:1.54/1.59/1.63 m3:1.19/1.25/1.30]
+
+ ✓ tests/zz-qa6.test.ts (1 test) 22833ms
+   ✓ qa6 lag-captured cpsafe + replay 22831ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  05:01:58
+   Duration  24.47s (tests 94%, transform 4%, setup 2%)
+
+
+ RUN  v5.1.0 /local/home/saiposh/personal/ldd-wt/svp
+
+stdout | tests/zz-qa6.test.ts > qa6 lag-captured cpsafe + replay
+QA6
+SVP-06: checked 336 plays at 3 distinct capture points, fails 0; longest stretch 10.0 s; replay worst 1.86 s [naive:1.66/1.76/1.86 fix:1.35/1.35/1.35]
+SVP-07: checked 560 plays at 5 distinct capture points, fails 0; longest stretch 9.6 s; replay worst 5.46 s [naive:4.53/4.63/4.82 fix:2.84/2.77/2.93 m0:1.01/1.01/1.01 m1:1.02/0.97/1.02 m2:5.00/5.31/5.46 m3:3.83/3.90/4.05 m4:3.69/3.72/4.11]
+SVP-08: checked 560 plays at 5 distinct capture points, fails 0; longest stretch 10.3 s; replay worst 7.18 s [naive:1.81/1.86/1.91 fix:1.98/2.02/2.08 m0:7.18/7.18/7.18 m1:3.22/3.22/3.22]
+FAIL SVP-09 capture-lag6 idle0 cp0 x32.5 taken@tick437 Dad x35.6: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag6 idle0 cp0 x32.5 taken@tick437 Dad x35.6: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag6 idle0 cp0 x32.5 taken@tick437 Dad x35.6: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag6 idle37 cp0 x32.5 taken@tick474 Dad x35.6: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag6 idle37 cp0 x32.5 taken@tick474 Dad x35.6: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag6 idle37 cp0 x32.5 taken@tick474 Dad x35.6: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag6 idle120 cp0 x32.5 taken@tick557 Dad x35.6: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag6 idle120 cp0 x32.5 taken@tick557 Dad x35.6: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag6 idle120 cp0 x32.5 taken@tick557 Dad x35.6: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag6 idle251 cp0 x32.5 taken@tick688 Dad x35.6: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag6 idle251 cp0 x32.5 taken@tick688 Dad x35.6: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag6 idle251 cp0 x32.5 taken@tick688 Dad x35.6: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag11 idle0 cp0 x32.5 taken@tick442 Dad x35.6: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag11 idle0 cp0 x32.5 taken@tick442 Dad x35.6: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag11 idle0 cp0 x32.5 taken@tick442 Dad x35.6: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag11 idle37 cp0 x32.5 taken@tick479 Dad x35.6: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag11 idle37 cp0 x32.5 taken@tick479 Dad x35.6: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag11 idle37 cp0 x32.5 taken@tick479 Dad x35.6: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag11 idle120 cp0 x32.5 taken@tick562 Dad x35.6: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag11 idle120 cp0 x32.5 taken@tick562 Dad x35.6: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag11 idle120 cp0 x32.5 taken@tick562 Dad x35.6: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag11 idle251 cp0 x32.5 taken@tick693 Dad x35.6: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag11 idle251 cp0 x32.5 taken@tick693 Dad x35.6: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag11 idle251 cp0 x32.5 taken@tick693 Dad x35.6: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle0 cp0 x32.5 taken@tick443 Dad x35.5: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle0 cp0 x32.5 taken@tick443 Dad x35.5: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle0 cp0 x32.5 taken@tick443 Dad x35.5: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle0 cp2 x79.0 taken@tick1365 Dad x83.0: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle0 cp2 x79.0 taken@tick1365 Dad x83.0: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle0 cp2 x79.0 taken@tick1365 Dad x83.0: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle37 cp0 x32.5 taken@tick480 Dad x35.5: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle37 cp0 x32.5 taken@tick480 Dad x35.5: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle37 cp0 x32.5 taken@tick480 Dad x35.5: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle37 cp2 x79.0 taken@tick1402 Dad x83.0: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle37 cp2 x79.0 taken@tick1402 Dad x83.0: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle37 cp2 x79.0 taken@tick1402 Dad x83.0: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle120 cp0 x32.5 taken@tick563 Dad x35.5: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle120 cp0 x32.5 taken@tick563 Dad x35.5: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle120 cp0 x32.5 taken@tick563 Dad x35.5: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle120 cp2 x79.0 taken@tick1485 Dad x83.0: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle120 cp2 x79.0 taken@tick1485 Dad x83.0: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle120 cp2 x79.0 taken@tick1485 Dad x83.0: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle251 cp0 x32.5 taken@tick694 Dad x35.5: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle251 cp0 x32.5 taken@tick694 Dad x35.5: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle251 cp0 x32.5 taken@tick694 Dad x35.5: tap12 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle251 cp2 x79.0 taken@tick1616 Dad x83.0: tap0 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle251 cp2 x79.0 taken@tick1616 Dad x83.0: tap6 -> svp-eent2
+FAIL SVP-09 capture-lag12 idle251 cp2 x79.0 taken@tick1616 Dad x83.0: tap12 -> svp-eent2
+SVP-09: checked 896 plays at 8 distinct capture points, fails 48; longest stretch 6.1 s; replay worst 2.86 s [naive:1.15/1.20/1.25 fix:0.66/0.65/0.66 m0:2.86/2.86/2.86 m1:2.86/2.86/2.86]
+FAIL SVP-10 capture-lag6 idle0 cp4 x68.5 taken@tick3372 Dad x71.5: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag6 idle0 cp4 x68.5 taken@tick3372 Dad x71.5: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag6 idle0 cp4 x68.5 taken@tick3372 Dad x71.5: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag6 idle37 cp4 x68.5 taken@tick3409 Dad x71.5: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag6 idle37 cp4 x68.5 taken@tick3409 Dad x71.5: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag6 idle37 cp4 x68.5 taken@tick3409 Dad x71.5: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag6 idle120 cp4 x68.5 taken@tick3492 Dad x71.5: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag6 idle120 cp4 x68.5 taken@tick3492 Dad x71.5: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag6 idle120 cp4 x68.5 taken@tick3492 Dad x71.5: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag6 idle251 cp4 x68.5 taken@tick3623 Dad x71.5: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag6 idle251 cp4 x68.5 taken@tick3623 Dad x71.5: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag6 idle251 cp4 x68.5 taken@tick3623 Dad x71.5: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle0 cp1 x41.6 taken@tick1818 Dad x45.5: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle0 cp1 x41.6 taken@tick1818 Dad x45.5: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle0 cp1 x41.6 taken@tick1818 Dad x45.5: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle0 cp2 x47.6 taken@tick2309 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle0 cp2 x47.6 taken@tick2309 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle0 cp2 x47.6 taken@tick2309 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle0 cp3 x53.6 taken@tick2797 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle0 cp3 x53.6 taken@tick2797 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle0 cp3 x53.6 taken@tick2797 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle0 cp4 x68.5 taken@tick3387 Dad x71.5: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle0 cp4 x68.5 taken@tick3387 Dad x71.5: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle0 cp4 x68.5 taken@tick3387 Dad x71.5: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle0 cp6 x115.0 taken@tick4307 Dad x119.0: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle0 cp6 x115.0 taken@tick4307 Dad x119.0: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle0 cp6 x115.0 taken@tick4307 Dad x119.0: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle37 cp1 x41.6 taken@tick1855 Dad x45.5: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle37 cp1 x41.6 taken@tick1855 Dad x45.5: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle37 cp1 x41.6 taken@tick1855 Dad x45.5: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle37 cp2 x47.6 taken@tick2346 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle37 cp2 x47.6 taken@tick2346 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle37 cp2 x47.6 taken@tick2346 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle37 cp3 x53.6 taken@tick2834 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle37 cp3 x53.6 taken@tick2834 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle37 cp3 x53.6 taken@tick2834 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle37 cp4 x68.5 taken@tick3424 Dad x71.5: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle37 cp4 x68.5 taken@tick3424 Dad x71.5: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle37 cp4 x68.5 taken@tick3424 Dad x71.5: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle37 cp6 x115.0 taken@tick4344 Dad x119.0: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle37 cp6 x115.0 taken@tick4344 Dad x119.0: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle37 cp6 x115.0 taken@tick4344 Dad x119.0: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle120 cp1 x41.6 taken@tick1938 Dad x45.5: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle120 cp1 x41.6 taken@tick1938 Dad x45.5: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle120 cp1 x41.6 taken@tick1938 Dad x45.5: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle120 cp2 x47.6 taken@tick2429 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle120 cp2 x47.6 taken@tick2429 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle120 cp2 x47.6 taken@tick2429 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle120 cp3 x53.6 taken@tick2917 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle120 cp3 x53.6 taken@tick2917 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle120 cp3 x53.6 taken@tick2917 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle120 cp4 x68.5 taken@tick3507 Dad x71.5: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle120 cp4 x68.5 taken@tick3507 Dad x71.5: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle120 cp4 x68.5 taken@tick3507 Dad x71.5: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle120 cp6 x115.0 taken@tick4427 Dad x119.0: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle120 cp6 x115.0 taken@tick4427 Dad x119.0: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle120 cp6 x115.0 taken@tick4427 Dad x119.0: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle251 cp1 x41.6 taken@tick2069 Dad x45.5: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle251 cp1 x41.6 taken@tick2069 Dad x45.5: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle251 cp1 x41.6 taken@tick2069 Dad x45.5: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle251 cp2 x47.6 taken@tick2560 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle251 cp2 x47.6 taken@tick2560 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle251 cp2 x47.6 taken@tick2560 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle251 cp3 x53.6 taken@tick3048 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle251 cp3 x53.6 taken@tick3048 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle251 cp3 x53.6 taken@tick3048 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag11 idle251 cp4 x68.5 taken@tick3638 Dad x71.5: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle251 cp4 x68.5 taken@tick3638 Dad x71.5: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle251 cp4 x68.5 taken@tick3638 Dad x71.5: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle251 cp6 x115.0 taken@tick4558 Dad x119.0: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle251 cp6 x115.0 taken@tick4558 Dad x119.0: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag11 idle251 cp6 x115.0 taken@tick4558 Dad x119.0: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle0 cp1 x41.6 taken@tick1834 Dad x45.5: run0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp1 x41.6 taken@tick1834 Dad x45.5: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp1 x41.6 taken@tick1834 Dad x45.5: run6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp1 x41.6 taken@tick1834 Dad x45.5: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp1 x41.6 taken@tick1834 Dad x45.5: run12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp1 x41.6 taken@tick1834 Dad x45.5: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp2 x47.6 taken@tick2312 Dad x51.4: run0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp2 x47.6 taken@tick2312 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp2 x47.6 taken@tick2312 Dad x51.4: run6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp2 x47.6 taken@tick2312 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp2 x47.6 taken@tick2312 Dad x51.4: run12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp2 x47.6 taken@tick2312 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp3 x53.6 taken@tick2798 Dad x57.5: run0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp3 x53.6 taken@tick2798 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp3 x53.6 taken@tick2798 Dad x57.5: run6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp3 x53.6 taken@tick2798 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp3 x53.6 taken@tick2798 Dad x57.5: run12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp3 x53.6 taken@tick2798 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle0 cp4 x68.5 taken@tick3379 Dad x71.5: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle0 cp4 x68.5 taken@tick3379 Dad x71.5: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle0 cp4 x68.5 taken@tick3379 Dad x71.5: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle0 cp6 x115.0 taken@tick4301 Dad x119.1: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle0 cp6 x115.0 taken@tick4301 Dad x119.1: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle0 cp6 x115.0 taken@tick4301 Dad x119.1: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle37 cp1 x41.6 taken@tick1871 Dad x45.5: run0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp1 x41.6 taken@tick1871 Dad x45.5: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp1 x41.6 taken@tick1871 Dad x45.5: run6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp1 x41.6 taken@tick1871 Dad x45.5: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp1 x41.6 taken@tick1871 Dad x45.5: run12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp1 x41.6 taken@tick1871 Dad x45.5: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp2 x47.6 taken@tick2349 Dad x51.4: run0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp2 x47.6 taken@tick2349 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp2 x47.6 taken@tick2349 Dad x51.4: run6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp2 x47.6 taken@tick2349 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp2 x47.6 taken@tick2349 Dad x51.4: run12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp2 x47.6 taken@tick2349 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp3 x53.6 taken@tick2835 Dad x57.5: run0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp3 x53.6 taken@tick2835 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp3 x53.6 taken@tick2835 Dad x57.5: run6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp3 x53.6 taken@tick2835 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp3 x53.6 taken@tick2835 Dad x57.5: run12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp3 x53.6 taken@tick2835 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle37 cp4 x68.5 taken@tick3416 Dad x71.5: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle37 cp4 x68.5 taken@tick3416 Dad x71.5: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle37 cp4 x68.5 taken@tick3416 Dad x71.5: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle37 cp6 x115.0 taken@tick4338 Dad x119.1: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle37 cp6 x115.0 taken@tick4338 Dad x119.1: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle37 cp6 x115.0 taken@tick4338 Dad x119.1: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle120 cp1 x41.6 taken@tick1954 Dad x45.5: run0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp1 x41.6 taken@tick1954 Dad x45.5: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp1 x41.6 taken@tick1954 Dad x45.5: run6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp1 x41.6 taken@tick1954 Dad x45.5: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp1 x41.6 taken@tick1954 Dad x45.5: run12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp1 x41.6 taken@tick1954 Dad x45.5: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp2 x47.6 taken@tick2432 Dad x51.4: run0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp2 x47.6 taken@tick2432 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp2 x47.6 taken@tick2432 Dad x51.4: run6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp2 x47.6 taken@tick2432 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp2 x47.6 taken@tick2432 Dad x51.4: run12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp2 x47.6 taken@tick2432 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp3 x53.6 taken@tick2918 Dad x57.5: run0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp3 x53.6 taken@tick2918 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp3 x53.6 taken@tick2918 Dad x57.5: run6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp3 x53.6 taken@tick2918 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp3 x53.6 taken@tick2918 Dad x57.5: run12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp3 x53.6 taken@tick2918 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle120 cp4 x68.5 taken@tick3499 Dad x71.5: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle120 cp4 x68.5 taken@tick3499 Dad x71.5: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle120 cp4 x68.5 taken@tick3499 Dad x71.5: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle120 cp6 x115.0 taken@tick4421 Dad x119.1: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle120 cp6 x115.0 taken@tick4421 Dad x119.1: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle120 cp6 x115.0 taken@tick4421 Dad x119.1: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle251 cp1 x41.6 taken@tick2085 Dad x45.5: run0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp1 x41.6 taken@tick2085 Dad x45.5: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp1 x41.6 taken@tick2085 Dad x45.5: run6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp1 x41.6 taken@tick2085 Dad x45.5: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp1 x41.6 taken@tick2085 Dad x45.5: run12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp1 x41.6 taken@tick2085 Dad x45.5: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp2 x47.6 taken@tick2563 Dad x51.4: run0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp2 x47.6 taken@tick2563 Dad x51.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp2 x47.6 taken@tick2563 Dad x51.4: run6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp2 x47.6 taken@tick2563 Dad x51.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp2 x47.6 taken@tick2563 Dad x51.4: run12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp2 x47.6 taken@tick2563 Dad x51.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp3 x53.6 taken@tick3049 Dad x57.5: run0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp3 x53.6 taken@tick3049 Dad x57.4: tap0 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp3 x53.6 taken@tick3049 Dad x57.5: run6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp3 x53.6 taken@tick3049 Dad x57.4: tap6 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp3 x53.6 taken@tick3049 Dad x57.5: run12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp3 x53.6 taken@tick3049 Dad x57.4: tap12 -> svp-magar2
+FAIL SVP-10 capture-lag12 idle251 cp4 x68.5 taken@tick3630 Dad x71.5: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle251 cp4 x68.5 taken@tick3630 Dad x71.5: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle251 cp4 x68.5 taken@tick3630 Dad x71.5: tap12 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle251 cp6 x115.0 taken@tick4552 Dad x119.1: tap0 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle251 cp6 x115.0 taken@tick4552 Dad x119.1: tap6 -> svp-eent2
+FAIL SVP-10 capture-lag12 idle251 cp6 x115.0 taken@tick4552 Dad x119.1: tap12 -> svp-eent2
+SVP-10: checked 2016 plays at 18 distinct capture points, fails 168; longest stretch 12.3 s; replay worst 6.11 s [naive:5.45/5.38/5.33 fix:0.83/0.82/0.82 m0:5.97/6.03/6.11 m1:0.66/0.66/0.66 m2:5.01/5.32/5.46 m3:3.52/3.67/3.71 m4:2.86/2.86/2.86 m5:2.86/2.86/2.86 m6:1.54/1.59/1.63 m7:1.19/1.24/1.30]
+
+ ✓ tests/zz-qa6.test.ts (1 test) 123518ms
+   ✓ qa6 lag-captured cpsafe + replay 123516ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  05:01:58
+   Duration  125.12s (tests 99%, transform 1%)
+

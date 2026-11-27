@@ -1,0 +1,94 @@
+| Stage | Pair | lag | baited cause@tick (x) | other cause@tick (x) | ok |
+|---|---|---|---|---|---|
+| DIS-01 | stage naive/fix [naive/fix] | 0 | dis-spill@1143 (x84) | dis-pool@1181 (x87) | yes |
+| DIS-01 | stage naive/fix [naive/fix] | 6 | dis-spill@1173 (x84) | dis-pool@1217 (x88) | yes |
+| DIS-01 | stage naive/fix [naive/fix] | 12 | dis-spill@1203 (x84) | dis-pool@1253 (x88) | yes |
+| DIS-02 | dis02-bhutbhuti [m2/m3] | 0 | dis-bhutbhuti@2020 (x86) | dis-char-sink@2085 (x83) | yes |
+| DIS-02 | dis02-bhutbhuti [m2/m3] | 6 | dis-bhutbhuti@2050 (x86) | dis-char-sink@2109 (x83) | yes |
+| DIS-02 | dis02-bhutbhuti [m2/m3] | 12 | dis-bhutbhuti@2085 (x86) | dis-char-sink@2137 (x83) | yes |
+| DIS-04 | stage naive/fix [naive/fix] | 0 | dis-talatal@314 (x20) | dis-doba@478 (x7) | yes |
+| DIS-04 | stage naive/fix [naive/fix] | 6 | dis-talatal@338 (x20) | dis-doba@496 (x7) | yes |
+| DIS-04 | stage naive/fix [naive/fix] | 12 | dis-talatal@374 (x20) | dis-doba@526 (x8) | yes |
+| DIS-04 | dis04-batah [m0/m1] | 0 | dis-kup@711 (x39) | dis-garh@780 (x44) | yes |
+| DIS-04 | dis04-batah [m0/m1] | 6 | dis-kup@730 (x39) | dis-garh@799 (x44) | yes |
+| DIS-04 | dis04-batah [m0/m1] | 12 | dis-kup@761 (x39) | dis-garh@829 (x44) | yes |
+| DIS-05 | dis05-sanko [m1/m2] | 0 | dis-beam@1378 (x101) | dis-sanko-pit@1456 (x95) | yes |
+| DIS-05 | dis05-sanko [m1/m2] | 6 | dis-beam@1390 (x101) | dis-sanko-pit@1464 (x95) | yes |
+| DIS-05 | dis05-sanko [m1/m2] | 12 | dis-beam@1402 (x102) | dis-sanko-pit@1476 (x95) | yes |
+| DIS-05 | dis05-feast [m3/m4] | 0 | dis-kol-paat@1704 (x121) | dis-pit@1710 (x125) | yes |
+| DIS-05 | dis05-feast [m3/m4] | 6 | dis-kol-paat@1716 (x120) | dis-pit@1717 (x125) | yes |
+| DIS-05 | dis05-feast [m3/m4] | 12 | dis-kol-paat@1728 (x120) | dis-pit@1723 (x125) | yes |
+| DIS-05 | dis05-kaath [m5/m6] | 0 | dis-kaath@1998 (x146) | dis-kaath-gamosa@2421 (x156) | yes |
+| DIS-05 | dis05-kaath [m5/m6] | 6 | dis-kaath@2008 (x146) | dis-kaath-gamosa@2443 (x156) | yes |
+| DIS-05 | dis05-kaath [m5/m6] | 12 | dis-kaath@2020 (x147) | dis-kaath-gamosa@2410 (x156) | yes |
+| DIS-05 | dis05-machan [m7/m8] | 0 | dis-machan@3022 (x180) | dis-machan-luit@2373 (x173) | yes |
+| DIS-05 | dis05-machan [m7/m8] | 6 | dis-machan@3028 (x180) | dis-machan-luit@2379 (x173) | yes |
+| DIS-05 | dis05-machan [m7/m8] | 12 | dis-machan@3034 (x180) | dis-machan-luit@2385 (x173) | yes |
+| DIS-06 | stage naive/fix [naive/fix] | 0 | dis-porcupine@199 (x15) | dis-bank@215 (x13) | yes |
+| DIS-06 | stage naive/fix [naive/fix] | 6 | dis-porcupine@205 (x15) | dis-bank@221 (x13) | yes |
+| DIS-06 | stage naive/fix [naive/fix] | 12 | dis-porcupine@211 (x15) | dis-bank@227 (x13) | yes |
+| DIS-06 | dis06-flag [m0/m1] | 0 | dis-flag-luit@2333 (x113) | dis-ghat-gamosa@2307 (x112) | yes |
+| DIS-06 | dis06-flag [m0/m1] | 6 | dis-flag-luit@2346 (x113) | dis-ghat-gamosa@2314 (x112) | yes |
+| DIS-06 | dis06-flag [m0/m1] | 12 | dis-flag-luit@2401 (x113) | dis-ghat-gamosa@2363 (x112) | yes |
+| DIS-06 | dis06-wake [m2/m3] | 0 | dis-dhal@900 (x41) | dis-wake-bank@920 (x38) | yes |
+| DIS-06 | dis06-wake [m2/m3] | 6 | dis-dhal@906 (x41) | dis-wake-bank@932 (x38) | yes |
+| DIS-06 | dis06-wake [m2/m3] | 12 | dis-dhal@912 (x41) | dis-wake-bank@944 (x38) | yes |
+| DIS-06 | dis06-traps [m4/m5] | 0 | dis-dirru@1714 (x74) | dis-tip@1654 (x78) | yes |
+| DIS-06 | dis06-traps [m4/m5] | 6 | dis-dirru@1726 (x75) | dis-tip@1672 (x78) | yes |
+| DIS-06 | dis06-traps [m4/m5] | 12 | dis-dirru@1738 (x75) | dis-tip@1689 (x77) | yes |
+| DIS-07 | stage naive/fix [naive/fix] | 0 | dis-gate@277 (x21) | dis-dhol-sink@1964 (x58) | yes |
+| DIS-07 | stage naive/fix [naive/fix] | 6 | dis-gate@283 (x21) | dis-dhol-sink@1892 (x55) | yes |
+| DIS-07 | stage naive/fix [naive/fix] | 12 | dis-gate@289 (x21) | dis-dhol-sink@1904 (x55) | yes |
+| DIS-07 | dis07-card [m3/m4] | 0 | dis-card-gate@5649 (x185) | dis-horin@5814 (x177) | yes |
+| DIS-07 | dis07-card [m3/m4] | 6 | dis-card-gate@5696 (x185) | dis-horin@5861 (x177) | yes |
+| DIS-07 | dis07-card [m3/m4] | 12 | dis-card-gate@5745 (x185) | dis-horin@5910 (x177) | yes |
+| DIS-07 | dis07-rope [m5/m6] | 0 | dis-pat@2315 (x82) | dis-paakoni@2635 (x89) | yes |
+| DIS-07 | dis07-rope [m5/m6] | 6 | dis-pat@2333 (x82) | dis-paakoni@2653 (x89) | yes |
+| DIS-07 | dis07-rope [m5/m6] | 12 | dis-pat@2364 (x82) | dis-paakoni@2684 (x89) | yes |
+| DIS-07 | dis07-cart [m7/m8] | 0 | dis-herd@6487 (x211) | dis-cart-pukhuri@6499 (x219) | yes |
+| DIS-07 | dis07-cart [m7/m8] | 6 | dis-herd@6541 (x211) | dis-cart-pukhuri@6568 (x220) | yes |
+| DIS-07 | dis07-cart [m7/m8] | 12 | dis-herd@6596 (x211) | dis-cart-pukhuri@6629 (x220) | yes |
+| DIS-07 | dis07-pepa [m9/m10] | 0 | dis-pepa-gate@9473 (x308) | dis-stakes@10226 (x307) | yes |
+| DIS-07 | dis07-pepa [m9/m10] | 6 | dis-pepa-gate@9525 (x308) | dis-stakes@10278 (x307) | yes |
+| DIS-07 | dis07-pepa [m9/m10] | 12 | dis-pepa-gate@9580 (x308) | dis-stakes@10333 (x307) | yes |
+| DIS-07 | dis07-tekeli [m11/m12] | 0 | dis-lathi@4966 (x139) | dis-lathi-ghur@4839 (x140) | yes |
+| DIS-07 | dis07-tekeli [m11/m12] | 6 | dis-lathi@5007 (x139) | dis-lathi-ghur@4880 (x140) | yes |
+| DIS-07 | dis07-tekeli [m11/m12] | 12 | dis-lathi@5050 (x140) | dis-lathi-ghur@4923 (x140) | yes |
+| DIS-07 | dis07-goru [m13/m14] | 0 | dis-goru@3433 (x106) | dis-goru-lane@3509 (x106) | yes |
+| DIS-07 | dis07-goru [m13/m14] | 6 | dis-goru@3456 (x106) | dis-goru-lane@3538 (x106) | yes |
+| DIS-07 | dis07-goru [m13/m14] | 12 | dis-goru@3493 (x106) | dis-goru-lane@3586 (x106) | yes |
+| DIS-08 | stage naive/fix [naive/fix] | 0 | dis-beel@109 (x8) | dis-gorh@433 (x7) | yes |
+| DIS-08 | stage naive/fix [naive/fix] | 6 | dis-beel@115 (x8) | dis-gorh@439 (x7) | yes |
+| DIS-08 | stage naive/fix [naive/fix] | 12 | dis-beel@121 (x8) | dis-gorh@445 (x7) | yes |
+| DIS-08 | dis08-bogoli [m0/m1] | 0 | dis-bogoli@3270 (x108) | dis-jui@3766 (x103) | yes |
+| DIS-08 | dis08-bogoli [m0/m1] | 6 | dis-bogoli@3294 (x108) | dis-jui@3797 (x103) | yes |
+| DIS-08 | dis08-bogoli [m0/m1] | 12 | dis-bogoli@3318 (x108) | dis-jui@3827 (x103) | yes |
+| DIS-08 | dis08-jeep [m2/m3] | 0 | dis-beel@1013 (x37) | dis-gorh@1699 (x36) | yes |
+| DIS-08 | dis08-jeep [m2/m3] | 6 | dis-beel@1025 (x37) | dis-gorh@1711 (x36) | yes |
+| DIS-08 | dis08-jeep [m2/m3] | 12 | dis-beel@1037 (x37) | dis-gorh@1723 (x36) | yes |
+| DIS-08 | dis08-duijeep [m4/m5] | 0 | dis-gorh@2709 (x77) | dis-beel@2427 (x78) | yes |
+| DIS-08 | dis08-duijeep [m4/m5] | 6 | dis-gorh@2727 (x77) | dis-beel@2445 (x78) | yes |
+| DIS-08 | dis08-duijeep [m4/m5] | 12 | dis-gorh@2745 (x77) | dis-beel@2463 (x78) | yes |
+| DIS-08 | dis08-bagori [m6/m7] | 0 | dis-gorh@3909 (x129) | dis-gorh-adha@4644 (x165) | yes |
+| DIS-08 | dis08-bagori [m6/m7] | 6 | dis-gorh@3939 (x129) | dis-gorh-adha@4680 (x165) | yes |
+| DIS-08 | dis08-bagori [m6/m7] | 12 | dis-gorh@3969 (x129) | dis-gorh-adha@4718 (x165) | yes |
+| DIS-09 | stage naive/fix [naive/fix] | 0 | dis-roof@201 (x10) | dis-gutter@119 (x8) | yes |
+| DIS-09 | stage naive/fix [naive/fix] | 6 | dis-roof@211 (x9) | dis-gutter@138 (x8) | yes |
+| DIS-09 | stage naive/fix [naive/fix] | 12 | dis-roof@225 (x10) | dis-gutter@156 (x8) | yes |
+| DIS-09 | dis09-tug [m1/m2] | 0 | dis-khaal@722 (x44) | dis-rope@1017 (x51) | yes |
+| DIS-09 | dis09-tug [m1/m2] | 6 | dis-khaal@782 (x44) | dis-rope@1080 (x51) | yes |
+| DIS-09 | dis09-tug [m1/m2] | 12 | dis-khaal@805 (x44) | dis-rope@1108 (x51) | yes |
+| DIS-09 | dis09-sluice [m3/m4] | 0 | dis-sluice@2327 (x112) | dis-sluice-tel@2999 (x118) | yes |
+| DIS-09 | dis09-sluice [m3/m4] | 6 | dis-sluice@2470 (x112) | dis-sluice-tel@3153 (x118) | yes |
+| DIS-09 | dis09-sluice [m3/m4] | 12 | dis-sluice@2515 (x112) | dis-sluice-tel@3211 (x118) | yes |
+| DIS-09 | dis09-tunnels [m5/m6] | 0 | dis-tel-gola@3194 (x136) | dis-vault@3178 (x145) | yes |
+| DIS-09 | dis09-tunnels [m5/m6] | 6 | dis-tel-gola@3365 (x136) | dis-vault@3335 (x145) | yes |
+| DIS-09 | dis09-tunnels [m5/m6] | 12 | dis-tel-gola@3435 (x136) | dis-vault@3392 (x145) | yes |
+| DIS-10 | stage naive/fix [naive/fix] | 0 | dis-ulta@219 (x10) | dis-rope-ulta@2672 (x86) | yes |
+| DIS-10 | stage naive/fix [naive/fix] | 6 | dis-ulta@223 (x11) | dis-rope-ulta@2705 (x86) | yes |
+| DIS-10 | stage naive/fix [naive/fix] | 12 | dis-ulta@220 (x11) | dis-rope-ulta@2734 (x86) | yes |
+| DIS-10 | dis10-dhol [m0/m1] | 0 | dis-pukhuri-lahe@1336 (x42) | dis-dhol-lahe@1384 (x39) | yes |
+| DIS-10 | dis10-dhol [m0/m1] | 6 | dis-pukhuri-lahe@1359 (x42) | dis-dhol-lahe@1407 (x39) | yes |
+| DIS-10 | dis10-dhol [m0/m1] | 12 | dis-pukhuri-lahe@1377 (x42) | dis-dhol-lahe@1425 (x40) | yes |
+
+pairs: 30; rows not meeting the bar (excluding one-play): 0

@@ -1,0 +1,76 @@
+{
+ "code": "JAI",
+ "moved": [
+  "src/render/backdrops-west.ts:jaipur -> src/game/cities/jai/backdrop.ts",
+  "src/game/levels/jai.ts -> src/game/cities/jai/levels.ts",
+  "src/game/entities/rajasthan.ts -> src/game/cities/jai/entities.ts"
+ ],
+ "removed": [
+  "src/game/cities.ts:LINES.JAI",
+  "src/game/cities.ts:CHAPTERS JAI city/hello/famous (filled by install)",
+  "src/game/levels/chunks.ts:SKINS.JAI",
+  "src/game/levels/tour.ts:COURSES.JAI",
+  "src/app/citylines.ts:CITY_LINE.JAI",
+  "src/render/renderer.ts:GRADES.JAI",
+  "src/render/art/tiles.ts:CAP.JAI",
+  "src/audio/audio.ts:MUSIC.JAI",
+  "src/render/theme.ts:THEMES.JAI",
+  "src/render/theme.ts:CITY_ORDER JAI (install appends it)",
+  "src/game/entities/props.ts:CAUSE_LINES.kaanch",
+  "src/game/entities/props.ts:CAUSE_LINES.talwar",
+  "src/game/entities/props.ts:CAUSE_LINES.phataka",
+  "src/game/entities/props.ts:CAUSE_LINES.matka",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.sutradhar (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.toran (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.shant (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.naap (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.dulha (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.palat (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.salaami (+ WestEndingKind)",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case ghevar"
+ ],
+ "importers": [
+  "src/game/cities/jai/endings.ts",
+  "src/game/levels/endings3.ts",
+  "src/game/levels/index.ts",
+  "tests/west.ts"
+ ],
+ "pruned": [
+  "src/game/levels/endings3.ts: import { Player } from '../player';",
+  "src/game/levels/endings3.ts: dropped {'npc'}",
+  "src/game/levels/endings3.ts: import { Balloon, Bangle, Board, Bowl, Elephant, Ghodi, Pots, Shards, brazierArt } from '../cities/jai/entities';"
+ ],
+ "inv": {
+  "own": [
+   "src/game/levels/jai.ts",
+   "src/game/entities/rajasthan.ts"
+  ],
+  "cause": [
+   "kaanch",
+   "talwar",
+   "phataka",
+   "matka"
+  ],
+  "causeShared": [],
+  "ending": [
+   "sutradhar",
+   "toran",
+   "shant",
+   "naap",
+   "dulha",
+   "palat",
+   "salaami"
+  ],
+  "endingShared": [
+   "lamp<game/cities/blr/levels.ts,game/cities/bom/levels.ts,game/cities/chn/levels.ts,game/cities/dmn/levels.ts,game/cities/gnr/levels.ts,game/cities/hyd/levels.ts,game/cities/pdy/levels.ts,game/cities/pnj/levels.ts,game/cities/rnc/levels.ts,game/levels/bpl.ts,game/levels/rpr.ts"
+  ],
+  "thing": [
+   "ghevar"
+  ],
+  "thingShared": [
+   "rock<game/cities/amr/levels.ts,game/cities/blr/levels.ts,game/cities/gnr/levels.ts,game/cities/hyd/levels.ts,game/cities/pdy/levels.ts,game/levels/bpl.ts,render/scenes.ts",
+   "cart<game/cities/amr/levels.ts,game/cities/amr/skin.ts,game/cities/bom/levels.ts,game/cities/bom/skin.ts,game/cities/dmn/levels.ts,game/cities/gnr/levels.ts,game/cities/pdy/levels.ts,game/cities/rnc/levels.ts,game/entities/mumbai.ts,game/levels/bpl.ts,game/levels/rpr.ts",
+   "bulbs<game/cities/blr/levels.ts,game/cities/gnr/levels.ts,game/cities/hyd/levels.ts"
+  ]
+ }
+}

@@ -1,0 +1,21 @@
+v22.21.1
+TSC_OK
+     ✓ DIS-07: route passes all 25, replay is exact 345ms
+  DIS-01 Nomoskar Guwahati: 8ms a post | 8ms a post | 8ms a post | 8ms a shallow ditch | 8ms a step up | 8ms a step up | 8ms hop the parked ride | 8ms up on the deck
+  DIS-02 Char: 8ms on to the first bar | 8ms on to the new bar | 8ms on to the last bar | 8ms on to the far bank | 8ms on to the first bar | 8ms on to the big bar | 8ms across to the hut, which never moves | 8ms on to the last bar | 8ms on to the far bank | 8ms on to the long bar | 8ms on to the new bar | 8ms to the bank
+  DIS-03 Duta Paat, Ekta Kuhi: 
+  DIS-04 Talatal: 8ms up on to the landing: the stair starts to fall | 8ms over to the far side | 8ms over the lit well: the flooded vault | 8ms over the first dark well: the flame leans on past it
+  DIS-05 Gamosa: 8ms up on the platform | 8ms over the pit | 8ms up on the platform | 8ms over the pit | 8ms hop over the host who is holding out a gamosa | 8ms over the second pit | 8ms over the third pit | 8ms over the ditch | 8ms hop the ditch | 8ms a short hop: down where the first split was, as it slides ahead | 8ms over the first split where it stopped, at once | 8ms an ordinary hop over the second: it slides back under me | 8ms over the ditch
+  DIS-06 Majuli ka Paar: 8ms over the slab and the spur on to the step | 125ms over the slab and the spur on to the step | 8ms over the spur into its lee | 8ms on to the next trap | 8ms on to the next trap | 8ms on to the next trap | 8ms down on the gangplank | 8ms over the ghat man and his gamosa | 8ms run-jump from the plank’s end across to the bank, past the flag
+  DIS-07 Husori: 8ms up on to the jetty as the cart runs under it
+  DIS-08 Gorh: 8ms up on the haystack
+  DIS-09 Rang Ghar: 317ms over the rib and the oil, on to the next pad | 317ms and the next | 317ms and the last | 317ms over the rib and the oil | 317ms and the next | 317ms and the next | 317ms and the last | 8ms up on the embankment
+  DIS-10 Luit: 8ms on to the new bar | 8ms on to the last bar | 8ms on to the far bank
+     ✓ DIS-05: idle, run and tap-jump at lag 0/6/12 720ms
+     ✓ DIS-06: idle, run and tap-jump at lag 0/6/12 389ms
+     ✓ DIS-07: idle, run and tap-jump at lag 0/6/12 3750ms
+     ✓ DIS-08: idle, run and tap-jump at lag 0/6/12 1141ms
+     ✓ DIS-09: idle, run and tap-jump at lag 0/6/12 1386ms
+     ✓ DIS-10: idle, run and tap-jump at lag 0/6/12 998ms
+ Test Files  18 passed | 13 skipped (31)
+      Tests  1801 passed | 20 skipped (1821)

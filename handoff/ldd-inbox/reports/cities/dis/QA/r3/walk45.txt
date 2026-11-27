@@ -1,0 +1,19 @@
+W45 DIS-01 cps=6 clear
+W45 DIS-02 cps=5 clear
+W45 DIS-03 cps=4 clear
+W45 DIS-04 cps=2 
+  cp1@35.1 walk -> dis-kup at +4.7 tiles, 0.57 s
+  cp1@35.1 tapwalk -> dis-kup at +4.7 tiles, 0.58 s
+W45 DIS-05 cps=11 clear
+W45 DIS-06 cps=8 
+  cp1@33.3 walk -> dis-dhal at +4.7 tiles, 1.32 s
+  cp1@33.3 tapwalk -> dis-dhal at +4.7 tiles, 1.32 s
+W45 DIS-07 cps=25 clear
+W45 DIS-08 cps=11 
+  cp5@99.2 walk -> dis-bogoli at +4.8 tiles, 1.25 s
+  cp5@99.2 tapwalk -> dis-bogoli at +4.7 tiles, 1.26 s
+W45 DIS-09 cps=11 
+  cp7@107.2 walk -> dis-sluice at +4.7 tiles, 0.60 s
+  cp7@107.2 tapwalk -> dis-sluice at +4.7 tiles, 0.61 s
+W45 DIS-10 cps=10 clear
+      Tests  1 passed (1)

@@ -1,0 +1,26 @@
+CALM CCU-01 calm deaths 0
+CALM CCU-02 calm deaths 0
+CALM CCU-03 calm deaths 0
+CALM CCU-04 calm deaths 0
+CALM CCU-05 calm deaths 0
+CALM CCU-06 calm deaths 0
+CALM CCU-07 L0 i0 cp5 x215.2 idle0 shared1 DIES ccu-baan +2.93s
+CALM CCU-07 L0 i0 cp5 x215.2 idle0 shared3 DIES ccu-baan +2.99s
+CALM CCU-07 L0 i0 cp5 x215.2 idle0 shared5 DIES ccu-baan +3.05s
+CALM CCU-07 L0 i37 cp5 x215.2 idle0 shared1 DIES ccu-baan +2.93s
+CALM CCU-07 L0 i37 cp5 x215.2 idle0 shared3 DIES ccu-baan +2.99s
+CALM CCU-07 L0 i37 cp5 x215.2 idle0 shared5 DIES ccu-baan +3.05s
+CALM CCU-07 L0 i120 cp5 x215.2 idle0 shared1 DIES ccu-baan +2.93s
+CALM CCU-07 L0 i120 cp5 x215.2 idle0 shared3 DIES ccu-baan +2.99s
+CALM CCU-07 L0 i120 cp5 x215.2 idle0 shared5 DIES ccu-baan +3.05s
+CALM CCU-07 L0 i251 cp5 x215.2 idle0 shared1 DIES ccu-baan +2.93s
+CALM CCU-07 L0 i251 cp5 x215.2 idle0 shared3 DIES ccu-baan +2.99s
+CALM CCU-07 L0 i251 cp5 x215.2 idle0 shared5 DIES ccu-baan +3.05s
+CALM CCU-07 L6 i0 cp5 x215.2 idle0 shared3 DIES ccu-baan +2.98s
+CALM CCU-07 L6 i37 cp5 x215.2 idle0 shared3 DIES ccu-baan +2.98s
+CALM CCU-07 L6 i120 cp5 x215.2 idle0 shared3 DIES ccu-baan +2.98s
+CALM CCU-07 L6 i251 cp5 x215.2 idle0 shared3 DIES ccu-baan +2.98s
+CALM CCU-07 calm deaths 16
+CALM CCU-08 calm deaths 0
+CALM CCU-09 calm deaths 0
+CALM CCU-10 calm deaths 0

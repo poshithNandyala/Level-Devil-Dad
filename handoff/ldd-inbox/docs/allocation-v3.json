@@ -1,0 +1,5599 @@
+{
+ "PAT": {
+  "name": "Patna",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "PAT-01",
+    "name": "Prannam Patna",
+    "family": "crowd-carried-by-vehicle",
+    "betrayals": [
+     "sidestep-surge"
+    ],
+    "chain": "A2 kerb when horn sounds; A3 wait behind the tempo; the surge carries you at most under one screen back",
+    "closest": "BOM-03 shove-out -- crowd moves along the street and you sidestep; carry capped under one screen (v2, review 10)"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "PAT-05",
+    "name": "Litti ki Aanch",
+    "family": "ember-floor-poker-targets-food",
+    "betrayals": [
+     "poker-targets-food"
+    ],
+    "chain": "A2 stand on uncracked ash; A3 poker follows the cooked marker, move on",
+    "closest": "RNC-02 dhuska -- floor stays still, poker comes from above"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "PAT-F2",
+    "name": "Ashok Rajpath (coaching hoardings)",
+    "family": "hoarding-swap-at-class-bell",
+    "betrayals": [
+     "B8",
+     "banner-swap-width"
+    ],
+    "chain": "A2 at the class bell stand on the hoarding whose rolled-up replacement above it is wider; A3 the new batch banner is narrower than the old (B8), step off to the next before it is pulled taut",
+    "closest": "B8 shrinking supports (FREE) / PDY-03 signs act -- floor width is the banner printed above, swapped on a bell that never moves Dad (not TVM-02)"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "PAT-02",
+    "name": "Golghar",
+    "family": "one-way-stairs-rising-grain",
+    "betrayals": [
+     "one-way-porters"
+    ],
+    "chain": "A2 down the other spiral; A3 porter meets you at the turn, wait out of his way",
+    "closest": "RPR-04 rice hills -- floor rises inside a closed room (door at base, not inward)"
+   },
+   {
+    "index": 5,
+    "shape": "long",
+    "concept": "PAT-04",
+    "name": "Pipa Pul",
+    "family": "float-sinks-under-load",
+    "betrayals": [
+     "load-sinks"
+    ],
+    "chain": "A2 wait on high section; A3 cart rolls back, walk behind it",
+    "closest": "DMN-06 weighing -- chain of floats, load moves by itself"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "PAT-03",
+    "name": "Setu ka Jod",
+    "family": "setu-joint-missing-plate",
+    "betrayals": [
+     "missing-plate"
+    ],
+    "chain": "A2 count the expansion plates, the joint with no plate drops you; A3 the missing plate is the one after the truck (the bob is flavour only)",
+    "closest": "CHN-08 lifting bridge -- a counted gap, not a tilt by weight (v2, review 6)"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "PAT-07",
+    "name": "Tempo",
+    "family": "vehicle-leans-to-rider-side",
+    "betrayals": [
+     "lean-balance",
+     "parked-gap-closes"
+    ],
+    "chain": "A2 stand road side; A3 the gap between two parked tempos closes when a third backs in, cross before its reverse light; hidden checkpoints",
+    "closest": "TVM-02 bus bells -- no conductor signal; tilt follows where riders stand, parked tempos close the gap (v2, review 4)"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "PAT-11",
+    "name": "Nalanda",
+    "family": "count-bricks-routes-cells",
+    "betrayals": [
+     "count-routing"
+    ],
+    "chain": "A2 count the bricks over each cell door, N bricks puts you out N cells along; A3 zero bricks is the door; tell: brick count drawn over every door, one rule, one death",
+    "closest": "`invisible`/`fakewin` -- counting rule, no pick-the-door (was PAT R1; v2 replaces Sattu, review 3/7)"
+   },
+   {
+    "index": 9,
+    "shape": "tough",
+    "concept": "PAT-10",
+    "name": "Sonepur Mela",
+    "family": "moving-gap-behind-rider",
+    "betrayals": [
+     "moving-gap",
+     "gondola-swing"
+    ],
+    "chain": "A2 follow the horse; A3 skip an occupied gondola; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
+    "closest": "GNR-07 garba, JAI-06 horse -- you ride nothing, you move in a gap"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "PAT-12",
+    "name": "Setu se Golghar",
+    "family": "finale-setu-plate-count",
+    "betrayals": [
+     "plate-count-under-cart"
+    ],
+    "chain": "callbacks only: setu joints (plate count), pontoon cart, Golghar stairs, tempo; twist: the plate count from slot 06 is read while riding the pontoon cart",
+    "closest": "(own callbacks) -- twist combines PAT slot 06 plate count + slot 05 pontoon (v2, review 9)"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "PAT-F3",
+    "name": "Agam Kuan (the well)",
+    "family": "well-returns-what-falls",
+    "betrayals": [
+     "returns-later"
+    ],
+    "chain": "A2 what drops into the well comes back up later as a step; A3 the bucket you dropped comes up under the ledge you jump from (FRESH, Agam Kuan lore unverified)",
+    "closest": "RNC-02 dhuska come up -- delayed return of what you dropped"
+   },
+   {
+    "concept": "PAT-F1",
+    "name": "Kumhrar (pillar hall)",
+    "family": "polished-pillar-stumps-slick",
+    "betrayals": [
+     "polish-slick"
+    ],
+    "chain": "A2 walk the rough pillars; A3 polished ones slide you (FRESH, needs source)",
+    "closest": "TVM-03 painted floor -- surface finish is the tell"
+   }
+  ]
+ },
+ "LKO": {
+  "name": "Lucknow",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "LKO-F1",
+    "name": "Aadaab Lucknow (Chowk cloth bolts)",
+    "family": "sold-bolt-hooked-out-sideways",
+    "betrayals": [
+     "B3",
+     "bolt-unrolls-curtain"
+    ],
+    "chain": "A2 the shopkeeper's bamboo hook rises to the bolt before it is pulled, hop off when the hook touches; A3 the pulled bolt unrolls down across the lane, pass under it before its end reaches the floor",
+    "closest": "CCU slot 04 stack-pulled-from-bottom -- here the bolt slides out sideways on a visible hook (B3), no customer choice, no height drop; never needs standing still"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "LKO-02",
+    "name": "Pehle Aap",
+    "family": "politeness-bow-sets-order",
+    "betrayals": [
+     "bow-order"
+    ],
+    "chain": "A2 bow then they go; FIX dad who waits is pushed in first; A3 bow once",
+    "closest": "CHN-02 queue -- order set by politeness"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "LKO-04",
+    "name": "Chhapa",
+    "family": "print-washed-stitch-remains",
+    "betrayals": [
+     "wash-remains"
+    ],
+    "chain": "A2 cross on white; FIX second wash takes jali; A3 cross on solid stitch (v2: no stitcher-ahead act)",
+    "closest": "BPL-04/DMN-07 -- pattern state, you never sew"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "LKO-05",
+    "name": "Makhan Malai",
+    "family": "sun-direction-sinks-foam",
+    "betrayals": [
+     "light-sinks"
+    ],
+    "chain": "A2 shady side first; FIX tray lid lets sun in; A3 follow the shadow line: the rule is the DIRECTION the light comes from, not melt over time",
+    "closest": "DMN-03 melting ice -- driven by light direction not time (LKO is the only sun-direction owner)"
+   },
+   {
+    "index": 5,
+    "shape": "long",
+    "concept": "LKO-08",
+    "name": "Galouti",
+    "family": "flatten-platforms-build-low-lane",
+    "betrayals": [
+     "flatten-lane"
+    ],
+    "chain": "A2 flatten a row first; A3 walk the flat row under the spike tips",
+    "closest": "crumbling floors -- it lowers, stays, becomes a lane you build"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "LKO-06",
+    "name": "Kathak",
+    "family": "sound-draws-dancer-spin",
+    "betrayals": [
+     "sound-draws"
+    ],
+    "chain": "A2 land on silent strips; A3 go where she is not tapping",
+    "closest": "JAI-02 beats -- your sound draws her, no forced hops"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "LKO-07",
+    "name": "Hazratganj",
+    "family": "pace-sets-crowd-shape",
+    "betrayals": [
+     "pace-crowd",
+     "ladder-block"
+    ],
+    "chain": "A2 walk; FIX walker is under awning at dusk; A3 pause at lamps; hidden checkpoints",
+    "closest": "PNJ-08 freeze, BOM-03 -- your speed sets the crowd shape"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "LKO-03",
+    "name": "Bhool Bhulaiya",
+    "family": "entry-height-routes-level",
+    "betrayals": [
+     "enter-height"
+    ],
+    "chain": "A2 walk in; A3 one arch has low ceiling; tell: floor level change visible",
+    "closest": "`fakewin`/`invisible` -- no fake door, entry routes you"
+   },
+   {
+    "index": 9,
+    "shape": "long",
+    "concept": "LKO-10",
+    "name": "Kabootarbazi",
+    "family": "flag-colour-steers-flock",
+    "betrayals": [
+     "flag-signal"
+    ],
+    "chain": "A2 watch the flag; A3 flag is two-sided, read the colour facing you",
+    "closest": "chasers (crows) -- flock obeys a flag (hobby details need local check)"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "LKO-12",
+    "name": "Lakhnavi Tehzeeb",
+    "family": "finale-bow-meets-bells",
+    "betrayals": [
+     "bow-vs-bells"
+    ],
+    "chain": "callbacks only: doorways, chikan wash, malai, arches, bells; twist: bowing on a ringing strip",
+    "closest": "(own callbacks) -- politeness clashes with bells"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "LKO-09",
+    "name": "Taj (generic dome)",
+    "family": "distance-scales-world",
+    "betrayals": [
+     "distance-scale"
+    ],
+    "chain": "A2 jump from the paving line; A3 gate is huge from the dome",
+    "closest": "`tiny` -- distance scales the world, Dad does not"
+   },
+   {
+    "concept": "LKO-11",
+    "name": "Pachisi Court",
+    "family": "throw-count-limits-moves",
+    "betrayals": [
+     "count-moves"
+    ],
+    "chain": "A2 wait for a bigger throw; A3 avoid shared squares",
+    "closest": "PNJ-06 roulette -- count-based moves, capturing pieces"
+   }
+  ],
+  "v3": [
+   {
+    "F": "F471",
+    "family": "hop-at-the-turn",
+    "slot": 5,
+    "stage": "05 Galouti",
+    "decision": "The cook turns the skewers: hop under them the moment they turn flat, not when they have been still a while (a still skewer is about to turn).",
+    "source": "candidate 5.2",
+    "place": "Tunday Kababi lane, Chowk (bible §3)",
+    "naive": "hop under a still skewer -> it turns into you `lko-seekh`",
+    "fix": "wait on the heap for a long still -> the heap squashes and the tawa burns through `lko-tawa`",
+    "estSeconds": 9,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F472",
+    "family": "control-flip-toggles-on-cue",
+    "slot": 6,
+    "stage": "06 Kathak",
+    "decision": "The guru's rule: the student mirrors her. At every stamp (sam) Dad's left and right swap, and swap back at the next: treat each stamp as a state change.",
+    "source": "B23 (flip that toggles at cues; `flipControls` exists, the toggle is level logic)",
+    "place": "Kathak class, Lucknow gharana (bible §3)",
+    "naive": "keep pressing the old way after a stamp -> into the strip `lko-ghungroo`",
+    "fix": "stop after each stamp to re-check -> standing still is a bow, she spins to you `lko-chakkar`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F473",
+    "family": "third-repeat-is-the-one",
+    "slot": 6,
+    "stage": "06 Kathak",
+    "decision": "Tihai: a phrase played three times ends on sam, when EVERY strip rings; on the third repeat be off all strips, not only the silent ones.",
+    "source": "candidate 6.1",
+    "place": "the same stage",
+    "naive": "treat the third like the first two -> all strips ring `lko-ghungroo`",
+    "fix": "leave the stage floor for the takht early -> the musicians' takht is being carried (set change) `lko-takht`",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F474",
+    "family": "pass-on-the-attention-side",
+    "slot": 7,
+    "stage": "07 Hazratganj (marathon)",
+    "decision": "A window-shopper steps back from the glass without looking: pass on the WINDOW side (where he is looking), not the open side (where he steps).",
+    "source": "candidate 7.3",
+    "place": "Hazratganj arcades (bible §2)",
+    "naive": "pass on the open side -> shoved into the nala `lko-nala`",
+    "fix": "wait for him to finish -> the awning comes down (07's shaam) `lko-shamiyana`",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F475",
+    "family": "sound-names-the-side",
+    "slot": 7,
+    "stage": "07 Hazratganj (marathon)",
+    "decision": "A tonga comes up behind you ringing its bell on the side it will pass: step to the OTHER side. **Sound beat.**",
+    "source": "new (bible §3 Hazratganj evening)",
+    "place": "Hazratganj carriageway",
+    "naive": "stand still (PAT-04's answer) -> run down `lko-tonga`",
+    "fix": "step to the bell side -> run down, other wheel `lko-tonga-ulta`",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": "sound"
+   },
+   {
+    "F": "F476",
+    "family": "crowd-gathers-under-light",
+    "slot": 7,
+    "stage": "07 Hazratganj (marathon)",
+    "decision": "At dusk the lamps come on one by one and the strollers gather under each lit lamp: a lit lamp's circle is a wall; take the dark stretch before its lamp lights (the lamplighter's order is readable).",
+    "source": "new (bible §2 lamp posts)",
+    "place": "Hazratganj",
+    "naive": "walk under the lit lamp -> the crowd shoves you in `lko-nala`",
+    "fix": "run the dark stretch -> the lamplighter's ladder swings (`batti`'s cause) `lko-seedhi`",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F477",
+    "family": "portals-rearrange-after-warp",
+    "slot": 8,
+    "stage": "08 Bhool Bhulaiya (HWIK)",
+    "decision": "The hall doors warp you across the maze, and after every warp the arches have moved: two seconds of calm on arrival, then re-read before you jump.",
+    "source": "B30 (portals that rearrange)",
+    "place": "Bhool Bhulaiya (bible §2, generic old maze)",
+    "naive": "jump the arch you remember -> the well `lko-kuan`",
+    "fix": "run on without a warp -> the gallery ends `lko-bhool`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F478",
+    "family": "whole-arch-lifts",
+    "slot": 8,
+    "stage": "08 Bhool Bhulaiya (HWIK)",
+    "decision": "An arch must be whole to lift you a floor: a broken arch is only a doorway, so skip it and jump the next.",
+    "source": "candidate 8.2 (ladder beat)",
+    "place": "the same gallery",
+    "naive": "jump the broken arch -> no lift, the well `lko-kuan`",
+    "fix": "walk every arch -> the hook roof when the next whole one lifts you walking? no: walking never lifts; the floor ends `lko-bhool`",
+    "estSeconds": 8,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F479",
+    "family": "keep-off-the-wall",
+    "slot": 8,
+    "stage": "08 Bhool Bhulaiya (HWIK)",
+    "decision": "The whispering gallery: a word at the wall is heard at the far end and the guard there turns; walk the middle of the gallery though the handrail is on the wall side.",
+    "source": "candidate 8.3",
+    "place": "the same gallery",
+    "naive": "walk by the rail -> heard, the guard's gate drops `lko-sargoshi`",
+    "fix": "run the middle -> the dark stretch's hole (roshandan) `lko-roshandan`",
+    "estSeconds": 8,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F480",
+    "family": "tumble-is-not-landing",
+    "slot": 9,
+    "stage": "09 Kabootarbazi",
+    "decision": "Girahbaaz pigeons tumble in the air; a tumble is not a landing, so keep crossing on red through a tumble.",
+    "source": "candidate 9.2",
+    "place": "pigeon rooftops, old city (bible §3)",
+    "naive": "stop at the tumble -> the flag turns white, they land on you `lko-kabootar`",
+    "fix": "cross on white \"while they tumble\" -> they land `lko-chhat`",
+    "estSeconds": 8,
+    "kind": "act",
+    "beat": null
+   }
+  ]
+ },
+ "CCU": {
+  "name": "Kolkata",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "CCU-01",
+    "name": "Nomoshkar Kolkata",
+    "family": "rail-groove-sticks-foot",
+    "betrayals": [
+     "groove-catch"
+    ],
+    "chain": "A2 land between rails; A3 time the hop to the tram bell",
+    "closest": "GNR-06 mud -- one-beat catch timed to the tram"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "CCU-02",
+    "name": "Aaste!",
+    "family": "exit-moving-vehicle-on-shout",
+    "betrayals": [
+     "exit-facing-forward"
+    ],
+    "chain": "A2 step off on aaste facing forward; FIX pole at next kerb; A3 stop is where he shouts",
+    "closest": "TVM-02 bells -- you exit a moving thing"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "CCU-F2",
+    "name": "Jhalmuri (the shaken tin)",
+    "family": "shake-tin-sorts-big-pieces-up",
+    "betrayals": [
+     "shake-sorts-up",
+     "B35"
+    ],
+    "chain": "A2 stand on the peanuts: each shake of the tin lifts big pieces and sinks the puffed rice; A3 a green chilli (big, spiky) rises where you landed after the second shake, step to the next peanut (B35); Dad never eats",
+    "closest": "GNR-08 platforms that rise when you jump -- here the vendor's shake (tin tilts first) sorts by size; no feeding, no pause"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "CCU-04",
+    "name": "Boi Para",
+    "family": "stack-pulled-from-bottom",
+    "betrayals": [
+     "stack-drops-one-height"
+    ],
+    "chain": "A2 stand on a quiet stack; FIX re-shelved on top; A3 ride it down",
+    "closest": "crumbling floors -- customer chooses the stack"
+   },
+   {
+    "index": 5,
+    "shape": "long",
+    "concept": "CCU-05",
+    "name": "Kumartuli",
+    "family": "painted-figure-carried-out",
+    "betrayals": [
+     "paint-done-departs",
+     "dry-cracks-from-height"
+    ],
+    "chain": "A2 stand on figures the paint line has not passed the waist of; when the paint reaches the crown the figure is carried out of the lane; A3 a dry pale layer cracks if you land on it from a height, hop down short",
+    "closest": "B6 scaffold with a deadline / `lamp` -- the visible paint line on the figure itself is the timer; no straw-is-air, nobody builds ahead (generic figures, no deities)"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "CCU-03",
+    "name": "Trolley Pole",
+    "family": "pole-swings-at-junction",
+    "betrayals": [
+     "pole-sweep",
+     "points-switch"
+    ],
+    "chain": "A2 drop to the step at junctions; A3 points send tram the other way",
+    "closest": "bom03-wire/CHN-08 -- the swinging pole is the hazard"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "CCU-07",
+    "name": "Howrah Bridge",
+    "family": "head-load-platforms",
+    "betrayals": [
+     "carry-platform",
+     "porter-rests"
+    ],
+    "chain": "A2 ride loads going your way; FIX switch early meets oncoming; A3 never stand long on a load",
+    "closest": "DMN-04 plank hand to hand -- two streams, rest stops"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "CCU-08",
+    "name": "Adda",
+    "family": "stand-still-held-by-chat",
+    "betrayals": [
+     "held-until-event"
+    ],
+    "chain": "A2 never stop on the rok; A3 tea seller passes = released; tell: tea cup carried by seller",
+    "closest": "RPR-03 -- social trap released by outside event"
+   },
+   {
+    "index": 9,
+    "shape": "tough",
+    "concept": "CCU-09",
+    "name": "Pandal",
+    "family": "cloth-panel-covers-foothold",
+    "betrayals": [
+     "build-order-wall"
+    ],
+    "chain": "A2 climb where cloth is tied; A3 opening-night queue shifts holds; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
+    "closest": "CHN-08 -- cover goes up where your foothold was (OWNS family; DIS-07 retired)"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "CCU-12",
+    "name": "Kolkata Kolkata",
+    "family": "finale-book-bundle-loads",
+    "betrayals": [
+     "customers-ask-mid-crossing"
+    ],
+    "chain": "callbacks only: bus, tram pole, loads, stacks, clay, adda; twist: loads are book bundles",
+    "closest": "(own callbacks) -- customers ask for bundles mid-crossing"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "CCU-11",
+    "name": "Kumir-danga",
+    "family": "safe-call-window",
+    "betrayals": [
+     "safe-call-window"
+    ],
+    "chain": "A2 call land only for 3 s (check rules with natives)",
+    "closest": "`mime` -- chalk squares, you call safe"
+   },
+   {
+    "concept": "CCU-F1",
+    "name": "Hooghly bore",
+    "family": "tidal-bore-front",
+    "betrayals": [
+     "bore-front"
+    ],
+    "chain": "A2 ride behind the front; A3 front returns (FRESH, close to tides, source needed)",
+    "closest": "DMN/PDY-06 tides -- a travelling wave front"
+   }
+  ],
+  "v3": [
+   {
+    "F": "F481",
+    "family": "horn-shifts-the-carrier",
+    "slot": 7,
+    "stage": "07 Howrah (marathon)",
+    "decision": "A lorry's horn behind makes the porters step toward the parapet: the load you ride moves one tile out; stand on its inner half or go over the rail. **Sound beat.**",
+    "source": "new (bible §2 Howrah Bridge traffic)",
+    "place": "Howrah Bridge footpath",
+    "naive": "stand centred on the load -> tipped over the parapet `ccu-parapet`",
+    "fix": "hop to the next load on the horn -> it steps too, you land between `ccu-gaari`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": "sound"
+   },
+   {
+    "F": "F502",
+    "family": "board-takes-one",
+    "slot": 7,
+    "stage": "07 Howrah (marathon)",
+    "decision": "A CHA board seats one porter: when two loads head for the same board, the first to reach it sets down and the second does NOT stop, so ride the second past the board (the room taught \"switch before the board\"; here the board is taken and your porter walks on).",
+    "source": "new (07's own relay, the opposite answer from the same cue)",
+    "place": "Howrah Bridge footpath, the chai boards",
+    "naive": "switch before the board as taught -> the second porter was going on, you drop between loads `ccu-bojha`",
+    "fix": "stay on the first porter -> he sets down at the board under the taxi lane `ccu-cha`",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   }
+  ]
+ },
+ "BBI": {
+  "name": "Bhubaneswar",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "BBI-01",
+    "name": "Namaskara Bhubaneswar",
+    "family": "aimed-hose-slick-follows-waiter",
+    "betrayals": [
+     "aimed-slide"
+    ],
+    "chain": "A2 pass while he faces pots; A3 slide is one tile only",
+    "closest": "TVM-01 soaked road -- aimed and moving, a slide not a break"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "BBI-02",
+    "name": "Hockey",
+    "family": "keeper-pads-carry-you",
+    "betrayals": [
+     "carried-by-actor"
+    ],
+    "chain": "A2 stand on far pad; FIX rebound flick; A3 let the ball score",
+    "closest": "PNJ-03/penalty -- keeper carries you, you must let it score"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "BBI-03",
+    "name": "Chandua",
+    "family": "cutout-safe-on-open-parasol",
+    "betrayals": [
+     "safe-shape"
+    ],
+    "chain": "A2 wait for a customer; A3 shopkeeper peels the cut-out",
+    "closest": "blinkers -- a customer opens it, safe part is a shape"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "BBI-10",
+    "name": "Tarakasi",
+    "family": "standing-builds-blocker",
+    "betrayals": [
+     "stand-builds-block"
+    ],
+    "chain": "A2 keep moving; A3 stop only at the gap",
+    "closest": "RPR-06 cocoon -- built in front, blocks rather than protects"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "BBI-09",
+    "name": "Raja",
+    "family": "idle-world-you-start-it",
+    "betrayals": [
+     "idle-world"
+    ],
+    "chain": "A2 touch nothing; A3 door behind house step; tell: still machines",
+    "closest": "--- stillness is the rule"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "BBI-05",
+    "name": "Bandha (ikat)",
+    "family": "loom-beat-aligns-threads",
+    "betrayals": [
+     "beat-align"
+    ],
+    "chain": "A2 count beats until motif whole; A3 shuttle crosses on bridge beat",
+    "closest": "GNR-08 scroll -- alignment of offset parts"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "BBI-08",
+    "name": "Gotipua",
+    "family": "troupe-pose-platform-shapes",
+    "betrayals": [
+     "pose-shapes"
+    ],
+    "chain": "A2 wait for the bridge pose; A3 drum restart throws you off; hidden checkpoints",
+    "closest": "GNR-07/RNC-05 -- shapes chosen by drum stops"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "BBI-F3",
+    "name": "Pakhala",
+    "family": "pakhala-pour-floats-grains",
+    "betrayals": [
+     "pour-floats"
+    ],
+    "chain": "A2 the settled rice in the bowl is floor until the water is poured, then the grains float apart; stand on the badi (fried lump) before the jug tips; A3 the second pour comes from the other rim, the badi drifts, hop to the next one; tell: the jug at the rim, tilting, from the first frame",
+    "closest": "floods (TVM-02), RPR-04 rice hills -- one visible pour floats the floor apart; no moving reveal (BBI.md street food: pakhala)"
+   },
+   {
+    "index": 9,
+    "shape": "long",
+    "concept": "BBI-06",
+    "name": "Chakka",
+    "family": "world-slides-hub-stays-still",
+    "betrayals": [
+     "hub-still"
+    ],
+    "chain": "A2 stand on wheel hub; A3 spokes sink in order",
+    "closest": "moving platforms/clockhand -- obvious wheel is fixed"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "BBI-12",
+    "name": "Kalinga",
+    "family": "finale-pads-onto-plinth",
+    "betrayals": [
+     "pads-to-plinth"
+    ],
+    "chain": "callbacks only: pads, parasols, ikat, plinth hub, troupe; twist = BBI slot 02 keeper pads + slot 09 hub: the keeper's pads carry you on to the sliding plinth, step to the hub",
+    "closest": "(own callbacks) -- no soot reveal (BBI slot 08 recast)"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "BBI-F1",
+    "name": "Bagudi (tag)",
+    "family": "tag-it-passes-to-you",
+    "betrayals": [
+     "it-passes"
+    ],
+    "chain": "A2 tag back at the line; A3 (FRESH, from bible games list)",
+    "closest": "chasers -- 'it' is passed to you"
+   },
+   {
+    "concept": "BBI-04",
+    "name": "Talapatra",
+    "family": "stylus-cut-lines-soot",
+    "betrayals": [
+     "soot-after"
+    ],
+    "chain": "A2 follow behind the stylus (reserve only; DDN slot 05 owns reveal-by-weather)",
+    "closest": "`invisible` -- reveal after you pass"
+   },
+   {
+    "concept": "BBI-F2",
+    "name": "Pattachitra panels",
+    "family": "painted-panel-previews-next",
+    "betrayals": [
+     "preview-panel"
+    ],
+    "chain": "A2 read the panel before stepping (FRESH, craft in bible)",
+    "closest": "AGT-06 -- preview is a painting"
+   }
+  ],
+  "v3": [
+   {
+    "F": "F464",
+    "family": "bait-the-switcher",
+    "slot": 5,
+    "stage": "05 Raja",
+    "decision": "The uncle switches off any machine you start; start a second one as bait so he walks there while you ride the one you need.",
+    "source": "candidate C5 (unbuilt)",
+    "place": "Raja week threshing yard, Cuttack district (bible §3)",
+    "naive": "ride the first machine -> he stops it under you, you drop `bbi-chacha`",
+    "fix": "touch nothing and walk -> the idle crusher's channel (05's room) `bbi-khai`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F465",
+    "family": "break-plain-thread-to-stall",
+    "slot": 6,
+    "stage": "06 Bandha",
+    "decision": "Snap a thread on purpose to stall the shuttle, and choose a plain warp thread, not one of the motif: a motif thread is the bridge you stand on.",
+    "source": "candidate C8 (unbuilt)",
+    "place": "Sambalpur ikat loom (bible §2)",
+    "naive": "snap the nearest (motif) thread -> the bridge opens under you `bbi-sutra`",
+    "fix": "never touch the loom and time the shuttle -> the beater `bbi-rachh`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F466",
+    "family": "portal-that-runs",
+    "slot": 6,
+    "stage": "06 Bandha",
+    "decision": "The flying shuttle is a box you can ride across; aim at it and it jumps 160 px away then sweeps left: step into where it IS now, or take the low route under the warp.",
+    "source": "B29 (portal that runs)",
+    "place": "the same loom's shuttle race",
+    "naive": "run at it -> it jumps, you run into the dye trough `bbi-ranga`",
+    "fix": "wait for it to come -> the beater sweeps `bbi-rachh` (different tick)",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F498",
+    "family": "rolling-bridge-walk-with-turn",
+    "slot": 7,
+    "stage": "07 Gotipua (marathon)",
+    "decision": "On a drum roll the bridge (gadiba) turns over toward the drummer: be walking the way it turns, and never stand on it.",
+    "source": "IDEAS-3 B1 (built `bbi07-gadiba`, 04:49 UTC)",
+    "place": "Raghurajpur night performance",
+    "naive": "stand on the bridge -> rolled off `bbi-gadiba`",
+    "fix": "walk against the turn -> carried over the far edge `bbi-thrown`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F499",
+    "family": "tent-safe-while-they-dance",
+    "slot": 7,
+    "stage": "07 Gotipua (marathon)",
+    "decision": "The dancers' dressing tent is safe only while they dance; at the drum's stop the boys who are not in the pose run into it. **Shelter beat.**",
+    "source": "IDEAS-3 B2 (built `bbi07-sajaghara`, 04:55 UTC)",
+    "place": "Raghurajpur",
+    "naive": "shelter in the tent through the stop -> trampled `bbi-sajaghara`",
+    "fix": "stay out on the floor at the stop -> the pose restart throws `bbi-thrown`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": "shelter"
+   },
+   {
+    "F": "F495",
+    "family": "pleats-tell-the-roll",
+    "slot": 7,
+    "stage": "07 Gotipua (marathon)",
+    "decision": "A troupe with its pleats tucked up (kachha) will roll; a loose-skirted troupe lies still: look at the waists before you trust a pose as floor. A tell beat for the HWIK moment.",
+    "source": "IDEAS-3 B4 (unbuilt)",
+    "place": "Raghurajpur",
+    "naive": "trust the tucked-up troupe as floor -> it rolls `bbi-gadiba`",
+    "fix": "wait for every troupe to settle -> the restart throws `bbi-thrown`",
+    "estSeconds": 8,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F500",
+    "family": "first-stopped-first-restarts",
+    "slot": 7,
+    "stage": "07 Gotipua (marathon)",
+    "decision": "Two troupes make one bridge from two halves; the half whose drummer stopped first is the half that restarts first: cross from the later half.",
+    "source": "IDEAS-3 B5 (built `bbi07-jodi`, 04:44 UTC)",
+    "place": "Raghurajpur",
+    "naive": "cross from the earlier half -> it restarts under you `bbi-thrown`",
+    "fix": "wait for both to restart and re-form -> the drum roll rolls the bridge `bbi-gadiba`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F501",
+    "family": "cheer-length-is-hold-length",
+    "slot": 7,
+    "stage": "07 Gotipua (marathon)",
+    "decision": "A pose the women cheer (hulahuli) holds as long as their cheer and not a beat longer; a pose met with silence does not hold at all.",
+    "source": "IDEAS-3 B6 (built `bbi07-hulahuli`, 04:4x UTC)",
+    "place": "Raghurajpur",
+    "naive": "cross a silent pose -> it drops `bbi-nacha`",
+    "fix": "linger past the cheer's end -> thrown `bbi-thrown`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F467",
+    "family": "quiet-means-clear",
+    "slot": 7,
+    "stage": "07 Gotipua (marathon)",
+    "decision": "Lamps out between pieces: the whirling boys are heard, not seen; cross where the ghungur are quiet. **Sound beat** (the beat B3 would take if ruled in). Note for the builder: F501 reads silence the other way (a silent pose does not hold); the two are different decisions (one locates, one times) but the polarity flip should be taught, not sprung.",
+    "source": "new (bible §3 gotipua)",
+    "place": "Raghurajpur night performance (bible §2)",
+    "naive": "cross where you last saw a gap -> whirled `bbi-nacha`",
+    "fix": "wait for the lamps -> the restart throws `bbi-thrown`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": "sound"
+   },
+   {
+    "F": "F468",
+    "family": "accordion-folds-at-hinge",
+    "slot": 7,
+    "stage": "07 Gotipua (marathon)",
+    "decision": "The folded talapatra screen behind the stage opens as a stepped platform: its leaves hold at their ends and fold shut at the hinge: never stand on a hinge (the opposite of Daman's tipping planks).",
+    "source": "new (bible §2 Raghurajpur talapatra)",
+    "place": "Raghurajpur",
+    "naive": "land on the hinge -> folded `bbi-patra-bhanga`",
+    "fix": "hop end to end fast -> the restart throws `bbi-thrown`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F469",
+    "family": "vortex-outer-edge-slow",
+    "slot": 8,
+    "stage": "08 Pakhala (HWIK)",
+    "decision": "The uncle stirs: every badi circles; the outer ring is slow and the middle fast. Hop between badi only at the slow outer edge.",
+    "source": "new (bible §3 pakhala)",
+    "place": "Pakhala dibasa table (20 March)",
+    "naive": "hop across the middle -> spun into the rim `bbi-ghurni`",
+    "fix": "wait on a badi for the stir to stop -> his spoon scoops it `bbi-chamacha`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F470",
+    "family": "throws-accelerate-if-you-wait",
+    "slot": 8,
+    "stage": "08 Pakhala (HWIK)",
+    "decision": "The server tosses badi into the bowl; the longer you wait at the rim the faster they come; the first three seconds are readable: go at once and ride the first.",
+    "source": "B21 (bad coins that accelerate)",
+    "place": "Cuttack dahibara-aloodum cart row (bible §2)",
+    "naive": "wait to read the pattern -> hit `bbi-badi`",
+    "fix": "hop every throw -> the second jug (08's room) `bbi-pakhala`",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   }
+  ]
+ },
+ "GTK": {
+  "name": "Gangtok",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "GTK-01",
+    "name": "Namaste Gangtok",
+    "family": "sweeper-sweeps-ground-things",
+    "betrayals": [
+     "sweep-arc"
+    ],
+    "chain": "A2 step on a bench; A3 swing timing",
+    "closest": "treadmills -- arc sweep, only ground things (OWNS sweep; SHL-09 retired)"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "GTK-05",
+    "name": "Momo Steamer",
+    "family": "tier-cycle-top-to-bottom",
+    "betrayals": [
+     "tier-cycle"
+    ],
+    "chain": "A2 stand on second tier; FIX lid comes down; A3 step off on the move",
+    "closest": "`revolve` -- stack cycles top to bottom"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "GTK-08",
+    "name": "Plastic Nahin",
+    "family": "inspector-confiscates-thin-bags",
+    "betrayals": [
+     "inspector-removes"
+    ],
+    "chain": "A2 stitched handles; A3 inspector takes the bag you stand on",
+    "closest": "fake floors -- inspector removes, tell is stitches"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "GTK-02",
+    "name": "Kun Floor",
+    "family": "floor-numbering-by-entrance",
+    "betrayals": [
+     "numbering"
+    ],
+    "chain": "A2 take stairs and count; FIX shop floor without door; A3 count from your entrance",
+    "closest": "BOM-06 chawl stairs -- numbering depends on entrance"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "GTK-04",
+    "name": "MG Marg ka Niyam",
+    "family": "dropped-litter-warden-pause",
+    "betrayals": [
+     "rule-broken-by-jump"
+    ],
+    "chain": "A2 walk past a bin; A3 bins full, use the next; tell: wrapper in hand",
+    "closest": "CHN-02 queue -- rule broken by your jump"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "GTK-03",
+    "name": "Seedhi",
+    "family": "shortcut-stairs-one-loop-low",
+    "betrayals": [
+     "topology"
+    ],
+    "chain": "A2 stair up to loop above; A3 roof-garden stair; Tara true for once",
+    "closest": "BOM-06 -- topology on a hillside"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "GTK-07",
+    "name": "Badal",
+    "family": "fog-hides-edge-rope-gaps",
+    "betrayals": [
+     "fog-edge"
+    ],
+    "chain": "A2 follow the kerb rope, stop at gaps; A3 painted wall continues road; hidden checkpoints",
+    "closest": "mist (kit) -- fog hides an edge, not blocks (OWNS fog)"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "GTK-F2",
+    "name": "Ropeway",
+    "family": "cabins-cross-at-midpoint",
+    "betrayals": [
+     "cabin-cross"
+    ],
+    "chain": "A2 ride the cabin; it is a shuttle that turns back at the middle station; A3 hop to the other cabin only as they pass at mid; tell: two cabins and the middle station visible from the start",
+    "closest": "BOM trains -- cabins swap at mid; no decoy twin (FRESH: Gangtok ropeway)"
+   },
+   {
+    "index": 9,
+    "shape": "long",
+    "concept": "GTK-10",
+    "name": "Tsomgo",
+    "family": "ride-animal-fixed-loop",
+    "betrayals": [
+     "ride-fixed-loop"
+    ],
+    "chain": "A2 get off far side; A3 photo stop on thin shore",
+    "closest": "JAI-08 elephant -- fixed loop, no steering"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "GTK-12",
+    "name": "Kanchenjunga",
+    "family": "finale-two-roads-count-in-fog",
+    "betrayals": [
+     "count-in-fog"
+    ],
+    "chain": "callbacks only: floors, stairs, rule, steamer, churpi, rope; twist: count floors in fog",
+    "closest": "(own callbacks) -- cannot see entrance road"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "GTK-F1",
+    "name": "Handmade paper",
+    "family": "pulp-sheet-dries-stiff",
+    "betrayals": [
+     "pulp-dries"
+    ],
+    "chain": "A2 wet sheet holds; A3 dry cracks (FRESH, bible crafts)",
+    "closest": "RNC-02 -- sheet stiffens by drying"
+   },
+   {
+    "concept": "GTK-F3",
+    "name": "MG Marg benches",
+    "family": "bench-row-reserved-by-sign",
+    "betrayals": [
+     "bench-reserved"
+    ],
+    "chain": "A2 stand only on benches without the reserved card (FRESH, weak)",
+    "closest": "PDY-03 signs -- an honest sign"
+   }
+  ],
+  "v3": [
+   {
+    "F": "F482",
+    "family": "busy-warden-window",
+    "slot": 3,
+    "stage": "03 Plastic Nahin",
+    "decision": "Pass the inspector while he is writing someone else's fine; his lifting restarts when the pen stops.",
+    "source": "candidate 9 (moved from 05 to 03, which loses `kagaz` in §5 S2)",
+    "place": "MG Marg checkpoint (bible §2)",
+    "naive": "pass while he looks up -> your bag is lifted `gtk-jaanch`",
+    "fix": "wait for him to finish -> the jhora bag you wait on is polythene `gtk-polythene`",
+    "estSeconds": 8,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F483",
+    "family": "lamp-warming-tell",
+    "slot": 5,
+    "stage": "05 MG Marg ka Niyam (HWIK)",
+    "decision": "Jump with the wrapper only in a patch whose lamp is still cold: a glowing filament means that patch is about to be lit and policed.",
+    "source": "candidate 8",
+    "place": "MG Marg at dusk",
+    "naive": "jump under a glowing lamp -> fined `gtk-jurmana`",
+    "fix": "wait for the lamp to light fully then go -> the sweeper's stroke `gtk-jhadu`",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F484",
+    "family": "occupied-means-it-moves",
+    "slot": 6,
+    "stage": "06 Seedhi",
+    "decision": "Read occupancy before you pass: a taxi with one seat left is about to pull out across the stair foot, and a house with its lights on throws you out of its through-door; the empty taxi and the dark house are the way.",
+    "source": "candidate 10 + 11 merged (the one thought: occupied things act)",
+    "place": "taxi stand and switchback houses on the slope (bible §2)",
+    "naive": "pass the nearly-full taxi -> `gtk-taxi`",
+    "fix": "take the lit house's door -> the gully `gtk-khaai`",
+    "estSeconds": 14,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F485",
+    "family": "walk-to-sound",
+    "slot": 7,
+    "stage": "07 Badal (marathon)",
+    "decision": "In the cloud a mule's bell marks the road: walk to the sound, not along the rope, where the rope has gone with the slide. **Sound beat.**",
+    "source": "candidate 1",
+    "place": "NH10 mule train in cloud (bible §3)",
+    "naive": "follow the rope -> the slid road `gtk-badal`",
+    "fix": "stand and wait for the bell to come to you -> the mule walks you off the kerb `gtk-khachar`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": "sound"
+   },
+   {
+    "F": "F486",
+    "family": "drip-line-shelter",
+    "slot": 7,
+    "stage": "07 Badal (marathon)",
+    "decision": "When the rain comes, stand on a drip line: it proves a roof above you the fog hides; the awning you remember has gone. **Shelter beat** (replaces `thau` if §5 S12 is ruled strictly).",
+    "source": "candidate 2",
+    "place": "MG Marg side lanes",
+    "naive": "run to the remembered awning -> the gap where it was `gtk-khaai`",
+    "fix": "stand in the open and wait -> soaked and slid `gtk-chiplo`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": "shelter"
+   },
+   {
+    "F": "F487",
+    "family": "fog-hides-ceiling",
+    "slot": 7,
+    "stage": "07 Badal (marathon)",
+    "decision": "Under a drip line jump low: the fog hides the balcony above, not the floor.",
+    "source": "candidate 3 (the twist on 2)",
+    "place": "the same lane",
+    "naive": "full jump -> the balcony `gtk-balcony`",
+    "fix": "walk the stretch -> the kerb gap `gtk-khaai`",
+    "estSeconds": 8,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F488",
+    "family": "count-flash-to-thunder",
+    "slot": 7,
+    "stage": "07 Badal (marathon)",
+    "decision": "Count flash to thunder: cross the open stretch only while the count is longer than the crossing; shelter while it is shorter.",
+    "source": "candidate 6",
+    "place": "the ridge road above town (bible §2 monsoon)",
+    "naive": "cross on a short count -> struck `gtk-bijuli`",
+    "fix": "shelter for ever -> the shelter is the cloud-hidden kerb (07's room) `gtk-badal`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F489",
+    "family": "door-side-boarding",
+    "slot": 8,
+    "stage": "08 Ropeway (HWIK)",
+    "decision": "Board from the door side; if the cabin arrives with its door facing away, walk round the station to the far platform.",
+    "source": "candidate 12",
+    "place": "Deorali ropeway station (bible §2)",
+    "naive": "board the near side -> the blind side has no door, you fall `gtk-ropeway`",
+    "fix": "wait for the next cabin -> it is the one that rides back into the shed (08's room) `gtk-ropeway` (different tick)",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   }
+  ]
+ },
+ "DIS": {
+  "name": "Dispur/Guwahati",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "DIS-01",
+    "name": "Nomoskar Guwahati",
+    "family": "carrier-spills-on-contact",
+    "betrayals": [
+     "carrier-spill"
+    ],
+    "chain": "A2 let him pass river side; A3 tray swings back",
+    "closest": "TVM-03 tea pour -- moving carrier, contact spill"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "DIS-02",
+    "name": "Char",
+    "family": "sandbars-relocate-by-level-post",
+    "betrayals": [
+     "level-post-relocate"
+    ],
+    "chain": "A2 step on the next bar; FIX bar at both marks shrinks; A3 farmer's hut never moves",
+    "closest": "KVT-08 sandbar -- bars move by a readable level"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "DIS-04",
+    "name": "Duta Paat, Ekta Kuhi",
+    "family": "plucked-row-steps-down",
+    "betrayals": [
+     "crop-floor-lowers"
+    ],
+    "chain": "A2 walk behind a plucker; A3 sprinkler wets the path",
+    "closest": "JAI-03 pots -- floor is the crop"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "DIS-09",
+    "name": "Til Pitha",
+    "family": "set-crepe-rolls-you-up",
+    "betrayals": [
+     "roll-by-shine"
+    ],
+    "chain": "A2 stand on shiny liquid crepe; A3 laru plate door",
+    "closest": "RNC-02 dhuska -- rolled from an edge, readable by shine"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "DIS-11",
+    "name": "Gamosa",
+    "family": "gamosas-hide-feet-camera",
+    "betrayals": [
+     "overloaded-blind"
+    ],
+    "chain": "A2 walk into the next host to give one away; A3 last gamosa is the latch; tell: hosts put cloth on you",
+    "closest": "LKO-02 bow -- give-away by walking into them, not standing still"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "DIS-03",
+    "name": "Majuli ka Paar",
+    "family": "silt-behind-the-spur",
+    "betrayals": [
+     "spur-silt"
+    ],
+    "chain": "A2 jump over slab and spur to the silt step; A3 the slab in front goes early, the spur is only poles (v3: F453 raft ride, F454 wake refuge, F455 flag marker, F456 trap bells)",
+    "closest": "KVT-08 sandbar (ruled taken as the slab clock): here waiting is right, but only behind a spur",
+    "v2family": "bank-retreats-in-slabs"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "DIS-06",
+    "name": "Husori",
+    "family": "join-moving-group-to-pass-gate",
+    "betrayals": [
+     "join-group"
+    ],
+    "chain": "A2 join the circle; A3 leave before gamosa and shut out; hidden checkpoints",
+    "closest": "DMN-04 plank -- you belong to a moving group"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "DIS-08",
+    "name": "Gorh",
+    "family": "follow-flattened-strip",
+    "betrayals": [
+     "follow-flattened"
+    ],
+    "chain": "A2 follow the flattened strip; A3 second strip other way; tell: engine noise backdrop AND a dust plume rising where the noise is (visual twin)",
+    "closest": "GNR-05 lions -- animal charges at something else; readable muted"
+   },
+   {
+    "index": 9,
+    "shape": "long",
+    "concept": "DIS-10",
+    "name": "Rang Ghar",
+    "family": "roof-curve-slides-stop-at-ribs",
+    "betrayals": [
+     "slope-ribs"
+    ],
+    "chain": "A2 climb the pavilion side; A3 stop at ribs",
+    "closest": "PNJ gangway -- slope with rib stops"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "DIS-12",
+    "name": "Luit",
+    "family": "finale-level-post-far-bank",
+    "betrayals": [
+     "level-post-far-bank"
+    ],
+    "chain": "callbacks only: char, Majuli, tea rows, husori gate, rolled pitha; twist: post on far bank",
+    "closest": "(own callbacks) -- level post only reached by pluckers' paths"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "DIS-R1",
+    "name": "Uruka net",
+    "family": "net-pulled-in-by-group",
+    "betrayals": [
+     "group-net"
+    ],
+    "chain": "A2 cross before the net closes (from bhelaghar bible; no thatch)",
+    "closest": "TVM-06 nets -- people pull it"
+   },
+   {
+    "concept": "DIS-R2",
+    "name": "Muga reel",
+    "family": "cocoon-reeled-up",
+    "betrayals": [
+     "cocoon-reel"
+    ],
+    "chain": "A2 hop on the cocoon as reel turns (FRESH)",
+    "closest": "RPR-06 cocoon -- reeled up not made by stillness"
+   }
+  ],
+  "v3": [
+   {
+    "F": "F447",
+    "family": "false-cue-among-true",
+    "slot": 2,
+    "stage": "02 Char",
+    "decision": "Count the sirens: the bhutbhuti ferry's horn sounds like the level siren but moves no bar, so a bar you step to on the horn is not there yet.",
+    "source": "B5 (cadence, then a liar)",
+    "place": "Umananda ferry ghat beside the chars (bible §2: 10-minute ferry)",
+    "naive": "step off on the horn -> river `dis-luit`",
+    "fix": "wait out the horn without moving -> your bar narrows under you `dis-char-sink` (02's own clock)",
+    "estSeconds": 11,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F448",
+    "family": "collapsing-stair-penultimate-rises",
+    "slot": 4,
+    "stage": "04 **new room** (replaces Til Pitha, TAKEN)",
+    "decision": "Talatal Ghar's stair down falls step by step in order as you descend; racing it dies, and the step before the last RISES back and is the way: wait on it as it comes up.",
+    "source": "B7 (staircase that eats itself; rising penultimate)",
+    "place": "Talatal Ghar, Sivasagar (Ahom palace, floors below ground, bible §2)",
+    "naive": "run down ahead of the fall -> the bottom step is gone `dis-talatal`",
+    "fix": "wait at the top for it to finish -> the top landing sinks into the flooded vault `dis-doba`",
+    "estSeconds": 25,
+    "kind": "room",
+    "beat": null
+   },
+   {
+    "F": "F449",
+    "family": "pickup-row-is-floor",
+    "slot": 5,
+    "stage": "05 Gamosa",
+    "decision": "The Uruka feast laid on banana leaves is a row of pithas: they are the FLOOR; jumping to collect one tips the leaf. Walk on the feast.",
+    "source": "B18 (semantic coin: the pickup row is solid ground)",
+    "place": "Uruka night feast, Bhogali Bihu eve (bible §3; the meji itself is never a trap)",
+    "naive": "jump for a pitha -> the leaf tips `dis-kol-paat`",
+    "fix": "hop the whole row -> land in the giver behind it: third gamosa, blind, pit `dis-gamosa`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F450",
+    "family": "scaffold-deadline-collapse",
+    "slot": 5,
+    "stage": "05 Gamosa",
+    "decision": "The Bihu machan stage is being planked ahead of you a plank every ~1.25 s, and at the drum roll (1 s cue) every plank drops: never wait on a safe-looking plank; be across before the roll.",
+    "source": "B6 (scaffold with a deadline; the deadline collapse is the free part)",
+    "place": "Latasil field Bihu stage, Guwahati (bible §3 Bihu functions)",
+    "naive": "wait on a plank for the next -> all drop `dis-machan`",
+    "fix": "sprint ahead of the planking -> the far end is not built, river `dis-luit`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F451",
+    "family": "spike-slides-under-jump",
+    "slot": 5,
+    "stage": "05 Gamosa",
+    "decision": "A sharpened bamboo split from the japi-maker's stall slides one tile the moment you jump at it, under your landing; the next slides the other way: jump where it will NOT be.",
+    "source": "B11 (spike that slides aside, visible)",
+    "place": "Japi and bamboo craft stalls, Fancy Bazar (bible §2)",
+    "naive": "jump over the split -> it slides under you `dis-kaath`",
+    "fix": "wait for it to settle -> the host behind catches up: third gamosa, blind `dis-gamosa`",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F452",
+    "family": "remembered-gap-is-bridged",
+    "slot": 5,
+    "stage": "05 Gamosa",
+    "decision": "With three gamosas on you cannot see your feet, and the gap you saw before the cloth came has since had a bamboo laid over it (its shadow shows past the gap's drawn end): WALK it.",
+    "source": "B10 (invisible bridge: the gap is walkable; floor part is free)",
+    "place": "A wedding yard's bamboo bridge over the nala, Jorhat (bible §3 weddings)",
+    "naive": "jump the remembered gap -> head into the low machan beam `dis-beam`",
+    "fix": "back off to find a taker -> the pit behind you `dis-pit`",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F454",
+    "family": "refuge-not-flight",
+    "slot": 6,
+    "stage": "06 Majuli ka Paar",
+    "decision": "A ferry's wake runs along the bank; the spur's lee is the one refuge, and running past the lee brings a reverse wake: shelter, wait, then go.",
+    "source": "B13 (wave with a refuge; reverse wave on fleeing past it)",
+    "place": "Aphalamukh ghat, Majuli (bible §2)",
+    "naive": "outrun the wake -> caught `dis-dhal`",
+    "fix": "hop the wave -> the slab the river takes `dis-bank`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F455",
+    "family": "marker-moves-floor-stays",
+    "slot": 6,
+    "stage": "06 Majuli ka Paar",
+    "decision": "The ghat man moves the red landing flag up the bank as the water rises; the plank is where it was: land where the plank is, not where the flag is.",
+    "source": "B20 (coin that moves: trust the support)",
+    "place": "Majuli ghat landing (bible §2)",
+    "naive": "jump to the flag -> gap `dis-luit`",
+    "fix": "jump to where the flag WAS -> the ghat man dragging it is a giver host, third gamosa (05 callback, only if 05 is before 06; else `dis-pit`)",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F456",
+    "family": "bell-names-the-moving-platform",
+    "slot": 6,
+    "stage": "06 Majuli ka Paar",
+    "decision": "Fish traps on pulleys line the channel; the one whose bell rings is the one about to be hoisted: a ringing trap you leave, a silent trap is floor. (A sound beat for a long stage.)",
+    "source": "new (bible §3 fishing: polo/jakoi traps)",
+    "place": "Garmur fishing channel, Majuli",
+    "naive": "stand on the ringing trap -> hoisted into the beam `dis-dirru`",
+    "fix": "hop at the ring to the next -> its slack rope tips it `dis-tip`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F457",
+    "family": "join-the-approaching-not-the-leaving",
+    "slot": 7,
+    "stage": "07 Husori (marathon)",
+    "decision": "A husori group leaving a yard will not stop for you; the one you HEAR coming (pepa getting louder) will: wait for the pipe, then step into its ring as it arrives. **Sound beat.**",
+    "source": "new (bible §3 pepa, husori)",
+    "place": "Village yards, Nalbari",
+    "naive": "run after the leaving group -> the gate shuts on you `dis-gate`",
+    "fix": "wait under the gate for the coming group -> its stakes drop as they arrive `dis-stakes`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": "sound"
+   },
+   {
+    "F": "F458",
+    "family": "pause-before-charge",
+    "slot": 7,
+    "stage": "07 Husori (marathon)",
+    "decision": "The Goru Bihu bull patrols the lane; when it stops and lowers its head you have one second to be out of its lane before it charges.",
+    "source": "B17 (patrol that turns into a chase after a visible pause)",
+    "place": "Goru Bihu bathing day lane by the river (bible §3)",
+    "naive": "stand your ground -> charged `dis-goru`",
+    "fix": "run past it while it walks -> it turns and charges a mover too; the answer is leave its lane sideways `dis-goru-lane`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F459",
+    "family": "treat-trail-herds",
+    "slot": 7,
+    "stage": "07 Husori (marathon)",
+    "decision": "The host lays a trail of pitha along the husori's bamboo cart floor; the floor moves off at 150 px/s for 2 s: take the treats without stopping, or skip them.",
+    "source": "B19 (coin trail that herds on to a moving floor)",
+    "place": "Husori yard, Barpeta",
+    "naive": "stop to pick one -> carried into the stakes `dis-herd`",
+    "fix": "skip the trail along the bank -> the bank is the gate's shut side `dis-gate`",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F460",
+    "family": "shout-steers-hazard",
+    "slot": 7,
+    "stage": "07 Husori (marathon)",
+    "decision": "Tekeli bhonga: a blindfolded man swings his stick where the crowd shouts \"left/right\"; stand where they are NOT shouting.",
+    "source": "new (bible §3 Bhogali games)",
+    "place": "Uruka field games",
+    "naive": "stand still in the open -> struck `dis-lathi`",
+    "fix": "run through on the shout side -> struck as he turns `dis-lathi-ghur` (different tick/cause tag)",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F461",
+    "family": "birds-up-means-charge",
+    "slot": 8,
+    "stage": "08 Gorh (HWIK)",
+    "decision": "The only sign of a hidden rhino in the grass is the egrets rising off its back: cross a stretch while they sit, never while they are up.",
+    "source": "new (bible §2 Kaziranga)",
+    "place": "Kaziranga, Bagori range",
+    "naive": "cross while the egrets fly -> trampled `dis-gorh`",
+    "fix": "wait for the egrets to fly before crossing (reversed read) -> the grass burns from the far side (ranger's controlled burn) `dis-jui`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F462",
+    "family": "portal-chain-backwards",
+    "slot": 9,
+    "stage": "09 Rang Ghar (tough)",
+    "decision": "The Ahom tunnels: each mouth warps you to the next mouth one step BACK; six in a chain, and the exit only appears 2.7 s after the chain is walked. Walk the chain.",
+    "source": "B28 (portal chain; a visible portal object is free; `w.warp` exists)",
+    "place": "Talatal Ghar tunnels, Sivasagar (said to run to the Dikhow)",
+    "naive": "skip the tunnels and run the roof -> rib and oil `dis-roof`",
+    "fix": "take one and run ahead -> the next mouth is not open yet, the vault `dis-khaal`",
+    "estSeconds": 15,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F463",
+    "family": "bell-opens-the-sluice",
+    "slot": 9,
+    "stage": "09 Rang Ghar (tough)",
+    "decision": "Joysagar's sluice opens on the tank bell; the channel below it floods a beat later: on the bell be past the gate or up on the embankment.",
+    "source": "new (bible §2 Sivasagar tanks)",
+    "place": "Joysagar tank embankment",
+    "naive": "stand in the channel at the bell -> flood `dis-sluice`",
+    "fix": "climb the embankment early -> it is the oiled roof's foot, pushed back in `dis-roof`",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   }
+  ]
+ },
+ "SVP": {
+  "name": "Sri Vijaya Puram",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "SVP-01",
+    "name": "Namaste SVP",
+    "family": "lane-sheet-flow-push",
+    "betrayals": [
+     "sheet-flow"
+    ],
+    "chain": "A2 wait under awning; A3 flow stops with the cloud",
+    "closest": "TVM-02 floods -- shallow sheet only on lanes"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "SVP-02",
+    "name": "Aari",
+    "family": "cut-floor-saw-carriage",
+    "betrayals": [
+     "cut-floor"
+    ],
+    "chain": "A2 stand on log centre; FIX last pass halves it; A3 ride the plank off",
+    "closest": "rollers -- you stand on the thing being cut"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "SVP-06",
+    "name": "Magarmachh",
+    "family": "warning-board-arrow-turns",
+    "betrayals": [
+     "honest-moving-sign"
+    ],
+    "chain": "A2 stay in shallow water; A3 arrow turns, read the croc",
+    "closest": "`fake` -- an honest sign that moves"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "SVP-04",
+    "name": "Hiran",
+    "family": "food-holder-followed-by-deer",
+    "betrayals": [
+     "carry-attracts"
+    ],
+    "chain": "A2 drop the food; FIX herd stops at ledge; A3 drop it away from edge",
+    "closest": "chasers/`herd` -- you pick being followed (OWNS carry-attracts; GTK-09 retired)"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "SVP-11",
+    "name": "Note Ki Tasveer",
+    "family": "picture-aligns-ledge-from-spot",
+    "betrayals": [
+     "viewpoint-align"
+    ],
+    "chain": "A2 stand at the bench spot; A3 door only on the note; tell: bench",
+    "closest": "`invisible` -- view alignment"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "SVP-07",
+    "name": "Tote",
+    "family": "bird-weight-bends-tree",
+    "betrayals": [
+     "crowd-weight-bends"
+    ],
+    "chain": "A2 wait for dusk; A3 horn lifts branch slowly",
+    "closest": "KVT-07 bending palms -- crowd weight by time of day"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "SVP-10",
+    "name": "Ship Late Hai",
+    "family": "luggage-stacks-as-floor",
+    "betrayals": [
+     "crowd-belongings-floor"
+    ],
+    "chain": "A2 be at jetty edge on call; A3 second ship's gangway; hidden checkpoints",
+    "closest": "CHN-02 -- belongings are terrain"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "SVP-08",
+    "name": "Do Monsoon",
+    "family": "rain-direction-reverses-awnings",
+    "betrayals": [
+     "second-season"
+    ],
+    "chain": "A2 shelter under the other awnings; A3 first-pass road is a river; tell: before the second monsoon the cloud bank and slanting rain lines show on the opposite horizon, and every awning tilts to the new side",
+    "closest": "--- rain direction as rule; the visual tell is the rain slant and awning tilt, not the replay"
+   },
+   {
+    "index": 9,
+    "shape": "long",
+    "concept": "SVP-03",
+    "name": "Jad",
+    "family": "brick-crumbles-roots-hold",
+    "betrayals": [
+     "visual-rule-brick-root"
+    ],
+    "chain": "A2 stand on roots; A3 one root swings",
+    "closest": "crumbling floors -- visual rule brick vs root"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "SVP-12",
+    "name": "Dweep",
+    "family": "finale-food-through-sawmill",
+    "betrayals": [
+     "food-through-sawmill"
+    ],
+    "chain": "callbacks only: saw, roots, deer, croc board, luggage; twist: carry deer food through the mill",
+    "closest": "(own callbacks) -- deer food in the mill"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "SVP-09",
+    "name": "Choona",
+    "family": "knocked-formation-drips",
+    "betrayals": [
+     "knock-drip"
+    ],
+    "chain": "A2 do not knock (weak)",
+    "closest": "AMR-07 -- knock makes drip slide"
+   },
+   {
+    "concept": "SVP-F1",
+    "name": "Mooring rope",
+    "family": "mooring-rope-throw-pull",
+    "betrayals": [
+     "rope-throw"
+    ],
+    "chain": "A2 be at the bollard end (FRESH)",
+    "closest": "PNJ-05 ropes -- thrown line"
+   }
+  ],
+  "v3": [
+   {
+    "F": "F503",
+    "family": "eye-height-not-footprints",
+    "slot": 5,
+    "stage": "05 Note Ki Tasveer (HWIK)",
+    "decision": "The painted footprints at the last bench are for someone taller: from the ground the picture never lines up (the horizon on the note sits above the trees); stand on the bench behind the footprints to match the eye height, and the slabs appear. The HWIK read: the note's horizon tells the height.",
+    "source": "new (05's own rule on a second axis)",
+    "place": "North Bay viewpoint, the ₹20-note view (bible §2)",
+    "naive": "stand on the footprints and step out -> no slab `svp-nazar`",
+    "fix": "climb the signboard pole for height -> the slabs appear too far down the slope, out of a tap's reach `svp-door`",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F490",
+    "family": "refraction-aim-beyond",
+    "slot": 6,
+    "stage": "06 Tote",
+    "decision": "The submerged ledge is not where it looks: aim beyond it by the amount the boatman's pole bends at the water line.",
+    "source": "candidate 5",
+    "place": "Baratang mangrove creek at dusk (bible §2)",
+    "naive": "jump where the ledge looks -> short, into the creek `svp-nadi`",
+    "fix": "wait for the pole to straighten -> the parrots land, the branch you wait on bends under (06's room) `svp-tote`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F491",
+    "family": "exit-shelter-same-side",
+    "slot": 7,
+    "stage": "07 Ship Late Hai (marathon)",
+    "decision": "The arch shelter: leave it by the side you entered; the far side is where the rush comes round. **Shelter beat.**",
+    "source": "candidate 3",
+    "place": "Haddo wharf arches (bible §3 ferries)",
+    "naive": "leave by the far side -> the crowd `svp-bheed`",
+    "fix": "stay in the arch -> the luggage stack beside it is the floor that goes (07's room) `svp-saman`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": "shelter"
+   },
+   {
+    "F": "F492",
+    "family": "read-roof-slope",
+    "slot": 8,
+    "stage": "08 Do Monsoon (HWIK)",
+    "decision": "Under a roof, read the slope, not the wind: a lean-to sheds its water on its low side whichever way the rain comes.",
+    "source": "candidate 6",
+    "place": "Aberdeen Bazaar eaves (bible §2)",
+    "naive": "stand to leeward by the wind -> the slope's run-off `svp-chhajja`",
+    "fix": "stand to windward -> the rain `svp-baarish`",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F493",
+    "family": "drumming-roof-names-the-rain-side",
+    "slot": 8,
+    "stage": "08 Do Monsoon (HWIK)",
+    "decision": "Under the covered market the rain is heard, not seen: the tin roof that drums is taking the rain, so its lee edge is dry. **Sound beat.**",
+    "source": "new (bible §2 Aberdeen Bazaar)",
+    "place": "Aberdeen Bazaar covered market",
+    "naive": "step out under the quiet roof's edge -> the rain is on that side `svp-baarish`",
+    "fix": "wait under the drumming roof -> the gutter floods (08's door rule) `svp-nala`",
+    "estSeconds": 10,
+    "kind": "act",
+    "beat": "sound"
+   },
+   {
+    "F": "F494",
+    "family": "release-point-vertical",
+    "slot": 9,
+    "stage": "09 Jad (long)",
+    "decision": "The weight belt: the way up is a straight line and the hull above has one hatch; from which spot on the seabed you let go decides it.",
+    "source": "candidate 4",
+    "place": "North Bay sea walk pontoon (bible §2)",
+    "naive": "let go under the pontoon's middle -> the hull `svp-hull`",
+    "fix": "walk the seabed to the edge and surface -> the propeller `svp-pankha`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   }
+  ]
+ },
+ "SHL": {
+  "name": "Shillong",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "SHL-T",
+    "name": "Welcome (view point)",
+    "family": "fake-first-raindrop",
+    "betrayals": [
+     "fake-first-drop"
+    ],
+    "chain": "A2 stay out of the cloud shape; A3 real drop only under the cloud",
+    "closest": "TVM-01 tarp -- first drop is the lie"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "SHL-07",
+    "name": "Pine Peak",
+    "family": "cloud-bank-platform-thins-edge",
+    "betrayals": [
+     "cloud-platform"
+    ],
+    "chain": "A2 cross where it is lit; A3 thins at the edge, centre holds",
+    "closest": "mist (kit)/GNR-03 sunbeams -- cloud is a platform"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "SHL-08",
+    "name": "Sway (Dawki)",
+    "family": "bridge-swing-matches-step-cadence",
+    "betrayals": [
+     "cadence-swing"
+    ],
+    "chain": "A2 walk at the swing rhythm; A3 stop at the tower to settle (OWNS bridge-sway; DDN-05 retired)",
+    "closest": "JAI-03 tower, PNJ-05 ropes -- sway is your own cadence"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "SHL-01",
+    "name": "Knup",
+    "family": "wide-gear-hitbox",
+    "betrayals": [
+     "wide-gear"
+    ],
+    "chain": "A2 take it off at the arch; FIX awning drip is a spike row; A3 off, then on",
+    "closest": "`tiny` -- body wider, gear optional per gap"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "SHL-10",
+    "name": "Seven Sisters",
+    "family": "one-stream-schedule-mark",
+    "betrayals": [
+     "hidden-schedule"
+    ],
+    "chain": "A2 cross the one stream when its bank mark is dry (a white line on the rock shows the dry level); A3 the stream refills two beats after the mark is uncovered, cross on the mark, not after; tell: the mark is drawn from the first frame",
+    "closest": "RNC-07/`khoh` -- one stream, one visible mark; no choice among seven (SHL-10 Seven Sisters)"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "SHL-02",
+    "name": "Root Guide",
+    "family": "choose-guide-root-grows",
+    "betrayals": [
+     "choose-grow"
+    ],
+    "chain": "A2 guide the shortest root; A3 late root grows into head path",
+    "closest": "DMN-07/RPR-04 -- you choose the line, wait, choice permanent"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "SHL-04",
+    "name": "Mawsmai",
+    "family": "drip-growth-gate-pairs",
+    "betrayals": [
+     "drip-growth"
+    ],
+    "chain": "A2 tap a stalactite; A3 tap only stops the one you hit; hidden checkpoints",
+    "closest": "kit rising walls -- growth caused by drips, stopped by a tap"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "SHL-05",
+    "name": "Wettest Desert",
+    "family": "tank-fills-when-not-under-rain",
+    "betrayals": [
+     "cloud-meter"
+    ],
+    "chain": "A2 stand outside cloud shadow; A3 second bigger cloud; tell: tank gauge",
+    "closest": "tarp TVM-01/RNC-04 -- cloud is a filling meter"
+   },
+   {
+    "index": 9,
+    "shape": "tough",
+    "concept": "SHL-06",
+    "name": "Eight-Day Market",
+    "family": "day-cycle-rearranged-stalls",
+    "betrayals": [
+     "day-cycle"
+    ],
+    "chain": "A2 read today's colour; A3 sign changed at last row; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
+    "closest": "PNJ-06/HYD-07 -- fixed day cycle by your progress"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "SHL-12",
+    "name": "Down Seven Hundred",
+    "family": "finale-cadence-bridge-day-stalls",
+    "betrayals": [
+     "stalls-on-swaying-span"
+    ],
+    "chain": "callbacks only: knup, root, drip, market, Dawki bridge; twist = SHL slot 03 cadence sway + slot 09 day-cycle stalls: the rest stalls rearrange at each checkpoint on a span that sways to your step",
+    "closest": "(own callbacks) -- RNC-07 no fall rule"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "SHL-03",
+    "name": "Full Sumo",
+    "family": "gather-followers-then-deliver",
+    "betrayals": [
+     "gather-deliver"
+    ],
+    "chain": "A2 walk, do not run; A3 fourth rider is Tara",
+    "closest": "DMN-04/BOM-03 -- followers gathered then delivered"
+   },
+   {
+    "concept": "SHL-11",
+    "name": "Soundcheck",
+    "family": "amp-volume-dial-pushes",
+    "betrayals": [
+     "dial"
+    ],
+    "chain": "A2 lower dial after the pit; A3 amp on wrong dial",
+    "closest": "GNR-04 shockwaves -- you control the dial (close, last resort)"
+   }
+  ]
+ },
+ "ITA": {
+  "name": "Itanagar",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "ITA-T",
+    "name": "Welcome (Ita Fort)",
+    "family": "brick-hop-mortar-vs-loose",
+    "betrayals": [
+     "brick-pop"
+    ],
+    "chain": "A2 skip the loose one; A3 second is loose",
+    "closest": "TVM-03 painted floor -- brick tells"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "ITA-02",
+    "name": "Ek Ek Karke",
+    "family": "one-lane-bridge-oncoming-bays",
+    "betrayals": [
+     "oncoming-bay"
+    ],
+    "chain": "A2 wait at first bay; A3 second porter early",
+    "closest": "TVM-03 scooters, DMN-04 -- walking load, bays"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "ITA-06",
+    "name": "Mithun Maidan",
+    "family": "living-platforms-graze-cycle",
+    "betrayals": [
+     "graze-cycle"
+    ],
+    "chain": "A2 wait for the lead's lift; A3 third head dips as you land",
+    "closest": "PNJ-02 bubbles, GNR-05 -- living platforms on a cycle"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "ITA-07",
+    "name": "Santra Seedhi",
+    "family": "fruit-rolls-into-baskets-as-steps",
+    "betrayals": [
+     "fruit-steps"
+    ],
+    "chain": "A2 shake from lower tree; A3 top tree drops a basket",
+    "closest": "TVM-04 coconuts -- fruit is steps not hazard"
+   },
+   {
+    "index": 5,
+    "shape": "long",
+    "concept": "ITA-08",
+    "name": "Anjeer Daal",
+    "family": "fig-ripeness-drops-platforms",
+    "betrayals": [
+     "ripeness-timeline"
+    ],
+    "chain": "A2 read colour; A3 colour flips at dusk",
+    "closest": "KVT-07 bending palms -- ripeness timeline"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "ITA-04",
+    "name": "Dhaan aur Machhli",
+    "family": "linked-tanks-lever-order",
+    "betrayals": [
+     "lever-water-order"
+    ],
+    "chain": "A2 lever order from the end; A3 last lever resets first",
+    "closest": "DMN-05 tide, TVM-02 -- water moved by your actions"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "ITA-09",
+    "name": "Sela Dhakka",
+    "family": "push-heavy-slope-object",
+    "betrayals": [
+     "push-in-bursts"
+    ],
+    "chain": "A2 push in bursts; A3 second truck on next hill; needs push mechanic; hidden checkpoints",
+    "closest": "BPL-07 magnets -- pushing a slope-bound object"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "ITA-10",
+    "name": "Siang raft",
+    "family": "raft-poles-spread-under-weight",
+    "betrayals": [
+     "poles-spread"
+    ],
+    "chain": "A2 stand across the poles, never along one: along one the lashing gives and the poles spread apart; A3 the last raft has one loose lashing, cross it in one hop; tell: lashings drawn on every raft, the loose one frayed",
+    "closest": "PAT slot 05 pontoon sinks under load -- here the floor splits sideways, nothing sinks or tilts (ITA.md concept 10, the bible's own HWIK)"
+   },
+   {
+    "index": 9,
+    "shape": "long",
+    "concept": "ITA-03",
+    "name": "Ita (brick wall)",
+    "family": "pull-brick-pile-slumps",
+    "betrayals": [
+     "pull-brick-slump"
+    ],
+    "chain": "A2 pull from the top; A3 top bricks hold spikes",
+    "closest": "RPR-07/RNC-02 -- you remove blocks, gravity rearranges"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "ITA-12",
+    "name": "Subah",
+    "family": "finale-bricks-on-one-lane-bridge",
+    "betrayals": [
+     "brick-bridge-oncoming"
+    ],
+    "chain": "callbacks only: one-lane bridge, bricks, sluice, fruit baskets; twist = ITA slot 02 one-lane bridge + slot 09 pull-brick slump: the oncoming porter carries bricks and the pile slumps into the passing bay",
+    "closest": "(own callbacks) -- no sun line"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "ITA-F1",
+    "name": "Tipi orchids",
+    "family": "orchid-ledge-opens-by-dew",
+    "betrayals": [
+     "orchid-dew"
+    ],
+    "chain": "A2 wait for dew (FRESH)",
+    "closest": "KOH-06 -- ledge blooms by humidity"
+   },
+   {
+    "concept": "ITA-F2",
+    "name": "Bamboo flute",
+    "family": "flute-hole-platforms",
+    "betrayals": [
+     "flute-holes"
+    ],
+    "chain": "A2 hear which hole (FRESH)",
+    "closest": "`bells` -- holes covered change platforms"
+   },
+   {
+    "concept": "ITA-11",
+    "name": "Convoy gate",
+    "family": "convoy-gate-direction-alternates",
+    "betrayals": [
+     "direction-gate"
+    ],
+    "chain": "A2 go with your direction's convoy; A3 the gate turns mid-convoy",
+    "closest": "BLR signals -- direction, not stop/go"
+   }
+  ]
+ },
+ "KOH": {
+  "name": "Kohima",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "KOH-T",
+    "name": "Welcome (lane stairs)",
+    "family": "rolling-handrail-rod",
+    "betrayals": [
+     "grab-rolls"
+    ],
+    "chain": "A2 skip the rod; A3 walk",
+    "closest": "treadmills -- rail rolls you a step"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "KOH-05",
+    "name": "Rassi Tan",
+    "family": "tug-rope-bridge-drifts",
+    "betrayals": [
+     "team-drift"
+    ],
+    "chain": "A2 walk the drift; A3 stronger side swaps when you pass middle",
+    "closest": "PNJ-05/DMN-05 -- team contest moves the platform"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "KOH-07",
+    "name": "Bans Jhula",
+    "family": "helper-launched-by-your-jump",
+    "betrayals": [
+     "helper-launched"
+    ],
+    "chain": "A2 jump from the lowest tile; A3 second seesaw wrong end",
+    "closest": "`salaami`/cannon -- helper is launched, you wait"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "KOH-06",
+    "name": "Dzukou",
+    "family": "bloom-wave-platforms-cold-slows",
+    "betrayals": [
+     "bloom-wave"
+    ],
+    "chain": "A2 follow the wave; A3 wave reverses at stream",
+    "closest": "blinkers/DMN-03 -- travelling wave pattern"
+   },
+   {
+    "index": 5,
+    "shape": "long",
+    "concept": "KOH-02",
+    "name": "Dhol Gach",
+    "family": "crew-beat-log-platform",
+    "betrayals": [
+     "crew-surge"
+    ],
+    "chain": "A2 step on after the shout; A3 double shout",
+    "closest": "DMN-05/JAI-02 -- beat belongs to others"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "KOH-03",
+    "name": "Chaal-Chaal",
+    "family": "sloped-noisy-tin-roofs",
+    "betrayals": [
+     "noisy-floor"
+    ],
+    "chain": "A2 cross thatch first; A3 chimney lifts",
+    "closest": "BOM-06 -- sloped roofs slide you"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "KOH-01",
+    "name": "Kath ka Gari",
+    "family": "downhill-cart-lean-steer",
+    "betrayals": [
+     "cart-steer"
+    ],
+    "chain": "A2 lean into each bend early, there is no brake; A3 slick hairpin spins you, lean out of it; hidden checkpoints",
+    "closest": "JAI-05/TVM-02, SXR slot 09 -- lean-steer only, no brake (SXR owns brake-only)"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "KOH-04",
+    "name": "Axone Handi",
+    "family": "carried-scent-repels",
+    "betrayals": [
+     "scent-selective"
+    ],
+    "chain": "A2 lid off here, on there; A3 cat loves it; tell: dogs and crows keep off",
+    "closest": "cocoon RPR-06 -- scent repels selectively (treat with respect)"
+   },
+   {
+    "index": 9,
+    "shape": "tough",
+    "concept": "KOH-11",
+    "name": "Kisama Din",
+    "family": "five-houses-opposite-rules",
+    "betrayals": [
+     "rule-flip-per-room"
+    ],
+    "chain": "A2 rule of house N opposite of N-1; A3 house 5 uses both; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
+    "closest": "PNJ-06 -- five rule sets in one yard"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "KOH-12",
+    "name": "Subah Kisama",
+    "family": "finale-run-to-hornbill-ground",
+    "betrayals": [
+     "hornbill-ground-run"
+    ],
+    "chain": "callbacks only: cart, log, roofs, axone, rope, seesaw",
+    "closest": "(own callbacks) -- one run"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "KOH-F1",
+    "name": "Pulie Badze pole",
+    "family": "greased-pole-climb",
+    "betrayals": [
+     "greased-pole"
+    ],
+    "chain": "A2 grip the dry section (FRESH)",
+    "closest": "PNJ-05 -- slippery pole"
+   },
+   {
+    "concept": "KOH-F2",
+    "name": "Tragopan zoo",
+    "family": "shy-bird-shows-safe-ledge",
+    "betrayals": [
+     "shy-bird"
+    ],
+    "chain": "A2 follow its glance (FRESH)",
+    "closest": "`monkey` -- animal shows the way"
+   }
+  ]
+ },
+ "IMP": {
+  "name": "Imphal",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "IMP-T",
+    "name": "Welcome (Kangla)",
+    "family": "inward-only-gate",
+    "betrayals": [
+     "one-way-gate"
+    ],
+    "chain": "A2 go round; A3 moat far bank fake",
+    "closest": "`backdoor` -- gate direction"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "IMP-04",
+    "name": "Net Cast",
+    "family": "thrown-net-circle-closes",
+    "betrayals": [
+     "closing-circle"
+    ],
+    "chain": "A2 keep moving; A3 he throws where you will land",
+    "closest": "TVM-06 nets -- thrown circle that closes"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "IMP-06",
+    "name": "Samban Lei",
+    "family": "shears-trim-tier",
+    "betrayals": [
+     "trim-tier"
+    ],
+    "chain": "A2 climb behind the shears; A3 shears at the bottom",
+    "closest": "RNC-02/dropping floors -- trimmer removes a tier"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "IMP-09",
+    "name": "Thambal",
+    "family": "dew-beads-roll-leaf-tilt",
+    "betrayals": [
+     "tilt-by-drops"
+    ],
+    "chain": "A2 stand at the rim; A3 next leaf rolls other way",
+    "closest": "PNJ gangway -- rolling drops push"
+   },
+   {
+    "index": 5,
+    "shape": "long",
+    "concept": "IMP-02",
+    "name": "Phumdi Dock",
+    "family": "drifting-mats-merge-seam",
+    "betrayals": [
+     "merge-seam"
+    ],
+    "chain": "A2 wait for the click; A3 third mat from behind",
+    "closest": "BOM-04 crates -- waiting makes a bridge"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "IMP-01",
+    "name": "Sangai Steps",
+    "family": "animal-scout-firm-patches",
+    "betrayals": [
+     "animal-scout"
+    ],
+    "chain": "A2 wait for it to turn back; FIX Tara says go straight; A3 follow only its steps",
+    "closest": "RPR-07/`footsteps` -- animal tests the path"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "IMP-03",
+    "name": "Resurface",
+    "family": "phumdi-detach-reground",
+    "betrayals": [
+     "detach-ground"
+    ],
+    "chain": "A2 cross while grounded; A3 mat regrounds before hill; hidden checkpoints",
+    "closest": "TVM-02/DMN-05 tides -- ground detaches and reattaches"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "IMP-05",
+    "name": "Sasta Sabse Pehle",
+    "family": "price-order-stalls",
+    "betrayals": [
+     "ordered-by-number"
+    ],
+    "chain": "A2 step in rising price; A3 numerals taught first; tell: price signs",
+    "closest": "PNJ-06 roulette -- order set by a number on each stall"
+   },
+   {
+    "index": 9,
+    "shape": "tough",
+    "concept": "IMP-08",
+    "name": "Chukker",
+    "family": "steed-stamina-gallop-walk",
+    "betrayals": [
+     "stamina"
+    ],
+    "chain": "A2 walk soft ground; A3 last chukker no trough; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
+    "closest": "JAI-06 -- stamina and rest"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "IMP-12",
+    "name": "Loktak Sandhya",
+    "family": "finale-lake-at-dusk",
+    "betrayals": [
+     "lake-dusk-run"
+    ],
+    "chain": "callbacks only: deer path, mats, net, lotus, weir",
+    "closest": "(own callbacks) -- one run"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "IMP-11",
+    "name": "Ngaa Ing",
+    "family": "funnel-easy-in-hard-out",
+    "betrayals": [
+     "funnel"
+    ],
+    "chain": "A2 swim the outside; A3 second funnel",
+    "closest": "`trapdoor` -- funnel built to be easy to enter"
+   },
+   {
+    "concept": "IMP-10",
+    "name": "Mallet",
+    "family": "mallet-angle-by-tile-position",
+    "betrayals": [
+     "mallet-launch"
+    ],
+    "chain": "A2 stand at lip; A3 other team rider (CLOSE `salaami`; last resort)",
+    "closest": "`cannon` -- angle is your position"
+   }
+  ]
+ },
+ "AIZ": {
+  "name": "Aizawl",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "AIZ-T",
+    "name": "Welcome (Champhai flat)",
+    "family": "roof-reveal-underfoot",
+    "betrayals": [
+     "roof-step-down"
+    ],
+    "chain": "A2 skip the edge; A3 roof ends",
+    "closest": "BOM-06 -- you were on a roof"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "AIZ-02",
+    "name": "Staircase Lane",
+    "family": "house-doors-open-into-stair",
+    "betrayals": [
+     "door-timetable"
+    ],
+    "chain": "A2 wait behind lower door; A3 same door opens twice",
+    "closest": "kit shutters -- doors open outward into the route"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "AIZ-06",
+    "name": "Dhalan",
+    "family": "grade-changes-speed-and-jump",
+    "betrayals": [
+     "grade-speed"
+    ],
+    "chain": "A2 walk down; A3 tarp hides steeper grade",
+    "closest": "PNJ gangway/GNR-06 -- grade not push"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "AIZ-07",
+    "name": "Jonk",
+    "family": "cling-slows-until-salt",
+    "betrayals": [
+     "cling-slow"
+    ],
+    "chain": "A2 keep moving; A3 leaf bridge all leeches",
+    "closest": "RPR-07 ants -- cling that slows"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "AIZ-05",
+    "name": "Shanti Road",
+    "family": "far-ridge-headlight-tell",
+    "betrayals": [
+     "far-tell"
+    ],
+    "chain": "A2 look at far ridge; A3 near-side headlight; tell: sweeping lights on ridge",
+    "closest": "TVM-03/BLR-04 -- tell from another place on screen"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "AIZ-04",
+    "name": "Cheraw",
+    "family": "scissoring-pole-pairs-on-beat",
+    "betrayals": [
+     "beat-poles"
+    ],
+    "chain": "A2 step on second beat; A3 middle gap is wrong one; practice poles with children",
+    "closest": "kit sword dancers/GNR-07 -- poles on the ground (reviewer: only if distinct)"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "AIZ-01",
+    "name": "Ten Floors Below",
+    "family": "descending-stacked-house",
+    "betrayals": [
+     "descend-rooms"
+    ],
+    "chain": "A2 drop only through open trap with rope; A3 balcony is neighbour's roof; hidden checkpoints",
+    "closest": "`lightwell`/BOM-06 -- descending level of rooms (AIZ owns; GTK-02 is numbering)"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "AIZ-03",
+    "name": "Tlawmngai",
+    "family": "stopping-brings-carrying-help",
+    "betrayals": [
+     "help-by-stopping"
+    ],
+    "chain": "A2 fall at the marked mat; A3 helpers carry you back too; tell: helpers rush a stumbling NPC",
+    "closest": "`herd`/`reel` -- help triggered by stopping"
+   },
+   {
+    "index": 9,
+    "shape": "long",
+    "concept": "AIZ-F1",
+    "name": "Guitar Night",
+    "family": "string-platform-ripple",
+    "betrayals": [
+     "string-ripple"
+    ],
+    "chain": "A2 step between frets; A3 plucked string ripples (FRESH from CITIES.md: football and guitars)",
+    "closest": "BPL-04 thread -- strings sag, you may touch"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "AIZ-12",
+    "name": "Chapchar Kut Raat",
+    "family": "finale-festival-night",
+    "betrayals": [
+     "festival-night"
+    ],
+    "chain": "callbacks only: stacked house, stair doors, helpers, quiet road, slope",
+    "closest": "(own callbacks) -- no dancers at risk"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "AIZ-08",
+    "name": "Puan",
+    "family": "woven-band-shift",
+    "betrayals": [
+     "band-shift"
+    ],
+    "chain": "A2 read ahead (weak)",
+    "closest": "PNJ-06 -- band colour predicts"
+   },
+   {
+    "concept": "AIZ-F2",
+    "name": "Khumbeu cap",
+    "family": "hat-shelter-radius",
+    "betrayals": [
+     "hat-shelter"
+    ],
+    "chain": "A2 stay under the cap radius (FRESH)",
+    "closest": "DDN-01 -- cap shelter"
+   }
+  ]
+ },
+ "AGT": {
+  "name": "Agartala",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "AGT-T",
+    "name": "Welcome (Ujjayanta lawn)",
+    "family": "fountain-jet-lifts-safe-tile",
+    "betrayals": [
+     "safe-tile-jet"
+    ],
+    "chain": "A2 stand off the jet base; A3 pulse",
+    "closest": "`geyser` kit -- jet lifts the guide's safe tile"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "AGT-02",
+    "name": "Tomtom",
+    "family": "battery-gauge-platform",
+    "betrayals": [
+     "gauge-platform"
+    ],
+    "chain": "A2 change at the stand; A3 next one already low",
+    "closest": "TVM-02/HYD-04 -- finite gauge platform"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "AGT-F4",
+    "name": "Kosh (latex cups)",
+    "family": "latex-cup-tips-when-full",
+    "betrayals": [
+     "fill-tips"
+    ],
+    "chain": "A2 stand on the emptiest cup (fill level visible on every cup); A3 your weight makes the drip run faster, so hop on, never rest",
+    "closest": "`lamp`/B39 -- the fill level is an honest clock on each foothold; nobody walks ahead of you (AGT.md seed 5, rubber plantations)"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "AGT-04",
+    "name": "Bet",
+    "family": "over-under-weave-height",
+    "betrayals": [
+     "height-pattern"
+    ],
+    "chain": "A2 count cells from edge; A3 edge cells over-over",
+    "closest": "PNJ-06 -- height not colour"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "AGT-01",
+    "name": "Latex Round",
+    "family": "sticky-now-solid-later",
+    "betrayals": [
+     "sticky-then-solid"
+    ],
+    "chain": "A2 step only on grey; A3 cup tips and re-wets; tell: white vs grey",
+    "closest": "tar kit/DMN-03 -- liquid trap now, floor later"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "AGT-06",
+    "name": "Fountain Court",
+    "family": "beam-telegraphs-next-jet",
+    "betrayals": [
+     "beam-telegraph"
+    ],
+    "chain": "A2 read the beam not the jet; A3 two beams",
+    "closest": "kit spouts/PNJ-06 -- beam telegraphs future"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "AGT-07",
+    "name": "Neermahal",
+    "family": "boat-wake-covers-stair-step",
+    "betrayals": [
+     "wake-covers"
+    ],
+    "chain": "A2 climb wet steps first; A3 terrace gap; hidden checkpoints",
+    "closest": "DMN-05 -- wake covers one step at a time"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "AGT-F1",
+    "name": "Duck column",
+    "family": "duck-column-pace-on-bund",
+    "betrayals": [
+     "duck-pace"
+    ],
+    "chain": "A2 march in the ducks' footprints at duck pace (the column walks round the soft patches of the bund); A3 the last duck steps off at the sluice and its prints end, jump the sluice; tell: footprints on the bund, visible from the start",
+    "closest": "PNJ-08 -- the column's own prints are the safe floor; one unknown (soft bund), one move after one death (FRESH: fish farming is in AGT.md; ducks on bunds need a source)"
+   },
+   {
+    "index": 9,
+    "shape": "std",
+    "concept": "AGT-05",
+    "name": "Anarosh",
+    "family": "thrown-fruit-chain-steps",
+    "betrayals": [
+     "thrown-chain"
+    ],
+    "chain": "A2 stand in thrower's gap; A3 a fruit lands as a rolling platform",
+    "closest": "TVM-04/DMN-04 -- arcs you can use"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "AGT-12",
+    "name": "Neermahal Sandhya",
+    "family": "finale-lake-to-palace",
+    "betrayals": [
+     "lake-palace-run"
+    ],
+    "chain": "callbacks only: latex, tomtom, mat, weave, pineapples, wakes",
+    "closest": "(own callbacks) -- one run"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "AGT-F2",
+    "name": "Carrom",
+    "family": "flicked-by-striker",
+    "betrayals": [
+     "flicked"
+    ],
+    "chain": "A2 stay off the baseline (FRESH; bible sports)",
+    "closest": "`cannon` -- you are a piece"
+   },
+   {
+    "concept": "AGT-F3",
+    "name": "Evening popcorn",
+    "family": "popped-kernels-launch",
+    "betrayals": [
+     "popcorn"
+    ],
+    "chain": "A2 step between pops (FRESH)",
+    "closest": "kit shots -- timed"
+   }
+  ]
+ },
+ "DEL": {
+  "name": "New Delhi",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "DEL-T",
+    "name": "Welcome (Lutyens lawns)",
+    "family": "lawn-shortcut-sprinkler",
+    "betrayals": [
+     "shortcut-sprinkler"
+    ],
+    "chain": "A2 walk the path; A3 rotary five exits",
+    "closest": "rollers kit -- shortcut is the trap"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "DEL-03",
+    "name": "Lagori",
+    "family": "rebuild-scattered-stack-stairs",
+    "betrayals": [
+     "rebuild-stack"
+    ],
+    "chain": "A2 largest first; A3 last stone thrown away",
+    "closest": "RPR-04/kit shots -- steps rebuilt under fire"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "DEL-04",
+    "name": "Gali Sankri (shutters)",
+    "family": "gali-stalls-out-in-shutter-order",
+    "betrayals": [
+     "shutter-stall-out"
+    ],
+    "chain": "A2 pass each shop before its shutter is up (shutters rise in a visible order down the lane); A3 the last shop opens from inside, its stall comes out first",
+    "closest": "kit rising walls -- the lane narrows by shop opening order, never because you stand"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "DEL-08",
+    "name": "Tandoor Daud",
+    "family": "timed-cling-hot-clay-wall",
+    "betrayals": [
+     "timed-cling"
+    ],
+    "chain": "A2 stick hop stick; A3 wall cools unevenly",
+    "closest": "BOM-06 wall kicks -- timed cling"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "DEL-06",
+    "name": "Taar Jaal",
+    "family": "hang-traverse-live-hum",
+    "betrayals": [
+     "hang-traverse"
+    ],
+    "chain": "A2 swap at the knot; A3 knot is dead end; tell: hum taught once; needs hang state",
+    "closest": "HYD-05 manja/KVT-07 -- hang verb, live wire by hum"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "DEL-09",
+    "name": "Chhan",
+    "family": "carried-wet-state-oil-spits",
+    "betrayals": [
+     "carried-state"
+    ],
+    "chain": "A2 dry on the mat; A3 mat also wet",
+    "closest": "CHN-01 Pongal pot -- player carries the state"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "DEL-01",
+    "name": "Gol Chakkar",
+    "family": "wraparound-lap-count",
+    "betrayals": [
+     "wrap-lap"
+    ],
+    "chain": "A2 count laps by lamp posts; A3 middle ring runs other way; hidden checkpoints; needs wrap camera (else swap to DEL-11)",
+    "closest": "AMR-05 -- world wraps, lap count matters"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "DEL-02",
+    "name": "Horn code",
+    "family": "horn-ring-code-reading",
+    "betrayals": [
+     "code-reading"
+    ],
+    "chain": "A2 read the rhythm, not the loudness: each vehicle's indicator blinks in its horn rhythm (visual twin); A3 two vehicles share a code; no guide line (guide never describes an unmet trap); NO fog (GTK owns)",
+    "closest": "BLR-04/TVM-07 -- hazards telegraphed by horn + blink code"
+   },
+   {
+    "index": 9,
+    "shape": "tough",
+    "concept": "DEL-05",
+    "name": "Saat Dilli",
+    "family": "old-plan-is-safe-route",
+    "betrayals": [
+     "old-plan-route"
+    ],
+    "chain": "A2 remember last section; A3 seventh mirrors first at new scale; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
+    "closest": "BPL-03/`dejavu` -- built on ruins, old layout is answer"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "DEL-12",
+    "name": "Dilli Darshan",
+    "family": "finale-hop-on-bus-loop",
+    "betrayals": [
+     "bus-loop"
+    ],
+    "chain": "callbacks only: ring wrap, horn, stack, lane, wires, kadhai",
+    "closest": "(own callbacks) -- bus loop"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "DEL-11",
+    "name": "Rehri Train",
+    "family": "push-cart-train",
+    "betrayals": [
+     "cart-train"
+    ],
+    "chain": "A2 ride then step off (weak)",
+    "closest": "BOM-02 -- chained carts"
+   },
+   {
+    "concept": "DEL-F1",
+    "name": "Golgappa",
+    "family": "hollow-shell-cracks-fills",
+    "betrayals": [
+     "hollow-shell"
+    ],
+    "chain": "A2 tap shell (FRESH)",
+    "closest": "RNC-02 -- shell as boat"
+   }
+  ]
+ },
+ "CHP": {
+  "name": "Chandigarh (Punjab)",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "CHP-01",
+    "name": "Kiddan, Chandigarh!",
+    "family": "missing-sector-sign-is-a-gap",
+    "betrayals": [
+     "missing-number-gap"
+    ],
+    "chain": "A2 count signs, no 13 no ground; A3 walk with the dawn walkers",
+    "closest": "fake floors kit/BLR-01 -- tell is a missing number"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "CHP-03",
+    "name": "Joota Chupai",
+    "family": "ability-removed-running-hurts",
+    "betrayals": [
+     "ability-removed"
+    ],
+    "chain": "A2 walk; A3 jutti toes steer landing",
+    "closest": "RPR-02/`tiny` -- removed ability won back by trading"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "CHP-09",
+    "name": "Madhani",
+    "family": "churn-reverses-on-rope-pull",
+    "betrayals": [
+     "reverse-fling"
+    ],
+    "chain": "A2 jump off as it slows; A3 two churns opposite (OWNS churn; LEH-10 retired)",
+    "closest": "`clockhand`/RPR-05 -- turn reverses on a visible pull"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "CHP-07",
+    "name": "Sarson",
+    "family": "crop-band-hides-furrows",
+    "betrayals": [
+     "crop-cover"
+    ],
+    "chain": "A2 watch the stalks bend where a furrow is; A3 a band of taller stalks hides a second furrow behind the first, hop long; no scarecrow lie",
+    "closest": "TVM-07/kit mist -- cover is a crop band at fixed height (SVP slot 04 owns carry-attracts)"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "CHP-10",
+    "name": "Phulkari",
+    "family": "solid-only-from-shining-side",
+    "betrayals": [
+     "approach-direction"
+    ],
+    "chain": "A2 approach shining tiles; A3 bagh section flips; tell: shine",
+    "closest": "PNJ-02/PNJ-06 -- solidity by horizontal approach"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "CHP-02",
+    "name": "Kachra Kala",
+    "family": "broken-tiles-carry-forward",
+    "betrayals": [
+     "break-as-resource"
+    ],
+    "chain": "A2 break every tile on purpose; A3 real way is behind the waterfall",
+    "closest": "kit crumbling -- breaking is a resource for a later room"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "CHP-06",
+    "name": "Lohri di Lakdi",
+    "family": "built-bridge-taken-from-far-end",
+    "betrayals": [
+     "bridge-taken-back"
+    ],
+    "chain": "A2 cross before the sun touches the hill; A3 popped kernels hit near end; hidden checkpoints",
+    "closest": "`lamp`/PDY-04 -- window is a resource taken from the far end"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "CHP-08",
+    "name": "Truck Pe Likheya",
+    "family": "rule-written-on-the-thing",
+    "betrayals": [
+     "literal-slogan"
+    ],
+    "chain": "A2 read the tailgate; A3 last tailgate upside down; tell: slogan visible",
+    "closest": "BLR signals/AMR-05 -- rules written on the moving thing"
+   },
+   {
+    "index": 9,
+    "shape": "std",
+    "concept": "CHP-04",
+    "name": "Sehra",
+    "family": "veil-hides-floor-when-still",
+    "betrayals": [
+     "speed-hider"
+    ],
+    "chain": "A2 look while moving; A3 petals show spikes",
+    "closest": "kit mist/CHN-05 -- hider is on Dad, driven by his speed"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "CHP-12",
+    "name": "Asli Viah",
+    "family": "finale-wedding-blind-walk",
+    "betrayals": [
+     "veil-and-shoes"
+    ],
+    "chain": "callbacks only: veil, notes, logs, phulkari, churn, barefoot; twist = CHP slot 09 veil (floor hidden when still) + slot 02 barefoot (running hurts): walk, never stop, never run",
+    "closest": "(own callbacks) -- two own ideas combined, no horse/groom door"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "CHP-11",
+    "name": "Kikli",
+    "family": "edge-on-gate-pair",
+    "betrayals": [
+     "edge-on-gate"
+    ],
+    "chain": "A2 pass on edge-on beat; A3 crowd surges to rail",
+    "closest": "GNR-07 -- pair arm span sweeps"
+   },
+   {
+    "concept": "CHP-F1",
+    "name": "Sukhna boat club rails",
+    "family": "lake-rail-gap-by-boat-count",
+    "betrayals": [
+     "rail-count"
+    ],
+    "chain": "A2 count the boats out (FRESH)",
+    "closest": "KVT boats -- counted, never ridden"
+   }
+  ]
+ },
+ "CHH": {
+  "name": "Chandigarh (Haryana)",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "CHH-01",
+    "name": "Ke Haal Se?",
+    "family": "bridge-laid-by-routine",
+    "betrayals": [
+     "routine-bridge"
+    ],
+    "chain": "A2 wait for noon by the wall; A3 land on buffalo back not head",
+    "closest": "DMN-04/`drawbridge` -- bridge laid by a visible routine"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "CHH-04",
+    "name": "Rassi Kood",
+    "family": "rope-sweeps-hop-doubles",
+    "betrayals": [
+     "rope-sweep"
+    ],
+    "chain": "A2 hop on swish; A3 whistle doubles hops",
+    "closest": "JAI-02 -- you choose the hops"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "CHH-05",
+    "name": "Chaak",
+    "family": "potter-lifts-then-pinches",
+    "betrayals": [
+     "shaped-lift"
+    ],
+    "chain": "A2 jump at the pinch; A3 wire cuts the pot",
+    "closest": "kit lifts/RPR-04 -- lift shaped by someone who may undo it"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "CHH-06",
+    "name": "Ghoomta Engine",
+    "family": "turntable-swaps-your-ends",
+    "betrayals": [
+     "end-swap"
+    ],
+    "chain": "A2 stand on the far end; A3 steam goes where you stood",
+    "closest": "`revolve`/BLR-05 -- rotation swaps ends"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "CHH-09",
+    "name": "Tau Ki Salah",
+    "family": "tara-strides-wrong-unit",
+    "betrayals": [
+     "unit-trap"
+    ],
+    "chain": "A2 Tara says \"ten of Tau's steps\" and you pace your own; A3 Tau's stick steps are shorter, pace the foot marks; tell: Tau's foot marks in the dust; the guide stays true",
+    "closest": "BPL-06 -- the lie is Tara's (only Tara lies); the unit is the trap"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "CHH-03",
+    "name": "Akhada",
+    "family": "throw-back-by-runup-length",
+    "betrayals": [
+     "throw-back"
+    ],
+    "chain": "A2 wait for him to bend; A3 watered pit slows run-up",
+    "closest": "`salaami`/JAI-08 -- throw reverses you by your speed (OWNS wrestling)"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "CHH-02",
+    "name": "Johad",
+    "family": "buffalo-platforms-sink-on-herder-call",
+    "betrayals": [
+     "animal-platform-call"
+    ],
+    "chain": "A2 cross while the herder boy on the bank is silent; A3 at his two-finger whistle the calf sinks first; hidden checkpoints",
+    "closest": "KVT-08 dolphins -- platforms dip on a visible herder call, not a sun cue"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "CHH-08",
+    "name": "Jugaad",
+    "family": "assemble-ride-from-parts",
+    "betrayals": [
+     "assemble-ride"
+    ],
+    "chain": "A2 pick parts in your order; A3 steering turns you round; tell: parts in yard",
+    "closest": "rides that leave -- you build the ride"
+   },
+   {
+    "index": 9,
+    "shape": "tough",
+    "concept": "CHH-10",
+    "name": "Jaman",
+    "family": "carried-starter-sets-floor",
+    "betrayals": [
+     "starter-sets"
+    ],
+    "chain": "A2 touch wait step; A3 churned pot behind, keep last jaman; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
+    "closest": "DMN-07/DMN-03 -- set by carried starter after delay"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "CHH-12",
+    "name": "Dangal Ka Din",
+    "family": "finale-ragini-on-turntable",
+    "betrayals": [
+     "crowd-on-turntable"
+    ],
+    "chain": "callbacks only: buffalo, ropes, tau, turntable",
+    "closest": "(own callbacks) -- crowd turns with it"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "CHH-07",
+    "name": "Ragini",
+    "family": "crowd-height-by-sound-side",
+    "betrayals": [
+     "crowd-sound"
+    ],
+    "chain": "A2 walk the singing side",
+    "closest": "BOM-03/CHN-06 -- crowd height by sound"
+   },
+   {
+    "concept": "CHH-11",
+    "name": "Chhaj",
+    "family": "grain-column-chaff-hides-edge",
+    "betrayals": [
+     "column-tell"
+    ],
+    "chain": "A2 stand in chaff",
+    "closest": "kit shots -- toss direction tell"
+   }
+  ]
+ },
+ "DDN": {
+  "name": "Dehradun",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "DDN-01",
+    "name": "Kya Haal Chaal, Doon?",
+    "family": "umbrella-dome-solid-at-tip",
+    "betrayals": [
+     "one-solid-point"
+    ],
+    "chain": "A2 land at the tip; A3 bakery lid opens when baker leaves",
+    "closest": "TVM-01 tarp -- curved dome one solid point"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "DDN-02",
+    "name": "Guchhu Pani",
+    "family": "wet-path-safe-crust-hollow",
+    "betrayals": [
+     "wet-is-safe"
+    ],
+    "chain": "A2 walk in the water; A3 gorge fall between gushes (OWNS wet-is-safe; SVP-05 retired)",
+    "closest": "fake floors/TVM-04 -- tell is where the water goes"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "DDN-04",
+    "name": "Do Baar Seka",
+    "family": "one-platform-becomes-slices",
+    "betrayals": [
+     "slice-gaps"
+    ],
+    "chain": "A2 stand on a score mark; A3 chai dunks last slice",
+    "closest": "RNC-02/TVM-03 -- one platform becomes many"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "DDN-09",
+    "name": "Doobki",
+    "family": "probe-before-jump-current-shifts",
+    "betrayals": [
+     "probe-depth"
+    ],
+    "chain": "A2 watch the paddle; A3 jump a raft length early",
+    "closest": "RNC-07 -- tell is a probe, current shifts landing"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "DDN-06",
+    "name": "Kaanch Ka Pul",
+    "family": "rain-splash-reveals-glass",
+    "betrayals": [
+     "rain-reveal"
+    ],
+    "chain": "A2 wait for rain; A3 shower moves on; tell: splashes",
+    "closest": "KVT-02/`invisible` -- reveal is weather that moves"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "DDN-08",
+    "name": "Phool Dei",
+    "family": "children-markers-show-real-step",
+    "betrayals": [
+     "follow-marker"
+    ],
+    "chain": "A2 stay behind children; A3 one runs back, stop with them",
+    "closest": "`fakewin`/`paintwall` -- moving markers say which is real"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "DDN-03",
+    "name": "Lahar",
+    "family": "position-holds-or-frees-raft",
+    "betrayals": [
+     "position-holds-frees"
+    ],
+    "chain": "A2 move to back only when next landing lined up; A3 second wave flips; hidden checkpoints",
+    "closest": "PNJ-07/DMN-02 -- position holds or frees"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "DDN-07",
+    "name": "Paimaish",
+    "family": "ground-on-sightlines-between-pillars",
+    "betrayals": [
+     "sightline-ground"
+    ],
+    "chain": "A2 walk pillar to pillar; A3 tripod moves; tell: white pillars",
+    "closest": "DMN-07/KVT-03 -- floor is geometry between fixed points"
+   },
+   {
+    "index": 9,
+    "shape": "long",
+    "concept": "DDN-F1",
+    "name": "FRI timber rings",
+    "family": "tree-ring-steps",
+    "betrayals": [
+     "ring-width-reads-years"
+    ],
+    "chain": "A2 thick rings are wet years (FRESH; FRI museum is real, check)",
+    "closest": "RPR-04 -- rings as steps"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "DDN-12",
+    "name": "Doon Ghati",
+    "family": "finale-valley-run",
+    "betrayals": [
+     "valley-run"
+    ],
+    "chain": "callbacks only: rain over glass, wave, sightlines, children, rusks",
+    "closest": "(own callbacks) -- one run"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "DDN-F2",
+    "name": "Sahastradhara crust",
+    "family": "mineral-crust-grows",
+    "betrayals": [
+     "crust-grows"
+    ],
+    "chain": "A2 step before it hardens (FRESH, no shrine)",
+    "closest": "DMN-03 -- grows then holds"
+   },
+   {
+    "concept": "DDN-F3",
+    "name": "Ghanta Ghar faces",
+    "family": "six-faces-different-time-tell",
+    "betrayals": [
+     "six-faces"
+    ],
+    "chain": "A2 read the face that matches (FRESH)",
+    "closest": "`clockhand`/RPR-03 -- six faces"
+   }
+  ]
+ },
+ "SML": {
+  "name": "Shimla",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "SML-01",
+    "name": "Kiya Haal, Shimla?",
+    "family": "lift-door-opens-behind",
+    "betrayals": [
+     "door-behind"
+    ],
+    "chain": "A2 turn round at the top; A3 cornice vs railing posts",
+    "closest": "`pull`/`slidedoor` -- door on the other side"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "SML-03",
+    "name": "Chhat Ki Barf",
+    "family": "sun-sheet-slides-drip-tell",
+    "betrayals": [
+     "sun-sheet"
+    ],
+    "chain": "A2 pass before the drips; A3 fallen heap soft, step on its edge",
+    "closest": "TVM-04 coconuts -- fall from a slope the sun reaches"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "SML-04",
+    "name": "Gola",
+    "family": "growing-roller-ends-as-platform",
+    "betrayals": [
+     "growing-roller"
+    ],
+    "chain": "A2 meet it early; A3 second ball stacks",
+    "closest": "kit rollers/amr03 -- hazard grows then becomes a step"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "SML-06",
+    "name": "Seedhiyan",
+    "family": "slow-body-fills-lane-niche-shelter",
+    "betrayals": [
+     "niche-shelter"
+    ],
+    "chain": "A2 find the niches; A3 ladder load, crouch low",
+    "closest": "BOM-06 -- safe spots are architecture"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "SML-11",
+    "name": "Kath-Kuni",
+    "family": "beam-holds-where-stone-above",
+    "betrayals": [
+     "weight-above"
+    ],
+    "chain": "A2 stand on beams with stone above; A3 mason removes stone; tell: wall courses",
+    "closest": "BOM-06 -- strength follows weight above"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "SML-F1",
+    "name": "Bridle path mules",
+    "family": "mule-train-accordion",
+    "betrayals": [
+     "mule-accordion"
+    ],
+    "chain": "A2 stay behind the leader's bell (FRESH)",
+    "closest": "chasers -- train stops when leader stops"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "SML-02",
+    "name": "Pakki Barf",
+    "family": "own-steps-pack-the-snow",
+    "betrayals": [
+     "pack-by-stepping"
+    ],
+    "chain": "A2 step, step back, step further: snow stepped twice holds, once is soft; A3 the porter's track ahead looks packed but was stepped once, pack it again; no sun beat (see conflict 12); hidden checkpoints",
+    "closest": "DMN-07 painted path -- here only YOUR double step makes floor; nothing fades behind you and nobody builds ahead"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "SML-08",
+    "name": "Lift Le Lo",
+    "family": "capacity-rule-second-lift",
+    "betrayals": [
+     "capacity-rule"
+    ],
+    "chain": "A2 count the queue; A3 corridor floods; tell: buzzer",
+    "closest": "BLR-01 -- capacity rule"
+   },
+   {
+    "index": 9,
+    "shape": "tough",
+    "concept": "SML-10",
+    "name": "Gaddi",
+    "family": "flowing-flock-floor",
+    "betrayals": [
+     "flock-carries"
+    ],
+    "chain": "A2 jump off at the gap; A3 whistle reverses flock; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
+    "closest": "`herd`/CHN-06 -- flock carries you (OWNS flock floor)"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "SML-12",
+    "name": "Shimla Ki Sardi",
+    "family": "finale-winter-run",
+    "betrayals": [
+     "winter-run"
+    ],
+    "chain": "callbacks only: lift door behind (01), roof sheet drip (02), snowball (03), porter niches (04), flock (09); twist: the Gaddi flock (09) comes down the stair-lane the porter fills (04), use his niches",
+    "closest": "(own callbacks) -- twist = SML slot 04 + slot 09"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "SML-F2",
+    "name": "Apple grading",
+    "family": "sorting-chute-by-size",
+    "betrayals": [
+     "sorting-chute"
+    ],
+    "chain": "A2 ride the right chute (FRESH)",
+    "closest": "kit rollers -- sorted by size"
+   },
+   {
+    "concept": "SML-F3",
+    "name": "Wool skein",
+    "family": "skein-winds-up",
+    "betrayals": [
+     "skein-winds"
+    ],
+    "chain": "A2 step off as it winds (FRESH)",
+    "closest": "`clockhand` -- winds"
+   }
+  ]
+ },
+ "JMU": {
+  "name": "Jammu",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "JMU-01",
+    "name": "Ki Haal Ae, Jammu?",
+    "family": "loose-heap-slides-back",
+    "betrayals": [
+     "heap-slide"
+    ],
+    "chain": "A2 go round; A3 kulcha lid is a step while held",
+    "closest": "kit treadmill/RPR-04 -- heap slides you back"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "JMU-04",
+    "name": "Akhrot Jhaad",
+    "family": "struck-branch-pole-raised-first",
+    "betrayals": [
+     "struck-platform"
+    ],
+    "chain": "A2 stand between strokes; A3 strokes come away from you",
+    "closest": "TVM-04 coconuts -- the platform is struck"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "JMU-06",
+    "name": "Kalari",
+    "family": "growing-slick-ring-from-source",
+    "betrayals": [
+     "growing-slick"
+    ],
+    "chain": "A2 cross before rings meet; A3 ghee ring already wide",
+    "closest": "DMN-03/tar -- slick grows outward"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "JMU-07",
+    "name": "Rajma",
+    "family": "water-swells-steps-after-delay",
+    "betrayals": [
+     "swell-steps"
+    ],
+    "chain": "A2 stand where water was poured; A3 over-soaked splits",
+    "closest": "RPR-04 -- delayed growth by water, ends if over-soaked"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "JMU-05",
+    "name": "Patisa",
+    "family": "layer-peel-per-landing",
+    "betrayals": [
+     "layer-count"
+    ],
+    "chain": "A2 count layers on the edge; A3 fresh slab stacked on thin one; tell: edge lines (OWNS layer-peel; PAT-09 retired)",
+    "closest": "kit crumbling/BLR-01 -- countable life read on the edge"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "JMU-08",
+    "name": "Tawi Di Dhaar",
+    "family": "dam-redirects-water",
+    "betrayals": [
+     "dam-redirect"
+    ],
+    "chain": "A2 dam so the pool is behind you; A3 next channel floods",
+    "closest": "TVM-02/DMN-05 -- you move a stone and choose where water goes"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "JMU-02",
+    "name": "Moud",
+    "family": "tier-opposite-traffic-switchbacks",
+    "betrayals": [
+     "tier-opposite"
+    ],
+    "chain": "A2 look at the tier below; A3 truck queue horn chain; hidden checkpoints",
+    "closest": "TVM-07 -- route crosses the road"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "JMU-10",
+    "name": "Gharat",
+    "family": "hidden-spin-read-from-trail",
+    "betrayals": [
+     "read-trail"
+    ],
+    "chain": "A2 read the flour trail; A3 chute shut then second chute; tell: flour",
+    "closest": "`clockhand`/RPR-05 -- direction hidden, read from a trail"
+   },
+   {
+    "index": 9,
+    "shape": "tough",
+    "concept": "JMU-03",
+    "name": "Surang",
+    "family": "lights-ahead-signal-oncoming",
+    "betrayals": [
+     "light-ahead"
+    ],
+    "chain": "A2 wait in a dark lay-by; A3 lights fail; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
+    "closest": "BLR-06 -- light is information that runs ahead"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "JMU-12",
+    "name": "Dogra Darbar",
+    "family": "finale-feast-run",
+    "betrayals": [
+     "feast-run"
+    ],
+    "chain": "callbacks only: walnuts, kalari rings, patisa over dam, mill",
+    "closest": "(own callbacks) -- tunnel lights ahead of the harvest cart"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "JMU-09",
+    "name": "Nehar",
+    "family": "one-way-conveyor-ghat-exits",
+    "betrayals": [
+     "conveyor-exits"
+    ],
+    "chain": "A2 get out at the right ghat",
+    "closest": "kit treadmill/KVT-06 -- one-way water with fixed exits"
+   },
+   {
+    "concept": "JMU-11",
+    "name": "Bhutta",
+    "family": "flare-wave-crosses-cobs",
+    "betrayals": [
+     "flare-wave"
+    ],
+    "chain": "A2 follow one cob behind",
+    "closest": "`lamp` -- a wave across a row"
+   }
+  ]
+ },
+ "SXR": {
+  "name": "Srinagar",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "SXR-01",
+    "name": "Toh Chiv Vaaray?",
+    "family": "boats-follow-the-stander",
+    "betrayals": [
+     "follow-the-stander"
+    ],
+    "chain": "A2 stand then cross; A3 Tara draws them away",
+    "closest": "KVT/PNJ/DMN boats -- boats come to you as customers"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "SXR-02",
+    "name": "Raad",
+    "family": "floating-garden-firm-at-stakes",
+    "betrayals": [
+     "firm-points"
+    ],
+    "chain": "A2 step stake to stake; A3 unstaked raad wait for two hammer blows",
+    "closest": "KVT-08/DMN-04 -- firmness at visible points"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "SXR-06",
+    "name": "Trami",
+    "family": "diners-take-servings-in-turn",
+    "betrayals": [
+     "circle-order"
+    ],
+    "chain": "A2 move against the eating order; A3 new course sets in same order",
+    "closest": "blinkers -- order round a visible circle"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "SXR-08",
+    "name": "Booin",
+    "family": "rakes-push-soft-heaps",
+    "betrayals": [
+     "moving-soft-obstacle"
+    ],
+    "chain": "A2 walk behind a rake; A3 two heaps meet",
+    "closest": "TVM-04 fronds -- leaves are a moving soft obstacle"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "SXR-F1",
+    "name": "Nadru (lotus stems)",
+    "family": "cut-stem-sinks-leaf",
+    "betrayals": [
+     "cut-stem-sinks"
+    ],
+    "chain": "A2 hop leaf to leaf ahead of the harvester's boat; A3 a cut leaf floats one beat then sinks, never wait on it; tell: the harvester and his cut stems are on screen from the start",
+    "closest": "IMP slot 09 -- harvest sinks leaves; no decoy twin (FRESH: nadru harvest on the Dal)"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "SXR-09",
+    "name": "Hanji",
+    "family": "rope-arc-boat-swing",
+    "betrayals": [
+     "rope-arc"
+    ],
+    "chain": "A2 board near, ride back; A3 unties, pushes only",
+    "closest": "`tipjetty`/gangway -- swing by where you stand"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "SXR-03",
+    "name": "Subah Ki Mandi",
+    "family": "boats-lock-into-floor",
+    "betrayals": [
+     "boats-lock-floor"
+    ],
+    "chain": "A2 cross pair by pair; A3 sunrise scatter, be far side; hidden checkpoints",
+    "closest": "rides that leave -- crowd of boats holds while they trade"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "SXR-04",
+    "name": "Talim",
+    "family": "spoken-count-colour-knots",
+    "betrayals": [
+     "spoken-rule"
+    ],
+    "chain": "A2 count the chant; A3 next row mid-step; tell: the chant AND the talim (the weaver's written colour code) hung over each row, readable without sound or Kashmiri",
+    "closest": "PNJ-06/CHP slot 08 -- the rule is the talim the weaver reads"
+   },
+   {
+    "index": 9,
+    "shape": "tough",
+    "concept": "SXR-05",
+    "name": "Sledge",
+    "family": "brake-only-downhill",
+    "betrayals": [
+     "brake-only"
+    ],
+    "chain": "A2 brake into bumps; A3 puller swings you to lower run; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
+    "closest": "JAI-06/DMN-03 -- only control is a brake (OWNS ski slope)"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "SXR-12",
+    "name": "Dal Ki Sham",
+    "family": "finale-dal-evening",
+    "betrayals": [
+     "dal-evening"
+    ],
+    "chain": "callbacks only: touts, stakes, market, rakes, talim",
+    "closest": "(own callbacks) -- kitchen-boat swings into market"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "SXR-11",
+    "name": "Samovar",
+    "family": "seller-fed-hazard-lands-near-side",
+    "betrayals": [
+     "fed-hazard-side"
+    ],
+    "chain": "A2 stand far side of the ring",
+    "closest": "TVM-03 -- seller's visible action lands predictably"
+   },
+   {
+    "concept": "SXR-F2",
+    "name": "Hanji houseboat ladder",
+    "family": "houseboat-plank-lifts-on-wake",
+    "betrayals": [
+     "plank-wake"
+    ],
+    "chain": "A2 cross the plank between wakes (FRESH)",
+    "closest": "KVT-02 jetty planks -- lifted, not broken"
+   }
+  ]
+ },
+ "LEH": {
+  "name": "Leh",
+  "status": "new",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "tour",
+    "concept": "LEH-F2",
+    "name": "Julley, Leh! (water turn)",
+    "family": "water-turn-switches-channel",
+    "betrayals": [
+     "water-turn",
+     "B4"
+    ],
+    "chain": "A2 walk the dry field channel; A3 the wooden gate twitches, then turns two beats later and the water comes to your channel (B4), step up on to the bund",
+    "closest": "TVM-02/BOM-04 floods, LEH slot 06 nala -- the level never rises; which channel carries water switches at a visible gate (LEH.md seed 13)"
+   },
+   {
+    "index": 2,
+    "shape": "std",
+    "concept": "LEH-07",
+    "name": "Oont",
+    "family": "animal-rise-order-tips-rider",
+    "betrayals": [
+     "rise-order"
+    ],
+    "chain": "A2 stand in the dip; A3 step off before it kneels",
+    "closest": "JAI-08/`safari` -- standing/kneeling order is the danger"
+   },
+   {
+    "index": 3,
+    "shape": "std",
+    "concept": "LEH-08",
+    "name": "Puck",
+    "family": "ricochet-readable-from-first-bounce",
+    "betrayals": [
+     "ricochet"
+    ],
+    "chain": "A2 read the angle; A3 slap shot double bounce",
+    "closest": "kit shots/CHN-04 -- ricochet off banks"
+   },
+   {
+    "index": 4,
+    "shape": "std",
+    "concept": "LEH-04",
+    "name": "Ice Stupa",
+    "family": "day-night-growing-structure",
+    "betrayals": [
+     "day-night-structure"
+    ],
+    "chain": "A2 climb at night between pulses; A3 spring melt fills channel",
+    "closest": "kit rising/RPR-04 -- player picks the time"
+   },
+   {
+    "index": 5,
+    "shape": "HWIK (long 60-90 s)",
+    "concept": "LEH-05",
+    "name": "Magnetic Hill",
+    "family": "drawing-lies-about-slope",
+    "betrayals": [
+     "drawing-lies"
+    ],
+    "chain": "A2 trust the rolling apricot; A3 horizon tilts, stream shows level; tell: apricot rolls",
+    "closest": "`gravity` -- gravity never changes, only the drawing"
+   },
+   {
+    "index": 6,
+    "shape": "long",
+    "concept": "LEH-06",
+    "name": "Nala",
+    "family": "sun-clock-stream-level",
+    "betrayals": [
+     "sun-clock"
+    ],
+    "chain": "A2 cross in the morning; A3 three streams, sun moves",
+    "closest": "TVM-02/BOM-04/tides -- clock is sun height, waiting is the answer (close; last resort swap LEH-11)"
+   },
+   {
+    "index": 7,
+    "shape": "marathon",
+    "concept": "LEH-02",
+    "name": "Saans",
+    "family": "altitude-bands-jump-ceiling",
+    "betrayals": [
+     "altitude-ceiling"
+    ],
+    "chain": "A2 rest at each band's ledge; A3 last band no ledge, rest longer; hidden checkpoints",
+    "closest": "KVT-06/AMR-01 -- ceiling set by where you rested, no meter"
+   },
+   {
+    "index": 8,
+    "shape": "HWIK",
+    "concept": "LEH-09",
+    "name": "Hanle",
+    "family": "platforms-as-missing-stars",
+    "betrayals": [
+     "negative-space"
+    ],
+    "chain": "A2 read gaps in stars; A3 cloud hides stars; tell: black shapes",
+    "closest": "BLR-06/`invisible`/CHN-05 -- platforms known as missing stars"
+   },
+   {
+    "index": 9,
+    "shape": "tough",
+    "concept": "LEH-03",
+    "name": "Chadar",
+    "family": "ice-colour-grades-thickness",
+    "betrayals": [
+     "ice-colour"
+    ],
+    "chain": "A2 read colour; A3 sledge cracks floes, no way back; tough: 60-90 s, 4-5 beats, 3-4 checkpoints, knowable",
+    "closest": "DMN-03/TVM-01 -- three grades by colour plus a current line (OWNS river ice)"
+   },
+   {
+    "index": 10,
+    "shape": "finale",
+    "concept": "LEH-12",
+    "name": "Khardung La",
+    "family": "finale-high-pass",
+    "betrayals": [
+     "high-pass"
+    ],
+    "chain": "callbacks only: thin air, streams, tilt, chadar colours, greetings",
+    "closest": "(own callbacks) -- stars show last ledge"
+   }
+  ],
+  "reserves": [
+   {
+    "concept": "LEH-11",
+    "name": "Sangam",
+    "family": "two-waters-colour-tell",
+    "betrayals": [
+     "two-waters"
+    ],
+    "chain": "A2 wade brown upstream, swim pink",
+    "closest": "KVT-06 -- two kinds of water side by side"
+   },
+   {
+    "concept": "LEH-F1",
+    "name": "Seabuckthorn",
+    "family": "thorn-snag-slows",
+    "betrayals": [
+     "thorn-snag"
+    ],
+    "chain": "A2 pass the thin side (FRESH)",
+    "closest": "RPR-07 -- snag slows"
+   }
+  ]
+ },
+ "TVM": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "TVM-01",
+    "family": "s-soaked-road-rocket-boosters",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "TVM-02",
+    "family": "s-bus-roof-bells-flyover-slabs",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "TVM-03",
+    "family": "s-tea-pour-double-pull",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "TVM-04",
+    "family": "s-coconut-drop-on-stoppers",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "TVM-05",
+    "family": "s-fort-gate-second-portcullis",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "TVM-06",
+    "family": "s-fishing-net-counterweight",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "TVM-07",
+    "family": "s-hairpin-jeeps-mist-pits",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "TVM-08",
+    "family": "s-snake-boat-low-bridges",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "TVM-09",
+    "name": "Kovalam Flags",
+    "family": "flag-strip-shifts",
+    "betrayals": [
+     "strip-shift"
+    ],
+    "idea": "lifeguard flags mark the safe strip; he moves them each wave and the strip you trusted is now the drift",
+    "source": "WV Thiruvananthapuram (Kovalam found)"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "TVM-10",
+    "name": "Dhara",
+    "family": "pendulum-oil-slick",
+    "betrayals": [
+     "offset-swing"
+    ],
+    "idea": "a swinging oil pot drips where it passes the middle; the pot hangs off-centre so the slick is not under it",
+    "source": "WV Thiruvananthapuram (Ayurveda found)"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-tvm-b4",
+   "betrayals": [
+    "B4"
+   ],
+   "idea": "Connemara market: fish-ice slab twitches 16 px, then slides 3 tiles two beats later"
+  },
+  "seventhDeathTheme": "the chaaya-kada chechi counts seven glasses of tea (line concept; Malayalam check)",
+  "reserves": []
+ },
+ "KVT": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "KVT-01",
+    "family": "s-turtle-nest-spread",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "KVT-02",
+    "family": "s-jetty-planks-tide",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "KVT-03",
+    "family": "s-lighthouse-beam-bridge",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "KVT-04",
+    "family": "s-airstrip-tailwind",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "KVT-05",
+    "family": "s-tuna-fly-over",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "KVT-06",
+    "family": "s-reef-air-meter-eels",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "KVT-07",
+    "family": "s-palm-climb-crabs",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "KVT-08",
+    "family": "s-lagoon-run-sandbar-dolphins",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "KVT-09",
+    "name": "Kalpeni Storm Bank",
+    "family": "storm-bank-rubble-slides",
+    "betrayals": [
+     "rubble-slide"
+    ],
+    "idea": "the coral-rubble storm bank slides one tile toward the lagoon with every step; climb it on the diagonal, never straight up",
+    "source": "WP Kalpeni (storm bank of coral debris; source check needed)"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "KVT-10",
+    "name": "Octopus Hole",
+    "family": "camouflage-twin-creature",
+    "betrayals": [
+     "camouflage-twin"
+    ],
+    "idea": "an octopus matches the coral colour; its hole is the safe ledge, the colour that moves is the creature",
+    "source": "WV Lakshadweep (octopus found)"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-kvt-b8",
+   "betrayals": [
+    "B8"
+   ],
+   "idea": "jetty coral step shrinks from 3 tiles to 1 as the tide drops; never under 1 tile"
+  },
+  "seventhDeathTheme": "the boat-board strikes out the seventh departure",
+  "reserves": [],
+  "v3": [
+   {
+    "F": "F496",
+    "family": "slide-is-the-ride",
+    "slot": 9,
+    "stage": "09 Kalpeni Kadalkara (tough)",
+    "decision": "A beach-rock lip too low to leap under (09's `pavizham`) with the next ledge beyond a tap's reach: land SHORT on purpose and let two landings slide you under the lip to the ledge's foot; on the ridge after it, land on the side of the heap you want to travel: the slide is how you move, not only what you avoid.",
+    "source": "B16 (block that pushes: contact is a ride); contested with DIS-06 F453, §5e V1",
+    "place": "Kalpeni's eastern storm bank under the cemented beach-rock lip (KVT.md source check: Wikipedia, 1847 storm debris)",
+    "naive": "tap-jump for the ledge as `pavizham` taught -> hits the lip `spikes`",
+    "fix": "walk off the step to avoid any slide (`kodumudi`'s answer) -> the ledge is out of reach and the slide stops at the lip's foot over the pool: splash",
+    "estSeconds": 14,
+    "kind": "act",
+    "beat": null
+   },
+   {
+    "F": "F497",
+    "family": "place-the-heap-for-the-way-back",
+    "slot": 9,
+    "stage": "09 Kalpeni Kadalkara (tough)",
+    "decision": "The route doubles back along the crest, and every heap you slide stays where it went: on the way out, slide each heap on purpose to where you will need it on the way back; a heap slid off the crest is gone.",
+    "source": "new (09's own physics made persistent)",
+    "place": "the crest of the storm bank above Koomel bay, out along the sea side and back along the lagoon side",
+    "naive": "climb clean, far tile every time (as taught) -> on the way back the heaps sit under the lip, the gap is a full leap into the pool: splash",
+    "fix": "slide every heap as far as it goes -> the third goes off the crest into the lagoon and the way back has no step: fall on to beach rock `kvt-rock`",
+    "estSeconds": 12,
+    "kind": "act",
+    "beat": null
+   }
+  ]
+ },
+ "CHN": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "CHN-01",
+    "family": "s-pongal-pot-boil-over",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "CHN-02",
+    "family": "s-pot-queue-places",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "CHN-03",
+    "family": "s-subway-flood",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "CHN-04",
+    "family": "s-filter-coffee-cricket",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "CHN-05",
+    "family": "s-mirage-exit",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "CHN-06",
+    "family": "s-jasmine-crowd-push",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "CHN-07",
+    "family": "s-nodding-dolls",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "CHN-08",
+    "family": "s-lifting-bridge-train-roof",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "CHN-09",
+    "name": "Murukku Press",
+    "family": "extruded-spiral-strand",
+    "betrayals": [
+     "extrude-set"
+    ],
+    "idea": "a press lays a spiral strand; fresh strand is soft, fried strand holds",
+    "source": "everyday life, no page hit (unverified)"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "CHN-10",
+    "name": "Spencer Escalators",
+    "family": "stair-direction-by-load",
+    "betrayals": [
+     "escalator-flip"
+    ],
+    "idea": "the escalator reverses when more than one shopper steps on",
+    "source": "WV Chennai (Spencer found)"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-chn-b16",
+   "betrayals": [
+    "B16"
+   ],
+   "idea": "sundal cart rolls the promenade: contact is a ride across a 6-tile gap, same sprite as a hazard cart"
+  },
+  "seventhDeathTheme": "the kaapi tumbler is topped up the seventh time",
+  "reserves": []
+ },
+ "PDY": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "PDY-01",
+    "family": "s-kepi-chase",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "PDY-02",
+    "family": "s-rock-beach-waves",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "PDY-03",
+    "family": "s-yellow-wall-jam",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "PDY-04",
+    "family": "s-closing-time-beach-road",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "PDY-05",
+    "family": "s-canal-bridge-opinions",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "PDY-06",
+    "family": "s-paradise-tide",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "PDY-07",
+    "family": "s-surf-school",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "PDY-08",
+    "family": "s-bastille-rooftops",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "PDY-09",
+    "name": "Pétanque",
+    "family": "nearest-to-jack-safe",
+    "betrayals": [
+     "moving-target-tile"
+    ],
+    "idea": "the tile nearest the jack (cochonnet) is safe; a thrown boule moves the jack",
+    "source": "MECHANICS.md lists pétanque as unused"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "PDY-10",
+    "name": "Touch-Me-Not",
+    "family": "fold-on-touch-leaf",
+    "betrayals": [
+     "fold-under-weight"
+    ],
+    "idea": "mimosa leaves fold when stepped on and reopen after a count",
+    "source": "WV Pondicherry (Botanical Garden found)"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-pdy-b20",
+   "betrayals": [
+    "B20"
+   ],
+   "idea": "painted yellow landing square on the Promenade shifts one tile right after you commit to the jump"
+  },
+  "seventhDeathTheme": "the pétanque scoreboard reads seven-nil (French numeral)",
+  "reserves": []
+ },
+ "BLR": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "BLR-01",
+    "family": "s-loading-bridge-99",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "BLR-02",
+    "family": "s-green-man-signal",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "BLR-03",
+    "family": "s-metro-opening-soon",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "BLR-04",
+    "family": "s-silk-board-jam",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "BLR-05",
+    "family": "s-glasshouse-remote",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "BLR-06",
+    "family": "s-palace-powercut-lights",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "BLR-07",
+    "family": "s-hampi-boulder-coracle",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "BLR-08",
+    "family": "s-jog-falls-cascade",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "BLR-09",
+    "name": "Cogwheel Hall",
+    "family": "meshing-cog-teeth",
+    "betrayals": [
+     "mesh-gap"
+    ],
+    "idea": "platforms are the teeth of two meshing gears; cross only at the mesh",
+    "source": "WV Bangalore (Visvesvaraya found)"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "BLR-10",
+    "name": "Kadalekai Parishe",
+    "family": "stirred-hot-sand-reveals",
+    "betrayals": [
+     "sand-roast-reveal"
+    ],
+    "idea": "stirring the roasting sand brings groundnut platforms up; still sand is soft",
+    "source": "WP Kadalekai Parishe (found)"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-blr-b5",
+   "betrayals": [
+    "B5"
+   ],
+   "idea": "Cubbon Park bandstand tiles return on a 1.5 s beat; the fifth flashes outline-only and is real one beat later"
+  },
+  "seventhDeathTheme": "the metro board says next train in seven minutes",
+  "reserves": []
+ },
+ "AMR": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "AMR-01",
+    "family": "s-full-stomach-short-jump",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "AMR-02",
+    "family": "s-chilli-powder-clouds",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "AMR-03",
+    "family": "s-barrage-gates-watch-feet",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "AMR-04",
+    "family": "s-tar-road-roller-heat",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "AMR-05",
+    "family": "s-benz-circle-humps",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "AMR-06",
+    "family": "s-gandikota-rope-bridge",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "AMR-07",
+    "family": "s-belum-cave-dark",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "AMR-08",
+    "family": "s-vizag-ropeway",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "AMR-09",
+    "name": "Kondapalli Lathe",
+    "family": "lathe-shrinks-radius",
+    "betrayals": [
+     "radius-shrink"
+    ],
+    "idea": "the wood turns on a lathe and the chisel thins the platform as it passes; never under 1 tile",
+    "source": "WP Kondapalli Toys (found)"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "AMR-10",
+    "name": "Satavahana Coins",
+    "family": "walk-on-coins",
+    "betrayals": [
+     "B18"
+    ],
+    "idea": "a row of old coins is the floor: walking on them holds, jumping to collect drops you",
+    "source": "WV Amaravati (Satavahana found)"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-amr-b12",
+   "betrayals": [
+    "B12"
+   ],
+   "idea": "chilli sacks tumble in a wave behind you at less than run speed; stopping lets it catch you"
+  },
+  "seventhDeathTheme": "the chilli-heat scale says seven out of ten",
+  "reserves": []
+ },
+ "HYD": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "HYD-01",
+    "family": "s-tour-irani-chai",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "HYD-02",
+    "family": "s-auto-wala-shadow",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "HYD-03",
+    "family": "s-biryani-cooker-bait",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "HYD-04",
+    "family": "s-shy-autos-statue",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "HYD-05",
+    "family": "s-kite-chase-pakka-exit",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "HYD-06",
+    "family": "s-golconda-echo-clap",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "HYD-07",
+    "family": "s-bangle-boxes-shuffle",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "HYD-08",
+    "family": "s-film-set-retake",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "HYD-09",
+    "name": "Irani Chai",
+    "family": "dunked-biscuit-softens-on-count",
+    "betrayals": [
+     "dunk-soft"
+    ],
+    "idea": "Osmania biscuits dunked in the chai are footholds that go soft three beats after they go in; the waiter dunks in a visible order",
+    "source": "WP Hyderabadi cuisine (Irani chai, Osmania biscuit; source check needed)"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "HYD-10",
+    "name": "Salar Jung Clock",
+    "family": "automaton-on-the-hour",
+    "betrayals": [
+     "hourly-figure"
+    ],
+    "idea": "a mechanical figure steps out on the hour and carries you one lane",
+    "source": "WP Salar Jung Museum (clock found)"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-hyd-b19",
+   "betrayals": [
+    "B19"
+   ],
+   "idea": "a trail of Osmania biscuits herds you along a cart floor that moves 150 px/s for 2 s; row ends on solid ground"
+  },
+  "seventhDeathTheme": "the seventh dum on the biryani pot",
+  "reserves": []
+ },
+ "PNJ": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "PNJ-01",
+    "family": "s-ferry-poi-tour",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "PNJ-02",
+    "family": "s-gossip-bubbles-platforms",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "PNJ-03",
+    "family": "s-football-ground-volley-header",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "PNJ-04",
+    "family": "s-siesta-sleepers",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "PNJ-05",
+    "family": "s-toddy-rope-recoil",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "PNJ-06",
+    "family": "s-roulette-colour-floors",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "PNJ-07",
+    "family": "s-parasail-towed",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "PNJ-08",
+    "family": "s-carnival-freeze-floats",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "PNJ-09",
+    "name": "Azulejo Slide",
+    "family": "sliding-tile-floor",
+    "betrayals": [
+     "slide-into-gap"
+    ],
+    "idea": "the tile floor slides into the one empty slot when you step; plan the order",
+    "source": "WV Panaji (azulejo, Fontainhas found)"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "PNJ-10",
+    "name": "Shell Windows",
+    "family": "translucent-pane-reveals",
+    "betrayals": [
+     "see-through-pane"
+    ],
+    "idea": "shell panes show the room behind; only the lit pane has a floor",
+    "source": "WV Panaji (shell found, window detail unverified)"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-pnj-b24",
+   "betrayals": [
+    "B24"
+   ],
+   "idea": "on the ferry ramp Up and Down swap roles for its length: Down jumps, Up lifts a plank; one-frame icon cue"
+  },
+  "seventhDeathTheme": "the church bell strikes seven over the siesta (sete)",
+  "reserves": []
+ },
+ "BOM": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "BOM-01",
+    "family": "s-tour-local-trains",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "BOM-02",
+    "family": "s-dabba-cart-shuffle",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "BOM-03",
+    "family": "s-packed-train-shove",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "BOM-04",
+    "family": "s-monsoon-manholes-treadmills",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "BOM-05",
+    "family": "s-last-train-doors",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "BOM-06",
+    "family": "s-chawl-wall-kicks",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "BOM-07",
+    "family": "s-dabba-carry-holi",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "BOM-08",
+    "family": "s-twin-mirror-mela",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "BOM-09",
+    "name": "Dhobi Ghat",
+    "family": "wet-sheet-curtain-wall",
+    "betrayals": [
+     "wet-sheet-sag"
+    ],
+    "idea": "wet sheets hung on lines sag into walls and bridges as they dry",
+    "source": "WV Mumbai (washing found, Dhobi name not on page)"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "BOM-10",
+    "name": "Colaba Haggle",
+    "family": "walk-away-lowers-height",
+    "betrayals": [
+     "walk-away-lowers"
+    ],
+    "idea": "a stall step sinks the further you walk away, rises when you return",
+    "source": "WV Mumbai (Colaba, haggle found)"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-bom-b23",
+   "betrayals": [
+    "B23"
+   ],
+   "idea": "Marine Drive tetrapod rows flip safe/unsafe at each wave gap; 0.2 s shake is the cue"
+  },
+  "seventhDeathTheme": "the dabba code on the lid reads the seven-fifteen local",
+  "reserves": []
+ },
+ "DMN": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "DMN-01",
+    "family": "s-tour-forts-fish-racks",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "DMN-02",
+    "family": "s-pedal-boat-channel",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "DMN-03",
+    "family": "s-ice-factory-melting",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "DMN-04",
+    "family": "s-plank-hand-to-hand",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "DMN-05",
+    "family": "s-rope-ferry-mash",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "DMN-06",
+    "family": "s-fish-market-weighing",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "DMN-07",
+    "family": "s-warli-painted-path",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "DMN-08",
+    "family": "s-diu-fort-tricks",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "DMN-09",
+    "name": "Dredger",
+    "family": "bucket-chain-lift",
+    "betrayals": [
+     "bucket-lift"
+    ],
+    "idea": "a bucket-chain dredger lifts buckets as platforms; empty ones tip",
+    "source": "page not reachable in check; WP Daman pending"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "DMN-10",
+    "name": "Seaface Binoculars",
+    "family": "coin-binocular-preview",
+    "betrayals": [
+     "preview-window"
+    ],
+    "idea": "a coin binocular shows the platforms ahead for ten seconds",
+    "source": "page not reachable in check; WP Daman pending"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-dmn-b11",
+   "betrayals": [
+    "B11"
+   ],
+   "idea": "a fish-rack spike slides aside 16 px as you jump; second one slides the other way"
+  },
+  "seventhDeathTheme": "the fish scale reads seven kilos",
+  "reserves": []
+ },
+ "GNR": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "GNR-01",
+    "family": "s-tour-sector-peacocks",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "GNR-02",
+    "family": "s-kite-pole-vault",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "GNR-03",
+    "family": "s-stepwell-sunbeams",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "GNR-04",
+    "family": "s-dino-shockwaves",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "GNR-05",
+    "family": "s-lions-stalk-when-back-turned",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "GNR-06",
+    "family": "s-peacock-feather-flaps-mud",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "GNR-07",
+    "family": "s-garba-dance-rings",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "GNR-08",
+    "family": "s-candle-chart-floor",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "GNR-09",
+    "name": "GIFT City Chutes",
+    "family": "full-bin-chute-pulls-down",
+    "betrayals": [
+     "chute-when-full"
+    ],
+    "idea": "bin lids are footholds; when a bin's fill gauge reaches full the vacuum chute pulls the lid and whatever stands on it down the pipe",
+    "source": "WP GIFT City (automated waste collection; source check needed)"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "GNR-10",
+    "name": "Kalol Pumpjack",
+    "family": "nodding-pump-arm",
+    "betrayals": [
+     "pump-arm-beat"
+    ],
+    "idea": "pump arms nod; ride one up, step off before it nods back",
+    "source": "WP Kalol, Gandhinagar (found)"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-gnr-b17",
+   "betrayals": [
+    "B17"
+   ],
+   "idea": "a lawn mower patrols a sector lawn, pauses 1 s, grows and chases at 150 px/s"
+  },
+  "seventhDeathTheme": "the seventh round of the garba circle (saatmo fero)",
+  "reserves": []
+ },
+ "JAI": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "JAI-01",
+    "family": "s-tour-pink-city",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "JAI-02",
+    "family": "s-puppet-strings-beat-hops",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "JAI-03",
+    "family": "s-pot-tower-on-head",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "JAI-04",
+    "family": "s-marble-bowl-swing-yantra",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "JAI-05",
+    "family": "s-bangle-roll-glass",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "JAI-06",
+    "family": "s-dummy-horse-never-stops",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "JAI-07",
+    "family": "s-balloon-wind-layers",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "JAI-08",
+    "family": "s-elephant-ride-amer",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "JAI-09",
+    "name": "Marble Lane",
+    "family": "chip-reveal-steps",
+    "betrayals": [
+     "chip-reveal"
+    ],
+    "idea": "a statue is chipped as you stand; the chip reveals the step",
+    "source": "WV Jaipur (marble found)"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "JAI-10",
+    "name": "Johari Sieve",
+    "family": "sieve-holes-slide",
+    "betrayals": [
+     "sieve-slide"
+    ],
+    "idea": "a gem sieve is shaken; holes slide under you; line the solid bars up",
+    "source": "WV Jaipur (Johari found)"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-jai-b30",
+   "betrayals": [
+    "B30"
+   ],
+   "idea": "arcade arches rearrange after each archway; two seconds of calm on arrival"
+  },
+  "seventhDeathTheme": "the puppeteer pulls the string a seventh time",
+  "reserves": []
+ },
+ "BPL": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "BPL-01",
+    "family": "s-tour-two-lakes",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "BPL-02",
+    "family": "s-skipping-stone-lake",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "BPL-03",
+    "family": "s-painted-real-worlds-stencils",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "BPL-04",
+    "family": "s-gold-thread-you-are-needle",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "BPL-05",
+    "family": "s-bowls-bounce-grows",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "BPL-06",
+    "family": "s-tall-tales-come-true",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "BPL-07",
+    "family": "s-iron-carry-crane-magnets",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "BPL-08",
+    "family": "s-bhojtal-lake",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "BPL-09",
+    "name": "Bhimbetka Shelters",
+    "family": "rock-shelter-refuge-wave",
+    "betrayals": [
+     "B13"
+    ],
+    "idea": "a rockfall wave runs along the cliff; the rock-shelter overhangs are refuges, and running past the last shelter sends a second wave back the other way (B13)",
+    "source": "WP Bhopal / Bhimbetka rock shelters (UNESCO, 45 km from Bhopal; source check needed; no paintings used as floor)"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "BPL-10",
+    "name": "Batua",
+    "family": "drawstring-mouth-closes",
+    "betrayals": [
+     "drawstring-close"
+    ],
+    "idea": "the purse mouth closes on a pull; cross while it is open",
+    "source": "WP Bhopal (batua found)"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-bpl-b10",
+   "betrayals": [
+    "B10"
+   ],
+   "idea": "a lake-mist footbridge is walkable though drawn as a gap (floor FREE part)"
+  },
+  "seventhDeathTheme": "Surma Bhopali tells the story the seventh time and it has grown",
+  "reserves": []
+ },
+ "RPR": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "RPR-01",
+    "family": "s-tour-rice-bowl",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "RPR-02",
+    "family": "s-stilts-mud",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "RPR-03",
+    "family": "s-clock-time-only-when-moving",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "RPR-04",
+    "family": "s-rice-poured-into-hills",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "RPR-05",
+    "family": "s-spinning-top-platforms",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "RPR-06",
+    "family": "s-cocoon-from-standing-still",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "RPR-07",
+    "family": "s-ant-bridges",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "RPR-08",
+    "family": "s-dussehra-chariot-pull",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "RPR-09",
+    "name": "Steel Ladle",
+    "family": "swinging-ladle-crane",
+    "betrayals": [
+     "ladle-swing"
+    ],
+    "idea": "a ladle crane swings its load; the cold side is the step",
+    "source": "WP Raipur (Bhilai found)"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "RPR-10",
+    "name": "Raut Nacha",
+    "family": "raut-sticks-clash-high-low",
+    "betrayals": [
+     "stick-clash"
+    ],
+    "idea": "cowherd dancers clash sticks high on one beat and low on the next; the crossed pair is a bar you stand on only on the high beat",
+    "source": "WP Raut Nacha (source check needed)"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-rpr-b6",
+   "betrayals": [
+    "B6"
+   ],
+   "idea": "rice-mill hopper scaffold: platforms appear every 1.25 s then all drop at 6.5 s; cue 1 s before"
+  },
+  "seventhDeathTheme": "the grain measure is filled the seventh time",
+  "reserves": []
+ },
+ "RNC": {
+  "status": "shipped",
+  "slots": [
+   {
+    "index": 1,
+    "shape": "shipped",
+    "concept": "RNC-01",
+    "family": "s-tour-waterfall-city",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 2,
+    "shape": "shipped",
+    "concept": "RNC-02",
+    "family": "s-dhuska-flipped-scooped",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 3,
+    "shape": "shipped",
+    "concept": "RNC-03",
+    "family": "s-arrow-straw-boss-steps",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 4,
+    "shape": "shipped",
+    "concept": "RNC-04",
+    "family": "s-lightning-rugra-lifts",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 5,
+    "shape": "shipped",
+    "concept": "RNC-05",
+    "family": "s-chhau-masks-roles",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 6,
+    "shape": "shipped",
+    "concept": "RNC-06",
+    "family": "s-lost-wax-hollow-window",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 7,
+    "shape": "shipped",
+    "concept": "RNC-07",
+    "family": "s-long-fall-kills-rule",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 8,
+    "shape": "shipped",
+    "concept": "RNC-08",
+    "family": "s-storm-over-falls-tallest",
+    "betrayals": [
+     "shipped"
+    ]
+   },
+   {
+    "index": 9,
+    "shape": "encore-tough",
+    "concept": "RNC-09",
+    "name": "Lac (Namkum)",
+    "family": "lac-sheet-softens-near-fire",
+    "betrayals": [
+     "lac-soft"
+    ],
+    "idea": "lac sticks laid as a bridge bend under you near the brazier and hold hard away from it; the brazier is carried along the bridge",
+    "source": "WP Ranchi (lac research institute at Namkum; source check needed)"
+   },
+   {
+    "index": 10,
+    "shape": "encore-finale",
+    "concept": "RNC-10",
+    "name": "Sal Plates",
+    "family": "leaf-plates-pressed-shapes",
+    "betrayals": [
+     "press-shape"
+    ],
+    "idea": "leaf plates are pressed into bowls; bowls are the steps",
+    "source": "everyday life (unverified)"
+   }
+  ],
+  "tourNew": {
+   "family": "tour-rnc-b40",
+   "betrayals": [
+    "B40"
+   ],
+   "idea": "a hidden item appears only after you fall into the gap on purpose (optional)"
+  },
+  "seventhDeathTheme": "the seventh rock on the waterfall path is counted",
+  "reserves": []
+ },
+ "rules": {
+  "version": 3,
+  "ending": "Every stage declares meta.ending: a kebab-case key for its door-ending idea, prefixed with the city code (e.g. 'pat-plate-gap'). The idea must be new against MECHANICS.md's 'Door endings' list and the advice lines in src/game/levels/endings*.ts (an idea counts as used under a new name) and against every other city's endings. The allocation does not assign endings; the builder picks one and greps first.",
+  "act": "Every act id is '<city><slot>-<word>' (e.g. 'pat07-tempos'), new against MECHANICS.md's Acts list and every other city; one per id, never reused.",
+  "slot09": "Slot 09 shape 'tough': 60-90 s, 4-5 beats, 3-4 checkpoints, A2 and A3 in every beat, knowable (TROLL-BIBLE E).",
+  "hwik05": "A HWIK at slot 05 is also the long stage: 60-90 s, 3-4 checkpoints; shape reads 'HWIK (long 60-90 s)'.",
+  "ids": "'CITY slot NN (concept)' names a stage; the concept id is the bible id and differs from the slot number in most cities.",
+  "v3": "Per-city `v3` lists are act-level assignments for short stages (DECISION, source, place, NAIVE/FIX, est. seconds); families F447-F494, one owner each. DIS slot 06 is relabelled silt-behind-the-spur (v2 label kept in v2family). Finales get no new families (callbacks only). Registry of every built decision: DECISIONS.md.",
+  "v3Cuts": "DECISIONS.md section 5 names the in-flight acts to cut or recast (S1-S12, I1-I8, W1-W9)."
+ }
+}

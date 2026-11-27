@@ -1,0 +1,3 @@
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+ Test Files  3 failed | 21 passed | 15 skipped (39)
+      Tests  3 failed | 1876 passed | 22 skipped (1901)

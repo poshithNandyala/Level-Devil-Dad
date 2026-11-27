@@ -1,0 +1,77 @@
+{
+ "code": "PNJ",
+ "moved": [
+  "src/render/backdrops-west.ts:panaji -> src/game/cities/pnj/backdrop.ts",
+  "src/game/levels/pnj.ts -> src/game/cities/pnj/levels.ts",
+  "src/game/entities/goa.ts -> src/game/cities/pnj/entities.ts"
+ ],
+ "removed": [
+  "src/game/cities.ts:LINES.PNJ",
+  "src/game/cities.ts:CHAPTERS PNJ city/hello/famous (filled by install)",
+  "src/game/levels/chunks.ts:SKINS.PNJ",
+  "src/game/levels/tour.ts:COURSES.PNJ",
+  "src/app/citylines.ts:CITY_LINE.PNJ",
+  "src/render/renderer.ts:GRADES.PNJ",
+  "src/render/art/tiles.ts:CAP.PNJ",
+  "src/audio/audio.ts:MUSIC.PNJ",
+  "src/render/theme.ts:THEMES.PNJ",
+  "src/render/theme.ts:CITY_ORDER PNJ (install appends it)",
+  "src/game/entities/props.ts:CAUSE_LINES.gossip",
+  "src/game/entities/props.ts:CAUSE_LINES.woke",
+  "src/game/entities/props.ts:CAUSE_LINES.tangled",
+  "src/game/entities/props.ts:CAUSE_LINES.mast",
+  "src/game/entities/props.ts:CAUSE_LINES.dunked",
+  "src/game/entities/props.ts:CAUSE_LINES.momo",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.poder (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.penalty (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.clockhand (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.hammock (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.gangway (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.sandcastle (+ WestEndingKind)",
+  "src/game/levels/endings3.ts:WEST_ENDINGS.decree (+ WestEndingKind)",
+  "src/render/art/things.ts:SIZE/BaseThingKind/drawThing case poi"
+ ],
+ "importers": [
+  "src/game/levels/endings3.ts",
+  "src/game/levels/index.ts",
+  "tests/west.ts"
+ ],
+ "inv": {
+  "own": [
+   "src/game/levels/pnj.ts",
+   "src/game/entities/goa.ts"
+  ],
+  "cause": [
+   "gossip",
+   "woke",
+   "tangled",
+   "mast",
+   "dunked",
+   "momo"
+  ],
+  "causeShared": [
+   "splash<app/app.ts,game/cities/amr/levels.ts,game/cities/blr/levels.ts,game/cities/chn/levels.ts,game/cities/kvt/endings.ts,game/cities/kvt/entities.ts,game/cities/kvt/levels.ts,game/cities/pdy/levels.ts,game/cities/rnc/entities.ts,game/cities/tvm/entities.ts,game/cities/tvm/levels.ts,game/entities/abilities.ts,game/entities/daman.ts,game/entities/tamil.ts,game/entities/traps.ts,game/levels/acts.ts,game/levels/bom.ts,game/levels/chunks.ts,game/levels/dmn.ts,game/levels/endings2.ts,game/levels/endings3.ts,game/levels/gnr.ts,game/levels/kit.ts,game/player.ts",
+   "far<game/levels/endings3.ts,ui/mapview.ts"
+  ],
+  "ending": [
+   "poder",
+   "penalty",
+   "clockhand",
+   "hammock",
+   "gangway",
+   "sandcastle",
+   "decree"
+  ],
+  "endingShared": [
+   "lamp<game/cities/blr/levels.ts,game/cities/chn/levels.ts,game/cities/hyd/levels.ts,game/cities/pdy/levels.ts,game/cities/rnc/levels.ts,game/levels/bom.ts,game/levels/bpl.ts,game/levels/dmn.ts,game/levels/gnr.ts,game/levels/jai.ts,game/levels/rpr.ts"
+  ],
+  "thing": [
+   "poi"
+  ],
+  "thingShared": [
+   "scooter<game/cities/blr/levels.ts,game/cities/blr/skin.ts,game/cities/chn/skin.ts,game/cities/hyd/levels.ts,game/cities/hyd/skin.ts,game/cities/pdy/levels.ts,game/cities/rnc/skin.ts,game/cities/tvm/levels.ts,game/entities/traffic.ts,game/levels/chunks.ts,render/art/vehicles.ts",
+   "dog<game/cities/amr/skin.ts,game/cities/blr/skin.ts,game/cities/chn/skin.ts,game/cities/hyd/skin.ts,game/cities/pdy/skin.ts,game/cities/rnc/skin.ts,game/cities/tvm/levels.ts,game/cities/tvm/skin.ts,game/levels/chunks.ts",
+   "jetty<game/cities/kvt/levels.ts,game/levels/dmn.ts,game/levels/endings3.ts"
+  ]
+ }
+}

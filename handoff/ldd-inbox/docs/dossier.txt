@@ -1,0 +1,2028 @@
+RESEARCH + ORIGINAL DESIGN BRIEF
+Level Devil:
+what to learn,
+what to build next
+A source-backed benchmark for a wordless dad platformer set in
+Indian cities, with a path to the wider world.
+Prepared for Poshith and the development team • 23 November 2026
+The design thesis
+Make the player think “I understand what happened; one more try.” Protect that feeling with short
+routes, dependable input, readable surprises and an affectionate comic lead. The setting must change
+the puzzles, not only the backgrounds.
+Decision
+Recommendation
+Initial product
+One city, 15 original stages, three mechanical families, three buttons. Validate the loop before
+building a world map.
+Competitive edge
+Clearer touch input, less repeated travel, dependable saves, restrained ads and a memorable
+dad character.
+Naming
+Choose an independent name. “Level Devil Dad” presents substantial brand-confusion and
+store-policy risk; see the legal assessment.
+Evidence standard
+Use sourced facts for the benchmark and explicitly proposed values for the new game. No
+invented trigger coordinates, death averages or retention figures.
+Evidence limit: forty archived layouts and a public reconstruction’s scene data, room scripts and C
+controller were inspected. That adds specific trigger coordinates and timings for an older 80-room
+sequence. It does not establish identical behaviour in today’s official mobile build. Live game/video
+playback was unavailable here.
+The first-40 cards distinguish reconstructed mechanics from inferred player reactions. Typical deaths,
+actual second/third-attempt behaviour, current input latency and retention remain unverified. No original
+game assets or implementation code are included.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+1 / 39
+
+READING MAP
+Find the answer by question
+ Question
+Where to look
+Pages
+Evidence
+Scope, version differences and limitations
+3
+1
+Forty individual stage cards; later-stage examples
+7–15
+2
+Trap taxonomy, frequency and combinations
+5–6
+3
+Door structure, pacing, timing proxies and skip
+4
+4
+Controller, jump, death, restart and phone targets
+16
+5
+Look, palette, UI, sound and clip readability
+17
+6
+Retry psychology, humour and review complaints
+18
+7
+Installs, organic discovery, ads and missing metrics
+19
+8
+Comparison with the five requested references
+20
+9
+Trademark status and “Level Devil Dad” risk
+21
+10a
+Twenty numerical design rules
+22–23
+10b
+A scored level acceptance checklist
+24
+10c
+Ten original Indian-city concepts
+25–29
+10d
+Premium phone art and production criteria
+30
+Next step
+Lean pilot and measurement protocol
+31–32
+Sources
+32 source entries plus 40 direct image links
+33–37
+Coordinates
+Spawn positions, trigger anchors and trigger scales
+38–39
+Use three different kinds of numbers correctly
+Published numbers include store buckets and leaderboards. Reconstruction values come from an
+independent port and need current-build validation. Calculated numbers include averages and the
+jump formula. Proposed numbers include the new game’s targets. Keep these categories separate.
+The PDF outline provides section bookmarks. Source URLs and the forty image references are clickable.
+The report is designed to be used alongside a prototype, with each unmeasured reference claim left open
+until a controlled capture resolves it.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+2 / 39
+
+READ THIS BEFORE USING THE NUMBERS
+What this report establishes
+ Request
+Evidence available
+Remaining gap
+First 40 stages
+Forty layouts; reconstructed trap scripts,
+coordinates and timings; route cues; inferred
+reactions.
+Validation against an official fixed build and
+observed attempt sequences.
+Trap frequency
+Actor-presence census for the reconstructed first
+40 and original 80 rooms.
+Runtime activation counts, dynamic spawns and
+a census of current versions.
+Pacing
+Door structure, public speedrun records and
+2024 chapter spans.
+Novice completion distributions, stage-only
+timings and abandonment rates.
+Game feel
+Independent C reconstruction supplies controller,
+collision, death and shake values.
+Whether these match current official physics;
+real phone latency and restart measurements.
+Business
+Store download bucket, ratings, developer
+self-report and analyst estimates.
+Audited revenue, acquisition mix, retention
+cohorts, ad frequency and lifetime value.
+Naming
+Documented US registration; platform policies;
+actual enforcement example.
+Complete current international clearance and an
+India register result.
+Original game
+20 numerical rules, scored checklist, 10
+concepts, physics starter and test plan.
+Prototype measurements and evidence that
+these proposed targets outperform the
+reference.
+Evidence labels used throughout
+Verified: established by a primary source. Observed: visible in inspected images. R / reconstructed:
+checked in a third-party port’s files, not an official binary. Reported: a player/source claim. Hypothesis:
+an interpretation to test. Proposed: a new-game specification.
+Version discipline
+The reference game is Adam Corey / Unept’s platformer, released in December 2023; Poki publishes the
+web version. [4][12]
+“Level” can mean a single room, a five-stage door or a whole world. Here, stage means one room and
+door means its group. The first forty are original-world doors 1–8, as indexed in the 2024 walkthrough.
+The screenshot archive has no dependable build stamp. Modern mobile, web and Steam updates must
+not be assumed identical. [7][8]
+Current mobile listings advertise 240+ levels. [2][3] Poki’s page gives inconsistent totals. Use dated build
+inventories rather than treating marketing totals as an exact census. [1]
+How to read the stage cards
+R uses 16 px tiles, but a normal 7 px-wide collision body: one tile is not one character width. Δx is
+spawn-to-trigger-anchor displacement, not distance until contact. Triggers fire on overlap. A1/A2/A3
+are hypotheses; typical deaths remain unavailable. The coordinate appendix explains bounds and
+scale. [28–31]
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+3 / 39
+
+WHAT CAN BE QUANTIFIED
+Structure and pacing
+The publisher describes three worlds—Level Devil, Level Devil-er and Level Devil-est—with themed
+five-stage doors and longer final sequences combining tricks. A skip appears after repeated failures; an
+exact current threshold is not specified. [1]
+Door / first 40
+Best listed door time¹
+Time ÷ 5²
+2024 chapter span³
+1. Pits / 1–5
+25.733 s
+5.15 s
+28 s
+2. Spikes / 6–10
+28.417 s
+5.68 s
+43 s
+3. Push / 11–15
+29.950 s
+5.99 s
+38 s
+4. Coins / 16–20
+30.833 s
+6.17 s
+39 s
+5. Controls / 21–25
+28.983 s
+5.80 s
+37 s
+6. Platforms / 26–30
+40.583 s
+8.12 s
+51 s
+7. Springs / 31–35
+37.217 s
+7.44 s
+47 s
+8. Warps / 36–40
+43.667 s
+8.73 s
+59 s
+¹ No Major Glitches records displayed at research time; expert category timing, not typical play. ² Arithmetic per-stage
+equivalent, not five individually measured room durations. ³ Differences between YouTube chapter timestamps, including
+transitions and possibly editing; playback was not observed. These columns are not directly comparable performance tests.
+[6][7]
+The eight chapter spans total 342 seconds, or 8.55 seconds per stage as a video-duration proxy. That
+supports designing compact rooms. It does not tell us whether a beginner needs ten seconds or ten
+minutes to solve one. [7]
+A useful interpretation of the curve
+Early progression increases what the player must distrust: floor geometry → visible hazards → moving
+supports → reward symbols → controls → time-dependent platforms → launch impulses → spatial
+connections. That is a rise in reasoning burden as much as physical precision. This is an analytical
+reading of the sequence, not a measured difficulty score.
+A five-stage pattern to borrow as a method
+Stage
+Proposed role in an original door
+1
+Introduce a comprehensible interaction and a small surprise.
+2
+Move the same interaction to a new location; expose the lazy repetition.
+3
+Make the previous successful response insufficient for one visible reason.
+4
+Change the useful action: wait, retreat, walk or use the obstacle.
+5
+Combine two learned rules in a short capstone, then allow a clean celebration.
+This is a proposed template, not the actual script of every door. Vary the position of the punchline.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+4 / 39
+
+A TAXONOMY, NOT AN EXHAUSTIVE MEASURED CENSUS
+Trap taxonomy: classify the rule being
+broken
+ Family
+Documented or visible form
+What the player learns to question
+Geometry removal
+Floor openings; disappearing support. [4]
+Whether a surface remains there after
+commitment.
+Geometry motion
+Platforms translate, rise, fall or reveal
+themselves. [8]
+Whether a landing target stays usable.
+Pushing geometry
+A block or wall moves the player. [8][27]
+Whether contact is a threat or transport.
+Reactive spikes
+Visible hazards move or appear in a changing
+route. [4]
+Whether jumping over the current position is
+sufficient.
+Reversing hazards
+Saws change direction. [4]
+Whether a learned motion pattern persists.
+Reward semantics
+Coins can act as collectibles or solid crossing
+geometry. [4]
+Whether a familiar icon has a familiar
+collision rule.
+Input remapping
+Left/right inversion, including changes within a
+room. [1]
+Whether the same button still means the
+same motion.
+Jump / physics
+change
+Unusually high or repeated jumps; gravity
+reversal. [1][4]
+Whether a familiar input produces a familiar
+arc.
+Launch devices
+Spring-shaped supports and routes. [8]
+Whether using every apparent helper is wise.
+Teleport topology
+Fatal destinations and portal routes. [4][8]
+Whether apparent proximity implies useful
+connectivity.
+Goal betrayal
+The destination itself moves or becomes
+dangerous. [4][27]
+Whether reaching the final object guarantees
+safety.
+Projectile pursuit
+Tracking bullets and sideways bombs in later
+content. [1]
+Whether standing still or moving away
+remains safe.
+Ability failure
+A later jetpack can stop working. [1]
+Whether a newly granted capability is
+dependable.
+Shared agency
+Later clone-control situations. [1]
+Whether one safe action is safe for every
+controlled body.
+Enemy / glitch rules
+Later enemies and glitch-themed content. [1]
+Whether entities and displayed geometry
+obey prior conventions.
+Other named
+systems
+Scale, wraparound, levers, crates, rhythm and
+arcade categories exist. [6]
+Their labels alone do not establish all exact
+trap behaviours.
+Do not count “spike,” “saw” and “bomb” as three wholly different ideas if they all implement the same
+proximity-triggered interception. For production, record trigger → transformation → player decision
+→ resolution. This exposes mechanical repetition beneath different art.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+5 / 39
+
+A COMPUTED CENSUS OF THE RECONSTRUCTION / NOT MODERN MOBILE TELEMETRY
+Frequency, combination and comic escalation
+Each early named theme occupies 5/40 rooms (12.5%). The overlapping actor census below is more
+informative: it counts rooms containing each authored actor type and the number of those actors. Static
+floor tiles, script-created actors and repeated activations are excluded. Unused actors may be included.
+[7][29]
+Actor family
+First 40 rooms
+Original 80 rooms
+Movable/fake blocks
+27/40 rooms; 70 actors
+53/80 rooms; 179 actors
+Spikes
+14/40 rooms; 120 actors
+33/80 rooms; 311 actors
+Saws
+0/40 rooms; 0 actors
+15/80 rooms; 52 actors
+Springs
+5/40 rooms; 16 actors
+11/80 rooms; 24 actors
+Coins
+4/40 rooms; 49 actors
+5/80 rooms; 57 actors
+Bad coins
+1/40 rooms; 13 actors
+2/80 rooms; 14 actors
+Warps
+5/40 rooms; 23 actors
+7/80 rooms; 26 actors
+Buttons
+0/40 rooms; 0 actors
+15/80 rooms; 42 actors
+One-way tiles
+0/40 rooms; 0 actors
+2/80 rooms; 35 actors
+Gravity spikes
+0/40 rooms; 0 actors
+1/80 rooms; 2 actors
+Death squares
+2/40 rooms; 3 actors
+3/80 rooms; 9 actors
+Triggers
+37/40 rooms; 95 actors
+77/80 rooms; 219 actors
+How combinations increase depth
+A moving support asks when?; a deceptive portal asks where?; an input reversal asks which button?
+Teach each separately before combining two. The census shows how broad that vocabulary becomes:
+saws and buttons are absent from the first forty authored scenes, yet each appears in fifteen of the
+original eighty.
+Controls 5 repeatedly changes a learned mapping. Platforms 4 undermines the learned return cadence
+with a non-solid preview. These reconstructed examples demonstrate counter-adaptation: the player’s
+previous correct inference becomes incomplete. [30]
+Proposed 15-stage content budget
+Use three primary families, five stages each. In each family: two single-rule rooms, two reversals, one
+two-rule capstone. Across all fifteen, allow at most three capstones with two active rules at once. Do not
+enforce a quota of deaths or a mandatory failure on every room.
+For a real frequency study, count both stage presence and event instances. A room with six moving
+spikes is one “moving-hazard stage” but may contain six entities and only one shared trigger. Those are
+three different denominators.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+6 / 39
+
+FIRST 40 / EVIDENCE AUDIT
+Door 1: Pits — stages 1–5
+R: mechanics/timing from reconstructed scripts [30], anchors from scene data [29]. Screen = archived still. A1/A2/A3 =
+inferred, not observed; deaths = unknown. Route cues are reported [5], with controller correction from R where noted.
+01 · Pits 1 [L01]
+Screen / A1: A plain horizontal passage; a door stands at the right end. Walk directly to the visible goal.
+Trap [R]: T1 drops the fake floor at 200 px/s; velocity is stopped 2.00 s later. Location: T1 anchor (320,144);
+Δx=+11 tiles from spawn.
+A2/A3 hypothesis: A2 jumps before the floor falls. A3 adjusts the landing. No additional counter-trap is
+established in this script. Solution cue: Jump gaps.
+02 · Pits 2 [L02]
+Screen / A1: Another long, nearly empty passage, again ending at a right-hand door. Reuse the first room’s
+successful rhythm.
+Trap [R]: T1 drops the first fake strip at 100 px/s; T2 drops the next at 200 px/s. Each stops after 2.00 s. Location:
+T1 anchor (256,144); Δx=+7 tiles from spawn.
+A2/A3 hypothesis: A2 clears the first strip but trusts the second. A3 treats both landing strips as temporary.
+Solution cue: Jump gaps.
+03 · Pits 3 [L03]
+Screen / A1: A short room with a narrow vertical shaft just before the exit ledge. Clear the visible shaft with a
+normal jump.
+Trap [R]: T1 moves both broad fake-floor masses 64 px left over 0.50 s. The failure is lateral, not a vertical
+collapse. Location: T1 anchor (272,144); Δx=+6 tiles from spawn.
+A2/A3 hypothesis: A2 waits for a vertical collapse; lateral movement changes the gap instead. A3 plans around
+the shifted floor. Solution cue: Jump gaps.
+04 · Pits 4 [L04]
+Screen / A1: A vertical opening lies near the left side; a long floor leads right to the door. Get past the early
+opening and continue right.
+Trap [R]: T1 nudges the broad floor 16 px right in 0.10 s. T2 then shifts it another 192 px over 1.70 s. Location:
+T1 anchor (160,144); Δx=+1 tiles from spawn.
+A2/A3 hypothesis: A2 waits out the small twitch, then meets the larger second shift. A3 accounts for both events.
+Solution cue: Jump gaps.
+05 · Pits 5 [L05]
+Screen / A1: An L-shaped left-hand drop joins a long right-hand shelf and exit. Stay on the long shelf and head for
+the door.
+Trap [R]: T1 slides the main floor 240 px right over 2.00 s; then it fires event 2, which shifts the other section 16
+px left in 0.10 s. Location: T1 anchor (176,144); Δx=+4 tiles from spawn.
+A2/A3 hypothesis: A2 follows the main floor but misses the delayed secondary shift. A3 plans the final crossing
+separately. Solution cue: Jump gaps.
+Times are relative to the named event unless “room start” is specified. Location offsets are signed, in tiles. Full authored
+trigger coordinates/scales are in the appendix; they do not prove a current official collision threshold.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+7 / 39
+
+FIRST 40 / EVIDENCE AUDIT
+Door 2: Spikes — stages 6–10
+R: mechanics/timing from reconstructed scripts [30], anchors from scene data [29]. Screen = archived still. A1/A2/A3 =
+inferred, not observed; deaths = unknown. Route cues are reported [5], with controller correction from R where noted.
+06 · Spikes 1 [L06]
+Screen / A1: A two-tier hooked passage descends at the right. Floor spikes and the exit are below, to the left. Drop
+down, then head toward the exit.
+Trap [R]: T1 shifts the spike initially at x=240 by 16 px left over 0.25 s. Location: T1 anchor (248,132); Δx=-3.5
+tiles from spawn.
+A2/A3 hypothesis: A2 lands beside the old spike position. A3 allows clearance for its revealed position. Solution
+cue: Descend; reverse left.
+07 · Spikes 2 [L07]
+Screen / A1: Three separated spike clusters occupy a flat corridor with a right-hand exit. Jump over each visible
+cluster.
+Trap [R]: T1 shifts one spike 16 px left in 0.32 s; T2 shifts another 16 px right in 0.32 s. Location: T1 anchor
+(240,120); Δx=+9 tiles from spawn.
+A2/A3 hypothesis: A2 compensates for the first leftward move; the second moves the other way. A3 adjusts both
+landings. Solution cue: Jump right.
+08 · Spikes 3 [L08]
+Screen / A1: Narrow vertical channels between hanging columns lead to floor spikes and a right-hand exit alcove.
+Descend through the channels and run into the alcove.
+Trap [R]: Two T1 actors can each move the first spike 32 px left in 0.25 s. T2 sends both main spikes 400 px left
+over 7.00 s. Location: T1 anchor (240,48); Δx=-1 tiles from spawn.
+A2/A3 hypothesis: A2 waits after the first shift; another trigger and the later sweep invalidate that pause. A3
+keeps the exit approach short. Solution cue: Jump at exit alcove.
+09 · Spikes 4 [L09]
+Screen / A1: A stair-shaped valley drops from the left and rises toward the right-hand door. Run down and jump
+back up the stairs.
+Trap [R]: T1 creates a wave: each spike rises 16 px after x/120 seconds, where x is that spike’s scene coordinate.
+Location: T1 anchor (304,168); Δx=+12 tiles from spawn.
+A2/A3 hypothesis: A2 pauses to inspect the wave; later steps become dangerous. A3 uses a deliberate
+continuous cadence. Solution cue: Chain staircase jumps.
+10 · Spikes 5 [L10]
+Screen / A1: A long low corridor has its door at the left and a small floor recess near the right. Run left toward the
+goal.
+Trap [R]: T1 raises each spike after x/150 seconds and retracts it 0.40 s later. T2 starts a reverse wave after
+(528−x)/250 seconds. Location: T1 anchor (320,128); Δx=-7 tiles from spawn.
+A2/A3 hypothesis: A2 keeps fleeing left and can activate another wave. A3 uses the visible recess as a refuge.
+Solution cue: Trigger wave; shelter; exit.
+Times are relative to the named event unless “room start” is specified. Location offsets are signed, in tiles. Full authored
+trigger coordinates/scales are in the appendix; they do not prove a current official collision threshold.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+8 / 39
+
+FIRST 40 / EVIDENCE AUDIT
+Door 3: Push — stages 11–15
+R: mechanics/timing from reconstructed scripts [30], anchors from scene data [29]. Screen = archived still. A1/A2/A3 =
+inferred, not observed; deaths = unknown. Route cues are reported [5], with controller correction from R where noted.
+11 · Push 1 [L11]
+Screen / A1: A horizontal route is broken by a narrow central shaft; the exit is to the right. Jump the central break.
+Trap [R]: T1 raises the block 32 px/0.25 s; at +1.00 s it moves left 32 px/0.25 s; at +1.50 s it drops 32 px/0.50 s.
+Location: T1 anchor (272,144); Δx=+8 tiles from spawn.
+A2/A3 hypothesis: A2 retreats from the rising block. A3 treats its revealed path as a usable part of the route.
+Solution cue: Bait block; retreat; leap.
+12 · Push 2 [L12]
+Screen / A1: A largely empty rectangular passage ends at a right-hand door. Run through the uncluttered route.
+Trap [R]: T1 drops the large slab at 150 px/s. T2 moves the narrow block up 16, right 32, down 32 px in 0.25, 0.25,
+0.50 s. Location: T1 anchor (272,144); Δx=+8 tiles from spawn.
+A2/A3 hypothesis: A2 waits for a complicated block solution learned earlier. A3 tests a committed run and jump.
+Solution cue: Jump right.
+13 · Push 3 [L13]
+Screen / A1: A small central island sits between two deep gaps, with the exit across the right gap. Use the island
+as a normal stepping stone.
+Trap [R]: T1 raises the block 16 px/0.25 s, then moves it left 32 px/0.25 s. T2 sends it right 176 px/0.75 s.
+Location: T1 anchor (160,144); Δx=+1 tiles from spawn.
+A2/A3 hypothesis: A2 clears the initial shove but meets the long rightward sweep. A3 uses that movement for
+progress. Solution cue: Clear block; ride push.
+14 · Push 4 [L14]
+Screen / A1: A broad gap separates the left ledge from a slightly higher right-hand exit platform. Attempt a
+full-distance leap.
+Trap [R]: T1 lifts a support 16 px/0.16 s; at +0.75 s it moves right 32 px/0.32 s; at +1.75 s the floor retreats. T2
+moves a second support left 32 px/0.43 s. Location: T1 anchor (192,176); Δx=+3 tiles from spawn.
+A2/A3 hypothesis: A2 avoids the moving support and remains stranded. A3 lands on it and rides its useful
+motion. Solution cue: Land on moving block.
+15 · Push 5 [L15]
+Screen / A1: The exit is at the far left, with a shaft near it; the character is far to the right. Move left toward the
+nearby-looking goal route.
+Trap [R]: After T1 +0.50 s, the floor shifts 256 px left in four accelerating segments, ending near +3.03 s. T2
+raises the plug 32 px/0.32 s and lowers it at +0.50 s. Location: T1 anchor (352,136); Δx=-4 tiles from spawn.
+A2/A3 hypothesis: A2 follows the moving floor too far toward danger. A3 stages the final edge jump deliberately.
+Solution cue: Move left; edge jump.
+Times are relative to the named event unless “room start” is specified. Location offsets are signed, in tiles. Full authored
+trigger coordinates/scales are in the appendix; they do not prove a current official collision threshold.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+9 / 39
+
+FIRST 40 / EVIDENCE AUDIT
+Door 4: Coins — stages 16–20
+R: mechanics/timing from reconstructed scripts [30], anchors from scene data [29]. Screen = archived still. A1/A2/A3 =
+inferred, not observed; deaths = unknown. Route cues are reported [5], with controller correction from R where noted.
+16 · Coins 1 [L16]
+Screen / A1: A neat row of coins sits above a flat floor leading to the right-hand exit. Collect the coins on the way.
+Trap [R]: T1 moves the fake floor right at 150 px/s for 2.00 s. The coin trail encourages commitment onto that
+moving floor. Location: T1 anchor (304,104); Δx=+11 tiles from spawn.
+A2/A3 hypothesis: A2 pauses for coins and loses the floor. A3 keeps traversing while the support moves.
+Solution cue: Run and jump.
+17 · Coins 2 [L17]
+Screen / A1: Coins trace a line across a break in the floor. Follow the implied route through the coins.
+Trap [R]: No scripted betrayal: an invisible 112 px-wide support is present from the start. The apparent gap is
+traversable. Location: Start/input event; no T1 location actor.
+A2/A3 hypothesis: A2 attempts an unnecessary long leap. A3 discovers the invisible bridge. The lesson is a safe
+reversal, not a second kill. Solution cue: Run and jump.
+18 · Coins 3 [L18]
+Screen / A1: A low coin row is interrupted by one noticeably higher coin. Jump for the raised reward.
+Trap [R]: T1 removes its own trigger actors and drops the broad floor at 200 px/s for 2.00 s. The second authored
+trigger has no handler here. Location: T1 anchor (272,75); Δx=+9 tiles from spawn.
+A2/A3 hypothesis: A2 trusts the bridge lesson from Coins 2 and dwells. A3 crosses this falling version promptly.
+Solution cue: Run and jump.
+19 · Coins 4 [L19]
+Screen / A1: Three widely spaced coins hang over an open gap. Treat the coins as a suggested jump arc.
+Trap [R]: Fake supports are hidden at start. T1 shifts one coin 16 px right over 0.10 s, undermining it as a
+stationary route marker. Location: T1 anchor (282,80); Δx=+12.625 tiles from spawn.
+A2/A3 hypothesis: A2 trusts the displaced coin as a fixed marker. A3 distinguishes coin location from actual
+support. Solution cue: Run and jump.
+20 · Coins 5 [L20]
+Screen / A1: Repeated stair-like teeth carry coin trails; the door is low beyond the final steps. Collect along the
+repeating staircase pattern.
+Trap [R]: T1 accelerates bad-coin actors right at 90 px/s². Acceleration ends after 6.667 s; this does not stop their
+velocity. Location: T1 anchor (304,80); Δx=+14 tiles from spawn.
+A2/A3 hypothesis: A2 waits to inspect, allowing hazards to accelerate. A3 starts the staircase route immediately.
+Solution cue: Chain stairs; drop to exit.
+Times are relative to the named event unless “room start” is specified. Location offsets are signed, in tiles. Full authored
+trigger coordinates/scales are in the appendix; they do not prove a current official collision threshold.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+10 / 39
+
+FIRST 40 / EVIDENCE AUDIT
+Door 5: Controls — stages 21–25
+R: mechanics/timing from reconstructed scripts [30], anchors from scene data [29]. Screen = archived still. A1/A2/A3 =
+inferred, not observed; deaths = unknown. Route cues are reported [5], with controller correction from R where noted.
+21 · Controls 1 [L21]
+Screen / A1: The door is on a narrow isolated pillar. The screenshot already shows the character near the upper
+route. Press toward the door using the usual mapping.
+Trap [R]: Left/right reverse 0.05 s after room start. There is no location trigger for the inversion. Location:
+Start/input event; no T1 location actor.
+A2/A3 hypothesis: A2 consciously reverses the directional input. A3 checks the mapping before committing; no
+extra trap is established. Solution cue: Use reversed directions.
+22 · Controls 2 [L22]
+Screen / A1: A long raised ledge holds spikes; the exit is left of the character. Travel left and jump over the
+hazards.
+Trap [R]: Left/right reverse at 0.05 s. T1 also moves a spike 16 px right over 0.16 s. Location: T1 anchor
+(376,120); Δx=-2.5 tiles from spawn.
+A2/A3 hypothesis: A2 corrects the mapping but trusts a spike’s old position. A3 leaves space for its shift.
+Solution cue: Reverse; jump spikes.
+23 · Controls 3 [L23]
+Screen / A1: A raised corridor carries three spike groups and a right-hand exit. Jump over the spikes as usual.
+Trap [R]: At 0.05 s, directions reverse and Down becomes jump. Up throws spikes upward. T1 reveals a hidden
+spike. Location: T1 anchor (344,112); Δx=+15.5 tiles from spawn.
+A2/A3 hypothesis: A2 corrects left/right but still presses Up to jump, launching spikes. A3 uses Down for jumping.
+Solution cue: Use Down to jump; Up lifts spikes. [R]
+24 · Controls 4 [L24]
+Screen / A1: A low entrance opens into a tall chamber with upper and lower spikes and a gap before the exit. Use
+a large jump to clear the floor danger.
+Trap [R]: At 0.10 s the jump-force parameter becomes 100 (normal reference 18); the port’s upward-speed cap
+becomes 1,000 px/s. Ceiling spikes punish the tall arc. Location: Start/input event; no T1 location actor.
+A2/A3 hypothesis: A2 repeats a normal full jump and hits upper hazards. A3 chooses take-off positions around
+the altered arc. Solution cue: Manage high jumps.
+25 · Controls 5 [L25]
+Screen / A1: Several narrow gaps separate small islands on the route to the right-hand door. Keep holding one
+direction through the jumps.
+Trap [R]: Starts reversed at 0.05 s. T1/T2/T3 set normal/reversed/normal movement; each change requests 0.20 s
+of shake. Location: T1 anchor (192,64); Δx=+7.25 tiles from spawn.
+A2/A3 hypothesis: A2 memorises a fixed reversal; the next boundary changes it. A3 treats each gap as a state
+change. Solution cue: Reverse after each gap.
+Times are relative to the named event unless “room start” is specified. Location offsets are signed, in tiles. Full authored
+trigger coordinates/scales are in the appendix; they do not prove a current official collision threshold.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+11 / 39
+
+FIRST 40 / EVIDENCE AUDIT
+Door 6: Platforms — stages 26–30
+R: mechanics/timing from reconstructed scripts [30], anchors from scene data [29]. Screen = archived still. A1/A2/A3 =
+inferred, not observed; deaths = unknown. Route cues are reported [5], with controller correction from R where noted.
+26 · Platforms 1 [L26]
+Screen / A1: A broad opening contains a small central support between the start and right-hand exit. Jump onto
+the visible stepping stone.
+Trap [R]: T1 sends three supports right at 50 px/s; the middle stops after 4.80 s. T2 and T3 drop the outer
+supports at 150 px/s. Location: T1 anchor (144,136); Δx=+3 tiles from spawn.
+A2/A3 hypothesis: A2 stays with an outer support that later drops. A3 uses the middle support and its stopping
+point. Solution cue: Ride middle moving block.
+27 · Platforms 2 [L27]
+Screen / A1: Four floating blocks make an elevated route toward a door on the left. Jump block to block in a
+regular rhythm.
+Trap [R]: First movement sends the belt left at 50 px/s. T1 reverses it; 1.00 s later supports shrink from 48 to 32
+px over 5.00 s. Location: T1 anchor (192,136); Δx=-14 tiles from spawn.
+A2/A3 hypothesis: A2 chases the belt’s old direction. A3 accounts for reversal and the later loss of platform
+width. Solution cue: Time leftward platform jumps.
+28 · Platforms 3 [L28]
+Screen / A1: A deep rectangular pit contains a low platform, with the exit high on the right. Try to cross the open
+distance immediately.
+Trap [R]: T1 introduces supports at 0, 1.25, 2.50, 3.75 and 5.00 s. At +6.50 s all six supports begin dropping at
+150 px/s. Location: T1 anchor (256,176); Δx=+7 tiles from spawn.
+A2/A3 hypothesis: A2 waits on apparently safe support until the scaffold drops. A3 keeps climbing before the
+deadline. Solution cue: Ride rising platforms.
+29 · Platforms 4 [L29]
+Screen / A1: A large apparently empty gap separates the character’s ledge from the right-hand exit. Assume the
+visible jump is impossible or try a maximum leap.
+Trap [R]: T1 disables supports. T2 restores them at 0/1.5/3/4.5/8 s; the fifth flashes non-solid at 7 s. T4 removes
+the first three at +0.5/1/1.5 s. Location: T1 anchor (112,88); Δx=+1 tiles from spawn.
+A2/A3 hypothesis: A2 jumps on the fifth flash, which still has no collision. A3 waits for the stable return at +8 s.
+Solution cue: Wait for final platform.
+30 · Platforms 5 [L30]
+Screen / A1: A diagonal staircase of small floating blocks rises toward the right-hand exit. Climb using a steady
+series of jumps.
+Trap [R]: T1 drops the first five steps at +0.6/0.9/1.2/1.5/1.8 s. T2 raises step six 32 px/0.64 s after a 0.5 s delay;
+T3 drops the last at 180 px/s. Location: T1 anchor (248,128); Δx=+6.5 tiles from spawn.
+A2/A3 hypothesis: A2 climbs faster but the final step falls. A3 waits on the penultimate step as it rises. Solution
+cue: Wait on penultimate step.
+Times are relative to the named event unless “room start” is specified. Location offsets are signed, in tiles. Full authored
+trigger coordinates/scales are in the appendix; they do not prove a current official collision threshold.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+12 / 39
+
+FIRST 40 / EVIDENCE AUDIT
+Door 7: Springs — stages 31–35
+R: mechanics/timing from reconstructed scripts [30], anchors from scene data [29]. Screen = archived still. A1/A2/A3 =
+inferred, not observed; deaths = unknown. Route cues are reported [5], with controller correction from R where noted.
+31 · Springs 1 [L31]
+Screen / A1: A high left shelf overlooks a lower corridor with several spring shapes. Use each spring to move
+forward.
+Trap [R]: Four trigger groups move nearby spikes by 5 px in 0.10 s. The first three move upward; the final group
+moves downward. Location: T1 anchor (112,64); Δx=-5 tiles from spawn.
+A2/A3 hypothesis: A2 repeats the same bounce rule through the last spring. A3 tests bypassing that final launch.
+Solution cue: Bypass last spring.
+32 · Springs 2 [L32]
+Screen / A1: Three gaps are separated by ledges with spikes near their far edges. Use a spring for every gap.
+Trap [R]: T1 shifts a spring/support right 16 px/0.16 s. T2 lowers spikes 10 px/0.10 s. T3 moves the last assembly,
+including a 32 px rise over 1.28 s. Location: T1 anchor (162,137); Δx=+5.125 tiles from spawn.
+A2/A3 hypothesis: A2 uses every spring. A3 alternates spring, ordinary jump and spring to fit the three different
+gaps. Solution cue: Spring; jump; spring.
+33 · Springs 3 [L33]
+Screen / A1: A single spring-bearing support stands over a broad spike bed. Bounce from the visible spring toward
+safety.
+Trap [R]: T1 carries the spring/support right at 50 px/s to x=368. T2 spawns a block moving left at 100 px/s and
+hides the old block. Location: T1 anchor (160,144); Δx=+4 tiles from spawn.
+A2/A3 hypothesis: A2 assumes the transport keeps the same direction. A3 accounts for the new block and the
+changed support state. Solution cue: Ride travelling spring.
+34 · Springs 4 [L34]
+Screen / A1: A left shaft opens toward ascending terraces; the exit sits low at the far right. Use springs to climb
+the terraces.
+Trap [R]: T1 shifts the first spring/support left 16 px/0.16 s. T2 lowers spikes 5 px/0.10 s and raises the final spring
+16 px/0.16 s. Location: T1 anchor (96,80); Δx=+1 tiles from spawn.
+A2/A3 hypothesis: A2 aims at the first spring’s old position. A3 follows its actual position and avoids the
+unnecessary final bounce. Solution cue: Use three; bypass last.
+35 · Springs 5 [L35]
+Screen / A1: Four narrow spring pedestals form a row over a gap. Bounce through the whole row.
+Trap [R]: T1–T4 shift all spring/support assemblies 16 px in 0.16 s, in the direction sequence right, left, right, right.
+Location: T1 anchor (163,137); Δx=+4.1875 tiles from spawn.
+A2/A3 hypothesis: A2 chases the pedestal’s previous position. A3 anticipates the right/left/right/right
+displacement sequence. Solution cue: Chain spring bounces.
+Times are relative to the named event unless “room start” is specified. Location offsets are signed, in tiles. Full authored
+trigger coordinates/scales are in the appendix; they do not prove a current official collision threshold.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+13 / 39
+
+FIRST 40 / EVIDENCE AUDIT
+Door 8: Warps — stages 36–40
+R: mechanics/timing from reconstructed scripts [30], anchors from scene data [29]. Screen = archived still. A1/A2/A3 =
+inferred, not observed; deaths = unknown. Route cues are reported [5], with controller correction from R where noted.
+36 · Warps 1 [L36]
+Screen / A1: A left ledge and central island carry portals above spikes, with a door to the right. Enter the nearest
+visible portal.
+Trap [R]: T1/T2 warp to (240,32)/(352,32). T3 drops a support and spike at 300 px/s. T4 warps to (448,64).
+Location: T1 anchor (128,96); Δx=+4 tiles from spawn.
+A2/A3 hypothesis: A2 keeps the old direction after teleporting. A3 reorients and treats the falling spike/support
+as a separate event. Solution cue: Right twice; then left.
+37 · Warps 2 [L37]
+Screen / A1: Upper ledges overlook several lower portals. The door is in a right-wall alcove. Drop toward the portal
+that seems to point at the goal.
+Trap [R]: T1 spawns a moving portal/trigger at 20 px/s. T2 stops portals after transfer. T3 drops one at 300 px/s;
+T4 shifts another 32 px/0.32 s. Location: T1 anchor (136,160); Δx=+3.5 tiles from spawn.
+A2/A3 hypothesis: A2 aims at the moving portal’s previous location. A3 intercepts its current position. Solution
+cue: Catch moving warp.
+38 · Warps 3 [L38]
+Screen / A1: Stacked horizontal channels and vertical shafts contain several portals before a right-hand door.
+Follow the apparent shortest chain of openings.
+Trap [R]: T1/T5/T7 warp to (296,32)/(336,32)/(432,32). Other events slide supports and portals, including an 80 px
+portal shift over 0.80 s. Location: T1 anchor (112,160); Δx=-3 tiles from spawn.
+A2/A3 hypothesis: A2 assumes portals stay where first seen. A3 checks the changed route after each transfer.
+Solution cue: Climb; reorient; drop.
+39 · Warps 4 [L39]
+Screen / A1: A very simple horizontal tunnel places a portal on the left and the goal on the right. Expect one quick
+teleport to finish the room.
+Trap [R]: Six portals each send the player one step back; their support reacts after 1.20 s. The sixth event spawns
+a new lower portal at +2.70 s. Location: T1 anchor (104,92); Δx=+2.5 tiles from spawn.
+A2/A3 hypothesis: A2 expects each portal to finish the room. A3 progresses through the chain and waits for the
+lower exit route. Solution cue: Six warps; descending platform.
+40 · Warps 5 [L40]
+Screen / A1: A large chamber contains small upper blocks and lower portals; the door is on a right-hand ledge.
+Choose the nearest or highest apparently useful portal.
+Trap [R]: The first portal and its trigger jump along the route: +160 px/0.20 s, −64 px/0.08 s, later +64 px/0.08 s.
+T7 sweeps them left 1,000 px/1.25 s. Location: T1 anchor (96,160); Δx=+2 tiles from spawn.
+A2/A3 hypothesis: A2 repeats the tempting upper route and meets the pursuing portal again. A3 chooses the
+lower alternative. Solution cue: Avoid upper-left warp.
+Times are relative to the named event unless “room start” is specified. Location offsets are signed, in tiles. Full authored
+trigger coordinates/scales are in the appendix; they do not prove a current official collision threshold.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+14 / 39
+
+NOT A RANKING OF POPULARITY
+Later stages that deserve special attention
+ Sequence / evidence
+Why it matters
+Unresolved detail
+Scale, after Warps [6][7]
+A named size-related family is a useful benchmark
+for silhouette and collision communication.
+Do not infer exact scale
+multipliers from its name.
+Doors 5 / identity swap [30]
+R renders the player as the door and the door as
+the player. A1: chase the familiar icon; A2: follow
+the controllable body; solution: reach the real goal
+actor.
+Two floor shifts follow contact:
+8 px out/back, then a delayed
+48 px displacement.
+Saws 1 [30]
+R changes a patrol into a chase: pause at trigger,
+growth begins after 0.50 s, then pursuit begins at
+1.00 s at 150 px/s.
+A2 waiting can become
+unsafe; create distance during
+the delay. Current-build
+validation remains open.
+Flappy [6]
+Its listed expert door record is 92.367 s, much
+longer than the earliest doors.
+Exact stage breakdown and
+beginner completion cost.
+Gravity, Movement, Wraparound
+[6][7]
+Late original-world categories broaden the rules
+the player must reconsider.
+Specific room-by-room
+transformations.
+First-world Boss 5 [30]
+Six buttons reduce R run speed through
+80/60/50/40/30/20 px/s; the door retreats and a
+large saw moves after event 6 +5.30 s.
+A2 rushing repeats a slower
+state; success demands
+planning around the changed
+speed. No novice death data.
+Bullets, Bombs, Jetpack [1][6]
+Pursuit, directional surprise and unreliable
+abilities create time pressure.
+Current implementations may
+differ across builds.
+Clones / Enemies [1][6]
+More bodies or agents multiply the consequences
+of one input.
+Whether every entity shares
+input and collision rules in
+every room.
+Glitch stage 4 — player complaint
+[9]
+A player described a thin avatar between saws
+where tiny movement felt luck-driven. That is a
+warning about input granularity.
+One anecdote does not
+establish population failure
+rate.
+Late slow fall / finale [9]
+The developer confirmed a Getting Over It
+reference; one player disliked the prolonged fall.
+Exact duration and current
+placement were not
+measured.
+Secret routes [1][6]
+Hidden-key and wormhole content extends
+curiosity beyond ordinary completion.
+No reliable census of every
+secret in every current build.
+How to use these references
+Study one late mechanic at a time in a fixed build. Separate its novelty from its execution burden. A
+mechanic may be worth borrowing as an abstract idea while its long punishment loop is exactly what the
+new game should improve.
+The final sequence should test rules already understood. If it adds several new invisible rules while also
+increasing the distance lost on death, difficulty and frustration rise together. Keep a record of both,
+rather than treating rage as evidence of quality.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+15 / 39
+
+THE MIDDLE COLUMN DESCRIBES AN INDEPENDENT C PORT, NOT A VERIFIED CURRENT APP
+Game feel: reconstruction versus new-game
+targets
+ Parameter
+Reconstruction evidence [31]
+Proposed prototype value
+Units / body
+16 px tile; 7×13 px normal body in a 16×16 sprite.
+Use collision width u as the design unit.
+Run / jump / gravity
+Nominal 80 px/s run, 188 px/s launch, 800 px/s²
+gravity; 60 Hz fixed-point simulation.
+9u/s run; 3u jump height; 0.70 s airtime.
+Arc approximation
+Continuous equations give ≈22.1 px height, 0.47 s
+airtime, 37.6 px range. Discrete collisions alter
+these.
+6.3u horizontal range; test actual
+trajectories.
+Coyote / buffer
+Condition coyote<5, nominal upper span ≈83 ms;
+step order matters. No explicit jump queue seen.
+83 ms grace; 117 ms input buffer.
+Restart
+About 0.5 s to retry-wait state, a fresh key, then 18
+entry steps (0.3 s). Not an official-phone
+measurement.
+350 ms median / 500 ms P95 to accepted
+input.
+Death / shake
+Eight body pieces; death requests 30 steps of
+shake with up to 2 screen-pixel jitter in this
+renderer.
+Short impact burst; optional ≤2 px / 120
+ms shake.
+Animation / camera
+Running comment specifies 60 ms per picture.
+Scene viewport x=50–477, y=0–240, rendered at
+¾ scale.
+Fixed ordinary rooms; consistent foot
+contact.
+Phone input
+The calculator port does not validate phone
+buttons or device latency. Official play uses
+left/right/jump. [1]
+64–80 dp targets; P95 touch-to-motion
+≤83 ms.
+The port is explicitly unaffiliated and uses a rewritten runtime. Its files are stronger evidence than eyeballing a video, but they
+are not proof of current official constants. Coyote acceptance and restart duration need frame-level testing in the target build.
+[28][31]
+A consistent first physics pass
+Let u be the avatar collision width. Choose height H = 3u and airtime T = 0.70 s. For a constant-gravity
+symmetric jump: g = 8H/T² ≈ 49u/s²; launch speed v₀ = 4H/T ≈ 17.14u/s. At a run speed of 9u/s,
+range is 6.3u. These are computed design choices, not reverse-engineered constants.
+If u = 24 logical pixels, this means run speed 216 px/s, jump height 72 px, launch speed about 411 px/s
+and gravity about 1,176 px/s². Start with a fixed-height jump; add variable jump height only if tests show
+that it improves control without obscuring trap logic.
+Keep the controller trustworthy
+Environmental rules may surprise. Dropped touches, drifting collision boxes and frame-rate-dependent
+movement must not. Preserve a default controller and implement intentional rule changes as explicit
+room states, with an obvious transition whenever possible.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+16 / 39
+
+OBSERVED PRESENTATION VERSUS PRODUCTION INTERPRETATION
+Look, sound and small-screen readability
+The inspected archive uses flat warm fields, a tiny dark character, simple pale door shapes and
+uncomplicated solid geometry. Large negative spaces keep the route easy to parse. Stage progress is
+shown with five small blocks; touch directions sit low on the screen. These are static observations, not a
+complete animation or camera audit. [8; L01–L40]
+Door
+Two common image colours¹
+Readability lesson
+Pits
+■ #936C07 ■ #F7B755
+A nearly empty passage makes the door the focal point.
+Spikes
+■ #B57509 ■ #EDB03B
+Hazards remain simple shapes within a consistent field.
+Push
+■ #C68409 ■ #F2CA51
+The room silhouette matters more than texture.
+Coins
+■ #F2CA51 ■ #D77707
+Reward symbols can stand out without detailed rendering.
+Controls
+■ #E1C94B ■ #D65E21
+Geometry must remain readable when input rules change.
+Platforms
+■ #CB512A ■ #F18557
+Open space gives moving supports visual room.
+Springs
+■ #C6442A ■ #F7CF32
+Launch devices need a recognisable repeated silhouette.
+Warps
+■ #AB432A ■ #E5916F
+Portals add topology without requiring detailed scenery.
+¹ Most frequent RGB values sampled from the first archived image of each door. JPEG compression and capture processing
+affect them. These are approximate screenshot colours, not original palette tokens or recommended colours for a new game.
+Why a clip can work without words — analysis
+The viewer can usually identify a body, an apparent route and a goal before understanding the controls.
+A small environmental change then reverses an obvious expectation. Because the joke is spatial,
+localisation is less important than framing. A short replay shows the viewer what the player has learned.
+Audio: what is actually supported
+Music and sound effects exist. A Steam player initially mistook a grey music icon for unavailable
+functionality, then discovered it was a toggle. An independent reviewer reported playing an entire world
+before noticing the music was off. Neither source establishes exact sample lengths, loudness or death
+timing. [24][25]
+For the new game: separate jump, impact, state-change and clear sounds. Give a moving mechanism
+its own short cue; do not make audio the only warning. Start with effects under 250 ms, 2–3 subtle
+variations per common event and a quiet loop. Treat these as mix targets to audition, not requirements
+to imitate the reference.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+17 / 39
+
+DESIGN HYPOTHESES SUPPORTED BY QUALITATIVE TESTIMONY
+Retry psychology and the point where it
+breaks
+ Mechanism
+Why it can encourage another attempt
+How it fails
+A small remaining
+problem
+One new fact can make the next attempt feel
+winnable.
+The cause stays ambiguous, so retrying feels
+like gambling.
+Nearness to the goal
+The visible destination makes the
+improvement imaginable.
+A fake finish repeats so often that reaching a
+door loses meaning.
+Recoverable surprise
+The player can blame a now-understood
+decision rather than unexplained input
+failure.
+Collision, latency or an unseen rule makes
+the correction unreliable.
+Short loss
+A few seconds of replay preserves curiosity.
+Long empty travel, slow falls or ads turn
+surprise into unpaid repetition.
+Counterprediction
+A second trap can feel like a witty response
+to the player’s correction.
+Third and fourth corrections die without
+adding information.
+Visible mastery
+A once-dangerous room becomes a smooth
+tiny performance.
+Controls change without feedback or the
+solution depends on luck.
+“My fault” is an incomplete explanation. Many first deaths are deliberately unfair surprises. A healthier
+target is “Now I understand it, and my next decision matters.” Do not use unclear controls to
+manufacture self-blame.
+What reviews actually say
+Selected Android reviews praise short stages and repeated discovery, but complain about frequent ads
+and a startup crash on a specific Android 16 device/build. These are individual reports, not rates. [2]
+India-listing review excerpts also raise touch spacing, timing and late-stage frustration. [26] A positive
+iOS review praises the small control set and the satisfaction of working out a gate’s mechanic. [3]
+The two late-game complaints on page 15 suggest useful failure categories: input resolution smaller
+than the task demands, and too much time between mistake and meaningful action. Their
+prevalence is unknown.
+Wordless humour and sharing — a design reading
+Corey identifies humour as an objective and traces the idea to a retreating goal in Unicycle Legend. [4]
+Use three visible beats: an ordinary intention, a concrete betrayal, a readable reaction. Dad can
+straighten his shirt or protect his bag while the room resets. The joke should belong to a particular object
+and situation. A trap that only adds a random spike has little character.
+A strong clip lets viewers predict the move before it fails. An 8–15 second clip can contain setup, surprise
+and one improved retry. Keep the complete cause and destination in frame; a vertical crop that hides the
+trigger destroys the joke. This duration is a proposed creative target, not measured viral performance.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+18 / 39
+
+DO NOT SUBSTITUTE DOWNLOADS FOR RETENTION
+Business: strong reach, weak public unit
+economics
+ Metric / claim
+Evidence
+Interpretation
+Android downloads
+Google Play displays 50M+. [2]
+A cumulative bucket floor, not MAU,
+unique people, current DAU or exact
+installs.
+Android rating
+4.8; approximately 337K headline reviews at
+lookup. [2]
+Storefront and device views show
+different counts; this is a dated snapshot.
+iOS reception
+US listing shows about 67K ratings and 4.8.
+[3]
+Apple does not publish comparable
+download totals here.
+Web scale / acquisition
+Creator’s 2024 AMA roughly guessed 200M
+plays and said discovery began on Poki
+without marketing. [9]
+Self-reported plays, not installs; not proof
+of zero paid spend for the game’s entire
+life.
+Paid promotion
+Sensor Tower’s retrieved public overview
+labels “Advertised on Any Network” as Active.
+[32]
+Indexed metadata can lag; it is evidence
+against assuming lifetime zero paid
+acquisition, not campaign-spend data.
+Retention / revenue
+No verified D1/D7/D30 cohorts, LTV, ad
+ARPDAU or financial statements found.
+Do not invent these or infer them from
+ratings.
+What probably helped discovery — inference, not attribution data
+A free browser surface removes installation friction. A visible goal makes clips understandable; surprises
+produce reactions; short stages produce complete little stories. The creator’s report supports the order of
+discovery, not the contribution of each channel. Historical organic growth and later advertising can
+coexist. [9][32]
+Ad design for the new game
+A secondary teardown reports interstitials and rewarded skips. [10] For the new game, use completed
+doors as interruption boundaries. Start with no forced ad for 180 seconds and at most one per 180
+active-play seconds thereafter. Rewarded skips must be explicit and granted once; ad failure must return
+to usable play.
+A transparent example, not a forecast
+Daily ad revenue ≈ DAU × sessions/day × eligible impressions/session × fill × eCPM / 1,000. At 10,000
+DAU, 2 sessions, 1.5 eligible impressions and 85% fill, there are 25,500 served impressions. Assumed
+eCPMs of $0.50 / $2 / $5 produce $12.75 / $51 / $127.50 per day. These eCPMs are placeholders, not
+India benchmarks or Level Devil earnings.
+Measure retention before increasing ad load. D1 is the share of a new-player cohort returning the next
+day; long session time is not D1. Defold’s Poki guidance makes that distinction and emphasises early
+clarity, saved progress and robust ad handling. [11]
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+19 / 39
+
+THE COMPARATIVE JUDGMENTS ARE DESIGN ANALYSIS
+Comparison: take the strength, reject the
+wrong cost
+ Reference
+What it does best
+Useful lesson / cost to avoid
+Cat Mario / Syobon
+Action
+Turns familiar platformer expectations
+into traps; the recognisable grammar
+makes betrayal immediate.
+Borrow expectation design, not Mario-like assets or
+level layouts. Prior Mario knowledge is a
+dependency. The cited mobile remake cannot
+establish original PC physics. [20]
+TrapAdventure 2
+Builds fear of the obvious correction:
+rushing, stopping and retreating can
+each feel suspect.
+Layer a second interpretation, but preserve
+learnability and manageable loss. Current version
+notes differ from old reviews about lives and ads.
+[21]
+Troll Face Quest
+Makes the interaction itself the visual
+punchline; absurd object relationships
+suit touch.
+Borrow visual causality and concise reactions. Avoid
+solutions that become arbitrary pixel hunting. [22]
+Super Mario Maker
+troll courses
+A mature construction vocabulary
+supports elaborate setups, callbacks and
+viewer/player knowledge gaps.
+Borrow compositional thinking and reusable states.
+Do not require a mobile newcomer to know a
+community’s years of conventions. Nintendo
+supplies tools; troll quality varies by creator. [23]
+Getting Over It
+Makes mastery, recovery and the
+possibility of a huge fall emotionally
+meaningful; narration frames failure.
+Borrow the importance of reliable control and
+earned competence. Its long loss is a different
+contract from a quick mobile comedy loop. The
+creator’s median 5-hour finish claim concerns his
+playtesters, not all players. [19]
+Level Devil
+Packages expectation traps into small,
+readable units with little control
+overhead.
+Borrow the compact format and progression of rules.
+Compete with original character-driven
+mechanisms, better measured touch feel and less
+interrupted retrying. [1][4][8]
+The product choice
+A dad crossing cities is strongest as a comic puzzle platformer with dependable input. It should not
+accidentally become an endurance game, a pixel-hunting adventure and a precision platformer at once.
+Choose the loss model first: most deaths cost seconds; optional expert routes can demand longer
+mastery.
+City specificity should help the audience understand the physical cause. A tiffin lid, umbrella or
+counterweight is useful when its familiar purpose explains what happens. It is weak when the same
+hidden-spike room is merely painted with a different landmark.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+20 / 39
+
+A DOCUMENTED REGISTRATION, NOT JUST A SEARCH-RESULT GUESS
+Naming: “Level Devil Dad” is high risk
+Yes: LEVEL DEVIL is registered in the United States. WIPO’s September 15, 2026 decision identifies
+US registration 7,887,332, registered August 12, 2025, applied for September 26, 2024, covering
+game software in Class 9. The recorded owner in that decision is Level Devil B.V. [12]
+The same decision ordered transfer of leveldevilfull.com. Adding “full” did not avoid confusing similarity
+under the domain-dispute test. That is evidence of real enforcement, although a domain decision is not a
+ruling on the proposed app name. [12]
+Issue
+Assessment for “Level Devil Dad”
+Trademark confusion
+High practical risk: it retains the entire established mark for another game in the same genre.
+“Dad” could sound like a themed edition or official spin-off. This is an assessment, not a court
+prediction. [16]
+Apple review
+Guideline 4.1 addresses copycats; 4.1(c) restricts another developer’s brand or product name
+in an app name/icon without approval. Section 5.2 addresses IP. Rejection or later removal is
+plausible. [13]
+Google Play
+Trademark and impersonation policies cover confusing or misleading affiliation. An original
+codebase does not resolve a confusing title or icon. [14][15]
+India / other countries
+No completed Indian register clearance is claimed. US registration is not proof of registrations
+everywhere; absence of an identified Indian record is not clearance. Use official searches and
+qualified review for target markets. [18]
+Mechanics versus
+expression
+Generic ideas and methods differ from protected artwork, code and other expression. That
+distinction does not permit copying distinctive levels or branding and assuming all risk
+disappears. [17]
+Concrete action
+Use an unrelated working name now, before paying for logos or store assets. Examples for brainstorming
+only: Dad, Almost There! or Papa’s Long Way Home. Neither has been cleared. Search exact and
+similar names, app stores, domains and relevant trademark classes—typically game software and
+potentially entertainment services—then have the intended launch name reviewed.
+Keep the inspiration internal
+Use Level Devil as a benchmark in team documents. Give the released game its own title, icon,
+character, level geometry, sound and store presentation. A disclaimer or the word “Dad” is not a
+reliable substitute for an independent identity.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+21 / 39
+
+PROPOSED ACCEPTANCE CRITERIA / NOT MEASURED REFERENCE VALUES
+20 numerical design rules — 1–10
+01 · A readable goal
+In a 2-second still-image test, at least 9 of 10 fresh viewers identify the controllable dad and the
+destination. No text prompt.
+02 · Immediate agency
+Accept movement within 3 seconds of the title/play transition on the agreed test device; target the first
+comic event within 10 seconds.
+03 · Short solved routes
+Target 6–12 seconds for an ordinary solved room and 15–25 seconds for a capstone. Time gameplay
+separately from menus and ads.
+04 · A small teaching unit
+Introduce 1 primary new rule in a group of 5 stages. Use later stages to test it in new positions and with
+one prior rule.
+05 · A limited joke budget
+Use 1–2 meaningful reversals in an ordinary room; cap a final stage at 3. More reveals require a
+checkpoint or a separate room.
+06 · Predictable simulation
+Replay the same timestamped input 100 times from a fresh state: identical collision and outcome all 100
+times. Cosmetic randomness may vary.
+07 · A learnable response
+After the player knows the rule, provide at least a 200 ms usable correction window in standard rooms.
+First encounters may still surprise.
+08 · Little repeated labour
+After death, reach the previous failure point within 8 seconds on a successful replay. Shorten the
+approach or add a checkpoint otherwise.
+09 · Fast restart
+Death event to first accepted movement: median at most 350 ms, P95 at most 500 ms. Effects must not
+extend this budget.
+10 · Stable frame delivery
+Target 60 fps: P95 frame time at most 16.7 ms and P99 at most 33.3 ms during traps on the nominated
+low-end device.
+These are starting gates for a compact mobile comedy platformer. Change them using observed player behaviour. They are
+neither industry averages nor evidence of Level Devil’s internal tuning.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+22 / 39
+
+PROPOSED ACCEPTANCE CRITERIA / NOT MEASURED REFERENCE VALUES
+20 numerical design rules — 11–20
+11 · Responsive touch
+Touch-down to visible motion: P95 at most 83 ms, measured externally. Test simultaneous direction plus
+jump and sliding between directions.
+12 · Forgiving edges
+Start with 83 ms coyote time and 117 ms jump buffering: 5 and 7 frames at 60 Hz. Tune from
+missed-input recordings.
+13 · Room to land
+Ordinary landing surfaces at least 1.5 collision-body widths; optional precision challenges at least 1.1
+widths. Do not count visual overhang as support.
+14 · A death budget
+Pilot medians: introductory rooms 1–3 deaths, regular rooms 2–6, capstones 4–10. Zero-death wins
+remain valid; investigate a regular-room P90 above 15.
+15 · A humane escape
+Offer a hint after 5 deaths; offer a skip after 8 deaths or 90 seconds in one room. Never auto-skip or hide
+the retry button.
+16 · Protected momentum
+No forced ad in the first 180 seconds; thereafter at most 1 per 180 active-play seconds, at a
+completed-door boundary. Never on an ordinary death.
+17 · Comfortable controls
+Use 64–80 dp touch targets with 12–16 dp gaps as initial values. Let players reposition them; keep the
+playfield out from under thumbs.
+18 · Silent readability
+At 360 px video width, at least 9 of 10 viewers should explain the visible cause of death after 2 viewings
+with audio muted.
+19 · Restrained effects
+Optional shake: at most 2 logical pixels for 120 ms. Critical hitboxes do not move with the camera.
+Include reduced-motion and separate audio toggles.
+20 · Evidence of wanting another try
+In a 30-person blind test, target at least 80% of first failures followed by retry within 5 seconds and 70%
+correct rule explanation by attempt 3. Report quitters separately.
+These are starting gates for a compact mobile comedy platformer. Change them using observed player behaviour. They are
+neither industry averages nor evidence of Level Devil’s internal tuning.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+23 / 39
+
+100 POINTS PLUS NON-NEGOTIABLE GATES
+A level acceptance checklist
+Score each dimension 0, 5 or 10: absent/broken, usable but inconsistent, or demonstrated in a blind test.
+Pass at 85/100 or better and only if every hard gate passes. This is a proposed studio rubric, not a
+validated Level Devil rating scale.
+10 points each
+Evidence required for full marks
+1. Immediate reading
+9/10 viewers find player and goal in 2 seconds; route survives a small muted video.
+2. A real setup
+A fresh player’s first action follows naturally from the visible arrangement.
+3. A concrete punchline
+The surprise changes a recognisable object or relationship, rather than adding
+unexplained damage.
+4. Learnable correction
+By attempt 3, at least 70% can explain the rule; an informed route consistently works.
+5. Dependable execution
+No observed dropped input; the collision silhouette and landing contact agree.
+6. Short recovery
+P95 restart at most 500 ms; return to prior failure point within 8 seconds.
+7. Mobile comfort
+Buttons, thumb occlusion and simultaneous movement/jump pass on small phones.
+8. Useful information
+Animation and sound explain state changes; muted play still works.
+9. Original character
+The mechanism and reaction fit this dad and this location; it is not a traced reference
+room.
+10. Desire to continue
+First-failure retry target is met; skip and quit reasons are captured rather than hidden.
+Hard gates: any failure blocks shipping
+• Identical inputs produce the same gameplay outcome; no frame-rate-dependent hazard activation.
+• No softlock, unwinnable restored state or dependence on an ad being available.
+• Progress is saved immediately after a stage clear and survives a forced close.
+• Retry, audio and accessibility settings remain usable; gameplay does not resume under an unexpected
+ad overlay.
+• The title, icon, audio, code and level art have a documented original or licensed origin.
+One review form per room
+Record build/device, stage ID, solved-route time, first-pass completion, deaths median/IQR/P90, quit/skip
+count, explanation accuracy and comments. Attach the worst confusing attempt, not only the cleanest
+successful recording. Have one reviewer try to break determinism and another watch without playing.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+24 / 39
+
+ALL TRIGGER VALUES BELOW ARE NEW DESIGN PROPOSALS
+Original city concepts — 1 and 2
+01 · Bengaluru: The auto that is almost ready
+On screen: A waiting auto-rickshaw is the destination. Dad has a cloth shopping bag; a curb and a
+roofed stop define the room.
+Trap and trigger: At 2 body-widths from the passenger opening, the auto rolls 4 widths away in 0.55
+seconds. An early jump follows the auto into a puddle; its canopy springs upward only when landed on.
+Attempt logic: A1: walk to the seat. A2: leap after the retreating vehicle and get bounced beyond it. A3:
+trigger the departure, wait under the stop, then board when it rolls back.
+Solution / fairness: After departure, the auto returns once and stops for 0.8 seconds. The destination
+marker travels with its opening; a small suspension settle signals the stop.
+Reusable system: Moving goal + optional spring. The local object changes the verb from chasing to
+waiting. Avoid real operator logos or treating drivers as villains.
+02 · Mumbai: The tiffin bridge
+On screen: Three oversized stacked tiffin carriers cross a gap to a suburban-platform shelter. Their
+handles make obvious stepping surfaces.
+Trap and trigger: A landing holds a lid flat for 0.18 seconds, then tips it through 45 degrees over 0.25
+seconds. A hurried high jump hits the next raised handle; a pause allows the first lid to settle into a ramp.
+Attempt logic: A1: run across closed lids. A2: jump faster and collide with the handle overhead. A3:
+land, wait for the ramp to settle, then use a low crossing.
+Solution / fairness: Every lid has the same two-state cycle. Dad can stand safely near the hinge, which
+is marked by shape rather than colour.
+Reusable system: Timed support + overhead clearance. Food remains intact; the joke is the
+engineering of the lunchboxes, not wasted food.
+A body-width means the dad’s collision width, not a background tile. Each concept still needs blind testing for comprehension
+and at least one complete deterministic implementation before its timings are accepted.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+25 / 39
+
+ALL TRIGGER VALUES BELOW ARE NEW DESIGN PROPOSALS
+Original city concepts — 3 and 4
+03 · Delhi: The very helpful gate
+On screen: An unbranded metro-style gate stands before the exit. A floor plate and a sliding overhead
+direction sign are the only moving props.
+Trap and trigger: Standing on the plate retracts the gate after 0.3 seconds. Jumping while inside the
+gate zone lowers the sign to a safe but blocking height for 0.5 seconds.
+Attempt logic: A1: sprint at the closed gate. A2: jump to bypass it and get stopped by the lowered sign.
+A3: activate the plate, remain grounded and walk through.
+Solution / fairness: A lit outline on the floor shows the plate’s extent. The lowered sign blocks progress
+but leaves a safe retreat, so the second lesson need not kill.
+Reusable system: Input-conditioned obstruction + wait-to-open. The surprise teaches that the natural
+platformer solution, jumping, is sometimes unnecessary.
+04 · Hyderabad: One chai, two directions
+On screen: Two giant tea kettles sit beside a stall awning. Steam is drawn as broad visible bands; a cup
+rim provides a safe platform.
+Trap and trigger: A kettle pulses upward for 0.45 seconds, rests for 0.55 seconds, then visibly rotates
+its spout over 0.2 seconds. Its next pulse is horizontal.
+Attempt logic: A1: ride the first pulse toward the exit. A2: reuse the same launch and get pushed
+sideways. A3: land on the cup rim, let the spout rotate, then use the horizontal pulse.
+Solution / fairness: Spout direction determines force direction every time. Rotation is visible before the
+pulse; the cup rim is at least 1.5 body-widths wide.
+Reusable system: Launch direction + refuge timing. This is a controllable air-current puzzle, with
+tea-stall detail providing the visual explanation.
+A body-width means the dad’s collision width, not a background tile. Each concept still needs blind testing for comprehension
+and at least one complete deterministic implementation before its timings are accepted.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+26 / 39
+
+ALL TRIGGER VALUES BELOW ARE NEW DESIGN PROPOSALS
+Original city concepts — 5 and 6
+05 · Chennai: Dad brought the wrong umbrella
+On screen: A monsoon gust crosses a bus-stop scene. Dad’s closed umbrella opens automatically in the
+wind zone; a low awning sits before a drain gap.
+Trap and trigger: Entering the 3-width wind zone gives 0.7 seconds of upward lift. Jumping adds too
+much height and catches the umbrella on an overhead laundry line.
+Attempt logic: A1: jump the drain and rise into the line. A2: rush through and overshoot the landing. A3:
+walk under the awning, use it to cap the lift, then step off at the wind’s end.
+Solution / fairness: The umbrella stays an automatic state change: no fourth button. The gust is a
+visible region, and there is a grounded staging point before it.
+Reusable system: Automatic lift + ceiling as useful geometry. Build a scripted impulse, not a complex
+cloth or fluid simulation.
+06 · Kolkata: Please ring once
+On screen: A stylised tram stop has a large bell rope connected visibly to a short moving bridge. The
+route does not require identifying the city to solve it.
+Trap and trigger: A jump into the rope advances the bridge by 2 widths over 0.4 seconds. Touching it
+again reverses the bridge instead of advancing it.
+Attempt logic: A1: jump repeatedly to force the bridge into place. A2: jump toward it while under the
+rope and accidentally reverse it. A3: ring once, step clear of the rope, then cross.
+Solution / fairness: The rope only activates on a new contact, with a 0.2-second debounce. A visible
+two-position linkage makes the reversal understandable.
+Reusable system: Toggle + accidental reactivation. The joke is Dad being overly helpful with the bell,
+not transport failure.
+A body-width means the dad’s collision width, not a background tile. Each concept still needs blind testing for comprehension
+and at least one complete deterministic implementation before its timings are accepted.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+27 / 39
+
+ALL TRIGGER VALUES BELOW ARE NEW DESIGN PROPOSALS
+Original city concepts — 7 and 8
+07 · Jaipur: The puppet copies Dad
+On screen: A puppet above the stage shares Dad’s silhouette. Its strings connect to a counterweight
+that raises the exit platform.
+Trap and trigger: The puppet repeats each jump 0.25 seconds later. Its landing lowers a canopy over
+the player’s next landing zone for 0.3 seconds.
+Attempt logic: A1: jump quickly through the stage. A2: jump again to escape the canopy, causing
+another delayed strike. A3: make one jump, stop in the refuge and let the echo finish.
+Solution / fairness: The strings and mirrored pose show causality. Only the previous one jump is
+queued; there is no unbounded backlog of delayed actions.
+Reusable system: Delayed input echo + safe pause. The puppet becomes a recurring character for
+later cities, not just decorative local art.
+08 · Ahmedabad: A kite has taken the shopping bag
+On screen: A kite line connects a rooftop spool to Dad’s bag. A gap and a low cloth canopy create two
+possible routes.
+Trap and trigger: Crossing the line at 1.5 widths from the spool pulls the bag for 0.5 seconds. Jumping
+during the pull catches the canopy; walking straight runs past the safe ledge.
+Attempt logic: A1: continue forward against the pull. A2: jump out and snag the canopy. A3: trigger the
+tug, retreat one width, then use the release as a normal jump cue.
+Solution / fairness: The line visibly tightens before movement and slackens on release. The pull affects
+horizontal velocity only, making the jump arc predictable.
+Reusable system: Temporary horizontal force + anticipation. Keep string hazards stylised and avoid
+presenting real sharp-line kite handling as a challenge.
+A body-width means the dad’s collision width, not a background tile. Each concept still needs blind testing for comprehension
+and at least one complete deterministic implementation before its timings are accepted.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+28 / 39
+
+ALL TRIGGER VALUES BELOW ARE NEW DESIGN PROPOSALS
+Original city concepts — 9 and 10
+09 · Kochi: The net is the elevator
+On screen: A large Chinese-fishing-net-inspired silhouette spans the room. A counterweight, basket and
+dock form an obvious mechanical system.
+Trap and trigger: Stepping into the basket lowers it for 0.35 seconds before the counterweight lifts it.
+Jumping too early tips the basket; its return to horizontal lasts 0.6 seconds.
+Attempt logic: A1: leap immediately from the descending basket. A2: wait until the top and overshoot
+as it tilts. A3: ride until the basket is horizontal, then step toward the dock.
+Solution / fairness: The hinge and counterweight remain visible. Use a fixed authored animation and a
+simple moving collider rather than unconstrained rope physics.
+Reusable system: Apparent fall that becomes transport + departure window. The net’s function
+explains the complete puzzle without dialogue.
+10 · Varanasi: The boat politely backs away
+On screen: An ordinary riverside boat and gangplank sit below broad steps. Dad is simply trying to get
+aboard with his bag.
+Trap and trigger: Approaching within 2 widths folds the gangplank over 0.25 seconds. A leap toward
+the boat pulls a loose mooring line, moving the boat 3 widths away.
+Attempt logic: A1: walk onto the plank. A2: jump after it retracts and drift short of the boat. A3: step on
+a separate mooring board, wait 0.5 seconds for the boat to settle, then cross.
+Solution / fairness: The mooring board has a visible rope connection to the boat. The plank unfolds
+after the boat settles and stays usable until the player crosses.
+Reusable system: Moving goal + remote cause. Keep the comedy on an ordinary travel mishap;
+religious ceremonies and worshippers are background-free, not obstacles.
+A body-width means the dad’s collision width, not a background tile. Each concept still needs blind testing for comprehension
+and at least one complete deterministic implementation before its timings are accepted.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+29 / 39
+
+A PROPOSED QUALITY BAR FOR PHONES, NOT A CLAIM ABOUT A MARKET SURVEY
+What “premium” art means here in 2026
+Premium means that every important shape, pose, movement and sound looks intentional at the size at
+which people actually play. More detail can reduce quality if it hides a collision boundary or delays the
+punchline.
+Layer
+Production brief
+Acceptance test
+Dad silhouette
+One readable body shape, a bag and a distinctive
+posture. Face detail is secondary at small size.
+Recognisable at 24–40 px high, in
+silhouette and at 360 px video width.
+Character animation
+Start with 6–8 walk frames, 3 airborne poses, 2–3
+reaction poses and a short reset. Keep the foot
+contact consistent.
+Movement reads at 60 fps; poses never
+suggest a different collider.
+Environment
+Three depth layers: quiet backdrop, playable
+geometry, foreground accents outside critical
+edges.
+Hide the background: the full level
+remains understandable.
+City identity
+One distant landmark silhouette plus three
+recurring everyday prop families per city. Avoid
+cluttered postcard collages.
+Players recognise the situation without
+needing labels or stereotypes.
+Colour / materials
+A controlled palette and consistent
+outlines/material treatment. Colour supports shape
+rather than replacing it.
+Critical adjacent edges aim for 3:1
+luminance contrast as an internal target;
+grayscale still differentiates states.
+Motion polish
+Use 100–180 ms anticipation for known moving
+mechanisms and 300–500 ms comic reaction tails
+that overlap restart.
+No effect delays input; reduced-motion
+mode preserves all information.
+Mobile UI
+Large clear hit areas, distinct
+enabled/disabled/toggled states, separate
+music/effects controls and reliable safe-area
+handling.
+A grey icon never ambiguously means
+both “off” and “unavailable.”
+Performance
+Consistent scale, modest texture memory, no
+shader effect necessary to read the puzzle.
+Frame-time gates pass on a nominated 4
+GB Android phone and an older supported
+iPhone.
+Clip composition
+Keep dad, trigger, hazard and destination visible in
+the intended 9:16 presentation.
+A muted 8–15 second clip preserves the
+complete cause and result.
+Choose either clean pixel art with deliberate integer scaling or a consistent illustrated style. Do not mix
+highly detailed generated backgrounds, rough sprites and unrelated UI packs. Polish comes from a
+common visual language and dependable motion.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+30 / 39
+
+ONE CITY FIRST; THE WORLD IS AN EXPANSION PLAN
+A lean build that can test the opportunity
+ Step
+Deliverable
+Decision gate
+1. Controller room
+One plain room with reliable run/jump, death/reset
+and adjustable touch input.
+Controller metrics pass before traps are
+added.
+2. Three greybox jokes
+One moving-goal room, one timed-support room
+and one reversible mechanism.
+Fresh players understand the cause and
+want another attempt.
+3. Fifteen-stage pilot
+Three five-stage groups, one dad, one city kit,
+checkpoint/save flow.
+No regular room exceeds the
+death/replay budgets without a
+deliberate reason.
+4. Comparative blind
+test
+30 participants, counterbalanced game order;
+device and experience recorded.
+Original stages match or beat the
+chosen reference sample on retry,
+clarity and control complaints.
+5. Art and sound pass
+A finished vertical slice with 3–5 polished rooms
+and short clips.
+Polish improves reading and character
+without lowering performance.
+6. Small release cohort
+Only then test ads, optional skip and next-day
+return.
+Use cohort data and comments before
+expanding cities or buying traffic.
+Keep the architecture small
+Use a deterministic room state machine with explicit trigger volumes and a short event timeline. Store
+level geometry and events as data; make a simple internal preview/restart tool. A public editor,
+multiplayer, inventory, daily economy and large narrative system can wait. The first fifteen levels do not
+need a physics sandbox.
+A fair benchmark test
+Recruit 15 less-experienced and 15 platformer-experienced players. Use matched subsets of original and
+reference rooms rather than giving everyone all forty. Counterbalance order and ask about prior
+exposure; a player who has memorised the reference is not a clean novelty comparison. Freeze both
+builds and use the same phone class.
+Observe first-failure retry within 5 seconds, time to a coherent rule explanation, stage completion,
+voluntary next-door entry, input complaints and quit reasons. Report confidence limits and individual
+traces. Thirty people are useful for finding problems, not for proving a small retention advantage.
+Expansion rule
+Add a city only when it contributes at least one new physical relationship and two good combinations
+with old rules. The later world tour can reuse the dad and controller while introducing locally grounded
+objects. New scenery alone should not count as a new mechanic.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+31 / 39
+
+AN EXECUTABLE RESEARCH PROTOCOL, NOT FABRICATED FINDINGS
+How to finish the missing forensic
+measurements
+ Question
+Measurement procedure
+Record
+Exact trigger distance
+Freeze build and camera. Approach from both sides, at
+two heights and two speeds; include an idle control.
+Binary-search the boundary to 0.25 body-width. Repeat
+10 times.
+Boundary interval, direction, entry
+state and whether the event is
+positional, input-based, timed or
+contact-based.
+Trigger timing
+Capture at 60 or 120 fps with an input overlay. Count
+frames from the event’s actual cause to first changed
+collision/visible motion.
+Frames and seconds; visible
+animation and collision activation
+separately.
+Run/jump constants
+Measure body width in pixels, track horizontal position
+for at least 30 unobstructed frames, and fit vertical
+position across a full normal jump.
+Units/s, height, rise/fall duration,
+fit error and whether velocity is
+capped.
+Coyote / buffer
+Step off a ledge and issue jump 0–10 frames later. For
+buffer, press 0–10 frames before landing. Repeat each
+delay.
+Largest reliable accepted delay,
+not one lucky attempt.
+Restart / input feel
+Externally record touch and screen together. Compare
+death frame with first accepted movement. Use at
+least 30 events/device.
+Median/P95/P99, device, refresh
+rate, OS, build, and thermal state.
+Second/third attempts
+Record fresh players without coaching. Label each
+intentional correction and its actual outcome.
+Observed sequence; avoid
+narrating intentions solely from
+movement.
+Typical deaths
+Use naive players, include non-completers, and
+distinguish deaths before clear from deaths before
+quit/skip.
+Median, IQR, P90, sample size,
+completion fraction and censored
+outcomes.
+Minimal analytics events
+session_start; stage_start; trap_fired; death; restart_ready; stage_clear; hint_shown/used;
+skip_offered/used; ad_requested/shown/closed/failed; app_background; settings_changed. Include build,
+stage, attempt, elapsed active time and a local anonymous session identifier. Avoid collecting sensitive
+personal data just to measure a platformer.
+For D1/D7, define the new-player cohort, timezone and exact return window. A rough worst-case 95%
+margin of error near a 50% proportion is about ±5 percentage points at 400 independent players.
+Comparing two games or detecting a small lift needs a larger, separately planned experiment.
+What still needs direct testing
+The reconstruction supplies a numerical reference matrix, not proof of current official behaviour.
+Validate its geometry, collision timing and controller against a fixed official build. Observed A2/A3
+sequences, typical deaths, phone latency and retention still require player/device data.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+32 / 39
+
+PRIMARY SOURCES FIRST / ALL ACCESSED FOR THIS BRIEF
+Source catalogue — 1–11
+[1] Poki — official game page
+https://poki.com/en/g/level-devil
+Publisher description, controls, release month, worlds, five-stage doors and skip; its level totals conflict internally.
+[2] Google Play — official Android listing
+https://play.google.com/store/apps/details?hl=en_US&id=com.unept.leveldevil
+Current download bucket, rating, 240+ stages, update date, ads/IAP, selected dated user reviews.
+[3] Apple App Store — official iOS listing
+https://apps.apple.com/us/app/level-devil-not-a-troll-game/id6477413486
+Current listing, rating, stage count and player reviews; regional numbers are not global installs.
+[4] Apple editorial — creator interview
+https://apps.apple.com/fi/ipad/story/id1732098061
+Adam Corey’s origin story and humour objective; selected mechanic descriptions.
+[5] Speedrun.com — Xikofis route guide
+https://www.speedrun.com/es-ES/Level_Devil/guides/lw0yf
+Player-authored route cues, not frame measurements or novice observations.
+[6] Speedrun.com — individual-level leaderboard
+https://www.speedrun.com/Level_Devil/levels?h=each-levels
+Displayed No Major Glitches door records and later category names; records can change.
+[7] GamingP3nguin — 2024 walkthrough
+https://www.youtube.com/watch?v=Suayu3F8gRo
+Chapter metadata establishes the original-world sequence. Playback was unavailable in this audit.
+[8] Unofficial screenshot archive
+https://level-devil.org/walkthrough
+Forty individual stage images inspected. Capture build/date and whether each image is a spawn state are unknown.
+[9] Adam Corey — developer AMA
+https://www.reddit.com/r/indiegames/comments/1goebnp/my_webmobile_game_level_devil_went_viral_this/
+Primary self-report about discovery and rough plays; also player complaints and creator replies.
+[10] Gamigion — historical commercial analysis
+https://www.gamigion.com/solo-dev-game-level-devil-reaches-35m-downloads-with-no-ua/
+Third-party estimates and monetization description; not audited financials or current telemetry.
+[11] Defold — web games on Poki
+https://defold.com/2026/11/03/Good-practices-for-web-games-on-Poki/
+November 2026 platform guidance; uses Level Devil as a positive example of readability and restart flow.
+Source type matters: store metadata is not telemetry; a creator statement is not an audited financial report; a speedrun is
+not a novice playtest. Analytical conclusions and prototype targets are identified in the body.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+33 / 39
+
+PRIMARY SOURCES FIRST / ALL ACCESSED FOR THIS BRIEF
+Source catalogue — 12–22
+[12] WIPO — D2026-3427 decision
+https://www.wipo.int/amc/en/domains/decisions/pdf/2026/d2026-3427.pdf
+September 2026 finding identifying US trademark registration and ordering transfer of leveldevilfull.com.
+[13] Apple — App Review Guidelines
+https://developer.apple.com/app-store/review/guidelines/
+Sections 4.1 and 5.2 address copycats, another developer’s brand/name, and intellectual property.
+[14] Google Play — Intellectual Property policy
+https://support.google.com/googleplay/android-developer/answer/9888072?hl=en
+Trademark and other IP enforcement policy.
+[15] Google Play — Impersonation policy
+https://support.google.com/googleplay/android-developer/answer/9888374?hl=en
+Misleading affiliation through title, icon, developer identity or presentation.
+[16] USPTO — likelihood of confusion
+https://www.uspto.gov/trademarks/search/likelihood-confusion
+Similarity and related goods/services matter; exact identity is unnecessary.
+[17] US Copyright Office — games
+https://www.copyright.gov/register/tx-games.html
+Distinguishes game ideas/methods from protectable expression.
+[18] IP India — public trademark search
+https://tmrsearch.ipindia.gov.in/tmrpublicsearch/
+Official India clearance route. No completed Indian register search is claimed here.
+[19] Getting Over It — creator’s Steam listing
+https://store.steampowered.com/app/240720/Getting_Over_It_with_Bennett_Foddy/
+Hammer climbing, loss of progress and narration; creator’s own playtester-duration statement.
+[20] Syobon Action HD — mobile remake listing
+https://apps.apple.com/us/app/syobon-action-hd/id886584755
+Identifies Chiku’s original. This is a later port, so its controls cannot establish original PC physics.
+[21] TrapAdventure 2 — official App Store listing
+https://apps.apple.com/in/app/trapadventure-2/id1110037150
+Creator listing and current version history; older life/ad restrictions should not be treated as current.
+[22] Troll Face Quest Video Games — official listing
+https://apps.apple.com/in/app/troll-face-quest-video-games/id1129234419
+SPIL Games’ absurd situational-puzzle format.
+Source type matters: store metadata is not telemetry; a creator statement is not an audited financial report; a speedrun is
+not a novice playtest. Analytical conclusions and prototype targets are identified in the body.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+34 / 39
+
+PRIMARY SOURCES FIRST / ALL ACCESSED FOR THIS BRIEF
+Source catalogue — 23–32
+[23] Nintendo — Super Mario Maker 2 creation page
+https://supermariomaker.nintendo.com/make/
+Official construction tools. Troll-course judgments in this report are analysis of the community form.
+[24] Steam — sound/music UI report
+https://steamcommunity.com/app/3242750/discussions/0/600783421635155420/
+A July 2025 player initially mistook the grey music toggle for disabled UI; developer acknowledged the reply.
+[25] WellPlayed — Level Devil review
+https://www.well-played.com.au/level-devil-review/
+Independent first-person account of readable pixel art, music and laughing at anticipated reactions.
+[26] Google Play — India listing and reviews
+https://play.google.com/store/apps/details?hl=en-IN&id=com.unept.leveldevil
+Qualitative reports about touch spacing/timing and difficult late stages; not a representative survey.
+[27] Official Level Devil site
+https://playleveldevil.com/
+Describes fast death/restart and moving environmental hazards; qualitative marketing, not timing data.
+[28] CalcPlay — provenance and limitations
+https://github.com/noxio-dev/CalcPlay/blob/7ddbd289ef6cc25828d82054d6f9ca7e2d1d120f/games/leveldevil/README.md
+Independent C reconstruction; author says geometry was extracted and room behaviours transcribed from an old web build.
+Not affiliated with Unept.
+[29] CalcPlay — extracted scene inventory
+https://github.com/noxio-dev/CalcPlay/blob/7ddbd289ef6cc25828d82054d6f9ca7e2d1d120f/games/leveldevil/tools/scenes.js
+on
+Raw actor/trigger coordinates and type IDs. Counts in this report are computed from this data, not from modern mobile
+telemetry.
+[30] CalcPlay — reconstructed room scripts
+https://github.com/noxio-dev/CalcPlay/blob/7ddbd289ef6cc25828d82054d6f9ca7e2d1d120f/games/leveldevil/tools/rooms.py
+Event definitions for the original 80-room sequence. Milliseconds, pixel displacements and velocity conversion checked
+directly.
+[31] CalcPlay — reconstructed controller/runtime
+https://github.com/noxio-dev/CalcPlay/blob/7ddbd289ef6cc25828d82054d6f9ca7e2d1d120f/games/leveldevil/src/main.c
+Defines a 60 Hz C simulation, collision outlines, movement, death, restart and rendering. These values are not verified
+against a current official binary.
+[32] Sensor Tower — public Android overview
+https://app.sensortower.com/overview/com.unept.leveldevil?country=US
+Retrieved overview labels advertising as Active. Indexed version metadata may lag the official store; this is not
+campaign-spend or acquisition-attribution data.
+Source type matters: store metadata is not telemetry; a creator statement is not an audited financial report; a speedrun is
+not a novice playtest. Analytical conclusions and prototype targets are identified in the body.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+35 / 39
+
+FORTY ARCHIVED STAGE IMAGES INSPECTED
+Visual source index — L01–L20
+Each link resolves the exact image endpoint used for the corresponding stage card. These are unofficial
+archived screenshots, not evidence that all depicted geometry or behaviour remains unchanged in the
+current release. Some show mid-attempt states. [8]
+Image
+Stage
+Direct image link
+L01
+Pits 1
+Open archived image 1-1.jpg
+L02
+Pits 2
+Open archived image 1-2.jpg
+L03
+Pits 3
+Open archived image 1-3.jpg
+L04
+Pits 4
+Open archived image 1-4.jpg
+L05
+Pits 5
+Open archived image 1-5.jpg
+L06
+Spikes 1
+Open archived image 2-1.jpg
+L07
+Spikes 2
+Open archived image 2-2.jpg
+L08
+Spikes 3
+Open archived image 2-3.jpg
+L09
+Spikes 4
+Open archived image 2-4.jpg
+L10
+Spikes 5
+Open archived image 2-5.jpg
+L11
+Push 1
+Open archived image 3-1.jpg
+L12
+Push 2
+Open archived image 3-2.jpg
+L13
+Push 3
+Open archived image 3-3.jpg
+L14
+Push 4
+Open archived image 3-4.jpg
+L15
+Push 5
+Open archived image 3-5.jpg
+L16
+Coins 1
+Open archived image 4-1.jpg
+L17
+Coins 2
+Open archived image 4-2.jpg
+L18
+Coins 3
+Open archived image 4-3.jpg
+L19
+Coins 4
+Open archived image 4-4.jpg
+L20
+Coins 5
+Open archived image 4-5.jpg
+The report describes these images but does not reproduce the reference game’s artwork as an asset pack. Do not use the
+screenshots as implementation templates for the new game.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+36 / 39
+
+FORTY ARCHIVED STAGE IMAGES INSPECTED
+Visual source index — L21–L40
+Each link resolves the exact image endpoint used for the corresponding stage card. These are unofficial
+archived screenshots, not evidence that all depicted geometry or behaviour remains unchanged in the
+current release. Some show mid-attempt states. [8]
+Image
+Stage
+Direct image link
+L21
+Controls 1
+Open archived image 5-1.jpg
+L22
+Controls 2
+Open archived image 5-2.jpg
+L23
+Controls 3
+Open archived image 5-3.jpg
+L24
+Controls 4
+Open archived image 5-4.jpg
+L25
+Controls 5
+Open archived image 5-5.jpg
+L26
+Platforms 1
+Open archived image 6-1.jpg
+L27
+Platforms 2
+Open archived image 6-2.jpg
+L28
+Platforms 3
+Open archived image 6-3.jpg
+L29
+Platforms 4
+Open archived image 6-4.jpg
+L30
+Platforms 5
+Open archived image 6-5.jpg
+L31
+Springs 1
+Open archived image 7-1.jpg
+L32
+Springs 2
+Open archived image 7-2.jpg
+L33
+Springs 3
+Open archived image 7-3.jpg
+L34
+Springs 4
+Open archived image 7-4.jpg
+L35
+Springs 5
+Open archived image 7-5.jpg
+L36
+Warps 1
+Open archived image 8-1.jpg
+L37
+Warps 2
+Open archived image 8-2.jpg
+L38
+Warps 3
+Open archived image 8-3.jpg
+L39
+Warps 4
+Open archived image 8-4.jpg
+L40
+Warps 5
+Open archived image 8-5.jpg
+The report describes these images but does not reproduce the reference game’s artwork as an asset pack. Do not use the
+screenshots as implementation templates for the new game.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+37 / 39
+
+AUTHORED DATA [29] / PIXELS, NOT MEASURED PLAYER TRAVEL
+Reconstruction coordinates — stages 1–20
+Spawn and trigger values below are sprite anchors (x,y). Default trigger size is 16×16 px. “×sx,sy” is a non-default scale
+about the centre (x+8,y+8); bounds are centre ± (8sx,8sy). The runner’s normal body is 7×13 px at spawn+(4,3). Activation
+requires geometric overlap, not reaching an x-coordinate. [29][31]
+Stage
+Spawn x,y
+Trigger anchors; optional scale
+01 Pits 1
+144,144
+T1: 320,144
+02 Pits 2
+144,144
+T1: 256,144; T2: 347,139
+03 Pits 3
+176,144
+T1: 272,144
+04 Pits 4
+144,144
+T1: 160,144; T2: 240,144
+05 Pits 5
+112,144
+T1: 176,144
+06 Spikes 1
+304,80
+T1: 248,132
+07 Spikes 2
+96,128
+T1: 240,120; T2: 344,120
+08 Spikes 3
+256,16
+T1: 240,48; T1: 272,48; T2: 271,160
+09 Spikes 4
+112,96
+T1: 304,168
+10 Spikes 5
+432,128
+T1: 320,128; T2: 192,128
+11 Push 1
+144,144
+T1: 272,144
+12 Push 2
+144,144
+T1: 272,144; T2: 288,144
+13 Push 3
+144,144
+T1: 160,144; T2: 240,144
+14 Push 4
+144,176
+T1: 192,176; T2: 320,154
+15 Push 5
+416,144
+T1: 352,136; T2: 168,136
+16 Coins 1
+128,112
+T1: 304,104
+17 Coins 2
+128,96
+None authored
+18 Coins 3
+128,96
+T1: 272,75 ×0.375,1; T2: 336,96
+19 Coins 4
+80,96
+T1: 282,80
+20 Coins 5
+80,128
+T1: 304,80
+Example: Pits 1 has spawn x=144 and T1 anchor x=320: Δx=176 px = 11 tiles. That is NOT 11 collision-body widths and NOT
+the exact first-contact distance. At a given height the body can touch the trigger before its sprite anchor reaches x=320.
+All listed actors come from the authored scene file, including unused triggers. Scripts can also create new actors. A trigger’s
+presence does not prove its event has an active handler.
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+38 / 39
+
+AUTHORED DATA [29] / PIXELS, NOT MEASURED PLAYER TRAVEL
+Reconstruction coordinates — stages 21–40
+Spawn and trigger values below are sprite anchors (x,y). Default trigger size is 16×16 px. “×sx,sy” is a non-default scale
+about the centre (x+8,y+8); bounds are centre ± (8sx,8sy). The runner’s normal body is 7×13 px at spawn+(4,3). Activation
+requires geometric overlap, not reaching an x-coordinate. [29][31]
+Stage
+Spawn x,y
+Trigger anchors; optional scale
+21 Controls 1
+220,96
+None authored
+22 Controls 2
+416,128
+T1: 376,120
+23 Controls 3
+96,112
+T1: 344,112
+24 Controls 4
+64,144
+None authored
+25 Controls 5
+76,64
+T1: 192,64; T2: 256,64; T3: 318,64
+26 Platforms 1
+96,144
+T1: 144,136; T2: 240,136; T3: 320,136
+27 Platforms 2
+416,144
+T1: 192,136; T2: 240,72
+28 Platforms 3
+144,96
+T1: 256,176 ×2.375,1; T2: 288,64
+29 Platforms 4
+96,96
+T1: 112,88; T2: 160,88; T3: 182,88; T4: 288,96
+30 Platforms 5
+144,176
+T1: 248,128; T2: 336,80; T3: 376,64 ×1.5,1
+31 Springs 1
+192,80
+T1: 112,64; T2: 160,160; T3: 256,160; T4: 352,160
+32 Springs 2
+80,128
+T1: 162,137 ×0.375,3.375; T2: 240,150; T2: 244,137 ×0.375,3.375; T3:
+322,135 ×0.375,2.875
+33 Springs 3
+96,112
+T1: 160,144; T2: 273,135 ×1,3.5
+34 Springs 4
+80,16
+T1: 96,80; T2: 376,48
+35 Springs 5
+96,128
+T1: 163,137 ×0.5,9.25; T2: 210,125 ×0.5,8.375; T3: 268,129 ×1,9.125; T4:
+319,129 ×1,10.625
+36 Warps 1
+64,96
+T1: 128,96; T2: 288,96; T3: 352,32; T4: 320,208
+37 Warps 2
+80,32
+T1: 136,160; T3: 256,72; T4: 368,64 ×2.5,1; T5: 384,160
+38 Warps 3
+160,160
+T1: 112,160; T2: 208,160; T3: 208,128; T4: 120,128; T5: 80,128; T6: 352,64
+×2.25,1; T7: 368,160
+39 Warps 4
+64,96
+T1: 104,92; T2: 136,92; T3: 168,92; T4: 200,92; T5: 232,92; T6: 264,92; T7:
+296,92
+40 Warps 5
+64,32
+T1: 96,160; T2: 128,176; T3: 224,48 ×5.125,1; T4: 192,176; T5: 256,176; T6:
+384,48 ×5.375,1; T7: 352,176; T8: 416,176
+Dynamic additions: Warps 2 creates T2 at (136,176), moving with a portal; Warps 4 creates T8 at (200,176). Warps 5 moves
+T1 with its portal. Those moving bounds must be tracked over time, not treated as fixed coordinates. [30]
+LEVEL DEVIL / RESEARCH + ORIGINAL DESIGN BRIEF / 23 NOV 2026
+39 / 39
+

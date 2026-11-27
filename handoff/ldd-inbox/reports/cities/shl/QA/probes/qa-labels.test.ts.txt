@@ -1,0 +1,12 @@
+import { it } from 'vitest';
+import { NAIVE, FIX, MISTAKES } from '../solutions';
+// QA scratch: the labels behind m0..mN in the sweep output
+it.runIf(!!process.env.QAL)('qa dis labels', () => {
+  const out: string[] = [];
+  for (let i = 1; i <= 10; i++) {
+    const id = `SHL-${String(i).padStart(2, '0')}`;
+    out.push(`${id} naive -> ${NAIVE[id]?.cause ?? '-'} | fix -> ${FIX[id]?.cause ?? '-'}`);
+    (MISTAKES[id] ?? []).forEach((m, k) => out.push(`  m${k} [${m.cause}] ${m.what}`));
+  }
+  console.log('LABELS\n' + out.join('\n'));
+});

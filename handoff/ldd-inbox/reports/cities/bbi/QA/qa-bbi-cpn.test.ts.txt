@@ -1,0 +1,12 @@
+import { it } from 'vitest';
+import { LEVELS } from '../../src/game/levels';
+import { World } from '../../src/game/world';
+import { INFO } from '../helpers';
+// QA scratch: how many checkpoints each BBI stage has right after build (cpsafe skips a stage with none)
+it.runIf(!!process.env.QACPN)('qa bbi cp count', () => {
+  for (const def of LEVELS.filter((d) => d.id.startsWith('BBI'))) {
+    const w = new World(def, INFO);
+    def.build?.(w);
+    console.log(`CPN ${def.id} n=${w.checkpoints.length} at=${w.checkpoints.map((x) => (x / 16).toFixed(1)).join(',')}`);
+  }
+});
