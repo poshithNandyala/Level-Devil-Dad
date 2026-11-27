@@ -794,13 +794,13 @@ export const ending: Ending = {
  *  new places on the floor to whirl in the dark. You cannot see them; you can see their ankle bells ringing.
  *  Jump where the bells ring, walk where it is quiet. When the lamps come back the next piece starts and the
  *  whole troupe sweeps the floor. */
-export const GHUNGUR = { c0: 4, c1: 19, lit: [9.5, 14.5], dark: [7, 12, 17], darkFor: 5, sweep: 1.5, litFor: 3 };
+export const GHUNGUR = { c0: 4, c1: 22, lit: [10, 16], dark: [7, 13, 19], darkFor: 5, sweep: 1.5, litFor: 3 };
 /** `tied` (the finale's turn, law 7): tonight the bells are tied to the drummer's frame, not to the boys' ankles:
  *  they ring over the empty floor and the boys whirl in silence. Jump where it is quiet. */
 export function ghungurAct(id: string, key: string, tied = false): Act {
   return {
   id,
-  w: 23,
+  w: 26,
   advice: tied
     ? 'Look where the bells hang tonight: on strings from the drummer’s frame, not on the boys. They ring over the empty floor, and the boys whirl in the quiet. Jump where it is quiet, walk under the bells.'
     : 'Between pieces the lamps go out and the boys whirl in new places in the dark. Don’t go by where you saw them: listen. Jump where the ankle bells ring, walk where it is quiet, and be off the floor before the lamps come back and the next piece sweeps it.',
@@ -823,7 +823,8 @@ export function ghungurAct(id: string, key: string, tied = false): Act {
     );
     const spot = (col: number, when: 'lit' | 'dark', bells = when === 'dark', live = true) =>
       w.add(
-        new Rig(c.X(col), FL - 26, 16, 26, {
+        // a boy spinning low on the floor (the dancers' bhuin chakkar): knee high, so a hop clears him
+        new Rig(c.X(col), FL - 16, 16, 16, {
           cause: 'bbi-nacha',
           inset: 2,
           layer: 4,
@@ -886,8 +887,9 @@ export const act19 = ghungurAct('bbi07-ghungur', 'bbi7gh');
  *  once. Look at the waists, not at the bridge. */
 export const T07K: TroupeCfg[] = [
   { c0: 4, n: 7, drum: 1.4, hold: 1.8, poses: ['bridge', 'bridge'], form: 0.2, roll: { stops: [0], at: 0.12, dur: 0.5, cause: 'bbi-kachha' }, kachha: true },
-  { c0: 15, n: 7, drum: 1.4, hold: 1.3, poses: ['bridge'], form: 0.2 },
+  { c0: 19, n: 7, drum: 1.4, hold: 1.3, poses: ['bridge'], form: 0.2 },
 ];
-export const act20 = troupeAct('bbi07-kachha', 25, T07K, 'bbi7kc', 'Look at their waists while they whirl. Pleats tucked up (kachha) means the line rolls the moment it lies down: let that stop go and cross on the next. Loose skirts lie still, but not for long: on those, go at once.');
+// a checkpoint on the wide bank between the two, so a replay is never the whole act
+export const act20 = troupeAct('bbi07-kachha', 29, T07K, 'bbi7kc', 'Look at their waists while they whirl. Pleats tucked up (kachha) means the line rolls the moment it lies down: let that stop go and cross on the next. Loose skirts lie still, but not for long: on those, go at once.', [13]);
 
 export const meta07 = { family: 'troupe-pose-platform-shapes', betrayals: ['pose-shapes'], ending: 'bbi-pose-gate' };

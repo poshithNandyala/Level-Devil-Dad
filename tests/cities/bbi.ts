@@ -1083,13 +1083,13 @@ const kachhaRun = (x: number): Step[] => [
   waitFor((w) => tr(w, 'bbi7kc0').pose === null, 'the drum again: pleats down now', 2400),
   waitFor((w) => tr(w, 'bbi7kc0').pose === 'bridge', 'this stop it lies still', 2400),
   { hold: 'R', until: and(ground, X(x + 11.2)), max: 400, note: 'over' },
-  { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 15) - 2, max: 900, note: 'to the second pit' },
+  { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 19) - 2, max: 900, note: 'to the second pit' },
   waitFor((w) => tr(w, 'bbi7kc1').pose === 'bridge', 'loose skirts: go at once', 2400),
-  { hold: 'R', until: and(ground, X(x + 22.2)), max: 400, note: 'over' },
-  { hold: 'R', until: X(x + 24.5), max: 300 },
+  { hold: 'R', until: and(ground, X(x + 26.2)), max: 400, note: 'over' },
+  { hold: 'R', until: X(x + 28.5), max: 300 },
 ];
 /** the ghungur: in the dark, jump each ringing spot (7, 12, 17), walk the quiet floor between */
-const ghungurRun = (x: number): Step[] => [...hop(x + 5.3, 'over the bells at 7'), ...hop(x + 10.3, 'over the bells at 12'), ...hop(x + 15.3, 'over the bells at 17'), { hold: 'R', until: X(x + 22.5), max: 300 }];
+const ghungurRun = (x: number): Step[] => [...hop(x + 4.6, 'over the bells at 7', 24), ...hop(x + 10.6, 'over the bells at 13', 24), ...hop(x + 16.6, 'over the bells at 19', 24), { hold: 'R', until: X(x + 25.5), max: 300 }];
 /** the finale's chariot: on to the hub that rides the stone, then up on to the still rim before the slam */
 const chakraRun = (x: number): Step[] => [
   ...hop(x + 1.4, 'up on the plinth'),
@@ -1125,7 +1125,7 @@ const tantu10Run = (x: number): Step[] => [
   { hold: 'R', until: X(x + 17.5), max: 300 },
 ];
 /** the finale's ghungur: jump the quiet spots (9.5, 14.5), walk under the bells */
-const ghungur10Run = (x: number): Step[] => [...hop(x + 7.8, 'over the quiet spot'), ...hop(x + 12.8, 'over the quiet spot'), { hold: 'R', until: X(x + 22.5), max: 300 }];
+const ghungur10Run = (x: number): Step[] => [...hop(x + 7.6, 'over the quiet spot', 24), ...hop(x + 13.6, 'over the quiet spot', 24), { hold: 'R', until: X(x + 25.5), max: 300 }];
 const phingaRun = (x: number): Step[] => [
   { hold: 'R', until: X(x + 2.6), max: 400, note: 'to the rim' },
   waitFor((w) => ph(w).t0 >= 0 && (w.tick - ph(w).t0) / 120 > 0.9 + 0.6, 'the first lands soft'),
