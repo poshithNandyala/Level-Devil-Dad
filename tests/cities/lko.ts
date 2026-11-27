@@ -793,10 +793,10 @@ actRoutes['lko10-raasta'] = (x) => [
   walkTo(x + 2.5, 300),
   hop(x + 4, x + 6.5, 'over the nala'),
   pause('pause before them'),
-  walkTo(x + 9.2, 300, 'stroll up: they part'),
+  walkTo(x + 12.2, 300, 'stroll up: they part'),
   until((w) => ['gone'].includes((w.flags['lko10-raasta:g'] as { s: string }).s), 900, 'bow back: he goes first, and the stone goes under him'),
-  hop(x + 14, x + 16.5, 'over the hole he left'),
-  runTo(x + 21, 300),
+  hop(x + 18, x + 20.5, 'over the hole he left'),
+  runTo(x + 25, 300),
 ];
 const jawabOk = (w: World) => (w.flags['lko10-jawab:g'] as { s: string } | undefined)?.s === 'ok';
 actRoutes['lko10-jawab'] = (x) => [
@@ -1093,7 +1093,7 @@ mistakes['LKO-08'].push(
 );
 
 mistakes['LKO-10'].push(
-  { what: 'the strollers again: through the gap once they part, as on the Ganj', steps: [...through('LKO-10', room10, 5), walkTo(actX('LKO-10', 5) + 2.5, 300), hop(actX('LKO-10', 5) + 4, actX('LKO-10', 5) + 6.5), pause(), walkTo(actX('LKO-10', 5) + 9.2, 300), until((w) => (w.flags['lko10-raasta:g'] as { s: string }).s === 'bow', 600), { hold: 'R', until: done, max: 600 }], cause: 'lko-pehle' },
+  { what: 'the strollers again: through the gap once they part, as on the Ganj', steps: [...through('LKO-10', room10, 5), walkTo(actX('LKO-10', 5) + 2.5, 300), hop(actX('LKO-10', 5) + 4, actX('LKO-10', 5) + 6.5), pause(), walkTo(actX('LKO-10', 5) + 12.2, 300), until((w) => (w.flags['lko10-raasta:g'] as { s: string }).s === 'bow', 600), { hold: 'R', until: done, max: 600 }], cause: 'lko-pehle' },
   { what: 'the strollers again: rushing them', steps: [...through('LKO-10', room10, 5), walkTo(actX('LKO-10', 5) + 2.5, 300), hop(actX('LKO-10', 5) + 4, actX('LKO-10', 5) + 6.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-ganj' },
 );
 

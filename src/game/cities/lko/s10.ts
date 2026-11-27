@@ -291,22 +291,22 @@ const jawab: Act = {
  *  the loose one. 07 taught: go through the gap. Here: bow back, let him go first, take the gap second. */
 const raasta: Act = {
   id: 'lko10-raasta',
-  w: 22,
+  w: 26,
   cp0: false,
   cps: [-2],
   advice: 'The strollers again: pause and they part. But a gap made by politeness is a doorway, and the gentleman in it bows you through first, on to the loose stone. Bow back (stand still) and let him go first, then hop the hole he leaves.',
   paint: (g, c) => {
     g.pit(c.x + 4, c.x + 5);
-    g.pit(c.x + 14, c.x + 15);
+    g.pit(c.x + 18, c.x + 19);
   },
   build: (w, c) => {
     const x = c.x;
     nala(w, x + 4, x + 5, 'lko-nala');
-    const crowd = strollers(w, x + 10, c.f('crowd'), 'lko-ganj', -210);
-    const hole = looseStone(w, x + 14, 2, 'lko-pehle');
+    const crowd = strollers(w, x + 13, c.f('crowd'), 'lko-ganj', -210);
+    const hole = looseStone(w, x + 18, 2, 'lko-pehle');
     const still = stillness(w);
     bowIcon(w, still);
-    const G = { x: c.X(13) + 8, s: 'wait', y: FLOOR };
+    const G = { x: c.X(17) + 8, s: 'wait', y: FLOOR };
     w.flags[c.f('g')] = G;
     w.add(
       new Art((ctx) => {
@@ -319,10 +319,10 @@ const raasta: Act = {
       if (G.s === 'wait' && crowd.s === 'parted') {
         G.s = 'bow';
         w2.say('Pehle aap, janab! | After you, sir!', G.x, FLOOR - 36, 2, 'npc');
-      } else if (G.s === 'bow' && still() > 50 && p.cx < c.X(13)) G.s = 'first';
+      } else if (G.s === 'bow' && still() > 50 && p.cx < c.X(17)) G.s = 'first';
       else if (G.s === 'first') {
-        const sx = c.X(14) - 6,
-          ex = c.X(16) + 10;
+        const sx = c.X(18) - 6,
+          ex = c.X(20) + 10;
         if (!hole.st.down && G.x >= sx) hole.drop(w2);
         if (G.x < ex) {
           G.x += 1.4;
