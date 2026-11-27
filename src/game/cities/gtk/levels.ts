@@ -7,7 +7,7 @@ import { room as room02, act as act02, meta02 } from './s02';
 import { room as room03, act as act03, act2 as act03b, meta03 } from './s03';
 import { room as room04, act as act04, meta04 } from './s04';
 import { room as room05, act1 as act05a, act2 as act05b, act3 as act05c, meta05 } from './s05';
-import { room as room06, act as act06, act2 as act06b, act3 as act06c, act4 as act06d, meta06 } from './s06';
+import { room as room06, act as act06, act2 as act06b, act3 as act06c, act4 as act06d, act5 as act06e, act6 as act06f, meta06 } from './s06';
 import { room as room07, act1 as act07a, act2 as act07b, act3 as act07c, act4 as act07d, act5 as act07e, act6 as act07f, act7 as act07g, act8 as act07h, act9 as act07i, act10 as act07j, act11 as act07k, act12 as act07l, act13 as act07m, meta07 } from './s07';
 import { room as room08, act as act08, act2 as act08b, act3 as act08c, act4 as act08d, act5 as act08e, meta08 } from './s08';
 import { room as room09, act as act09, act2 as act09b, act3 as act09c, act4 as act09d, meta09 } from './s09';
@@ -19,7 +19,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: room03(), acts: [act03, act03b], twist: 'gtk-jhola-entry', par: 23, shape: 'long', meta: meta03 }),
   longStage({ base: room04(), acts: [act04], twist: 'gtk-lift-counts-down', par: 15, shape: 'long', meta: meta04 }),
   longStage({ base: room05(), acts: [act05a, act05b, act05c], twist: 'gtk-taxi-meter', par: 40, shape: 'wtf', meta: meta05 }),
-  longStage({ base: room06(), acts: [act06, act06b, act06c, act06d], twist: 'gtk-tank-overflow', par: 18, shape: 'long', meta: meta06 }),
+  longStage({ base: room06(), acts: [act06, act06b, act06c, act06d, act06e, act06f], twist: 'gtk-tank-overflow', par: 18, shape: 'long', meta: meta06 }),
   longStage({ base: room07(), acts: [act07a, act07b, act07c, act07d, act07e, act07f, act07h, act07g, act07i, act07j, act07l, act07k, act07m], twist: 'gtk-rope-climbs-to-door', par: 59, shape: 'marathon', lives: 'act', meta: meta07 }),
   longStage({ base: room08(), acts: [act08, act08b, act08c, act08d, act08e], twist: 'gtk-cabin-both-doors', par: 35, shape: 'wtf', meta: meta08 }),
   longStage({ base: room09(), acts: [act09, act09c, act09d, act09b], twist: 'gtk-gate-yak-snowbank', par: 52, shape: 'long', meta: meta09 }),

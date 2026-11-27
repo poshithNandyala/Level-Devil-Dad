@@ -44,7 +44,7 @@ export function standTaxi(w: World, x0: number, x1: number, floor: number, start
       live: (r) => st.t0 >= 0 && (r.s.k ?? 0) > 0.03,
       tick: (r, w2) => {
         if (st.t0 < 0) return;
-        const u = cyc(w2, st.t0, cfg.period);
+        const u = cyc(w2, st.t0 + Math.round(((cfg as { delay?: number }).delay ?? 0) * 120), cfg.period);
         const k = u < cfg.out ? u / cfg.out : u < cfg.out * 2 ? 1 - (u - cfg.out) / cfg.out : 0;
         r.s.k = k;
         r.x = x0 + (x1 - x0) * Math.sin((k * Math.PI) / 2);
@@ -243,6 +243,53 @@ export const act4: Act = {
   build: (w, c) => {
     standTaxi(w, c.X(15), c.X(10.1), px(11), c.X(2), 'gtk6a', STAND2);
     sign(w, c.x + 1, 9.4, 3.6, 'TAXI STAND', 'green', 'up', 'seedhi');
+  },
+};
+
+/** act 5: two loops down. The stair down lands in a taxi pocket again, but this time the road you want is the
+ *  loop below that: wait out the taxi on the last step, cross the pocket, take the second stair down */
+export const STAND5 = { period: 3.4, out: 0.7 };
+export const act5: Act = {
+  id: 'gtk06-neeche',
+  w: 34,
+  advice: 'The road you want is two loops down. The first stair lands in a taxi pocket: wait on the last step while the taxi backs out, cross behind it as it pulls in, and take the second stair down at the far side.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x, x + 33, 15, 15, '.');
+    g.fill(x, x + 3, 11, 17, '#');
+    g.fill(x + 4, x + 5, 12, 17, '#');
+    g.fill(x + 6, x + 7, 13, 17, '#');
+    g.fill(x + 8, x + 20, 14, 17, '#');
+    g.fill(x + 21, x + 22, 15, 17, '#');
+    g.fill(x + 23, x + 33, 16, 17, '#');
+  },
+  build: (w, c) => {
+    standTaxi(w, c.X(13), c.X(8.1), px(14), c.X(2), 'gtk6n', STAND5);
+    decor(w, -3, (ctx) => {
+      box(ctx, c.X(12), px(11), px(6), 3, '#2E86AB');
+      box(ctx, c.X(12), px(11), 2, px(3), '#4E5A62');
+      box(ctx, c.X(18) - 2, px(11), 2, px(3), '#4E5A62');
+    });
+    sign(w, c.x + 0.5, 7.4, 3.6, 'LOWER RD', 'green', 'down', '2 loops');
+  },
+};
+export const STAND6 = { period: 5.0, out: 0.7 };
+/** act 6: the loop above has its own taxi stand, and the stair up from it lands right in the taxis' way */
+export const act6: Act = {
+  id: 'gtk06-upar2',
+  w: 32,
+  advice: 'Up again, and the loop above has its own stand: the stair comes out where two taxis back out in turn. Wait on the stair until the second has pulled in, then up and across.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 4, x + 5, 14, 17, '#');
+    g.fill(x + 6, x + 7, 13, 17, '#');
+    g.fill(x + 8, x + 9, 12, 17, '#');
+    g.fill(x + 10, x + 31, 11, 17, '#');
+  },
+  build: (w, c) => {
+    standTaxi(w, c.X(14), c.X(10.1), px(11), c.X(2), 'gtk6p', STAND6);
+    standTaxi(w, c.X(22), c.X(17.5), px(11), c.X(2), 'gtk6q', { ...STAND6, delay: STAND6.out * 2 } as typeof STAND6);
+    sign(w, c.x + 1, 9.4, 3.6, 'TAXI STAND', 'green', 'up', 'two taxis');
   },
 };
 

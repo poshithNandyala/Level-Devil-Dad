@@ -10,7 +10,7 @@ import { VENT, type Steamer } from '../../src/game/cities/gtk/s02';
 import type { Bag } from '../../src/game/cities/gtk/s03';
 import { FLOORS } from '../../src/game/cities/gtk/s04';
 import type { Rule } from '../../src/game/cities/gtk/s05';
-import { TANK, STAND2, STAND3 } from '../../src/game/cities/gtk/s06';
+import { TANK, STAND2, STAND3, STAND5, STAND6 } from '../../src/game/cities/gtk/s06';
 import type { Cloud } from '../../src/game/cities/gtk/s07';
 import { DOCK } from '../../src/game/cities/gtk/s08';
 import type { Yak } from '../../src/game/cities/gtk/s09';
@@ -433,6 +433,23 @@ const act06d = (x: number): Step[] => [
   { policy: stepper(), until: and(ground, X(x + 8.2), (w) => w.player.y + w.player.h <= 193), max: 900, note: 'up to the step below the top' },
   { hold: '', until: parked('gtk6a', STAND2), max: 900, note: 'wait while the taxi backs out over the top step' },
   { policy: stepper(), until: and(ground, X(x + 29)), max: 600, note: 'up and past it' },
+];
+const act06e = (x: number): Step[] => [
+  { hold: 'R', until: and(ground, X(x + 6.2), (w) => w.player.y + w.player.h >= 207 && w.player.y + w.player.h <= 209), max: 600, note: 'down to the last step above the pocket' },
+  { hold: '', until: parked('gtk6n', STAND5), max: 900, note: 'wait out the taxi' },
+  { hold: 'R', until: and(ground, X(x + 24)), max: 600, note: 'across the pocket, down the second stair' },
+  { policy: stepper(), until: X(x + 33.5), max: 400 },
+];
+const bothParked = (w: World) => {
+  const a = w.flags.gtk6p as { t0: number };
+  if (a.t0 < 0) return false;
+  const u = cyc(w, a.t0, STAND6.period);
+  return u >= STAND6.out * 4 + 0.02 && u <= STAND6.out * 4 + 0.3;
+};
+const act06f = (x: number): Step[] => [
+  { policy: stepper(), until: and(ground, X(x + 8.2), (w) => w.player.y + w.player.h <= 193), max: 900, note: 'up to the step below the top' },
+  { hold: '', until: bothParked, max: 1500, note: 'wait till both taxis are in' },
+  { policy: stepper(), until: and(ground, X(x + 31)), max: 600, note: 'up and across' },
 ];
 /** the tank: wait short of the gush till it stops, then walk in */
 const tankPolicy: Policy = (w, _m, d) => {
@@ -945,6 +962,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk06-modh': act06b,
   'gtk06-ulta': act06c,
   'gtk06-adda': act06d,
+  'gtk06-neeche': act06e,
+  'gtk06-upar2': act06f,
   'gtk07-thau': act07a,
   'gtk07-chitra': act07b,
   'gtk07-ghumti': act07c,
