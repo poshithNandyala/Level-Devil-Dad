@@ -537,7 +537,7 @@ export const roshandan: Act = {
     // the floor patches: solid, seen only in their own beam
     for (const f of ROSHAN.floor) w.add(new Block(c.X(f), fy, 32, 6, () => {}, 1));
     w.add(
-      new Art((ctx) => {
+      new Art((ctx, w2) => {
         // the dark gallery
         ctx.fillStyle = 'rgba(20,16,12,0.88)';
         ctx.fillRect(c.X(4), px(3), px(20), FLOOR + 40 - px(3));
@@ -557,6 +557,22 @@ export const roshandan: Act = {
           ctx.fill();
           ctx.fillStyle = '#C9B08A';
           ctx.fillRect(x0, fy, 32, 6);
+          // the roshandan itself: a lit square opening in the vault, in a dark wooden frame
+          ctx.fillStyle = '#3B2A1C';
+          ctx.fillRect(x0 + 9, px(4) - 9, 14, 10);
+          ctx.fillStyle = '#FFF3D0';
+          ctx.fillRect(x0 + 11, px(4) - 7, 10, 7);
+          // a solid stone slab: a pool of light on its top, a hard edge under it
+          ctx.fillStyle = 'rgba(255,244,210,0.8)';
+          ctx.fillRect(x0 + 3, fy - 1, 26, 2);
+          ctx.fillStyle = '#7A6448';
+          ctx.fillRect(x0, fy + 5, 32, 2);
+          // dust falling down the beam
+          ctx.fillStyle = 'rgba(255,248,225,0.8)';
+          for (let k = 0; k < 4; k++) {
+            const ph = ((w2.tick * 0.6 + k * 23) % 90) / 90;
+            ctx.fillRect(x0 + 10 + k * 4 + ph * 4, px(4) + ph * (fy - px(4)), 1.5, 1.5);
+          }
         }
         // beams from below: a bright hole, the beam widening upwards to the vault
         for (const h of ROSHAN.hole) {
@@ -572,8 +588,19 @@ export const roshandan: Act = {
           ctx.lineTo(x0 - 12, px(4));
           ctx.closePath();
           ctx.fill();
-          ctx.fillStyle = 'rgba(255,245,215,0.9)';
-          ctx.fillRect(x0 + 2, fy, 28, 3);
+          // the hole: a black opening in the floor with its broken lip lit from beneath
+          ctx.fillStyle = '#0B0806';
+          ctx.fillRect(x0 + 2, fy, 28, 6);
+          ctx.fillStyle = '#FFE9B0';
+          ctx.fillRect(x0 + 2, fy + 4, 28, 2);
+          ctx.fillRect(x0, fy - 1, 3, 7);
+          ctx.fillRect(x0 + 29, fy - 1, 3, 7);
+          // dust rising up out of it
+          ctx.fillStyle = 'rgba(255,240,200,0.8)';
+          for (let k = 0; k < 4; k++) {
+            const ph = ((w2.tick * 0.6 + k * 23) % 90) / 90;
+            ctx.fillRect(x0 + 6 + k * 6 - ph * 8 + k * ph * 4, fy - ph * (fy - px(4)), 1.5, 1.5);
+          }
         }
       }, 0),
     );
