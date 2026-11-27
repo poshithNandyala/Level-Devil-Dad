@@ -809,24 +809,36 @@ const rubbleOctopus: Act = {
  *  after a fish has gone over. */
 const highTuna: Act = {
   id: 'kvt10-choora',
-  w: 34,
-  advice: 'The tuna fly higher here, right over your head while you walk: don’t hop them, that is where they are. Hop the gaps in the pier just after one has gone over.',
+  w: 52,
+  advice: 'The tuna fly higher here, right over your head while you walk: don’t hop them, that is where they are. Hop the gaps in the pier just after one has gone over. The second boat throws low again, as in Minicoy: hop those.',
   paint: (g, c) => {
     for (const t of [10, 18, 26]) g.pit(c.x + t, c.x + t);
   },
   build: (w, c) => {
     const { X } = c;
     for (const t of [10, 18, 26]) pool(w, c.x + t, c.x + t + 1, 15.3, { colors: LAGOON });
-    let on = false;
+    let on = false,
+      on2 = false;
     const fling = () => {
       if (w.state !== 'play') return;
       if (w.player.x < X(33)) shot(w, 'kvt-tuna', X(34), FLOOR - 50, -170, 0, 0, 'hit');
       w.after(1.3, fling);
     };
+    // the second boat, past the gaps, throws at head height again
+    const fling2 = () => {
+      if (w.state !== 'play') return;
+      if (w.player.x < X(50)) shot(w, 'kvt-tuna', X(52), FLOOR - 20, -170, 0, 0, 'hit');
+      w.after(1.3, fling2);
+    };
     onPass(w, X(1), () => {
       if (on) return;
       on = true;
       fling();
+    });
+    onPass(w, X(33), () => {
+      if (on2) return;
+      on2 = true;
+      fling2();
     });
     sign(w, c.x + 0.4, G - 4.4, 3.4, 'TUNA', 'wood', null, 'mind your head');
     onPass(w, X(2), (w2) => taraSays(w2, 'Meen varunnu, chaadu! | Fish coming, jump!', 2.4));
