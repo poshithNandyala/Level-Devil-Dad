@@ -184,6 +184,26 @@ ulta nishana tadit chehra kataar khoh dwar
 pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound pat-charkhi pat-ginti-pad
 (+ the old nine twists: spikes crush swap shy sink rise wall fake none)
 
+## CHN (Chennai, Tamil Nadu): ideas used (hardness pass, 10 stages)
+- **01 tour bite** the sundal cart on the promenade: the vendor lifts the pan's lid on a steady beat and its steam stands
+  over the path while it is up; as you come near the beat lies once (a short shut, then up again). The honest tell is his
+  hand on the handle before every lift (`SundalCart`, `chn-sundal`, `chn-sooda`).
+- **09 Murukku Press** a brass press on a rail lays spiral strands into a kadai of hot oil: pale dough folds under you,
+  fried golden holds, and the cook's ladle lifts the oldest out first, so the golden one you wait on is the one he takes.
+  Acts: the ladle takes the darkest and drips on the one before (`chn09-karandi`), a big spiral's open eye with the press
+  over its far turn (`chn09-kannu`), thenkuzhal fries white and never turns: read the oil going quiet (`chn09-thenkuzhal`),
+  a row laid together is one age, wait then run it against the ladle's order (`chn09-varisai`, the stage's labelled
+  momentum beat). Door `chn-fresh-curtain`: pale strands part for a walker; stop and the burner fries them into a wall.
+- **10 Spencer Escalators** the old mall's escalators run by load: one rider up, two down fast into the comb plate; give
+  the ride away (hop back to the kerb), then ride. Callbacks that break their rule: four aboard crawl up, so stay on
+  (`chn10-moodal`); indoors the shimmer is polish and the dark is the well, and on the food court display the pale spirals
+  are real and the golden ones plaster that gives at a touch (`chn10-kaanal`); the billing queue's third trolley is the
+  locked one (`chn10-billing`). Door `chn-wet-floor-sign` is plain.
+- **Cut, and why:** `chn09-ruchi` (keep going before the cook snaps the near end: KVT-08's keep moving, registry S9),
+  `chn10-keezhe` (ride the down escalator up with the kid: any escalator can be hopped up, the trick had no teeth); the
+  plaster display, once `chn10-pattarai` (stand a second and it crumbles: keep moving again), is now kaanal's second half
+  and gives at a touch.
+
 ## KVT (Kavaratti, Lakshadweep): ideas used (hardness pass, 10 stages)
 - **01 tour bite** the coral step out to the boat shrinks with the tide as you come down the beach (`CoralStep`).
 - **09 Kalpeni Kadalkara** storm rubble: every landing slides you a tile towards the lagoon (`RubbleBank`, with `dir`,

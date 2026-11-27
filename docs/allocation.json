@@ -3458,11 +3458,11 @@
    }
   ],
   "tourNew": {
-   "family": "tour-chn-b16",
+   "family": "tour-chn-b5",
    "betrayals": [
-    "B16"
+    "B5"
    ],
-   "idea": "sundal cart rolls the promenade: contact is a ride across a 6-tile gap, same sprite as a hazard cart"
+   "idea": "the sundal vendor lifts the pan's lid on a steady beat and its steam stands over the path while it is up; the beat lies once as you come near (his hand on the handle is the honest tell)"
   },
   "seventhDeathTheme": "the kaapi tumbler is topped up the seventh time",
   "reserves": []

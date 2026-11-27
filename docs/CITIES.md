@@ -22,7 +22,7 @@ How to use this file:
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | TVM | Thiruvananthapuram | Kerala | South | Malayalam + English | done |
 | 2 | KVT | Kavaratti (bonus) | Lakshadweep | South | Jeseri words + Malayalam + English | done |
-| 3 | CHN | Chennai | Tamil Nadu | South | Chennai Tamil + English | done |
+| 3 | CHN | Chennai | Tamil Nadu | South | Chennai Tamil + English | done (10 stages, v0.17.6) |
 | 4 | PDY | Puducherry | Puducherry | South | Tamil + English + a little French | done |
 | 5 | BLR | Bengaluru | Karnataka | South | Kannada + English | done |
 | 6 | AMR | Amaravati | Andhra Pradesh | South | Telugu (coastal Andhra) + English | done |

@@ -618,3 +618,16 @@ round 7 cut `lko10-darbar` and `lko10-jawab` and kept one trap in `lko07-shaam`;
 death cause so the line is true for the play that died. Lengths under the floors are honest and ruled final: 05
 42.9 s, 06 37.3 s, 07 49.9 s, 08 37.1 s, 09 61.0 s, 10 24.5 s. Fair at N=80: 100 at 6 and 12 ticks on all ten;
 worst replay from a checkpoint to a death 7.46 s. Design notes: `docs/cities/LKO.md`.
+
+## v0.17.6: Chennai, ten stages
+Chennai's hardness pass: a tour bite (the sundal cart's lid lies once about its beat; watch the vendor's hand), the
+eight shipped rooms made fair at both lags (round 2: widen the answer, never the trap), and two new stages: 09 Murukku
+Press (pale dough folds, golden holds, the ladle takes the oldest) and 10 Spencer Escalators (one rider up, two down into
+the comb), whose acts break this city's own rules. QA round 1 failed 8c554fb: `chn09-ruchi` and the old plaster display
+asked "keep moving" (KVT-08's), `chn10-keezhe` and `chn10-billing` were cleared by hopping, three finale acts had one
+death each, and the oil's one line ("the pale spiral folded") was false for most plays. Fix round 3 (7d22a66) cut ruchi
+and keezhe, folded the display into kaanal with plaster that gives at a touch, made free trolleys roll at a touch, gave
+the family act its own second death and every death a line true for the play. CHN-09 28.1 s and CHN-10 22.9 s are
+honestly under their floors. Fair at N=80: 100 at 6 and 12 ticks on 01, 09 and 10; worst replay 4.58 s. CHN is off the
+modules-test allow-list. Shared fixes in this merge: `tests/acts.ts` no longer throws on a stage with no next float, and
+the allocation's tour entry is `tour-chn-b5`. Design notes: `docs/cities/CHN.md`.
