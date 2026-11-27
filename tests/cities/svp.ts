@@ -11,6 +11,7 @@ import type { Barge, Swell } from '../../src/game/cities/svp/lehar';
 import type { Stall } from '../../src/game/cities/svp/kadhai';
 import type { Pool } from '../../src/game/cities/svp/hauz';
 import type { LiftBridge } from '../../src/game/cities/svp/khula';
+import type { Lift } from '../../src/game/cities/svp/uthao';
 import type { SawHall } from '../../src/game/cities/svp/s02';
 import type { Creek } from '../../src/game/cities/svp/s03';
 import type { Herd, LateBoat } from '../../src/game/cities/svp/s04';
@@ -447,6 +448,13 @@ const bargeOf = (w: World) => (w.flags.barges as Barge[])[0];
 // ------------------------------------------------------------------ SVP-08 act 2: the fish-fry stalls
 // ------------------------------------------------------------------ SVP-09 act 2: the drained pools
 const pool = (i: number) => (w: World) => (w.flags.pools as Pool[])[i];
+// ------------------------------------------------------------------ SVP-07 act 5: the godown lifts
+const lift = (i: number) => (w: World) => (w.flags.lifts as Lift[])[i];
+/** on to lift `i` and ride to its last stop (where `until` ends the wait) */
+const liftRide = (i: number, boardTx: number): Step[] => [
+  { hold: 'R', until: (w) => w.standing(lift(i)(w).plat.solid) && w.player.cx > lift(i)(w).x + 20, max: 900, note: 'on to the lift' },
+  { hold: '', until: (w) => lift(i)(w).state === 'stop' && lift(i)(w).at === 1, max: 6000, note: 'ride it past the first stop to the last' },
+];
 // ------------------------------------------------------------------ SVP-07 act 4: the lift bridges
 const bridge = (i: number) => (w: World) => (w.flags.bridges as LiftBridge[])[i];
 /** back from the channel on the road until the lights have just gone green, then straight across and on to the far road */
@@ -519,6 +527,14 @@ function floatsStep(k: number, lastTx: number, note: string): Step {
   };
 }
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp07-uthao': (x) => [
+    ...liftRide(0, x + 8),
+    { hold: 'R', until: and(ground, X(x + 16)), max: 600, note: 'off on to the roof' },
+    { hold: 'R', until: and(ground, X(x + 24.2)), max: 600, note: 'along the roof' },
+    ...liftRide(1, x + 26),
+    { hold: 'R', until: and(ground, X(x + 34)), max: 600, note: 'off on to the road' },
+    { hold: 'R', until: and(ground, X(x + 39)), max: 600 },
+  ],
   'svp07-khula': (x) => [...bridgeCross(0, x + 6), ...bridgeCross(1, x + 26), ...bridgeCross(2, x + 46), { hold: 'R', until: and(ground, X(x + 64)), max: 600 }],
   'svp09-hauz': (x) => [...poolCross(0, x + 6), ...poolCross(1, x + 26), ...poolCross(2, x + 46), { hold: 'R', until: and(ground, X(x + 64)), max: 600 }],
   'svp08-bazaar': (x) => [...stallCross(0, x + 4), ...stallCross(1, x + 24), ...stallCross(2, x + 44), { hold: 'R', until: and(ground, X(x + 62)), max: 600 }],
@@ -681,6 +697,15 @@ const endingPolicies: Record<string, Policy> = {
 };
 
 // ------------------------------------------------------------------ the plays that must die in an added act
+actDeath('SVP-07', 'svp07-uthao', 'ride the lift up and stay aboard past the last stop', 'svp-uthao', () => [
+  { hold: 'R', until: (w) => w.standing(lift(0)(w).plat.solid) && w.player.cx > lift(0)(w).x + 20, max: 900 },
+  { hold: '', until: (w) => w.state !== 'play', max: 6000, note: 'stay aboard' },
+]);
+actDeath('SVP-07', 'svp07-uthao', 'take the roof lift down and stay aboard past the ground', 'svp-uthao', (x) => [
+  ...actRoutes['svp07-uthao'](x).slice(0, 4),
+  { hold: 'R', until: (w) => w.standing(lift(1)(w).plat.solid) && w.player.cx > lift(1)(w).x + 20, max: 900 },
+  { hold: '', until: (w) => w.state !== 'play', max: 6000, note: 'stay aboard' },
+]);
 actDeath('SVP-07', 'svp07-khula', 'run across the bridge without looking at the lights', 'svp-khula', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 1200, note: 'across the deck' }]);
 actDeath('SVP-07', 'svp07-khula', 'start across when the lights begin to flash', 'svp-khula', (x) => [
   { policy: (w) => go(toward(w, px(x + 6) - 20, 3)), until: (w) => bridge(0)(w).phase.name === 'warn' && Math.abs(w.player.cx - (px(x + 6) - 20)) < 8, max: 4000, note: 'wait for the flashing lights' },
