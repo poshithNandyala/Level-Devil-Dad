@@ -463,5 +463,80 @@ export const upar: Act = {
   },
 };
 
-export const s08 = { room: bhoolRoom, acts: [chaupar, upar, minar, mehrab, utar, wapas] };
+// ================================================================ act: roshandan, the light well
+/** A dark stretch of gallery over the well. You can't see the floor; you see only patches of light. Light
+ *  that comes DOWN from an opening in the vault falls on floor; light that comes UP through a hole from the
+ *  hall below is the hole itself, and its beam widens upwards. Hop from down-lit patch to down-lit patch. */
+const ROSHAN = { floor: [7, 12, 17, 22], hole: [9, 14, 19] };
+export const roshandan: Act = {
+  id: 'lko08-roshandan',
+  w: 26,
+  advice: 'A dark stretch of gallery: you see only patches of light. Light coming down from an opening in the vault falls on floor; light coming up through a hole from the hall below is the hole, and its beam widens upwards. Hop from down-lit patch to down-lit patch, over the dark and over the up-lit ones.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x, x + 25, 15);
+    g.fill(x, x + 4, 11, 11, '=');
+    g.fill(x + 24, x + 25, 11, 11, '=');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    well(w, x, x + 25);
+    const fy = px(11);
+    // the floor patches: solid, seen only in their own beam
+    for (const f of ROSHAN.floor) w.add(new Block(c.X(f), fy, 32, 6, () => {}, 1));
+    w.add(
+      new Art((ctx) => {
+        // the dark gallery
+        ctx.fillStyle = 'rgba(20,16,12,0.88)';
+        ctx.fillRect(c.X(4), px(3), px(20), FLOOR + 40 - px(3));
+        // beams from above: narrow at the vault, wide on the floor they light
+        for (const f of ROSHAN.floor) {
+          const x0 = c.X(f);
+          const g = ctx.createLinearGradient(0, px(4), 0, fy);
+          g.addColorStop(0, 'rgba(255,240,200,0.15)');
+          g.addColorStop(1, 'rgba(255,240,200,0.55)');
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.moveTo(x0 + 12, px(4));
+          ctx.lineTo(x0 + 20, px(4));
+          ctx.lineTo(x0 + 32, fy);
+          ctx.lineTo(x0, fy);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = '#C9B08A';
+          ctx.fillRect(x0, fy, 32, 6);
+        }
+        // beams from below: a bright hole, the beam widening upwards to the vault
+        for (const h of ROSHAN.hole) {
+          const x0 = c.X(h);
+          const g = ctx.createLinearGradient(0, fy, 0, px(4));
+          g.addColorStop(0, 'rgba(255,236,190,0.6)');
+          g.addColorStop(1, 'rgba(255,236,190,0.1)');
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.moveTo(x0, fy);
+          ctx.lineTo(x0 + 32, fy);
+          ctx.lineTo(x0 + 44, px(4));
+          ctx.lineTo(x0 - 12, px(4));
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = 'rgba(255,245,215,0.9)';
+          ctx.fillRect(x0 + 2, fy, 28, 3);
+        }
+      }, 0),
+    );
+    // falling through an up-lit patch is its own death; anywhere else in the dark is the well
+    const zone = w.add(new Zone(c.X(0), fy + 24, px(26), 40, 'lko-kuan'));
+    let left = 0;
+    w.onTick((w2) => {
+      const p = w2.player;
+      // where you stepped off decides it: into an up-lit patch, or into the dark
+      if (p.onGround) left = (p.cx - c.X(0)) / 16;
+      zone.hazard.cause = ROSHAN.hole.some((h) => left >= h - 1 && left < h + 2) ? 'lko-roshandan' : 'lko-kuan';
+    });
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Har darwaza ek jaisa hai. | Every doorway is alike.', 2.2));
+  },
+};
+
+export const s08 = { room: bhoolRoom, acts: [chaupar, upar, minar, mehrab, utar, wapas, roshandan] };
 export const meta08 = { family: 'entry-height-routes-level', betrayals: ['enter-height'], ending: 'lko-489' } as StageMeta;

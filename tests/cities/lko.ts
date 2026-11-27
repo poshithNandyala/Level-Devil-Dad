@@ -643,6 +643,10 @@ actRoutes['lko08-upar'] = (x) => [
   hops([x + 5.6, x + 9.6, x + 13.6, x + 17.6, x + 21.5], 'down on to the arch tops from above, top to top, and down past the well'),
   runTo(x + 25, 300),
 ];
+actRoutes['lko08-roshandan'] = (x) => [
+  walkTo(x + 4.3, 300),
+  hops([x + 4.3, x + 7.6, x + 8.5, x + 12.6, x + 13.5, x + 17.6, x + 18.5, x + 22.6, x + 25], 'down-lit patch to down-lit patch'),
+];
 actRoutes['lko08-mehrab'] = (x) => [runTo(x + 12, 400, 'on foot through the vault arch'), hop(x + 14.6, x + 17, 'at a jump through the next, up past the well', 30), runTo(x + 29.5, 300)];
 
 const R_lko09_hawa = (id: string) => (x: number): Step[] => {
@@ -928,7 +932,7 @@ mistakes['LKO-08'] = [
     cause: 'lko-goti',
   },
   { what: 'in the vault, hopping the drain into the arch', steps: [...through('LKO-08', room08, 3), runTo(actX('LKO-08', 3) + 1, 300), hop(actX('LKO-08', 3) + 3, actX('LKO-08', 3) + 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-mehrab' },
-  { what: 'hopping the crack into the last arch', steps: [...through('LKO-08', room08, 3), ...actRoutes0('lko08-mehrab', actX('LKO-08', 3)), ...actRoutes0('lko08-utar', actX('LKO-08', 4)), ...actRoutes0('lko08-wapas', actX('LKO-08', 5)), runTo(doorX('LKO-08') - 8.5, 300), hop(doorX('LKO-08') - 6, doorX('LKO-08') - 2), { hold: 'R', until: done, max: 400 }], cause: 'lko-bhool' },
+  { what: 'hopping the crack into the last arch', steps: [...through('LKO-08', room08, 3), ...actRoutes0('lko08-mehrab', actX('LKO-08', 3)), ...actRoutes0('lko08-utar', actX('LKO-08', 4)), ...actRoutes0('lko08-wapas', actX('LKO-08', 5)), ...actRoutes0('lko08-roshandan', actX('LKO-08', 6)), runTo(doorX('LKO-08') - 8.5, 300), hop(doorX('LKO-08') - 6, doorX('LKO-08') - 2), { hold: 'R', until: done, max: 400 }], cause: 'lko-bhool' },
 ];
 /** the room's route and the routes of the stage's first n acts */
 function through(id: string, room: Step[], n: number): Step[] {
@@ -1072,6 +1076,11 @@ mistakes['LKO-07'].push(
 mistakes['LKO-05'].push(
   { what: 'under the ladle: waiting on a heap for it to squash, as all along', steps: [...through('LKO-05', room05, 5), runTo(actX('LKO-05', 5) + 0.6, 300), hops([actX('LKO-05', 5) + 3]), until(done, 900)], cause: 'lko-ghee' },
   { what: 'under the ladle: hopping on from a crusted heap', steps: [...through('LKO-05', room05, 5), runTo(actX('LKO-05', 5) + 0.6, 300), hops([actX('LKO-05', 5) + 3, actX('LKO-05', 5) + 6]), until(done, 600)], cause: 'lko-seekh' },
+);
+
+mistakes['LKO-08'].push(
+  { what: 'in the dark, walking on to the next patch of light', steps: [...through('LKO-08', room08, 6), walkTo(actX('LKO-08', 6) + 4.3, 300), hops([actX('LKO-08', 6) + 4.3, actX('LKO-08', 6) + 7.6]), { hold: 'R', until: done, max: 400 }], cause: 'lko-roshandan' },
+  { what: 'in the dark, keeping off the light and walking on', steps: [...through('LKO-08', room08, 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-kuan' },
 );
 
 export const test: CityTests = {
