@@ -21,4 +21,6 @@ export const causeLines: Record<string, string[]> = {
   'ita-truck': ['You let go between chocks and the truck rolled back over you.', 'Let go only when the wheel has just dropped over a chock: the truck settles a step ahead of you and rolls back no further than that stone.'],
   'ita-nadi': ['The poles spread under you and the one you stood on rolled you into the Siang.', 'Look at the lashings: a pole with a rope band round it is tied to its neighbours and holds. A plain pole is loose. Hop from band to band.'],
   'ita-rassi': ['That band was frayed: it snapped and the rope whipped you.', 'A frayed band (loose ends, twitching) is not a step. Hop over that pole to the next sound band.'],
+  'ita-malba': ['The wall slumped into the hole, on to you.', 'Read the mortar above the brick you pull: only fresh pale mortar holds the course up. Under dry mortar, pull and step back.'],
+  'ita-kaanta': ['The fort’s spikes: they ride on the top course, all the way down.', 'A slumped wall is a spiked stub. Never stand on it: pull it down to one brick and hop over.'],
 };

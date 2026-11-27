@@ -475,6 +475,43 @@ const ghatPolicy: Policy = (w, m) => {
   return go('R');
 };
 
+// ------------------------------------------------------------------ ITA-09
+type WallSt = { c: number; bonded: boolean[]; bricks: { x: number; y: number }[]; hole: boolean; slumpT: number; pulls: number };
+/** one wall: lean until the brick comes out; walk through a hole; step back from a slump; hop a one-brick stub */
+function wallPolicy(key: string, climb = false): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const st = w.flags[key] as WallSt;
+    const p = w.player;
+    const wx = px(st.c);
+    if (p.x > wx + 8) return go('R');
+    if (st.bricks.length === 0 || st.hole) return go('R');
+    if (st.slumpT >= 0) return go('L');
+    if (st.bricks.length === 1) {
+      if (!p.onGround) return go('R');
+      if (climb ? p.x + p.w >= wx - 26 : p.x + p.w >= wx - 10) {
+        jt = climb ? 8 : 14;
+        return { move: 'R', jump: true };
+      }
+      return go('R');
+    }
+    return go('R');
+  };
+}
+const walls = (keys: string[], to: number): Step[] => [...keys.map((k): Step => ({ policy: wallPolicy(k), until: (w) => w.player.x > px((w.flags[k] as WallSt).c) + 8, max: 2400, note: `the wall ${k}` })), { hold: 'R', until: X(to), max: 600 }];
+const room09 = (): Step[] => walls(['ita9a', 'ita9b', 'ita9c'], 29);
+const act09 = (x: number): Step[] => walls(['ita9d', 'ita9e', 'ita9f', 'ita9g'], x + 39.4);
+const gatePolicy9: Policy = (w) => wallPolicy('ita9h')(w);
+
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-01': { steps: [...courseRoute(), ...hop(62.4, 'hop the fort wall like the others'), { hold: 'R', until: done, max: 900 }], cause: 'ita-ita' },
@@ -485,6 +522,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-06': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-doob' },
   'ITA-07': { steps: [{ hold: 'R', until: done, max: 2400, note: 'push without stopping' }], cause: 'ita-dhuan' },
   'ITA-08': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-nadi' },
+  'ITA-09': { steps: [{ hold: 'R', until: done, max: 2400, note: 'lean on every wall and walk into every hole' }], cause: 'ita-malba' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-01': { steps: [...upTo(24), { hold: 'R', until: X(77.0), max: 600 }, { hold: 'R', jump: 16, ticks: 16, note: 'skip the first brick, as on the first wall' }, { hold: 'R', until: done, max: 900 }], cause: 'ita-pop' },
@@ -520,6 +558,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
     },
     cause: 'ita-rassi',
   },
+  'ITA-09': { steps: [{ policy: wallPolicy('ita9a'), until: (w) => w.player.x > px(8) + 8, max: 2400 }, { policy: wallPolicy('ita9b', true), until: done, max: 2400, note: 'pull the second wall down and climb the stub' }], cause: 'ita-kaanta' },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
   'ITA-03': [{ what: 'wait on the young one’s back for the next to dip', steps: [{ policy: herdWalk('ita3'), until: (w) => w.player.x >= px(15), max: 3000 }, { hold: '', until: done, max: 1500 }], cause: 'ita-seeng' }],
@@ -566,6 +605,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'ita07-chadhai': act07,
   'ita07-barf': act07b,
   'ita08-dhaara': act08,
+  'ita09-deewar': act09,
 };
 const endingPolicies: Record<string, Policy> = {
   'ita-phatak': gatePolicy,
@@ -575,6 +615,7 @@ const endingPolicies: Record<string, Policy> = {
   'ita-mori': sluicePolicy,
   'ita-tailgate': tailgatePolicy,
   'ita-ghat': ghatPolicy,
+  'ita-darwaza': gatePolicy9,
 };
 
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
@@ -593,6 +634,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('ITA-07', 0, []);
   S['ITA-08'] = room08();
   lengthen('ITA-08', 0, []);
+  S['ITA-09'] = room09();
+  lengthen('ITA-09', 0, []);
 }
 
 export const test: CityTests = {
@@ -602,5 +645,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['ITA-02', 'ITA-03', 'ITA-04', 'ITA-05', 'ITA-06', 'ITA-07', 'ITA-08'],
+  fair: ['ITA-02', 'ITA-03', 'ITA-04', 'ITA-05', 'ITA-06', 'ITA-07', 'ITA-08', 'ITA-09'],
 };
