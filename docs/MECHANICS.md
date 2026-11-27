@@ -93,6 +93,15 @@ nouns and verbs (`grep -rni "bounce\|trampoline" src/game`). For the stage list 
   counted from the top of your jump, so off a high rock you walk, or run, but never jump; inside the
   falling water you sink slowly (RNC-07), and the storm parked over the falls, where the slow water makes
   you the tallest thing (RNC-08).
+- A tram rail whose groove locks a foot landed from a jump and steers you along it (CCU-01), kumir-danga
+  chalk rivers safe only while the kumir counts (CCU-01), a bus that never stops: off only forwards on the
+  conductor's "aaste" crawl (CCU-02), a jhalmuri tin whose shake sinks the muri and lifts the peanuts, a
+  chilli coming up where you landed (CCU-03), book stacks that drop one when a customer points (CCU-04),
+  clay figures carried out when the paint reaches the crown (CCU-05),
+  a trolley pole that sweeps the roof at a wire junction and points that turn the tram off (CCU-06),
+  porters' head-loads as platforms that set down at a marked CHA board (CCU-07), standing still among
+  the old men on the rok joins their adda until the tea seller passes (CCU-08), cloth panels tied where
+  your next foothold was, lifting you when the next is tied above (CCU-09).
 
 ## Hazards and kit (traps.ts, kit.ts, abilities.ts, goa.ts)
 Springs/spouts, blinkers (timed platforms), gusts/wind, geysers, cascades, rollers, riders, shots,
@@ -163,6 +172,10 @@ jai02-show jai03-zenana jai04-yantras jai05-rasta jai06-mela jai07-udaan jai08-a
 bpl02-jheel bpl03-shelters bpl04-karchob bpl05-mehfil bpl06-chowk bpl07-karkhana bpl08-bhojtal
 rpr02-khet rpr03-chowk rpr04-kothi rpr05-mela rpr06-jungle rpr07-saal rpr08-dussehra
 rnc02-galli rnc03-maidan rnc04-seedhi rnc05-kharkai rnc06-ghariya rnc07-chattan rnc08-ghagh
+ccu03-dokan ccu04-thak ccu05-lane ccu05-ghat
+ccu06-points ccu06-duiline ccu07-girder ccu07-dui ccu07-horn ccu07-board ccu07-pylon ccu07-jowar
+ccu08-rok ccu09-sinri ccu09-dhak ccu09-uthan ccu09-line
+ccu10-bus ccu10-chhad ccu10-phire ccu10-pherot ccu10-kumor ccu10-khola ccu10-kumir ccu10-setu ccu10-setu-b
 pat02-chokha pat03-batch pat04-anaaj pat05-ghat pat05-sangam pat06-sau pat06-nau pat07-sadak pat07-adda
 pat08-chowk pat08-vihara pat09-jhoola pat09-ghoda pat09-wapsi pat10-pipa pat10-sau pat10-sidhi pat10-anaaj
 pat05-bori pat06-gaadi pat07-pul pat07-haat pat07-mandi pat10-bori pat10-gaadi
@@ -181,6 +194,7 @@ sutradhar toran shant naap dulha palat salaami
 ghat haath gaanth khaali paan rakhdo kissa
 utar ghanta khisko lattu reel gud rath
 ulta nishana tadit chehra kataar khoh dwar
+ccu-stop ccu-thonga ccu-set ccu-murti ccu-pole-turn ccu-arch ccu-dorja ccu-dwar-kapor ccu-stup
 pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound pat-charkhi pat-ginti-pad
 (+ the old nine twists: spikes crush swap shy sink rise wall fake none)
 
