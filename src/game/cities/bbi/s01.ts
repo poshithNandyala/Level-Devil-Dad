@@ -160,7 +160,7 @@ export const tourLevel = (): LevelDef =>
     ],
     props: [],
     par: 30,
-    cps: [8, 33.5, 48, 75, 92],
+    cps: [8, 14.5, 33.5, 48, 75, 92],
     paint: (g) => {
       g.pit(G1.drain[0], G1.drain[1]).pit(G2.drain[0], G2.drain[1]);
     },

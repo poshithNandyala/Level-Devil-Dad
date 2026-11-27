@@ -24,5 +24,5 @@ export const levels = (): LevelDef[] => [
   longStage({ base: room07(), acts: [act07a, act07h, act07b, act07k, act07i, act07j], twist: 'bbi-pose-gate', par: 145, shape: 'marathon', lives: 'act', meta: meta07 }),
   longStage({ base: room08(), acts: [act08, act08f, act08e], twist: 'bbi-leaf-plate', par: 74, shape: 'wtf', meta: meta08 }),
   longStage({ base: room09(), acts: [act09d, act09g, act09b, act09i, act09f, act09h, act09], twist: 'bbi-horse-gap', par: 76, shape: 'long', meta: meta09 }),
-  longStage({ base: room10(), acts: [act10a, { ...act10i, cp0: false }, act10b, act10d, { ...act10j, cp0: false }, act10f, { ...act10e, cp0: false }, act10l, { ...act10g, cp0: false }, act10k, { ...act10h, cp0: false }, act10c], twist: 'bbi-ribbon-snip', par: 120, shape: 'marathon', lives: 'act', meta: meta10 }),
+  longStage({ base: room10(), acts: [act10a, act10i, act10b, act10d, act10j, act10f, act10e, act10l, act10g, act10k, act10h, act10c], twist: 'bbi-ribbon-snip', par: 120, shape: 'marathon', lives: 'act', meta: meta10 }),
 ];

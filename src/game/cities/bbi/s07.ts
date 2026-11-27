@@ -360,7 +360,7 @@ export const act7: Act = { cp0: false, ...troupeAct(
 
 /** act 8, lamps: a string of oil lamps hangs low over the pit. The wheel pose comes first and looks like the way,
  *  but standing on its top puts your head in the lamps; only the bridge goes under them */
-export const T07L: TroupeCfg = { c0: 4, n: 8, drum: 2.6, hold: 1.6, poses: ['wheel', 'tower', 'bridge'], form: 0.3 };
+export const T07L: TroupeCfg = { c0: 4, n: 8, drum: 1.6, hold: 1.5, poses: ['wheel', 'bridge'], form: 0.3 };
 export function deepaAct(id: string, key: string): Act {
   return {
   id,
@@ -407,15 +407,15 @@ export const T07C: TroupeCfg[] = [
   { c0: 10, n: 6, drum: 0.12, hold: 1.4, poses: ['bridge', 'wheel'], form: 0.2 },
   { c0: 16, n: 6, drum: 0.12, hold: 1.4, poses: ['bridge', 'tower'], form: 0.2 },
 ];
-export const act9: Act = { cp0: false, ...troupeAct('bbi07-shrinkhala', 26, T07C, 'bbi7k', 'One long pit, three troupes and no bank between them. Each drummer stops as you reach his part, and each bridge only lasts the walk over it: once on, keep walking to the far side without stopping.') };
+export const act9: Act = { ...troupeAct('bbi07-shrinkhala', 26, T07C, 'bbi7k', 'One long pit, three troupes and no bank between them. Each drummer stops as you reach his part, and each bridge only lasts the walk over it: once on, keep walking to the far side without stopping.') };
 
 /** act 10, the island: a long pit with a lamp plinth in the middle; the far troupe's bridge comes rarely: rest on
  *  the plinth (the shelter), not on a pose */
 export const T07I: TroupeCfg[] = [
-  { c0: 4, n: 6, drum: 1.6, hold: 1.5, poses: ['wheel', 'bridge'], form: 0.3 },
-  { c0: 12, n: 7, drum: 2.6, hold: 1.5, poses: ['tower', 'wheel', 'tower', 'bridge'], form: 0.3, phase: 0.8 },
+  { c0: 4, n: 6, drum: 1.6, hold: 1.5, poses: ['bridge', 'wheel'], form: 0.3 },
+  { c0: 12, n: 7, drum: 1.8, hold: 1.5, poses: ['tower', 'bridge'], form: 0.3, phase: 0.8 },
 ];
-export const act10 = troupeAct('bbi07-dweepa', 22, T07I, 'bbi7i', 'A lamp plinth stands in the middle of this pit. Cross the first troupe’s bridge to it and wait there: the second troupe makes a tower, a wheel and a tower again before its bridge comes.');
+export const act10 = troupeAct('bbi07-dweepa', 22, T07I, 'bbi7i', 'A lamp plinth stands in the middle of this pit. Cross the first troupe’s bridge to it and wait there: the second troupe makes a tower before its bridge comes.');
 
 /** act 11, Bagudi (BBI reserve, tag-it-passes-to-you): the boys play bagudi between shows. The raider's touch
  *  makes Dad "it", and the line of boys tackles whoever is it. He jumps for anyone hopping him, so the tag

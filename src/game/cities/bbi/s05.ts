@@ -620,7 +620,7 @@ export const act10 = bailAct('bbi05-gali', 20, 22, 'bbi5g', 'A longer lane and s
  *  over the rice pounder, and every time it walks along the beam the pounder's head swings up over the pit.
  *  A2: jump from the straw only when the head is down. A3: and only once the goat is on your side: on the far
  *  bank it butts you back into the pit. */
-export const GOAT = { bales: [5, 7] as [number, number], pit: [9, 10] as [number, number], g0: 5, g1: 17, start: 8, v: 32, beam: [8, 12] as [number, number] };
+export const GOAT = { bales: [5, 7] as [number, number], pit: [9, 10] as [number, number], g0: 5, g1: 15, start: 8, v: 40, beam: [8, 12] as [number, number] };
 export const act12: Act = {
   id: 'bbi05-chheli',
   w: 26,
