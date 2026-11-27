@@ -488,7 +488,7 @@ export const lashedHall: Act = {
         { x: px(x + 21), w: px(3), h: 16 },
         { x: px(x + 24), w: px(4), h: 32 },
       ],
-      300,
+      260,
       crowd,
       [px(x + 4), px(x + 12)],
       0,
@@ -497,7 +497,7 @@ export const lashedHall: Act = {
     ).install(w);
     w.add(back);
     w.add(back.hurt);
-    crowd.onArrive = (w2) => w2.after(1.6, () => back.go());
+    crowd.onArrive = (w2) => w2.after(1.0, () => back.go());
     (w.flags.halls ??= []).push(hall);
     (w.flags.backs ??= []).push(back);
     w.add(

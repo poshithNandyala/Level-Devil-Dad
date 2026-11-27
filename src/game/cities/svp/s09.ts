@@ -262,7 +262,7 @@ export const pul: Act = {
   paint: (g, c) => {
     g.pit(c.x + 6, c.x + 22);
     g.pit(c.x + 31, c.x + 47);
-    g.pit(c.x + 54, c.x + 73);
+    g.pit(c.x + 56, c.x + 73);
     g.pit(c.x + 82, c.x + 93);
     g.pit(c.x + 100, c.x + 110);
   },
@@ -270,7 +270,7 @@ export const pul: Act = {
     const x = c.x + 3;
     cellar(w, x + 3, x + 19, 4, 30, 'svp-eent2');
     cellar(w, x + 28, x + 44, 4, 30, 'svp-eent2');
-    cellar(w, x + 51, x + 70, 4, 30, 'svp-eent2');
+    cellar(w, x + 53, x + 70, 4, 30, 'svp-eent2');
     cellar(w, x + 79, x + 90, 4, 30, 'svp-eent2');
     cellar(w, x + 97, x + 107, 4, 30, 'svp-eent2');
     // first creek of ruin: green, green (swinging), a grey step to tempt you, green

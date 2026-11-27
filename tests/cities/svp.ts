@@ -612,7 +612,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'svp10-ghat': (x) => [
     { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall, a fritter in hand' },
     { hold: 'R', until: X(x + 15.2), max: 600, note: 'on to the edge: the deer are tied' },
-    { policy: (w) => (boatA(w).docked ? go('R') : pace(w)), until: (w) => boatA(w).docked && w.standing(boatA(w).boat.solid), max: 1800, note: 'pace about with the fritter until the boat is in, then step on' },
+    { policy: (w) => (boatA(w).docked ? go('R') : pace(w, px(x + 13), px(x + 14.5))), until: (w) => boatA(w).docked && w.standing(boatA(w).boat.solid), max: 1800, note: 'pace about with the fritter until the boat is in, then step on' },
     { hold: '', until: (w) => boatA(w).boat.x >= boatA(w).R0 - 1, max: 900, note: 'ride it across' },
     { hold: 'R', until: and(ground, X(x + 24)), max: 400, note: 'off on to the far bank' },
     { hold: 'R', until: and(ground, X(x + 33.5)), max: 600 },
@@ -719,7 +719,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 };
 
 /** back and forth a few steps at a time, not standing still (standing still puts the fritter down) */
-const pace = (w: World): Out => go(Math.floor(w.tick / 24) % 2 ? 'L' : 'R');
+const pace = (w: World, lo = 0, hi = 1e9): Out => (w.player.cx < lo ? go('R') : w.player.cx > hi ? go('L') : go(w.player.facing > 0 ? 'R' : 'L'));
 /** from the end of a grey root at tile `a`: a jump to the grey root at tile `b` */
 const greyJump = (a: number, b: number): Step[] => [
   { hold: 'R', until: and(ground, X(a + 0.4)), max: 900, note: 'to the end of the grey root' },
@@ -937,7 +937,7 @@ actDeath('SVP-10', 'svp10-ghat', 'put the fritter down at the stall, as before, 
 actDeath('SVP-10', 'svp10-ghat', 'carry the fritter to the edge and step off while the boat is away', 'fell', (x) => [
   { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },
   { hold: 'R', until: X(x + 15.2), max: 600, note: 'to the edge' },
-  { policy: (w) => (boatA(w).boat.x >= boatA(w).R0 - 1 ? go('R') : pace(w)), until: (w) => w.state !== 'play', max: 1800, note: 'pace about, and walk off when the boat has gone back across' },
+  { policy: (w) => (boatA(w).boat.x >= boatA(w).R0 - 1 ? go('R') : pace(w, px(x + 13), px(x + 14.5))), until: (w) => w.state !== 'play', max: 1800, note: 'pace about, and walk off when the boat has gone back across' },
 ]);
 /** the spot at the end of awning `idx` that the wind alone would give: the lee end (or, `against`, the windward end) */
 const windSpot = (idx: number, against = false) => (w: World) => {
