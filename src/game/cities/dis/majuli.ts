@@ -120,7 +120,8 @@ export class Trap extends Entity {
     readonly cycle = 480,
     readonly ring = 110,
     readonly up = 100,
-    readonly slack = 60,
+    // fix round 1 (QA F3): 60 -> 84 ticks, so a hop the moment it comes down still lands while slack at lag 12
+    readonly slack = 84,
   ) {
     super();
     this.layer = 2;

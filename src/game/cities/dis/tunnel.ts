@@ -130,7 +130,7 @@ export const rangTunnels: Act = {
     const x = c.x;
     g.pit(x + 6, x + 51);
     for (const k of PIERS) g.fill(x + k, x + k + 1, 15, 17, '#');
-    g.fill(x + 1, x + 3, 13, 13, '=');
+    g.fill(x, x + 4, 13, 13, '=');
     g.fill(x + 4, x + 16, 11, 11, '=');
   },
   build: (w, c) => {
