@@ -591,3 +591,16 @@ Thiruvananthapuram's extend pass: stages 09 and 10 after the old finale (ids kep
 keys under the `tvm-` prefix, and every checkpoint moved where it passes the three-play respawn check (idle,
 run, tap jump at lag 0, 6 and 12). It passed independent QA at 2e7eba9 after five fix rounds
 (ldd-inbox/reports/cities/tvm/QA/). TVM is off the modules-test allow-list, so it now gets every strict check.
+
+## v0.17.4: Kavaratti, ten stages
+Kavaratti's hardness pass: a tour bite (the coral step out to the boat shrinks with the tide), two new stages
+(09 Kalpeni Kadalkara, storm rubble that slides you a tile towards the lagoon on every landing; 10 Neerali
+Kuzhi, an octopus the colour of the coral, whose finale acts each break a rule an earlier KVT stage taught),
+its keys under the `kvt-` prefix, a seventh-death line, and checkpoints that pass the three-play respawn check.
+It passed QA round 4 at b66b2bf. Fix round 4 cut `kvt10-kannadi` (KVT-08's "keep moving" again); QA round 4
+cut `kvt10-kotta` (stay in the basket past a rotten landing to the very end): that thought, "the ride is not
+over at the first place you could get off", is Gangtok's yak that stops for photos on thin ice, committed
+earlier, so Gangtok keeps it. KVT-10 is 86.7 s, honestly under the 90 s floor; KVT-09 is 42.6 s (ruled final).
+Fair at N=80: every stage 100 at 6 ticks and at least 96 at 12 (KVT-08 96); worst replay from a checkpoint to a
+death 7.18 s; 1920 respawn checks on KVT-10, no death for idle, a short run or a tap jump. KVT is off the
+modules-test allow-list. Design notes: `docs/cities/KVT.md`.

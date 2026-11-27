@@ -184,6 +184,24 @@ ulta nishana tadit chehra kataar khoh dwar
 pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound pat-charkhi pat-ginti-pad
 (+ the old nine twists: spikes crush swap shy sink rise wall fake none)
 
+## KVT (Kavaratti, Lakshadweep): ideas used (hardness pass, 10 stages)
+- **01 tour bite** the coral step out to the boat shrinks with the tide as you come down the beach (`CoralStep`).
+- **09 Kalpeni Kadalkara** storm rubble: every landing slides you a tile towards the lagoon (`RubbleBank`, with `dir`,
+  `ridge` and `carry`); climb by walking to each step's far end and tapping up; never a full leap under a beach-rock
+  lip; over the summit walk off, never hop down; the sea wall's heap you land deep on, its loose block you jump
+  whole; a ridge where only the middle holds; storm cuts you jump well past; the shingle that carries you under a
+  lip (`kvt09-ozhukku`). Door `kvt-buried-door`: three hops slide the heap off the door, a fourth tips you in.
+- **10 Neerali Kuzhi** an octopus drawn as a coral head of the same colour; its den, the dark shell-ringed hole, is
+  solid. Callbacks that break each KVT rule: the rotten plank is the way down (`kvt10-palaka`), land mid-step, the
+  far tile is the octopus (`kvt10-kallu`), run on from the nest behind (`kvt10-aama`), walk under the high tuna
+  (`kvt10-choora`), leap from the trunk (`kvt10-thengu`), wait for the moray's second strike (`kvt10-irandu`), jump
+  with the wind (`kvt10-kaattu`), ride the dolphin under the arch and step off coming down (`kvt10-kamaanam`), step on
+  after the lighthouse beam (`kvt10-nizhal`), stand still on heads that sink while you move (`kvt10-veliyettam`), the
+  reef that rises for a jumper (`kvt10-paaru`), chase the boat that is not coming back (`kvt10-thoni`), the tide steps
+  and the hole with eyes (`kvt10-irakkam`). Door `kvt-sand-arm`: the octopus's arm is the patch of sand that moves.
+- **Cut, and why:** `kvt10-kannadi` (glass that holds only a runner: KVT-08's keep moving), `kvt10-kotta` (stay in the
+  basket past a rotten landing: Gangtok's yak photo stops, earlier).
+
 ## PAT (Patna, Bihar): ideas used (module city, 10 stages)
 - **01 Prannam, Patna!** a tempo pulls in behind you at the bus stop and the waiting crowd surges along the road
   to it (climb on the kerb board, then run on before the tempo pulls out).
