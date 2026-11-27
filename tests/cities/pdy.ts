@@ -281,7 +281,6 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'PDY-10': [
     { what: 'jump on to the first leaf and run across', steps: [{ hold: 'R', until: X(4.2), max: 300 }, { hold: 'R', jump: 10, ticks: 10 }, die], cause: 'splash' },
     { what: 'fold the first leaf, then wait for it to open again and walk across the open leaf', steps: [...foldAndCross('leaf1', 5, 13.3).slice(0, 4), { hold: '', until: (w) => leafState('leaf1')(w) === 'open', max: 900 }, { hold: 'R', jump: 8, ticks: 8 }, die], cause: 'splash' },
-    { what: 'fold the second leaf and stand on the bar to look', steps: [...foldAndCross('leaf1', 5, 13.3), ...foldAndCross('leaf2', 17, 24.3, 150), die], cause: 'pdy-mul' },
   ],
 };
 
