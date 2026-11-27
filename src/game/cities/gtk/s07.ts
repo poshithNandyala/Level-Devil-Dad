@@ -286,34 +286,6 @@ export const DAGAR_PITS: [number, number][] = [
   [29, 30],
   [34, 35],
 ];
-/** shelter, the other way round: the cloud is drifting off up the road ahead of you, slower than a walk. Stay in
- *  the clear air behind it, where you can see the holes; catch it up and you're walking blind */
-export const drifterAct = (id: string, PITS: [number, number][], speed: number, key: string, w = 44, painted = false): Act => ({
-  id,
-  w,
-  advice: painted
-    ? 'The cloud drifts off ahead again, and the clear air behind it shows the painted wall: a road where there are holes. The rope is back: stay behind the cloud, and jump where the rope stops, not where the road looks broken.'
-    : 'The cloud is drifting off up the road ahead of you, slower than you walk, and there’s no rope. Don’t catch it up: stay in the clear air behind it, where you can see the holes, and jump them there.',
-  paint: (g, c) => {
-    for (const [a, b] of PITS) g.pit(c.x + a, c.x + b);
-  },
-  build: (w2, c) => {
-    const cl: Cloud = { t0: -1, thick: 0, clear: 0, ahead: speed };
-    w2.flags[key] = cl;
-    onPass(w2, c.X(1), (w3) => {
-      cl.t0 = w3.tick;
-    });
-    const pits = PITS.map(([a, b]) => [c.x + a, c.x + b] as [number, number]);
-    if (painted) mural(w2, pits);
-    fog(w2, c.x + 3, c.x + w - 1, cl);
-    if (painted) rope(w2, c.x + 1, c.x + w - 1, pits);
-    drops(w2, pits, painted ? 'gtk-deewar' : 'gtk-badal');
-    decor(w2, -2, (ctx) => {
-      box(ctx, c.X(0), FL - 44, px(3), 5, '#2E86AB');
-      box(ctx, c.X(0), FL - 39, 3, 39, '#5E5A50');
-    });
-  },
-});
 /** two tea stalls on one long stretch with the rope down: wait under each for the cloud to lift, look, go */
 export const SHELTERS = [1, 30];
 export const chaiAct = (id: string, PITS: [number, number][], CL: Cloud, key: string): Act => ({

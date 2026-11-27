@@ -306,59 +306,6 @@ export const act3: Act = {
   },
 };
 
-/** act 4: the bin round, coming towards you. A wrapper underfoot, every bin heaped full, and the bin man working
- *  down the street from the far end. Behind him each shop tips its sweepings into the bin he did before, so only
- *  the bin he has just emptied takes a wrapper: read where he has got to, and bin it in that one */
-export const PEECHE = { delay: 4, speed: 30, tip: 1 };
-export const act4: Act = {
-  id: 'gtk05-peeche',
-  w: 36,
-  advice: 'Every bin is heaped full, and the bin man is coming down the street from the far end, emptying them one by one. The shops fill each one again behind him, so only the bin he has just emptied takes a wrapper: bin it in that one, then jump the bed.',
-  paint: (g, c) => {
-    g.fill(c.x + 27, c.x + 28, 13, 14, '#');
-  },
-  build: (w, c) => {
-    const x = c.x;
-    // the wrapper lies halfway down the round, so the act's second checkpoint is taken empty-handed
-    litter(w, x + 19.5);
-    const bins = [x + 8, x + 13, x + 18, x + 23].map((cc) => bin(w, cc, true));
-    planterPaint(w, x + 27, x + 28, 2);
-    const st = { t0: -1, done: 0, bins };
-    w.flags.gtk5p = st;
-    onPass(w, c.X(2.5), (w2) => {
-      st.t0 = w2.tick;
-    });
-    let last: (typeof bins)[number] | null = null;
-    w.add(
-      new Rig(c.X(25.5), FL - 28, 12, 28, {
-        layer: 2,
-        tick: (r, w2) => {
-          if (st.t0 < 0 || (w2.tick - st.t0) / 120 < PEECHE.delay) return;
-          const next = [...bins].reverse().find((b) => b.s.full && b !== last && b.x < r.x + 4);
-          if (next && r.x <= next.x + 2) {
-            r.s.tip = (r.s.tip ?? 0) + 1;
-            if (r.s.tip > PEECHE.tip * 120) {
-              next.s.full = false;
-              next.s.room = 99;
-              // the shop by the last one has tipped its sweepings in: heaped again
-              if (last) last.s.full = true;
-              last = next;
-              st.done++;
-              r.s.tip = 0;
-            }
-            return;
-          }
-          if (r.x > c.X(4)) r.x -= perTick(PEECHE.speed);
-        },
-        paint: (ctx, r) => {
-          box(ctx, r.x + 14, FL - 14, 20, 12, '#2E7D5B');
-          local(ctx, r.x + 6, r.y, 28, '#E8772E', { cap: '#3E8E41' });
-        },
-      }),
-    );
-    sign(w, x + 30, 9.6, 4, 'BIN ROUND', 'green', null, 'down the street');
-  },
-};
 /** act 5: MG Marg's benches with RESERVED cards (GTK reserve F3), by a sweeper. A bench is the way over his stroke;
  *  a reserved one, the owner asks you off it, down on to the paving, in front of his broom */
 export const act5: Act = {

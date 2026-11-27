@@ -13,7 +13,7 @@ export const lines: CityLines = {
     'Swagatam, Dad! Hop along MG Marg! | Welcome, Dad! Hop along MG Marg!',
     'Hajur! The shortcut stairs, Dad! | Yes! The shortcut stairs, Dad!',
     'Ke cha haal khabar? Just run! | What’s the news? Just run!',
-    'Hajur! Stay on, Dad, all the way! | Yes! Stay on, Dad, all the way!',
+    'Hajur! In you get, Dad, from this side! | Yes! In you get, Dad, from this side!',
     'Hajur! Off the yak when it stops! | Yes! Off the yak when it stops!',
     'Shubha yatra, Dad! Kanchenjunga awaits! | Have a good journey, Dad! Kanchenjunga awaits!',
   ],

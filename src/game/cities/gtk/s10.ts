@@ -12,9 +12,8 @@ import { onPass } from '../../levels/trolls';
 import { FL, Rig, box, decor, px } from './entities';
 import { taraScript } from './common';
 import { FLOORS, house, houseDecor } from './s04';
-import { fog, rope, drifterAct, type Cloud } from './s07';
+import { fog, rope, type Cloud } from './s07';
 import { inspectorAct } from './s03';
-import { spanAct } from './s08';
 import { bankLook, river, thinShore, yak } from './s09';
 import { ACT_CFG, steamer } from './s02';
 import { bin, litter, mgRule } from './s05';
@@ -203,7 +202,6 @@ export const act5: Act = {
 
 /** the rest of the finale: Gangtok's own ideas once more, each in a new place */
 // the cloud drifts off ahead of you over a road whose wall is painted; the rope is the truth
-export const act6 = drifterAct('gtk10-baadal', [[7, 8], [13, 14], [20, 21], [27, 28], [34, 35]], 50, 'gtk10d', 40, true);
 // the bag rail over the jhora on the way to the ropeway, the inspector working it towards you
 export const act7 = inspectorAct(
   'gtk10-jhola',
@@ -214,31 +212,120 @@ export const act7 = inspectorAct(
   'Over the jhora on the bag rail once more, and the inspector is working it from the far end towards you: cloth bags only, and hop over him the moment he has passed the next one.',
 );
 // the ropeway up to the viewpoint: the far cabin stops above yours at the middle
-export const act8 = spanAct(
-  'gtk10-tar',
-  'gtk10t',
-  15,
-  9,
-  px(12),
-  px(12) - 26,
-  ['#C0392B', '#2E86AB'],
-  'The ropeway up to the viewpoint road: the two cabins meet at the middle, the far one a little higher. Jump up on to it while they’re together; stay on yours and it takes you back.',
-  'viewpoint',
-);
+/** the finale's ropeway breaks 08's middle-station change: tonight your cabin goes through to the viewpoint deck,
+ *  and the other one that waits at the middle drops away down the valley line the moment yours comes in. Stay on
+ *  yours past the middle, and off on the deck: it goes on up into its shed */
+export const TAR10 = { wait: 0.8, toMid: 2.4, atMid: 1.0, toDeck: 2.2, atDeck: 2.0, up: 0.6, bDrop: 0.5 };
+const lerp10 = (a: number, b: number, k: number) => a + (b - a) * Math.max(0, Math.min(1, k));
+export const act8: Act = {
+  id: 'gtk10-tar',
+  w: 34,
+  advice: 'The ropeway up to the viewpoint road, and tonight it runs through: your cabin goes all the way to the far deck. The other cabin at the middle is the valley line, and it drops away the moment yours comes in. Stay on past the middle, and get off on the far deck: your cabin goes on up into its shed.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x, x + 33);
+    g.fill(x, x + 4, 15, 17, '#');
+    g.fill(x + 29, x + 33, 9, 17, '#');
+  },
+  build: (w, c) => {
+    const T = TAR10;
+    const st = { t0: -1 };
+    w.flags.gtk10tl = st;
+    onPass(w, c.X(1.5), (w2) => {
+      if (st.t0 < 0) st.t0 = w2.tick;
+    });
+    const t = (w2: World) => (st.t0 < 0 ? 0 : (w2.tick - st.t0) / 120);
+    const a0 = { x: c.X(5), y: px(15) },
+      am = { x: c.X(17) - 40, y: px(12) },
+      ad = { x: c.X(29) - 40, y: px(9) };
+    const aAt = (u: number) => {
+      if (u < T.wait) return { ...a0, ph: 'end' };
+      u -= T.wait;
+      if (u < T.toMid) return { x: lerp10(a0.x, am.x, u / T.toMid), y: lerp10(a0.y, am.y, u / T.toMid), ph: 'up' };
+      u -= T.toMid;
+      if (u < T.atMid) return { ...am, ph: 'mid' };
+      u -= T.atMid;
+      if (u < T.toDeck) return { x: lerp10(am.x, ad.x, u / T.toDeck), y: lerp10(am.y, ad.y, u / T.toDeck), ph: 'up' };
+      u -= T.toDeck;
+      if (u < T.atDeck) return { ...ad, ph: 'deck' };
+      u -= T.atDeck;
+      return { x: ad.x, y: ad.y - 60 * Math.min(1, u / T.up), ph: 'shed' };
+    };
+    const roof = (ctx: CanvasRenderingContext2D, r: Rig, colour: string) => {
+      const cx = r.x + r.w / 2;
+      box(ctx, cx - 1, r.y - 14, 2, 14, '#4E5A62');
+      box(ctx, r.x, r.y, r.w, 4, '#D9D4C7');
+      box(ctx, r.x + 2, r.y + 4, r.w - 4, 22, colour);
+      box(ctx, r.x + 5, r.y + 8, r.w - 10, 9, '#BFD7EA');
+    };
+    const A = w.add(
+      new Rig(a0.x, a0.y, 40, 6, {
+        solid: true,
+        layer: 2,
+        tick: (r, w2) => {
+          const q = aAt(t(w2));
+          r.moveTo(w2, q.x, q.y);
+          r.s.ph = q.ph;
+          // on up into the shed over the far deck, with Dad still on the roof: the eave takes him
+          if (q.ph === 'shed' && q.y < ad.y - 30 && r.carries(w2)) w2.die('gtk-ropeway');
+        },
+        paint: (ctx, r) => roof(ctx, r, '#C0392B'),
+      }),
+    );
+    // the valley-line cabin waiting at the middle, a little lower: it drops away as A comes in
+    const b0 = { x: c.X(17) + 4, y: px(12) + 14 };
+    const B = w.add(
+      new Rig(b0.x, b0.y, 40, 6, {
+        solid: true,
+        layer: 2,
+        tick: (r, w2) => {
+          const u = t(w2) - (T.wait + T.toMid);
+          const k = u < 0 ? 0 : Math.min(1, u / T.bDrop);
+          r.moveTo(w2, b0.x + 40 * k, b0.y + 200 * k * k);
+          r.s.ph = k > 0 ? 'gone' : 'mid';
+        },
+        paint: (ctx, r) => roof(ctx, r, '#2E86AB'),
+      }),
+    );
+    w.flags.gtk10t = [A, B];
+    decor(w, -3, (ctx) => {
+      ctx.strokeStyle = '#26323A';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(a0.x + 20, a0.y - 16);
+      ctx.lineTo(am.x + 20, am.y - 16);
+      ctx.lineTo(ad.x + 20, ad.y - 16);
+      ctx.stroke();
+      // the valley line going down from the middle, and the far deck's shed roof
+      ctx.beginPath();
+      ctx.moveTo(b0.x + 20, b0.y - 16);
+      ctx.lineTo(b0.x + 80, FL + 60);
+      ctx.stroke();
+      box(ctx, ad.x - 6, ad.y - 70, 52, 6, '#5E5A50');
+    });
+    w.add(new Rig(c.X(0), FL + 20, px(34), 40, { cause: 'gtk-khaai', inset: 0 }));
+    sign(w, c.x + 0.4, 10.4, 3.6, 'TASHI', 'station', null, 'runs through');
+  },
+};
 /** the yak by the viewpoint lake: it stops for a photo on the thin shore; stay on, off at the far bank */
 export const act9: Act = {
   id: 'gtk10-chauri',
-  w: 32,
-  advice: 'A yak by the little lake below the viewpoint: it stops for a photo on the thin ice. Stay on, and get off on the real bank as it crosses it, before it wades into the river.',
+  w: 40,
+  advice: 'A yak by the little lake below the viewpoint: it stops for a photo on the thin ice. Stay on, and get off on the real bank as it crosses it, before it wades into the stream. Jump the stream: the handler’s second yak takes you over the last of the shore and stands on the far bank.',
   paint: (g, c) => {
-    g.pit(c.x + 29, c.x + 29);
+    g.pit(c.x + 19, c.x + 20);
   },
   build: (w, c) => {
     // a bank 7 tiles wide at the start, wider than a tap-jump, so the act's checkpoint is calm
-    thinShore(w, c.x + 7.5, c.x + 23);
-    bankLook(w, c.x + 11, c.x + 16);
-    river(w, c.x + 29, c.x + 29);
-    yak(w, c.X(4.5), [{ wait: 0.8 }, { to: c.X(13) }, { wait: 2.2, photo: true }, { to: c.X(27) }, { sink: true }], 'mount', 'gtk10y');
+    // two rides, each started as Dad gets on, with the bank between as a calm pause
+    thinShore(w, c.x + 7.5, c.x + 13);
+    bankLook(w, c.x + 8, c.x + 12);
+    river(w, c.x + 19, c.x + 20);
+    // the bank across the stream is 7 tiles: its checkpoint (+21.5) is clear of a tap-jump
+    thinShore(w, c.x + 28, c.x + 34);
+    yak(w, c.X(4.5), [{ wait: 0.6 }, { to: c.X(9) }, { wait: 1.8, photo: true }, { to: c.X(16.5) }, { sink: true }], 'mount', 'gtk10y');
+    // the second yak stands on the far bank once it is there: the handler holds it for the next tourist
+    yak(w, c.X(26.2), [{ wait: 0.6 }, { to: c.X(36) }, { wait: 9999 }], 'mount', 'gtk10y2');
   },
 };
 /** the last house in the cloud: three floors down again, the shop floor and all */

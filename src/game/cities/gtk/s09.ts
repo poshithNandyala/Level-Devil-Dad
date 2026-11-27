@@ -12,7 +12,8 @@ import { onPass } from '../../levels/trolls';
 import { FL, Rig, box, decor, local, px } from './entities';
 import { taraScript } from './common';
 
-export const YAK = { w: 40, h: 22, speed: 44 };
+// round 5: the yaks walk a little quicker, so no ride between two banks is longer than about 7 s
+export const YAK = { w: 40, h: 22, speed: 72 };
 
 /** one leg of the yak's loop: walk to x (px) or stop for `wait` seconds (a photo stop if `photo`) */
 export type Leg = { to: number } | { wait: number; photo?: boolean } | { sink: true };
@@ -172,17 +173,17 @@ export function room(): LevelDef {
     tagline: 'Tsomgo, high above Gangtok: the lake frozen solid, the yaks waiting in a line for the tourists.',
     hint: 'The snow along the shore lies on thin ice: stand on it and you’re through. Ride the yak across. Halfway it stops for the handler’s photo, on thin ice that only looks like a bank: stay on. It never turns back: get off on the real bank as it walks over it, before it wades on into the river.',
     par: 20,
-    map: Grid.ground(15).pit(29, 29).put(1, 14, '@').put(31, 14, 'E').rows(),
+    map: Grid.ground(15).pit(23, 24).put(1, 14, '@').put(31, 14, 'E').rows(),
     build(w: World) {
       door(w);
       lake(w, px(5), px(27));
-      thinShore(w, 6, 22);
-      bankLook(w, 11, 17);
-      river(w, 29, 29);
+      thinShore(w, 6, 17);
+      bankLook(w, 7, 13);
+      river(w, 23, 24);
       yak(
         w,
         px(2.5),
-        [{ wait: 0.8 }, { to: px(13) }, { wait: 2.4, photo: true }, { to: px(27) }, { sink: true }],
+        [{ wait: 0.6 }, { to: px(9) }, { wait: 1.6, photo: true }, { to: px(20.5) }, { sink: true }],
         'mount',
         'gtk9',
       );
@@ -190,7 +191,7 @@ export function room(): LevelDef {
       sign(w, 2, 8.6, 4.2, 'TSOMGO', 'wood', null, 'yak ride');
       rival(w, 4.5, 15, 1, taraScript(9));
       onPass(w, px(3), (w2) => tara(w2, 'Hajur! Off the yak when it stops! | Yes! Off the yak when it stops!', 2.4));
-      collectible(w, 'gtk-churpi', 13.8, 10.2);
+      collectible(w, 'gtk-churpi', 9.8, 10.2);
     },
   };
 }
@@ -201,16 +202,16 @@ export const act: Act = {
   w: 34,
   advice: 'This yak stops for its photo right under the high bank, and then wades on into the river. Ride it out, and while it stands for the photo, jump from its back up on to the bank.',
   paint: (g, c) => {
-    g.pit(c.x + 23, c.x + 24);
-    g.fill(c.x + 25, c.x + 33, 13, 14, '#');
+    g.pit(c.x + 19, c.x + 20);
+    g.fill(c.x + 21, c.x + 33, 13, 14, '#');
   },
   build: (w, c) => {
-    lake(w, c.X(2), c.X(26));
+    lake(w, c.X(2), c.X(22));
     // a bank 5 tiles wide at the start, so a checkpoint there is calm
-    thinShore(w, c.x + 5.5, c.x + 22);
-    river(w, c.x + 23, c.x + 24);
-    yak(w, c.X(3), [{ wait: 0.8 }, { to: c.X(21) }, { wait: 2.4, photo: true }, { sink: true }], 'mount', 'gtk9a');
-    onPass(w, c.X(14), (w2) => npc(w2, 'Hajur! Photo! | Yes! A photo!', c.X(21), FL - 50, 1.4));
+    thinShore(w, c.x + 5.5, c.x + 18);
+    river(w, c.x + 19, c.x + 20);
+    yak(w, c.X(3), [{ wait: 0.5 }, { to: c.X(17) }, { wait: 2.0, photo: true }, { sink: true }], 'mount', 'gtk9a');
+    onPass(w, c.X(10), (w2) => npc(w2, 'Hajur! Photo! | Yes! A photo!', c.X(17), FL - 50, 1.4));
     sign(w, c.x + 27, 8, 3.6, 'CHANGU', 'wood', null, 'snow point');
   },
 };
@@ -220,36 +221,49 @@ export const act: Act = {
 export const act2: Act = {
   id: 'gtk09-chattan',
   w: 36,
-  advice: 'The last yak doesn’t stop till the far end, and the far end is thin ice too. Its loop passes under the stair up to the snow road: as you go under the first step, jump off its back on to it, and climb.',
+  advice: 'The last yak doesn’t stop at all: it walks the whole thin shore and out into the open lake, through the ice. Its way passes under the stair up to the snow road: as you go under the first step, jump off its back on to it, and climb.',
   paint: (g, c) => {
     const x = c.x;
+    g.pit(x + 24, x + 25);
     g.fill(x + 12, x + 15, 12, 12, '=');
     g.fill(x + 15, x + 18, 10, 10, '=');
     g.fill(x + 18, x + 33, 8, 9, '#');
   },
   build: (w, c) => {
     const x = c.x;
-    thinShore(w, x + 5.5, x + 32);
-    yak(w, c.X(3), [{ wait: 0.6 }, { to: c.X(28) }, { wait: 0.8 }, { to: c.X(3) }, { wait: 1.0 }], 'mount', 'gtk9b');
+    thinShore(w, x + 5.5, x + 23);
+    // the open lake past the shore: the yak walks into it, through the ice, and takes whoever is still on it
+    river(w, x + 24, x + 25);
+    thinShore(w, x + 26, x + 32);
+    yak(w, c.X(3), [{ wait: 0.5 }, { to: c.X(22) }, { sink: true }], 'mount', 'gtk9b');
     sign(w, x + 30, 4.4, 3.8, 'SNOW POINT', 'wood', null, 'this way');
   },
 };
 
-/** act 3: the long loop with two photo stops, both on the thin shore: stay on through both, off at the far bank */
+/** act 3: two photo stops, on two yaks. The first stops for its photo on the thin shore and wades into the stream
+ *  past the moraine bank; across the stream the second waits at the end of a long bank, stops for its photo, and
+ *  wades into the river past the far bank. Stay on through each photo, off on each real bank. Each ride starts
+ *  when Dad gets on, and the long bank between them is a calm pause */
 export const act3: Act = {
   id: 'gtk09-dophoto',
-  w: 40,
-  advice: 'A long ride, and the handler stops twice for photos, both times on the thin shore. Stay on through both, and get off on the real bank as it walks over it, before it wades into the river.',
+  w: 50,
+  advice: 'Two yaks, two photo stops, both on the thin shore. Stay on through the first photo and get off on the moraine before it wades into the stream; jump the stream, walk the bank to the second yak, stay on through its photo too, and off on the far bank before the river.',
   paint: (g, c) => {
-    g.pit(c.x + 37, c.x + 37);
+    g.pit(c.x + 21, c.x + 22);
+    g.pit(c.x + 44, c.x + 45);
   },
   build: (w, c) => {
-    lake(w, c.X(3), c.X(30));
+    lake(w, c.X(3), c.X(40));
     // a 6.5-tile bank at the start: the act's checkpoint is 4.5 tiles or more from the thin shore
-    thinShore(w, c.x + 7, c.x + 30);
-    river(w, c.x + 37, c.x + 37);
-    yak(w, c.X(3), [{ wait: 0.8 }, { to: c.X(11) }, { wait: 2.0, photo: true }, { to: c.X(23) }, { wait: 2.0, photo: true }, { to: c.X(35) }, { sink: true }], 'mount', 'gtk9c');
-    sign(w, c.x + 36, 8.6, 3.4, 'TSOMGO', 'wood', null, 'far bank');
+    thinShore(w, c.x + 7, c.x + 15);
+    river(w, c.x + 21, c.x + 22);
+    // the bank across the stream is 7 tiles: its checkpoint (+23.5) is clear of a tap-jump
+    thinShore(w, c.x + 31, c.x + 38);
+    river(w, c.x + 44, c.x + 45);
+    yak(w, c.X(3), [{ wait: 0.5 }, { to: c.X(10) }, { wait: 1.8, photo: true }, { to: c.X(18.5) }, { sink: true }], 'mount', 'gtk9c');
+    yak(w, c.X(28.2), [{ wait: 0.5 }, { to: c.X(33) }, { wait: 1.8, photo: true }, { to: c.X(41) }, { sink: true }], 'mount', 'gtk9c2');
+    sign(w, c.x + 16, 8.6, 3.4, 'MORAINE', 'wood', null, 'firm ground');
+    sign(w, c.x + 40, 8.6, 3.4, 'TSOMGO', 'wood', null, 'far bank');
   },
 };
 /** act 4: here the yak's loop crosses the lake itself, and the frozen lake is the safe part: off its back on to
@@ -266,9 +280,10 @@ export const act4: Act = {
       box(ctx, c.X(13), FL - 3, px(14), 5, '#7FB3D5');
       for (let i = 0; i < 6; i++) box(ctx, c.X(14) + i * 34, FL - 1, 12, 1, 'rgba(255,255,255,0.7)');
     });
-    yak(w, c.X(3), [{ wait: 0.8 }, { to: c.X(17) }, { wait: 0.6 }, { to: c.X(3) }, { wait: 1.0 }], 'mount', 'gtk9d');
+    // the yaks never turn back: the first stands on the lake ice once it is out there, the second on the far bank
+    yak(w, c.X(3), [{ wait: 0.6 }, { to: c.X(17) }, { wait: 9999 }], 'mount', 'gtk9d');
     // and a second yak waiting on the far side of the lake, to take you over the far shore
-    yak(w, c.X(25), [{ wait: 1.2 }, { to: c.X(35) }, { wait: 0.9 }, { to: c.X(25) }], 'mount', 'gtk9d2');
+    yak(w, c.X(24), [{ wait: 0.6 }, { to: c.X(35) }, { wait: 9999 }], 'mount', 'gtk9d2');
     sign(w, c.x + 18, 8.6, 3.4, 'LAKE ICE', 'wood', null, 'thick');
   },
 };
