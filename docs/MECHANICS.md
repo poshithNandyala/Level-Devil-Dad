@@ -217,8 +217,7 @@ pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound p
 - **Fix round 2 (PAT):** 05 stays at its honest length (no extra act after round 4); 06 the truck at the foot is unloaded while you read it and a second truck half-way is loaded, so the count that
   counts is the one left when the porter has finished (`pat06-ginti`); 10 callbacks: the coaching hoardings with the
   cart's three sacks naming the narrowing bell (`pat10-roll`) and the shared tempo with sacks as riders (`pat10-tempo`).
-
-## SHL (Shillong, Meghalaya): ideas used (module city, 7 of 10 stages built, branch `city/shl`)
+## SHL (Shillong, Meghalaya): ideas used (module city, 10 stages, branch `city/shl`)
 - **01 Kumno, Shillong!** at the view point a first drop falls by a pine well short of the cloud and means nothing;
   the rain falls only under the cloud shape, on a beat, and the cloud drifts over anyone who stands near it waiting:
   run under it right after it has emptied (`shl-slap`, `shl-lyoh`).
@@ -236,16 +235,39 @@ pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound p
   heavy rain, swap at the hooks (`shl04-khynnah`); door: a Khasi half-door (`shl-halfdoor`).
 - **05 Seven Sisters (HWIK)** each fall pours on a schedule: full, thinning, on the white mark, a dry moment, full again
   with no warning; cross on the mark, the dry moment is the lure (`shl-um`, `shl-wah`); acts: a sister that never goes
-  dry (`shl05-ar`), a basin that floods whenever either sister is full (`shl05-pung`, `shl-pung`); door: the seventh
-  sister's pool (`shl-pool`).
+  dry (`shl05-ar`), a basin that floods whenever either sister is full (`shl05-pung`, `shl-pung`), a sister hidden
+  behind rock whose roar is the read, and the quick sister with half a second on the mark (`shl05-roar`); door: the
+  seventh sister's pool (`shl-pool`).
 - **06 Root Guide** three bamboo guides: jump at one and its root grows across the gorge, the others wither; the short
   one lands in the spray, the middle gives up half way, the long one from the rock lands dry (`shl-gorge`,
-  `shl-spray`); acts: stand on the tip of a root you grew and it sprouts the next span (`shl06-sprout`); a guide in the
-  path grows a root across it at head height, hop the guide (`shl06-kiang`, `shl-jri`); door: one guide, one root to
-  the ledge (`shl-rootdoor`).
-- **07 Mawsmai (marathon, core only)** stalactites grow a step towards the floor at every drip you hear; one that meets
-  its stump is a wall for a moment, then breaks and starts again from the top; pass while there is room, a head bump
-  freezes one for a few drips (`shl-maw`, `shl-shut`); act: the gallery, seven dripping together, wait for the break then
-  run them all (`shl07-krem`, the labelled momentum beat); door: the slowest one over the door's arch (`shl-column`).
-- **08-10** not built in round 1: Wettest Desert cloud meter (HWIK), Eight-Day Market day cycle (tough), Down Seven
-  Hundred finale (callbacks breaking 01-09).
+  `shl-spray`); acts: stand on the tip of a root you grew and it sprouts the next span (`shl06-sprout`); a gorge too
+  wide for one root: the near guide first, then the far guide from the near root's tip, out of order the near root grows
+  at head height (`shl06-double`); a guide in the path grows a root across it at head height, hop the guide
+  (`shl06-kiang`, `shl-jri`); door: one guide, one root to the ledge (`shl-rootdoor`).
+- **07 Mawsmai (marathon)** stalactites grow a step towards the floor at every drip you hear; one that meets its stump
+  is a wall for a moment, then breaks and starts again; pass while there is room, a head bump freezes one for a few
+  drips (`shl-maw`, `shl-shut`); acts: the gallery, seven dripping together, wait for the break then run them all
+  (`shl07-krem`, momentum beat); the drip storm with the stalactite over the pool that never meets a stump
+  (`shl07-pool`, shelter beat); tips hidden behind pillars, a high click is a long fall and a deep plop is nearly down
+  (`shl07-plop`, sound beat); two on different clocks a step apart: bump the first and wait under it (`shl07-knock`);
+  stumps that grow too, so a frozen pair still shuts half as fast (`shl07-pairs`, `shl-stump`); door: the slowest one
+  over the door's arch (`shl-column`).
+- **08 Wettest Desert (HWIK)** the cloud follows whoever is under its reach and soaks them in a moment and a half; the
+  tank fills only while the rain falls into its gutter, so stand out of reach, or under the tank's roof where the rain
+  on you drains into it; the spout pours across the path as the gate lifts (`shl-soaked`, `shl-spout`); acts: a roof
+  with a hole (`shl08-roof`, `shl-leak`); a cloud resting over the path that must be pulled on to the roof, whose edge
+  sheds (`shl08-pull`, `shl-runoff`); a bucket gauge over the only out-of-reach spot (`shl08-bucket`, `shl-bucket`);
+  two tanks and one gate (`shl08-two`); door: the tank's tap (`shl-tap`).
+- **09 Eight-Day Market (tough)** every stall's plate is the day it is closed and a closed stall is a cloth over a
+  frame; each arch you pass is a new day and the board shows it (`shl-nala`, `shl-closed`); acts: another arch
+  (`shl09-sngi`); blank boards, count the arches (`shl09-kot`); the arch in the middle of a row, the day turns under you
+  (`shl09-pdeng`, `shl-shift`); the sold-out stall, boards off means closed (`shl09-doh`, `shl-pack`); the holiday,
+  every stall a frame and the drain dry, then a double arch (`shl09-sngi-khlieh`); door: the flipped board, trust the
+  gates (`shl-board`).
+- **10 Down Seven Hundred (finale)** law 7, each rule turned: the lone drop tells the truth, stop at it, and the cloud
+  that forms drifts to a waiter (`shl-truedrop`); the knup is wrong for the drizzle and the low arch and right for the
+  drips: leave the first hook, take the second; a sister whose mark was painted too high, read the sheet
+  (`shl10-rong`, `shl-liar`); the hanging guide grows a root at head height and the pole from the far bank grows the
+  floor (`shl10-jingkieng`); a wet stalactite sheds three drips when bumped (`shl10-wet`, `shl-wet`); the rest stalls on
+  a Dawki span, bursts and plates and the arch in the middle (`shl10-pung`); door: the gate is tall today, take the knup
+  for its drips (`shl-tallgate`).
