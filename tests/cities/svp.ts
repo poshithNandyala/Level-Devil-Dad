@@ -9,6 +9,7 @@ import type { Rope } from '../../src/game/cities/svp/rassi';
 import type { Formation } from '../../src/game/cities/svp/choona';
 import type { Barge, Swell } from '../../src/game/cities/svp/lehar';
 import type { Stall } from '../../src/game/cities/svp/kadhai';
+import type { Pool } from '../../src/game/cities/svp/hauz';
 import type { SawHall } from '../../src/game/cities/svp/s02';
 import type { Creek } from '../../src/game/cities/svp/s03';
 import type { Herd, LateBoat } from '../../src/game/cities/svp/s04';
@@ -443,6 +444,17 @@ const swell = (k: number) => (w: World) => (w.flags.swells as Swell[])[k];
 const bargeOf = (w: World) => (w.flags.barges as Barge[])[0];
 
 // ------------------------------------------------------------------ SVP-08 act 2: the fish-fry stalls
+// ------------------------------------------------------------------ SVP-09 act 2: the drained pools
+const pool = (i: number) => (w: World) => (w.flags.pools as Pool[])[i];
+/** into the pool, on to the raft, up with the water, across to the wall and off its far side */
+const poolCross = (i: number, p: number): Step[] => [
+  { hold: 'R', until: X(p + 0.9), max: 900, note: 'into the dry pool: a pipe starts to run' },
+  { policy: (w) => ({ move: 'R', jump: w.player.onGround && w.player.x > pool(i)(w).raft.x - 22 }), until: (w) => w.standing(pool(i)(w).raft.solid), max: 400, note: 'up on the raft' },
+  { hold: '', until: (w) => pool(i)(w).level >= pool(i)(w).top - 1, max: 3000, note: 'on the raft while the water rises to the top of the wall' },
+  { hold: 'R', until: (w) => w.player.x >= pool(i)(w).raft.x + 30, max: 200, note: 'to the wall end of the raft' },
+  { hold: 'R', jump: 16, ticks: 16, note: 'across to the wall' },
+  { hold: 'R', until: and(ground, X(p + 11.6)), max: 600, note: 'over the wall and down the far side' },
+];
 const stall = (i: number) => (w: World) => (w.flags.stalls as Stall[])[i];
 /** over one counter: climb on in the rest before the left half spits, stand on the right half, change to the left in the rest, and off at the end */
 const stallCross = (i: number, s: number): Step[] => [
@@ -499,6 +511,7 @@ function floatsStep(k: number, lastTx: number, note: string): Step {
   };
 }
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp09-hauz': (x) => [...poolCross(0, x + 6), ...poolCross(1, x + 26), ...poolCross(2, x + 46), { hold: 'R', until: and(ground, X(x + 64)), max: 600 }],
   'svp08-bazaar': (x) => [...stallCross(0, x + 4), ...stallCross(1, x + 24), ...stallCross(2, x + 44), { hold: 'R', until: and(ground, X(x + 62)), max: 600 }],
   'svp06-lehar': (x) => [
     { hold: 'R', until: X(x + 3.2), max: 600 },
@@ -659,6 +672,14 @@ const endingPolicies: Record<string, Policy> = {
 };
 
 // ------------------------------------------------------------------ the plays that must die in an added act
+actDeath('SVP-09', 'svp09-hauz', 'run across the dry pool to the wall', 'svp-hauz', (x) => [
+  { hold: 'R', until: X(x + 7.5), max: 600 },
+  { hold: '', until: (w) => w.state !== 'play', max: 2500, note: 'wait at the wall: the water has to go somewhere' },
+]);
+actDeath('SVP-09', 'svp09-hauz', 'wait for the water on the floor beside the raft', 'svp-hauz', (x) => [
+  { hold: 'R', until: X(x + 6.5), max: 600 },
+  { hold: '', until: (w) => w.state !== 'play', max: 2500, note: 'wait on the floor by the raft' },
+]);
 actDeath('SVP-08', 'svp08-bazaar', 'run over the stalls', 'svp-tel', () => [hopUntil((w) => w.state !== 'play', 'hop the counters')]);
 actDeath('SVP-08', 'svp08-bazaar', 'climb on in the rest and stay on the right half', 'svp-tel', (x) => [
   ...stallCross(0, x + 4).slice(0, 3),
