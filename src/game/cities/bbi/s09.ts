@@ -366,7 +366,7 @@ export function risingSpokes(id: string, dir: 1 | -1, key: string): Act {
     paint: (g, c) => {
       g.pit(c.x + 2, c.x + 24);
       if (dir > 0) g.fill(c.x + 25, c.x + 27, top, 14, '#');
-      else g.fill(c.x, c.x + 1, top, 14, '#');
+      else g.fill(c.x, c.x + 2, top, 14, '#');
     },
     build: (w, c) => {
       channel(w, c.x + 2, c.x + 24, 'bbi-udaya', 'water');
@@ -374,7 +374,7 @@ export function risingSpokes(id: string, dir: 1 | -1, key: string): Act {
       (w.flags[key] as unknown) = st;
       for (let k = 0; k < n; k++) {
         const x = c.X(3 + 2.5 * k);
-        const y0 = dir > 0 ? FL - 16 - 9 * k : FL - 54 + 5 * k;
+        const y0 = dir > 0 ? FL - 16 - 9 * k : FL - 48 + 4 * k;
         w.add(
           new Rig(x, FL + 30, 28, 6, {
             solid: true,

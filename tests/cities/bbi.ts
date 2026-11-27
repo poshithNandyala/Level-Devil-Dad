@@ -595,7 +595,7 @@ const loomRun = (k: string, n: number, after: number) => (x: number): Step[] => 
   { hold: 'R', until: and(ground, X(x + 3 + n + 0.4)), max: 400, note: 'across' },
   { hold: 'R', until: X(x + 3 + n + 3.5), max: 300 },
 ];
-const chAct = (k: string, len: number, slide: number) => (x: number): Step[] => chariotRun(k, x, x + 3 + len - 3, x + 3 + len + slide + 1.5, x + 3 + len + slide + 5.5);
+const chAct = (k: string, len: number, slide: number) => (x: number): Step[] => chariotRun(k, x, x + 3 + len - 3, x + 3 + len + slide + 1.5, x + 3 + len + slide + 5.2);
 const bowlRun = (k: string, c0: number, c1: number, i: number, t: number) => (x: number): Step[] => [
   ...rideBowl(k, x + c0 - 1, x + c1 + 1.5, i, (w) => bw(w, k).t > t && bw(w, k).badis[i].x >= px(x + c1 + 1) - 26 - 4 - 34 * (bw(w, k).badis.length - 1 - i) - 0.5),
   { hold: 'R', until: X(x + c1 + 6.5), max: 400 },
@@ -875,12 +875,12 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02
         policy: (w) => {
           const p = w.player;
           const low = p.y + p.h > FLOOR_PX - 40;
-          if (p.onGround && low && p.x + p.w >= px(x) - 24) return { move: 'R', jump: true };
+          if (p.onGround && low && p.x + p.w >= px(x) - 24) return { move: 'R', jump: w.tick % 10 < 5 };
           return { move: 'R', jump: !p.onGround && p.vy < 0 };
         },
         until: (w) => w.player.onGround && w.player.y + w.player.h <= FLOOR_PX - 47 && w.player.x >= px(x) - 4,
       },
-      { hold: 'R', until: X(x + 1.0), max: 300 },
+      { hold: 'R', until: X(x + 1.5), max: 300 },
     ];
     for (let k = 0; k < 8; k++) out.push(waitFor((w) => (w.flags.bbi9s.stood[k - 1] ?? w.flags.bbi9s.stood[-1] ?? 1e9) + 1.35 * 120 <= w.tick, `wait till spoke ${k + 1} is up`), leap(() => px(x + 3 + 2.5 * k) + 14, `spoke ${k + 1}`, () => true, 8));
     out.push(leap(() => px(x + 26), 'on to the far bank'), { hold: 'R', until: and(ground, X(x + 27.4)), max: 300 });
