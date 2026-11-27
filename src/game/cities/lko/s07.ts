@@ -606,5 +606,85 @@ export const photo: Act = {
   },
 };
 
-export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, photo, chowk] };
+// ================================================================ act: dukaan, the window-shopper
+/** A window-shopper gazes up at a shop window, and every so often steps back from the glass without looking.
+ *  Pass on the window side, along the sill above him where he is looking, never on the open pavement behind
+ *  him where he steps. And don't wait for him to finish: he won't, and the awning over the step will. */
+export const dukaan: Act = {
+  id: 'lko07-dukaan',
+  w: 24,
+  cp0: false,
+  cps: [-4.5, 16.5],
+  advice: 'A window-shopper gazes up at the shop window and steps back from the glass without looking. Pass on the window side: up on to the sill, along it over his head, and down past him. Never walk the pavement behind him, and don’t wait for him to finish.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 2, x + 3);
+    g.fill(x + 5, x + 13, 13, 13, '=');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    arcade(w, x, x + 23);
+    nala(w, x + 2, x + 3);
+    const sx = c.X(9) + 8;
+    let back = -99;
+    w.add(
+      new Art((ctx, w2) => {
+        // the shop window over the sill, lit, with saris on show
+        ctx.fillStyle = '#4A3A2C';
+        ctx.fillRect(c.X(4), px(9), px(9), px(4));
+        ctx.fillStyle = 'rgba(255,226,160,0.85)';
+        ctx.fillRect(c.X(4) + 3, px(9) + 3, px(9) - 6, px(4) - 6);
+        for (let k = 0; k < 4; k++) {
+          ctx.fillStyle = ['#C2485B', '#5A8F7B', '#E8C547', '#7A4E6E'][k];
+          ctx.fillRect(c.X(5) + k * 30, px(9) + 8, 10, px(4) - 14);
+        }
+        // him, gazing up at it; stepping back he leans out, arms behind
+        const out = w2.tick - back < 24;
+        gent(ctx, sx - (out ? 6 : 0), FLOOR, 25, '#C9A27E', { face: 1, arms: out ? 0.2 : 0.9, skin: '#A06B45' });
+      }, 3),
+    );
+    w.onTick((w2) => {
+      const p = w2.player;
+      // on the pavement behind him he steps back into you, and you go back into the nala
+      const behind = p.onGround && p.y + p.h >= FLOOR - 1 && p.cx > c.X(4) && p.cx < sx;
+      if (behind && w2.tick - back > 60) {
+        back = w2.tick;
+        w2.flags.shoveCause = 'lko-dukaan';
+        p.vx = -210;
+        p.vy = -170;
+        p.onGround = false;
+        p.coyoteT = 0;
+        p.launched = true;
+        p.stun = 40;
+        w2.say('Arre! | Oh!', sx, FLOOR - 36, 1.5, 'npc');
+        w2.sfx('thud', sx, FLOOR - 10);
+      }
+    });
+    // waiting on the shop step for him to finish: the awning over it shivers, and comes down
+    const aw = { t: -1, sh: -1, still: 0 };
+    const z = w.add(
+      new Zone(c.X(0), FLOOR - 40, px(2), 40, 'lko-shamiyana', (ctx, _z, w2) => {
+        const k2 = aw.t < 0 ? 0 : Math.min(1, (w2.tick - aw.t) / 12);
+        const jig = aw.sh >= 0 && aw.t < 0 ? Math.sin(w2.tick * 1.4) * 1.6 : 0;
+        ctx.fillStyle = '#5A8F7B';
+        ctx.fillRect(c.X(0) + jig, FLOOR - 64 + k2 * 58 + Math.abs(jig), px(2), 6);
+      }, 4),
+    );
+    z.on = false;
+    w.onTick((w2) => {
+      const p = w2.player;
+      const onStep = p.onGround && p.cx > c.X(0) && p.cx < c.X(2) && Math.abs(p.vx) < 5;
+      aw.still = onStep ? aw.still + 1 : 0;
+      if (aw.sh < 0 && aw.still > 60) aw.sh = w2.tick;
+      if (aw.sh >= 0 && aw.t < 0 && w2.tick - aw.sh >= 66) {
+        aw.t = w2.tick;
+        z.on = true;
+      }
+      if (aw.t >= 0 && w2.tick - aw.t > 24) z.on = false;
+    });
+    sign(w, x + 13.4, 10.4, 3.2, 'DUKAAN', 'shop', null, 'ganj');
+  },
+};
+
+export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, photo, dukaan, chowk] };
 export const meta07 = { family: 'pace-sets-crowd-shape', betrayals: ['pace-crowd', 'ladder-block'], ending: 'lko-darban' } as StageMeta;

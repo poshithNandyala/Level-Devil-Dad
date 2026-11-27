@@ -503,6 +503,12 @@ const R_lko07_shaam = (id: string) => (x: number): Step[] => [
   runTo(x + 45, 800),
 ];
 actRoutes['lko07-shaam'] = R_lko07_shaam('lko07-shaam');
+actRoutes['lko07-dukaan'] = (x) => [
+  runTo(x - 3, 300, 'to the nala, under the shop awning'),
+  hop(x + 2, x + 6, 'over the nala and up on to the sill, the window side', 2, 24),
+  runTo(x + 12.4, 300, 'along the sill over his head'),
+  runTo(x + 23.5, 400, 'down past him'),
+];
 const R_lko07_batti = (id: string) => (x: number): Step[] => [behindLamp(`${id}:ll1`, x + 13), behindLamp(`${id}:ll2`, x + 34), behindLamp(`${id}:ll3`, x + 56), runTo(x + 57, 300)];
 actRoutes['lko07-batti'] = R_lko07_batti('lko07-batti');
 const JN = [12, 24, 36, 46];
@@ -892,7 +898,7 @@ mistakes['LKO-07'] = [
   },
   {
     what: 'hopping the café nala and going straight in',
-    steps: [...room07, ...actRoutes0('lko07-shaam', actX('LKO-07', 0)), ...actRoutes0('lko07-batti', actX('LKO-07', 1)), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), ...actRoutes0('lko07-photo', actX('LKO-07', 3)), ...actRoutes0('lko07-chauraha', actX('LKO-07', 4)), runTo(doorX('LKO-07') - 10), hop(doorX('LKO-07') - 8, doorX('LKO-07') - 3), { hold: 'R', until: done, max: 600 }],
+    steps: [...room07, ...actRoutes0('lko07-shaam', actX('LKO-07', 0)), ...actRoutes0('lko07-batti', actX('LKO-07', 1)), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), ...actRoutes0('lko07-photo', actX('LKO-07', 3)), ...actRoutes0('lko07-dukaan', actX('LKO-07', 4)), ...actRoutes0('lko07-chauraha', actX('LKO-07', 5)), runTo(doorX('LKO-07') - 10), hop(doorX('LKO-07') - 8, doorX('LKO-07') - 3), { hold: 'R', until: done, max: 600 }],
     cause: 'lko-darban',
   },
 ];
@@ -1002,8 +1008,8 @@ mistakes['LKO-06'].push(
 mistakes['LKO-07'].push(
   { what: 'at dusk, running the row without a stop, as the old awnings taught', steps: [...room07, { hold: 'R', until: done, max: 900 }], cause: 'lko-shamiyana' },
   { what: 'at dusk, stopping for the first shivering awning, then running the rest', steps: [...room07, walkTo(actX('LKO-07', 0) + 12.4, 400), until(awningDown('lko07-shaam', 3), 300), { hold: 'R', until: done, max: 900 }], cause: 'lko-shamiyana' },
-  { what: 'at the chauraha, rushing the strollers', steps: [...through('LKO-07', room07, 4), walkTo(actX('LKO-07', 4) + 3, 300), hop(actX('LKO-07', 4) + 5, actX('LKO-07', 4) + 7.3), { hold: 'R', until: done, max: 900 }], cause: 'lko-ganj' },
-  { what: 'at the chauraha, pausing again under the awnings once they part', steps: [...through('LKO-07', room07, 4), walkTo(actX('LKO-07', 4) + 3, 300), hop(actX('LKO-07', 4) + 5, actX('LKO-07', 4) + 7.3), pause(), runTo(actX('LKO-07', 4) + 14, 400), pause(), until(done, 600)], cause: 'lko-shamiyana' },
+  { what: 'at the chauraha, rushing the strollers', steps: [...through('LKO-07', room07, 5), walkTo(actX('LKO-07', 5) + 3, 300), hop(actX('LKO-07', 5) + 5, actX('LKO-07', 5) + 7.3), { hold: 'R', until: done, max: 900 }], cause: 'lko-ganj' },
+  { what: 'at the chauraha, pausing again under the awnings once they part', steps: [...through('LKO-07', room07, 5), walkTo(actX('LKO-07', 5) + 3, 300), hop(actX('LKO-07', 5) + 5, actX('LKO-07', 5) + 7.3), pause(), runTo(actX('LKO-07', 5) + 14, 400), pause(), until(done, 600)], cause: 'lko-shamiyana' },
 );
 mistakes['LKO-08'].push({ what: 'in the vault, walking on through the well arch too', steps: [...through('LKO-08', room08, 4), runTo(actX('LKO-08', 4) + 12, 400), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' });
 mistakes['LKO-10'].push(
@@ -1082,6 +1088,11 @@ mistakes['LKO-08'].push(
 mistakes['LKO-06'].push(
   { what: 'the tihai: standing on a tied-up strip through the third phrase, as through the first two', steps: [...through('LKO-06', room06, 1), walkTo(actX('LKO-06', 1) + 6, 300), until(done, 900)], cause: 'lko-tihai' },
   { what: 'the tihai: running the stage in one go', steps: [...through('LKO-06', room06, 1), { hold: 'R', until: done, max: 900 }], cause: 'lko-tihai' },
+);
+
+mistakes['LKO-07'].push(
+  { what: 'the window-shopper: over the nala and along the pavement behind him, as the open side', steps: [...through('LKO-07', room07, 4), runTo(actX('LKO-07', 4) - 3, 300), hop(actX('LKO-07', 4) + 2, actX('LKO-07', 4) + 4.4, '', 2, 1), { hold: 'R', until: done, max: 600 }], cause: 'lko-dukaan' },
+  { what: 'the window-shopper: waiting on the step for him to finish', steps: [...through('LKO-07', room07, 4), walkTo(actX('LKO-07', 4) + 0.6, 300), until(done, 900)], cause: 'lko-shamiyana' },
 );
 
 export const test: CityTests = {

@@ -14,6 +14,7 @@ export const causeLines: Record<string, string[]> = {
   'lko-tatkar': ['She was tapping that board: step on it and it rings with her feet.', 'Go where she isn’t tapping: over her patch, or up on the takht.'],
   'lko-ganj': ['You came rushing, so the strollers closed ranks and tutted you back into the nala.', 'Pause a moment before you reach them: stroll up, and they part.'],
   'lko-shamiyana': ['That awning was shivering on its rope: it was next, and you ran under it.', 'Watch which awning shivers. Stop short of it until it is down, then walk over it.'],
+  'lko-dukaan': ['He stepped back from the window without looking, into you, and you went back into the nala.', 'Pass on the side he is looking at: up on the sill, over his head.'],
   'lko-seedhi': ['The lamplighter swung his ladder up, and you were right behind him.', 'Hang back while it swings; go under while he’s up the ladder.'],
   'lko-darban': ['You came straight off the hop, rushing: the darban shoved you back.', 'Hop the nala early, pause, then stroll up to the door.'],
   'lko-bhool': ['You went through the arch at a jump, so you came out a floor up, on the hooks.', 'Through an arch: jump and you go up a floor, walk and you stay. Walk this one.'],
