@@ -33,4 +33,5 @@ export const causeLines: Record<string, string[]> = {
   'bbi-rachh': ['The beater swept the warp, with you on it.', 'Cross the moment the shuttle has gone: be off before the beater sweeps.'],
   'bbi-ulta': ['That plinth sank, Dad, with you on it.', 'From the hub go straight up on to the wall; never step down on to that stone.'],
   'bbi-udaya': ['The next spoke wasn’t up yet, Dad.', 'These rise one at a time: wait on each spoke until the next one is up.'],
+  'bbi-tenda': ['The water lift swung back down into the well, with you on it.', 'Step off on to the wall the moment the bucket is at the top.'],
 };

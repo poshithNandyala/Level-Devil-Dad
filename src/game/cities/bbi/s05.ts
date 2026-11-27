@@ -382,6 +382,134 @@ export const act4 = rajaAct('bbi05-pokhari', 30, RAJA4, 'Past the pond: a grindi
 export const RAJA5: RajaPiece[] = [{ k: 'cart', at: 3 }, { k: 'pounder', at: 9 }, { k: 'mill', at: 14 }, { k: 'stone', at: 20 }, { k: 'cart', at: 28 }];
 export const act5 = rajaAct('bbi05-gaon', 34, RAJA5, 'The far end of the village, the same still machines in a new order. Touch nothing.');
 
+/**
+ * The tenda: a well's water lift, a long pole on a post with the bucket at one end. Here the touch-nothing rule goes
+ * stale: the wall beside the well is too high to jump, and the only way up is to start the lift yourself. Step on
+ * the bucket and it rises slowly to the wall top, waits a moment, then swings back down into the well.
+ */
+export function tendaAct(id: string, wallRows: number, up: number, key: string, advice: string): Act {
+  const top = FL - 16 * wallRows;
+  return {
+    id,
+    w: 16,
+    advice,
+    cps: [],
+    paint: (g, c) => {
+      g.pit(c.x + 5, c.x + 7).fill(c.x + 8, c.x + 15, 15 - wallRows, 14, '#');
+    },
+    build: (w, c) => {
+      village(w, c.x, c.x + 16);
+      const st = { started: -1, k: 0 };
+      (w.flags[key] as unknown) = st;
+      const ch = channel(w, c.x + 5, c.x + 7, 'bbi-tenda', 'water');
+      void ch;
+      const x = c.X(8) - 27;
+      const y0 = FL - 8;
+      const bucket = w.add(
+        new Rig(x, y0, 26, 8, {
+          solid: true,
+          layer: 4,
+          tick: (r, w2) => {
+            if (st.started < 0 && r.rides(w2)) st.started = w2.tick;
+            let k = 0;
+            if (st.started >= 0) {
+              const t = since(w2, st.started) - 0.3;
+              // up slowly, a moment at the top, then it swings back down, fast, into the well
+              if (t > 0 && t < up) k = t / up;
+              else if (t >= up && t < up + 1.2) k = 1;
+              else if (t >= up + 1.2 && t < up + 1.6) k = 1 - (t - up - 1.2) / 0.4 - 0.0;
+              else if (t >= up + 1.6) {
+                k = -1;
+                st.started = -1;
+              }
+            }
+            st.k = k;
+            const y = k >= 0 ? y0 + (top - 8 - y0) * k : FL + 30;
+            r.moveTo(w2, x, y);
+            r.solid!.velX = 0;
+            if (k < 0) r.moveTo(w2, x, y0);
+          },
+          paint: (ctx, r) => {
+            // the post, the long pole and the bucket on its rope
+            const px0 = c.X(4) + 4;
+            box(ctx, px0, FL - 70, 5, 70, '#6E4A2E');
+            ctx.strokeStyle = '#8D5A2B';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(px0 - 30, FL - 70 + (r.y - y0) * -0.5 + 10);
+            ctx.lineTo(r.x + 13, r.y - 20);
+            ctx.stroke();
+            box(ctx, px0 - 36, FL - 64 + (r.y - y0) * -0.5, 10, 10, '#9E9E9E');
+            ctx.strokeStyle = '#5D3A1E';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(r.x + 13, r.y - 20);
+            ctx.lineTo(r.x + 13, r.y);
+            ctx.stroke();
+            box(ctx, r.x, r.y, r.w, r.h, '#8D6E63');
+            box(ctx, r.x + 2, r.y + 1, r.w - 4, 2, '#A1887F');
+            if (st.started < 0) restCloth(ctx, r.x, r.y, r.w);
+          },
+        }),
+      );
+      void bucket;
+    },
+  };
+}
+export const act6 = tendaAct('bbi05-tenda', 5, 3.5, 'bbi5t', 'A wall too high to jump, and the well’s water lift beside it. This once, start a machine on purpose: step on the bucket, ride it up, and step off on to the wall before it swings back down into the well.');
+export const act7 = tendaAct('bbi05-kua', 6, 4.5, 'bbi5k', 'A higher wall and a slower lift: on to the bucket, up, and off at the top before it drops.');
+
+/** the mill on the bank: started on purpose, it flings you over a channel too wide to jump; stand on its far half */
+export function flingAct(id: string, key: string, advice: string): Act {
+  return {
+    id,
+    w: 18,
+    advice,
+    cps: [],
+    paint: (g, c) => {
+      g.pit(c.x + 6, c.x + 12);
+    },
+    build: (w, c) => {
+      village(w, c.x, c.x + 18);
+      pitBlame(w, c.x + 6, c.x + 12, 'bbi-dhan', 'water');
+      const x = c.X(3);
+      const st = { started: -1 };
+      (w.flags[key] as unknown) = st;
+      w.add(
+        new Rig(x, FL - 8, 32, 8, {
+          solid: true,
+          layer: 3,
+          tick: (r, w2) => {
+            const p = w2.player;
+            if (st.started < 0 && r.rides(w2)) st.started = w2.tick;
+            if (st.started >= 0 && since(w2, st.started) > 0.5 && since(w2, st.started) < 0.52 && r.rides(w2)) {
+              // it spins the way you stand: the far half throws you forward, the near half back
+              const fwd = p.cx > r.x + 16;
+              p.vx = fwd ? 290 : -200;
+              p.vy = -360;
+              p.onGround = false;
+              p.coyoteT = 0;
+              p.launched = true;
+              p.stun = 70;
+              w2.flags.bbi5blame = 'bbi-jaanta';
+            }
+            if (st.started >= 0 && since(w2, st.started) > 1.2) st.started = -1;
+          },
+          paint: (ctx, r, w2) => {
+            box(ctx, r.x, r.y, r.w, r.h, '#9E9E9E');
+            box(ctx, r.x + 2, r.y + 1, r.w - 4, 2, '#BDBDBD');
+            box(ctx, r.x + 15, r.y - 2, 2, 2, '#5D3A1E');
+            const a = st.started >= 0 ? since(w2, st.started) * 14 : 0;
+            box(ctx, r.x + 16 + Math.cos(a) * 12 - 1, r.y - 8, 3, 8, '#6E4A2E');
+            if (st.started < 0) restCloth(ctx, r.x, r.y, r.w);
+          },
+        }),
+      );
+    },
+  };
+}
+export const act8 = flingAct('bbi05-chakki', 'bbi5f', 'A channel too wide to jump, and a big hand mill on the bank. Start it on purpose: stand on its far half, and it spins you forward over the water. On the near half it throws you back.');
+
 /** ending: the house with podapitha on the verandah step; the front door up there is locked. The way in is
  *  below, behind the step. On the verandah, the grinding stone's roller starts when you land by it. */
 export const ending: Ending = {

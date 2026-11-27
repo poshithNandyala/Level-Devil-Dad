@@ -611,6 +611,16 @@ const sidhiRun = (k: string) => (x: number): Step[] => {
     return out;
   };
 
+/** the water lift: on to the bucket, up, off on to the wall top at the top */
+const tendaRun = (k: string, rows: number) => (x: number): Step[] => [
+  { hold: 'R', until: X(x + 4.6), max: 400 },
+  { hold: 'R', jump: 8, ticks: 8, note: 'on to the bucket' },
+  { hold: 'R', until: ground, max: 200 },
+  stayOn(() => px(x + 8) - 14, (w) => (w.flags[k] as { k: number }).k >= 1, 'it lifts you up', 900),
+  { hold: 'R', until: (w) => w.player.onGround && w.player.x >= px(x + 8) && w.player.y + w.player.h <= FLOOR_PX - 16 * rows + 1, max: 300, note: 'off on to the wall' },
+  { hold: 'R', until: X(x + 15.5), max: 300 },
+];
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['BBI-01'] = [...pastG1(), ...tourTail()];
   S['BBI-02'] = room02();
@@ -746,6 +756,15 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02
     out.push(leap(() => px(x + 26), 'on to the terrace'), { hold: 'R', until: and(ground, X(x + 27.4)), max: 300 });
     return out;
   },
+  'bbi05-tenda': tendaRun('bbi5t', 5),
+  'bbi05-kua': tendaRun('bbi5k', 6),
+  'bbi05-chakki': (x) => [
+    { hold: 'R', until: X(x + 1.4), max: 400 },
+    leap(() => px(x + 4) + 8, 'on to the far half of the mill', () => true, 5),
+    { hold: '', until: (w) => (w.flags.bbi5f as { started: number }).started >= 0, max: 200, note: 'on its far half: it starts' },
+    { hold: '', until: (w) => w.player.onGround && w.player.x > px(x + 13), max: 400, note: 'flung over the channel' },
+    { hold: 'R', until: X(x + 17.5), max: 300 },
+  ],
   'bbi10-mela': (x) => [...crossTroupe('bbi10m0', x, 3, 6, 'bridge'), ...crossTroupe('bbi10m1', x, 13, 7, 'wheel'), { hold: 'R', until: X(x + 23.5), max: 300 }],
 };
 const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy, 'bbi-pose-gate': gatePolicy, 'bbi-leaf-plate': platePolicy, 'bbi-horse-gap': horseGap, 'bbi-ribbon-snip': ribbonPolicy };
