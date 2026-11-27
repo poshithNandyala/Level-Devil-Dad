@@ -530,10 +530,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'svp07-uthao': (x) => [
     ...liftRide(0, x + 8),
     { hold: 'R', until: and(ground, X(x + 16)), max: 600, note: 'off on to the roof' },
-    { hold: 'R', until: and(ground, X(x + 24.2)), max: 600, note: 'along the roof' },
-    ...liftRide(1, x + 26),
-    { hold: 'R', until: and(ground, X(x + 34)), max: 600, note: 'off on to the road' },
-    { hold: 'R', until: and(ground, X(x + 39)), max: 600 },
+    { hold: 'R', until: (w) => w.standing(((w.flags.belts ?? []) as { plat: { solid: unknown } }[])[0].plat.solid as never), max: 600, note: 'along the roof to the moving walkway' },
+    { hold: 'R', jump: 24, ticks: 24, note: 'jump from the walkway: it carries you over the gap' },
+    ...liftRide(1, x + 28),
+    { hold: 'R', until: and(ground, X(x + 38)), max: 600, note: 'off on to the road' },
+    { hold: 'R', until: and(ground, X(x + 44)), max: 600 },
   ],
   'svp07-khula': (x) => [...bridgeCross(0, x + 6), ...bridgeCross(1, x + 26), ...bridgeCross(2, x + 46), { hold: 'R', until: and(ground, X(x + 64)), max: 600 }],
   'svp09-hauz': (x) => [...poolCross(0, x + 6), ...poolCross(1, x + 26), ...poolCross(2, x + 46), { hold: 'R', until: and(ground, X(x + 64)), max: 600 }],
@@ -701,8 +702,12 @@ actDeath('SVP-07', 'svp07-uthao', 'ride the lift up and stay aboard past the las
   { hold: 'R', until: (w) => w.standing(lift(0)(w).plat.solid) && w.player.cx > lift(0)(w).x + 20, max: 900 },
   { hold: '', until: (w) => w.state !== 'play', max: 6000, note: 'stay aboard' },
 ]);
-actDeath('SVP-07', 'svp07-uthao', 'take the roof lift down and stay aboard past the ground', 'svp-uthao', (x) => [
+actDeath('SVP-07', 'svp07-uthao', 'step on the walkway and just stand there', 'svp-uthao', (x) => [
   ...actRoutes['svp07-uthao'](x).slice(0, 4),
+  { hold: '', until: (w) => w.state !== 'play', max: 900, note: 'it carries you to the edge of the gap, and over' },
+]);
+actDeath('SVP-07', 'svp07-uthao', 'take the roof lift down and stay aboard past the ground', 'svp-uthao', (x) => [
+  ...actRoutes['svp07-uthao'](x).slice(0, 6),
   { hold: 'R', until: (w) => w.standing(lift(1)(w).plat.solid) && w.player.cx > lift(1)(w).x + 20, max: 900 },
   { hold: '', until: (w) => w.state !== 'play', max: 6000, note: 'stay aboard' },
 ]);

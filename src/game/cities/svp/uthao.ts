@@ -133,26 +133,75 @@ export class Lift extends Entity {
   }
 }
 
-/** SVP-07's fifth act: up one lift to the godown roof and down another, each with a stop that is not the one you want */
+/** a moving walkway for the porters: it carries whoever stands on it, and what it carries stays with a jump from it */
+export class Walkway extends Entity {
+  plat: Plat;
+  private rode = -99;
+  private boosted = -999;
+  constructor(
+    x: number,
+    y: number,
+    wd: number,
+    readonly speed: number,
+  ) {
+    super();
+    this.layer = 1;
+    this.plat = new Plat(x, y, wd, 8, (ctx, q, w2) => {
+      ctx.fillStyle = '#3F4A52';
+      ctx.fillRect(q.x, q.y, q.w, 8);
+      ctx.fillStyle = '#F6E27F';
+      const off = (w2.tick * 1.3) % 16;
+      for (let xx = q.x + off; xx < q.x + q.w - 10; xx += 16) {
+        ctx.beginPath();
+        ctx.moveTo(xx, q.y + 1);
+        ctx.lineTo(xx + 8, q.y + 4);
+        ctx.lineTo(xx, q.y + 7);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#7C8A92';
+      ctx.fillRect(q.x, q.y, q.w, 2);
+    });
+  }
+  install(w: World) {
+    w.add(this);
+    w.add(this.plat);
+    return this;
+  }
+  update(w: World) {
+    const p = w.player;
+    if (w.standing(this.plat.solid) && w.state === 'play') {
+      p.pushVx = this.speed;
+      this.rode = w.tick;
+    } else if (!p.onGround && p.jumpTick === w.tick - 1 && w.tick - this.rode <= 14 && this.boosted !== p.jumpTick) {
+      // a jump from the walkway keeps its speed
+      this.boosted = p.jumpTick;
+      p.carryVx = this.speed;
+    }
+  }
+}
+
+/** SVP-07's fifth act: up one lift to the godown roof, over a gap on a moving walkway, and down another lift */
 export const uthao: Act = {
   id: 'svp07-uthao',
-  w: 40,
-  advice: 'The godown lifts, in open shafts: one goes up to the roof, and another takes you down the far side. They go slowly, and at each floor the gate is open for a few seconds. The first stop has a balcony that goes nowhere. Stay aboard until the last stop, and step off there: if you stay on after it the lift overruns the shaft.',
-  cps: [14],
+  w: 46,
+  advice: 'The godown lifts, in open shafts: one goes up to the roof, and another takes you down the far side. They go slowly, and at each floor the gate is open for a few seconds. The first stop has a balcony that goes nowhere. Stay aboard until the last stop, and step off there: if you stay on after it the lift overruns the shaft. On the roof a moving walkway carries you to the edge of a gap too wide to jump from standing: jump from the walkway, and what it carries stays with you in the air.',
+  cps: [13],
   paint: (g, c) => {
     const x = c.x;
     g.pit(x + 7, x + 10);
     g.fill(x + 3, x + 6, 12, 12, '#');
-    g.fill(x + 11, x + 24, 7, 14, '#');
-    g.pit(x + 25, x + 28);
-    g.fill(x + 29, x + 31, 12, 12, '#');
+    g.fill(x + 11, x + 15, 7, 14, '#');
+    g.pit(x + 21, x + 26);
+    g.pit(x + 27, x + 33);
+    g.fill(x + 34, x + 36, 12, 12, '#');
   },
   build: (w, c) => {
     const x = c.x;
     const up = new Lift(px(x + 7), FLOOR, [FLOOR - 48, FLOOR - 128]).install(w);
-    const down = new Lift(px(x + 25), FLOOR - 128, [FLOOR - 48, FLOOR]).install(w);
+    const down = new Lift(px(x + 27), FLOOR - 128, [FLOOR - 48, FLOOR], px(7)).install(w);
     w.add(new Hurt(px(x + 7), FLOOR + 16, px(4), 40, 'svp-uthao', null));
-    w.add(new Hurt(px(x + 25), FLOOR + 16, px(4), 40, 'svp-uthao', null));
+    w.add(new Hurt(px(x + 21), FLOOR + 16, px(13), 40, 'svp-uthao', null));
     (w.flags.lifts ??= []).push(up, down);
+    (w.flags.belts ??= []).push(new Walkway(px(x + 16), FLOOR - 128, px(5), 220).install(w));
   },
 };
