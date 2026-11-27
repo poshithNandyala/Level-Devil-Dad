@@ -960,7 +960,6 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   act('CCU-07', 'ccu07-ulto', 0, 'jump', 'a long jump off the pylon on to the long span', 'ccu-gaari');
   act('CCU-07', 'ccu07-pylon', 1, 'jump', 'jumping off the second pylon rather than wait', 'ccu-gaari');
   act('CCU-08', 'ccu08-tokta', 1, 'jump', 'a long jump at the broken rok instead of sitting', 'ccu-khod');
-  act('CCU-08', 'ccu08-rok', 0, 'jump', 'a long jump along the rok into the maid’s water', 'ccu-dhowa');
   act('CCU-09', 'ccu09-sinri', 0, 'jump', 'a long jump at the cloth staircase', 'ccu-bansh');
   act('CCU-09', 'ccu09-toran', 0, 'jump', 'a long jump at the gate arch’s bamboo', 'ccu-bansh');
   act('CCU-09', 'ccu09-chala', 0, 'jump', 'a long jump at the long bamboo', 'ccu-bansh');
