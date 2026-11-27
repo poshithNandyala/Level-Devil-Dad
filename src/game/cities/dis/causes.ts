@@ -19,5 +19,7 @@ export const causeLines: Record<string, string[]> = {
   'dis-rope': ['Rosi! The winning team pulled the rope out from under you.', 'The taut rope slides toward the team that is winning. Get on only when the far team’s red flag is up, and cross at once.'],
   'dis-taat': ['Taat! The warp threads are not a floor yet.', 'Only the woven cloth holds you. Wait on it by its edge while it grows.'],
   'dis-shuttle': ['Maku! The loom’s shuttle flew into your ankles.', 'The shuttle flies along the cloth to its edge and back on every pass: hop it each time.'],
+  'dis-bordoisila': ['Bordoisila! The storm’s wind blew you into the pond.', 'When the sky darkens and the leaves fly, get under the bhoral, the granary on stilts, and stay there till the storm has passed.'],
+  'dis-hail': ['Hail! Bordoisila’s hail came down on you in the open.', 'Holding on against the wind is not enough: the hail follows it. Shelter under the bhoral.'],
   'dis-reel': ['Muga! You were reeled in with the cocoon.', 'Ride the cocoon up, and step off on to the verandah while it waits at the top.'],
 };
