@@ -7,13 +7,14 @@ import { Pan } from './pitha';
 import { roller } from '../../levels/kit';
 import { Host, gam, machan } from './gamosa';
 import { TeaBoy } from './bank';
+import { MugaReel, UrukaNet } from './doors';
 import { husori } from './husori';
 import { charge } from './gorh';
 import { roof } from './rangghar';
 import { Slab } from './entities';
 import type { Ending } from '../../levels/endkit';
 
-export type DisEndingKind = 'dis-hut-shut' | 'dis-tea-chest' | 'dis-laru-plate' | 'dis-gamosa-latch' | 'dis-tea-ladder' | 'dis-gamosa-door' | 'dis-watch-tower' | 'dis-post-bank' | 'dis-royal-seat';
+export type DisEndingKind = 'dis-hut-shut' | 'dis-muga-reel' | 'dis-laru-plate' | 'dis-gamosa-latch' | 'dis-tea-ladder' | 'dis-uruka-net' | 'dis-watch-tower' | 'dis-post-bank' | 'dis-royal-seat';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<DisEndingKind, true> {}
@@ -69,35 +70,21 @@ export const endings: Record<DisEndingKind, Ending> = {
   },
   // ================================================================ DIS-03: the tea chest
   /** The door is the tea chest at the end of the path, nailed shut until the plucker walking up it has tipped her basket in. */
-  'dis-tea-chest': {
-    space: 28,
+  'dis-muga-reel': {
+    space: 22,
     after: 5,
-    advice: 'The door is the tea chest at the end of the path, nailed shut until the plucker has tipped her basket in. Follow her up the path, a few steps behind, and wait for the lid. Run ahead of her and you are standing in front of the chest when she arrives.',
+    advice: 'The door is up on the garden bungalow’s verandah, too high to jump. By it a muga cocoon hangs on its reel: the reel lifts it up its thread to the verandah, waits a moment, and then reels it in to the wheel. Get on while it is down, ride it up, and step off on to the verandah before it is reeled in.',
+    paint: (g, D) => {
+      g.put(D, 14, '.');
+      g.fill(D - 1, D + 3, 11, 14, '#');
+      g.put(D + 1, 10, 'E');
+    },
     build(w: World, d) {
-      const D = Math.round(d.x / 16);
-      const h = w.add(new Hedge(D - 14));
-      w.add(h.slab);
-      const p = w.add(new Plucker(px(D - 20), px(D - 26), [h], px(D - 3)));
-      (w.flags.pluckers ??= []).push(p);
-      w.flags.twist = 'shut';
-      const L = lock(w, d, 'Roba! Lid. | Stop! The lid.');
-      p.onEnd = (w2) => {
-        L.unlock();
-        w2.flags.twist = 'open';
-        w2.sfx('thud', d.x + 8, d.y + 16);
-      };
-      w.add(
-        new Decor((ctx) => {
-          const x = d.x - 6;
-          ctx.fillStyle = '#8D6B2E';
-          ctx.fillRect(x, GROUND - 26, 28, 26);
-          ctx.fillStyle = '#6A4B1C';
-          ctx.fillRect(x, GROUND - 26, 28, 4);
-          ctx.fillRect(x + 12, GROUND - 22, 4, 22);
-          ctx.fillStyle = '#C9A253';
-          ctx.fillRect(x + 4, GROUND - 17, 4, 4);
-        }, -4),
-      );
+      const D = Math.round(d.x / 16) - 1;
+      const r = w.add(new MugaReel(px(D - 3), px(11) - 8, px(D - 12)));
+      w.solids.push(r.solid);
+      w.flags.reel = r;
+      w.flags.twist = 'reel';
     },
   },
   // ================================================================ DIS-04: the laru plate
@@ -226,14 +213,20 @@ export const endings: Record<DisEndingKind, Ending> = {
   },
   // ================================================================ DIS-07: the host's door
   /** The last house. The singers stop in the yard while the host hands them gamosas; the gate to his door opens when he is done. */
-  'dis-gamosa-door': {
-    space: 36,
-    after: 5,
-    advice: 'The last house: the singers stop in the yard while the host hands out the gamosas, and his gate opens only when he has finished, and only for you if you are still inside the ring. Wait in the ring. If you leave it, stay out of the doorway.',
+  'dis-uruka-net': {
+    space: 22,
+    after: 6,
+    advice: 'Uruka night: a fishing net lies across the last pond, and as you come near the fishers on the far bank pull it in, all together. Its near end slides away towards them: cross at a run, and don’t stop on it.',
+    paint: (g, D) => {
+      g.pit(D - 14, D - 5);
+    },
     build(w: World, d) {
       const D = Math.round(d.x / 16);
-      husori(w, D - 28, D - 36, [{ x: D - 5, ritual: 300, stay: 480 }]);
-      w.flags.twist = 'host';
+      river(w, D - 14, D - 4, 'dis-net');
+      const n = w.add(new UrukaNet(px(D - 14), px(D - 4), px(D - 14) + 8));
+      w.solids.push(n.solid);
+      w.flags.net = n;
+      w.flags.twist = 'net';
     },
   },
   // ================================================================ DIS-08: the watch tower

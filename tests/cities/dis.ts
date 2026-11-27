@@ -2,7 +2,7 @@
 // Found by tests/city-tests.ts; merged into SOLUTIONS, NAIVE, FIX, MISTAKES, ACT_ROUTES and ENDING_POLICIES.
 // tests/modules.test.ts fails until every table is filled. Scaffolded by scripts/dev/new-city.mjs.
 import type { World } from '../../src/game/world';
-import type { Door } from '../../src/game/entities/basics';
+import { Door as DoorE, type Door } from '../../src/game/entities/basics';
 import { Step, X, and, ground } from '../runner';
 import type { CityTests } from '../city-tests';
 import { LEVELS } from '../../src/game/levels';
@@ -353,6 +353,35 @@ act('dis10-ghat', 'DIS-10', [ghatNaive(10, 14), 'dis-spill', 'climbs straight ou
 act('dis10-chang', 'DIS-10', [changNaive, 'dis-bank', 'jumps at the stilt house'], [changFix(11), 'dis-bank', 'up the ladder, then walks off the house into the river']);
 act('dis10-gamosa', 'DIS-10', [() => [{ hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'walks into every giver'], [(x) => [{ hold: 'R', until: X(x + 12.4), max: 600 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'a little hop over the third giver, into the fourth']);
 /** after the routes exist: each act's deaths start from the stage route up to the act's own start */
+/** an ending's own policy as a step policy (for plays that follow it part of the way) */
+const viaEnding = (kind: string) => {
+  let W: World | null = null;
+  let m: { hold: number; [k: string]: any } = { hold: 0 };
+  return (w: World) => {
+    if (W !== w) {
+      W = w;
+      m = { hold: 0 };
+    }
+    const d = w.entities.find((e) => e instanceof DoorE && !(e as Door).fake) as Door;
+    const o = endingPolicies[kind](w, m, d);
+    if (m.hold > 0) m.hold--;
+    return o;
+  };
+};
+/** the two door endings of their own: a play that dies at each, from the stage route up to the door */
+function doorDeaths(S: Record<string, Step[]>) {
+  const pre = (id: string) => S[id].slice(0, S[id].findIndex((s) => (s.note ?? '').startsWith('the door')));
+  (mistakes['DIS-07'] ??= []).push({
+    what: 'door: stops on the Uruka net to look: it is pulled in from under him',
+    steps: [...pre('DIS-07'), { hold: 'R', until: (w) => !!w.flags.net && (w.flags.net as { started: number }).started >= 0, max: 900 }, { hold: 'R', ticks: 12 }, { hold: '', until: done, max: 900 }],
+    cause: 'dis-net',
+  });
+  (mistakes['DIS-03'] ??= []).push({
+    what: 'door: rides the muga cocoon and stays on it at the top: reeled in',
+    steps: [...pre('DIS-03'), { policy: viaEnding('dis-muga-reel'), until: (w) => w.player.onGround && w.player.isRiding((w.flags.reel as any).solid), max: 3000 }, { hold: '', until: done, max: 1500 }],
+    cause: 'dis-reel',
+  });
+}
 function actDeaths(S: Record<string, Step[]>) {
   for (const d of ACT_DEATHS) {
     const route = S[d.stage];
@@ -432,6 +461,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   ];
   lengthen('DIS-10', 0, []);
   actDeaths(S);
+  doorDeaths(S);
 }
 
 /** the obvious play per stage, and the cause it must die of (every stage, 01-10). */
@@ -773,11 +803,10 @@ const endingPolicies: Record<string, Policy> = {
     void B;
     return go('R');
   },
-  'dis-gamosa-door'(w, _m, d) {
-    const f = atTheGate(-1)(w);
-    if (f.move === '' && gatesOf(w)[gatesOf(w).length - 1].open === false) return f;
+  'dis-uruka-net'(w, _m, d) {
     return go(toward(w, d.x + 8, 1) || 'R');
   },
+
   'dis-tea-ladder'(w, m, d) {
     const k = w.flags.ladder as { boy: { down: boolean }; rung: { solid: { x: number; w: number } & object } };
     const D = Math.round(d.x / 16) - 1;
@@ -815,23 +844,21 @@ const endingPolicies: Record<string, Policy> = {
     }
     return go(p.onGround ? toward(w, d.x + 8, 1) || 'R' : 'R');
   },
-  'dis-tea-chest'(w, m, d) {
-    const pl = pluckers(w)[pluckers(w).length - 1];
+  'dis-muga-reel'(w, m, d) {
+    const r = w.flags.reel as { solid: { x: number; y: number }; phase: string; t: number };
     const p = w.player;
-    if (w.flags.twist === 'open') return go(toward(w, d.x + 8, 1) || 'R');
     if (m.hold > 0) return { move: 'R', jump: true };
-    if (pl.phase === 'wait') return go('R');
-    if (pl.x - p.cx < 58) return go('');
-    if (p.onGround && w.solidAt(p.x + p.w + 2, p.y + 2, 1, p.h - 4)) {
-      const hd = pl.hedges.find((h) => p.cx < h.x0 && h.x0 - p.cx < 16);
-      if (hd && hd.h <= 16) {
-        m.hold = 7;
-        return { move: 'R', jump: true };
-      }
-      return go('');
+    if (!p.onGround) return go('');
+    if (p.y + p.h <= px(11) && p.cx > r.solid.x + 32) return go(toward(w, d.x + 8, 1) || 'R');
+    if (w.player.isRiding(r.solid as never)) return go(r.phase === 'top' ? 'R' : toward(w, r.solid.x + 16, 2));
+    if (p.cx < r.solid.x - 24) return go('R');
+    if (r.phase === 'rest' && r.t < 100) {
+      m.hold = 10;
+      return { move: 'R', jump: true };
     }
-    return go('R');
+    return go(p.cx > r.solid.x - 20 ? 'L' : '');
   },
+
   'dis-hut-shut'(w, m, d) {
     const f = fields(w)[fields(w).length - 1];
     const p = w.player;
