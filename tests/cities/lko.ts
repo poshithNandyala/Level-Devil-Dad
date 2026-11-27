@@ -480,6 +480,36 @@ const R_lko06_mehfil = (id: string) => (x: number): Step[] => {
   return steps;
 };
 actRoutes['lko06-mehfil'] = R_lko06_mehfil('lko06-mehfil');
+/** forward whichever way the guru's stamps have turned the controls, hopping each red strip */
+const GURU_STRIPS = [4, 9, 14, 19];
+const guruFwd = (x: number, to: number, old = false): Step => {
+  let jt = 0;
+  let W: World | null = null;
+  return {
+    policy: (w) => {
+      if (W !== w) {
+        W = w;
+        jt = 0;
+      }
+      const p = w.player;
+      const move: Move = w.flipped && !old ? 'L' : 'R';
+      if (jt > 0) {
+        jt--;
+        return { move, jump: true };
+      }
+      const near = GURU_STRIPS.map((s0) => px(x + s0)).some((sx) => sx - (p.x + p.w) > 0 && sx - (p.x + p.w) < 14);
+      if (p.onGround && near) {
+        jt = 11;
+        return { move, jump: true };
+      }
+      return { move, jump: false };
+    },
+    until: and(ground, X(to)),
+    max: 1500,
+    note: 'forward the way the last stamp left you, hopping the strips',
+  };
+};
+actRoutes['lko06-guru'] = (x) => [guruFwd(x, x + 25.5), runTo(x + 27.5, 300)];
 const tihaiAt = (w: World) => (w.flags['lko06-tihai:at'] as ((w: World) => { n: number; k: number }) | undefined)?.(w) ?? { n: -1, k: -1 };
 const afterSam = (w: World) => { const a = tihaiAt(w); return a.n === 0 && a.k > 2 && a.k < 40; };
 actRoutes['lko06-tihai'] = (x) => [
@@ -987,10 +1017,10 @@ mistakes['LKO-04'].push(
   { what: 'under the cloud: waiting on a cup, as on the heaps', steps: [...through('LKO-04', room04, 1), walkTo(actX('LKO-04', 1) + 2.4, 300), hops([[actX('LKO-04', 1) + 3.5, shaded(actX('LKO-04', 1), 4)]]), until(done, 600)], cause: 'lko-badal-peeche' },
 );
 mistakes['LKO-06'] = [
-  { what: 'in the mehfil, crossing her floor', steps: [...through('LKO-06', room06, 2), walkTo(actX('LKO-06', 2) + 3.6, 300), hops([actX('LKO-06', 2) + 6.5, actX('LKO-06', 2) + 12.2]), until(done, 1200)], cause: 'lko-mehfil' },
+  { what: 'in the mehfil, crossing her floor', steps: [...through('LKO-06', room06, 3), walkTo(actX('LKO-06', 3) + 3.6, 300), hops([actX('LKO-06', 3) + 6.5, actX('LKO-06', 3) + 12.2]), until(done, 1200)], cause: 'lko-mehfil' },
   {
     what: 'in the mehfil, stepping down on to the red strip as she goes away',
-    steps: [...through('LKO-06', room06, 2), walkTo(actX('LKO-06', 2) + 3.6, 300), hops([actX('LKO-06', 2) + 6.5]), until((w) => w.flags['lko06-mehfil:d'].x > px(actX('LKO-06', 2) + 22), 2400), hops([actX('LKO-06', 2) + 11.2, actX('LKO-06', 2) + 12.4, actX('LKO-06', 2) + 13.5]), until(done, 1200)],
+    steps: [...through('LKO-06', room06, 3), walkTo(actX('LKO-06', 3) + 3.6, 300), hops([actX('LKO-06', 3) + 6.5]), until((w) => w.flags['lko06-mehfil:d'].x > px(actX('LKO-06', 3) + 22), 2400), hops([actX('LKO-06', 3) + 11.2, actX('LKO-06', 3) + 12.4, actX('LKO-06', 3) + 13.5]), until(done, 1200)],
     cause: 'lko-ghungroo',
   },
 ];
@@ -1093,6 +1123,11 @@ mistakes['LKO-06'].push(
 mistakes['LKO-07'].push(
   { what: 'the window-shopper: over the nala and along the pavement behind him, as the open side', steps: [...through('LKO-07', room07, 4), runTo(actX('LKO-07', 4) - 3, 300), hop(actX('LKO-07', 4) + 2, actX('LKO-07', 4) + 4.4, '', 2, 1), { hold: 'R', until: done, max: 600 }], cause: 'lko-dukaan' },
   { what: 'the window-shopper: waiting on the step for him to finish', steps: [...through('LKO-07', room07, 4), walkTo(actX('LKO-07', 4) + 0.6, 300), until(done, 900)], cause: 'lko-shamiyana' },
+);
+
+mistakes['LKO-06'].push(
+  { what: 'the guru: pressing on the old way after her stamp, as on every stage so far', steps: [...through('LKO-06', room06, 2), { ...guruFwd(actX('LKO-06', 2), actX('LKO-06', 2) + 25.5, true), until: done }], cause: 'lko-ghungroo' },
+  { what: 'the guru: stopping after each stamp to work out which way is which', steps: [...through('LKO-06', room06, 2), { ...guruFwd(actX('LKO-06', 2), actX('LKO-06', 2) + 25.5), until: (w) => ((w.flags['lko06-guru:g'] as { n: number } | undefined)?.n ?? 0) >= 1 }, until(done, 900)], cause: 'lko-chakkar' },
 );
 
 export const test: CityTests = {

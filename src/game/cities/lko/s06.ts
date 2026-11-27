@@ -8,7 +8,7 @@ import { collectible, door, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
 import { Grid } from '../../levels/grid';
 import type { Act } from '../../levels/acts';
-import { Art, FLOOR, Zone, gent, px, TAU, type Ctx } from './kit';
+import { Art, FLOOR, Zone, gent, px, stillness, TAU, type Ctx } from './kit';
 import { tara } from './s02';
 
 /** the dancer: poses at `home`; drawn to a sound, she spins along the floor to it, turns there, spins home */
@@ -433,5 +433,82 @@ export const tihai: Act = {
   },
 };
 
-export const s06 = { room: kathakRoom, acts: [tatkar, tihai, mehfil] };
+// ================================================================ act: guru, the student mirrors her
+/** The guru's rule: the student mirrors her. At every stamp of her foot Dad's left and right swap, and at
+ *  the next stamp they swap back. Every stamp is a change of state: press the other way, at once. Go back
+ *  over a red strip and it rings; stand still on her floor and that's a bow, and she spins to you. */
+const GURU = { first: 70, every: 150, strips: [4, 9, 14, 19], from: 2, to: 23 };
+export const guru: Act = {
+  id: 'lko06-guru',
+  w: 28,
+  cp0: false,
+  cps: [-2.5, 25.5],
+  advice: 'The guru’s rule: the student mirrors her. At every stamp of her foot your left and right swap, and at the next stamp they swap back. Each stamp is a change: press the other way at once. Go back over a red strip and it rings; stop still on her floor and that is a bow, and she spins to you.',
+  build: (w, c) => {
+    const x = c.x;
+    boards(w, x, x + 27);
+    const d = new Dancer(w, c.X(12) + 8, 420, 'lko-ghungroo');
+    const G = { t0: -1, n: 0, last: -99 };
+    let chase = -1;
+    w.flags[c.f('g')] = G;
+    strips(
+      w,
+      GURU.strips.map((s) => [x + s, x + s] as [number, number]),
+      (w2, sx) => {
+        d.call(w2, sx, 'lko-ghungroo');
+        chase = w2.tick + 90;
+      },
+    );
+    const still = stillness(w);
+    w.onTick((w2) => {
+      const p = w2.player;
+      const inside = p.cx > c.X(GURU.from) && p.cx < c.X(GURU.to);
+      if (G.t0 < 0 && inside) G.t0 = w2.tick;
+      if (G.t0 >= 0 && G.n < 99) {
+        const e = w2.tick - G.t0 - GURU.first;
+        if (e >= 0 && e % GURU.every === 0) {
+          G.n++;
+          G.last = w2.tick;
+          w2.sfx('thud', c.X(26), FLOOR);
+          w2.emit('shake', c.X(26), FLOOR, { amount: 1.5 });
+          if (G.n % 2) w2.flipControls(999);
+          else w2.flipUntil = -1;
+        }
+      }
+      // past her floor the stamps stop, and the controls come back to you
+      if (p.cx >= c.X(GURU.to) && G.n < 99) {
+        G.n = 99;
+        w2.flipUntil = -1;
+      }
+      if (inside && still() > 50) {
+        d.call(w2, p.cx, 'lko-chakkar');
+        chase = w2.tick + 90;
+      }
+      // she spins to the sound and follows you for a moment
+      if (w2.tick < chase && d.s === 'out') d.target = p.cx;
+    });
+    w.add(
+      new Art((ctx, w2) => {
+        // the guru at the end of her floor: her foot comes down on each stamp, a ring of sound goes out
+        const k = w2.tick - G.last;
+        gent(ctx, c.X(26) + 8, FLOOR, 25, '#F2EEE4', { face: -1, arms: k < 20 ? 1 : 0.5, skin: '#9C6B48', dupatta: '#C2485B' });
+        if (k < 40) {
+          ctx.strokeStyle = `rgba(232,197,71,${1 - k / 40})`;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(c.X(26) + 8, FLOOR, 6 + k * 2, Math.PI, TAU);
+          ctx.stroke();
+        }
+        // which way round you are now: a little mirrored hand over her head
+        if (w2.flipped) {
+          ctx.fillStyle = '#E8C547';
+          ctx.fillText('⇄', c.X(26) + 4, FLOOR - 40);
+        }
+      }, 3),
+    );
+    sign(w, x + 0.4, 10.4, 3.2, 'GURU', 'shop', null, 'ulta');
+  },
+};
+
+export const s06 = { room: kathakRoom, acts: [tatkar, tihai, guru, mehfil] };
 export const meta06 = { family: 'sound-draws-dancer-spin', betrayals: ['sound-draws'], ending: 'lko-sam' } as StageMeta;
