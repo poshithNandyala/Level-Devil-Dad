@@ -15,7 +15,7 @@ import { lines as L } from './lines';
 /** tiers: tier k (0..3) spans cols x0+4k .. x0+4k+5, standing row 13-2k */
 export const TIER = { n: 4, w: 6, step: 4, rise: 2 };
 /** the gardener: `per` seconds on each tier; two snips per tier, each `snip` seconds long */
-export const SNIP = { per: 2.4, at: [0.7, 1.6], snip: 0.4 };
+export const SNIP = { per: 2.6, at: [1.0, 1.9], snip: 0.4 };
 
 export interface TopiaryState {
   t0: number;
@@ -27,24 +27,29 @@ export interface TopiaryState {
   done: boolean;
 }
 
+/** the tiers as one-way tiles: tier k at row 14 - 2k, columns x0 + 4k .. x0 + 4k + 5 */
+export function topiaryTiles(g: Grid, x0: number) {
+  for (let k = 0; k < TIER.n; k++) g.fill(x0 + TIER.step * k, x0 + TIER.step * k + TIER.w - 1, 14 - TIER.rise * k, 14 - TIER.rise * k, '=');
+}
+
 export function topiary(w: World, key: string, x0: number, start: number, dir: 1 | -1, causeUp: string, causeDown: string, trigger: number) {
   const st: TopiaryState = { t0: -1, tier: start, dir, snipping: false, done: false };
   w.flags[key] = st;
   const tierX = (k: number) => px(x0 + TIER.step * k);
   const tierY = (k: number) => px(13 - TIER.rise * k) + 16; // top of the platform (Dad stands with his feet here)
-  // the tiers: solid shelves of hedge
+  // the tiers are one-way tiles in the map (`topiaryTiles`): Dad jumps up through them; here only their hedge dressing
+  w.add(
+    new Paint((ctx) => {
+      for (let k = 0; k < TIER.n; k++) {
+        const x = tierX(k),
+          y = tierY(k);
+        box(ctx, x, y, px(TIER.w), 12, '#4F7A2A');
+        box(ctx, x, y, px(TIER.w), 3, '#8FBF4A');
+        for (let i = 2; i < px(TIER.w); i += 7) box(ctx, x + i, y + 4 + ((i * 3) % 4), 3, 3, '#6FA33A');
+      }
+    }, -1),
+  );
   for (let k = 0; k < TIER.n; k++) {
-    w.add(
-      new Rig(tierX(k), tierY(k), px(TIER.w), 12, {
-        layer: 1,
-        solid: true,
-        paint: (ctx, r) => {
-          box(ctx, r.x, r.y, r.w, r.h, '#4F7A2A');
-          box(ctx, r.x, r.y, r.w, 3, '#8FBF4A');
-          for (let i = 2; i < r.w; i += 7) box(ctx, r.x + i, r.y + 4 + ((i * 3) % 4), 3, 3, '#6FA33A');
-        },
-      }),
-    );
     // the blade on this tier: live when the gardener is on the tier above or below and snipping
     w.add(
       new Rig(tierX(k) - 4, tierY(k) - 18, px(TIER.w) + 8, 18, {
@@ -116,7 +121,11 @@ export function room(): LevelDef {
     tagline: 'The world’s tallest topiary. The gardener is up it with his shears.',
     hint: 'The gardener’s shears cut the tier above him and the tier below him, and never the tier he stands on. He works his way up from the bottom. Stay level with him: step on to his tier, and move up each time he does. A tier two away from him is safe as well.',
     par: 30,
-    map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').rows(),
+    map: (() => {
+      const g = Grid.ground(15).put(1, 14, '@').put(30, 14, 'E');
+      topiaryTiles(g, 6);
+      return g.rows();
+    })(),
     build(w: World) {
       door(w);
       topiary(w, 'imp3', 6, 0, 1, 'imp-shear', 'imp-shear-makha', 4);
@@ -135,6 +144,9 @@ export const act: Act = {
   w: 36,
   advice: 'The second hedge’s gardener starts at the top and works down. His rule is the same: his own tier is safe, the ones next to him are cut. Wait on the lowest tier while he is high, step up on to his tier as he reaches the one above you, and when he goes on down keep two tiers between you and him.',
   cps: [30],
+  paint: (g, c) => {
+    topiaryTiles(g, c.x + 4);
+  },
   build: (w, c) => {
     topiary(w, 'imp3b', c.x + 4, TIER.n - 1, -1, 'imp-shear', 'imp-shear-makha', c.x + 2);
     sign(w, c.x + 1.5, 10.4, 3.4, 'MAALI', 'shop', null, 'the gardener');

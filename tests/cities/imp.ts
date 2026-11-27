@@ -20,7 +20,7 @@ type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
 const go = (move: Move, jump = false): Out => ({ move, jump });
 const hop = (at: number, note: string, ticks = 12): Step[] => [
   { hold: 'R', until: X(at), max: 900 },
-  { hold: 'R', jump: ticks, ticks, note },
+  { hold: 'R', jump: ticks, ticks, note, ...(ticks > 14 ? { long: true } : {}) },
   { hold: 'R', until: ground, max: 300 },
 ];
 const runOn: Step[] = [{ hold: 'R', until: done, max: 5000 }];
@@ -131,12 +131,17 @@ const leafWalk = (key: string, bankX: number) => (w: World): Out => {
   const cx = p.x + p.w / 2;
   if (!p.onGround) return go('R', p.vy < 0 && p.airTicks < holdFor);
   holdFor = HOLD;
-  const cur = ls.find((l) => Math.abs(cx - l.cx) < 52);
-  const next = ls.find((l) => l.cx - cx > 20);
+  const cur = ls.find((l) => Math.abs(cx - l.cx) < 60);
+  const next = ls.find((l) => l.cx - cx > 60);
+  // just landed: the leaf has not registered the landing yet (its tick runs inside the next step): stand a tick
+  if (cur && cur.t0 < 0 && p.landTick >= w.tick - 2) return go('');
   // on a leaf whose dew has not gone yet: get inside the beads on their half while the leaf settles, and stand there
   if (cur && cur.t0 >= 0 && cur.side !== 0 && cur.beads.some((b) => !b.gone)) {
-    const spot = cur.cx + cur.side * 9;
-    if (Math.abs(cx - spot) > 3) return go(cx < spot ? 'R' : 'L');
+    // the inside zone on the dew's half: between the centre and the resting beads; stand once in it (a late key
+    // overshoots by up to 14 px, so the zone is read coarsely)
+    const off = (cx - cur.cx) * cur.side;
+    if (off < 4) return go(cur.side > 0 ? 'R' : 'L');
+    if (off > 30) return go(cur.side > 0 ? 'L' : 'R');
     return go('');
   }
   if (!next) return go('R', cx > bankX - 60 && cur !== undefined && cx > cur.cx + 20);
@@ -144,18 +149,19 @@ const leafWalk = (key: string, bankX: number) => (w: World): Out => {
     // a both-rim leaf: jump it from this leaf's far rim to the centre of the one beyond
     const beyond = ls.find((l) => l.cx > next.cx);
     if (!beyond || !cur) return go('R');
-    if (cx >= cur.cx + 40) {
-      holdFor = 24; // a longer leap: over the narrow leaf and its two gaps
+    if (cx >= cur.cx + 44) {
+      holdFor = 30; // a longer leap (~79 px): over the narrow leaf and its two gaps
       return go('R', true);
     }
     return go('R');
   }
-  // land inside the dew, on its side of the centre: take off a leap's length before that spot
-  const target = next.cx + next.side * 9;
+  // aim the landing a little short of the centre: a late key (up to 14 px) and the landing slide carry it on to the
+  // dew's half, inside the beads; the settle above corrects the rest
+  const target = next.side > 0 ? next.cx - 2 : next.cx - 24;
   return go('R', cx >= target - LEAP);
 };
-const room04 = (): Step[] => [{ policy: leafWalk('imp4', 26 * 16), until: and(ground, X(28)), max: 3000, note: 'leaf to leaf on the dew’s side' }, { hold: 'R', until: X(31.5), max: 400 }];
-const act04 = (x: number): Step[] => [{ policy: leafWalk('imp4b', (x + 31) * 16), until: and(ground, X(x + 33)), max: 4000, note: 'the dew’s side each time; over the both-rim leaf' }, { hold: 'R', until: X(x + 39.5), max: 400 }];
+const room04 = (): Step[] => [{ policy: leafWalk('imp4', 29 * 16), until: and(ground, X(29.5)), max: 3000, note: 'leaf to leaf on the dew’s side' }, { hold: 'R', until: X(31.5), max: 400 }];
+const act04 = (x: number): Step[] => [{ policy: leafWalk('imp4b', (x + 38) * 16), until: and(ground, X(x + 38.5)), max: 4000, note: 'the dew’s side each time; over the both-rim leaf' }, { hold: 'R', until: X(x + 43.5), max: 400 }];
 
 // ------------------------------------------------------------------ IMP-05
 const dockOf = (w: World, key: string) => w.flags[key] as DockState;
@@ -299,10 +305,10 @@ const act07b = (x: number): Step[] => [
 /** step on the stalls in rising price order: `path` is the list of stall indices to stand on */
 const stallWalk = (c0: number, path: number[], exitX: number): Step[] => {
   // stall k spans [c0px + 48k, +40]; the 8 px gaps are walked; a skipped stall is jumped from the last 8 px before it
-  const steps: Step[] = [{ hold: 'R', until: X(c0 - 1.4), max: 900 }, { hold: 'R', jump: 10, ticks: 10, note: 'up on to the first stall' }, { hold: 'R', until: ground, max: 300 }];
+  const steps: Step[] = [{ hold: 'R', until: X(c0 - 2.6), max: 900 }, { hold: 'R', jump: 10, ticks: 10, note: 'up on to the first stall' }, { hold: 'R', until: ground, max: 300 }];
   for (let k = 1; k < path.length; k++) {
     const from = path[k - 1];
-    if (path[k] - from > 1) steps.push({ hold: 'R', until: X((c0 * 16 + 48 * from + 28) / 16), max: 900 }, { hold: 'R', jump: 32, ticks: 32, long: true, note: 'over the dearer stall' }, { hold: 'R', until: ground, max: 300 });
+    if (path[k] - from > 1) steps.push({ hold: 'R', until: X((c0 * 16 + 48 * from + 18) / 16), max: 900 }, { hold: 'R', jump: 32, ticks: 32, long: true, note: 'over the dearer stall' }, { hold: 'R', until: ground, max: 300 });
   }
   steps.push({ hold: 'R', until: X(exitX), max: 900 });
   return steps;
@@ -352,13 +358,14 @@ const room10 = (): Step[] => [
   { hold: 'R', until: X(31.5), max: 600 },
 ];
 const act10a = (x: number): Step[] => {
-  const s: Step[] = [{ hold: 'R', until: X(x + 2.3), max: 400 }, { hold: 'R', jump: 14, ticks: 14, note: 'to the first leaf’s centre' }, { hold: 'R', until: ground, max: 300 }];
-  for (let i = 0; i < 3; i++) s.push({ hold: 'R', until: X(x + 4 + i * 6 + 3.0), max: 400 }, { hold: 'R', jump: 15, ticks: 15, note: 'centre to centre' }, { hold: 'R', until: ground, max: 300 });
-  s.push({ hold: 'R', until: X(x + 4 + 3 * 6 + 3.2), max: 400 }, { hold: 'R', jump: 14, ticks: 14, note: 'to the bank' }, { hold: 'R', until: and(ground, X(x + 29.5)), max: 400 }, { hold: 'R', until: X(x + 35.5), max: 400 });
+  // a 14-tick running jump carries ~59 px; aim each landing at the leaf's centre with the lag window (0-14 px) centred
+  const s: Step[] = [{ hold: 'R', until: X(x + 2.06), max: 400 }, { hold: 'R', jump: 14, ticks: 14, note: 'to the first leaf’s centre' }, { hold: 'R', until: ground, max: 300 }];
+  for (let i = 0; i < 3; i++) s.push({ hold: 'R', until: X(x + 4 + i * 6 + 4.06), max: 400 }, { hold: 'R', jump: 14, ticks: 14, note: 'centre to centre' }, { hold: 'R', until: ground, max: 300 });
+  s.push({ hold: 'R', until: X(x + 4 + 3 * 6 + 3.8), max: 400 }, { hold: 'R', jump: 14, ticks: 14, note: 'to the bank' }, { hold: 'R', until: and(ground, X(x + 29.5)), max: 400 }, { hold: 'R', until: X(x + 35.5), max: 400 });
   return s;
 };
 const act10b = (x: number): Step[] => [
-  { hold: 'R', until: X(x + 3.4), max: 400 },
+  { hold: 'R', until: X(x + 1.6), max: 400 },
   { hold: 'R', jump: 10, ticks: 10, note: 'on to the anchored mat' },
   { hold: 'R', until: ground, max: 300 },
   { hold: 'R', until: X(x + 5.4), max: 300, note: 'the far end (the back) of the mat' },
@@ -429,7 +436,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'IMP-01': { steps: [...upToGate, { hold: 'R', until: done, max: 2400, note: 'walk into the arch' }], cause: 'imp-thong' },
   'IMP-02': { steps: runOn, cause: 'imp-in' },
   'IMP-03': { steps: [...[0, 1, 2, 3].flatMap((k) => hop(6 + 4 * k - 1.2, 'tier', 16)), ...runOn], cause: 'imp-shear' },
-  'IMP-04': { steps: runOn, cause: 'imp-dew' },
+  'IMP-04': { steps: [{ hold: 'R', until: X(7.0), max: 600, note: 'on to the first leaf’s near half' }, { hold: '', until: done, max: 900, note: 'and stop to look' }], cause: 'imp-dew' },
   'IMP-05': { steps: [{ hold: 'R', until: X(3.6), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, ...runOn], cause: 'imp-ishing' },
   'IMP-06': { steps: runOn, cause: 'imp-phum' },
   'IMP-07': { steps: [{ hold: 'R', until: X(3.4), max: 400 }, { hold: 'R', jump: 10, ticks: 10 }, ...runOn], cause: 'imp-ishing' },
@@ -441,7 +448,16 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'IMP-01': { steps: [...tourRoute().slice(0, upToGate.length + 3), { hold: 'R', until: X(64.3), max: 600 }, { hold: 'R', until: done, max: 1500, note: 'step down on to the green bank' }], cause: 'imp-khong' },
   'IMP-02': { steps: [{ hold: 'R', until: X(9), max: 400 }, { hold: '', until: done, max: 1500, note: 'stop, and stay stopped' }], cause: 'imp-in-leppa' },
   'IMP-03': { steps: [...hop(4.8, 'tier 0', 16), { hold: '', until: done, max: 1500, note: 'wait below him' }], cause: 'imp-shear-makha' },
-  'IMP-04': { steps: [{ hold: 'R', until: X(6.2), max: 300 }, { hold: 'R', jump: 30, ticks: 30, long: true, note: 'to the far rim, beyond the dew' }, { hold: 'R', until: ground, max: 300 }, { hold: '', until: done, max: 1500 }], cause: 'imp-dew-rim' },
+  'IMP-04': {
+    steps: [
+      { policy: leafWalk('imp4', 29 * 16), until: (w) => leavesOf(w, 'imp4')[0].t0 >= 0 && leavesOf(w, 'imp4')[0].beads.every((b) => b.gone) && w.player.onGround, max: 2000, note: 'the first leaf as taught' },
+      { hold: 'R', until: X(10.6), max: 400 },
+      { hold: 'R', jump: 10, ticks: 10, note: 'a short hop to the second leaf’s near rim, beyond its dew' },
+      { hold: 'R', until: ground, max: 300 },
+      { hold: '', until: done, max: 1500, note: 'stand at the rim' },
+    ],
+    cause: 'imp-dew-rim',
+  },
   'IMP-05': { steps: [{ hold: 'R', until: X(3.6), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: X(11.6), max: 600, note: 'to the front edge' }, { hold: '', until: done, max: 1500, note: 'wait for the big mat' }], cause: 'imp-lurch' },
   'IMP-06': { steps: [...hops([[4.8, 12], [9.3, 12]]), { hold: 'R', until: X(14.3), max: 400 }, { hold: 'R', jump: 30, ticks: 30, long: true, note: 'follow the deer’s leap, straight on as Tara says' }, { hold: 'R', until: done, max: 900 }], cause: 'imp-chong' },
   'IMP-07': { steps: [{ hold: 'R', until: X(3.4), max: 400 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: and(ground, X(6.8)), max: 400 }, { hold: '', until: done, max: 2400, note: 'stand where you are for the ride' }], cause: 'imp-branch' },
@@ -455,8 +471,8 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     inAct(
       'IMP-04',
       'imp04-ani',
-      'run on from the first leaf without waiting for the dew to go',
-      (x) => [{ policy: leafWalk('imp4b', (x + 31) * 16), until: (w) => leavesOf(w, 'imp4b')[0].t0 >= 0 && w.player.onGround, max: 2000, note: 'land on the first leaf' }, { hold: 'R', until: done, max: 900 }],
+      'run on across the first leaf to its empty far half and stop there',
+      (x) => [{ policy: leafWalk('imp4b', (x + 38) * 16), until: (w) => leavesOf(w, 'imp4b')[0].t0 >= 0 && w.player.onGround, max: 2000, note: 'land on the first leaf' }, { hold: 'R', until: X(x + 9.0), max: 400 }, { hold: '', until: done, max: 900 }],
       'imp-dew',
     ),
   ],

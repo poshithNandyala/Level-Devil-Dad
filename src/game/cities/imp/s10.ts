@@ -121,7 +121,7 @@ const actThambal: Act = {
           layer: 3,
           cause: 'imp-dew-lei',
           inset: 1,
-          live: (_r, w2) => st.t0 >= 0 && st.tip !== 0 && since(w2, st.t0) > 0.3 && since(w2, st.t0) < 0.8,
+          live: (_r, w2) => st.t0 >= 0 && st.tip !== 0 && since(w2, st.t0) >= 0.08 && since(w2, st.t0) < 0.8,
           tick: (r) => {
             r.x = st.tip < 0 ? x0 : x0 + wd - px(1.4);
           },

@@ -12,7 +12,7 @@ import { Rig, box } from './entities';
 import { FL, lake, since, taraScript } from './common';
 import { lines as L } from './lines';
 
-export const LEAF = { w: 6, tilt: 0.6, speed: 120, beadIn: 0.5 };
+export const LEAF = { w: 7, tilt: 0.6, speed: 120, beadIn: 0.5 };
 
 export interface LeafState {
   /** rest side of the beads: -1 left rim, 1 right rim, 0 both rims */
@@ -89,7 +89,8 @@ export function leaf(w: World, key: string, c0: number, side: LeafState['side'],
       layer: 3,
       cause: 'imp-dew',
       inset: 1,
-      live: () => st.t0 >= 0 && st.beads.some((b) => !b.gone),
+      // resting dew is harmless to stand in; it is the ROLLING dew that takes you (the leaf has tipped)
+      live: (_r, w2) => st.t0 >= 0 && since(w2, st.t0) >= LEAF.tilt && st.beads.some((b) => !b.gone),
       tick: (r, w2) => {
         const live = st.beads.find((b) => !b.gone);
         if (!live) return;
@@ -138,7 +139,7 @@ function leaves(w: World, key: string, c0: number, sides: LeafState['side'][], g
 /** the columns a row of leaves spans */
 export const leafSpan = (n: number, gap = 2, widths?: number[]) => (widths ? widths.reduce((a, b) => a + b, 0) : n * LEAF.w) + (n - 1) * gap;
 /** the act's leaves: the both-rim leaf is narrow (3 tiles) with one-tile gaps round it, so it is jumped from the leaf before */
-export const ACT_W = [6, 6, 2, 6, 6];
+export const ACT_W = [7, 7, 2, 7, 7];
 
 export function room(): LevelDef {
   return {
@@ -158,7 +159,7 @@ export function room(): LevelDef {
       onPass(w, px(3), (w2) => tara(w2, L.intro[2], 2.2));
       sign(w, 2.2, 10.4, 3.4, 'THAMBAL', 'green', null, 'lotus');
       rival(w, 29, 15, -1, taraScript(4));
-      collectible(w, 'imp-umorok', 6 + LEAF.w + 2 + 2.5, 11.4);
+      collectible(w, 'imp-umorok', 6 + LEAF.w + 1 + 3.5, 11.4);
     },
   };
 }
@@ -167,9 +168,9 @@ export function room(): LevelDef {
  * from either side, so take it in one jump from the leaf before it */
 export const act: Act = {
   id: 'imp04-ani',
-  w: 40,
+  w: 44,
   advice: 'More leaves, the dew on the far rim, then the near, then the far. One leaf has dew on both rims: there is no half to land on, so jump it in one go from the edge of the leaf before it.',
-  cps: [33],
+  cps: [40],
   paint: (g, c) => {
     g.fill(c.x + 3, c.x + 3 + leafSpan(5, 1, ACT_W) + 1, 15, 17, '.');
   },
