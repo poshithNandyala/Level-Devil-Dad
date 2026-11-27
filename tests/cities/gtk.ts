@@ -669,6 +669,12 @@ const act09b = (x: number): Step[] => [
   { policy: climbAll(), until: and(ground, X(x + 20), (w) => w.player.y + w.player.h <= 129), max: 1200, note: 'up the stair' },
   { hold: 'R', until: X(x + 35.5), max: 600, note: 'along the snow road and down' },
 ];
+const act09c = (x: number): Step[] => [{ policy: yakRide('gtk9c', { at: px(x + 34) }), until: and(ground, X(x + 36.5)), max: 5000, note: 'stay on through both photos, off at the far bank' }, { hold: 'R', until: X(x + 39.5), max: 300 }];
+const act09d = (x: number): Step[] => [
+  { policy: yakRide('gtk9d', { at: px(x + 17) }), until: and(ground, X(x + 19.6)), max: 4000, note: 'off on to the lake ice' },
+  { policy: yakRide('gtk9d2', { at: px(x + 35) }), until: and(ground, X(x + 37.6)), max: 4000, note: 'across the lake, on to the far yak, off past the far shore' },
+  { hold: 'R', until: X(x + 39.5), max: 300 },
+];
 const gateRides = new WeakMap<World, (w: World) => Out>();
 const gateYak: Policy = (w, _m, d) => {
   const D = Math.round(d.x / 16);
@@ -780,6 +786,25 @@ function actDeaths() {
     { hold: 'R', jump: 14, ticks: 14, note: 'jump across anyway' },
     { hold: 'R', until: done, max: 900 },
   ], 'gtk-khaai');
+  const r9 = room09();
+  actDeath('GTK-09', r9, 'gtk09-dophoto', 'walk across the shore', () => blind(), 'gtk-hiun');
+  actDeath('GTK-09', r9, 'gtk09-dophoto', 'stay on for one photo, off at the second: surely that’s the end', () => [
+    {
+      policy: (() => {
+        const ride = yakRide('gtk9c', {});
+        return (w: World) => {
+          const y = (w.flags.gtk9c as Yak[])[0];
+          if (y.carries(w) && y.s.leg === 4 && y.s.t > 6) return go('R');
+          return ride(w);
+        };
+      })(),
+      until: done,
+      max: 5000,
+    },
+  ], 'gtk-hiun');
+  actDeath('GTK-09', r9, 'gtk09-barf', 'stay off the lake ice: walk the snow', () => blind(), 'gtk-hiun');
+  actDeath('GTK-09', r9, 'gtk09-chattan', 'walk across the shore', () => blind(), 'gtk-hiun');
+  actDeath('GTK-09', r9, 'gtk09-chattan', 'ride it to the end, as on the first yak', (x) => [{ policy: yakRide('gtk9b', { at: px(x + 24) }), until: done, max: 5000 }], 'gtk-hiun');
   const r10 = room10();
   actDeath('GTK-10', r10, 'gtk10-peechha', 'the bin ahead is full: jump the holes anyway', (x) => [{ policy: stepper(), until: X(x + 7.3), max: 900 }, { policy: gapJumper(), until: done, max: 2400 }], 'gtk-jurmana');
   actDeath('GTK-10', r10, 'gtk10-jhola', 'on to every bag', () => [{ policy: bagHop('gtk10j', { every: true, dwell: 0.3 }), until: done, max: 3000 }], 'gtk-polythene');
@@ -893,6 +918,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk08-dobaar': chainRoute('gtk8ec'),
   'gtk09-chamri': act09,
   'gtk09-chattan': act09b,
+  'gtk09-dophoto': act09c,
+  'gtk09-barf': act09d,
   'gtk10-thela': act10a,
   'gtk10-rassi': act10b,
   'gtk10-chadhai': act10c,

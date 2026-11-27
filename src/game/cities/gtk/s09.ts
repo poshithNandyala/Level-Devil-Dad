@@ -196,6 +196,39 @@ export const act2: Act = {
   },
 };
 
+/** act 3: the long loop with two photo stops, both on the thin shore: stay on through both, off at the far bank */
+export const act3: Act = {
+  id: 'gtk09-dophoto',
+  w: 40,
+  advice: 'A long loop, and the handler stops twice for photos, both times on the thin shore. Stay on through both, and get off on the far bank before it turns.',
+  build: (w, c) => {
+    lake(w, c.X(3), c.X(34));
+    thinShore(w, c.x + 4, c.x + 33);
+    yak(w, c.X(1), [{ wait: 0.8 }, { to: c.X(11) }, { wait: 2.0, photo: true }, { to: c.X(23) }, { wait: 2.0, photo: true }, { to: c.X(34) }, { wait: 0.9 }, { to: c.X(1) }, { wait: 1.0 }], 'mount', 'gtk9c');
+    sign(w, c.x + 36, 8.6, 3.4, 'TSOMGO', 'wood', null, 'far bank');
+  },
+};
+/** act 4: here the yak's loop crosses the lake itself, and the frozen lake is the safe part: off its back on to
+ *  the blue ice, and walk across; the white snow either side lies on thin ice */
+export const act4: Act = {
+  id: 'gtk09-barf',
+  w: 40,
+  advice: 'This yak walks out across the frozen lake and back. The blue lake ice is thick and holds: get off on to it and walk across. It’s the white snow at the shore, either side, that lies on thin ice.',
+  build: (w, c) => {
+    thinShore(w, c.x + 3, c.x + 12);
+    thinShore(w, c.x + 27, c.x + 34);
+    decor(w, 1, (ctx) => {
+      // the lake ice, blue and hard, cracked only on top
+      box(ctx, c.X(13), FL - 3, px(14), 5, '#7FB3D5');
+      for (let i = 0; i < 6; i++) box(ctx, c.X(14) + i * 34, FL - 1, 12, 1, 'rgba(255,255,255,0.7)');
+    });
+    yak(w, c.X(1), [{ wait: 0.8 }, { to: c.X(17) }, { wait: 0.6 }, { to: c.X(1) }, { wait: 1.0 }], 'mount', 'gtk9d');
+    // and a second yak waiting on the far side of the lake, to take you over the far shore
+    yak(w, c.X(25), [{ wait: 1.2 }, { to: c.X(35) }, { wait: 0.9 }, { to: c.X(25) }], 'mount', 'gtk9d2');
+    sign(w, c.x + 18, 8.6, 3.4, 'LAKE ICE', 'wood', null, 'thick');
+  },
+};
+
 /** door: up on the snowbank. The gate yak walks to and fro below it; ride it to the high end and hop up */
 export const ending: Ending = {
   space: 13,
