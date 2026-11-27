@@ -10,7 +10,7 @@ import { VENT, type Steamer } from '../../src/game/cities/gtk/s02';
 import type { Bag } from '../../src/game/cities/gtk/s03';
 import { FLOORS } from '../../src/game/cities/gtk/s04';
 import type { Rule } from '../../src/game/cities/gtk/s05';
-import { TANK, STAND2, STAND3, STAND5, STAND6 } from '../../src/game/cities/gtk/s06';
+import { TANK, STAND2, STAND3, STAND5, STAND6, JEEP } from '../../src/game/cities/gtk/s06';
 import type { Cloud } from '../../src/game/cities/gtk/s07';
 import { DOCK } from '../../src/game/cities/gtk/s08';
 import type { Yak } from '../../src/game/cities/gtk/s09';
@@ -445,6 +445,12 @@ const act06g = (x: number): Step[] => [
   { policy: stairUpLeft(), until: (w) => w.player.onGround && w.player.y + w.player.h <= 144, max: 1200, note: 'back, and up the stair behind you' },
   { hold: 'R', until: X(x + 34.2), max: 900, note: 'along the loop above, over the hill' },
   { hold: 'R', until: ground, max: 300 },
+];
+const act06h = (x: number): Step[] => [
+  { hold: 'R', until: and(ground, X(x + 9.2), (w) => Math.abs(w.player.y + w.player.h - 208) <= 1), max: 900, note: 'down the stair to the last step' },
+  { hold: '', until: parked('gtk6s', JEEP), max: 1500, note: 'wait for the jeep to back in and pull out' },
+  { hold: 'R', until: and(ground, X(x + 22)), max: 600, note: 'down and past the stand' },
+  { policy: stepper(), until: X(x + 31.5), max: 400 },
 ];
 const bothParked = (w: World) => {
   const a = w.flags.gtk6p as { t0: number };
@@ -971,6 +977,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk06-neeche': act06e,
   'gtk06-upar2': act06f,
   'gtk06-peeche': act06g,
+  'gtk06-sawari': act06h,
   'gtk07-thau': act07a,
   'gtk07-chitra': act07b,
   'gtk07-ghumti': act07c,

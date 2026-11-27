@@ -320,6 +320,34 @@ export const act7: Act = {
   },
 };
 
+/** act 8: the share-jeep stand at the foot of a long stair down. A share jeep waits to fill up and then pulls
+ *  out across the foot of the stair, and the next one backs straight in: wait on the step for the gap */
+export const JEEP = { period: 6.2, out: 1.1 };
+export const act8: Act = {
+  id: 'gtk06-sawari',
+  w: 32,
+  advice: 'The long stair down ends at the share-jeep stand: each jeep backs in across the foot of the stair, waits to fill, and pulls out again. Wait on the last step while it backs in and out; go as it pulls back in.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x, x + 31, 15, 15, '.');
+    g.fill(x, x + 2, 9, 17, '#');
+    g.fill(x + 3, x + 4, 10, 17, '#');
+    g.fill(x + 5, x + 6, 11, 17, '#');
+    g.fill(x + 7, x + 8, 12, 17, '#');
+    g.fill(x + 9, x + 10, 13, 17, '#');
+    g.fill(x + 11, x + 31, 16, 17, '#');
+  },
+  build: (w, c) => {
+    standTaxi(w, c.X(16), c.X(11.1), px(16), c.X(1), 'gtk6s', JEEP);
+    decor(w, -3, (ctx) => {
+      box(ctx, c.X(15), px(13), px(6), 3, '#3E8E41');
+      box(ctx, c.X(15), px(13), 2, px(3), '#4E5A62');
+      box(ctx, c.X(21) - 2, px(13), 2, px(3), '#4E5A62');
+    });
+    sign(w, c.x + 13, 9.4, 4.2, 'SHARE JEEP', 'green', null, 'singtam, rangpo');
+  },
+};
+
 /** door: the roof's water tank overflows down the house front, over the doorway, and the gush shoves you back */
 export const TANK = { period: 3.0, on: 1.1 };
 export const ending: Ending = {
