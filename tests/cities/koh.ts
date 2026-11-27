@@ -670,7 +670,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 const ROOMS: Record<string, () => Step[]> = { 'KOH-02': room02, 'KOH-03': room03, 'KOH-04': room04, 'KOH-05': room05, 'KOH-06': room06, 'KOH-07': room07, 'KOH-08': room08, 'KOH-09': room09, 'KOH-10': room10 };
 const ACT_ORDER: Record<string, string[]> = {
   'KOH-02': ['koh02-teen', 'koh02-jhatka'],
-  'KOH-03': ['koh03-ulta'],
+  'KOH-03': ['koh03-ulta', 'koh03-bhari'],
   'KOH-04': ['koh04-kali'],
   'KOH-05': ['koh05-dui', 'koh05-chadhai'],
   'KOH-06': ['koh06-dhuan', 'koh06-upar'],
@@ -698,6 +698,8 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'KOH-03': [
     { what: 'land on the tip, then stand still on the near half', steps: [{ policy: landAt(SEE3.x0 + 9, SEE3.x0 - 30, 8), until: and(ground, (w) => w.player.x >= SEE3.x0 - 4), max: 900 }, { hold: '', until: done, max: 1500 }], cause: 'koh-khad' },
     inAct('KOH-03', 'koh03-ulta', 'hop on to the near end beside Kewhi, like the first seesaw', (x) => [{ policy: landAt(px(x + 6) + 9, px(x + 6) - 30, 8), until: and(ground, (w) => w.player.x >= px(x + 6) - 4), max: 900 }, { hold: '', until: done, max: 1500 }], 'koh-khad'),
+    inAct('KOH-03', 'koh03-bhari', 'step off the bank on to the tip, a short drop', (x) => [{ hold: 'R', until: X(x + 1.6), max: 600 }, { hold: 'R', jump: 16, ticks: 16 }, { hold: 'R', until: and(ground, (w) => w.player.y < FL - 30), max: 300 }, { hold: 'R', until: and(ground, (w) => w.player.x >= px(x + 7) - 2 && w.player.y > FL - 20), max: 600, note: 'walk off the bank on to the tip' }, { hold: 'R', until: (w) => w.player.cx > px(x + 7) + 72, max: 400 }, { hold: '', until: done, max: 1500 }], 'koh-patak'),
+    inAct('KOH-03', 'koh03-bhari', 'he looks too heavy to throw: jump the near half and walk to the gate', (x) => [{ hold: 'R', until: X(x + 1.6), max: 600 }, { hold: 'R', jump: 16, ticks: 16 }, { hold: 'R', until: and(ground, (w) => w.player.y < FL - 30), max: 300 }, { hold: 'R', until: X(x + 5.6), max: 400 }, { hold: 'R', jump: 28, ticks: 28, long: true, note: 'over the near half' }, { hold: 'R', until: done, max: 1500 }], 'koh-kanta'),
     inAct('KOH-03', 'koh03-ulta', 'a running jump that lands short of the far tip', (x) => [{ hold: 'R', until: X(x + 5.8), max: 600 }, { hold: 'R', jump: 14, ticks: 14 }, { hold: 'R', until: (w) => w.player.onGround && w.player.cx > px(x + 9), max: 300 }, { hold: '', until: done, max: 1500 }], 'koh-patak'),
   ],
   'KOH-04': [
@@ -771,6 +773,14 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: X(x + 4.6), max: 600, note: 'to the edge of the bank' },
     { policy: landAt(px(x + 6) + 80, px(x + 6) - 6, 34), until: and(ground, (w) => w.player.cx >= px(x + 6) + 60), max: 900, note: 'a running jump on to the far tip' },
     { policy: seesawCross('koh3b', px(x + 6) + 48), until: and(ground, X(x + 13.5)), max: 1200, note: 'wait for Kewhi to lift the bar' },
+    { hold: 'R', until: X(x + 29.4), max: 600 },
+  ],
+  'koh03-bhari': (x) => [
+    { hold: 'R', until: X(x + 1.6), max: 600 },
+    { hold: 'R', jump: 16, ticks: 16, note: 'up on to the high bank' },
+    { hold: 'R', until: and(ground, (w) => w.player.y < FL - 30), max: 300 },
+    { policy: landAt(px(x + 7) + 9, px(x + 7) - 14, 12), until: and(ground, (w) => w.player.x >= px(x + 7) - 4 && w.player.y > FL - 20), max: 900, note: 'down on to the near tip from the bank' },
+    { policy: seesawCross('koh3c', px(x + 7) + 64), until: and(ground, X(x + 16.5)), max: 1200, note: 'wait for Kewhi to lift the bar' },
     { hold: 'R', until: X(x + 29.4), max: 600 },
   ],
   'koh04-kali': act04,

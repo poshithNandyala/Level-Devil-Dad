@@ -26,6 +26,8 @@ export interface Seesaw {
   helper: { side: -1 | 1; x: number; y: number; flying: boolean; t0: number; h: number; gone: boolean; full: boolean };
   /** the landing distance from the post, tiles (for the tests) */
   d: number;
+  /** the fall speed of the landing that threw (for the tests) */
+  fall?: number;
   slamT: number;
   lastLand: number;
 }
@@ -36,7 +38,7 @@ export interface Seesaw {
  * propped; the gate stands at the far bank and the ledge is at `ledge` (px). A landing at least `full` tiles from
  * the post is a full throw.
  */
-export function seesaw(w: World, c0: number, half: number, side: 1 | -1, key: string, o: { wedge: boolean; ledge: [number, number]; full: number }): Seesaw {
+export function seesaw(w: World, c0: number, half: number, side: 1 | -1, key: string, o: { wedge: boolean; ledge: [number, number]; full: number; heavy?: number }): Seesaw {
   const x0 = px(c0);
   const mid = x0 + px(half);
   const xEnd = mid + px(half);
@@ -125,15 +127,18 @@ export function seesaw(w: World, c0: number, half: number, side: 1 | -1, key: st
         const k = Math.min(1, t / T);
         const up = 4 * k * (1 - k) * h.h + (h.full ? k * (h.y - (o.ledge[1] - 26)) : 0);
         const sx = h.full ? h.x + (o.ledge[0] + 24 - h.x) * k : h.x;
-        folk(ctx, sx, h.y - up, 26, '#C0392B');
-      } else folk(ctx, h.x, h.y, 26, '#C0392B');
+        folk(ctx, sx, h.y - up, 26, '#C0392B', o.heavy ? { sack: '#A1887F' } : {});
+      } else folk(ctx, h.x, h.y, 26, '#C0392B', o.heavy ? { sack: '#A1887F' } : {});
     }, 3),
   );
+  // the speed of the fall that lands (for a heavy helper, the drop must be a high one)
+  let fallV = 0;
   w.onTick((w2) => {
     const p = w2.player;
     const h = st.helper;
     const onNear = w2.standing(st.near.solid!);
     const onFar = w2.standing(st.far.solid!);
+    if (!p.onGround) fallV = Math.max(fallV, p.vy);
     // a landing on the plank pops the wedge; a landing on the half opposite the helper throws him, higher the farther from the post
     // (entities run before the player, and the ground is only known on the next tick, so the landing is seen two ticks late)
     const landed = w2.tick - p.landTick <= 2 && st.lastLand !== p.landTick;
@@ -149,7 +154,10 @@ export function seesaw(w: World, c0: number, half: number, side: 1 | -1, key: st
         st.d = d;
         h.flying = true;
         h.t0 = w2.tick;
-        h.full = d >= o.full;
+        // a heavy helper flies full only from a high drop (the fall speed), whatever the spot
+        h.full = d >= o.full && (!o.heavy || fallV >= o.heavy);
+        st.fall = fallV;
+        fallV = 0;
         h.h = h.full ? 40 : 18 + d * 12;
         w2.sfx('boing', mid, FL - 20);
       }
@@ -217,6 +225,27 @@ export const actUlta: Act = {
   build: (w, c) => {
     seesaw(w, c.x + 6, 3, -1, 'koh3b', { wedge: false, ledge: [px(c.x + 1), FL - 76], full: 1.3 });
     sign(w, c.x + 1, 10.4, 3, 'ULTA', 'shop', null, 'wrong end');
+  },
+};
+
+/** the heavy helper: Kewhi has a basket on his back; the throw's strength is your DROP, not your spot: come down on the tip from the high bank */
+export const actBhari: Act = {
+  id: 'koh03-bhari',
+  w: 30,
+  advice: 'Kewhi has a basket on his back and a hop from the ground will not lift him: the throw is only as strong as your drop. Climb the high bank beside the plank and come down on the near tip from there; he flies to the ledge. From the low ground he is thrown short and the plank kicks you off; and the gate is barred with thorns until he lifts the bar.',
+  cps: [],
+  paint: (g, c) => {
+    g.fill(c.x + 7, c.x + 7 + 7, 15, 17, '.');
+  },
+  build: (w, c) => {
+    // the high bank: a block two tiles up, right at the plank's near tip
+    w.add(new Rig(px(c.x + 4), FL - 32, 48, 32, { solid: true, layer: 2, paint: (ctx, r) => box(ctx, r.x, r.y, r.w, r.h, '#8C5A3C') }));
+    seesaw(w, c.x + 7, 4, 1, 'koh3c', { wedge: true, ledge: [px(c.x + 16), FL - 76], full: 2.4, heavy: 380 });
+    w.when(
+      (w2) => w2.player.cx > px(c.x + 2),
+      (w2) => w2.guide(NPC.loghat),
+    );
+    sign(w, c.x + 1, 10.4, 3, 'BHARI', 'shop', null, 'heavy');
   },
 };
 
