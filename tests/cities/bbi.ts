@@ -755,9 +755,9 @@ const DEATHS: Record<string, Death[]> = {
   'bbi09-ratha': [cNaive(10)],
   'bbi09-surya': [cNaive(12)],
   'bbi09-chakra': [cNaive(9)],
-  'bbi09-chhera': [
-    { what: 'walk straight on', cause: 'bbi-chhera', steps: () => [{ hold: 'R', until: done, max: 1500 }] },
-    { what: 'follow the broom out and keep walking', cause: 'bbi-pahanra', steps: (x) => [{ hold: 'R', until: X(x + 2), max: 400 }, { hold: '', until: (w) => ch9(w).dir === 1 && ch9(w).x > px(x + 6), max: 1500 }, { hold: 'R', until: done, max: 1500, steer: (w) => (ch9(w).dir === 1 && ch9(w).x - w.player.x < 40 ? '' : 'R') }] },
+  'bbi09-jhadu': [
+    { what: 'walk straight on', cause: 'bbi-jhadu', steps: () => [{ hold: 'R', until: done, max: 1500 }] },
+    { what: 'follow the broom out and keep walking', cause: 'bbi-pheri', steps: (x) => [{ hold: 'R', until: X(x + 2), max: 400 }, { hold: '', until: (w) => ch9(w).dir === 1 && ch9(w).x > px(x + 6), max: 1500 }, { hold: 'R', until: done, max: 1500, steer: (w) => (ch9(w).dir === 1 && ch9(w).x - w.player.x < 40 ? '' : 'R') }] },
   ],
   'bbi09-ulta': [cNaive(9), { what: 'step down on to the stone after the slam', cause: 'bbi-ulta', steps: (x) => [...chAct('bbi9u', 9, 8)(x).slice(0, 9), { hold: 'L', ticks: 40 }, { hold: '', until: done, max: 900 }] }],
   'bbi09-udaya': [spokesNaive()],
@@ -810,7 +810,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('BBI-10', 0, []);
   {
     // the full route up to the sinking spokes, then the careful climber who checks each spoke
-    const order: [string, number][] = [['bbi09-ghoda', 24], ['bbi09-udaya', 28], ['bbi09-ratha', 28], ['bbi09-chhera', 24], ['bbi09-ulta', 26], ['bbi09-asta', 28]];
+    const order: [string, number][] = [['bbi09-ghoda', 24], ['bbi09-udaya', 28], ['bbi09-ratha', 28], ['bbi09-jhadu', 24], ['bbi09-ulta', 26], ['bbi09-asta', 28]];
     let X0 = 32;
     const pre: Step[] = [...room09()];
     for (const [id, wd] of order) {
@@ -885,9 +885,9 @@ const bagudiRun = (x: number): Step[] => [
   { hold: 'L', until: (w) => bg(w).out, max: 600, note: 'back over the line' },
   { hold: 'R', until: X(x + 23.5), max: 900 },
 ];
-/** the king's broom: follow it out, hop it on the way back, walk off */
-const ch9 = (w: World) => w.flags.bbi9ch as { x: number; dir: number };
-const chheraRun = (x: number): Step[] => [
+/** the caretaker's broom: follow it out, hop it on the way back, walk off */
+const ch9 = (w: World) => w.flags.bbi9jh as { x: number; dir: number };
+const jhaduRun = (x: number): Step[] => [
   { hold: 'R', until: X(x + 0.8), max: 400 },
   { hold: '', until: (w) => ch9(w).dir === 1 && ch9(w).x > px(x + 6), max: 1500, note: 'let the broom go ahead' },
   { hold: 'R', until: (w) => ch9(w).dir === -1 && ch9(w).x - w.player.x < 70, max: 1500, steer: (w) => (ch9(w).dir === 1 && ch9(w).x - w.player.x < 60 ? '' : 'R'), note: 'behind it' },
@@ -915,7 +915,7 @@ const sariRun = (x: number): Step[] => [
   { steer: (w) => (w.player.y + w.player.h < 240 - 16 * 6 - 2 ? 'R' : ''), until: (w) => w.player.onGround && w.player.y + w.player.h <= 240 - 96 + 1, max: 400, note: 'on to the bank once above it' },
   { hold: 'R', until: X(x + 23.6), max: 600 },
 ];
-const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi06-sari': sariRun, 'bbi05-chheli': chheliRun, 'bbi09-chhera': chheraRun, 'bbi07-bagudi': bagudiRun, 'bbi06-patta': pattaRun, 'bbi05-patra': patraRun, 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi10-ratha': act10c, 'bbi02-dive': act02b, 'bbi06-buni': act06b, 'bbi07-sahi': act07c, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b, 'bbi08-thali': act08b, 'bbi07-stambha': act07d, 'bbi07-raati': act07e, 'bbi06-tani': act06c, 'bbi09-chakra': act09c, 'bbi10-khela': act10d, 'bbi10-nacha': act10e,
+const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi06-sari': sariRun, 'bbi05-chheli': chheliRun, 'bbi09-jhadu': jhaduRun, 'bbi07-bagudi': bagudiRun, 'bbi06-patta': pattaRun, 'bbi05-patra': patraRun, 'bbi02-corner': act02, 'bbi03-gali': act03, 'bbi04-karkhana': act04, 'bbi05-dhenki': act05a, 'bbi05-gadi': act05b, 'bbi06-tana': act06, 'bbi07-mardala': act07a, 'bbi07-bandha': act07b, 'bbi08-kansa': act08, 'bbi09-ara': act09, 'bbi10-chhata': act10a, 'bbi10-tana': act10b, 'bbi10-ratha': act10c, 'bbi02-dive': act02b, 'bbi06-buni': act06b, 'bbi07-sahi': act07c, 'bbi09-ratha': act09b, 'bbi05-khala': act05c, 'bbi03-mela': act03b, 'bbi08-thali': act08b, 'bbi07-stambha': act07d, 'bbi07-raati': act07e, 'bbi06-tani': act06c, 'bbi09-chakra': act09c, 'bbi10-khela': act10d, 'bbi10-nacha': act10e,
   'bbi06-jala': loomRun('bbi6g', 6, 0.5),
   'bbi06-pata': loomRun('bbi6h', 9, 0.45 + 0.52 + 0.1),
   'bbi09-ghoda': chAct('bbi9g', 8, 7),

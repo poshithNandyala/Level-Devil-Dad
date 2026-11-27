@@ -277,27 +277,27 @@ export const act: Act = {
   },
 };
 
-/** act 9, Chhera Pahanra: before the chariot rolls, the king sweeps its deck with a golden broom. The deck is
- *  the only way over the moat. The broom goes away from you slowly and comes back fast and low. A2: let it go
+/** act 9, the sweeper: the caretaker sweeps the stone deck of the plinth with a long broom. The deck is the
+ *  only way over the moat. The broom goes away from you slowly and comes back fast and low. A2: let it go
  *  ahead, never walk into it. A3: it comes back before you reach the end: hop it on its way back. */
-export const CHHERA = { c0: 3, n: 18, rest: 0.8, out: 48, back: 150, h: 10 };
+export const JHADU = { c0: 3, n: 18, rest: 0.8, out: 48, back: 150, h: 10 };
 export const act9: Act = {
-  id: 'bbi09-chhera',
+  id: 'bbi09-jhadu',
   w: 24,
-  advice: 'The king sweeps the chariot deck with the golden broom. Don’t walk into it: let it go ahead. It comes back fast and low before you reach the end: hop it as it comes, then walk off the deck.',
+  advice: 'The caretaker sweeps the stone deck with his long broom. Don’t walk into it: let it go ahead. It comes back fast and low before you reach the end: hop it as it comes, then walk off the deck.',
   cps: [],
   paint: (g, c) => {
-    g.pit(c.x + CHHERA.c0, c.x + CHHERA.c0 + CHHERA.n - 1);
+    g.pit(c.x + JHADU.c0, c.x + JHADU.c0 + JHADU.n - 1);
   },
   build: (w, c) => {
-    channel(w, c.x + CHHERA.c0, c.x + CHHERA.c0 + CHHERA.n - 1, 'bbi-parikha', 'water');
-    const x0 = c.X(CHHERA.c0);
-    const x1 = c.X(CHHERA.c0 + CHHERA.n) - 20;
+    channel(w, c.x + JHADU.c0, c.x + JHADU.c0 + JHADU.n - 1, 'bbi-parikha', 'water');
+    const x0 = c.X(JHADU.c0);
+    const x1 = c.X(JHADU.c0 + JHADU.n) - 20;
     const st = { t0: -1, x: x0, dir: 0 };
-    w.flags.bbi9ch = st;
+    w.flags.bbi9jh = st;
     onPass(w, c.X(0.5), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
     w.add(
-      new Rig(x0, FL, px(CHHERA.n), 8, {
+      new Rig(x0, FL, px(JHADU.n), 8, {
         solid: true,
         layer: 2,
         paint: (ctx, r) => {
@@ -307,32 +307,32 @@ export const act9: Act = {
       }),
     );
     // the broom's cycle: rest at the near end, sweep away slowly, sweep back fast
-    const outT = (x1 - x0) / CHHERA.out;
-    const backT = (x1 - x0) / CHHERA.back;
+    const outT = (x1 - x0) / JHADU.out;
+    const backT = (x1 - x0) / JHADU.back;
     w.add(
-      new Rig(x0, FL - CHHERA.h, 20, CHHERA.h, {
-        cause: 'bbi-chhera',
+      new Rig(x0, FL - JHADU.h, 20, JHADU.h, {
+        cause: 'bbi-jhadu',
         inset: 2,
         layer: 4,
         tick: (r, w2) => {
           if (st.t0 < 0) return;
-          const t = since(w2, st.t0) % (CHHERA.rest + outT + backT);
-          if (t < CHHERA.rest) { st.x = x0; st.dir = 0; }
-          else if (t < CHHERA.rest + outT) { st.x = x0 + (t - CHHERA.rest) * CHHERA.out; st.dir = 1; }
-          else { st.x = x1 - (t - CHHERA.rest - outT) * CHHERA.back; st.dir = -1; }
+          const t = since(w2, st.t0) % (JHADU.rest + outT + backT);
+          if (t < JHADU.rest) { st.x = x0; st.dir = 0; }
+          else if (t < JHADU.rest + outT) { st.x = x0 + (t - JHADU.rest) * JHADU.out; st.dir = 1; }
+          else { st.x = x1 - (t - JHADU.rest - outT) * JHADU.back; st.dir = -1; }
           r.x = st.x;
-          r.hazard!.cause = st.dir < 0 ? 'bbi-pahanra' : 'bbi-chhera';
+          r.hazard!.cause = st.dir < 0 ? 'bbi-pheri' : 'bbi-jhadu';
         },
         paint: (ctx, r) => {
-          box(ctx, r.x + 2, r.y + 4, 16, 6, '#E9C46A');
-          for (let k = 0; k < 4; k++) box(ctx, r.x + 3 + k * 4, r.y + 8, 2, 2, '#B8860B');
-          box(ctx, r.x + 9, r.y - 18, 2, 22, '#B8860B');
+          box(ctx, r.x + 2, r.y + 4, 16, 6, '#C8A96A');
+          for (let k = 0; k < 4; k++) box(ctx, r.x + 3 + k * 4, r.y + 8, 2, 2, '#8D6E3F');
+          box(ctx, r.x + 9, r.y - 18, 2, 22, '#6E4A2E');
           box(ctx, r.x + 4, r.y - 34, 12, 16, '#F5F5F5');
           box(ctx, r.x + 6, r.y - 40, 8, 6, '#C68642');
         },
       }),
     );
-    sign(w, c.x + 21, 10.4, 3.4, 'RATHA', 'shop', null, 'D');
+    sign(w, c.x + 21, 10.4, 3.4, 'CHAKKA', 'shop', null, 'D');
   },
 };
 
