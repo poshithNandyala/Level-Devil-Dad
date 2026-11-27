@@ -13,6 +13,8 @@ import { Rig, box } from './entities';
 import { FL, channel, since, taraScript } from './common';
 
 export interface BowlCfg {
+  /** the second pour comes from a jug held over these badi (by index), not from the right rim */
+  over?: number[];
   /** inside of the bowl: columns c0..c1 (rims at c0-1 and c1+1) */
   c0: number;
   c1: number;
@@ -106,7 +108,7 @@ export function bowl(w: World, cfg: BowlCfg, t0: () => number, key: string) {
           }
           r.s.fx = x;
           // under the second jug's stream it is pushed under
-          const under = t >= cfg.pour2[0] && t < cfg.pour2[1] && x + BW > x1 - 30;
+          const under = t >= cfg.pour2[0] && t < cfg.pour2[1] && (cfg.over ? cfg.over.includes(i) : x + BW > x1 - 30);
           if (under && !r.s.under && r.rides(w2)) w2.flags.bbi8why = 'bbi-dhara';
           r.s.under = under;
           r.setSolid(!under);
@@ -158,7 +160,23 @@ export function bowl(w: World, cfg: BowlCfg, t0: () => number, key: string) {
         jug(x0 - 8, 1, p1 ? 1.2 : t >= cfg.pour1[1] ? 0.2 : wob, p1);
         const p2 = t >= cfg.pour2[0] && t < cfg.pour2[1];
         const pre2 = t >= cfg.pour2[0] - 1.2 && t < cfg.pour2[0];
-        jug(x1 + 8, -1, p2 ? 1.2 : pre2 ? 0.45 + 0.04 * Math.sin(w2.tick / 6) : 0.12, p2);
+        if (!cfg.over) jug(x1 + 8, -1, p2 ? 1.2 : pre2 ? 0.45 + 0.04 * Math.sin(w2.tick / 6) : 0.12, p2);
+        else
+          // a second jug, held high by the cook, over the badi it will push under
+          for (const i of cfg.over) {
+            const b = st.badis[i];
+            const bx = ((b.s.fx as number | undefined) ?? b.x) + BW / 2;
+            ctx.save();
+            ctx.translate(bx - 10, FL - 92);
+            ctx.rotate(p2 ? 1.0 : pre2 ? 0.35 : 0.1);
+            ctx.fillStyle = '#8D6E63';
+            ctx.beginPath();
+            ctx.ellipse(0, -8, 8, 9, 0, 0, Math.PI * 2);
+            ctx.fill();
+            box(ctx, -5, -12, 10, 2, '#E9C46A');
+            ctx.restore();
+            if (p2) box(ctx, bx - 2, FL - 86, 5, 86 + (FL - st.water) - 20, 'rgba(236,232,214,0.9)');
+          }
       },
     }),
   );
@@ -211,7 +229,7 @@ export const act: Act = {
 };
 
 /** act 2: the big family bowl: four badi, and the current runs harder */
-export const B08B: BowlCfg = { c0: 4, c1: 23, badi: [6, 11, 16, 20], pour1: [0.5, 2.6], pour2: [3.2, 5.6], v1: 40, v2: 45, v3: 50 };
+export const B08B: BowlCfg = { c0: 4, c1: 23, badi: [6, 11, 16, 20], pour1: [0.5, 2.6], pour2: [3.2, 5.6], v1: 40, v2: 45, v3: 35 };
 export const act2: Act = {
   id: 'bbi08-thali',
   w: 30,
@@ -241,6 +259,39 @@ export const act3: Act = {
     const st = { t0: -1 };
     onPass(w, c.X(B08C.c0) + 4, (w2) => (st.t0 = w2.tick));
     bowl(w, { ...B08C, c0: c.x + B08C.c0, c1: c.x + B08C.c1, badi: B08C.badi.map((k) => c.x + k) }, () => st.t0, 'bbi8f');
+  },
+};
+
+/** act 4: the cook pours the second jug over the middle badi this time: the one you learned to ride goes under */
+export const B08D: BowlCfg = { c0: 4, c1: 20, badi: [6, 11, 16], pour1: [0.5, 2.6], pour2: [3.2, 5.4], v1: 30, v2: 20, v3: 25, over: [1] };
+export const act4: Act = {
+  id: 'bbi08-majhi',
+  w: 27,
+  advice: 'Here the cook holds the second jug high over the middle badi: that is the one that goes under. Ride a badi at the side.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + B08D.c0, c.x + B08D.c1).fill(c.x + B08D.c0 - 1, c.x + B08D.c0 - 1, 13, 14, '#').fill(c.x + B08D.c1 + 1, c.x + B08D.c1 + 1, 13, 14, '#');
+  },
+  build: (w, c) => {
+    const st = { t0: -1 };
+    onPass(w, c.X(B08D.c0) + 4, (w2) => (st.t0 = w2.tick));
+    bowl(w, { ...B08D, c0: c.x + B08D.c0, c1: c.x + B08D.c1, badi: B08D.badi.map((k) => c.x + k) }, () => st.t0, 'bbi8g');
+  },
+};
+/** act 5: four badi and two jugs held over two of them */
+export const B08E: BowlCfg = { c0: 4, c1: 24, badi: [6, 11, 16, 20], pour1: [0.5, 2.8], pour2: [3.4, 6.0], v1: 30, v2: 15, v3: 25, over: [0, 2] };
+export const act5: Act = {
+  id: 'bbi08-dui',
+  w: 31,
+  advice: 'Four badi and two jugs held over two of them. Watch where the jugs hang and ride one of the other two.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + B08E.c0, c.x + B08E.c1).fill(c.x + B08E.c0 - 1, c.x + B08E.c0 - 1, 13, 14, '#').fill(c.x + B08E.c1 + 1, c.x + B08E.c1 + 1, 13, 14, '#');
+  },
+  build: (w, c) => {
+    const st = { t0: -1 };
+    onPass(w, c.X(B08E.c0) + 4, (w2) => (st.t0 = w2.tick));
+    bowl(w, { ...B08E, c0: c.x + B08E.c0, c1: c.x + B08E.c1, badi: B08E.badi.map((k) => c.x + k) }, () => st.t0, 'bbi8h');
   },
 };
 

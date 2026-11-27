@@ -733,6 +733,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02
     out.push(leap(() => px(x + 26), 'on to the far bank'), { hold: 'R', until: and(ground, X(x + 27.4)), max: 300 });
     return out;
   },
+  'bbi08-majhi': bowlRun('bbi8g', 4, 20, 0, 5.4),
+  'bbi08-dui': bowlRun('bbi8h', 4, 24, 1, 6.0),
   'bbi10-mela': (x) => [...crossTroupe('bbi10m0', x, 3, 6, 'bridge'), ...crossTroupe('bbi10m1', x, 13, 7, 'wheel'), { hold: 'R', until: X(x + 23.5), max: 300 }],
 };
 const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy, 'bbi-pose-gate': gatePolicy, 'bbi-leaf-plate': platePolicy, 'bbi-horse-gap': horseGap, 'bbi-ribbon-snip': ribbonPolicy };
