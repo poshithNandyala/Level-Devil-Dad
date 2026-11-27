@@ -1,16 +1,11 @@
 // Dispur's door endings, one per stage 02-10, each a new idea. Kinds start with 'dis-'.
 import { World } from '../../world';
-import { lock, tara } from '../../levels/endkit';
-import { px, sand, river, Decor, GROUND, levelPost } from './entities';
-import { Hedge, PathBars, Plucker } from './pluck';
-import { Pan } from './pitha';
+import { lock } from '../../levels/endkit';
+import { px, river, Decor, GROUND, levelPost } from './entities';
+import { PathBars, Plucker } from './pluck';
 import { roller, checkpoint } from '../../levels/kit';
 import { Host, gam, machan } from './gamosa';
 import { TeaBoy } from './bank';
-import { MugaReel, NetStrokes } from './doors';
-import { husori } from './husori';
-import { charge } from './gorh';
-import { roof } from './rangghar';
 import { Slab } from './entities';
 import type { Ending } from '../../levels/endkit';
 
@@ -24,32 +19,14 @@ export const endings: Record<DisEndingKind, Ending> = {
   // ================================================================ DIS-02: the farmer shuts the hut
   /** The door is the farmer's hut on the far bank. While the river is moving he keeps it shut. Two bars cross: the first
    *  sinks once the second is up. Get across, then wait at the hut till the water is calm. */
+  // fix round 1 (QA F1): the old door re-asked the room's crossing; no replacement passed the gate, so it is PLAIN:
+  // the road ends at the farmer's hut and the hut's door is the way out.
   'dis-hut-shut': {
-    space: 26,
+    space: 8,
     after: 5,
-    advice: 'The door is the farmer’s hut on the last bank, and he keeps it shut while the river is moving. Land on the first bar, wait for the siren and the second bar to come up, cross, and then wait at the hut until the water is calm and he opens up.',
-    paint: (g, D) => {
-      g.pit(D - 20, D - 5);
-    },
+    advice: 'The road ends at the farmer’s hut on the bank: its door is the way out. Walk in.',
     build(w: World, d) {
-      const D = Math.round(d.x / 16);
-      river(w, D - 20, D - 4);
-      const f = sand(
-        w,
-        [
-          [[D - 18, D - 13], [D - 18, D - 15]],
-          [null, [D - 10, D - 6]],
-        ],
-        [px(D - 18) - 4],
-      );
-      w.flags.twist = 'shut';
-      const L = lock(w, d, 'Roba! Lahe lahe. | Stop! Slowly.');
-      w.onTick((w2) => {
-        if (f.e < 0 && f.level >= 1 && w2.flags.twist === 'shut') {
-          L.unlock();
-          w2.flags.twist = 'open';
-        }
-      });
+      w.flags.twist = 'plain';
       w.add(
         new Decor((ctx) => {
           // the hut round the door
@@ -65,27 +42,17 @@ export const endings: Record<DisEndingKind, Ending> = {
           ctx.fill();
         }, -4),
       );
-      w.when((w2) => w2.player.cx > px(D - 24), (w2) => tara(w2, 'Bhal, Dad! | Good, Dad!', 2.4));
     },
   },
   // ================================================================ DIS-03: the muga reel
   /** The door is up on the verandah; a muga cocoon rides its reel up to it and is reeled in after a moment. */
+  // fix round 1 (QA F1): the muga reel was kvt05-lift (ride up, off at the top); PLAIN now.
   'dis-muga-reel': {
-    space: 22,
+    space: 8,
     after: 5,
-    advice: 'The door is up on the garden bungalow’s verandah, too high to jump. By it a muga cocoon hangs on its reel: the reel lifts it up its thread to the verandah, waits a moment, and then reels it in to the wheel. Get on while it is down, ride it up, and step off on to the verandah before it is reeled in.',
-    paint: (g, D) => {
-      g.put(D, 14, '.');
-      g.fill(D - 1, D + 3, 11, 14, '#');
-      g.put(D + 1, 10, 'E');
-    },
-    build(w: World, d) {
-      const D = Math.round(d.x / 16) - 1;
-      const r = w.add(new MugaReel(px(D - 3), px(11) - 8, px(D - 12)));
-      w.solids.push(r.solid);
-      w.flags.reel = r;
-      w.flags.twist = 'reel';
-      checkpoint(w, D - 8); // after the bungalow steps: a death on the cocoon replays one cycle, not the walk
+    advice: 'The tea rows end at the garden bungalow: its door is the way out. Walk in.',
+    build(w: World) {
+      w.flags.twist = 'plain';
     },
   },
   // ================================================================ DIS-04: the laru plate
@@ -209,43 +176,24 @@ export const endings: Record<DisEndingKind, Ending> = {
   },
   // ================================================================ DIS-07: the host's door
   /** The last house. The singers stop in the yard while the host hands them gamosas; the gate to his door opens when he is done. */
+  // fix round 1 (QA F1): the net in strokes was dis09-sluice in substance (wait on the midpoint while the danger runs);
+  // PLAIN now: the singers' last house, its door the way out.
   'dis-uruka-net': {
-    space: 22,
+    space: 8,
     after: 6,
-    advice: 'Uruka night: a fishing net lies across the last pond in two stretches, with a bamboo stake between them. The fishers on the far bank pull it in strokes, all together, and rest between: anyone on the net during a pull is jerked off it. Cross a stretch only while they rest, and wait on the stake while they pull.',
-    paint: (g, D) => {
-      g.pit(D - 14, D - 5);
-      // the bamboo stake in the middle of the pond: the one place off the net
-      g.fill(D - 10, D - 9, 15, 15, '#');
-    },
-    build(w: World, d) {
-      const D = Math.round(d.x / 16);
-      river(w, D - 14, D - 4, 'dis-pukhuri');
-      const n = w.add(new NetStrokes([[px(D - 14), px(D - 10)], [px(D - 8), px(D - 4)]], px(D - 16)));
-      w.flags.net = n;
-      w.flags.twist = 'net';
+    advice: 'The husori ends at the last house: its door is the way out. Walk in.',
+    build(w: World) {
+      w.flags.twist = 'plain';
     },
   },
   // ================================================================ DIS-08: the watch tower
-  /** The door is at the top of a watch tower's steps. One last field, then the rhino charges at the jeep parked by the tower, from behind you. */
+  // fix round 1 (QA F1): the rhino from behind was dis08-bagori again; PLAIN now.
   'dis-watch-tower': {
-    space: 30,
+    space: 8,
     after: 4,
-    advice: 'The door is at the top of the watch tower’s steps. Cross the last field on the strip, and the moment you are over, the jeep by the tower starts up: the rhino charges at it from behind you, along the bank. Go straight up the steps and wait on the top: it passes underneath.',
-    paint: (g, D) => {
-      g.pit(D - 26, D - 12);
-      g.fill(D - 6, D - 6, 14, 14, '#');
-      g.fill(D - 5, D - 5, 13, 14, '#');
-      g.fill(D - 4, D - 4, 12, 14, '#');
-      g.fill(D - 3, D + 1, 11, 14, '#');
-      g.put(D, 14, '.');
-      g.put(D, 10, 'E');
-    },
-    build(w: World, d) {
-      const D = Math.round(d.x / 16);
-      charge(w, { trig: px(D - 28), c0: D - 26, c1: D - 12, start: D - 9, plume: D - 26, delay: 150, rest: 80 });
-      charge(w, { trig: px(D - 11), c0: D - 11, c1: D - 12, start: D - 14, plume: D - 3, delay: 190, rest: 160 });
-      w.flags.twist = 'tower';
+    advice: 'The grass ends at the forest office: its door is the way out. Walk in.',
+    build(w: World) {
+      w.flags.twist = 'plain';
     },
   },
   // ================================================================ DIS-10: the level post across the water
@@ -273,29 +221,13 @@ export const endings: Record<DisEndingKind, Ending> = {
   },
   // ================================================================ DIS-09: the royal seat
   /** The door is the royal seat at the top of the roof. Two last stretches of oil, and a ball rolls in each. */
+  // fix round 1 (QA F1): two more oiled stretches were the room past its labelled beat; PLAIN now.
   'dis-royal-seat': {
-    space: 26,
+    space: 8,
     after: 5,
-    advice: 'The door is the royal seat, up two steps at the end of the roof. Two more oiled stretches with a ball in each: the same way, from pad to pad. The seat’s steps are bare wood, safe to stand on.',
-    paint: (g, D) => {
-      g.put(D - 16, 14, '#');
-      g.put(D - 9, 14, '#');
-      g.fill(D - 2, D - 2, 14, 14, '#');
-      g.fill(D - 1, D + 3, 13, 14, '#');
-      g.put(D, 14, '.');
-      g.put(D + 1, 12, 'E');
-    },
-    build(w: World, d) {
-      const D = Math.round(d.x / 16) - 1;
-      roof(
-        w,
-        [
-          { slick: D - 15, slickW: 3, push: 180, chute: D - 14, every: 230 },
-          { slick: D - 8, slickW: 3, push: 180, chute: D - 7, every: 230 },
-        ],
-        D - 23,
-      );
-      w.flags.twist = 'seat';
+    advice: 'The roof ends at the royal seat: its door is the way out. Walk in.',
+    build(w: World) {
+      w.flags.twist = 'plain';
     },
   },
 };

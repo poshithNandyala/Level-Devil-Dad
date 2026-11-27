@@ -497,11 +497,6 @@ const viaEnding = (kind: string) => {
 /** the two door endings of their own: a play that dies at each, from the stage route up to the door */
 function doorDeaths(S: Record<string, Step[]>) {
   const pre = (id: string) => S[id].slice(0, S[id].findIndex((s) => (s.note ?? '').startsWith('the door')));
-  (mistakes['DIS-07'] ??= []).push({
-    what: 'door: runs straight across the net without stopping (Kavaratti’s answer): a pull catches him on it',
-    steps: [...pre('DIS-07'), { hold: 'R', until: done, max: 900 }],
-    cause: 'dis-net',
-  });
   (mistakes['DIS-10'] ??= []).push(
     {
       what: 'door: waits on the bank to follow the plucker, as in 03: she walks into him',
@@ -514,11 +509,7 @@ function doorDeaths(S: Record<string, Step[]>) {
       cause: 'dis-luit',
     },
   );
-  (mistakes['DIS-03'] ??= []).push({
-    what: 'door: rides the muga cocoon and stays on it at the top: reeled in',
-    steps: [...pre('DIS-03'), { policy: viaEnding('dis-muga-reel'), until: (w) => w.player.onGround && w.player.isRiding((w.flags.reel as any).solid), max: 3000 }, { hold: '', until: done, max: 1500 }],
-    cause: 'dis-reel',
-  });
+  void viaEnding;
 }
 function actDeaths(S: Record<string, Step[]>) {
   for (const [a, stage, f, cause, what] of ACT_MORE) {
@@ -1039,24 +1030,21 @@ for (const [id, f] of Object.entries(actRoutes)) actRoutes[id] = (x) => { const 
 
 /** a policy for each door ending, by kind ('dis-...'). */
 const endingPolicies: Record<string, Policy> = {
-  'dis-royal-seat'(w, m, d) {
-    const D = Math.round(d.x / 16) - 1;
-    const p = w.player;
-    if (m.hold > 0) return { move: 'R', jump: true };
-    if (!p.onGround) return go('R');
-    // across the oil to the pad, then pad to pad
-    const rib1 = px(D - 16);
-    const rib2 = px(D - 9);
-    const jumpAt = (rib: number) => p.cx >= rib - 14 && p.cx < rib - 4;
-    if (jumpAt(rib1) || jumpAt(rib2)) {
-      m.hold = 40;
-      return { move: 'R', jump: true };
-    }
-    if (p.cx > px(D - 3) && w.solidAt(p.x + p.w + 2, p.y + 2, 1, p.h - 4)) {
-      m.hold = 9;
-      return { move: 'R', jump: true };
-    }
-    return go('R');
+  // fix round 1 (QA F1): five PLAIN doors: the road ends at the door; walk in
+  'dis-royal-seat'(w, _m, d) {
+    return go(toward(w, d.x + 8, 1) || 'R');
+  },
+  'dis-watch-tower'(w, _m, d) {
+    return go(toward(w, d.x + 8, 1) || 'R');
+  },
+  'dis-uruka-net'(w, _m, d) {
+    return go(toward(w, d.x + 8, 1) || 'R');
+  },
+  'dis-muga-reel'(w, _m, d) {
+    return go(toward(w, d.x + 8, 1) || 'R');
+  },
+  'dis-hut-shut'(w, _m, d) {
+    return go(toward(w, d.x + 8, 1) || 'R');
   },
   'dis-post-bank'(w, m, d) {
     const pl = pluckers(w)[pluckers(w).length - 1];
@@ -1078,45 +1066,6 @@ const endingPolicies: Record<string, Policy> = {
     if (ground && gap < 52) return go('R');
     return go('');
   },
-  'dis-watch-tower'(w, m, d) {
-    const cs = charges(w);
-    const A = cs[cs.length - 2];
-    const B = cs[cs.length - 1];
-    const p = w.player;
-    if (m.hold > 0) return { move: 'R', jump: true };
-    if (p.y + p.h <= 177 && p.cx > d.x - 56) return go(toward(w, d.x + 8, 1) || 'R');
-    if (A.phase === 'noise' || A.phase === 'charge' || A.phase === 'rest') return go('');
-    if (!p.onGround) return go('R');
-    if (w.solidAt(p.x + p.w + 2, p.y + 2, 1, p.h - 4) && p.cx > px(Math.round(d.x / 16) - 8)) {
-      m.hold = 9;
-      return { move: 'R', jump: true };
-    }
-    void B;
-    return go('R');
-  },
-  'dis-uruka-net'(w, m, d) {
-    const n = w.flags.net as { t: (w: World) => number; pull: number };
-    const D = Math.round(d.x / 16);
-    const p = w.player;
-    const t = n.t(w);
-    const restFresh = t >= n.pull && t < n.pull + 20;
-    m.stage ??= 0;
-    if (m.stage === 0) {
-      if (p.cx < px(D - 15)) return go('R');
-      if (!restFresh) return go('');
-      m.stage = 1;
-    }
-    if (m.stage === 1) {
-      if (p.cx < px(D - 10) + 12) return go('R');
-      m.stage = 2;
-    }
-    if (m.stage === 2) {
-      if (!restFresh || !p.onGround) return go('');
-      m.stage = 3;
-    }
-    return go(toward(w, d.x + 8, 1) || 'R');
-  },
-
   'dis-tea-ladder'(w, m, d) {
     const k = w.flags.ladder as { boy: { down: boolean }; rung: { solid: { x: number; w: number } & object } };
     const D = Math.round(d.x / 16) - 1;
@@ -1150,47 +1099,6 @@ const endingPolicies: Record<string, Policy> = {
       return { move: 'R', jump: true };
     }
     return go(p.onGround ? toward(w, d.x + 8, 1) || 'R' : 'R');
-  },
-  'dis-muga-reel'(w, m, d) {
-    const r = w.flags.reel as { solid: { x: number; y: number }; phase: string; t: number };
-    const p = w.player;
-    if (m.hold > 0) return { move: 'R', jump: true };
-    if (!p.onGround) return go('');
-    if (p.y + p.h <= px(11) && p.cx > r.solid.x + 32) return go(toward(w, d.x + 8, 1) || 'R');
-    if (w.player.isRiding(r.solid as never)) return go(r.phase === 'top' ? 'R' : toward(w, r.solid.x + 16, 2));
-    if (p.cx < r.solid.x - 24) return go('R');
-    if (r.phase === 'rest' && r.t < 60) {
-      m.hold = 10;
-      return { move: 'R', jump: true };
-    }
-    return go(p.cx > r.solid.x - 20 ? 'L' : '');
-  },
-
-  'dis-hut-shut'(w, m, d) {
-    const f = fields(w)[fields(w).length - 1];
-    const p = w.player;
-    if (m.hold > 0) return { move: 'R', jump: true };
-    if (w.flags.twist === 'open') return go(p.onGround ? toward(w, d.x + 8, 1) || 'R' : '');
-    if (!p.onGround) return go('R');
-    const X0 = f.bars[0].slab.solid,
-      Y = f.bars[1].slab.solid;
-    if (p.cx < X0.x - 38) return go('R');
-    if (p.cx < X0.x + 2 && !w.standing(X0)) {
-      m.hold = 13;
-      return { move: 'R', jump: true };
-    }
-    if (w.standing(X0)) {
-      if (Y.w < px(3)) return go('');
-      if (p.cx < X0.x + X0.w - 6) return go('R');
-      m.hold = 13;
-      return { move: 'R', jump: true };
-    }
-    if (w.standing(Y)) {
-      if (p.cx < Y.x + Y.w - 5) return go('R');
-      m.hold = 13;
-      return { move: 'R', jump: true };
-    }
-    return go(toward(w, d.x + 8, 1) || 'R');
   },
 };
 
