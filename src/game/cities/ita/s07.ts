@@ -5,7 +5,6 @@
 // the truck settles a step ahead of you, out of the smoke, and from there it rolls back only to that chock.
 import type { LevelDef, World } from '../../world';
 import type { Act } from '../../levels/acts';
-import type { Ending } from '../../levels/endkit';
 import { Paint, tara } from '../../levels/endkit';
 import { Grid } from '../../levels/grid';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
@@ -271,44 +270,6 @@ export const actBarf: Act = {
   },
 };
 
-/** ending: the tailgate. The last truck has started at the summit: the door is on its tailgate, and its exhaust coughs on
- *  the driver's rhythm. Walk in to the door between coughs. */
-export const ending: Ending = {
-  space: 14,
-  advice: 'At the summit the truck has finally started, and the door is on its tailgate. Its exhaust coughs every few seconds, a rumble first: walk in right after a cough.',
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    w.flags.twist = 'tailgate';
-    const P = 3.4;
-    w.flags.ita7e = { P, x: d.x };
-    w.add(
-      new Rig(d.x - 18, FL - 26, 16, 26, {
-        layer: 3,
-        cause: 'ita-dhuan',
-        inset: 0,
-        live: (r) => r.s.live === true,
-        tick: (r, w2) => {
-          const t = (w2.tick / 120) % P;
-          r.s.live = t >= P - COUGH_ON;
-          if (Math.abs(t - (P - COUGH_ON - TELL)) < 1 / 120 + 0.001) w2.sfx('rumble', d.x, FL - 40);
-          if (Math.abs(t - (P - COUGH_ON)) < 1 / 120 + 0.001) w2.sfx('boom', d.x, FL - 20);
-        },
-        paint: (ctx, r, w2) => {
-          // the truck's back end round the door: tailgate down, the body above
-          box(ctx, d.x - 10, FL - 80, 48, 30, '#2F4F6B');
-          box(ctx, d.x - 10, FL - 80, 48, 6, '#C9B06A');
-          if (!r.s.live) return;
-          ctx.fillStyle = 'rgba(30,30,34,0.85)';
-          for (let i = 0; i < 6; i++) {
-            ctx.beginPath();
-            ctx.arc(r.x + 2 + ((i * 5 + (w2.tick >> 1)) % 14), FL - 8 - i * 4, 5 + (i % 3), 0, Math.PI * 2);
-            ctx.fill();
-          }
-        },
-      }),
-    );
-    void D;
-  },
-};
-
-export const meta07 = { family: 'push-heavy-slope-object', betrayals: ['push-in-bursts'], ending: 'ita-tailgate' };
+// The door is plain. The tailgate whose exhaust coughed on a rhythm ("walk in right after a cough") was this stage's own
+// tell-then-cough rule a second time, not a new idea, and was cut.
+export const meta07 = { family: 'push-heavy-slope-object', betrayals: ['push-in-bursts'], ending: 'ita-plain-summit' };

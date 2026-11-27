@@ -5,7 +5,6 @@
 // a frayed band: that lashing snaps and whips the one standing on it. Cross that pole in one hop.
 import type { LevelDef, World } from '../../world';
 import type { Act } from '../../levels/acts';
-import type { Ending } from '../../levels/endkit';
 import { Paint, tara } from '../../levels/endkit';
 import { Grid } from '../../levels/grid';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
@@ -171,20 +170,6 @@ export const act: Act = {
   },
 };
 
-/** ending: the landing stage. The raft at the ghat is one pole with a frayed band: cross it in one running jump. */
-export const ending: Ending = {
-  space: 14,
-  advice: 'The ghat: the last raft is one pole, and its band is frayed. There is nothing to stand on. Cross it in one running jump from the bank.',
-  paint: (g, D) => {
-    g.fill(D - 6, D - 4, 15, 17, '.');
-  },
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    w.flags.twist = 'ghat';
-    river(w, px(D - 6), px(D - 3));
-    raft(w, D - 6, ['frayed'], 'ita8e');
-    w.flags.ita8g = { x0: px(D - 6), x1: px(D - 3) };
-  },
-};
-
-export const meta08 = { family: 'raft-poles-spread-under-weight', betrayals: ['poles-spread'], ending: 'ita-ghat' };
+// The door is plain. The one-pole frayed raft at the ghat ("cross it in one running jump") was this stage's own
+// frayed-is-not-a-step rule a second time, not a new idea, and was cut.
+export const meta08 = { family: 'raft-poles-spread-under-weight', betrayals: ['poles-spread'], ending: 'ita-plain-ghat' };

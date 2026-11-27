@@ -5,12 +5,11 @@
 // spiked stub, hop it. Read the mortar before you pull.
 import type { LevelDef, World } from '../../world';
 import type { Act } from '../../levels/acts';
-import type { Ending } from '../../levels/endkit';
 import { Paint, tara } from '../../levels/endkit';
 import { Grid } from '../../levels/grid';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
-import { Rig, box, brick, perTick } from './entities';
+import { Rig, box, brick } from './entities';
 import { FL, since, taraScript } from './common';
 import { lines as L } from './lines';
 
@@ -185,16 +184,6 @@ export const act: Act = {
   },
 };
 
-/** ending: the gate. The door is behind the last wall, two bricks high with spikes on top and no fresh mortar: pull it down to one and hop it. */
-export const ending: Ending = {
-  space: 14,
-  advice: 'The gate: the door is behind a wall two bricks high with the spikes on top and no fresh mortar anywhere. Pull once, step back as it slumps, and hop the spiked stub into the door.',
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    w.flags.twist = 'darwaza';
-    wall(w, D - 4, [false, false], 'ita9h');
-    void perTick;
-  },
-};
-
-export const meta09 = { family: 'pull-brick-pile-slumps', betrayals: ['pull-brick-slump'], ending: 'ita-darwaza' };
+// The door is plain. The two-brick spiked gate wall ("pull once, step back, hop the stub") was this stage's act rule a
+// second time, not a new idea, and was cut. The finale's act B puts that stub under the fort's arch instead.
+export const meta09 = { family: 'pull-brick-pile-slumps', betrayals: ['pull-brick-slump'], ending: 'ita-plain-fort-gate' };

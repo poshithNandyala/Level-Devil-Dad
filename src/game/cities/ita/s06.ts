@@ -5,12 +5,11 @@
 // that runs the length of it. Read the channel: never be in the tank the water is on its way to.
 import type { LevelDef, World } from '../../world';
 import type { Act } from '../../levels/acts';
-import type { Ending } from '../../levels/endkit';
 import { Paint, tara } from '../../levels/endkit';
 import { Grid } from '../../levels/grid';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
-import { Rig, box, perTick } from './entities';
+import { Rig, box } from './entities';
 import { FL, since, taraScript } from './common';
 import { lines as L, NPC } from './lines';
 
@@ -258,67 +257,6 @@ export const act: Act = {
   },
 };
 
-/** ending: the river sluice. The door is behind the sluice gate, which the last tank's water pushes open as it pours
- *  through; the pour is deadly, and the gate falls shut a second and a half after the pour stops. */
-export const ending: Ending = {
-  space: 16,
-  advice: 'The door is behind the river sluice. Pull the lever and the tank’s water pours through the gate and holds it open: the pour itself is deadly, and the gate falls shut a second and a half after the pour stops. Go through in that gap.',
-  paint: (g, D) => {
-    carveTanks(g, [{ c: D - 11 }]);
-  },
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    w.flags.twist = 'mori';
-    const st = paddies(w, [{ c: D - 11, full: true }], [{ c: D - 12, k: 0, to: -1 }], 'ita6e');
-    const tank = st.tanks[0];
-    const gate = { open: 0, pourT: -1 };
-    w.flags.ita6g = gate;
-    const POUR = 2.2;
-    const HOLD = 1.5;
-    w.add(
-      new Rig(px(D - 3), FL - 40, 8, 40, {
-        layer: 3,
-        solid: true,
-        cause: 'ita-mori',
-        inset: 0,
-        live: (r) => r.s.live === true,
-        tick: (r, w2) => {
-          if (tank.drainT >= 0 && gate.pourT < 0) gate.pourT = w2.tick;
-          const t = gate.pourT < 0 ? -1 : since(w2, gate.pourT);
-          // missed the gap: the channel refills the tank and the lever can be pulled again
-          if (t > POUR + HOLD + 2.5 && gate.open < 0.01) {
-            tank.level = 'full';
-            gate.pourT = -1;
-          }
-          const pouring = t >= 0 && t < POUR;
-          const openNow = t >= 0 && t < POUR + HOLD;
-          const target = openNow ? 1 : 0;
-          const prev = gate.open;
-          gate.open += (target - gate.open) * (target > gate.open ? 0.15 : 0.1);
-          if (Math.abs(target - gate.open) < 0.01) gate.open = target;
-          // the pour through the gate is deadly; so is the gate coming down
-          r.s.pouring = pouring;
-          r.s.live = pouring || (target === 0 && prev > 0.05 && gate.open > 0.05 && gate.open < 0.95);
-          const h = Math.round((1 - gate.open) * 40);
-          r.setSolid(gate.open < 0.5);
-          r.moveTo(w2, px(D - 3), FL - h);
-          r.h = h;
-          if (r.solid) r.solid.h = Math.max(1, h);
-        },
-        paint: (ctx, r) => {
-          box(ctx, r.x, r.y, 8, r.h, '#8A6A3A');
-          box(ctx, r.x + 9, FL - 48, 3, 48, '#6B4A2A');
-          box(ctx, r.x - 2, FL - 52, 14, 4, '#6B4A2A');
-          if (r.s.pouring) {
-            box(ctx, r.x - 30, FL - 14, 46, 14, 'rgba(200,235,235,0.9)');
-            box(ctx, r.x - 30, FL - 20, 10, 8, 'rgba(230,245,245,0.9)');
-          }
-        },
-      }),
-    );
-    void perTick;
-    w.add(new Paint((ctx) => box(ctx, d.x - 20, FL - 70, 60, 10, '#6B4A2A'), -4));
-  },
-};
-
-export const meta06 = { family: 'linked-tanks-lever-order', betrayals: ['lever-water-order'], ending: 'ita-mori' };
+// The door is plain. The river sluice whose gate the pour held open ("go through in the gap after the pour stops") was
+// TVM-03's cross-after-the-pour thought (DECISIONS.md S20) and was cut. The finale's act C is the sluice turned round.
+export const meta06 = { family: 'linked-tanks-lever-order', betrayals: ['lever-water-order'], ending: 'ita-plain-river-bund' };

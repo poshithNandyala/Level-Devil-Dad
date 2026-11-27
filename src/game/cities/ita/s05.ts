@@ -5,7 +5,6 @@
 // the read: ripe figs go dark and the green ones glow, so the darkest is next, not the brightest.
 import type { LevelDef, World } from '../../world';
 import type { Act } from '../../levels/acts';
-import type { Ending } from '../../levels/endkit';
 import { Paint, tara } from '../../levels/endkit';
 import { Grid } from '../../levels/grid';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
@@ -256,62 +255,6 @@ export const actGilahri: Act = {
   },
 };
 
-/** ending: the hollow. The door is in a hollow trunk, and the one fig in front of it is round: stand on its edge and it
- *  rolls under you into the gorge. Cross its middle without stopping. */
-export const ending: Ending = {
-  space: 16,
-  advice: 'The door is in the hollow trunk, and the last cluster in front of it is round: stand on its edge and it rolls under you. Cross it over the middle and do not stop on it.',
-  paint: (g, D) => {
-    g.fill(D - 12, D - 3, 15, 17, '.');
-  },
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    w.flags.twist = 'khokhla';
-    gorge(w, px(D - 12), px(D - 2));
-    const st = { tilt: 0, x0: px(D - 10), x1: px(D - 10) + 112 };
-    w.flags.ita5e = st;
-    const fig = w.add(
-      new Rig(px(D - 10), LOW, 112, 20, {
-        solid: true,
-        layer: 2,
-        tick: (r, w2) => {
-          const p = w2.player;
-          const on = w2.standing(r.solid!);
-          const mid = r.x + 56;
-          if (on && Math.abs(p.cx - mid) > 30) st.tilt = Math.min(1, st.tilt + 1 / 48);
-          else st.tilt = Math.max(0, st.tilt - 1 / 30);
-          // tilted enough and it rolls out from under you: the solid drops away for a moment
-          if (st.tilt >= 1) {
-            r.setSolid(false);
-            r.s.rolled = (r.s.rolled ?? 0) + 1;
-            if (r.s.rolled > 90) {
-              r.s.rolled = 0;
-              st.tilt = 0;
-              r.setSolid(true);
-            }
-          }
-        },
-        paint: (ctx, r) => {
-          const gone = (r.s.rolled ?? 0) > 0;
-          ctx.save();
-          ctx.translate(r.x + 56, r.y + 10 + (gone ? 60 : 0));
-          ctx.rotate(st.tilt * 0.25);
-          ctx.fillStyle = '#A0522D';
-          ctx.beginPath();
-          ctx.ellipse(0, 0, 56, 12, 0, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
-        },
-      }),
-    );
-    void fig;
-    w.add(
-      new Paint((ctx) => {
-        box(ctx, d.x - 14, FL - 90, 44, 90, '#4A3020');
-        box(ctx, d.x - 10, FL - 86, 36, 86, '#2A1810');
-      }, -4),
-    );
-  },
-};
-
-export const meta05 = { family: 'fig-ripeness-drops-platforms', betrayals: ['ripeness-timeline'], ending: 'ita-khokhla' };
+// The door is plain. The round fig that rolled when you stood on its edge ("cross the middle without stopping") was the
+// don't-stop-on-the-tilting-floor thought (KVT-08 sandbar; DECISIONS.md S9) and was cut.
+export const meta05 = { family: 'fig-ripeness-drops-platforms', betrayals: ['ripeness-timeline'], ending: 'ita-plain-hollow-trunk' };

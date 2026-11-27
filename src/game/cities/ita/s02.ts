@@ -4,12 +4,11 @@
 // his bundle hangs over the edge and sweeps the shallow bay. Read the load, take the deep bay.
 import type { LevelDef, World } from '../../world';
 import type { Act } from '../../levels/acts';
-import type { Ending } from '../../levels/endkit';
 import { Paint, tara } from '../../levels/endkit';
 import { Grid } from '../../levels/grid';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
-import { Rig, box, folk, perTick } from './entities';
+import { Rig, box, folk } from './entities';
 import { FL, since, taraScript } from './common';
 import { lines as L, NPC } from './lines';
 
@@ -213,53 +212,6 @@ export const act: Act = {
   },
 };
 
-/** ending: the far bank's cane gate is held open by the weight on the deck: it stays up while a porter is on the span and
- *  slams down when the span is empty. Cross the last stretch right behind the porter, not after he has stepped off. */
-export const ending: Ending = {
-  space: 20,
-  advice: 'The gate on the far bank is a cane bar on a counterweight: it hangs open while a porter is on the last span and slams down the moment the span is empty. Let him pass you in the bay, then follow close behind him and go through while he still holds it open.',
-  paint: (g, D) => {
-    g.fill(D - 16, D - 3, 16, 17, '.');
-    carveBay(g, D - 10, true);
-  },
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    w.flags.twist = 'gate';
-    const st = deck(w, D - 16, D - 3, D - 24, [{ at: 0, v: 50 }], [{ c: D - 10, deep: true }], 'ita2e', 11);
-    const gate = { down: 1, t: 0 };
-    w.flags.ita2g = gate;
-    // the gate bar: a cane pole across the path just before the door; solid when down, deadly while falling
-    const bar = w.add(
-      new Rig(px(D - 2), FL - 40, 8, 40, {
-        layer: 3,
-        solid: true,
-        cause: 'ita-phatak',
-        inset: 0,
-        live: () => gate.t > 0,
-        tick: (b, w2) => {
-          const porter = st.porters[0];
-          const onSpan = porter.on && porter.x > px(D - 16) - 8;
-          const target = onSpan ? 0 : 1;
-          const prev = gate.down;
-          gate.down += (target - gate.down) * (target > gate.down ? 0.08 : 0.04);
-          if (Math.abs(target - gate.down) < 0.01) gate.down = target;
-          gate.t = target === 1 && prev < 0.98 && gate.down > 0.2 ? 1 : 0;
-          const h = Math.round(gate.down * 40);
-          b.setSolid(gate.down > 0.5);
-          b.moveTo(w2, px(D - 2), FL - h);
-          b.h = h;
-          if (b.solid) b.solid.h = Math.max(1, h);
-        },
-        paint: (ctx, b) => {
-          box(ctx, b.x, b.y, 8, b.h, '#C9B06A');
-          box(ctx, b.x + 8, FL - 48, 3, 48, '#8A6A3A');
-          box(ctx, b.x - 6, FL - 50 - Math.round((1 - gate.down) * 20), 20, 6, '#6B5A2A');
-        },
-      }),
-    );
-    bar.s.gate = gate;
-    void perTick;
-  },
-};
-
-export const meta02 = { family: 'one-lane-bridge-oncoming-bays', betrayals: ['oncoming-bay'], ending: 'ita-phatak' };
+// The door is plain (the road ends at the door, walk in). The cane gate that hung open while a porter was on the span
+// ("follow close behind him") was the DMN-07 thought (the way exists just behind the walker; DECISIONS.md S8) and was cut.
+export const meta02 = { family: 'one-lane-bridge-oncoming-bays', betrayals: ['oncoming-bay'], ending: 'ita-plain-far-bank' };

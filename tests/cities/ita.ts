@@ -84,30 +84,6 @@ const bayWait = (key: string, bay: number, to: number, shallow: number[], after:
 ];
 const room02 = (): Step[] => bayWait('ita2', 18, 29, [12]);
 const act02 = (x: number): Step[] => bayWait('ita2a', x + 22, x + 41.4, [x + 9, x + 16], [x + 29]);
-/** the gate: into the bay, let the porter by, then straight after him through the gate he holds open */
-const gatePolicy: Policy = (w, m) => {
-  const st = w.flags.ita2e as DeckSt;
-  const g = w.flags.ita2g as { down: number };
-  const p = w.player;
-  const bayX = px(st.c0 + 6);
-  if (m.hold > 0) return { move: 'R', jump: true };
-  const inBay = p.y > FL - 8;
-  const porter = st.porters[0];
-  if (!inBay && p.x < bayX - 4) {
-    // only go on to the span if the porter is far enough off to reach the bay first
-    return go('R');
-  }
-  if (inBay) {
-    if (porter.on && porter.x < bayX - 30) {
-      m.hold = 16;
-      return { move: 'R', jump: true };
-    }
-    return go('');
-  }
-  // out of the bay: run for the gate while it is up
-  if (g.down < 0.5 || p.x > px(st.c1 + 2)) return go('R');
-  return go(p.x < px(st.c1 - 3) ? 'R' : '');
-};
 
 // ------------------------------------------------------------------ ITA-03
 type HerdSt = { t0: number; spec: { c: number; dip: number; graze: number; up: number; young?: boolean }[]; rigs: { x: number; w: number; solid: any; s: { ph?: string; left?: number } }[] };
@@ -142,22 +118,6 @@ function herdWalk(key: string, need = 0.9): (w: World) => Out {
 }
 const room03 = (): Step[] => [{ policy: herdWalk('ita3'), until: and(ground, X(23.5)), max: 3000, note: 'across the backs on the lead’s dip; wait behind the young one' }, { hold: 'R', until: X(29), max: 400 }];
 const act03 = (x: number): Step[] => [{ policy: herdWalk('ita3a'), until: and(ground, X(x + 29.5)), max: 4000, note: 'the big herd: wait behind each young one' }, { hold: 'R', until: X(x + 35.4), max: 400 }];
-/** the pen gate: wait before the lead until it has just dipped, hop over its back and through while the bar is up */
-const penPolicy: Policy = (w, m) => {
-  const st = w.flags.ita3e as HerdSt;
-  const r = st.rigs[0];
-  const p = w.player;
-  if (m.hold > 0) return { move: 'R', jump: true };
-  if (p.x > r.x + r.w + 4) return go('R');
-  if (p.x + p.w < r.x - 18) return go('R');
-  const ok = r.s.ph === 'down' && (r.s.left ?? 0) > 1.6;
-  if (!ok) return go('');
-  if (p.onGround && p.x + p.w >= r.x - 18 && p.x < r.x) {
-    m.hold = 13;
-    return { move: 'R', jump: true };
-  }
-  return go('R');
-};
 
 // ------------------------------------------------------------------ ITA-04
 type GroveSt = { trees: { shakes: number; notches: number; dropped: boolean }[]; baskets: { c: number; cap: number; n: number }[]; oranges: { alive: boolean; on: boolean }[]; gy: number };
@@ -288,20 +248,6 @@ const squirrelOut = (_w: World, st: CanopySt) => {
 const room05 = (): Step[] => [{ policy: canopyWalk('ita5'), until: and(ground, X(27.5)), max: 3000, note: 'across the canopy as it ripens' }, { hold: 'R', until: X(29), max: 400 }];
 const act05 = (x: number): Step[] => [{ policy: canopyWalk('ita5a'), until: and(ground, X(x + 33.5)), max: 4000, note: 'dusk: the darkest is next' }, { hold: 'R', until: X(x + 37.4), max: 400 }];
 const act05b = (x: number): Step[] => [{ policy: canopyWalk('ita5b', { noJumpWhen: squirrelOut }), until: and(ground, X(x + 30.5)), max: 4000, note: 'hop only when the squirrel is not coming' }, { hold: 'R', until: X(x + 35.4), max: 400 }];
-/** the hollow: hop on to the round fig, run straight over its middle without stopping, hop off at the far end */
-const hollowPolicy: Policy = (w, m) => {
-  const st = w.flags.ita5e as { x0: number; x1: number };
-  const p = w.player;
-  if (m.hold > 0) return { move: 'R', jump: true };
-  const edges = [st.x0, st.x1 + 16];
-  const e = edges.find((x) => p.x + p.w < x);
-  if (e !== undefined && p.onGround && p.x + p.w >= e - 30 && w.tick > (m.cool ?? 0)) {
-    m.hold = 11;
-    m.cool = w.tick + 40;
-    return { move: 'R', jump: true };
-  }
-  return go('R');
-};
 
 // ------------------------------------------------------------------ ITA-06
 type PaddySt = { tanks: { c: number; level: 'full' | 'low'; drainT: number; fillT: number }[]; levers: { c: number; k: number; to: number; pulledT: number }[] };
@@ -342,41 +288,6 @@ const act06 = (x: number): Step[] => [
   ...pullCross('ita6a', 4, x + 27, x + 33),
   { hold: 'R', until: X(x + 35.4), max: 600 },
 ];
-/** the river sluice: pull, cross the drained tank, wait on the bund for the pour to stop, go through before the gate falls */
-const sluicePolicy: Policy = (w, m, d) => {
-  const st = w.flags.ita6e as PaddySt;
-  const g = w.flags.ita6g as { open: number; pourT: number };
-  const p = w.player;
-  const D = Math.round(d.x / 16);
-  const tank = st.tanks[0];
-  if (m.hold > 0) return { move: m.dir ?? 'R', jump: true };
-  if (p.x > px(D - 3) + 8) return go('R');
-  const inTank = p.y > FL - 8;
-  if (inTank) {
-    if (p.x >= px(D - 7) - 12) {
-      m.hold = 14;
-      m.dir = 'R';
-      return { move: 'R', jump: true };
-    }
-    return go('R');
-  }
-  if (p.x < px(D - 12)) return go('R');
-  if (p.x + p.w <= px(D - 11) + 6 && p.x < px(D - 9)) {
-    // on the lever's bund (or hopping on it)
-    if (tank.level === 'full' && g.pourT < 0 && w.tick > (m.cool ?? 0)) {
-      m.hold = 20;
-      m.dir = '';
-      m.cool = w.tick + 150;
-      return { move: '', jump: true };
-    }
-    if (tank.level === 'low' && tank.drainT < 0) return go('R');
-    return go('');
-  }
-  // on the bund before the gate
-  const t = g.pourT < 0 ? -1 : (w.tick - g.pourT) / 120;
-  if (t >= 2.25 && t < 3.3) return go('R');
-  return go(p.x + p.w >= px(D - 3) - 30 ? '' : 'R');
-};
 
 // ------------------------------------------------------------------ ITA-07
 type TruckSt = { t0: number; x0: number; chocks: number[]; bay: number; coughs: number[]; rig: { x: number }; rolled: number; parked: boolean; atRest: boolean };
@@ -402,15 +313,6 @@ function pushBursts(key: string): (w: World) => Out {
 const room07 = (): Step[] => [{ policy: pushBursts('ita7'), until: (w) => (w.flags.ita7 as TruckSt).parked, max: 6000, note: 'push the truck to the lay-by, chock to chock, between coughs' }, { hold: 'R', until: X(29), max: 600 }];
 const act07 = (x: number): Step[] => [{ policy: pushBursts('ita7a'), until: (w) => (w.flags.ita7a as TruckSt).parked, max: 9000, note: 'the climb: uneven bursts, watch the cab' }, { hold: 'R', until: X(x + 43.4), max: 600 }];
 const act07b = (x: number): Step[] => [{ policy: pushBursts('ita7b'), until: (w) => (w.flags.ita7b as TruckSt).parked, max: 9000, note: 'the snow: listen for the engine' }, { hold: 'R', until: X(x + 43.4), max: 600 }];
-/** the tailgate: wait clear of the exhaust, walk in right after a cough */
-const tailgatePolicy: Policy = (w, _m, d) => {
-  const e = w.flags.ita7e as { P: number };
-  const p = w.player;
-  const t = (w.tick / 120) % e.P;
-  const need = Math.max(0, d.x + 8 - (p.x + p.w)) / 140;
-  if (t + need + 0.1 < e.P - 0.6) return go('R');
-  return go(p.x + p.w > d.x - 26 ? 'L' : '');
-};
 /** release when the cab shakes, wherever the truck is, and stand there */
 function releaseAtTell(key: string): (w: World) => Out {
   return (w) => {
@@ -463,17 +365,6 @@ function raftHop(keys: string[], bankX: number, frayedIsFine = false): (w: World
 }
 const room08 = (): Step[] => [{ policy: raftHop(['ita8a', 'ita8b'], px(27)), until: and(ground, X(27.5)), max: 2000, note: 'band to band across both rafts' }, { hold: 'R', until: X(29), max: 400 }];
 const act08 = (x: number): Step[] => [{ policy: raftHop(['ita8c', 'ita8d'], px(x + 41)), until: and(ground, X(x + 41.5)), max: 3000, note: 'band to band, over the frayed ones' }, { hold: 'R', until: X(x + 46.4), max: 400 }];
-/** the ghat: one running jump over the whole frayed raft */
-const ghatPolicy: Policy = (w, m) => {
-  const g = w.flags.ita8g as { x0: number; x1: number };
-  const p = w.player;
-  if (m.hold > 0) return { move: 'R', jump: true };
-  if (p.onGround && p.x + p.w >= g.x0 - 6 && p.x < g.x0) {
-    m.hold = 22;
-    return { move: 'R', jump: true };
-  }
-  return go('R');
-};
 
 // ------------------------------------------------------------------ ITA-09
 type WallSt = { c: number; bonded: boolean[]; bricks: { x: number; y: number }[]; hole: boolean; slumpT: number; pulls: number };
@@ -510,7 +401,6 @@ function wallPolicy(key: string, climb = false): (w: World) => Out {
 const walls = (keys: string[], to: number): Step[] => [...keys.map((k): Step => ({ policy: wallPolicy(k), until: (w) => w.player.x > px((w.flags[k] as WallSt).c) + 8, max: 2400, note: `the wall ${k}` })), { hold: 'R', until: X(to), max: 600 }];
 const room09 = (): Step[] => walls(['ita9a', 'ita9b', 'ita9c'], 29);
 const act09 = (x: number): Step[] => walls(['ita9d', 'ita9e', 'ita9f', 'ita9g'], x + 39.4);
-const gatePolicy9: Policy = (w) => wallPolicy('ita9h')(w);
 
 // ------------------------------------------------------------------ ITA-10 (the finale: every callback breaks its stage's rule)
 type HeapSt = { t: number; done: boolean };
@@ -749,15 +639,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'ita10-mori': act10c,
   'ita10-tokri': act10d,
 };
+// only 04's packing shed has a door twist; every other ITA door is plain (the shared exit policy walks in)
 const endingPolicies: Record<string, Policy> = {
-  'ita-phatak': gatePolicy,
-  'ita-baada': penPolicy,
   'ita-peti': shedPolicy,
-  'ita-khokhla': hollowPolicy,
-  'ita-mori': sluicePolicy,
-  'ita-tailgate': tailgatePolicy,
-  'ita-ghat': ghatPolicy,
-  'ita-darwaza': gatePolicy9,
 };
 
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {

@@ -1,6 +1,9 @@
-// Itanagar's ten stages: 01 the welcome tour, 02-10 long stages (room + acts + door ending), harder each time, 10 the
+// Itanagar's ten stages: 01 the welcome tour, 02-10 long stages (room + acts + door), harder each time, 10 the
 // finale. Each built stage lives in its own file (s01.ts ..) with its allocation slot as `meta` (docs/allocation.json).
 // `levels` is a function (docs/CITY-MODULE.md).
+// Doors: every door was checked like an act against the registry (reports/cities/ita/BUILD.md). Only 04's packing
+// shed (the rope's shadow slides to the next landing spot) is an idea of its own; the other eight doors are PLAIN:
+// the road ends at the door, walk in. Their earlier door twists were the stage's own rule again or a shipped thought.
 import type { LevelDef } from '../../world';
 import { longStage } from '../../levels/chunks';
 import { tourLevel, meta01 } from './s01';
@@ -16,14 +19,13 @@ import { room as room10, actPul, actMehraab, actMori, actTokri, meta10 } from '.
 
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: meta01 },
-  longStage({ base: room02(), acts: [act02], twist: 'ita-phatak', par: 40, shape: 'long', meta: meta02 }),
-  longStage({ base: room03(), acts: [act03], twist: 'ita-baada', par: 45, shape: 'long', meta: meta03 }),
+  longStage({ base: room02(), acts: [act02], par: 40, shape: 'long', meta: meta02 }),
+  longStage({ base: room03(), acts: [act03], par: 45, shape: 'long', meta: meta03 }),
   longStage({ base: room04(), acts: [act04], twist: 'ita-peti', par: 50, shape: 'long', meta: meta04 }),
-  longStage({ base: room05(), acts: [act05, act05b], twist: 'ita-khokhla', par: 80, shape: 'long', lives: 'act', meta: meta05 }),
-  longStage({ base: room06(), acts: [act06], twist: 'ita-mori', par: 70, shape: 'long', lives: 'act', meta: meta06 }),
-  longStage({ base: room07(), acts: [act07, act07b], twist: 'ita-tailgate', par: 150, shape: 'marathon', lives: 'act', meta: meta07 }),
-  longStage({ base: room08(), acts: [act08], twist: 'ita-ghat', par: 30, shape: 'wtf', meta: meta08 }),
-  longStage({ base: room09(), acts: [act09], twist: 'ita-darwaza', par: 60, shape: 'long', lives: 'act', meta: meta09 }),
-  // the finale: a plain door (the road ends at the door, walk in): no legal door idea was left to ITA, see docs/cities/ITA-10.md
+  longStage({ base: room05(), acts: [act05, act05b], par: 80, shape: 'long', lives: 'act', meta: meta05 }),
+  longStage({ base: room06(), acts: [act06], par: 70, shape: 'long', lives: 'act', meta: meta06 }),
+  longStage({ base: room07(), acts: [act07, act07b], par: 150, shape: 'marathon', lives: 'act', meta: meta07 }),
+  longStage({ base: room08(), acts: [act08], par: 30, shape: 'wtf', meta: meta08 }),
+  longStage({ base: room09(), acts: [act09], par: 60, shape: 'long', lives: 'act', meta: meta09 }),
   longStage({ base: room10(), acts: [actPul, actMehraab, actMori, actTokri], par: 37, shape: 'long', lives: 'act', meta: meta10 }),
 ];

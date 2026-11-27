@@ -5,7 +5,6 @@
 // is out of step: it grazes for a moment and lifts long before the others.
 import type { LevelDef, World } from '../../world';
 import type { Act } from '../../levels/acts';
-import type { Ending } from '../../levels/endkit';
 import { Paint, tara } from '../../levels/endkit';
 import { Grid } from '../../levels/grid';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
@@ -188,48 +187,6 @@ export const act: Act = {
   },
 };
 
-/** ending: the pen gate is a bamboo bar the lead mithun lifts with its forehead as it grazes under it: the way is open
- *  while its head is down, and the bar comes down (and the toss comes) when it lifts */
-export const ending: Ending = {
-  space: 14,
-  advice: 'The pen gate is a bamboo bar, and the lead mithun grazes under it: while its head is down its forehead holds the bar up and the way is open. When it lifts, the bar drops and the toss catches whoever is under it. Cross while it grazes, not as it is about to lift.',
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    w.flags.twist = 'baada';
-    const g: Graze = { c: D - 7, dip: 0.8, graze: 3.0, up: 2.4 };
-    const st = herd(w, D - 13, [g], 'ita3e');
-    // the animal stands on the road here (no mud): its back is still a step and the bar is over the lane beside its head
-    const bar = w.add(
-      new Rig(px(D - 3), FL - 40, 6, 40, {
-        layer: 3,
-        solid: true,
-        cause: 'ita-baada',
-        inset: 0,
-        live: (b) => b.s.falling === true,
-        tick: (b, w2) => {
-          const r = st.rigs[0];
-          const ph = r.s.ph as Phase;
-          const target = ph === 'down' ? 0 : 1;
-          const prev = b.s.k ?? 1;
-          const k = prev + (target - prev) * (target > prev ? 0.12 : 0.06);
-          b.s.k = Math.abs(target - k) < 0.01 ? target : k;
-          b.s.falling = target === 1 && b.s.k > 0.1 && b.s.k < 0.98;
-          const h = Math.round(b.s.k * 40);
-          b.setSolid(b.s.k > 0.5);
-          b.moveTo(w2, px(D - 3), FL - h);
-          b.h = h;
-          if (b.solid) b.solid.h = Math.max(1, h);
-        },
-        paint: (ctx, b) => {
-          box(ctx, b.x, b.y, 6, b.h, '#C9B06A');
-          box(ctx, b.x + 7, FL - 48, 3, 48, '#8A6A3A');
-          box(ctx, b.x - 60, FL - 46 - Math.round((1 - (b.s.k ?? 1)) * 10), 70, 4, '#A88A4A');
-        },
-      }),
-    );
-    bar.s.k = 1;
-    w.flags.ita3g = bar;
-  },
-};
-
-export const meta03 = { family: 'living-platforms-graze-cycle', betrayals: ['graze-cycle'], ending: 'ita-baada' };
+// The door is plain. The pen gate held up by the grazing head ("cross while its head is down") was this stage's own
+// graze-cycle rule a second time, not a new idea, and was cut.
+export const meta03 = { family: 'living-platforms-graze-cycle', betrayals: ['graze-cycle'], ending: 'ita-plain-pen' };
