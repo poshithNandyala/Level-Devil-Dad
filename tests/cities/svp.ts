@@ -698,6 +698,46 @@ const endingPolicies: Record<string, Policy> = {
   },
 };
 
+// ------------------------------------------------------------------ the second attempts and first-timer mistakes of 07 and 10
+// 07: the obvious fix of 'sit on the luggage' is 'run to the jetty edge' (svp-bheed, in `fix`); these are the other ways it goes wrong
+(mistakes['SVP-07'] ??= []).push({
+  what: 'into the trench, straight out again and on to the quay',
+  cause: 'svp-jahaz',
+  steps: [hopUntil(and(ground, X(14.5)), 'across the luggage'), { hold: 'R', until: inTrench, max: 600 }, { hold: '', ticks: 120, note: 'a moment in the trench' }, climbRight('out again', 25 * 16), { hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'and on towards the quay' }],
+});
+actDeath('SVP-07', 'svp07-ghat', 'on to the first ship with everyone else', 'svp-jahaz', (x) => [
+  { hold: 'R', until: and(ground, X(x + 4.5)), max: 600, note: 'along the pier' },
+  { hold: 'R', jump: 14, until: (w) => w.state !== 'play', max: 1800, note: 'step over to the first ship’s deck, and ride it out' },
+]);
+actDeath('SVP-07', 'svp07-doosra', 'sit down on the luggage like everyone', 'svp-bheed', (x) => [hopUntil(and(ground, X(x + 11.5)), 'on to the luggage'), { hold: '', until: (w) => w.state !== 'play', max: 2400, note: 'wait for the ship' }]);
+actDeath('SVP-07', 'svp07-doosra', 'out of the trench the moment the real call comes', 'svp-bheed', (x) => [
+  hopUntil(and(ground, X(x + 12.5)), 'across the luggage'),
+  { hold: 'R', until: inTrench, max: 600 },
+  { hold: '', until: (w) => hallN(w).called, max: 3600, note: 'in the trench through the false alarm, till the real call' },
+  climbRight('out at once, into the crowd', px(x + 26)),
+  { hold: 'R', until: (w) => w.state !== 'play', max: 1500, note: 'and on' },
+]);
+actDeath('SVP-07', 'svp07-teesra', 'sit down on the luggage like everyone, a third time', 'svp-bheed', (x) => [hopUntil(and(ground, X(x + 11.5)), 'on to the luggage'), { hold: '', until: (w) => w.state !== 'play', max: 3000, note: 'wait for the ship' }]);
+// 10: the second attempt gets through the mill with the food put down, and dies at the creek (a different trap from the blade)
+fix['SVP-10'] = {
+  cause: 'svp-magar',
+  get steps() {
+    return atAct('SVP-10', 'svp10-nadi', () => [hopUntil((w) => w.state !== 'play', 'hop the logs without reading the arrow')]);
+  },
+};
+(mistakes['SVP-10'] ??= []).push({
+  what: 'food put down, then ride the middle of the log',
+  cause: 'svp-aari',
+  steps: [{ hold: 'R', until: (w) => herd0(w).carrying, max: 600 }, putDown(herd0, 'put it down'), board((w) => hall(w, -1), 'on to the log'), { policy: (w) => go(toward(w, hall(w, -1).L + 48, 2)), until: (w) => w.state !== 'play', max: 2400, note: 'the middle of the log' }],
+});
+actDeath('SVP-10', 'svp10-jad', 'walk the brick floor of the cellar', 'svp-eent', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'across the brick' }]);
+actDeath('SVP-10', 'svp10-saman', 'sit down on the luggage like everyone', 'svp-bheed', (x) => [hopUntil(and(ground, X(x + 11.5)), 'on to the luggage'), { hold: '', until: (w) => w.state !== 'play', max: 2400, note: 'wait for the ship' }]);
+actDeath('SVP-10', 'svp10-ghat', 'carry the food to the edge and hop there waiting for the boat', 'svp-hiran', (x) => [
+  { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },
+  { hold: 'R', until: X(x + 15.5), max: 600 },
+  ...Array.from({ length: 40 }, (): Step => ({ hold: '', jump: 8, ticks: 40, note: 'hopping at the edge to keep warm' })),
+]);
+
 // ------------------------------------------------------------------ the plays that must die in an added act
 actDeath('SVP-07', 'svp07-uthao', 'ride the lift up and stay aboard past the last stop', 'svp-uthao', () => [
   { hold: 'R', until: (w) => w.standing(lift(0)(w).plat.solid) && w.player.cx > lift(0)(w).x + 20, max: 900 },
