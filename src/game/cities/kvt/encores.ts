@@ -773,6 +773,7 @@ export class SinkStep extends Entity {
  *  stand on one. The tour taught you to wait on the top before the hop off: here you never stop. */
 const risingTide: Act = {
   id: 'kvt10-veliyettam',
+  cps: [20],
   w: 24,
   advice: 'The tide is coming in, and these coral heads go under while you move on them: run across one and it sinks under your feet. Stand still on each and it holds; hop to the next from a standstill.',
   paint: (g, c) => {
@@ -1209,7 +1210,8 @@ export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, t
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {
-  space: 10,
+  // (the checkpoint before the door sits far enough back that a jump over it still lands before the arm)
+  space: 13,
   after: 4,
   advice: 'Last trick: in front of the door, a patch of the sand is the octopus’s arm, the colour of the sand. The sand that moves is the arm: jump over it, into the door.',
   build(w, d) {

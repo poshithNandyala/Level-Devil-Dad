@@ -11,14 +11,14 @@ export const KVT_LEAD: Record<string, number> = {
   'kvt10-midden': 2,
   'kvt10-palaka': 2,
   'kvt10-kallu': 2,
-  'kvt10-thengu': 3,
+  'kvt10-thengu': 5,
   'kvt10-kamaanam': 2,
   'kvt10-nizhal': 2,
   'kvt10-veliyettam': 2,
-  'kvt10-paaru': 1,
+  'kvt10-paaru': 3,
   'kvt10-kannadi': 1,
   'kvt10-thoni': 1,
-  'kvt10-irakkam': 2,
+  'kvt10-irakkam': 5,
 };
 /** the act with `n` tiles of plain ground before it (its own columns, flags and checkpoints move along) */
 export function lead(a: Act): Act {
