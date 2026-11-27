@@ -1,7 +1,7 @@
 # Cities: what's done, what's next
 
 The journey runs south to north through every state and UT capital (36 chapters, `CHAPTERS` in
-`src/game/cities.ts`, pins in `src/map/india-data.ts`). **16 done (130 stages), 20 to go.**
+`src/game/cities.ts`, pins in `src/map/india-data.ts`). **17 done (142 stages), 19 to go.**
 The 15 cities done before the modules have 8 stages: 01 is a welcome tour, 02–08 are long stages (a room + an act + a door
 ending), harder each time; 08 is the finale and may call back to its own city's ideas (never another city's).
 **Every new city has 10 stages** (01 tour, 02–10 long stages, 10 the finale), built as a module:
@@ -39,7 +39,7 @@ How to use this file:
 | 17 | LKO | Lucknow | Uttar Pradesh | Central | Lakhnavi Hindustani (Urdu-rich) + Awadhi + English | built on city/lko (10 stages, docs/cities/LKO.md), fix round 3 done, waiting for QA re-test |
 | 18 | BBI | Bhubaneswar | Odisha | East | Odia + Hindi + English | to do |
 | 19 | CCU | Kolkata | West Bengal | East | Bengali + Hindi + English | to do |
-| 20 | SVP | Sri Vijaya Puram (bonus) | Andaman & Nicobar Islands | East | Andaman Hindi + Bengali/Tamil/Telugu + English | to do |
+| 20 | SVP | Sri Vijaya Puram (bonus) | Andaman & Nicobar Islands | East | Andaman Hindi + Bengali/Tamil/Telugu + English | done (10 stages, v0.17.3) |
 | 21 | GTK | Gangtok | Sikkim | East | Nepali + Hindi + English | to do |
 | 22 | DIS | Dispur (Guwahati) | Assam | Northeast | Assamese + Hindi + English | to do |
 | 23 | SHL | Shillong | Meghalaya | Northeast | Khasi + English | to do |
