@@ -471,7 +471,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
             { hold: '' as const, until: still, max: 60 },
           ]
         : []),
-      { hold: 'R', jump: j, ticks: r },
+      { hold: 'R', jump: j, ticks: r, long: true },
       { hold: '', until: ground, max: 200 },
       { hold: '', ticks: 4 },
       { hold: '', until: still, max: 200 },
