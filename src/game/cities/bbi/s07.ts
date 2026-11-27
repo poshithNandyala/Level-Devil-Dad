@@ -37,7 +37,9 @@ export interface TroupeCfg {
   drumX?: number;
   /** on these stops (by index in `poses`) a drum roll at `at` s into the pose turns the bridge over towards the
    *  drummer for `dur` s: whoever is not walking with the turn is rolled under */
-  roll?: { stops: number[]; at: number; dur: number };
+  roll?: { stops: number[]; at: number; dur: number; cause?: string };
+  /** the boys tuck their pleats up (kachha) while they whirl before a roll stop: the only tell */
+  kachha?: boolean;
   /** a hold per stop (by index in `poses`) instead of the one `hold` */
   holds?: number[];
 }
@@ -78,7 +80,7 @@ export function troupeAt(cfg: TroupeCfg, t: number): TroupeSt {
 
 const SKIRT = ['#E63946', '#F4D35E', '#2A9D8F', '#F28C28', '#8E44AD'];
 /** a Gotipua dancer: flowers in the hair, bright pleated skirt; drawn at (x, feet y), lying (bridge) or upright */
-function dancer(ctx: CanvasRenderingContext2D, x: number, y: number, k: number, lie: boolean, spin = 0) {
+function dancer(ctx: CanvasRenderingContext2D, x: number, y: number, k: number, lie: boolean, spin = 0, tucked = false) {
   if (lie) {
     box(ctx, x - 7, y - 4, 14, 4, SKIRT[k % SKIRT.length]);
     box(ctx, x - 9, y - 2, 4, 4, '#B07A4E');
@@ -87,6 +89,16 @@ function dancer(ctx: CanvasRenderingContext2D, x: number, y: number, k: number, 
     return;
   }
   const sw = Math.sin(spin) * 3;
+  if (tucked) {
+    // kachha: the pleats tucked up into the waist, bare legs below
+    box(ctx, x - 4, y - 12, 8, 3, SKIRT[k % SKIRT.length]);
+    box(ctx, x - 3, y - 9, 2, 7, '#B07A4E');
+    box(ctx, x + 1, y - 9, 2, 7, '#B07A4E');
+    box(ctx, x - 3, y - 16, 6, 4, '#F4D35E');
+    box(ctx, x - 2, y - 21, 5, 5, '#B07A4E');
+    box(ctx, x - 3, y - 23, 7, 2, '#FFFFFF');
+    return;
+  }
   ctx.fillStyle = SKIRT[k % SKIRT.length];
   ctx.beginPath();
   ctx.moveTo(x - 6 - sw, y - 2);
@@ -174,7 +186,7 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
           if (standing || a.into >= cfg.roll.at + cfg.roll.dur) {
             if (p.vx > -40) {
               w2.flags.bbiThrown = 1;
-              w2.flags.bbiThrownCause = p.vx > 20 ? 'bbi-ulta-gadi' : 'bbi-gadi-tala';
+              w2.flags.bbiThrownCause = cfg.roll.cause ?? (p.vx > 20 ? 'bbi-ulta-gadi' : 'bbi-gadi-tala');
               p.vy = -120;
               p.onGround = false;
               rolled = true;
@@ -220,7 +232,8 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
         if (a.pose === null) {
           for (let i = 0; i < n; i++) {
             const sp = w2.tick / 10 + i * 1.3;
-            dancer(ctx, x0 + 8 + ((i * W) / n + Math.sin(sp) * 10 + W) % W, cfg.ground ? FL : FL + 16, i, false, sp);
+            const tuck = !!cfg.kachha && !!cfg.roll && cfg.roll.stops.includes(((st.stops % cfg.poses.length) + cfg.poses.length) % cfg.poses.length);
+            dancer(ctx, x0 + 8 + ((i * W) / n + Math.sin(sp) * 10 + W) % W, cfg.ground ? FL : FL + 16, i, false, sp, tuck);
           }
         } else if (a.pose === 'bridge') {
           const r = shapes.bridge;
@@ -850,5 +863,15 @@ export const act19: Act = {
     );
   },
 };
+
+/** act 20, kachha (ALLOCATION v3 F495, 07's tell beat): two troupes. The first whirls with its pleats tucked up
+ *  into the waist, and a troupe in kachha rolls the moment it lies down, with no shiver first; on the stop after,
+ *  the pleats are down and it lies still. The second is loose-skirted and lies still, but only briefly: go at
+ *  once. Look at the waists, not at the bridge. */
+export const T07K: TroupeCfg[] = [
+  { c0: 4, n: 7, drum: 1.4, hold: 1.8, poses: ['bridge', 'bridge'], form: 0.2, roll: { stops: [0], at: 0.12, dur: 0.5, cause: 'bbi-kachha' }, kachha: true },
+  { c0: 15, n: 7, drum: 1.4, hold: 1.3, poses: ['bridge'], form: 0.2 },
+];
+export const act20 = troupeAct('bbi07-kachha', 25, T07K, 'bbi7kc', 'Look at their waists while they whirl. Pleats tucked up (kachha) means the line rolls the moment it lies down: let that stop go and cross on the next. Loose skirts lie still, but not for long: on those, go at once.');
 
 export const meta07 = { family: 'troupe-pose-platform-shapes', betrayals: ['pose-shapes'], ending: 'bbi-pose-gate' };
