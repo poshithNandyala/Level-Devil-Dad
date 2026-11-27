@@ -41,3 +41,5 @@ Clear times of the scripted route: 01 15 s (the shared 120-column tour, see FIX-
 05 53 s, 06 37 s, 07 131 s, 09 74 s, 10 62 s. Added acts: `pat02-bhatti`, `pat03-patti`, `pat04-sidhi` (ladders, one new
 rule each); `pat05-bori`; `pat06-gaadi`; `pat07-pul`, `-haat`, `-mandi`; `pat09-wapsi`; `pat10-bori`, `pat10-gaadi`.
 `pat06-kumhrar` was cut (its idea repeated DMN-03's slippery floor). Details: `reports/cities/pat/LENGTH.md`, `FIX-1.md`.
+
+Fix round 2: 05 gains `pat05-khokhla` (61 s), 06 `pat06-ginti` (61 s), 10 `pat10-roll` and `pat10-tempo` (100 s). Details: `reports/cities/pat/FIX-2.md`.

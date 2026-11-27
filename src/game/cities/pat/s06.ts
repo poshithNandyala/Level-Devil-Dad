@@ -7,7 +7,7 @@ import type { Ending } from '../../levels/endkit';
 import { Paint, tara } from '../../levels/endkit';
 import { Grid } from '../../levels/grid';
 import { collectible, door, px, rival, sign } from '../../levels/kit';
-import { Rig, box } from './entities';
+import { Rig, box, folk } from './entities';
 import { since, taraScript } from './common';
 import { lines as L } from './lines';
 
@@ -253,6 +253,53 @@ export function liftSeams(w: World, c0: number, cols: number[], key: string, num
   return st;
 }
 
+/** a truck whose load is changing: a porter takes sacks off it (or puts them on) one by one once Dad is near. The count
+ *  that counts is the one left when the porter has finished. State on w.flags[key]: { t0, n, done }. */
+export function truckLoad(w: World, x: number, key: string, start: number, changes: { at: number; n: number }[], trigger: number) {
+  const st = { t0: -1, n: start, done: false, last: changes[changes.length - 1].at, final: changes[changes.length - 1].n };
+  w.flags[key] = st;
+  w.when(
+    (w2) => w2.player.cx >= trigger,
+    (w2) => {
+      st.t0 = w2.tick;
+    },
+  );
+  w.onTick((w2) => {
+    const t = st.t0 < 0 ? -1 : since(w2, st.t0);
+    let n = start;
+    for (const c of changes) if (t >= c.at) n = c.n;
+    st.n = n;
+    st.done = t >= st.last;
+  });
+  w.add(
+    new Paint((ctx, w2) => {
+      const t = st.t0 < 0 ? -9 : since(w2, st.t0);
+      box(ctx, x, FL - 14, 30, 8, '#6B3F1C');
+      ctx.fillStyle = '#1D1A1A';
+      ctx.beginPath();
+      ctx.arc(x + 7, FL - 4, 4, 0, Math.PI * 2);
+      ctx.arc(x + 23, FL - 4, 4, 0, Math.PI * 2);
+      ctx.fill();
+      for (let i = 0; i < st.n; i++) {
+        box(ctx, x + 2 + (i % 3) * 9, FL - 24 - Math.floor(i / 3) * 8, 8, 9, '#C9A56B');
+        box(ctx, x + 2 + (i % 3) * 9, FL - 24 - Math.floor(i / 3) * 8, 8, 2, '#E3C58A');
+      }
+      // the porter walking a sack off the truck (or on to it) in the second before the count changes
+      let prev = start;
+      for (const c of changes) {
+        if (t >= c.at - 1.2 && t < c.at) {
+          const k = (t - (c.at - 1.2)) / 1.2;
+          const off = c.n < prev;
+          const px0 = x + 40 + (off ? k : 1 - k) * 36;
+          folk(ctx, px0, FL - 28, 28, '#2F6BB0', { sack: '#C9A56B' });
+        }
+        prev = c.n;
+      }
+    }, 2),
+  );
+  return st;
+}
+
 /** a bridge in traffic: a truck lifts a plate out of its seat (it shakes a second before), and at the second
  *  window a second truck follows the first, so the plate is back for only a breath before it goes again */
 export const actGaadi: Act = {
@@ -272,6 +319,30 @@ export const actGaadi: Act = {
     ];
     liftSeams(w, c.x, cols, 'pat6c', [1, 2, 3, 4, 5, 6], lifts, px(c.x + 2));
     sign(w, c.x + 2, 10.4, 3.2, 'TRAFFIC', 'shop', null, 'plates lifting');
+  },
+};
+
+/** the count that lies: the truck at the foot is being unloaded while you read it; a second truck parked further on is being loaded */
+export const actGinti2: Act = {
+  id: 'pat06-ginti',
+  w: 120,
+  advice: 'Two trucks this time. The one at the foot is being unloaded: wait until the porter has finished, then count what is left. A second truck stands half-way along, and a porter is loading it as you come up: read that one when he has finished too, and count the plates after it by its sacks, not the first truck’s.',
+  cps: [28, 62, 82],
+  paint: (g, c) => {
+    for (let i = 0; i < 12; i++) g.fill(c.x + 10 + i * 8, c.x + 11 + i * 8, 15, 17, '.');
+  },
+  build: (w, c) => {
+    // part one: plates 1-6 by the first truck's final count (two); part two: plates 7-12 by the second truck's (three)
+    const list: [number, number, boolean][] = Array.from({ length: 12 }, (_, i) => {
+      const n = i + 1;
+      return [c.x + 10 + i * 8, n, n <= 6 ? n % 2 !== 0 : n % 3 !== 0];
+    });
+    seams(w, list, 'pat6d');
+    list.forEach(([col], i) => under(w, col, col + 1, i < 6 ? 'pat-ginti' : 'pat-load'));
+    truckLoad(w, px(c.x + 1), 'pat6t', 5, [{ at: 2.0, n: 4 }, { at: 4.2, n: 3 }, { at: 6.4, n: 2 }], px(c.x + 1));
+    truckLoad(w, px(c.x + 61), 'pat6u', 1, [{ at: 2.0, n: 2 }, { at: 4.4, n: 3 }], px(c.x + 55));
+    sign(w, c.x + 2, 10.4, 3.2, 'UNLOADING', 'shop', null, 'wait for the porter');
+    sign(w, c.x + 62, 10.4, 3.2, 'LOADING', 'shop', null, 'the next truck');
   },
 };
 

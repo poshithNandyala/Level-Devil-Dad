@@ -111,7 +111,7 @@ export function row(w: World, specs: Hoard[], bells: number[], trigger: number, 
 }
 
 /** the jammed road under the hoardings: cars nose to tail, deadly to fall into */
-function jam(w: World, c0: number, c1: number, specs?: Hoard[]) {
+export function jam(w: World, c0: number, c1: number, specs?: Hoard[]) {
   const pit = w.add(
     new Rig(px(c0), 256, px(c1 - c0 + 1), 34, {
       layer: 4,
@@ -134,7 +134,13 @@ function jam(w: World, c0: number, c1: number, specs?: Hoard[]) {
     w.onTick((w2) => {
       const cx = w2.player.cx;
       const sp = specs.find((q) => cx >= q.c0 * 16 - 16 && cx < (q.c0 + q.w0) * 16 + 16);
-      pit.hazard!.cause = sp?.swaps.some((q) => q.anchor === 'L' && q.w < sp.w0) ? 'pat-patti' : 'pat-jam';
+      let prev = sp?.w0 ?? 0;
+      let narrowsRight = false;
+      for (const q of sp?.swaps ?? []) {
+        if (q.anchor === 'L' && q.w < prev) narrowsRight = true;
+        prev = q.w;
+      }
+      pit.hazard!.cause = narrowsRight ? 'pat-patti' : 'pat-jam';
     });
 }
 

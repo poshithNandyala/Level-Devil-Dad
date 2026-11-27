@@ -268,6 +268,55 @@ export const actBori: Act = {
   },
 };
 
+/** a deck of mixed floats: those with no drums under them go under the moment you land, the leaky ones a second after,
+ *  so a drumless one is jumped and a leaky one is crossed without stopping */
+export const actKhokhla: Act = {
+  id: 'pat05-khokhla',
+  w: 70,
+  advice: 'The old deck: some floats have lost their drums (the underside shows bare and rust-red) and go under the moment you land on them, so jump those from the edge of the one before. Some have a cracked drum with a dark seam, and go under a second after you land: cross those without stopping. Never wait on this deck, as you did at the porters’.',
+  cps: [8, 36.8],
+  paint: (g, c) => {
+    g.fill(c.x + 4, c.x + 4 + 60 - 1, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const N = 24;
+    const D = [3, 8, 12, 17];
+    const Lk = [6, 10, 15, 19];
+    const pt = pontoon(w, c.x + 4, N, [], 'pat5k');
+    pt.secs.forEach((sec, i) => {
+      if (D.includes(i)) sec.hazard!.cause = 'pat-khokhla';
+      if (Lk.includes(i)) sec.hazard!.cause = 'pat-ghada';
+    });
+    w.onTick((w2) => {
+      pt.secs.forEach((sec, i) => {
+        const on = w2.standing(sec.solid!);
+        if (D.includes(i)) sec.s.awash = on || sec.s.awash;
+        if (Lk.includes(i)) {
+          sec.s.stand = on ? (sec.s.stand ?? 0) + 1 : 0;
+          sec.s.awash = sec.s.stand >= 110;
+        }
+      });
+    });
+    w.add(
+      new Paint((ctx) => {
+        for (const i of D) {
+          const sec = pt.secs[i];
+          // no drums: a bare rust-red underside where they should be
+          box(ctx, sec.x, sec.y + 5, SEC, 15, '#9A4A2A');
+          box(ctx, sec.x + 3, sec.y + 9, SEC - 6, 2, '#6B2E18');
+        }
+        for (const i of Lk) {
+          const sec = pt.secs[i];
+          // a cracked drum: a dark seam down the middle drum
+          box(ctx, sec.x + 19, sec.y + 6, 2, 14, '#1A2A3A');
+          box(ctx, sec.x + 15, sec.y + 12, 8, 1, '#1A2A3A');
+        }
+      }, 3),
+    );
+    sign(w, c.x + 1, 10.4, 3, 'PURANA PUL', 'shop', null, 'the old deck');
+  },
+};
+
 export const ending: Ending = {
   space: 18,
   advice: 'The last float has been unhooked for the night with the door on it, and it drifts away from the bank and back. Wait on the bank until it comes back in, jump on, and walk to the door while it is aboard.',

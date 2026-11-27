@@ -13,6 +13,8 @@ import { taraScript } from './common';
 import { pontoon, sackDeck } from './s05';
 import { seams, under, liftSeams, cart, type Lift } from './s06';
 import { stairBuild, stairPaint } from './s04';
+import { row, jam, type Hoard } from './s03';
+import { tempo, road } from './s07';
 import { lines as L } from './lines';
 
 const FL = 240;
@@ -131,7 +133,7 @@ export const actGaadi: Act = {
   id: 'pat10-gaadi',
   w: 70,
   advice: 'The cart at the foot of this stretch carries two sacks: the plates numbered two and four are the ones a truck lifts out of its seat, shaking a second before. Wait on the deck. Where a second truck follows the first, the plate is back for a breath and still shaking: cross only when it is in and still.',
-  cps: [34],
+  cps: [20, 34],
   paint: (g, c) => {
     for (let i = 0; i < 6; i++) g.fill(c.x + 6 + i * 9, c.x + 7 + i * 9, 15, 17, '.');
   },
@@ -145,6 +147,44 @@ export const actGaadi: Act = {
     liftSeams(w, c.x, cols, 'pat10c', [1, 2, 3, 4, 5, 6], lifts, px(c.x + 2));
     cart(w, px(c.x + 1), 2);
     sign(w, c.x + 1.2, 10.4, 3, 'SETU', 'shop', null, 'load: 2 sacks');
+  },
+};
+
+/** Ashok Rajpath again: the cart's three sacks say which bell is the one that narrows the banners (the third), and the rolls
+ *  only ever show the next swap, so the first two bells (which only grow them) teach you to stand where you are */
+export const actRoll: Act = {
+  id: 'pat10-roll',
+  w: 38,
+  advice: 'The coaching lane again, with a cart of three sacks at the foot: the banners grow at the first two bells, and only the third bell narrows them, from the right end for some and from the left for others. Each roll shows the next swap only. Wait on the first, plain hoarding until the third bell has rung, then cross.',
+  cps: [5.5],
+  paint: (g, c) => {
+    g.fill(c.x + 4, c.x + 26, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const S: Hoard[] = [
+      { c0: c.x + 4, w0: 4, swaps: [] },
+      { c0: c.x + 8, w0: 4, swaps: [{ bell: 0, w: 6, anchor: 'L' }, { bell: 2, w: 4, anchor: 'R' }] },
+      { c0: c.x + 15, w0: 3, swaps: [{ bell: 1, w: 6, anchor: 'L' }, { bell: 2, w: 4, anchor: 'L' }] },
+      { c0: c.x + 21, w0: 5, swaps: [{ bell: 2, w: 4, anchor: 'L' }] },
+    ];
+    row(w, S, [2.0, 4.4, 6.8], px(c.x + 2), 'pat10r');
+    jam(w, c.x + 4, c.x + 26, S);
+    cart(w, px(c.x + 1), 3);
+    sign(w, c.x + 1.2, 10.4, 3, 'RAJPATH', 'shop', null, 'load: 3 sacks');
+  },
+};
+
+/** the shared tempo again, with sacks for riders: a sack loaded on the road side weighs as much as a rider */
+export const actTempo: Act = {
+  id: 'pat10-tempo',
+  w: 86,
+  advice: 'The shared tempo once more, and the sacks the porters load count as riders: one on the kerb side at the first halt, one on the road side at the second, which cancels it, and one comes off at the last. Stand opposite the heavier side before every hump and arch, and in the middle where it is level. A truck on the kerb side pulls the other way.',
+  cps: [12, 38, 59],
+  paint: () => {},
+  build: (w, c) => {
+    tempo(w, px(c.x + 4), { trigger: px(c.x + 2), rider: false });
+    road(w, c, { stops: [[16, 1], [34, 1, 'L'], [56, -1]], trucks: [[22, 30], [44, 52, 'R']], scrapes: [[26, 'arch'], [40, 'arch'], [48, 'hump'], [64, 'arch']] }, [[1, 'ADDA', 'tempo stand']]);
+    (w.flags.pat7 as { stopAt: number }).stopAt = c.X(74);
   },
 };
 

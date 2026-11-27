@@ -39,8 +39,8 @@ export interface TempoState {
 }
 
 /** build the tempo in the room; acts add beats to it through w.flags.pat7 */
-function tempo(w: World, x0: number): TempoState {
-  const st = { P: 0, PL: 0, truck: false, lean: 0, cx: 0, halted: true, beats: { stops: [] as { at: number; d: number; side?: 'L'; done?: boolean; t?: number }[], trucks: [] as { a: number; b: number; side?: 'R' }[], scrapes: [] as { x: number; cause: string; kind: 'arch' | 'hump'; done?: boolean }[] }, rig: null as unknown as Rig, go: -1, v: 0, boarded: false, stopAt: Infinity, base: 0 };
+export function tempo(w: World, x0: number, late?: { trigger: number; rider: boolean }): TempoState {
+  const st = { P: 0, PL: 0, truck: false, lean: 0, cx: 0, halted: true, beats: { stops: [] as { at: number; d: number; side?: 'L'; done?: boolean; t?: number }[], trucks: [] as { a: number; b: number; side?: 'R' }[], scrapes: [] as { x: number; cause: string; kind: 'arch' | 'hump'; done?: boolean }[] }, rig: null as unknown as Rig, go: -1, v: 0, boarded: false, stopAt: Infinity, base: 0, T0: undefined as number | undefined };
   const rig = w.add(
     new Rig(x0, DECK_Y, DECK_W, 12, {
       solid: true,
@@ -50,10 +50,12 @@ function tempo(w: World, x0: number): TempoState {
         const cx = r.x + DECK_W / 2;
         st.cx = cx;
         // the room: a passenger climbs on at 1.5 s; the tempo pulls out at 3.5 s
-        const t = w2.tick / 120;
+        // in the room the clock is the world's; in a later act it starts when Dad reaches the trigger
+        const t = late ? (st.T0 === undefined ? -1 : (w2.tick - st.T0) / 120) : w2.tick / 120;
+        if (late && st.T0 === undefined && p.cx >= late.trigger) st.T0 = w2.tick;
         if (t >= 1.5 && !st.boarded) {
           st.boarded = true;
-          st.P += 1;
+          if (!late || late.rider) st.P += 1;
         }
         // stops: halt at each beat's x for 2.5 s; the passenger boards (or gets off) as it halts
         let hold = false;
@@ -204,7 +206,7 @@ export const act1: Act = {
 
 type Beats = { stopAt: number; beats: { trucks: { a: number; b: number; side?: 'R' }[]; scrapes: { x: number; cause: string; kind: 'arch' | 'hump' }[]; stops: { at: number; d: number; side?: 'L' }[] } };
 /** an act of the road made only of beats (stops, trucks, scrapes), given as [kind, column, ...] in act columns */
-function road(w: World, c: { X: (t: number) => number; x: number }, b: { stops?: [number, number, 'L'?][]; trucks?: [number, number, 'R'?][]; scrapes?: [number, 'arch' | 'hump'][] }, signs: [number, string, string][]) {
+export function road(w: World, c: { X: (t: number) => number; x: number }, b: { stops?: [number, number, 'L'?][]; trucks?: [number, number, 'R'?][]; scrapes?: [number, 'arch' | 'hump'][] }, signs: [number, string, string][]) {
   const st = w.flags.pat7 as Beats;
   for (const [at, d, side] of b.stops ?? []) st.beats.stops.push({ at: c.X(at), d, side });
   for (const [a, e, side] of b.trucks ?? []) {
