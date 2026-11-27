@@ -355,11 +355,36 @@ function grandCanal(S: Record<string, Step[]>) {
   S['PDY-05'] = [r[0], r[1], { ...r[2], until: rollerNear(62) }, r[3], ...hopLean(25.4, 'the loose cobble again, from further back'), ...r.slice(6)];
 }
 
+/** PDY-08's rocket in the street at tile column `tx` is up past roof level (y under `top`) and still climbing: cross now */
+const rocketPast = (tx: number, top: number) => (w: World) => w.entities.some((e: any) => e.kind === 'pdy-rocket' && e.alive && Math.abs(e.x - (px(tx) - 3)) < 4 && e.y < top && e.vy < 0);
+/** no spark is alive over this stretch of roof (x in px) */
+const noSparks = (x0: number, x1: number) => (w: World) => !w.entities.some((e: any) => e.kind === 'spark' && e.alive && e.x > x0 && e.x < x1);
+/**
+ * PDY-08, a person's timing (the room's rockets and sparks as shipped): cross each street the moment its rocket
+ * has gone up past the roofs (the next is 1.8 s behind), instead of hopping blind on the bot's phase
+ */
+function quatorze(S: Record<string, Step[]>) {
+  const r = S['PDY-08'];
+  const room: Step[] = [
+    { hold: 'R', until: X(4.4), max: 600 },
+    { hold: '', until: and(ground, rocketPast(7, 150)), max: 600, note: 'wait for the first street’s rocket to go up' },
+    { hold: 'R', until: X(4.9), max: 100 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'over the first street' },
+    { hold: 'R', until: and(ground, X(10.4)), max: 300 },
+    { hold: '', until: and(ground, rocketPast(13, 150)), max: 600, note: 'wait for the second street’s rocket' },
+    { hold: 'R', until: X(10.9), max: 100 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'over the second street' },
+    ...r.slice(4),
+  ];
+  S['PDY-08'] = room;
+}
+
 const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) => {
   tour01(S);
   rockBeach(S);
   sixOClock(S);
   grandCanal(S);
+  quatorze(S);
   S['PDY-09'] = petanqueRoom();
   lengthen('PDY-09', 0, []);
   S['PDY-10'] = mimosaRoom();

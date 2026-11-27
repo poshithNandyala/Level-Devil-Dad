@@ -674,7 +674,9 @@ export const levels = (): LevelDef[] => [
             r.alive = false;
             r.hazard.active = false;
             w.emit('fx', r.x, r.y, { kind: 'sparkle' });
-            for (let i = 0; i < 6; i++) shot(w, 'spark', r.x, r.y, Math.cos((i / 6) * Math.PI * 2) * 60, Math.sin((i / 6) * Math.PI * 2) * 60 - 30, 260, 'burnt').stopOnSolid = true;
+            // the burst's sparks fall back into the street they came from (spread 12 px/s: they used to reach
+            // 70 px either side and rain on both roofs, so a person waiting for the gap was burnt where he stood)
+            for (let i = 0; i < 6; i++) shot(w, 'spark', r.x, r.y, Math.cos((i / 6) * Math.PI * 2) * 12, Math.sin((i / 6) * Math.PI * 2) * 60 - 30, 260, 'burnt').stopOnSolid = true;
           });
           w.after(period, fire);
         };
