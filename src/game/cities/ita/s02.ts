@@ -173,7 +173,9 @@ export function room(): LevelDef {
     })(),
     build(w: World) {
       door(w);
-      deck(w, 6, 27, 7, [{ at: 0, v: 52 }, { at: 3.2, v: 56, bundle: true }], BAYS_ROOM, 'ita2');
+      // the bundle porter follows 2.4 s behind the first (was 3.2): the sweep of the first bay comes within a replay of
+      // the checkpoint at column 8.5 (levels.ts); the two still have to be let by, one after the other
+      deck(w, 6, 27, 7, [{ at: 0, v: 52 }, { at: 2.4, v: 56, bundle: true }], BAYS_ROOM, 'ita2');
       onPass(w, px(7), (w2) => tara(w2, L.intro[0], 2.4));
       w.add(
         new Paint((ctx) => {

@@ -221,21 +221,22 @@ export function room(): LevelDef {
   };
 }
 
+// the first tank starts 4.5 tiles after the act's checkpoint (a walk or a tap-walk from it stops on the bund)
 const NAHAR_T = [
-  { c: 4, full: true },
-  { c: 11, full: true },
-  { c: 17, full: false },
-  { c: 23, full: false },
-  { c: 29, full: true },
+  { c: 5, full: true },
+  { c: 12, full: true },
+  { c: 18, full: false },
+  { c: 24, full: false },
+  { c: 30, full: true },
 ];
 /** two levers share the second bund: the near one drains the second tank into the fourth, the far one drains the third
  *  tank back into the second: pull both at once ("drain everything ahead") and the second tank fills under you */
 const NAHAR_L = [
   { c: 3, k: 0, to: 2 },
-  { c: 8, k: 1, to: 3 },
-  { c: 9.5, k: 2, to: 1 },
-  { c: 21, k: 3, to: 4 },
-  { c: 27, k: 4, to: -1 },
+  { c: 8.6, k: 1, to: 3 },
+  { c: 10.2, k: 2, to: 1 },
+  { c: 22, k: 3, to: 4 },
+  { c: 28, k: 4, to: -1 },
 ];
 
 export const act: Act = {

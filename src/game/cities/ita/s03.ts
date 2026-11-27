@@ -181,10 +181,11 @@ export const act: Act = {
   advice: 'A bigger herd, and two young ones in it: the second animal and the fifth. Go on the lead’s dip, and before each young one wait on the back behind it until it has tossed and dipped again, then cross it at once.',
   cps: [32],
   paint: (g, c) => {
-    g.fill(c.x + 4, c.x + 28, 15, 17, '.');
+    // the mud starts 4.5 tiles after the act's checkpoint: a walk or a tap-walk from it stops on the bank
+    g.fill(c.x + 5, c.x + 28, 15, 17, '.');
   },
   build: (w, c) => {
-    mud(w, c.X(4), c.X(29));
+    mud(w, c.X(5), c.X(29));
     herd(w, c.x + 1, JHUND.map((g) => ({ ...g, c: c.x + g.c })), 'ita3a');
     sign(w, c.x + 1, 10.4, 3, 'JHUND', 'shop', null, 'the big herd');
   },

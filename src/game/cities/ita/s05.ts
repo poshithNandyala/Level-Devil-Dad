@@ -72,8 +72,9 @@ function figArt(ctx: CanvasRenderingContext2D, x: number, y: number, col: string
   ctx.fillRect(x, y + 16, W, 3);
 }
 
-/** the canopy over the gorge from the trigger column; `key` holds the state for the tests */
-export function canopy(w: World, trigger: number, figs: Fig[], key: string, dusk = false): Canopy {
+/** the canopy over the gorge from the trigger column; `key` holds the state for the tests; `over` is the gorge's span in
+ *  px: a dropping cluster lands over the edges of its neighbours, but it falls into the gorge, never on to the bank */
+export function canopy(w: World, trigger: number, figs: Fig[], key: string, dusk = false, over?: [number, number]): Canopy {
   const st: Canopy = { t0: -1, figs, rigs: [], dusk };
   w.flags[key] = st;
   onPass(w, px(trigger), (w2) => {
@@ -86,8 +87,9 @@ export function canopy(w: World, trigger: number, figs: Fig[], key: string, dusk
         solid: true,
         layer: 2,
         cause: 'ita-anjeer',
-        inset: -36,
-        live: (r2) => r2.s.falling === true,
+        // a dropping cluster lands over 40 px of each neighbour (round 3: 36): the middle of a neighbour is never safe
+        inset: -40,
+        live: (r2, w2) => r2.s.falling === true && (!over || (w2.player.cx > over[0] && w2.player.cx < over[1])),
         tick: (r2, w2) => {
           const t = st.t0 < 0 ? -1 : since(w2, st.t0);
           const k = Math.max(0, Math.min(1, t / f.at));
@@ -143,7 +145,7 @@ export function room(): LevelDef {
     build(w: World) {
       door(w);
       gorge(w, px(6), px(27));
-      canopy(w, 3, ROOM, 'ita5');
+      canopy(w, 3, ROOM, 'ita5', false, [px(6), px(27)]);
       onPass(w, px(3), (w2) => tara(w2, L.intro[3], 2.4));
       w.add(
         new Paint((ctx) => {
@@ -161,12 +163,14 @@ export function room(): LevelDef {
   };
 }
 
+// (round 3: 19 drops at 6.0 and 23 at 8.4, the other way round from round 1, so the day-rule misread on the third
+// platform is caught by the very next drop, within a replay of the act's checkpoint; the act is no shorter)
 const DUSK: Fig[] = [
   { c: 6.5, at: 1.5 },
   { c: 15, at: 2.8 },
   { c: 11, at: 5.0 },
-  { c: 23, at: 6.0 },
-  { c: 19, at: 8.4 },
+  { c: 19, at: 6.0 },
+  { c: 23, at: 8.4 },
   { c: 31, at: 9.2 },
   { c: 27, at: 11.6 },
 ];
@@ -178,11 +182,12 @@ export const act: Act = {
   advice: 'Dusk in the canopy, and the light turns the read round: a ripe cluster goes dark and the green ones glow. The darkest cluster drops next, not the brightest. Same rule otherwise: wait on the far side from the one that is next, and step across once it has landed.',
   cps: [34],
   paint: (g, c) => {
-    g.fill(c.x + 4, c.x + 32, 15, 17, '.');
+    // the gorge starts 4.5 tiles after the act's checkpoint: a walk or a tap-walk from it stops on the bank
+    g.fill(c.x + 5, c.x + 32, 15, 17, '.');
   },
   build: (w, c) => {
-    gorge(w, c.X(4), c.X(33));
-    canopy(w, c.x + 1, DUSK.map((f) => ({ ...f, c: c.x + f.c })), 'ita5a', true);
+    gorge(w, c.X(5), c.X(33));
+    canopy(w, c.x + 1, DUSK.map((f) => ({ ...f, c: c.x + f.c })), 'ita5a', true, [c.X(5), c.X(33)]);
     w.add(
       new Paint((ctx) => {
         ctx.fillStyle = 'rgba(20,20,60,0.35)';
@@ -209,13 +214,14 @@ export const actGilahri: Act = {
   id: 'ita05-gilahri',
   w: 36,
   advice: 'A giant flying squirrel glides along the walkway from the far end every few seconds, a chirp before it comes. It flies at head height over the gaps and climbs over each platform: be standing on a platform, not jumping, when it passes.',
-  cps: [32],
+  // the far-bank checkpoint sits two tiles past where the squirrel starts its glide, so a tap-jump there is clear of it
+  cps: [34],
   paint: (g, c) => {
-    g.fill(c.x + 4, c.x + 29, 15, 17, '.');
+    g.fill(c.x + 5, c.x + 29, 15, 17, '.');
   },
   build: (w, c) => {
-    gorge(w, c.X(4), c.X(30));
-    const st = canopy(w, c.x + 1, GILAHRI.map((f) => ({ ...f, c: c.x + f.c })), 'ita5b');
+    gorge(w, c.X(5), c.X(30));
+    const st = canopy(w, c.x + 1, GILAHRI.map((f) => ({ ...f, c: c.x + f.c })), 'ita5b', false, [c.X(5), c.X(30)]);
     const P = 5.0;
     const x1 = c.X(31),
       x0 = c.X(3);
@@ -232,22 +238,28 @@ export const actGilahri: Act = {
             return;
           }
           const t = (since(w2, st.t0) + 0.1) % P;
-          // chirp at 1.0 s into the cycle, the glide from 2.0 s to the near end at 240 px/s
-          if (Math.abs(t - 1.0) < 1 / 120) w2.sfx('whistle', x1, LOW - 40);
-          const g = t - 2.0;
+          // chirp at 2.0 s into the cycle, the glide from 3.0 s to the near end at 240 px/s (round 3: a second later than
+          // round 1, so the first glide crosses the canopy as the second platform lands and a hop then is the first death)
+          if (Math.abs(t - 2.0) < 1 / 120) w2.sfx('whistle', x1, LOW - 40);
+          const g = t - 3.0;
           const flying = g >= 0 && g < (x1 - x0) / 240;
           r.on = flying;
           r.s.live = flying;
           if (!flying) return;
           r.x = x1 - g * 240;
-          // over a platform it climbs clear; over a gap it comes down to head height
+          // over a platform it climbs clear of a standing man (a jumping one meets it); over a gap it comes down to
+          // the height of a man in the air, any part of his hop, and never touches one standing on a platform's edge
           const over = st.rigs.some((q) => q.s.down && r.x + 15 >= q.x - 6 && r.x + 15 < q.x + W + 6);
-          r.y = over ? LOW - 52 : LOW - 30;
+          r.y = over ? LOW - 52 : LOW - 44;
+          r.h = over ? 16 : 30;
         },
         paint: (ctx, r) => {
-          box(ctx, r.x, r.y + 4, 30, 8, '#5A3A2A');
-          box(ctx, r.x + 4, r.y, 22, 4, '#7A5A4A');
-          box(ctx, r.x + 26, r.y + 6, 10, 4, '#3A2A1A');
+          // drawn in the middle of its box: body, the stretched membrane, the tail behind
+          const y = r.y + r.h / 2 - 8;
+          box(ctx, r.x, y + 4, 30, 8, '#5A3A2A');
+          box(ctx, r.x - 4, y + 2, 38, 3, '#7A5A4A');
+          box(ctx, r.x + 4, y, 22, 4, '#7A5A4A');
+          box(ctx, r.x + 26, y + 6, 10, 4, '#3A2A1A');
         },
       }),
     );

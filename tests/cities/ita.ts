@@ -304,7 +304,16 @@ function canopyWalk(key: string, o: { wrongRead?: boolean; noJumpWhen?: (w: Worl
 /** the squirrel act: no hop from a second before the chirp's glide until it has gone through */
 const squirrelOut = (_w: World, st: CanopySt) => {
   const t = ((_w.tick - st.t0) / 120 + 0.1) % 5;
-  return t >= 1.5 && t <= 3.95;
+  return t >= 2.5 && t <= 4.95;
+};
+/** the impatient read of the chirp: hop while the squirrel is coming and still a few tiles off (it arrives mid-hop) */
+const squirrelClose = (x1: number) => (w: World, st: CanopySt) => {
+  const t = ((w.tick - st.t0) / 120 + 0.1) % 5;
+  const g = t - 3.0;
+  if (g < 0) return true;
+  const sx = x1 - g * 240;
+  const d = sx - (w.player.x + w.player.w);
+  return !(d > 20 && d < 100);
 };
 const room05 = (): Step[] => [{ policy: canopyWalk('ita5'), until: and(ground, X(27.5)), max: 3000, note: 'across the canopy as it ripens' }, { hold: 'R', until: X(29), max: 400 }];
 const act05 = (x: number): Step[] => [{ policy: canopyWalk('ita5a'), until: and(ground, X(x + 33.5)), max: 4000, note: 'dusk: the darkest is next' }, { hold: 'R', until: X(x + 37.4), max: 400 }];
@@ -329,24 +338,24 @@ const pullCross = (key: string, k: number, lever: number, out: number): Step[] =
 ];
 const room06 = (): Step[] => [...pullCross('ita6', 0, 5, 10), ...pullCross('ita6', 1, 11, 16), ...pullCross('ita6', 2, 17, 22), { hold: 'R', until: X(29), max: 600 }];
 const act06 = (x: number): Step[] => [
-  ...pullCross('ita6a', 0, x + 3, x + 8),
-  ...pullCross('ita6a', 1, x + 7.6, x + 15),
+  ...pullCross('ita6a', 0, x + 3, x + 9),
+  ...pullCross('ita6a', 1, x + 8.6, x + 16),
   // the third tank is full from the first tank's water, and its lever is the far one on the second bund: go back for it
-  { hold: 'L', until: (w) => w.player.x <= px(x + 11) + 2, max: 600, note: 'back down through the second tank' },
+  { hold: 'L', until: (w) => w.player.x <= px(x + 12) + 2, max: 600, note: 'back down through the second tank' },
   { hold: 'L', jump: 14, ticks: 14, note: 'up on to the second bund' },
   { hold: 'L', until: and(ground, (w) => w.player.y <= FL - 13), max: 300 },
-  { hold: 'L', until: (w) => w.player.x <= px(x + 10.2), max: 300, note: 'under the far lever' },
+  { hold: 'L', until: (w) => w.player.x <= px(x + 11.0), max: 300, note: 'under the far lever only' },
   { hold: '', ticks: 18 },
   { hold: '', jump: 20, ticks: 22, long: true, note: 'pull: the third tank drains back into the second' },
-  { hold: 'R', until: (w) => w.player.x >= px(x + 15) - 12, max: 600, note: 'straight back across the second tank before the surge' },
+  { hold: 'R', until: (w) => w.player.x >= px(x + 16) - 12, max: 600, note: 'straight back across the second tank before the surge' },
   { hold: 'R', jump: 14, ticks: 14, note: 'up on to the third bund' },
   { hold: 'R', until: and(ground, (w) => w.player.y <= FL - 13), max: 300 },
   { hold: '', until: settled('ita6a', 2), max: 900, note: 'the third tank is low and the second has filled' },
-  { hold: 'R', until: (w) => w.player.x >= px(x + 21) - 12, max: 600, note: 'through the third tank' },
+  { hold: 'R', until: (w) => w.player.x >= px(x + 22) - 12, max: 600, note: 'through the third tank' },
   { hold: 'R', jump: 14, ticks: 14 },
   { hold: 'R', until: and(ground, (w) => w.player.y <= FL - 13), max: 300 },
-  ...pullCross('ita6a', 3, x + 21, x + 27),
-  ...pullCross('ita6a', 4, x + 27, x + 33),
+  ...pullCross('ita6a', 3, x + 22, x + 28),
+  ...pullCross('ita6a', 4, x + 28, x + 34),
   { hold: 'R', until: X(x + 35.4), max: 600 },
 ];
 
@@ -600,10 +609,10 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'ITA-05': [
     { what: 'at dusk, read the brightest cluster as the next to drop (the day rule)', steps: [...room05(), { policy: canopyWalk('ita5a', { wrongRead: true }), until: done, max: 5000 }], cause: 'ita-anjeer' },
     {
-      what: 'in the squirrel’s canopy, hop across the moment each cluster lands',
+      what: 'in the squirrel’s canopy, take the chirp as "go": hop while it is coming, a few tiles off',
       get steps(): Step[] {
         const x = actX0('ITA-05', 'ita05-gilahri');
-        return [...room05(), ...act05(actX0('ITA-05', 'ita05-shaam')), { policy: canopyWalk('ita5b'), until: done, max: 5000 }, { hold: 'R', until: X(x + 40), max: 100 }];
+        return [...room05(), ...act05(actX0('ITA-05', 'ita05-shaam')), { policy: canopyWalk('ita5b', { noJumpWhen: squirrelClose(px(x + 31)) }), until: done, max: 5000 }, { hold: 'R', until: X(x + 40), max: 100 }];
       },
       cause: 'ita-gilahri',
     },
@@ -615,8 +624,9 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
         const x = actX0('ITA-06', 'ita06-nahar');
         return [
           ...room06(),
-          ...pullCross('ita6a', 0, x + 3, x + 8),
-          { hold: 'R', until: X(x + 8.2), max: 600, note: 'between the two handles' },
+          ...pullCross('ita6a', 0, x + 3, x + 9),
+          { hold: 'R', until: X(x + 10.4), max: 600, note: 'along the bund' },
+          { hold: 'L', until: XL(x + 9.7), max: 600, note: 'back to between the two handles' },
           { hold: '', ticks: 18 },
           { hold: '', jump: 20, ticks: 22, long: true, note: 'both at once' },
           { hold: '', until: (w) => (w.flags.ita6a as PaddySt).tanks[1].level === 'low', max: 600 },

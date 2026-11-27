@@ -19,7 +19,9 @@ import { room as room10, actPul, actMehraab, actMori, actTokri, meta10 } from '.
 
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: meta01 },
-  longStage({ base: room02(), acts: [act02], par: 40, shape: 'long', meta: meta02 }),
+  // 02: a hidden checkpoint on the deck at 8.5, 3.5 tiles short of the first bay and 1.5 past the porters' trigger: calm
+  // (the first porter is 5.8 s away), and the room's bay-side deaths replay from it in under 7.5 s
+  longStage({ base: room02(), acts: [act02], par: 40, shape: 'long', cps: [8.5], meta: meta02 }),
   longStage({ base: room03(), acts: [act03], par: 45, shape: 'long', meta: meta03 }),
   longStage({ base: room04(), acts: [act04], twist: 'ita-peti', par: 50, shape: 'long', meta: meta04 }),
   longStage({ base: room05(), acts: [act05, act05b], par: 80, shape: 'long', lives: 'act', meta: meta05 }),
