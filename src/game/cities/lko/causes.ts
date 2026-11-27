@@ -56,6 +56,8 @@ export const causeLines: Record<string, string[]> = {
   'lko-roshandan': ['That light came up from the hall below, through a hole: you stepped into the light, and through it.', 'Light coming down falls on floor; a beam widening upwards is a hole.'],
   'lko-girah': ['You waited for the tumbling birds to clear, and the red ran out: a tumble is not a landing.', 'Cross early in the red, straight through the tumble.'],
   'lko-taaga': ['That white was jali: the second wash took it. The raised blue was stitching, and it stayed.', 'Read the thread, not the colour: wait on the raised blue.'],
+  'lko-daana': ['Grain beats the flag: the flock came down to feed on it, red or not, and you were on the grain.', 'Wait at the near end of the roof; cross the grain while they are up.'],
+  'lko-daana-udaan': ['You hopped over the feeding birds and they burst up into you.', 'Never hop over them: wait for them to lift, then walk across.'],
   'lko-hawa': ['The birds read the other face of the flag: you saw red, they saw white.', 'Here, go while YOU see white: the curl at the flag’s tip shows their colour.'],
   'lko-gumbad': ['The dome was a different size from where you jumped: too high, or shrunk into the pool.', 'Stand on the red paving line in front of it, and jump from there.'],
   'lko-mehfil': ['She spins the whole stage end to end, and you were on her floor.', 'Wait on a takht till she has spun past beneath you, going away, then cross to the next.'],

@@ -14,6 +14,7 @@ import { archway, gentleman, looseStone, pehleDoorway, tara } from './s02';
 import { washLine } from './s03';
 import { Heap, karahi, shadows, type Light } from './s04';
 import { Dancer } from './s06';
+import { Flock, Flyer, drawFlyer, roofOf, roofs, type Roof } from './s09';
 import { arch, well, hooks, chausar } from './s08';
 import { on } from './kit';
 import { julus, nala, photoGroup, pace, strollers, type PhotoPlan } from './s07';
@@ -365,5 +366,75 @@ const taaga: Act = {
   },
 };
 
-export const s10 = { room: tehzeebRoom, acts: [dhulai, taaga, darbar, tasveer, julusBells, jawab, raasta, galiyara] };
+/** The rooftops again, but the flyer's boy has scattered grain on the wide roof. 09 taught: cross on red.
+ *  Grain beats the flag: the flock comes down to feed on it whatever the flag says, feeds, lifts, and comes
+ *  back. Wait at the roof's near end and cross the grain while they are up; don't hop over feeding birds. */
+const DAANA = { period: 420, feed: 240 };
+class Grain extends Flyer {
+  constructor(
+    readonly flag: Flyer,
+    readonly clock: { t: number; active: boolean },
+  ) {
+    super(flag.x, flag.feet, flag.plan, flag.from);
+  }
+  feeding(w: World) {
+    return this.clock.active && this.clock.t >= 0 && (w.tick - this.clock.t) % DAANA.period < DAANA.feed;
+  }
+  order(w: World) {
+    if (this.clock.active) return { c: this.feeding(w) ? ('white' as const) : ('red' as const), left: 1 };
+    return this.flag.order(w);
+  }
+}
+const daana: Act = {
+  id: 'lko10-daana',
+  w: 30,
+  cp0: false,
+  cps: [-2, 19.4],
+  advice: 'The rooftops again, but grain is scattered on the wide roof, and grain beats the flag: the flock comes down to feed on it whatever the flag says, then lifts, then comes back. Wait at the roof’s near end, cross the grain while they are up, and never hop over feeding birds.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 5, x + 29, 15);
+    g.fill(x + 7, x + 16, 13, 17, '#');
+    g.fill(x + 19, x + 24, 13, 17, '#');
+    g.fill(x + 27, x + 29, 14, 17, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const G = roofOf(x + 7, x + 16, 13),
+      patch: Roof = { x0: c.X(11), x1: c.X(14), top: px(13) },
+      B = roofOf(x + 19, x + 24, 13),
+      E = roofOf(x + 27, x + 29, 14);
+    roofs(w, [G, B, E], c.X(5), c.X(30));
+    const flag = new Flyer(c.X(1) + 8, FLOOR, [['red', 2.0], ['white', 1.8]], c.X(0.5));
+    drawFlyer(w, flag);
+    const clock = { t: -1, active: false };
+    const sig = new Grain(flag, clock);
+    const fl = new Flock(w, [B, E], sig, { x: c.X(14), y: px(4) }, 'lko-daana');
+    w.flags[c.f('k')] = { f: flag, sig, clock };
+    w.onTick((w2) => {
+      const p = w2.player;
+      if (clock.t < 0 && p.cx > c.X(5)) {
+        clock.t = w2.tick;
+        clock.active = true;
+      }
+      if (clock.active && p.cx > c.X(17)) clock.active = false;
+      fl.always = clock.active ? patch : null;
+      // hop over feeding birds and they burst up into you
+      const over = !p.onGround && p.cx > patch.x0 - 4 && p.cx < patch.x1 + 4;
+      if (over && sig.feeding(w2) && fl.z.on) w2.die('lko-daana-udaan');
+      fl.z.hazard.cause = clock.active ? 'lko-daana' : 'lko-kabootar';
+    });
+    w.add(
+      new Art((ctx) => {
+        if (!clock.active && clock.t >= 0) return;
+        ctx.fillStyle = '#E0B84C';
+        for (let k = 0; k < 18; k++) ctx.fillRect(patch.x0 + 2 + ((k * 13) % 44), patch.top - 2 + (k % 2), 1.5, 1.5);
+      }, 2),
+    );
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Intezaar kis baat ka? | Waiting for what?', 2.2));
+    sign(w, x + 0.2, 10.4, 3, 'DAANA', 'shop', null, 'kabootar');
+  },
+};
+
+export const s10 = { room: tehzeebRoom, acts: [dhulai, taaga, darbar, tasveer, julusBells, jawab, raasta, daana, galiyara] };
 export const meta10 = { family: 'finale-bow-meets-bells', betrayals: ['bow-vs-bells'], ending: 'lko-tehzeeb' } as StageMeta;

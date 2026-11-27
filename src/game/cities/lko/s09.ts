@@ -179,7 +179,7 @@ export function roofs(w: World, rs: Roof[], laneFrom: number, laneTo: number) {
   return w.add(new Zone(laneFrom, FLOOR + 20, laneTo - laneFrom, 30, 'lko-chhat'));
 }
 
-const roofOf = (c0: number, c1: number, row: number): Roof => ({ x0: px(c0), x1: px(c1 + 1), top: px(row) });
+export const roofOf = (c0: number, c1: number, row: number): Roof => ({ x0: px(c0), x1: px(c1 + 1), top: px(row) });
 
 // ================================================================ the room
 function kabootarRoom(): LevelDef {
