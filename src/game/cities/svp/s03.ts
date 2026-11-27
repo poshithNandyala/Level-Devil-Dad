@@ -368,12 +368,24 @@ export class StillCroc extends Entity {
   draw(ctx: Ctx, w: World) {
     if (this.gone) return;
     if (this.cx === this.gapX || !this.moving) {
-      // eyes only, and a dark patch under the surface
-      ctx.fillStyle = 'rgba(20,50,40,0.5)';
-      ctx.fillRect(this.cx - 18, FLOOR + 9, 36, 5);
-      ctx.fillStyle = '#E8D84A';
-      ctx.fillRect(this.cx - 7, FLOOR + 5, 2.4, 2.4);
-      ctx.fillRect(this.cx + 4, FLOOR + 5, 2.4, 2.4);
+      // lying still, only its back and eyes above the surface: a low dark hump with ridges, a snout, and two yellow eyes
+      const sy = FLOOR + 8;
+      ctx.fillStyle = 'rgba(20,50,40,0.55)';
+      ctx.fillRect(this.cx - 22, sy, 44, 7);
+      ctx.fillStyle = '#4A5A30';
+      ctx.beginPath();
+      ctx.ellipse(this.cx, sy + 1, 21, 6, 0, Math.PI, 0);
+      ctx.fill();
+      ctx.fillStyle = '#2F3C1C';
+      for (let k = -2; k <= 1; k++) ctx.fillRect(this.cx + k * 8 - 2, sy - 8, 4, 4);
+      ctx.fillStyle = '#4A5A30';
+      ctx.fillRect(this.cx + 14, sy - 6, 12, 6);
+      ctx.fillStyle = '#10140A';
+      ctx.fillRect(this.cx + 15, sy - 11, 5, 5);
+      ctx.fillRect(this.cx + 21, sy - 11, 5, 5);
+      ctx.fillStyle = '#F2E04A';
+      ctx.fillRect(this.cx + 16, sy - 10, 3, 3);
+      ctx.fillRect(this.cx + 22, sy - 10, 3, 3);
     } else {
       crocBody(ctx, this.cx, FLOOR + 14, 40, 1, 0.06);
       ctx.strokeStyle = 'rgba(255,255,255,0.8)';
