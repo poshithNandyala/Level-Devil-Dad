@@ -82,7 +82,7 @@ export function arch(w: World, st: Market, c: number, o: { board?: 'day' | 'blan
  * frame with no boards: it is not solid. `pack` names a pitch (index) whose keeper takes the boards off when Dad
  * passes `pack.at` (a column). The drain under the row is deadly. Row columns: c0 .. c0 + 3n + 1; bank at c0 + 3n + 2.
  */
-export function row(w: World, st: Market, c0: number, plates: number[], o: { pack?: { i: number; at: number }; causeFor?: (plate: number, day: number) => string } = {}) {
+export function row(w: World, st: Market, c0: number, plates: number[], o: { pack?: { i: number; at: number }; causeFor?: (plate: number, day: number) => string; dryOn?: number } = {}) {
   const n = plates.length;
   const x0 = px(c0);
   const x1 = px(c0 + n * 3 + 2);
@@ -157,17 +157,34 @@ export function row(w: World, st: Market, c0: number, plates: number[], o: { pac
       });
     });
   }
-  // the drain under the row
+  // the drain under the row; on the market's holiday (`dryOn`) the sluice is shut and the bed is dry: a floor two tiles down
+  const dry = (w2: World) => o.dryOn !== undefined && st.day === o.dryOn;
+  const bed = w.add(
+    new Rig(x0, FL + 32, x1 - x0, 16, {
+      solid: true,
+      layer: 1,
+      tick: (r, w2) => r.setSolid(dry(w2)),
+      paint: () => {},
+    }),
+  );
+  if (bed.solid) bed.solid.velX = 0;
   w.add(
     new Rig(x0, FL + 2, x1 - x0, 30, {
       layer: 0,
       cause: 'shl-nala',
       inset: 0,
+      live: (_r, w2) => !dry(w2),
       tick: (r) => {
         if (r.hazard) r.hazard.cause = st.cause;
       },
       paint: (ctx, r, w2) => {
         box(ctx, r.x, FL + 4, r.w, 40, '#3E4D47');
+        if (dry(w2)) {
+          // the dry bed: stones, a trickle
+          box(ctx, r.x, FL + 30, r.w, 14, '#5C6F66');
+          for (let x = r.x + 6; x < r.x + r.w; x += 11) box(ctx, x, FL + 28 + ((x * 7) % 3), 5, 3, '#9FB0A8');
+          return;
+        }
         ctx.fillStyle = 'rgba(120,170,180,0.6)';
         ctx.fillRect(r.x, FL + 8, r.w, 36);
         ctx.fillStyle = 'rgba(255,255,255,0.35)';
@@ -272,10 +289,34 @@ export const actPack: Act = {
   },
 };
 
+/** act 5: a double arch turns two days at once, and the second row is the market's holiday: every stall a frame, the drain dry */
+export const actHoliday: Act = {
+  id: 'shl09-sngi-khlieh',
+  w: 58,
+  advice: 'The eighth day: the whole market is shut, every stall a frame, and the sluice is closed, so the drain bed is dry. Drop into the bed and walk under the frames. Then a double arch, two gates a step apart: two days at once, so count gates, not arches: after eight comes one, and then two.',
+  cps: [30],
+  paint: (g, c) => {
+    g.fill(c.x + 6, c.x + 25, 15, 17, '.');
+    // the dry bed of the holiday row: a floor two tiles down
+    g.fill(c.x + 6, c.x + 25, 17, 17, '#');
+    g.fill(c.x + 37, c.x + 50, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const st = w.flags.shl9 as Market;
+    arch(w, st, c.x + 2);
+    row(w, st, c.x + 6, [8, 8, 8, 8, 8, 8], { dryOn: 8 });
+    arch(w, st, c.x + 32);
+    arch(w, st, c.x + 33.2);
+    row(w, st, c.x + 37, [1, 2, 4, 3]);
+    sign(w, c.x + 28, 10.4, 3, 'HOLIDAY', 'shop', null, 'day eight: everything shut');
+    sign(w, c.x + 53, 10.4, 3, 'TWO GATES', 'shop', null, 'two days at once');
+  },
+};
+
 /** ending: the last arch's board was flipped by a keeper (it shows yesterday); after day 8 comes day 1 */
 export const ending: Ending = {
   space: 22,
-  advice: 'The keeper by the last arch has flipped its board: it shows yesterday. Trust the arches, not the paint: this is the eighth day, and the stall with plate 8 is the frame.',
+  advice: 'The keeper by the last arch has flipped its board: it shows yesterday. Trust the gates, not the paint: this is day three, and the stall with plate 3 is the frame.',
   paint: (g, D) => {
     g.fill(D - 17, D - 4, 15, 17, '.');
   },
@@ -283,8 +324,8 @@ export const ending: Ending = {
     const D = Math.round(d.x / 16);
     const st = w.flags.shl9 as Market;
     w.flags.twist = 'board';
-    arch(w, st, D - 20, { board: 7, keeper: true });
-    row(w, st, D - 17, [6, 8, 7, 1], { causeFor: (plate) => (plate === 8 ? 'shl-board' : 'shl-closed') });
+    arch(w, st, D - 20, { board: 2, keeper: true });
+    row(w, st, D - 17, [6, 3, 7, 1], { causeFor: (plate) => (plate === 3 ? 'shl-board' : 'shl-closed') });
   },
 };
 

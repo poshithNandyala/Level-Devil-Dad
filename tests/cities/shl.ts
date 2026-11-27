@@ -545,6 +545,16 @@ const act09a = (x: number): Step[] => [{ policy: marketWalk('shl9'), until: and(
 const act09b = (x: number): Step[] => [{ policy: marketWalk('shl9'), until: and(ground, X(x + 42)), max: 5000, note: 'count the arches: days three and four' }, { hold: 'R', until: X(x + 44), max: 400 }];
 const act09c = (x: number): Step[] => [{ policy: marketWalk('shl9'), until: and(ground, X(x + 33)), max: 5000, note: 'the mid-row arch: day six beyond it' }, { hold: 'R', until: X(x + 36), max: 400 }];
 const act09d = (x: number): Step[] => [{ policy: marketWalk('shl9'), until: and(ground, X(x + 24)), max: 3000, note: 'day seven, and the packed stall' }, { hold: 'R', until: X(x + 27), max: 400 }];
+/** the holiday row: drop into the dry bed at the row's start and walk under the frames, up the far bank */
+const act09e = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 5.2), max: 900, note: 'to the edge of the holiday row' },
+  { hold: 'R', until: (w) => w.player.onGround && w.player.y > 250, max: 400, note: 'drop into the dry bed' },
+  { hold: 'R', until: X(x + 25.3), max: 1500, note: 'along the bed under the frames' },
+  { hold: 'R', jump: 20, ticks: 20, note: 'up the far bank' },
+  { hold: 'R', until: and(ground, X(x + 27), (w) => w.player.y < 230), max: 600 },
+  { policy: marketWalk('shl9'), until: and(ground, X(x + 52)), max: 4000, note: 'the double arch: days one and two; jump plate 2' },
+  { hold: 'R', until: X(x + 56), max: 600 },
+];
 const boardWalk = marketWalk('shl9');
 const boardPolicy: Policy = (w) => boardWalk(w);
 
@@ -684,7 +694,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-10': { steps: [{ hold: 'R', until: X(8), max: 600 }, { hold: '', until: done, max: 1500, note: 'stop at the drop and keep waiting for a beat, as in the tour' }], cause: 'shl-lyoh' },
 };
 const ROOMS: Record<string, () => Step[]> = { 'SHL-02': room02, 'SHL-03': room03, 'SHL-04': room04, 'SHL-05': room05, 'SHL-06': room06, 'SHL-07': room07, 'SHL-08': room08, 'SHL-09': room09, 'SHL-10': room10 };
-const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'], 'SHL-05': ['shl05-ar', 'shl05-pung', 'shl05-roar'], 'SHL-06': ['shl06-sprout', 'shl06-double', 'shl06-kiang'], 'SHL-07': ['shl07-krem', 'shl07-pool', 'shl07-plop', 'shl07-knock', 'shl07-pairs'], 'SHL-08': ['shl08-roof', 'shl08-pull', 'shl08-bucket', 'shl08-two'], 'SHL-09': ['shl09-sngi', 'shl09-kot', 'shl09-pdeng', 'shl09-doh'], 'SHL-10': ['shl10-rong', 'shl10-jingkieng', 'shl10-pung'] };
+const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'], 'SHL-05': ['shl05-ar', 'shl05-pung', 'shl05-roar'], 'SHL-06': ['shl06-sprout', 'shl06-double', 'shl06-kiang'], 'SHL-07': ['shl07-krem', 'shl07-pool', 'shl07-plop', 'shl07-knock', 'shl07-pairs'], 'SHL-08': ['shl08-roof', 'shl08-pull', 'shl08-bucket', 'shl08-two'], 'SHL-09': ['shl09-sngi', 'shl09-kot', 'shl09-pdeng', 'shl09-doh', 'shl09-sngi-khlieh'], 'SHL-10': ['shl10-rong', 'shl10-jingkieng', 'shl10-pung'] };
 const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
 const prefix = (id: string, act: string): Step[] => [...ROOMS[id](), ...ACT_ORDER[id].slice(0, ACT_ORDER[id].indexOf(act)).flatMap((a) => actRoutes[a](actX0(id, a)))];
 /** the stage up to the act (route), then `steps` played from the act's first column; built when the test runs */
@@ -771,6 +781,8 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     inAct('SHL-09', 'shl09-pdeng', 'read the row for day six from the start (it is still five before the arch)', () => [{ policy: marketWalk('shl9', { dayOf: () => 6 }), until: done, max: 5000 }], 'shl-closed'),
     inAct('SHL-09', 'shl09-doh', 'jump today’s plate and walk on to the packed stall', () => [{ policy: marketWalk('shl9', { ignorePack: true }), until: done, max: 3000 }], 'shl-pack'),
     inAct('SHL-09', 'shl09-doh', 'walk the counter, never mind the plates', () => [{ policy: marketWalk('shl9', { dayOf: () => 99, ignorePack: true }), until: done, max: 3000 }], 'shl-closed'),
+    inAct('SHL-09', 'shl09-sngi-khlieh', 'walk the drain bed of the next row too (the sluice is open again)', (x) => [...act09e(x).slice(0, 5), { hold: 'R', until: done, max: 1500 }], 'shl-nala'),
+    inAct('SHL-09', 'shl09-sngi-khlieh', 'count the double arch as one day (one)', (x) => [...act09e(x).slice(0, 5), { policy: marketWalk('shl9', { dayOf: () => 1 }), until: done, max: 4000 }], 'shl-closed'),
   ],
   'SHL-10': [
     { what: 'take the knup at the first hook, as the Knup stage taught', steps: [{ policy: dropWalk('shl10d', 9), until: and(ground, X(15)), max: 1500 }, ...atHook(17, 'take it'), { hold: 'R', until: done, max: 1500 }], cause: 'shl-lintel' },
@@ -791,6 +803,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'shl09-kot': act09b,
   'shl09-pdeng': act09c,
   'shl09-doh': act09d,
+  'shl09-sngi-khlieh': act09e,
   'shl08-roof': act08a,
   'shl08-pull': act08b,
   'shl08-bucket': act08c,

@@ -11,7 +11,7 @@ import { room as room05, act as act05, actBasin as act05b, actRoar as act05c, me
 import { room as room06, act as act06, actPole as act06b, actDouble as act06c, meta06 } from './s06';
 import { room as room07, act as act07, actPool as act07b, actPlop as act07c, actKnock as act07d, actPairs as act07e, meta07 } from './s07';
 import { room as room08, actRoof as act08a, actPull as act08b, actBucket as act08c, actTwo as act08d, meta08 } from './s08';
-import { room as room09, actTwo as act09a, actBlank as act09b, actMid as act09c, actPack as act09d, meta09 } from './s09';
+import { room as room09, actTwo as act09a, actBlank as act09b, actMid as act09c, actPack as act09d, actHoliday as act09e, meta09 } from './s09';
 import { room as room10, actMark as act10a, actFar as act10b, actSpan as act10c, meta10 } from './s10';
 
 export const levels = (): LevelDef[] => [
@@ -23,6 +23,6 @@ export const levels = (): LevelDef[] => [
   longStage({ base: room06(), acts: [act06, act06c, act06b], twist: 'shl-rootdoor', par: 48, shape: 'long', lives: 'act', meta: meta06 }),
   longStage({ base: room07(), acts: [act07, act07b, act07c, act07d, act07e], twist: 'shl-column', par: 68, shape: 'marathon', lives: 'act', meta: meta07 }),
   longStage({ base: room08(), acts: [act08a, act08b, act08c, act08d], twist: 'shl-tap', par: 93, shape: 'wtf', lives: 'act', meta: meta08 }),
-  longStage({ base: room09(), acts: [act09a, act09b, act09c, act09d], twist: 'shl-board', par: 30, shape: 'long', lives: 'act', meta: meta09 }),
+  longStage({ base: room09(), acts: [act09a, act09b, act09c, act09d, act09e], twist: 'shl-board', par: 39, shape: 'long', lives: 'act', meta: meta09 }),
   longStage({ base: room10(), acts: [act10a, act10b, act10c], twist: 'shl-tallgate', par: 33, shape: 'long', lives: 'act', meta: meta10 }),
 ];
