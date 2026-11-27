@@ -2,6 +2,60 @@
 // 10 the finale (Gangtok's own ideas only). One file per stage (s01.ts ... s10.ts).
 import type { LevelDef } from '../../world';
 import { longStage } from '../../levels/chunks';
+import type { Act } from '../../levels/acts';
+import { tara } from '../../levels/endkit';
+import { onPass } from '../../levels/trolls';
+import { px } from './entities';
+
+/** Tara at the start of an act, urging the play its trap waits for (she lies; the guide never does) */
+const INTRO: Record<string, string> = {
+  'gtk02-ulta': 'Hajur! Stay on, it comes back down!',
+  'gtk03-kagaz': 'Hajur! Wait, let the paper dry, Dad!',
+  'gtk03-ulto': 'Hajur! Check each bag for stitches, slowly!',
+  'gtk03-jaldi': 'Hajur! Have a good look at each bag!',
+  'gtk04-upar': 'Hajur! First door out, Dad!',
+  'gtk04-beech': 'Hajur! All the way up to G!',
+  'gtk05-aarakshit': 'Hajur! Up on the bench, Dad!',
+  'gtk05-do': 'Hajur! One bin is enough, Dad!',
+  'gtk05-jhadu': 'Hajur! Walk on, Dad, it’s clean!',
+  'gtk05-peeche': 'Hajur! Overtake him, Dad, hop on!',
+  'gtk05-raat': 'Hajur! No time, just hop!',
+  'gtk06-ulta': 'Hajur! The road goes on, Dad!',
+  'gtk06-adda': 'Hajur! Straight up the stairs!',
+  'gtk06-neeche': 'Hajur! Run across, quick!',
+  'gtk06-upar2': 'Hajur! One taxi’s in, go!',
+  'gtk06-chhatein': 'Hajur! Just walk, roofs are flat!',
+  'gtk06-peeche': 'Hajur! The road goes on, Dad!',
+  'gtk06-sawari': 'Hajur! Quick, before the jeep!',
+  'gtk06-ghumao': 'Hajur! Straight on, Dad!',
+  'gtk07-peeche': 'Ke cha haal khabar? Catch it up!',
+  'gtk07-dheere': 'Hajur! Run into the cloud!',
+  'gtk07-chiya': 'Hajur! No tea, just run!',
+  'gtk07-saath': 'Hajur! The road looks fine, walk!',
+  'gtk07-jaldi': 'Hajur! Stop and look, Dad!',
+  'gtk07-thau2': 'Hajur! No tea, just run!',
+  'gtk08-badli': 'Hajur! Stay on, Dad, all the way!',
+  'gtk08-dobaar': 'Hajur! Jump now, Dad!',
+  'gtk08-der': 'Hajur! Jump for the station!',
+  'gtk08-upar': 'Hajur! Jump now, Dad!',
+  'gtk09-dophoto': 'Hajur! Off at the photo!',
+  'gtk09-barf': 'Hajur! Ice is slippery, stay off!',
+  'gtk10-peechha': 'Hajur! Run, the cloud is coming!',
+  'gtk10-jhola': 'Hajur! Any bag will do!',
+  'gtk10-baadal': 'Hajur! The road looks fine, walk!',
+  'gtk10-antim': 'Hajur! Out the first door!',
+  'gtk10-tar': 'Hajur! Jump across now!',
+  'gtk10-chauri': 'Hajur! Off when it stops!',
+  'gtk10-stool': 'Hajur! Straight on to the steamer!',
+  'gtk10-dhuaan': 'Hajur! Run into the cloud!',
+};
+const withIntros = (acts: Act[]): Act[] =>
+  acts.map((a) => {
+    const line = INTRO[a.id];
+    if (!line) return a;
+    const en = line.replace(/^Hajur!/, 'Yes!').replace(/^Ke cha haal khabar\?/, 'What’s the news?');
+    return { ...a, build: (w, c) => { a.build?.(w, c); onPass(w, px(c.x + 0.6), (w2) => tara(w2, `${line} | ${en}`, 2.2)); } };
+  });
 import { tourLevel, meta01 } from './s01';
 import { room as room02, act as act02, act2 as act02b, meta02 } from './s02';
 import { room as room03, act as act03, act2 as act03b, act3 as act03c, act4 as act03d, meta03 } from './s03';
@@ -15,13 +69,13 @@ import { room as room10, act1 as act10a, act2 as act10b, act3 as act10c, act4 as
 
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: meta01 },
-  longStage({ base: room02(), acts: [act02, act02b], twist: 'gtk-steam-vent', par: 47, shape: 'long', meta: meta02 }),
-  longStage({ base: room03(), acts: [act03, act03c, act03b, act03d], twist: 'gtk-jhola-entry', par: 35, shape: 'long', meta: meta03 }),
-  longStage({ base: room04(), acts: [act04, act04b, act04c], twist: 'gtk-lift-counts-down', par: 34, shape: 'long', meta: meta04 }),
-  longStage({ base: room05(), acts: [act05a, act05b, act05e, act05c, act05f, act05g, act05d, act05h], twist: 'gtk-taxi-meter', par: 96, shape: 'wtf', meta: meta05 }),
-  longStage({ base: room06(), acts: [act06, act06b, act06c, act06d, act06e, act06f, act06i, act06g, act06h, act06j], twist: 'gtk-tank-overflow', par: 92, shape: 'long', meta: meta06 }),
-  longStage({ base: room07(), acts: [act07a, act07b, act07c, act07d, act07e, act07f, act07h, act07g, act07i, act07j, act07l, act07k, act07m], twist: 'gtk-rope-climbs-to-door', par: 166, shape: 'marathon', lives: 'act', meta: meta07 }),
-  longStage({ base: room08(), acts: [act08, act08b, act08c, act08d, act08e], twist: 'gtk-cabin-both-doors', par: 87, shape: 'wtf', meta: meta08 }),
-  longStage({ base: room09(), acts: [act09, act09c, act09d, act09b], twist: 'gtk-gate-yak-snowbank', par: 94, shape: 'long', meta: meta09 }),
-  longStage({ base: room10(), acts: [act10a, act10b, act10c, act10d, act10e, act10g, act10f, act10j, act10h, act10i, act10k, act10l], twist: 'gtk-viewpoint-second-floor', par: 135, shape: 'marathon', lives: 'act', meta: meta10 }),
+  longStage({ base: room02(), acts: withIntros([act02, act02b]), twist: 'gtk-steam-vent', par: 47, shape: 'long', meta: meta02 }),
+  longStage({ base: room03(), acts: withIntros([act03, act03c, act03b, act03d]), twist: 'gtk-jhola-entry', par: 35, shape: 'long', meta: meta03 }),
+  longStage({ base: room04(), acts: withIntros([act04, act04b, act04c]), twist: 'gtk-lift-counts-down', par: 34, shape: 'long', meta: meta04 }),
+  longStage({ base: room05(), acts: withIntros([act05a, act05b, act05e, act05c, act05f, act05g, act05d, act05h]), twist: 'gtk-taxi-meter', par: 96, shape: 'wtf', meta: meta05 }),
+  longStage({ base: room06(), acts: withIntros([act06, act06b, act06c, act06d, act06e, act06f, act06i, act06g, act06h, act06j]), twist: 'gtk-tank-overflow', par: 92, shape: 'long', meta: meta06 }),
+  longStage({ base: room07(), acts: withIntros([act07a, act07b, act07c, act07d, act07e, act07f, act07h, act07g, act07i, act07j, act07l, act07k, act07m]), twist: 'gtk-rope-climbs-to-door', par: 166, shape: 'marathon', lives: 'act', meta: meta07 }),
+  longStage({ base: room08(), acts: withIntros([act08, act08b, act08c, act08d, act08e]), twist: 'gtk-cabin-both-doors', par: 87, shape: 'wtf', meta: meta08 }),
+  longStage({ base: room09(), acts: withIntros([act09, act09c, act09d, act09b]), twist: 'gtk-gate-yak-snowbank', par: 94, shape: 'long', meta: meta09 }),
+  longStage({ base: room10(), acts: withIntros([act10a, act10b, act10c, act10d, act10e, act10g, act10f, act10j, act10h, act10i, act10k, act10l]), twist: 'gtk-viewpoint-second-floor', par: 135, shape: 'marathon', lives: 'act', meta: meta10 }),
 ];
