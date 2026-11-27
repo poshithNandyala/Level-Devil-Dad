@@ -699,7 +699,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   // the obvious correction: wait on every bar for the next one. The narrowing bar goes out from under the right end
   'DIS-02': { steps: [...dis02Start, { hold: 'R', until: X(19.0), max: 200 }, { hold: '', until: done, max: 1500 }], cause: 'dis-luit' },
   // hop clean over him instead: the tray tips on to where you land
-  'DIS-01': { steps: [...tourStart(), { hold: 'R', until: (w) => w.player.x >= px(66), max: 600 }, { hold: 'R', until: (w) => boy(w).x - w.player.x < 38, max: 900 }, { hold: 'R', jump: 30, ticks: 30, long: true, note: 'over him' }, { hold: 'R', until: done, max: 900 }], cause: 'dis-pool' },
+  'DIS-01': { steps: [...tourStart(), { hold: 'R', until: (w) => w.player.x >= px(66), max: 600 }, { hold: 'R', until: (w) => boy(w).x - w.player.x < 50, max: 900 }, { hold: 'R', jump: 30, ticks: 30, long: true, note: 'over him (fix round 1: from further off, so a late press still clears him)' }, { hold: 'R', until: done, max: 900 }], cause: 'dis-pool' },
 };
 
 /** more scripted first-timer deaths and 'like last time' moves. */
