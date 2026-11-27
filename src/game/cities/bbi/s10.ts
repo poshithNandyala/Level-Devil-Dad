@@ -15,7 +15,7 @@ import { keeperOn } from './s02';
 import { parasol } from './s03';
 import { patraAct } from './s05';
 import { loom, type LoomCfg } from './s06';
-import { deepaAct, stagePit, troupe, troupeAct, type TroupeCfg } from './s07';
+import { deepaAct, padaAct, stagePit, troupe, troupeAct, type TroupeCfg } from './s07';
 import { chariot, templeWall, type ChariotCfg } from './s09';
 
 export const C10: ChariotCfg = { c0: 18, len: 10, stopAt: 36, hub: 30, hubY: FL - 58, wait: 0.35, any: true, bare: true };
@@ -127,6 +127,10 @@ export const act4 = patraAct('bbi10-patra', 'bbi10pt', true);
  *  Here he is the one out of step, and the troupe follows the drummer by you. */
 export const T10F: TroupeCfg[] = [{ c0: 4, n: 7, drum: 1.6, hold: 1.7, poses: ['bridge'], form: 0.3, decoy: 1.65, decoyFar: true }];
 export const act5 = troupeAct('bbi10-dui-baja', 15, T10F, 'bbi10db', 'Two drummers again, but tonight the one across the pit is out of step: this troupe follows the drummer by you. Go when he stops.');
+
+/** act 6, the falling tower turned round (law 7): it stands at your edge and falls away from you, and it is down
+ *  only a moment: waiting back by the scuffs, as the Raja night taught, leaves you too far to cross */
+export const act6 = padaAct('bbi10-pada', 'bbi10pd', true);
 
 /** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */
 export const RIB = { period: 2.2, shut: 0.5, at: 9 };

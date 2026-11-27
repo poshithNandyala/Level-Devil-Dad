@@ -457,26 +457,32 @@ export const act11: Act = {
  *  top lands on the edge you were taught to wait at. A2: wait back from the edge. A3: not too far back: it
  *  stands up again quickly, and from further back you're still on it. */
 export const PADA = { c0: 7, n: 7, drum: 1.4, stand: 0.8, fall: 0.35, lie: 1.45, rise: 0.3, reach: 1.5 };
-export const act12: Act = {
-  id: 'bbi07-pada',
+/** `away` (the finale's turn, law 7): the tower stands at YOUR edge and falls away from you, so it lies only a
+ *  moment and the scuffs are on the far bank: wait right at the edge this time */
+export function padaAct(id: string, key: string, away = false): Act {
+  const lie = away ? 1.2 : PADA.lie;
+  return {
+  id,
   w: 18,
-  advice: 'This troupe never lies down: their tower stands at the far end and falls over towards you as the bridge, and its top lands right where you’d wait at the edge. Wait a little way back, by the scuffs, and go the moment it lands: it stands up again soon.',
+  advice: away
+    ? 'Tonight the tower stands at your edge and falls away from you, and it gets up again quickly. Nothing lands on your side: wait right at the edge and go the moment it is down.'
+    : 'This troupe never lies down: their tower stands at the far end and falls over towards you as the bridge, and its top lands right where you’d wait at the edge. Wait a little way back, by the scuffs, and go the moment it lands: it stands up again soon.',
   cps: [],
   paint: (g, c) => {
     g.pit(c.x + PADA.c0, c.x + PADA.c0 + PADA.n - 1);
   },
   build: (w, c) => {
     const st = { t0: -1, phase: 'drum' as 'drum' | 'stand' | 'fall' | 'lie' | 'rise', into: 0 };
-    w.flags.bbi7pd = st;
+    w.flags[key] = st;
     onPass(w, c.X(0.5), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
     stagePit(w, c.x + PADA.c0, c.x + PADA.c0 + PADA.n - 1);
-    const per = PADA.drum + PADA.stand + PADA.fall + PADA.lie + PADA.rise;
-    const near = c.X(PADA.c0 - PADA.reach);
-    const far = c.X(PADA.c0 + PADA.n) + 8;
+    const per = PADA.drum + PADA.stand + PADA.fall + lie + PADA.rise;
+    const near = away ? c.X(PADA.c0) - 8 : c.X(PADA.c0 - PADA.reach);
+    const far = away ? c.X(PADA.c0 + PADA.n + PADA.reach) : c.X(PADA.c0 + PADA.n) + 8;
     const bridge = w.add(new Rig(near, FL, far - near, 6, { solid: true, layer: 3 }));
     bridge.setSolid(false);
     w.add(
-      new Rig(near, FL - 30, c.X(PADA.c0) - near, 30, {
+      new Rig(away ? c.X(PADA.c0 + PADA.n) : near, FL - 30, away ? far - c.X(PADA.c0 + PADA.n) : c.X(PADA.c0) - near, 30, {
         cause: 'bbi-pada',
         inset: 2,
         layer: 4,
@@ -485,7 +491,7 @@ export const act12: Act = {
           if (st.t0 < 0) return;
           let t = since(w2, st.t0) % per;
           const was = st.phase;
-          const seq: [typeof st.phase, number][] = [['drum', PADA.drum], ['stand', PADA.stand], ['fall', PADA.fall], ['lie', PADA.lie], ['rise', PADA.rise]];
+          const seq: [typeof st.phase, number][] = [['drum', PADA.drum], ['stand', PADA.stand], ['fall', PADA.fall], ['lie', lie], ['rise', PADA.rise]];
           for (const [ph, d] of seq) {
             if (t < d) { st.phase = ph; st.into = t; break; }
             t -= d;
@@ -504,20 +510,21 @@ export const act12: Act = {
         },
         paint: (ctx) => {
           // scuffs on the bank where the top lands
-          box(ctx, near, FL - 1, c.X(PADA.c0) - near, 1, '#6E4A2E');
+          if (away) box(ctx, c.X(PADA.c0 + PADA.n), FL - 1, far - c.X(PADA.c0 + PADA.n), 1, '#6E4A2E');
+          else box(ctx, near, FL - 1, c.X(PADA.c0) - near, 1, '#6E4A2E');
           const H = far - near;
           const dancersAt = (ang: number) => {
             // the tower pivots on its base at the far end: ang 0 upright, PI/2 lying towards you
             for (let i = 0; i < 7; i++) {
               const d = (i + 0.5) * (H / 7);
-              const x = far - 8 - Math.sin(ang) * d;
+              const x = away ? near + 8 + Math.sin(ang) * d : far - 8 - Math.sin(ang) * d;
               const y = FL - Math.cos(ang) * d;
               box(ctx, x - 5, y - 5, 10, 10, SKIRT[i % SKIRT.length]);
               box(ctx, x - 2, y - 8, 4, 3, '#B07A4E');
             }
           };
           if (st.t0 < 0 || st.phase === 'drum') {
-            for (let i = 0; i < 4; i++) box(ctx, far - 30 + i * 9 + Math.sin(st.into * 6 + i) * 4, FL + 2, 7, 12, SKIRT[i % SKIRT.length]);
+            for (let i = 0; i < 4; i++) box(ctx, (away ? near + 4 : far - 30) + i * 9 + Math.sin(st.into * 6 + i) * 4, FL + 2, 7, 12, SKIRT[i % SKIRT.length]);
           } else if (st.phase === 'stand') dancersAt(0);
           else if (st.phase === 'fall') dancersAt((Math.PI / 2) * Math.min(1, st.into / PADA.fall));
           else if (st.phase === 'lie') dancersAt(Math.PI / 2);
@@ -527,6 +534,8 @@ export const act12: Act = {
     );
   },
 };
+}
+export const act12 = padaAct('bbi07-pada', 'bbi7pd');
 
 /** act 13, the far drummer (pose-shapes family): a second drummer sits on your bank playing out of step; the
  *  troupe follows its own drummer across the pit. A2: watch the far drummer, not the one by you. A3: his
