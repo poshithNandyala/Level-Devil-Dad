@@ -236,6 +236,25 @@ export const act: Act = {
   },
 };
 
+/** act 2: the third stall has its shelf behind you: ride the top tier up, and as the cook carries it round to
+ *  the left, step off backwards on to the shelf over the stool; the way on is the walkway above */
+export const act2: Act = {
+  id: 'gtk02-ulta',
+  w: 32,
+  advice: 'At the third stall the shelf is behind you, over the stool: ride the top tier up, and as the cook carries it round to his side, step off it backwards on to that shelf. Climb to the walkway above and go on along it.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 10, x + 10, 13, 14, '#');
+    g.fill(x + 2, x + 9, 6, 6, '=');
+    g.fill(x + 0, x + 6, 4, 4, '=');
+    g.fill(x - 6, x + 31, 2, 2, '=');
+  },
+  build: (w, c) => {
+    steamer(w, c.x + 11, ROOM_CFG, c.X(4), 'gtk2b');
+    sign(w, c.x + 20, 6.2, 4.4, 'SHAPALEY', 'shop', null, 'and momo');
+  },
+};
+
 /** door: the steam vent. The door stands past a floor grate over the big pot; the grate puffs a column of steam */
 export const VENT = { period: 2.6, on: 0.9 };
 export const ending: Ending = {

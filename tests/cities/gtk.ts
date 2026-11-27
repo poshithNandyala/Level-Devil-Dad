@@ -109,7 +109,7 @@ const benchRoute = (): Step[] => [
 
 // ------------------------------------------------------------------ GTK-02
 /** wait on the stool till the stack is still, hop on the top tier, ride it up, step off on to the shelf at the top */
-function rideTier(key: string, jumpOff: boolean, mode: 'route' | 'stay' | 'second' = 'route'): (w: World) => Out {
+function rideTier(key: string, jumpOff: boolean, mode: 'route' | 'stay' | 'second' | 'back' = 'route'): (w: World) => Out {
   let W: World | null = null;
   let jt = 0;
   let stage = 0;
@@ -150,8 +150,8 @@ function rideTier(key: string, jumpOff: boolean, mode: 'route' | 'stay' | 'secon
       }
       return go('');
     }
-    if (mode !== 'route') return go(p.onGround ? '' : 'R');
-    if (stage === 1) {
+    if (mode === 'stay' || mode === 'second') return go(p.onGround ? '' : 'R');
+    if (stage === 1 && mode !== 'back') {
       // on the stack: stand at its right edge
       const top = s.tiers.find((t) => t.s.rank === 2)!;
       if (!p.onGround) return go('R');
@@ -161,6 +161,11 @@ function rideTier(key: string, jumpOff: boolean, mode: 'route' | 'stay' | 'secon
     }
     // riding: off at the top
     const top = s.tiers.find((t) => t.s.rank === 2)!;
+    if (mode === 'back') {
+      if (!p.onGround) return go(p.cx > top.x + top.w / 2 + 4 ? 'L' : p.cx < top.x + top.w / 2 - 4 ? 'R' : '');
+      if (!top.carries(w)) return go(p.y + p.h <= 100 ? '' : 'L');
+      return go(s.phase === 'carry' && top.x <= s.x - 4 ? 'L' : p.cx > top.x + top.w / 2 ? 'L' : p.cx < top.x + top.w / 2 - 6 ? 'R' : '');
+    }
     if (p.y + p.h <= 98 && p.onGround && p.x > top.x + top.w) return go('R');
     if (jumpOff) {
       if (s.phase === 'lift' && top.y < 128 && p.onGround) {
@@ -175,6 +180,12 @@ function rideTier(key: string, jumpOff: boolean, mode: 'route' | 'stay' | 'secon
 const room02 = (): Step[] => [
   { policy: rideTier('gtk2', false), until: and(ground, X(12), (w) => w.player.y < 100), max: 2400, note: 'ride the top tier to the shelf' },
   { hold: 'R', until: and(ground, X(29)), max: 600, note: 'along the shelf and down' },
+];
+const act02b = (x: number): Step[] => [
+  { policy: rideTier('gtk2b', false, 'back'), until: (w) => w.player.onGround && Math.abs(w.player.y + w.player.h - 96) <= 1 && w.player.x < px(x + 10), max: 3000, note: 'ride the top tier up, off backwards on to the shelf' },
+  { policy: stairUpLeft(), until: (w) => w.player.onGround && w.player.y + w.player.h <= 32, max: 900, note: 'up to the walkway' },
+  { hold: 'R', until: X(x + 32.2), max: 900, note: 'along the walkway' },
+  { hold: 'R', until: ground, max: 300 },
 ];
 const act02 = (x: number): Step[] => [
   { policy: rideTier('gtk2a', true), until: and(ground, X(x + 10), (w) => w.player.y < 100), max: 2400, note: 'jump off on the way up' },
@@ -936,6 +947,10 @@ function actDeaths() {
     { policy: stepper(), until: done, max: 900 },
   ], 'gtk-taxi');
   actDeath('GTK-06', r6, 'gtk06-chhatein', 'walk off the roof without a hop', straight, 'gtk-khaai');
+  const r2 = room02();
+  actDeath('GTK-02', r2, 'gtk02-ulta', 'ride the top tier and stay on', () => [{ policy: rideTier('gtk2b', false, 'stay'), until: done, max: 3000 }], 'gtk-bhaap');
+  actDeath('GTK-02', r2, 'gtk02-ulta', 'let the top tier go, get on the second', () => [{ policy: rideTier('gtk2b', false, 'second'), until: done, max: 3000 }], 'gtk-dhakkan');
+  actDeath('GTK-02', r2, 'gtk02-bhatti', 'wait on the top tier for the hold at the top', () => [{ policy: rideTier('gtk2a', false, 'stay'), until: done, max: 3000 }], 'gtk-bhaap');
   const r3 = room03();
   actDeath('GTK-03', r3, 'gtk03-kagaz', 'stop on a frame to look', () => [{ policy: bagHop('gtk3k', { dwell: 2.5 }), until: done, max: 3000 }], 'gtk-kagaz');
   actDeath('GTK-03', r3, 'gtk03-ulto', 'on to every bag', () => [{ policy: bagHop('gtk3b', { every: true, dwell: 0.3 }), until: done, max: 3000 }], 'gtk-polythene');
@@ -1064,6 +1079,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk02-bhatti': act02,
+  'gtk02-ulta': act02b,
   'gtk03-jaanch': act03,
   'gtk03-ulto': act03b,
   'gtk03-jaldi': (x: number): Step[] => [{ policy: bagHop('gtk3c'), until: and(ground, X(x + 26)), max: 2400, note: 'no stopping, ahead of him' }, { hold: 'R', until: X(x + 30), max: 300 }],
