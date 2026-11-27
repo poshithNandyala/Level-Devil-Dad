@@ -176,8 +176,9 @@ export const act: Act = {
   },
   build: (w, c) => {
     lake(w, c.X(2), c.X(26));
-    thinShore(w, c.x + 3, c.x + 24);
-    yak(w, c.X(0.5), [{ wait: 0.8 }, { to: c.X(21) }, { wait: 2.4, photo: true }, { to: c.X(0.5) }, { wait: 1.0 }], 'mount', 'gtk9a');
+    // a bank 5 tiles wide at the start, so a checkpoint there is calm
+    thinShore(w, c.x + 5.5, c.x + 24);
+    yak(w, c.X(3), [{ wait: 0.8 }, { to: c.X(21) }, { wait: 2.4, photo: true }, { to: c.X(3) }, { wait: 1.0 }], 'mount', 'gtk9a');
     onPass(w, c.X(14), (w2) => npc(w2, 'Hajur! Photo! | Yes! A photo!', c.X(21), FL - 50, 1.4));
     sign(w, c.x + 27, 8, 3.6, 'CHANGU', 'wood', null, 'snow point');
   },
@@ -197,8 +198,8 @@ export const act2: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    thinShore(w, x + 3, x + 32);
-    yak(w, c.X(0.5), [{ wait: 0.6 }, { to: c.X(28) }, { wait: 0.8 }, { to: c.X(0.5) }, { wait: 1.0 }], 'mount', 'gtk9b');
+    thinShore(w, x + 5.5, x + 32);
+    yak(w, c.X(3), [{ wait: 0.6 }, { to: c.X(28) }, { wait: 0.8 }, { to: c.X(3) }, { wait: 1.0 }], 'mount', 'gtk9b');
     sign(w, x + 30, 4.4, 3.8, 'SNOW POINT', 'wood', null, 'this way');
   },
 };
@@ -210,8 +211,8 @@ export const act3: Act = {
   advice: 'A long loop, and the handler stops twice for photos, both times on the thin shore. Stay on through both, and get off on the far bank before it turns.',
   build: (w, c) => {
     lake(w, c.X(3), c.X(34));
-    thinShore(w, c.x + 4, c.x + 33);
-    yak(w, c.X(1), [{ wait: 0.8 }, { to: c.X(11) }, { wait: 2.0, photo: true }, { to: c.X(23) }, { wait: 2.0, photo: true }, { to: c.X(34) }, { wait: 0.9 }, { to: c.X(1) }, { wait: 1.0 }], 'mount', 'gtk9c');
+    thinShore(w, c.x + 5.5, c.x + 33);
+    yak(w, c.X(3), [{ wait: 0.8 }, { to: c.X(11) }, { wait: 2.0, photo: true }, { to: c.X(23) }, { wait: 2.0, photo: true }, { to: c.X(34) }, { wait: 0.9 }, { to: c.X(3) }, { wait: 1.0 }], 'mount', 'gtk9c');
     sign(w, c.x + 36, 8.6, 3.4, 'TSOMGO', 'wood', null, 'far bank');
   },
 };
@@ -222,14 +223,14 @@ export const act4: Act = {
   w: 40,
   advice: 'This yak walks out across the frozen lake and back. The blue lake ice is thick and holds: get off on to it and walk across. It’s the white snow at the shore, either side, that lies on thin ice.',
   build: (w, c) => {
-    thinShore(w, c.x + 3, c.x + 12);
+    thinShore(w, c.x + 5.5, c.x + 12);
     thinShore(w, c.x + 27, c.x + 34);
     decor(w, 1, (ctx) => {
       // the lake ice, blue and hard, cracked only on top
       box(ctx, c.X(13), FL - 3, px(14), 5, '#7FB3D5');
       for (let i = 0; i < 6; i++) box(ctx, c.X(14) + i * 34, FL - 1, 12, 1, 'rgba(255,255,255,0.7)');
     });
-    yak(w, c.X(1), [{ wait: 0.8 }, { to: c.X(17) }, { wait: 0.6 }, { to: c.X(1) }, { wait: 1.0 }], 'mount', 'gtk9d');
+    yak(w, c.X(3), [{ wait: 0.8 }, { to: c.X(17) }, { wait: 0.6 }, { to: c.X(3) }, { wait: 1.0 }], 'mount', 'gtk9d');
     // and a second yak waiting on the far side of the lake, to take you over the far shore
     yak(w, c.X(25), [{ wait: 1.2 }, { to: c.X(35) }, { wait: 0.9 }, { to: c.X(25) }], 'mount', 'gtk9d2');
     sign(w, c.x + 18, 8.6, 3.4, 'LAKE ICE', 'wood', null, 'thick');

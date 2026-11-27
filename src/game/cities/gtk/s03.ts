@@ -240,20 +240,21 @@ export const act3: Act = {
   w: 30,
   advice: 'The paper-makers’ frames over the jhora: a sheet still wet (dark, shining) holds you; a dry one (pale) cracks. They dry one after another from this end, so don’t wait: cross while the ones ahead are still wet.',
   paint: (g, c) => {
-    g.pit(c.x + 3, c.x + 18);
+    g.pit(c.x + 5, c.x + 20);
   },
   build: (w, c) => {
     const key = 'gtk3k';
-    jhora(w, c.x + 3, c.x + 18, key);
+    // five tiles of bank before the jhora, so the act's checkpoint is clear of a tap-jump
+    jhora(w, c.x + 5, c.x + 20, key);
     const st = { t0: -1 };
     w.flags[key] = st;
-    onPass(w, c.X(1.5), (w2) => {
+    onPass(w, c.X(3.5), (w2) => {
       st.t0 = w2.tick;
     });
     const n = 6;
     const sheets: Rig[] = [];
     for (let i = 0; i < n; i++) {
-      const x0 = c.X(4) + i * PAPER.step;
+      const x0 = c.X(6) + i * PAPER.step;
       const r = w.add(
         new Rig(x0, BAG.top + 4, 32, 8, {
           solid: true,

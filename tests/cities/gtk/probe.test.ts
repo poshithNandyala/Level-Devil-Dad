@@ -137,6 +137,8 @@ function hot(w: World): string {
     if (!h || !h.active || !e.alive || e.on === false) continue;
     // only hazards that move or switch on and off (a broom, a taxi, an inspector, a tier); a static pit is not 'running'
     if (!e.o?.live && !e.o?.tick) continue;
+    // a pit below the road (a jhora, a gorge) is not a running hazard, however its water is drawn
+    if (e.y >= 240) continue;
     if (e.o?.live && !e.o.live(e, w)) continue;
     const x0 = e.x, x1 = e.x + e.w;
     const d = p.cx < x0 ? x0 - p.cx : p.cx > x1 ? p.cx - x1 : 0;
@@ -211,3 +213,62 @@ it.runIf(!!process.env.LDD_GTKPROBE)('acts', () => {
   }
   console.log(out.join('\n'));
 }, 600000);
+
+// replay: worst replay per stretch at lag 0/6/12, per tick where it can peak. Branches (stop / run on / run+jump)
+// every 30 ticks, then every tick over the last 1.5 s before each checkpoint and +-0.5 s around each stretch's
+// coarse worst. Replay = death tick - the respawn checkpoint's tick. Also the three calm plays and hot captures.
+it.runIf(!!process.env.LDD_GTKPROBE)('replay', () => {
+  const out: string[] = [];
+  const lags = (process.env.LDD_LAGS ?? '0,6,12').split(',').map(Number);
+  for (const id of IDS()) {
+    const def = LEVELS.find((l) => l.id === id)!;
+    for (const lag of lags) {
+      const r = lagged(id, SOLUTIONS[id], lag, 0) as any;
+      if (!r.won) { out.push(`${id} | ${lag} | route did not win: ${r.why}`); continue; }
+      const rec: number[] = r.rec;
+      const cpAt = new Map<number, number>(); cpAt.set(-1, 0); cpAt.set(0, 0);
+      const cps: number[][] = r.cpTicks;
+      for (const [cp, t] of cps) cpAt.set(cp, t);
+      const branch = (t: number, k: number) => {
+        const f = [(_i: number) => I, (_i: number) => Rr, (i: number) => ({ ...Rr, jump: i % 40 < 14, jumpPressed: i % 40 === 0 })][k];
+        const w = replay(def, INFO, rec.slice(0, t));
+        for (let i = 0; i < 480 && w.state === 'play'; i++) w.step(f(i));
+        if (w.state !== 'dead') return null;
+        return { cp: w.cp, back: (w.deathTick - (cpAt.get(w.cp) ?? 0)) / 120, cause: w.deathCause, t };
+      };
+      const worst = new Map<number, { back: number; what: string; t: number }>();
+      const note = (res: ReturnType<typeof branch>, k: number) => {
+        if (!res) return;
+        const cur = worst.get(res.cp);
+        if (!cur || res.back > cur.back) worst.set(res.cp, { back: res.back, what: `${['stop', 'run on', 'run+jump'][k]}@${(res.t / 120).toFixed(2)}s ${res.cause}`, t: res.t });
+      };
+      for (let t = 0; t < rec.length; t += 30) for (let k = 0; k < 3; k++) note(branch(t, k), k);
+      const fine = new Set<number>();
+      const ends = [...cps.map(([, t]) => t), rec.length];
+      for (const e of ends) for (let t = Math.max(0, e - 180); t < Math.min(rec.length, e + 1); t++) fine.add(t);
+      for (const [, v] of worst) for (let t = Math.max(0, v.t - 60); t < Math.min(rec.length, v.t + 61); t++) fine.add(t);
+      for (const t of fine) if (t % 30) for (let k = 0; k < 3; k++) note(branch(t, k), k);
+      let mx = 0, mxw = '';
+      for (const [cp, v] of worst) if (v.back > mx) (mx = v.back), (mxw = `cp${cp} ${v.what}`);
+      const idleBad: string[] = [], caps: string[] = [];
+      for (const [cp, t] of cps) {
+        if (cp < 0) continue;
+        const at = replay(def, INFO, rec.slice(0, t));
+        const hh = hot(at);
+        if (hh) caps.push(`cp${cp}@x${(at.player.cx / 16).toFixed(1)} ${hh}`);
+        for (const [name, f] of [['idle', () => I], ['run0.3', (i: number) => (i < 36 ? Rr : I)], ['tap', (i: number) => (i < 40 ? { ...Rr, jump: i < 12, jumpPressed: i === 0 } : I)]] as [string, (i: number) => any][]) {
+          const w = replay(def, INFO, rec.slice(0, t)); w.player.vx = 0;
+          for (let i = 0; i < 480 && w.state === 'play'; i++) w.step(f(i));
+          if (w.state === 'dead') idleBad.push(`cp${cp}@x${(at.player.cx / 16).toFixed(1)} ${name}:${w.deathCause}`);
+        }
+      }
+      let prev = 0, longest = 0;
+      for (const [, t] of cps) (longest = Math.max(longest, t - prev)), (prev = t);
+      longest = Math.max(longest, r.w.tick - prev);
+      const per = [...worst].sort((a, b) => a[0] - b[0]).filter(([, v]) => v.back > 7.5).map(([cp, v]) => `cp${cp}=${v.back.toFixed(2)}`).join(' ');
+      out.push(`${id} | ${lag} | ${(r.w.tick / 120).toFixed(1)}s | ${cps.length} cps | longest ${(longest / 120).toFixed(1)}s | max replay ${mx.toFixed(2)}s ${mxw} | over7.5: ${per || 'none'} | calm fails: ${idleBad.join('; ') || 'none'} | hot: ${caps.join('; ') || 'none'}`);
+      if (process.env.LDD_CPS) out.push(`   cps: ` + cps.map(([c, t, x]: number[]) => `cp${c}@${(t / 120).toFixed(1)}s x${x}`).join(' '));
+    }
+  }
+  console.log(out.join('\n'));
+}, 3600000);

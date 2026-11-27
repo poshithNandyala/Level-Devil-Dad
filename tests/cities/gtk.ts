@@ -1078,7 +1078,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk03-jaanch': act03,
   'gtk03-ulto': act03b,
   'gtk03-jaldi': (x: number): Step[] => [{ policy: bagHop('gtk3c'), until: and(ground, X(x + 26)), max: 2400, note: 'no stopping, ahead of him' }, { hold: 'R', until: X(x + 30), max: 300 }],
-  'gtk03-kagaz': (x: number): Step[] => [{ policy: bagHop('gtk3k'), until: and(ground, X(x + 19.5)), max: 2400, note: 'frame to frame while the sheets are wet' }, { hold: 'R', until: X(x + 29.5), max: 300 }],
+  'gtk03-kagaz': (x: number): Step[] => [{ policy: bagHop('gtk3k'), until: and(ground, X(x + 21.5)), max: 2400, note: 'frame to frame while the sheets are wet' }, { hold: 'R', until: X(x + 29.5), max: 300 }],
   'gtk04-ghar': act04,
   'gtk04-upar': act04b,
   'gtk04-beech': (x: number): Step[] => [{ policy: upHouseRoute(x + 3, 2), until: and(ground, X(x + 20)), max: 3000, note: 'two flights up, out' }, { hold: 'R', until: X(x + 26.5), max: 300 }],

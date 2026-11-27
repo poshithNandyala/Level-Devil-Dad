@@ -187,7 +187,8 @@ export const act5: Act = {
     const x = c.x;
     const pits = BANK_PITS.map(([a, b]) => [x + a, x + b] as [number, number]);
     bin(w, x + 1, false);
-    litter(w, x + 4);
+    // the wrapper two tiles past where Dad lands off the stair, so the act's checkpoint is taken empty-handed
+    litter(w, x + 6);
     bin(w, x + 7, true);
     const cl: Cloud = { t0: -1, thick: 0, clear: 0, roll: 60 };
     w.flags.gtk10c = cl;
@@ -230,8 +231,9 @@ export const act9: Act = {
   w: 32,
   advice: 'A yak by the little lake below the viewpoint: it stops for a photo on the thin ice. Stay on, and get off on the far bank before it turns back.',
   build: (w, c) => {
-    thinShore(w, c.x + 4, c.x + 25);
-    yak(w, c.X(1), [{ wait: 0.8 }, { to: c.X(13) }, { wait: 2.2, photo: true }, { to: c.X(26) }, { wait: 0.9 }, { to: c.X(1) }, { wait: 1.0 }], 'mount', 'gtk10y');
+    // a bank 7 tiles wide at the start, wider than a tap-jump, so the act's checkpoint is calm
+    thinShore(w, c.x + 7.5, c.x + 25);
+    yak(w, c.X(4.5), [{ wait: 0.8 }, { to: c.X(13) }, { wait: 2.2, photo: true }, { to: c.X(26) }, { wait: 0.9 }, { to: c.X(4.5) }, { wait: 1.0 }], 'mount', 'gtk10y');
   },
 };
 /** the last house in the cloud: three floors down again, the shop floor and all */

@@ -207,7 +207,7 @@ export const act1: Act = {
   id: 'gtk05-shaam',
   w: 46,
   advice: 'Evening on MG Marg, and the sweepers are out. Hopping up on the bench is a jump, and you’ve just picked up a wrapper: so no bench. Walk through behind the broom’s stroke instead. Bin the next wrapper (the first bin is full) before the flower bed, and walk behind the second sweeper too.',
-  cps: [12.5, 27.5],
+  cps: [18.5, 38],
   paint: (g, c) => {
     g.fill(c.x + 19, c.x + 20, 13, 14, '#');
     g.fill(c.x + 40, c.x + 41, 14, 14, '#');
