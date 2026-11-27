@@ -585,3 +585,9 @@ Patna (PAT, Bihar) is the first city since the modularization: ten stages (01 th
 passed independent QA at c5e4950 after four failed rounds (reports in ldd-inbox/reports/cities/pat/QA/).
 PAT-05 runs 52.9 s, under the 60 s floor, accepted as an honest number (QA round 4): every act that took it
 past 60 s repeated a shipped decision. Design notes: `docs/cities/PAT.md`.
+
+## v0.17.1: Thiruvananthapuram, ten stages
+Thiruvananthapuram's extend pass: stages 09 and 10 after the old finale (ids kept, no save migration), its
+keys under the `tvm-` prefix, and every checkpoint moved where it passes the three-play respawn check (idle,
+run, tap jump at lag 0, 6 and 12). It passed independent QA at 2e7eba9 after five fix rounds
+(ldd-inbox/reports/cities/tvm/QA/). TVM is off the modules-test allow-list, so it now gets every strict check.

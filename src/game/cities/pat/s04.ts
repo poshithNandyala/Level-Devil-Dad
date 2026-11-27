@@ -158,13 +158,13 @@ export const act: Act = {
 /** the second flight: the same stair, but a third porter follows the other two, a long breath behind them */
 export const actSidhi: Act = {
   id: 'pat04-sidhi',
-  w: 34,
+  w: 37,
   advice: 'The second flight is busier: three porters come down it, not two. The first and the second are as before, and a third follows a long breath behind them. Wait at the foot until all three have been and gone, then go up in one go.',
   cps: [],
-  paint: (g, c) => stairPaint(g, c.x + 2),
+  paint: (g, c) => stairPaint(g, c.x + 5),
   build: (w, c) => {
-    stairBuild(w, c.x + 2, 'pat4b', false, { period: 14, emerge: 6.2 });
-    sign(w, c.x + 22, 6.4, 4.4, 'DOOSRI SIDHI', 'shop', null, 'the other stair');
+    stairBuild(w, c.x + 5, 'pat4b', false, { period: 14, emerge: 5.0 });
+    sign(w, c.x + 25, 6.4, 4.4, 'DOOSRI SIDHI', 'shop', null, 'the other stair');
   },
 };
 

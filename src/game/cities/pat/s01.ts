@@ -154,7 +154,7 @@ export const tourLevel = (): LevelDef =>
     ],
     things: [],
     hint: 'A walk round Patna: hop the ditch, climb the steps, hop the posts and the parked cart. At the bus stop a tempo pulls in behind you and the crowd rushes at it along the road: climb on to the kerb board and let them go by under you, then run on before the tempo pulls out.',
-    cps: [20, 36, 50, 59, 90, 101],
+    cps: [20, 36, 50, 59, 101],
     paint: (g: Grid) => {
       g.fill(STOP.kerb[0], STOP.kerb[1], 13, 13, '=');
     },

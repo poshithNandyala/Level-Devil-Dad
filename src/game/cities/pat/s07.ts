@@ -40,7 +40,7 @@ export interface TempoState {
 
 /** build the tempo in the room; acts add beats to it through w.flags.pat7 */
 export function tempo(w: World, x0: number, late?: { trigger: number; rider: boolean }): TempoState {
-  const st = { P: 0, PL: 0, truck: false, lean: 0, cx: 0, halted: true, beats: { stops: [] as { at: number; d: number; side?: 'L'; done?: boolean; t?: number }[], trucks: [] as { a: number; b: number; side?: 'R' }[], scrapes: [] as { x: number; cause: string; kind: 'arch' | 'hump'; done?: boolean }[] }, rig: null as unknown as Rig, go: -1, v: 0, boarded: false, stopAt: Infinity, base: 0, T0: undefined as number | undefined };
+  const st = { P: 0, PL: 0, truck: false, lean: 0, cx: 0, halted: true, beats: { stops: [] as { at: number; d: number; side?: 'L'; hold?: number; done?: boolean; t?: number }[], trucks: [] as { a: number; b: number; side?: 'R' }[], scrapes: [] as { x: number; cause: string; kind: 'arch' | 'hump'; done?: boolean }[] }, rig: null as unknown as Rig, go: -1, v: 0, boarded: false, stopAt: Infinity, base: 0, T0: undefined as number | undefined };
   const rig = w.add(
     new Rig(x0, DECK_Y, DECK_W, 12, {
       solid: true,
@@ -67,7 +67,7 @@ export function tempo(w: World, x0: number, late?: { trigger: number; rider: boo
             else st.P = Math.max(0, st.P + s.d);
             w2.sfx('honk', cx, FL - 30);
           }
-          if (s.t !== undefined && w2.tick - s.t < 300) hold = true;
+          if (s.t !== undefined && w2.tick - s.t < (s.hold ?? 300)) hold = true;
         }
         const leaving = t >= 3.5 && !hold && cx < st.stopAt;
         st.halted = !leaving;
@@ -186,9 +186,10 @@ export const act1: Act = {
   id: 'pat07-sadak',
   w: 70,
   advice: 'The road: a truck overtakes on your side, so stand in the middle while it passes and over the first hump. Then the rider is alone again, so back to the road side for the second hump. At the next halt the rider gets off: stand in the middle for the arch.',
-  cps: [20, 45],
+  cp0: false,
+  cps: [5.7, 21.7, 43.7],
   build: (w, c) => {
-    const st = w.flags.pat7 as { beats: { trucks: { a: number; b: number; side?: 'R' }[]; scrapes: { x: number; cause: string; kind: 'arch' | 'hump' }[]; stops: { at: number; d: number }[] } };
+    const st = w.flags.pat7 as { beats: { trucks: { a: number; b: number; side?: 'R' }[]; scrapes: { x: number; cause: string; kind: 'arch' | 'hump' }[]; stops: { at: number; d: number; hold?: number }[] } };
     // centre positions (px): the act starts at c.x; the tempo centre is ~ 7 tiles behind the door
     const X = (t: number) => c.X(t);
     st.beats.trucks.push({ a: X(10), b: X(26) });
@@ -197,18 +198,22 @@ export const act1: Act = {
     obstacle(w, X(18), 'hump');
     st.beats.scrapes.push({ x: X(34), cause: 'pat-dhakka', kind: 'hump' });
     obstacle(w, X(34), 'hump');
-    st.beats.stops.push({ at: X(46), d: -1 });
+    st.beats.stops.push({ at: X(46), d: -1, hold: 500 });
+    // two long waits at a crossing, each with a checkpoint in it: a calm place to come back to, before each hump
+    st.beats.stops.push({ at: X(8), d: 0, hold: 500 });
+    st.beats.stops.push({ at: X(24), d: 0, hold: 500 });
+    sign(w, c.x + 8, 10.4, 3, 'CHOWK', 'shop', null, 'the light is red');
     st.beats.scrapes.push({ x: X(60), cause: 'pat-torana', kind: 'arch' });
     obstacle(w, X(60), 'arch');
     sign(w, c.x + 44, 10.4, 3, 'HALT', 'shop', null, 'get off here');
   },
 };
 
-type Beats = { stopAt: number; beats: { trucks: { a: number; b: number; side?: 'R' }[]; scrapes: { x: number; cause: string; kind: 'arch' | 'hump' }[]; stops: { at: number; d: number; side?: 'L' }[] } };
+type Beats = { stopAt: number; beats: { trucks: { a: number; b: number; side?: 'R' }[]; scrapes: { x: number; cause: string; kind: 'arch' | 'hump' }[]; stops: { at: number; d: number; side?: 'L'; hold?: number }[] } };
 /** an act of the road made only of beats (stops, trucks, scrapes), given as [kind, column, ...] in act columns */
-export function road(w: World, c: { X: (t: number) => number; x: number }, b: { stops?: [number, number, 'L'?][]; trucks?: [number, number, 'R'?][]; scrapes?: [number, 'arch' | 'hump'][] }, signs: [number, string, string][]) {
+export function road(w: World, c: { X: (t: number) => number; x: number }, b: { stops?: [number, number, 'L'?, number?][]; trucks?: [number, number, 'R'?][]; scrapes?: [number, 'arch' | 'hump'][] }, signs: [number, string, string][]) {
   const st = w.flags.pat7 as Beats;
-  for (const [at, d, side] of b.stops ?? []) st.beats.stops.push({ at: c.X(at), d, side });
+  for (const [at, d, side, hold] of b.stops ?? []) st.beats.stops.push({ at: c.X(at), d, side, hold });
   for (const [a, e, side] of b.trucks ?? []) {
     st.beats.trucks.push({ a: c.X(a), b: c.X(e), side });
     truckArt(w, c.X(a), c.X(e));
@@ -225,7 +230,7 @@ export const actPul: Act = {
   id: 'pat07-pul',
   w: 92,
   advice: 'Over the bridge: this time the rider who gets on sits on the road side, so the lean is the other way round: stand on the kerb side for the first hump and the arch. When he gets off, level again. Then a truck on the road side with a hump in it, and nobody else aboard: the kerb side again. Then a last arch.',
-  cps: [47.5],
+  cps: [22, 47.5, 60],
   build: (w, c) => road(w, c, { stops: [[10, 1, 'L'], [46, -1, 'L']], trucks: [[54, 70]], scrapes: [[24, 'hump'], [34, 'arch'], [62, 'hump'], [82, 'arch']] }, [[4, 'PUL', 'the bridge']]),
 };
 
@@ -234,7 +239,7 @@ export const actHaat: Act = {
   id: 'pat07-haat',
   w: 92,
   advice: 'The haat: a rider on the kerb side, then one on the road side: they cancel, so stand in the middle for the hump. When the kerb rider gets off, the road side is heavy: kerb side for the arch. Then a kerb-side truck evens it up again, with a hump in it, and the last rider gets off.',
-  cps: [26, 40, 63],
+  cps: [16, 50],
   build: (w, c) => road(w, c, { stops: [[8, 1], [20, 1, 'L'], [46, -1], [84, -1, 'L']], trucks: [[64, 80, 'R']], scrapes: [[34, 'hump'], [56, 'arch'], [72, 'hump']] }, [[4, 'HAAT', 'weekly market']]),
 };
 
@@ -243,18 +248,21 @@ export const actMandi: Act = {
   id: 'pat07-mandi',
   w: 92,
   advice: 'The mandi: a rider gets on, a road-side truck comes alongside and evens it, a hump in the middle of it. A second rider gets on at the halt: a heavy kerb side with the truck still pulling the other way, so the road side for the next hump. Then no halts at all: an arch, a hump and an arch, one after another.',
-  cps: [14, 62],
-  build: (w, c) => road(w, c, { stops: [[8, 1], [40, 1], [56, -1], [82, -1]], trucks: [[20, 34], [44, 60]], scrapes: [[27, 'hump'], [52, 'hump'], [72, 'arch'], [78, 'hump'], [86, 'arch']] }, [[4, 'MANDI', 'grain market']]),
+  cps: [6, 38, 55, 79.7],
+  build: (w, c) => road(w, c, { stops: [[8, 1], [40, 1], [56, -1], [82, -1, undefined, 500]], trucks: [[20, 34], [44, 60]], scrapes: [[27, 'hump'], [52, 'hump'], [72, 'arch'], [78, 'hump'], [86, 'arch']] }, [[4, 'MANDI', 'grain market']]),
 };
 
 export const act2: Act = {
   id: 'pat07-adda',
   w: 76,
   advice: 'The last stretch into the stand: a truck passes on the kerb side this time, pushing the other way, then a hump, then two arches with a rider getting on between them. Work out who is pulling which side before each one. The tempo stops at the stand: hop off, and cross the lane between the two parked tempos only while the third is out of it: it backs in to close the gap and drives out again.',
-  cps: [8, 30],
+  cp0: false,
+  cps: [1.7, 16, 46],
   build: (w, c) => {
     const st = w.flags.pat7 as { stopAt: number; beats: { trucks: { a: number; b: number; side?: 'R' }[]; scrapes: { x: number; cause: string; kind: 'arch' | 'hump' }[]; stops: { at: number; d: number }[] } };
     const X = (t: number) => c.X(t);
+    st.beats.stops.push({ at: X(4), d: 0, hold: 500 } as never);
+    sign(w, c.x + 4, 10.4, 3, 'CHOWK', 'shop', null, 'the light is red');
     st.beats.trucks.push({ a: X(6), b: X(22), side: 'R' });
     st.beats.scrapes.push({ x: X(14), cause: 'pat-dhakka', kind: 'hump' });
     obstacle(w, X(14), 'hump');
