@@ -816,6 +816,10 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'snap the plain thread, as before', cause: 'bbi-ganthi', steps: (x) => [{ hold: 'R', until: X(x + 2.6), max: 400 }, { hold: '', until: (w) => Math.abs(w.player.vx) < 5, max: 120 }, { hold: '', jump: 12, ticks: 40 }, { hold: 'R', until: X(x + 3.6), max: 300 }, waitFor((w) => lm(w, 'bbi10tn').bridge && lm(w, 'bbi10tn').into > 0.08, 'the motif'), { hold: 'R', until: done, max: 600 }] },
     { what: 'leave the loom alone and time the shuttle', cause: 'bbi-rachh', steps: (x) => [{ hold: 'R', until: X(x + 3.6), max: 400 }, waitFor((w) => lm(w, 'bbi10tn').bridge && lm(w, 'bbi10tn').into > 0.9, 'both passes of the shuttle by'), { hold: 'R', until: done, max: 600 }] },
   ],
+  'bbi07-pothi': [
+    { what: 'walk over the screen', cause: 'bbi-pothi', steps: (x) => [{ hold: 'R', until: done, max: 900 }] },
+    { what: 'hop the hinges and keep going', cause: 'bbi-nacha', steps: (x) => [...pothiRun(x).slice(0, 13), { hold: 'R', until: done, max: 600 }] },
+  ],
   'bbi07-kachha': [
     { what: 'go on the first stop, as taught', cause: 'bbi-kachha', steps: (x) => [{ hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 4) - 2, max: 900 }, waitFor((w) => tr(w, 'bbi7kc0').pose === 'bridge', 'the stop', 2400), { hold: 'R', until: done, max: 600 }] },
     { what: 'wait for each troupe to settle before you trust it', cause: 'bbi-thrown', steps: (x) => [...kachhaRun(x).slice(0, 6), waitFor((w) => tr(w, 'bbi7kc1').pose === 'bridge' && tr(w, 'bbi7kc1').into > 0.6, 'it has settled', 2400), { hold: 'R', until: done, max: 600 }] },
@@ -1095,6 +1099,15 @@ const ghurniRun = (x: number): Step[] => [
   leap(() => px(x + 21.5), 'off on to the far rim'),
   { hold: 'R', until: X(x + 23.5), max: 300 },
 ];
+/** pothi: hop each hinge from end to end, wait on the top end for the troupe's stop, then down and over */
+const pothiRun = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 3.6), max: 400, note: 'on to the first leaf end' },
+  ...[0, 1, 2, 3].flatMap((k) => hop(x + 4 + 5 * k + 0.7, `over hinge ${k + 1}`)),
+  { hold: '', until: (w) => Math.abs(w.player.vx) < 5, max: 200, note: 'on the top end' },
+  waitFor((w) => tr(w, 'bbi7po0').pose === 'bridge' && tr(w, 'bbi7po0').into < 0.4, 'the troupe stops', 2400),
+  { hold: 'R', until: and(ground, X(x + 32.4)), max: 400, note: 'down and over' },
+  { hold: 'R', until: X(x + 35.5), max: 300 },
+];
 /** kachha: let the tucked troupe's first stop go, cross on its second; the loose one at once */
 const kachhaRun = (x: number): Step[] => [
   { hold: 'R', until: (w) => w.player.x + w.player.w >= px(x + 4) - 2, max: 900, note: 'to the first pit' },
@@ -1290,6 +1303,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi07-sajaghara': sa
   'bbi08-ghurni': ghurniRun,
   'bbi07-ghungur': ghungurRun,
   'bbi07-kachha': kachhaRun,
+  'bbi07-pothi': pothiRun,
   'bbi10-ghungur': ghungur10Run,
   'bbi10-chakra': chakraRun,
   'bbi10-phinga': phinga10Run,

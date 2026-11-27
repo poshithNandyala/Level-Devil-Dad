@@ -90,10 +90,12 @@ function dancer(ctx: CanvasRenderingContext2D, x: number, y: number, k: number, 
   }
   const sw = Math.sin(spin) * 3;
   if (tucked) {
-    // kachha: the pleats tucked up into the waist, bare legs below
-    box(ctx, x - 4, y - 12, 8, 3, SKIRT[k % SKIRT.length]);
-    box(ctx, x - 3, y - 9, 2, 7, '#B07A4E');
-    box(ctx, x + 1, y - 9, 2, 7, '#B07A4E');
+    // kachha: the pleats tucked up into the waist (a fat white knot at the waist, read at phone size), bare legs
+    // below, where a loose troupe shows a wide coloured skirt
+    box(ctx, x - 6, y - 13, 12, 4, '#FFFFFF');
+    box(ctx, x - 4, y - 14, 8, 2, SKIRT[k % SKIRT.length]);
+    box(ctx, x - 3, y - 9, 2, 8, '#8A5A34');
+    box(ctx, x + 1, y - 9, 2, 8, '#8A5A34');
     box(ctx, x - 3, y - 16, 6, 4, '#F4D35E');
     box(ctx, x - 2, y - 21, 5, 5, '#B07A4E');
     box(ctx, x - 3, y - 23, 7, 2, '#FFFFFF');
@@ -891,5 +893,71 @@ export const T07K: TroupeCfg[] = [
 ];
 // a checkpoint on the wide bank between the two, so a replay is never the whole act
 export const act20 = troupeAct('bbi07-kachha', 29, T07K, 'bbi7kc', 'Look at their waists while they whirl. Pleats tucked up (kachha) means the line rolls the moment it lies down: let that stop go and cross on the next. Loose skirts lie still, but not for long: on those, go at once.', [13]);
+
+/** act 21, the talapatra screen (ALLOCATION v3 F468, reserve): a folding palm-leaf screen from Raghurajpur is laid
+ *  flat over the pit behind the stage. Each leaf holds at its two ends, where it is pinned, and folds shut at the
+ *  hinge in its middle as soon as you stand there. Hop each hinge, end to end; at the top end wait for the troupe
+ *  beyond to stop before you step down on to its bridge. */
+export const POTHI = { c0: 4, leaves: 4, end: 1.5, mid: 2, top: 3, tc0: 26, tn: 6, fold: 0.1 };
+const T07P: TroupeCfg = { c0: 0, n: POTHI.tn, drum: 2.0, hold: 1.6, poses: ['bridge'], form: 0.2, phase: 1.8 };
+export const act21: Act = {
+  id: 'bbi07-pothi',
+  w: 36,
+  advice: 'A palm-leaf screen lies over the pit. Each leaf is pinned at its ends and folds at the hinge in the middle the moment you stand there: hop every hinge, end to end. At the top end, wait for the troupe beyond to stop before you step down on to them.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + POTHI.c0, c.x + POTHI.tc0 + POTHI.tn - 1);
+  },
+  build: (w, c) => {
+    const P = POTHI;
+    const L = 2 * P.end + P.mid;
+    const st = { t0: -1, folded: [] as boolean[] };
+    w.flags.bbi7po = st;
+    onPass(w, c.X(1), (w2) => (st.t0 = w2.tick));
+    channel(w, c.x + P.c0, c.x + P.tc0 - 1, 'bbi-pothi', 'drain');
+    stagePit(w, c.x + P.tc0, c.x + P.tc0 + P.tn - 1);
+    troupe(w, { ...T07P, c0: c.x + P.tc0 }, () => st.t0, 'bbi7po0');
+    const plank = (x0: number, len: number, fold?: number) =>
+      w.add(
+        new Rig(c.X(x0), FL, px(len), 6, {
+          solid: true,
+          layer: 3,
+          tick: (r, w2) => {
+            if (fold === undefined) return;
+            if (st.folded[fold]) return;
+            if (r.rides(w2)) {
+              r.s.on = ((r.s.on as number | undefined) ?? 0) + 1;
+              if ((r.s.on as number) > P.fold * 120) {
+                st.folded[fold] = true;
+                r.setSolid(false);
+              }
+            } else r.s.on = 0;
+          },
+          paint: (ctx, r) => {
+            const folded = fold !== undefined && st.folded[fold];
+            if (folded) {
+              // folded shut at the hinge: two halves hanging down into the pit
+              box(ctx, r.x, r.y + 4, 4, 22, '#E8D9A8');
+              box(ctx, r.x + r.w - 4, r.y + 4, 4, 22, '#E8D9A8');
+              return;
+            }
+            box(ctx, r.x, r.y, r.w, r.h, '#E8D9A8');
+            for (let x = r.x + 3; x < r.x + r.w - 2; x += 6) box(ctx, x, r.y + 2, 3, 1, '#6E4A2E');
+            if (fold !== undefined) {
+              // the hinge: a dark crease with a cord through it, in the middle of the leaf
+              box(ctx, r.x + r.w / 2 - 1, r.y - 1, 2, r.h + 2, '#3B2416');
+              box(ctx, r.x + r.w / 2 - 3, r.y - 4, 6, 3, '#B71C1C');
+            } else box(ctx, r.x + 2, r.y - 3, 3, 3, '#6E4A2E');
+          },
+        }),
+      );
+    for (let k = 0; k < P.leaves; k++) {
+      const x0 = P.c0 + k * L;
+      plank(x0, P.end);
+      plank(x0 + P.end, P.mid, k);
+      plank(x0 + P.end + P.mid, k === P.leaves - 1 ? P.top : P.end);
+    }
+  },
+};
 
 export const meta07 = { family: 'troupe-pose-platform-shapes', betrayals: ['pose-shapes'], ending: 'bbi-pose-gate' };

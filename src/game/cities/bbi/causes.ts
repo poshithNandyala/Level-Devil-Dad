@@ -54,6 +54,7 @@ export const causeLines: Record<string, string[]> = {
   'bbi-pakhala': ['You sank in the pakhala, Dad. The rice floated apart.', 'The rice is a floor only till the water goes in. Stand on a badi before the jug tips.'],
   'bbi-badi': ['A hot badi on the head, Dad! He throws faster the longer you stand there.', 'Go on the first throw: hop on to that badi as it lands and ride it across.'],
   'bbi-buda': ['That badi went under, Dad: he threw it too hard.', 'Only the first throw floats. Ride that one, at once.'],
+  'bbi-pothi': ['The leaf folded shut under you, Dad: you stood on its hinge.', 'Each palm leaf holds at its ends and folds at the hinge in the middle: hop every hinge.'],
   'bbi-kachha': ['That line had its pleats tucked up, Dad: it rolled as soon as it lay down.', 'Look at the waists while they whirl: tucked up means let that stop go.'],
   'bbi-ghurni': ['Spun off into the rim, Dad! You jumped on while it was racing round.', 'Every badi goes slow at the edge of its circle and fast through the middle: hop only at the slow edge.'],
   'bbi-chamacha': ['His spoon scooped you up with the badi, Dad.', 'He scoops the badi you sit on too long: hop on to the next at its slow edge, don’t wait.'],
