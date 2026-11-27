@@ -1,4 +1,7 @@
 // Every hidden checkpoint must be a fair place to come back to: standing still there for 1.5 s is survivable.
+// Each checkpoint is probed from replay(), as a real respawn is, so the cost is checkpoints x route length.
+// That is allowed to grow: a stage takes as many checkpoints as its play needs (a 180 s marathon at one per
+// 8 s is 23), and the explicit timeout below is set so no test limit decides how far a player replays.
 import { describe, expect, it } from 'vitest';
 import { LEVELS } from '../src/game/levels';
 import { World, NO_INPUT } from '../src/game/world';
@@ -12,7 +15,9 @@ describe('checkpoints are safe to respawn at', () => {
     const probe = new World(def, INFO);
     def.build?.(probe);
     if (!probe.checkpoints.length) continue;
-    it(def.id, () => {
+    it(
+      def.id,
+      () => {
       (globalThis as any).__lddRec = [];
       play(def, SOLUTIONS[def.id]);
       const rec = (globalThis as any).__lddRec as number[];
@@ -31,6 +36,8 @@ describe('checkpoints are safe to respawn at', () => {
         }
       }
       expect(bad, `${def.id} unsafe checkpoints`).toEqual([]);
-    });
+      },
+      120_000,
+    );
   }
 });
