@@ -617,5 +617,87 @@ export const roshandan: Act = {
   },
 };
 
-export const s08 = { room: bhoolRoom, acts: [chaupar, upar, minar, toota, mehrab, utar, wapas, roshandan] };
+// ================================================================ act: sargoshi, the whispering gallery
+/** The whispering gallery: a word near the wall carries along it to the far end, where the guard listens.
+ *  The handrail is on the wall side, along a raised ledge; keep off it and walk the middle, though the
+ *  middle floor has holes in it (light coming up through them: hop those). */
+const SARGOSHI = { holes: [8, 17] };
+export const sargoshi: Act = {
+  id: 'lko08-sargoshi',
+  w: 26,
+  cps: [12],
+  advice: 'The whispering gallery: anything near the wall carries along it to the far end, where the guard listens. The handrail is on the wall side, along the raised ledge: keep off it. Walk the middle, and hop the holes where light comes up through the floor.',
+  paint: (g, c) => {
+    const x = c.x;
+    for (const h of SARGOSHI.holes) g.pit(x + h, x + h + 1, 15);
+    g.fill(x + 3, x + 22, 11, 11, '=');
+    g.fill(x + 23, x + 23, 13, 14, '#');
+    g.fill(x + 24, x + 25, 11, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    mazeWall(w, x, x + 25, [11, 15]);
+    for (const h of SARGOSHI.holes) well(w, x + h, x + h + 1, 'lko-roshandan');
+    const H = { on: 0, heard: false };
+    w.flags[c.f('h')] = H;
+    const gate = w.add(new Zone(c.X(20), px(8), px(3), px(3), 'lko-sargoshi'));
+    gate.on = false;
+    w.onTick((w2) => {
+      const p = w2.player;
+      const ledge = p.onGround && Math.abs(p.y + p.h - px(11)) < 2 && p.cx > c.X(3) && p.cx < c.X(23);
+      H.on = ledge ? H.on + 1 : 0;
+      if (H.on > 20 && !H.heard) {
+        H.heard = true;
+        w2.say('Kaun hai? | Who is there?', c.X(24), px(8), 2, 'npc');
+        w2.sfx('thud', c.X(21), px(10));
+      }
+      gate.on = H.heard;
+    });
+    w.add(
+      new Art((ctx, w2) => {
+        // the handrail along the wall-side ledge
+        ctx.fillStyle = '#8D6E63';
+        ctx.fillRect(c.X(3), px(11) - 12, px(20), 2);
+        for (let xx = c.X(3); xx < c.X(23); xx += 16) ctx.fillRect(xx, px(11) - 12, 2, 12);
+        // the ripples of a whisper running along the wall when you are on the ledge
+        if (H.on > 0) {
+          ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+          ctx.lineWidth = 1;
+          const ph = (w2.tick % 30) / 30;
+          for (let k = 0; k < 3; k++) {
+            ctx.beginPath();
+            ctx.arc(w2.player.cx + (k + ph) * 50, px(11) - 20, 6, Math.PI * 1.2, Math.PI * 1.8);
+            ctx.stroke();
+          }
+        }
+        // the guard at the far end, and his grille over the ledge's end
+        gent(ctx, c.X(24) + 8, px(11), 25, '#5D4A3A', { face: H.heard ? -1 : 1, arms: H.heard ? 1 : 0.3, skin: '#8C5A3C' });
+        ctx.fillStyle = '#3B3A36';
+        const gy = H.heard ? px(8) : px(5);
+        for (let xx = c.X(20); xx < c.X(23); xx += 6) ctx.fillRect(xx, gy, 2, px(3));
+        ctx.fillRect(c.X(20), gy + px(3) - 2, px(3), 2);
+        // light coming up through the holes in the middle floor
+        for (const h of SARGOSHI.holes) {
+          const x0 = c.X(h);
+          const g = ctx.createLinearGradient(0, FLOOR, 0, px(9));
+          g.addColorStop(0, 'rgba(255,236,190,0.55)');
+          g.addColorStop(1, 'rgba(255,236,190,0)');
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.moveTo(x0, FLOOR);
+          ctx.lineTo(x0 + 32, FLOOR);
+          ctx.lineTo(x0 + 40, px(11) + 4);
+          ctx.lineTo(x0 - 8, px(11) + 4);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = '#FFE9B0';
+          ctx.fillRect(x0, FLOOR + 3, 32, 2);
+        }
+      }, 0),
+    );
+    sign(w, x + 0.4, 10.4, 3.4, 'SARGOSHI', 'shop', null, 'dhire');
+  },
+};
+
+export const s08 = { room: bhoolRoom, acts: [chaupar, upar, minar, toota, mehrab, utar, wapas, sargoshi, roshandan] };
 export const meta08 = { family: 'entry-height-routes-level', betrayals: ['enter-height'], ending: 'lko-489' } as StageMeta;

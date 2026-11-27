@@ -55,6 +55,7 @@ export const causeLines: Record<string, string[]> = {
   'lko-seeti-jawab': ['The rival whistled back: the flock came down on the far roof as you crossed it.', 'Wait on the tank roof till the rival has called them, then go.'],
   'lko-ghee': ['You stood in the sizzling ghee, waiting for a squash that never comes: these heaps are set.', 'Hop while it sizzles: from half height the hop passes under the skewers.'],
   'lko-roshandan': ['That light came up from the hall below, through a hole: you stepped into the light, and through it.', 'Light coming down falls on floor; a beam widening upwards is a hole.'],
+  'lko-sargoshi': ['You walked by the wall, and the gallery carried it to the guard: he dropped his grille.', 'Keep off the wall-side ledge, rail or no rail: walk the middle.'],
   'lko-girah': ['You waited for the tumbling birds to clear, and the red ran out: a tumble is not a landing.', 'Cross early in the red, straight through the tumble.'],
   'lko-daana': ['Grain beats the flag: the flock came down to feed on it, red or not, and you were on the grain.', 'Wait at the near end of the roof; cross the grain while they are up.'],
   'lko-chirag': ['The lamplighter walked past your heap, and his lantern came round on to your side of it.', 'The light moves with him: when he passes a heap, its shady side changes. Keep the side away from his lantern.'],
