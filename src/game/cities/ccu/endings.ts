@@ -59,7 +59,8 @@ export const endings: Record<CcuEndingKind, Ending> = {
               return;
             }
             const still = p.onGround && Math.abs(p.vx) < 4 && p.cx > stop[0] && p.cx < stop[1];
-            if (!b.slowed && still && b.x < stop[0] - 8 && b.x > stop[0] - 150) {
+            // fix 4: he slows a bus-length short of the stop, so the wait at it is short
+            if (!b.slowed && still && b.x < stop[0] - 8 && b.x > stop[0] - 48) {
               b.slowed = true;
               w2.flags.twist = 'crawl';
             }

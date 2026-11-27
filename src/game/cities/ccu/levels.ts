@@ -1113,8 +1113,8 @@ export const levels = (): LevelDef[] => [
         feet(w);
         // the rail-groove bite is cut (DECISIONS.md S5: arrive walking, not from a jump, is KVT-02's / TVM-01's)
         // kumir-danga: a chalk river too wide to jump, safe only while the kumir counts
-        w.flags.kumirA = w.add(new Kumir(px(16), px(23.6), 4.5, 2.6));
-        w.flags.kumirB = w.add(new Kumir(px(101.5), px(110.8), 6.5, 2.6));
+        w.flags.kumirA = w.add(new Kumir(px(16), px(23.6), 4.2, 2.6));
+        w.flags.kumirB = w.add(new Kumir(px(101.5), px(110.8), 4, 2.6));
         sign(w, 105.4, 10.4, 3.2, 'KUMIR-DANGA', 'green', null, 'chalk river');
         onPass(w, px(56), (w2) => w2.guide('Tram! Ei je, shunun! | The tram line! Excuse me, listen!', (w3) => w3.player.cx < px(70)));
       },
