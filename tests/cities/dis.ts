@@ -20,6 +20,7 @@ import type { Stair } from '../../src/game/cities/dis/stair';
 import type { Trap, Wake } from '../../src/game/cities/dis/majuli';
 import type { Bull } from '../../src/game/cities/dis/goru';
 import type { Sluice } from '../../src/game/cities/dis/sluice';
+import type { Tekeli } from '../../src/game/cities/dis/tekeli';
 
 type Out = { move: 'L' | 'R' | ''; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
@@ -388,6 +389,8 @@ const bullLane = (x: number): Pol =>
     if (!clear) return { move: p.cx < px(onA ? x + 9 : x + 18) ? 'R' : '', jump: false };
     return { move: 'R', jump: false };
   });
+const tekeli = (w: World) => (w.flags.tekeli as Tekeli[])[0];
+const shoutAt = (i: number) => (w: World) => tekeli(w).at(w)[0] >= i;
 const sluice = (w: World) => (w.flags.sluice as Sluice[])[0];
 const drained = (w: World) => { const t = sluice(w).t(w); return t >= 200 && t < 220; };
 const wakes = (w: World) => w.flags.wakes as Wake[];
@@ -443,6 +446,7 @@ const ACT_MORE: [string, string, Play, string, string][] = [];
 act('dis10-talatal', 'DIS-10', [(x) => [...hopsUp(x + 2, 6), { hold: 'R', until: and(ground, X(x + 14.2)), max: 400 }, { hold: '', until: done, max: 900 }], 'dis-doba', 'stops on the step before the last to wait for it, as in 04']);
 act('dis07-card', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-gate', 'runs to the exit gate: it is shut before the card’s time'], [(x) => [{ hold: 'R', until: X(x + 25), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'dawdles on the road short of the gate: a corridor']);
 ACT_MORE.push(['dis07-card', 'DIS-07', (x) => [{ hold: 'R', until: X(x + 32), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'waits at the gate for the card: the deer cross there']);
+act('dis07-tekeli', 'DIS-07', [(x) => [{ hold: 'R', until: X(x + 9), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-lathi', 'stands still in the open by him: they shout his side'], [(x) => [{ hold: 'R', until: X(x + 6.2), max: 600 }, { hold: '', until: (w) => { const [i, k] = tekeli(w).at(w); return i === 0 && k >= 20; }, max: 300 }, { hold: 'R', until: done, max: 600 }], 'dis-lathi-ghur', 'runs through past him on the shout: across into the shouted side as he swings']);
 act('dis09-sluice', 'DIS-09', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-sluice', 'runs straight down the channel: the bell, and the flood'], [(x) => [{ hold: 'R', until: X(x + 4.6), max: 600 }, { hold: '', until: drained, max: 900 }, { hold: 'R', until: X(x + 10.1), max: 300 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: and(ground, X(x + 12)), max: 200 }, { hold: '', until: done, max: 1500 }], 'dis-roof', 'gets up on the embankment and stays there, safe from every flood: the oil slides him back in']);
 act('dis07-goru', 'DIS-07', [(x) => [{ hold: 'R', until: X(x + 6), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-goru', 'stands his ground in the lane: the bull stops, lowers its head and charges'], [(x) => [{ hold: 'R', until: done, max: 1500 }], 'dis-goru-lane', 'runs past the bull while it walks: it turns on him']);
 act('dis05-feast', 'DIS-05', [(x) => [{ hold: 'R', until: X(x + 6.6), max: 600 }, { hold: '', jump: 8, ticks: 8, note: 'up for the pitha on its stand' }, { hold: '', until: done, max: 600 }], 'dis-kol-paat', 'jumps up for a pitha: the leaf tips under the landing'], [(x) => [{ hold: 'R', until: X(x + 5.2), max: 600 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 600 }], 'dis-pit', 'jumps the whole feast at a run and lands at the ditch’s lip, running on into it']);
@@ -839,6 +843,13 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: X(x + 16), max: 600, note: 'take the card, through the first corridor, to the bench' },
     { hold: '', until: (w) => (w.flags.card as TimeCard[])[0].left(w) <= 200, max: 1500, note: 'sit out the card on the bench' },
     { hold: 'R', until: and(ground, X(x + 38)), max: 600, note: 'through the corridors, reaching the gate as it opens' },
+  ]),
+  'dis07-tekeli': mark('dis07-tekeli', (x) => [
+    { hold: 'R', until: X(x + 9), max: 600, note: 'his left: they shout "right"' },
+    { hold: '', until: shoutAt(1), max: 600, note: '"left!": over to his right' },
+    { hold: 'R', until: X(x + 12.3), max: 200 },
+    { hold: '', until: shoutAt(2), max: 600, note: '"right!": on past him' },
+    { hold: 'R', until: and(ground, X(x + 21)), max: 400 },
   ]),
   'dis09-sluice': mark('dis09-sluice', (x) => [
     { hold: 'R', until: X(x + 4.6), max: 600, note: 'to the channel’s edge' },
