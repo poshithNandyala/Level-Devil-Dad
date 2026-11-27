@@ -75,4 +75,4 @@ Death causes `pinched stung bitten hatchling` → `kvt-pinched kvt-stung kvt-bit
 | KVT-07 | 100 | 100 | 100 | 100 |
 | KVT-08 | 100 | 96 | 76 | 96 (dolphins) |
 | KVT-09 | 100 | 100 | 100 | 100 |
-| KVT-10 | 100 | 100 | 98 | 100 |
+| KVT-10 | 100 | 100 | 84 | 100 |
