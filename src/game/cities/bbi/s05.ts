@@ -767,16 +767,29 @@ export const act11 = patraAct('bbi05-patra', 'bbi5p');
  *  pass under in its short high moment. Stepping on its foot plate stops it where it is: stop it low and the
  *  pole's far end tips the bucket over the plate. A2: stop it yourself. A3: stop it when the stone is at its top. */
 export const THAKA = { plate: [4, 5] as [number, number], beam: [7, 15] as [number, number], per: 2.0, hi: FL - 30, lo: FL - 14, spill: 0.5 };
-export const act13: Act = {
-  id: 'bbi05-thaka',
+/** `bridge` (the finale's turn, law 7): the sweep stands over a ditch. Stopped at its top it leaves only the
+ *  ditch, and the raised stone tips if you climb on it; stopped low it rests on the rims: the stone is the bridge */
+export function thakaAct(id: string, key: string, bridge = false): Act {
+  return {
+  id,
   w: 20,
-  advice: 'Someone left the well sweep swinging, and in Raja week nobody will stop it. Its stone sweeps the lane, too wide to get under. Its foot plate stops it where it is: step on the plate when the stone is at its top, never when it is low, and walk under.',
+  advice: bridge
+    ? 'This sweep stands over a ditch. Stopped at its top it leaves you only the ditch, and a raised stone tips if you climb on it. Stop it low: then the stone rests on both rims, and it is your bridge.'
+    : 'Someone left the well sweep swinging, and in Raja week nobody will stop it. Its stone sweeps the lane, too wide to get under. Its foot plate stops it where it is: step on the plate when the stone is at its top, never when it is low, and walk under.',
   cps: [],
-  paint: () => {},
+  paint: (g, c) => {
+    if (bridge) g.pit(c.x + THAKA.beam[0], c.x + THAKA.beam[1]);
+  },
   build: (w, c) => {
-    village(w, c.x, c.x + 20);
-    const st = { t0: -1, frozen: -1 as number, y: THAKA.lo, spillT: -1, on: false };
-    w.flags.bbi5th = st;
+    if (!bridge) village(w, c.x, c.x + 20);
+    const st = { t0: -1, frozen: -1 as number, y: THAKA.lo, spillT: -1, on: false, tipped: false };
+    w.flags[key] = st;
+    if (bridge) {
+      const ditch = channel(w, c.x + THAKA.beam[0], c.x + THAKA.beam[1], 'bbi-kua', 'water');
+      ditch.o.tick = (r) => {
+        r.hazard!.cause = st.tipped ? 'bbi-pathara' : 'bbi-kua';
+      };
+    }
     onPass(w, c.X(0.5), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
     const yAt = (t: number) => THAKA.lo + (THAKA.hi - THAKA.lo) * (0.5 - 0.5 * Math.cos((2 * Math.PI * t) / THAKA.per));
     const plate = w.add(
@@ -788,7 +801,7 @@ export const act13: Act = {
           if (r.rides(w2)) {
             st.frozen = st.y;
             // stopped low: the pole's far end comes up and tips the bucket over the plate
-            if (st.y > (THAKA.hi + THAKA.lo) / 2) st.spillT = w2.tick;
+            if (!bridge && st.y > (THAKA.hi + THAKA.lo) / 2) st.spillT = w2.tick;
           }
         },
         paint: (ctx, r) => box(ctx, r.x, r.y, r.w, r.h, '#6E4A2E'),
@@ -817,6 +830,24 @@ export const act13: Act = {
         },
       }),
     );
+    // stopped, the stone is something to stand on: low it rests on the rims; high, your weight tips it into the ditch
+    if (bridge)
+      w.add(
+        new Rig(c.X(THAKA.beam[0]), THAKA.lo, px(THAKA.beam[1] - THAKA.beam[0] + 1), 4, {
+          solid: true,
+          layer: 4,
+          tick: (r, w2) => {
+            const stopped = st.frozen >= 0 && !st.tipped;
+            r.setSolid(stopped);
+            if (!stopped) return;
+            r.moveTo(w2, r.x, st.frozen);
+            if (st.frozen < (THAKA.hi + THAKA.lo) / 2 && r.rides(w2)) {
+              st.tipped = true;
+              st.frozen = FL + 20;
+            }
+          },
+        }),
+      );
     // the bucket's water over the plate, when it was stopped low
     w.add(
       new Rig(c.X(THAKA.plate[0]) - 4, FL - 60, px(THAKA.plate[1] - THAKA.plate[0] + 1) + 8, 60, {
@@ -832,6 +863,8 @@ export const act13: Act = {
     );
   },
 };
+}
+export const act13 = thakaAct('bbi05-thaka', 'bbi5th');
 
 /** act 14, the belt (IDEAS C6, idle-world family): the hand mill on the bank shares one drive belt with the cane
  *  crusher across the channel. Start the mill to be flung over (as 05 taught) and the crusher's rollers turn too,
