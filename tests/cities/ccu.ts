@@ -519,8 +519,7 @@ const lineRoute = (x: number, bad?: 'heads' | 'under'): Step[] => {
 const hornRoute = (x: number, bad?: 'centre' | 'hop'): Step[] => {
   const H = (w: World) => w.flags.horn as { p1: Porter; p2: Porter; h: { tellAt: number } };
   // up the pylon step and on to the first load, the relay's own way
-  const relay = relayRoute(x, [50, 50, 50], true);
-  const head: Step[] = relay.slice(0, relay.findIndex((st) => st.note?.startsWith('till the short porter')));
+  const head: Step[] = [relayRoute(x, [50, 50, 50], true)[0], walk(x + 7.4, 'along the long pylon step'), ...hopTo(px(x + 10), 10, 'up on the first porter')];
   if (bad === 'centre') return [...head, { hold: '', until: done, max: 1500, note: 'stand in the middle of the load' }];
   const back = (): Step => ({ hold: 'L', until: (w) => w.player.x <= H(w).p1.load.x + 3, max: 90, note: 'to the back of the load' });
   if (bad === 'hop') return [...head, back(), { hold: '', until: (w) => H(w).h.tellAt >= 0, max: 1500, note: 'wait for the horn' }, { hold: 'R', jump: 10, ticks: 30, note: 'hop to the porter in front on the horn' }, { hold: '', until: done, max: 400 }];
@@ -536,9 +535,13 @@ const hornRoute = (x: number, bad?: 'centre' | 'hop'): Step[] => {
 const boardRoute = (x: number, bad?: 'switch' | 'back'): Step[] => {
   const B = (w: World) => w.flags.board as { a: Porter; b: Porter };
   const relay = relayRoute(x, [45, 66, 0], true);
-  const head: Step[] = relay.slice(0, relay.findIndex((st) => st.note?.startsWith('till the short porter')));
-  // the room's switch: off the front on to the short one as he passes under (relay's own under-step)
-  const sw = relay.slice(relay.findIndex((st) => st.note?.startsWith('till the short porter')), relay.findIndex((st) => st.note === 'and drop on to his load') + 1);
+  const head: Step[] = [relay[0], walk(x + 7.4, 'along the long pylon step'), ...hopTo(px(x + 10), 10, 'up on the tall porter')];
+  // the room's switch: off the front on to the short one as he passes under
+  const sw: Step[] = [
+    { hold: '', until: (w) => B(w).a.riding(w) && B(w).b.x - B(w).a.x > 20 && B(w).b.x - B(w).a.x < 34, max: 2400, note: 'till the short porter is just ahead, under you' },
+    { hold: 'R', until: (w) => !w.player.onGround || B(w).b.riding(w), max: 200, note: 'step off the front' },
+    { hold: '', until: (w) => B(w).b.riding(w), max: 200, note: 'and drop on to his load' },
+  ];
   if (bad === 'switch') return [...head, ...sw, { hold: '', until: done, max: 2400, note: 'ride him to the board, as the room taught' }];
   if (bad === 'back') return [...head, ...sw, { hold: '', until: (w) => B(w).b.toRest() < 40, max: 2400 }, { hold: 'R', jump: 34, ticks: 34, long: true, note: 'off the front before his board, on to the pavement ahead' }, { hold: 'R', until: done, max: 400 }];
   return [...head, { hold: '', until: (w) => B(w).a.state !== 'walk', max: 3000, note: 'stay on: the board is taken, he walks on past it' }];

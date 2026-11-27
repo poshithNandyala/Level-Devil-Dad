@@ -114,6 +114,7 @@ function poleRoom(): LevelDef {
     map: Grid.ground(15).fill(4, 4, 13, 14, '#').fill(5, 6, 12, 12, '=').pit(11, 31).put(1, 14, '@').rows(),
     build(w: World) {
       khod(w, 11, 32);
+      checkpoint(w, 6.5);
       w.add(new Junction(px(24)));
       sign(w, 8.2, 8.4, 3.6, 'TRAM STOP', 'green', null, 'route 5');
       rival(w, 2, 15, 1, tara(4));
@@ -348,17 +349,19 @@ const baan: Act = {
 const horn: Act = {
   id: 'ccu07-horn',
   w: 36,
+  // on the long pylon step, before the porters
   cp0: false,
+  cps: [3],
   advice: 'A lorry behind is leaning on its horn: on every blare the porters step toward the parapet, and the load under you jumps back a stride without you. Be on the back of the load when the horn goes, and walk back to it again after each one. Don’t hop to the porter in front on the horn: he steps too.',
   paint: (g, c) => {
-    g.fill(c.x, c.x + 3, 14, 14, '#').fill(c.x + 1, c.x + 3, 13, 13, '#');
+    g.fill(c.x, c.x + 8, 14, 14, '#').fill(c.x + 1, c.x + 8, 13, 13, '#');
   },
   build: (w, c) => {
     w.add(new Girders(c.X(0), c.X(36)));
-    w.add(new Road(c.X(4), c.X(36), (w2) => (w2.flags.tipped && w2.tick - w2.flags.tipped < 120 ? 'ccu-parapet' : w2.flags.cha ? 'ccu-cha' : 'ccu-gaari')));
-    const p1 = w.add(new Porter({ x: c.X(5), v: 50, h: TALL, rests: [[c.X(36.8), Infinity]], go: (w2, me) => w2.player.isRiding(me.load), kind: 'sack' }));
-    const p2 = w.add(new Porter({ x: c.X(10), v: 50, h: TALL, go: walking(p1), off: c.X(36), kind: 'books' }));
-    const h = w.add(new Horn([p1, p2], [c.X(11), c.X(22)]));
+    w.add(new Road(c.X(9), c.X(36), (w2) => (w2.flags.tipped && w2.tick - w2.flags.tipped < 120 ? 'ccu-parapet' : w2.flags.cha ? 'ccu-cha' : 'ccu-gaari')));
+    const p1 = w.add(new Porter({ x: c.X(10), v: 50, h: TALL, rests: [[c.X(36.8), Infinity]], go: (w2, me) => w2.player.isRiding(me.load), kind: 'sack' }));
+    const p2 = w.add(new Porter({ x: c.X(15), v: 50, h: TALL, go: walking(p1), off: c.X(36), kind: 'books' }));
+    const h = w.add(new Horn([p1, p2], [c.X(16), c.X(26)]));
     w.flags.horn = { p1, p2, h };
   },
 };
@@ -369,16 +372,18 @@ const horn: Act = {
 const board: Act = {
   id: 'ccu07-board',
   w: 40,
+  // on the long pylon step, before the porters
   cp0: false,
+  cps: [3],
   advice: 'One CHA board, and it seats one. A short porter overtakes under you on his way to it, and he gets there first: he sets down, and yours finds the board taken and walks on past it. So this time don’t switch: stay on your load.',
   paint: (g, c) => {
-    g.fill(c.x, c.x + 3, 14, 14, '#').fill(c.x + 1, c.x + 3, 13, 13, '#');
+    g.fill(c.x, c.x + 8, 14, 14, '#').fill(c.x + 1, c.x + 8, 13, 13, '#');
   },
   build: (w, c) => {
     w.add(new Girders(c.X(0), c.X(40)));
-    road(w, c.X(4), c.X(40));
-    const a = w.add(new Porter({ x: c.X(5), v: 45, h: TALL, rests: [[c.X(40.8), Infinity]], go: (w2, me) => w2.player.isRiding(me.load), kind: 'sack' }));
-    const b = w.add(new Porter({ x: c.X(-2), v: 66, h: SHORT, rests: [[c.X(26), 6]], go: walking(a), off: c.X(40), kind: 'books' }));
+    road(w, c.X(9), c.X(40));
+    const a = w.add(new Porter({ x: c.X(10), v: 45, h: TALL, rests: [[c.X(40.8), Infinity]], go: (w2, me) => w2.player.isRiding(me.load), kind: 'sack' }));
+    const b = w.add(new Porter({ x: c.X(7), v: 66, h: SHORT, rests: [[c.X(26), 6]], go: walking(a), off: c.X(40), kind: 'books' }));
     w.add(new ChaiBoard(c.X(26)));
     w.flags.board = { a, b };
   },
@@ -1129,7 +1134,7 @@ const toran: Act = {
 
 
 /** CCU-10 acts 5 and 6: back over Howrah Bridge, on the porters, both ways up */
-const setu10a = relay('ccu10-setu', [45, 63, 83], true, 'Howrah Bridge again: tall porter, short one under you before his CHA board, tall one over you before the next, never jumping into a load coming the other way.', [0.2]);
+const setu10a = relay('ccu10-setu', [45, 63, 83], true, 'Howrah Bridge again: tall porter, short one under you before his CHA board, tall one over you before the next, never jumping into a load coming the other way.', [-0.5]);
 
 
 /** CCU-09 act: the canopy. Over a long stretch of lashed bamboo they let the canopy frame down on the
@@ -1162,7 +1167,7 @@ const dhak: Act = {
 const line: Act = {
   id: 'ccu09-line',
   cp0: false,
-  cps: [-1.8],
+  cps: [-1.8, 29],
   // 09's labelled momentum beat: ten bamboos, two more beats of the queue than it needs to teach
   w: 36,
   advice: 'Opening night, and the queue for the pandal: one person to a bamboo, and on each beat of the dhak they all step one bamboo on. Nobody climbs over the queue, and under it are the stakes. Move up into the bamboo they’ve just left, one beat at a time.',
