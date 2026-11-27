@@ -556,7 +556,16 @@ const jowarRoute = (x: number, bad?: 'stop' | 'long'): Step[] => {
 
 // ------------------------------------------------------------------ CCU-07 the bore
 /** CCU-07's shelter beat at the second pylon (the act's own route), for the scripts after it */
-const PYL = (x: number): Step[] => [walk(x + 3.9), ...hopTo(px(x + 6.4), 10, 'up the pylon step'), hopUp((w) => ahead(w, 55, 54), 'wait for the tall porter, and up on his load'), { hold: '', until: X(x + 39.4), max: 1800, note: 'ride him on to the causeway' }];
+const PYL = (x: number): Step[] => [
+  walk(x + 3.9),
+  ...hopTo(px(x + 6.4), 10, 'up the pylon step'),
+  hopUp((w) => ahead(w, 55, 54), 'wait for the tall porter, and up on his load'),
+  { hold: '', until: (w) => w.player.cx > px(x + 17.8), max: 1800, note: 'ride him to the mid-span pylon' },
+  { hold: 'R', until: (w) => w.player.onGround && !riding(w), max: 200, note: 'off on to its step' },
+  walk(x + 19.4),
+  hopUp((w) => ahead(w, 55, 54), 'and up on the next tall porter as he comes by'),
+  { hold: '', until: X(x + 39.4), max: 1800, note: 'ride him on to the causeway' },
+];
 
 // ------------------------------------------------------------------ CCU-10 the books brought back
 const pherotRoute = (x: number, bad?: 'quiet' | 'jump'): Step[] => {

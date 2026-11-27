@@ -347,15 +347,19 @@ const board: Act = {
 const pylon: Act = {
   id: 'ccu07-pylon',
   w: 40,
-  advice: 'The second pylon, and a porter about to leave from it: don’t take him, his chai stop is just ahead. Wait on the step for the tall porter coming up behind, and get on his load as he goes by.',
+  // fix 4: a mid-span pylon step, where the tall porter's span ends and the next one picks you up
+  cps: [19.2],
+  advice: 'The second pylon, and a porter about to leave from it: don’t take him, his chai stop is just ahead. Wait on the step for the tall porter coming up behind, and get on his load as he goes by. He takes you as far as the next pylon; the next tall porter takes you on from there.',
   paint: (g, c) => {
-    g.fill(c.x, c.x + 7, 14, 14, '#').fill(c.x + 5, c.x + 7, 13, 13, '#');
+    g.fill(c.x, c.x + 7, 14, 14, '#').fill(c.x + 5, c.x + 7, 13, 13, '#').fill(c.x + 17, c.x + 24, 14, 14, '#').fill(c.x + 18, c.x + 24, 13, 13, '#');
   },
   build: (w, c) => {
     w.add(new Girders(c.X(0), c.X(40)));
-    road(w, c.X(8), c.X(40));
+    road(w, c.X(8), c.X(17));
+    road(w, c.X(25), c.X(40));
     const p5 = w.add(new Porter({ x: c.X(8.8), v: 45, h: SHORT, rests: [[c.X(15), 3]], go: (w2, me) => w2.player.isRiding(me.load) }));
-    w.add(new Porter({ x: c.X(-6), v: 55, h: TALL, kind: 'books', rests: [[c.X(40.8), Infinity]], go: (w2) => w2.player.onGround && w2.player.cx > c.X(2) && w2.player.cx < c.X(8), off: Infinity }));
+    w.add(new Porter({ x: c.X(-3), v: 55, h: TALL, kind: 'books', rests: [[c.X(18.8), Infinity]], go: (w2) => w2.player.onGround && w2.player.cx > c.X(2) && w2.player.cx < c.X(8), off: Infinity }));
+    w.add(new Porter({ x: c.X(11), v: 55, h: TALL, kind: 'sack', rests: [[c.X(40.8), Infinity]], go: (w2) => w2.player.onGround && w2.player.cx > c.X(18) && w2.player.cx < c.X(25), off: Infinity }));
     w.add(new ChaiBoard(c.X(15)));
     w.add(new ChaiBoard(c.X(3), true));
   },
