@@ -61,7 +61,7 @@ function tehzeebRoom(): LevelDef {
     index: 10,
     name: 'Lakhnavi Tehzeeb',
     nameEn: 'Lucknow manners',
-    tagline: 'The last haveli. Two gentlemen at the door, a dancer inside, and the floor in front of the door is sewn with bells under chikan covers.',
+    tagline: 'The last haveli. Two gentlemen at the door, a dancer inside, and the floor is sewn with bells under chikan covers.',
     hint: 'The gentlemen still want you to bow, and they still push in whoever leans in first. But the white covers in front of the door have bells under them: a step is silent, a bow (standing still) rings them, and the dancer spins straight to you. Bow on the one plain board, then walk over the covers, take the second gentleman’s offer and hop the hole.',
     par: 18,
     map: Grid.ground(15).pit(19, 20).put(1, 14, '@').put(30, 14, 'E').rows(),
