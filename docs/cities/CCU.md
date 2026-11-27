@@ -20,6 +20,17 @@ Ashi, Bhalo theko, Jatra shubho hok, Saat baar), some with ", Dad" added.
   - 06 `duiline` now ends on its island.
   - 07 now ends on the bore's ghat steps, and the arch door has its own porter.
 
+**Fix round 3 (replay per tick, DECISIONS S4/S5):**
+- Cut:
+  - the CCU-01 rail-groove bite (S5; the kumir chalk river is 01's bite now)
+  - the dry clay everywhere (S4: the 05 room's second rule, `ccu05-ghat`'s and `ccu10-kumor`'s second halves)
+  - `ccu09-toran`, `ccu09-chala` and `ccu10-tram` (each had one trap)
+- Re-laid as short legs between ground stops, each leg started when Dad reaches its stop:
+  - 06: island stops on every tram leg (step off the back, hop back on: he waits)
+  - 09: the queue is two queues with the inner gate's deck between
+  - 10: the bus slows nearer the stop; setu is two spans (`ccu10-setu`, `ccu10-setu-b`) with the middle pylon between
+  - 07: girder and dui are one span each, pylon step to pylon step
+
 **Fix round 2 (allocation v3, DECISIONS.md 5):**
 - Cut, each for the reason in DECISIONS.md section 5:
   - `ccu05-uthon` (S4)
