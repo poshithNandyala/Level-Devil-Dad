@@ -21,7 +21,7 @@ export const lines: CityLines = {
     'Deewar par chalo, Dad! | Walk on the walls, Dad!',
     'Khana lekar mill se jao, Dad! | Take the food through the mill, Dad!',
   ],
-  taunt: ['Arre, dekha nahin? | Oh, didn’t you see?', 'Ek aur baar, Dad? | One more time, Dad?', 'Jungle one, Dad zero!', 'Kinara aa gaya tha! | You’d reached the shore!'],
+  taunt: ['Arre, dekha nahin? | Oh, didn’t you see?', 'Ek aur baar, Dad? | One more time, Dad?', 'Jungle ek, Dad zero! | Jungle one, Dad zero!', 'Kinara aa gaya tha! | You’d reached the shore!'],
   beaten: ['Bahut badhiya, Dad! | Very good, Dad!', 'Shabaash! | Well done!'],
   death: ['Kichad mein gaye! | Into the mud!', 'Magarmachh! Bhaago! | Crocodile! Run!', 'Baarish ne dhoka diya! | The rain tricked you!', 'Arre, dekha nahin? | Oh, didn’t you see?', 'Ek aur baar, Dad? | One more time, Dad?'],
   near: ['Bas thoda sa! | Just a little!', 'Kinara aa gaya tha! | You’d reached the shore!'],
@@ -30,7 +30,7 @@ export const lines: CityLines = {
   cleared: 'Sri Vijaya Puram cleared. Shabaash! | Sri Vijaya Puram cleared. Well done!',
   brag: 'Shabaash! | Well done!',
   idle: ['Ship ka intezaar, Dad? | Waiting for the ship, Dad?', 'Kya dekh rahe ho? | What are you looking at?', 'Ship ka intezaar, Dad? | Waiting for the ship, Dad?'],
-  seven: 'Saat baar! Ship nikal gayi! | Seven times! The ship has left!',
+  seven: 'Saat baar! Ship nikal gaya! | Seven times! The ship has left!',
   lastLife: 'Aakhri chance, dhyan se! | Last chance, carefully!',
 };
 

@@ -330,7 +330,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 };
 
 /** the obvious correction after the first death, which dies too */
-const fix: Record<string, { steps: Step[]; cause?: string }> = {
+const fix: Record<string, { steps: Step[]; cause?: string; act?: string }> = {
   'SVP-01': { steps: [...tourToAwning(), { hold: '', until: (w) => lane(w).t > 70 + 620 + 40, max: 1200, note: 'under the awning till the rain stops' }, hopUntil((w) => w.state !== 'play', 'and up the lane at once')], cause: 'svp-baha' },
   'SVP-09': {
     steps: [
@@ -365,7 +365,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
 };
 
 /** more scripted first-timer deaths and 'like last time' moves */
-const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {};
+const mistakes: Record<string, { what: string; steps: Step[]; cause?: string; act?: string }[]> = {};
 /** the stage played properly up to act `act`, then `then(x0)`: for the plays that must die inside an added act */
 function atAct(id: string, act: string, then: (x: number) => Step[]): Step[] {
   const def = LEVELS.find((l) => l.id === id)!;
@@ -387,6 +387,7 @@ function doorDeath(id: string, what: string, cause: string, then: (D: number) =>
   (mistakes[id] ??= []).push({
     what,
     cause,
+    act: 'door',
     get steps() {
       return atDoor(id, then);
     },
@@ -400,6 +401,7 @@ function actDeath(id: string, act: string, what: string, cause: string, then: (x
   (mistakes[id] ??= []).push({
     what,
     cause,
+    act,
     get steps() {
       return atAct(id, act, then);
     },
@@ -840,15 +842,17 @@ actDeath('SVP-07', 'svp07-teesra', 'sit down on the luggage like everyone, a thi
 const later = (id: string, act: string, cause: string, then: (x: number) => Step[]) => {
   fix[id] = {
     cause,
+    act,
     get steps() {
       return atAct(id, act, then);
     },
-  };
+  } as (typeof fix)[string];
 };
 later('SVP-09', 'svp09-pul', 'svp-eent2', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'across the brick of the cellar' }]);
 // 08: the street and the longer street done properly, then the gutter at the door: wait for the rain, then cross it
 fix['SVP-08'] = {
   cause: 'svp-nala',
+  act: 'door',
   get steps(): Step[] {
     const def = LEVELS.find((l) => l.id === 'SVP-08')!;
     const out: Step[] = [...ROOM['SVP-08']];
@@ -880,6 +884,7 @@ later('SVP-06', 'svp06-sanjh', 'svp-kichad2', (x) => [
 // 10: the second attempt gets through the mill with the food put down, and dies at the creek (a different trap from the blade)
 fix['SVP-10'] = {
   cause: 'svp-magar3',
+  act: 'svp10-nadi',
   get steps() {
     return atAct('SVP-10', 'svp10-nadi', () => [hopUntil((w) => w.state !== 'play', 'hop the logs without reading the arrow')]);
   },
