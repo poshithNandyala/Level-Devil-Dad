@@ -756,6 +756,7 @@ const grainUp = (w: World) => {
   return p >= 250 && p < 330;
 };
 actRoutes['lko10-daana'] = (x) => [
+  walkTo(x + 1, 300, 'slow down before the roof edge (a late stop must not carry off it)'),
   walkTo(x + 4.3, 300),
   hops([x + 4.3, x + 8.2], 'on to the near end of the grain roof'),
   until(grainUp, 900, 'they have fed and lifted'),
@@ -994,8 +995,8 @@ mistakes['LKO-09'].push(
 );
 
 mistakes['LKO-10'].push(
-  { what: 'the grain: crossing on the red flag, as on the roofs', steps: [...through('LKO-10', room10, 1), walkTo(actX('LKO-10', 1) + 4.3, 300), hops([actX('LKO-10', 1) + 4.3, actX('LKO-10', 1) + 8.2]), until((w) => { const k = w.flags['lko10-daana:k']; return !!k && k.sig.feeding(w) && k.f.order(w).c === 'red'; }, 900), { hold: 'R', until: done, max: 600 }], cause: 'lko-daana' },
-  { what: 'the grain: hopping over the feeding birds', steps: [...through('LKO-10', room10, 1), walkTo(actX('LKO-10', 1) + 4.3, 300), hops([actX('LKO-10', 1) + 4.3, actX('LKO-10', 1) + 8.2]), until((w) => { const k = w.flags['lko10-daana:k']; return !!k && k.sig.feeding(w) && k.clock.t >= 0 && (w.tick - k.clock.t) % 420 > 80; }, 900), hops([actX('LKO-10', 1) + 8.2, actX('LKO-10', 1) + 9.6, actX('LKO-10', 1) + 14.4]), until(done, 600)], cause: 'lko-daana-udaan' },
+  { what: 'the grain: crossing on the red flag, as on the roofs', steps: [...through('LKO-10', room10, 1), walkTo(actX('LKO-10', 1) + 1, 300), walkTo(actX('LKO-10', 1) + 4.3, 300), hops([actX('LKO-10', 1) + 4.3, actX('LKO-10', 1) + 8.2]), until((w) => { const k = w.flags['lko10-daana:k']; return !!k && k.sig.feeding(w) && k.f.order(w).c === 'red'; }, 900), { hold: 'R', until: done, max: 600 }], cause: 'lko-daana' },
+  { what: 'the grain: hopping over the feeding birds', steps: [...through('LKO-10', room10, 1), walkTo(actX('LKO-10', 1) + 1, 300), walkTo(actX('LKO-10', 1) + 4.3, 300), hops([actX('LKO-10', 1) + 4.3, actX('LKO-10', 1) + 8.2]), until((w) => { const k = w.flags['lko10-daana:k']; return !!k && k.sig.feeding(w) && k.clock.t >= 0 && (w.tick - k.clock.t) % 420 > 80; }, 900), hops([actX('LKO-10', 1) + 8.2, actX('LKO-10', 1) + 9.6, actX('LKO-10', 1) + 14.4]), until(done, 600)], cause: 'lko-daana-udaan' },
 );
 
 mistakes['LKO-10'].push(
