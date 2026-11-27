@@ -15,7 +15,7 @@ import { washLine } from './s03';
 import { Heap, karahi, shadows, type Light } from './s04';
 import { Dancer, makeGuru, makeTihai } from './s06';
 import { Flock, Flyer, drawFlyer, roofOf, roofs, type Roof } from './s09';
-import { arch, well, hooks, chausar } from './s08';
+import { arch, well, hooks, chausar, makeDarwaza } from './s08';
 import { on } from './kit';
 import { julus, nala, photoGroup, pace, strollers, type PhotoPlan } from './s07';
 
@@ -452,5 +452,17 @@ const do_ = makeTihai(
   'The tihai again, but tonight he cuts it short: sam comes on the second lamp, not the third. Be on a board when the second lights. The boards are chikan covers over bells now: keep your feet moving on them, a pause is a bow.',
   'DO HI',
 );
-export const s10 = { room: tehzeebRoom, acts: [dhulai, darbar, tasveer, julusBells, jawab, raasta, daana, chirag, seedha, do_, galiyara] };
+/** The hall door again, but tonight the maze stays put: the arch you saw is the arch. And the floor you
+ *  come out on is bells under chikan covers, so 08's calm look round on arrival is a bow. Run on. */
+const thahra = makeDarwaza(
+  'lko10-thahra',
+  false,
+  'The hall door again, but tonight the maze stays put: the arch you saw over the well’s edge is still there. And the floor past the door is bells under chikan covers: stop to look round, as in the maze, and that is a bow. Run on and jump the arch you saw.',
+  'THAHRA',
+  (w, c) => {
+    const d = new Dancer(w, c.X(17) + 8, 300, 'lko-tehzeeb');
+    covered(w, c.x + 6, c.x + 16, d, 30);
+  },
+);
+export const s10 = { room: tehzeebRoom, acts: [dhulai, darbar, tasveer, julusBells, jawab, raasta, daana, chirag, seedha, do_, thahra, galiyara] };
 export const meta10 = { family: 'finale-bow-meets-bells', betrayals: ['bow-vs-bells'], ending: 'lko-tehzeeb' } as StageMeta;

@@ -705,12 +705,12 @@ export const sargoshi: Act = {
  *  nearer now. Take the calm on arrival to look again. Hop over the door and nothing moves, but the arch you
  *  saw from out here lifts you only into the old lamp hooks. */
 const DARWAZA = { door: 4, out: 6.5, before: 17, after: 13 };
-export const darwaza: Act = {
-  id: 'lko08-darwaza',
+export const makeDarwaza = (id: string, moves: boolean, advice: string, word: string, extra?: (w: World, c: Parameters<NonNullable<Act['build']>>[1]) => void): Act => ({
+  id,
   w: 32,
   cp0: false,
   cps: [-2, 24],
-  advice: 'A hall door: walk through it and it sets you down a little further on, and while you were in it the arches moved. The one you saw over the well’s edge is gone; there is one nearer now. Look again before you jump. Hop over the door and nothing moves, but that arch lifts you only into the old lamp hooks.',
+  advice,
   paint: (g, c) => {
     const x = c.x;
     g.pit(x + 19, x + 31, 15);
@@ -724,7 +724,7 @@ export const darwaza: Act = {
     hooks(w, x + 18, x + 21, px(7));
     const D = { warped: false };
     w.flags[c.f('d')] = D;
-    const archAt = () => c.X(D.warped ? DARWAZA.after : DARWAZA.before) + 8;
+    const archAt = () => c.X(D.warped && moves ? DARWAZA.after : DARWAZA.before) + 8;
     let prev = w.player.cx;
     w.onTick((w2) => {
       const p = w2.player;
@@ -737,7 +737,7 @@ export const darwaza: Act = {
       // the one arch, wherever it stands now: at a jump it lifts you a floor (the old one: into the hooks)
       const ax = archAt();
       if (prev < ax && p.cx >= ax && !p.onGround && p.y + p.h > FLOOR - 56) {
-        const to = D.warped ? { x: c.X(15) + 8, y: px(11) } : { x: c.X(19) + 8, y: px(7) };
+        const to = D.warped ? { x: (moves ? c.X(15) : c.X(19)) + 8, y: px(11) } : { x: c.X(19) + 8, y: px(7) };
         w2.warp(to.x - p.w / 2, to.y - p.h, 'blink');
         w2.sfx('blink', to.x, to.y - 8);
       }
@@ -770,9 +770,16 @@ export const darwaza: Act = {
         ctx.stroke();
       }, 4),
     );
-    sign(w, x + 0.4, 10.4, 3.4, 'DARWAZA', 'shop', null, 'hall');
+    extra?.(w, c);
+    sign(w, x + 0.4, 10.4, 3.4, word, 'shop', null, 'hall');
   },
-};
+});
+export const darwaza = makeDarwaza(
+  'lko08-darwaza',
+  true,
+  'A hall door: walk through it and it sets you down a little further on, and while you were in it the arches moved. The one you saw over the well’s edge is gone; there is one nearer now. Look again before you jump. Hop over the door and nothing moves, but that arch lifts you only into the old lamp hooks.',
+  'DARWAZA',
+);
 
 export const s08 = { room: bhoolRoom, acts: [chaupar, upar, minar, toota, mehrab, utar, wapas, darwaza, sargoshi, roshandan] };
 export const meta08 = { family: 'entry-height-routes-level', betrayals: ['enter-height'], ending: 'lko-489' } as StageMeta;
