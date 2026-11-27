@@ -10,6 +10,7 @@ import { collectible, door, px, rival, sign } from '../../levels/kit';
 import type { Act } from '../../levels/acts';
 import { husDheki } from './dheki';
 import { luitThanda } from './cold';
+import { husCard } from './card';
 import { onPass } from '../../levels/trolls';
 import { tour } from '../../levels/tour';
 import { longStage } from '../../levels/chunks';
@@ -664,7 +665,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: pithaRoom(), acts: [runUp(bhogali, 3)], twist: 'dis-laru-plate', par: 34, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
   longStage({ base: gamosaRoom(), acts: [atithi], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
   longStage({ base: majuliRoom(), acts: [], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'silt-behind-the-spur', betrayals: ['spur-silt'], ending: 'dis-tea-ladder' } }),
-  longStage({ base: husoriRoom(), acts: [bordoisila, runUp(husDhol, 3), husDheki, chowk], cps: [16], twist: 'dis-uruka-net', par: 90, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
+  longStage({ base: husoriRoom(), acts: [bordoisila, runUp(husDhol, 3), husDheki, husCard, chowk], cps: [16], twist: 'dis-uruka-net', par: 90, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
   longStage({ base: gorhRoom(), acts: [gorhJeep, runUp(gorhBagori, 3)], twist: 'dis-watch-tower', par: 74, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
   longStage({ base: rangGharRoom(), acts: [rangTug, kaidhara], twist: 'dis-royal-seat', par: 36, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
   longStage({ base: luitRoom(), acts: [runUp(luitDhol, 3), runUp(luitBordoisila, 3), luitTug, luitThanda, luitGamosa], twist: 'dis-post-bank', par: 63, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
