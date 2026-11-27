@@ -13,12 +13,15 @@ Notes for the integrator (MECHANICS.md, WAVE1.md, CITIES.md). Branch `city/kvt`.
   under a jagged beach-rock lip a full leap is death; near the top the steps narrow to two tiles; over the
   summit the lagoon is the other way, so you walk off each step and never hop down; the breached crest wants a
   long jump well past each storm cut. `RubbleBank` in `kvt/encores.ts`.
-  Fix round 1 (route 36.7 s, `lives: 'act'`, 10 calm checkpoints): `kvt09-pavizham` four steps, the lip over
+  Fix round 1 and 2 (route 42.6 s, `lives: 'act'`, 12 calm checkpoints): `kvt09-pavizham` four steps, the lip over
   two of them; `kvt09-kodumudi` two wide steps then two narrow ones up, four down (walk off each, never hop
   down: the stage's one descent); `kvt09-kadalbhitti` the sea wall, whose first break is a heap you land deep on
   and whose second is one loose block you must jump whole; `kvt09-varambu` three heaps of widths 3, 1 and 5
   with water on both sides and a rock islet between (land in the middle; deep slides you off the far side;
-  `RubbleBank.ridge`); `kvt09-murivu` two storm cuts, two and three tiles. `RubbleBank` has `dir` (the slide
+  `RubbleBank.ridge`); `kvt09-murivu` two storm cuts, two and three tiles. Round 2: `kvt09-ozhukku` (F496, the slide
+  is the ride): a shingle shelf under a low beach-rock lip; land short and let the landings slide you off the edge,
+  and the shingle carries you on under the lip (`RubbleBank` `carry`); then a heap on a pillar: land on the side you
+  want to go. The summit's descent is three steps (3, 4, 2 wide) and the sea wall's ascent six (3, 2, 4, 3, 2, 4). `RubbleBank` has `dir` (the slide
   goes either way) and `ridge`. (The round-2 acts `kvt09-irangal` and `kvt09-kuzhi` were cut: both re-asked
   kodumudi's descent.)
   Door `kvt-buried-door`: the door is buried under a heap of storm rubble; every landing on the heap slides it
@@ -40,7 +43,7 @@ Notes for the integrator (MECHANICS.md, WAVE1.md, CITIES.md). Branch `city/kvt`.
   passes; `kvt10-veliyettam` the incoming tide, KVT-08's rule reversed: three heads that go under while you move on them and hold while you stand (`SinkStep` 'move'); `kvt10-paaru` the reef rises only
   for a jumper; `kvt10-kotta` the basket that does not stop at the bottom; `kvt10-kannadi` cracked glass holds
   only at a run; `kvt10-thoni` the boat that is not coming back.
-- Acts: `kvt09-pavizham kvt09-kodumudi kvt09-kadalbhitti kvt09-varambu kvt09-murivu`
+- Acts: `kvt09-pavizham kvt09-kodumudi kvt09-kadalbhitti kvt09-ozhukku kvt09-varambu kvt09-murivu`
   `kvt10-midden kvt10-palaka kvt10-kallu kvt10-aama kvt10-choora kvt10-thengu kvt10-irandu kvt10-kaattu`
   `kvt10-kamaanam kvt10-nizhal kvt10-veliyettam kvt10-paaru kvt10-kotta kvt10-kannadi kvt10-thoni kvt10-irakkam`.
 - Door endings: `kvt-buried-door kvt-sand-arm`.
@@ -74,5 +77,5 @@ Death causes `pinched stung bitten hatchling` → `kvt-pinched kvt-stung kvt-bit
 | KVT-06 | 100 | 100 | 80 | 100 |
 | KVT-07 | 100 | 100 | 100 | 100 |
 | KVT-08 | 100 | 96 | 76 | 96 (dolphins) |
-| KVT-09 | 100 | 100 | 100 | 100 |
+| KVT-09 | 100 | 100 | 83 | 100 |
 | KVT-10 | 100 | 100 | 84 | 100 |
