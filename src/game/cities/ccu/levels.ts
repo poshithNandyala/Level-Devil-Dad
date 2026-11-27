@@ -858,7 +858,7 @@ const rok10: Act = {
 const bisarjan: Act = {
   id: 'ccu10-bisarjan',
   w: 32,
-  cps: [12.6],
+  cps: [7.4],
   advice: 'The pandal again, after the festival: they’re taking it down. A cloth top you land on, they untie under you. Stand on the bamboo now and jump over each panel to the next bamboo. Under the roof frame they let a panel down on to the bamboo: straight on from that one.',
   paint: (g, c) => {
     const x = c.x;
