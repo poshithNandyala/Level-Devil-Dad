@@ -131,7 +131,7 @@ export const gamHusori: Act = {
   id: 'dis05-husori',
   w: 66,
   advice: 'The singers again, with a host in every yard. Walk with them through each gate, inside their ring. After the second gate two givers stand side by side before a pit: let the first one welcome you and hop over the second, or the third gamosa hides the pit.',
-  cps: [1.5, 32.5],
+  cps: [1.5, 18.5, 32.5, 40.5],
   paint: (g, c) => {
     g.pit(c.x + 56, c.x + 57);
   },
@@ -265,7 +265,7 @@ export const husLane: Act = {
   id: 'dis07-lane',
   w: 78,
   advice: 'One more lane of houses: three gates, and at the last the host hands out gamosas first, so wait in the ring till it opens.',
-  cps: [1.5, 24.5, 48.5],
+  cps: [1.5, 18.5, 24.5, 42.5, 48.5, 66.5],
   build: (w, c) => {
     const x = c.x;
     husori(w, x + 4, x, [{ x: x + 22, ritual: 0, stay: 200 }, { x: x + 46, ritual: 0, stay: 200 }, { x: x + 70, ritual: 170, stay: 330 }], 32);
@@ -337,7 +337,7 @@ export const rangBihu: Act = {
   id: 'dis09-bihu',
   w: 80,
   advice: 'Bihu in the Rang Ghar ground: the singers go through three gates on the way to the pavilion. Walk with them, inside their ring. At the middle gate they wait while the gamosas are handed out.',
-  cps: [1.5, 26.5, 50.5],
+  cps: [1.5, 18.5, 26.5, 42.5, 50.5, 68.5],
   build: (w, c) => {
     const x = c.x;
     husori(w, x + 4, x, [{ x: x + 22, ritual: 0, stay: 200 }, { x: x + 46, ritual: 170, stay: 330 }, { x: x + 72, ritual: 0, stay: 200 }], 32);

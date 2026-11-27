@@ -60,9 +60,9 @@ const tourLevel = () =>
       ['lamp', 104, {}],
     ],
     things: [],
-    par: 24,
+    par: 34,
     hint: 'A boy walks the promenade with a tray of hot lal chah, and the tray swings on his arm. Touch him, or hop clean over him (the tray tips and the tea spreads over where you land), and you are scalded. There is a ghat, a step down to the river, in the middle of the promenade: climb down into it and let him walk over your head. Climb out only once he is a few steps past: as he crosses the ghat he swings the tray right back behind him, over the steps. A second boy comes from Fancy Bazar once you are up on the deck: stay up there until he has set his tray down.',
-    cps: [27.5, 50.5, 58.5, 99.6],
+    cps: [27.5, 50.5, 58.5, 82.5, 99.6],
     paint: (g) => {
       g.pit(ghat.x0, ghat.x1, 15);
       g.fill(ghat.x0, ghat.x1, 17, 17, '#');
@@ -220,7 +220,7 @@ const bagan: Act = {
   id: 'dis03-bagan',
   w: 34,
   advice: 'A sprinkler runs over the path. While it sprays and for a little after, the path is wet and you slide: you cannot stop behind her. Wait before the pipe until it is dry again, then follow her as before.',
-  cps: [3.5],
+  cps: [3.5, 14.5, 24.5],
   build: (w, c) => {
     const x = c.x;
     garden(w, [x + 18, x + 27], { x: px(x + 5), from: px(x), endX: px(x + 33) });
@@ -533,7 +533,7 @@ const ghar: Act = {
   id: 'dis07-ghar',
   w: 62,
   advice: 'Two more houses, a long walk apart. The gates are the same: they open when the group is at them and you are inside the ring. Walk with them. Don’t run ahead to the next gate and wait at it: the stakes are on this side.',
-  cps: [14.5, 44.5],
+  cps: [14.5, 20.5, 44.5, 52.5],
   build: (w, c) => {
     const x = c.x;
     husori(w, x + 4, x, [{ x: x + 24, ritual: 0, stay: 200 }, { x: x + 56, ritual: 0, stay: 200 }]);
@@ -546,7 +546,7 @@ const chowk: Act = {
   id: 'dis07-chowk',
   w: 74,
   advice: 'Three more gates. At the middle one the host gives the singers gamosas first, and the gate stays shut until he is done: stay in the ring till it opens, and don’t go through before it does. Leave early and the group leaves you behind the stakes.',
-  cps: [14.5, 36.5, 58.5],
+  cps: [14.5, 18.5, 36.5, 42.5, 58.5, 66.5],
   build: (w, c) => {
     const x = c.x;
     husori(w, x + 4, x, [{ x: x + 22, ritual: 0, stay: 200 }, { x: x + 46, ritual: 170, stay: 330 }, { x: x + 70, ritual: 0, stay: 200 }]);
@@ -659,7 +659,7 @@ const luitBagan: Act = {
   id: 'dis10-bagan',
   w: 30,
   advice: 'The tea rows: a plucker walks ahead and the hedges step down only after she has picked them. Follow a few steps behind her.',
-  cps: [1.5],
+  cps: [1.5, 14.5],
   build: (w, c) => {
     const x = c.x;
     garden(w, [x + 12, x + 20], { x: px(x + 5), from: px(x), endX: px(x + 29) });
@@ -671,7 +671,7 @@ const luitGate: Act = {
   id: 'dis10-gate',
   w: 40,
   advice: 'The husori group, and a gate that waits for the host’s gamosa. Wait in front of it, not touching, until the group has come, the ritual is done and it opens for you inside the ring.',
-  cps: [3.5],
+  cps: [3.5, 26.5],
   build: (w, c) => {
     const x = c.x;
     husori(w, x + 4, x, [{ x: x + 30, ritual: 140, stay: 300 }]);
@@ -792,13 +792,13 @@ void hutDoor;
 
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), shape: 'tour', meta: { family: 'carrier-spills-on-contact', betrayals: ['carrier-spill'], ending: 'dis-tea-tray' } },
-  longStage({ base: charRoom(), acts: [chapori, dhar], twist: 'dis-hut-shut', par: 30, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
-  longStage({ base: teaRoom(), acts: [bagan], twist: 'dis-tea-chest', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-tea-chest' } }),
-  longStage({ base: pithaRoom(), acts: [tawa, bhogali], twist: 'dis-laru-plate', par: 32, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
-  longStage({ base: gamosaRoom(), acts: [biya, gamChar, gamHusori, gamGhat, atithi], twist: 'dis-gamosa-latch', par: 26, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
-  longStage({ base: majuliRoom(), acts: [majuli, majChang, majChar3, chapori6, majGhat, majChar, majPitha, majChang2], twist: 'dis-tea-ladder', par: 26, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
-  longStage({ base: husoriRoom(), acts: [ghar, husPaar, husGhat, chowk, husLane], twist: 'dis-gamosa-door', par: 120, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-gamosa-door' } }),
-  longStage({ base: gorhRoom(), acts: [kaziranga, gorhJeep, gorhBagori, gorhKohora], twist: 'dis-watch-tower', par: 40, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
-  longStage({ base: rangGharRoom(), acts: [rangBihu, kaidhara, rangWide, dhal], twist: 'dis-royal-seat', par: 26, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
-  longStage({ base: luitRoom(), acts: [luitTawa, luitChar, luitBagan, luitGorh, luitGate, luitGhat, luitChang, luitBank, luitGamosa], twist: 'dis-post-bank', par: 80, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
+  longStage({ base: charRoom(), acts: [chapori, dhar], twist: 'dis-hut-shut', par: 36, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
+  longStage({ base: teaRoom(), acts: [bagan], cps: [14.5], twist: 'dis-tea-chest', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-tea-chest' } }),
+  longStage({ base: pithaRoom(), acts: [tawa, bhogali], twist: 'dis-laru-plate', par: 34, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
+  longStage({ base: gamosaRoom(), acts: [biya, gamChar, gamHusori, gamGhat, atithi], twist: 'dis-gamosa-latch', par: 82, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
+  longStage({ base: majuliRoom(), acts: [majuli, majChang, majChar3, chapori6, majGhat, majChar, majPitha, majChang2], twist: 'dis-tea-ladder', par: 82, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
+  longStage({ base: husoriRoom(), acts: [ghar, husPaar, husGhat, chowk, husLane], cps: [18.5], twist: 'dis-gamosa-door', par: 186, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-gamosa-door' } }),
+  longStage({ base: gorhRoom(), acts: [kaziranga, gorhJeep, gorhBagori, gorhKohora], twist: 'dis-watch-tower', par: 90, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
+  longStage({ base: rangGharRoom(), acts: [rangBihu, kaidhara, rangWide, dhal], twist: 'dis-royal-seat', par: 84, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
+  longStage({ base: luitRoom(), acts: [luitTawa, luitChar, luitBagan, luitGorh, luitGate, luitGhat, luitChang, luitBank, luitGamosa], twist: 'dis-post-bank', par: 133, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
 ];
