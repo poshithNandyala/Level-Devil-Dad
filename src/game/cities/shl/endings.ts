@@ -4,8 +4,9 @@ import { ending as e02 } from './s02';
 import { ending as e03 } from './s03';
 import { ending as e04 } from './s04';
 import { ending as e05 } from './s05';
+import { ending as e06 } from './s06';
 
-export type ShlEndingKind = 'shl-dish' | 'shl-tollbar' | 'shl-halfdoor' | 'shl-pool';
+export type ShlEndingKind = 'shl-dish' | 'shl-tollbar' | 'shl-halfdoor' | 'shl-pool' | 'shl-rootdoor';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<ShlEndingKind, true> {}
@@ -16,4 +17,5 @@ export const endings: Record<ShlEndingKind, Ending> = {
   'shl-tollbar': e03,
   'shl-halfdoor': e04,
   'shl-pool': e05,
+  'shl-rootdoor': e06,
 };

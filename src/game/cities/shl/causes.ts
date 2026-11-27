@@ -16,5 +16,8 @@ export const causeLines: Record<string, string[]> = {
   'shl-um': ['You walked into the fall while it was pouring.', 'Full and thinning both kill. Wait for the water to sit on the white mark on the rock, then cross.'],
   'shl-wah': ['You went in while it was dry, and the fall came back on you.', 'The dry moment is the lure: the water returns with no warning. Cross when it sits on the mark, not after.'],
   'shl-pung': ['The basin flooded with you in it.', 'The basin floods whenever either sister is full or thinning. Cross it only when both sit on their marks, and go at once.'],
+  'shl-gorge': ['Into the gorge: no root was there yet.', 'A root must grow across first. Jump at a guide and wait for its root; on a root you grew, stand on the tip and it sprouts the next span.'],
+  'shl-spray': ['The spray at the low landing took you.', 'The short root lands in the spray. Climb the rock and take the long guide: its root lands dry on the far rock.'],
+  'shl-jri': ['The guide you walked into grew a root straight across the path, into you.', 'Every guide you touch grows a root. Hop over a guide you do not want.'],
   'shl-lintel': ['The low lintel caught your knup.', 'A low arch or a half-door needs the knup off: jump at the hook before it. A tall arch does not.'],
 };

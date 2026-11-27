@@ -11,6 +11,7 @@ import { room as room02, act as act02, actSun as act02b, meta02 } from './s02';
 import { room as room03, act as act03, actWet as act03b, meta03 } from './s03';
 import { room as room04, act as act04, actSmall as act04b, meta04 } from './s04';
 import { room as room05, act as act05, actBasin as act05b, meta05 } from './s05';
+import { room as room06, act as act06, actPole as act06b, meta06 } from './s06';
 
 /** a slot not built in this round: an empty room with a door, named so the tester knows (replaced by its stage file) */
 function unbuilt(n: number, name: string, nameEn: string, meta: LevelDef['meta']): LevelDef {
@@ -39,7 +40,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: room03(), acts: [act03, act03b], twist: 'shl-tollbar', par: 45, shape: 'long', meta: meta03 }),
   longStage({ base: room04(), acts: [act04, act04b], twist: 'shl-halfdoor', par: 40, shape: 'long', meta: meta04 }),
   longStage({ base: room05(), acts: [act05, act05b], twist: 'shl-pool', par: 60, shape: 'long', lives: 'act', meta: meta05 }),
-  unbuilt(6, 'Root Guide', 'Growing the bridge', { family: 'choose-guide-root-grows', betrayals: ['choose-grow'], ending: 'shl-root-door' }),
+  longStage({ base: room06(), acts: [act06, act06b], twist: 'shl-rootdoor', par: 60, shape: 'long', lives: 'act', meta: meta06 }),
   unbuilt(7, 'Mawsmai', 'The growing cave', { family: 'drip-growth-gate-pairs', betrayals: ['drip-growth'], ending: 'shl-column' }),
   unbuilt(8, 'Wettest Desert', 'Sohra’s water', { family: 'tank-fills-when-not-under-rain', betrayals: ['cloud-meter'], ending: 'shl-tap' }),
   unbuilt(9, 'Eight-Day Market', 'Ïewduh', { family: 'day-cycle-rearranged-stalls', betrayals: ['day-cycle'], ending: 'shl-sold-out' }),
