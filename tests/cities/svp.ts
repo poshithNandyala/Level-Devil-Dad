@@ -12,6 +12,7 @@ import type { Stall } from '../../src/game/cities/svp/kadhai';
 import type { Pool } from '../../src/game/cities/svp/hauz';
 import type { LiftBridge } from '../../src/game/cities/svp/khula';
 import type { Lift } from '../../src/game/cities/svp/uthao';
+import type { Belt } from '../../src/game/cities/svp/nali';
 import type { SawHall } from '../../src/game/cities/svp/s02';
 import type { Creek } from '../../src/game/cities/svp/s03';
 import type { Herd, LateBoat } from '../../src/game/cities/svp/s04';
@@ -679,6 +680,16 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     hopUntil(and(ground, X(x + 27)), 'across the ledge'),
     { hold: 'R', until: and(ground, X(x + 35)), max: 600 },
   ],
+  'svp09-patta': (x) => [
+    { hold: 'R', until: and(ground, X(x + 10.5)), max: 900, note: 'along the seabed to under the hatch' },
+    { hold: '', until: (w) => (w.flags.belts as Belt[])[0].rising, max: 400, note: 'stand still: the belt lets go' },
+    { hold: 'R', until: (w) => w.player.onGround && w.player.y + w.player.h < FLOOR_Y - 100 && w.player.cx > px(x + 13), max: 600, note: 'up through the hatch and along the deck' },
+    { hold: 'R', until: and(ground, X(x + 20.8)), max: 400, note: 'along the deck to its end' },
+    { hold: 'R', jump: 16, ticks: 16, long: true, note: 'jump the gap to the pillar' },
+    { hold: 'R', until: and(ground, X(x + 28)), max: 400, note: 'along the top of the pillar' },
+    { hold: 'R', until: (w) => w.player.onGround && w.player.y + w.player.h > FLOOR_Y - 2 && w.player.cx > px(x + 31), max: 600, note: 'down the far side' },
+    { hold: 'R', until: and(ground, X(x + 35)), max: 600 },
+  ],
   'svp04-ghat': (x) => [
     { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },
     putDown(herdA, 'put it down at the stall: the herd gathers there'),
@@ -930,6 +941,14 @@ const windSpot = (idx: number, against = false) => (w: World) => {
   return (d > 0) !== against ? a.x1 - 20 : a.x0 + 20;
 };
 const intoStreet = (x: number): Step => ({ hold: 'R', until: (w) => { return w.player.onGround && w.player.cx >= px(x + 4.5); }, max: 900, note: 'on along the road into the street' });
+actDeath('SVP-09', 'svp09-patta', 'let go under the middle of the pontoon', 'svp-hull', (x) => [
+  { hold: 'R', until: and(ground, X(x + 15)), max: 900, note: 'to under the middle of the pontoon' },
+  { hold: '', until: (w) => w.state !== 'play', max: 900, note: 'stand still: up into the hull' },
+]);
+actDeath('SVP-09', 'svp09-patta', 'walk the seabed to the end and let go there', 'svp-pankha', (x) => [
+  { hold: 'R', until: and(ground, X(x + 22.6)), max: 1500, note: 'to the foot of the pillar' },
+  { hold: '', until: (w) => w.state !== 'play', max: 900, note: 'and let go there' },
+]);
 actDeath('SVP-05', 'svp05-ooncha', 'stand on the footprints, then step out on to the ledge', 'svp-nazar', (x) => [
   ...onBench(x),
   { hold: 'R', until: (w) => w.player.onGround && w.player.y + w.player.h > FLOOR_Y - 2 && w.player.cx >= px(x + 7), max: 400, note: 'down off the bench on to the footprints' },

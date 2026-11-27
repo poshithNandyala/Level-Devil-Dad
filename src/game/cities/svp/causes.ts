@@ -18,6 +18,8 @@ export const causeLines: Record<string, string[]> = {
   'svp-bheed': ['Bheed! The whole hall ran for the ship, and you were in the way.', 'Down in the trench while they run for the ship, and out again behind them.'],
   'svp-jahaz': ['Jahaz! You got on the first ship, and it sailed.', 'The first ship is the crowd’s. Wait for the second, and step over to it when it docks.'],
   'svp-nali': ['Nali! The hose ran out under the second arch.', 'The hose lies where you went. Under an arch it bends and uses up line: go over at least one arch in a stretch.'],
+  'svp-hull': ['Hull! You let go under the pontoon and floated straight up into its belly.', 'The way up is a straight line from where you let go. The pontoon has one hatch, with its light coming down: let go under that.'],
+  'svp-pankha': ['Pankha! You let go at the edge and came up beside the pontoon, by the propeller.', 'You float up from exactly where you stood. The pillar side is not the way: the only way up to the deck is the hatch.'],
   'svp-nali2': ['Nali! This pontoon’s hose is shorter, and there was no spare for a bend.', 'The second stretch has no line to spare: climb over both arches, do not walk under either.'],
   'svp-chhajja': ['Chhajja! The tin sheds its water on its low side, and that is where you stood.', 'Read the slope, not the wind: a lean-to is dry under its high end, whichever way the rain comes.'],
   'svp-chhajja2': ['Chhajja! The second stall is high on the other side.', 'Every roof has its own slope. Look at which end of this one is high.'],

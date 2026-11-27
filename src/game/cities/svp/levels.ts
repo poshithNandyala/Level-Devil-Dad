@@ -15,7 +15,7 @@ import { toteRoom, sanjh } from './s06';
 import { jettyRoom, ghatSte, doosra, teesra } from './s07';
 import { monsoonRoom, gali, deewar, chhajja, tin } from './s08';
 import { jadRoom, pul } from './s09';
-import { nali } from './nali';
+import { nali, patta } from './nali';
 import { dweepRoom, nadi, jadFin, samanFin, naliFin, ghatFin } from './s10';
 
 export const levels = (): LevelDef[] => [
@@ -62,6 +62,6 @@ export const levels = (): LevelDef[] => [
   longStage({ base: toteRoom(), acts: [sanjh], twist: 'svp-bough-door', par: 49, shape: 'long', meta: { family: 'bird-weight-bends-tree', betrayals: ['crowd-weight-bends'], ending: 'svp-bough-door' } }),
   longStage({ base: jettyRoom(), acts: [ghatSte, doosra, teesra], twist: 'svp-ticket-window', par: 80, shape: 'marathon', lives: 'act', meta: { family: 'luggage-stacks-as-floor', betrayals: ['crowd-belongings-floor'], ending: 'svp-ticket-window' } }),
   longStage({ base: monsoonRoom(), acts: [gali, deewar, chhajja, tin], twist: 'svp-gutter-river', par: 80, shape: 'wtf', meta: { family: 'rain-direction-reverses-awnings', betrayals: ['second-season'], ending: 'svp-gutter-river' } }),
-  longStage({ base: jadRoom(), acts: [pul, nali], twist: 'svp-frame-door', par: 34, shape: 'long', meta: { family: 'brick-crumbles-roots-hold', betrayals: ['visual-rule-brick-root'], ending: 'svp-frame-door' } }),
+  longStage({ base: jadRoom(), acts: [pul, nali, patta], twist: 'svp-frame-door', par: 34, shape: 'long', meta: { family: 'brick-crumbles-roots-hold', betrayals: ['visual-rule-brick-root'], ending: 'svp-frame-door' } }),
   longStage({ base: dweepRoom(), acts: [nadi, jadFin, samanFin, naliFin, ghatFin], twist: 'svp-dweep-gate', par: 133, shape: 'marathon', lives: 'act', meta: { family: 'finale-food-through-sawmill', betrayals: ['food-through-sawmill'], ending: 'svp-dweep-gate' } }),
 ];
