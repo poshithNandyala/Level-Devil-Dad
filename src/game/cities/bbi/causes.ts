@@ -14,8 +14,6 @@ export const causeLines: Record<string, string[]> = {
   'bbi-chhuin': ['He jumped and tagged you in the air, Dad. You were it.', 'Hopping him is a tag too: let him touch you, then back over the line to pass it on.'],
   'bbi-chheli': ['The goat walked the pounder, Dad, and its head swung up into you.', 'Jump only when the pounder lies flat, with the goat off its beam.'],
   'bbi-sinha': ['The goat butted you, Dad.', 'Wait on the straw until the goat has crossed back to your side, then jump.'],
-  'bbi-dhua': ['Into the wash vat, Dad: you steered too soon and hit the bank.', 'Stay over the sari on the first bounce; steer only on the second, once you’re above the bank.'],
-  'bbi-sari': ['They let go of the sari, Dad! Two bounces is all you get.', 'Use the second bounce: steer on to the bank once you are above it.'],
   'bbi-bhanwar': ['Down the drain with the badi, Dad.', 'The water takes every badi to the hole: hop up on to the far rim just before yours goes down.'],
   'bbi-pada': ['The tower fell on you, Dad! Its top lands right on the edge.', 'Wait back by the scuffs, not at the edge, and go the moment it lands.'],
   'bbi-sutra': ['Through the undyed thread, Dad: there’s no patch on it.', 'Let the shuttle by, then hop the hole in the motif.'],

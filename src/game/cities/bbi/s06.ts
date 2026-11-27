@@ -267,66 +267,6 @@ export const act6 = sidhiAct('bbi06-sidhi', 'bbi6s');
 /** act 7, the beater: the motif holds, but at its end the beater sweeps the warp from the weaver's side */
 export const L06R: LoomCfg = { c0: 3, n: 8, speeds: [4, 2, 1, 3, 1, 4, 3, 2], beat: 0.8, hold: 2.2, shuttle: [[0, -1]], reed: true };
 export const act7 = loomAct('bbi06-rachh', 16, L06R, 'bbi6q', 'Here the beater sweeps the warp at the end of the motif beat. Let the shuttle by, then cross at once: be off the threads before the beater comes.');
-/** act 10, the wet sari: two dyers hold a fresh-dyed sari stretched over the wash vat, beside a high bank. It
- *  throws you up, higher on the second bounce, the only one that reaches the bank. A2: bounce in place first:
- *  steer on the first and you hit the bank's face. A3: after the second bounce they let go, laughing. */
-export const SARI = { c0: 7, c1: 9, ledge: 11, top: 6, v: [460, 700] };
-export const act10: Act = {
-  id: 'bbi06-sari',
-  w: 24,
-  advice: 'The dyers hold a wet sari over the wash vat, and it throws you up. The first bounce isn’t high enough for the bank: stay over the sari. The second is, and it’s the last: after it they let go. Steer on to the bank once you are above it.',
-  cps: [],
-  paint: (g, c) => {
-    g.pit(c.x + SARI.c0, c.x + SARI.ledge - 1);
-    g.fill(c.x + SARI.ledge, c.x + 23, 15 - SARI.top, 14, '#');
-  },
-  build: (w, c) => {
-    const st = { bounces: 0, on: false, dropped: false };
-    w.flags.bbi6sr = st;
-    const vat = channel(w, c.x + SARI.c0, c.x + SARI.ledge - 1, 'bbi-dhua', 'water');
-    vat.o.tick = (r) => {
-      r.hazard!.cause = st.dropped ? 'bbi-sari' : 'bbi-dhua';
-    };
-    w.add(
-      new Rig(c.X(SARI.c0), FL - 16, px(SARI.c1 - SARI.c0 + 1), 4, {
-        solid: true,
-        layer: 3,
-        tick: (r, w2) => {
-          if (!r.solid?.collidable) return;
-          const on = r.rides(w2);
-          if (on && !st.on) {
-            const p = w2.player;
-            p.vy = -SARI.v[Math.min(st.bounces, 1)];
-            p.onGround = false;
-            p.launched = true;
-            st.bounces++;
-            if (st.bounces >= 2) {
-              st.dropped = true;
-              r.setSolid(false);
-            }
-          }
-          st.on = on;
-        },
-        paint: (ctx, r, w2) => {
-          const p = w2.player;
-          const sag = r.solid?.collidable && p.x + p.w > r.x && p.x < r.x + r.w && p.y + p.h >= r.y - 2 && p.y + p.h <= r.y + 2 ? 3 : 0;
-          if (r.solid?.collidable) {
-            box(ctx, r.x, r.y + sag, r.w, 3, '#B71C1C');
-            for (let x = r.x + 4; x < r.x + r.w - 4; x += 10) box(ctx, x, r.y + sag + 1, 4, 1, '#F4D35E');
-            folk(ctx, r.x - 6, FL, 24, '#C68642', { skirt: '#2A9D8F', face: 1, arm: 0.2 });
-            folk(ctx, r.x + r.w + 6, FL - 2, 24, '#C68642', { skirt: '#2A9D8F', face: -1, arm: 0.2 });
-          } else {
-            box(ctx, r.x - 4, FL - 4, 14, 4, '#B71C1C');
-            folk(ctx, r.x - 6, FL, 24, '#C68642', { skirt: '#2A9D8F', face: 1, arm: 1.2 });
-            folk(ctx, r.x + r.w + 6, FL - 2, 24, '#C68642', { skirt: '#2A9D8F', face: -1, arm: 1.2 });
-          }
-        },
-      }),
-    );
-    sign(w, c.x + 18, 15 - SARI.top - 4.6, 3.2, 'SAMBALPURI', 'shop', null, 'D');
-  },
-};
-
 /** act 11, the undyed thread (loom family): one warp thread here was never tied and dyed, so it carries no
  *  patch: the motif lines up with a hole in it. A2: the shuttle still goes first. A3: and then the hole, which
  *  only shows once the bridge is there: hop it. */
