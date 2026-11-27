@@ -7,6 +7,7 @@ import type { CityTests } from '../city-tests';
 import { LEVEL_BY_ID } from '../../src/game/levels';
 import { VIEW } from '../../src/game/cities/shl/s01';
 import type { SwayState } from '../../src/game/cities/shl/s03';
+import type { Fall } from '../../src/game/cities/shl/s05';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -16,6 +17,7 @@ interface Mem {
 }
 type Policy = (w: World, m: Mem, d: Door) => Out;
 const go = (move: Move): Out => ({ move, jump: false });
+const px = (t: number) => t * 16;
 /** on the road (not up on a deck), standing, at or past column x */
 const road = (x: number) => and(ground, X(x), (w: World) => w.player.y >= 224);
 const hop = (at: number, note: string, ticks = 12): Step[] => [
@@ -188,6 +190,53 @@ const halfdoorPolicy: Policy = (w, m, d) => {
   return go('R');
 };
 
+// ------------------------------------------------------------------ SHL-05
+/** cross each fall ahead the moment its water sits on the mark (with time in hand), waiting a tile and a half short of it */
+function fordWalk(key: string, onlyUpTo?: number): (w: World) => Out {
+  return (w) => {
+    const falls = w.flags[key] as Fall[];
+    const p = w.player;
+    const next = falls.filter((f) => px(f.c0 + 3) > p.x && (onlyUpTo === undefined || f.c0 <= onlyUpTo)).sort((a, b) => a.c0 - b.c0)[0];
+    if (!next) return go('R');
+    const edge = px(next.c0) - 26;
+    if (p.x + p.w < edge) return go('R');
+    if (p.x + p.w > px(next.c0) - 2) return go('R');
+    const ph = next.at(w);
+    return go(ph.k === 'mark' && ph.left > 0.75 ? 'R' : '');
+  };
+}
+/** the lure: wait for the fall to go dry, then go */
+function dryWalk(key: string): (w: World) => Out {
+  return (w) => {
+    const falls = w.flags[key] as Fall[];
+    const p = w.player;
+    const next = falls.filter((f) => px(f.c0 + 3) > p.x).sort((a, b) => a.c0 - b.c0)[0];
+    if (!next) return go('R');
+    if (p.x + p.w < px(next.c0) - 26) return go('R');
+    if (p.x + p.w > px(next.c0) - 2) return go('R');
+    return go(next.at(w).k === 'dry' ? 'R' : '');
+  };
+}
+/** the basin: both sisters on their marks, then straight through */
+function basinWalk(x: number): (w: World) => Out {
+  return (w) => {
+    const falls = (w.flags.shl5 as Fall[]).filter((f) => f.c0 >= x + 6 && f.c0 <= x + 14).sort((a, b) => a.c0 - b.c0);
+    const p = w.player;
+    const a = falls[0],
+      b = falls[1];
+    if (p.x + p.w < px(a.c0) - 26) return go('R');
+    if (p.x + p.w > px(a.c0) - 2) return go('R');
+    const pa = a.at(w),
+      pb = b.at(w);
+    const ok = pa.k === 'mark' && pb.k === 'mark' && Math.min(pa.left, pb.left) > 1.0;
+    return go(ok ? 'R' : '');
+  };
+}
+const room05 = (): Step[] => [{ policy: fordWalk('shl5', 14), until: and(ground, X(18)), max: 4000, note: 'the first sister: on the mark' }, { hold: 'R', until: X(29), max: 400 }];
+const act05 = (x: number): Step[] => [{ policy: fordWalk('shl5', x + 22), until: and(ground, X(x + 26)), max: 6000, note: 'two sisters, each on her mark' }, { hold: 'R', until: X(x + 32), max: 400 }];
+const act05b = (x: number): Step[] => [{ policy: basinWalk(x), until: and(ground, X(x + 18)), max: 6000, note: 'both on their marks, then through the basin' }, { hold: 'R', until: X(x + 34), max: 400 }];
+const poolPolicy: Policy = (w) => fordWalk('shl5')(w);
+
 // ------------------------------------------------------------------ tables
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['SHL-01'] = tourRoute();
@@ -197,7 +246,9 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('SHL-03', 0, []);
   S['SHL-04'] = room04();
   lengthen('SHL-04', 0, []);
-  for (const n of [5, 6, 7, 8, 9, 10]) {
+  S['SHL-05'] = room05();
+  lengthen('SHL-05', 0, []);
+  for (const n of [6, 7, 8, 9, 10]) {
     S[`SHL-${String(n).padStart(2, '0')}`] = [{ hold: 'R', until: done, max: 1200, note: 'not built yet' }];
   }
 }
@@ -209,6 +260,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-02': { steps: runOn, cause: 'shl-edge' },
   'SHL-03': { steps: runOn, cause: 'shl-sway' },
   'SHL-04': { steps: runOn, cause: 'shl-slap' },
+  'SHL-05': { steps: runOn, cause: 'shl-um' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-01': { steps: [...upTo(21), { hold: 'R', until: X(64), max: 600 }, { hold: '', until: done, max: 1500, note: 'stand outside the cloud and wait' }], cause: 'shl-lyoh' },
@@ -218,9 +270,10 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
     cause: 'shl-wake',
   },
   'SHL-04': { steps: [...atHook(5, 'take the knup'), { hold: 'R', until: done, max: 2400, note: 'and keep it on' }], cause: 'shl-dieng' },
+  'SHL-05': { steps: [{ policy: dryWalk('shl5'), until: done, max: 4000, note: 'wait for the bed to run dry, then go' }], cause: 'shl-wah' },
 };
-const ROOMS: Record<string, () => Step[]> = { 'SHL-02': room02, 'SHL-03': room03, 'SHL-04': room04 };
-const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'] };
+const ROOMS: Record<string, () => Step[]> = { 'SHL-02': room02, 'SHL-03': room03, 'SHL-04': room04, 'SHL-05': room05 };
+const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'], 'SHL-05': ['shl05-ar', 'shl05-pung'] };
 const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
 const prefix = (id: string, act: string): Step[] => [...ROOMS[id](), ...ACT_ORDER[id].slice(0, ACT_ORDER[id].indexOf(act)).flatMap((a) => actRoutes[a](actX0(id, a)))];
 /** the stage up to the act (route), then `steps` played from the act's first column; built when the test runs */
@@ -256,8 +309,23 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     inAct('SHL-04', 'shl04-khynnah', 'keep the small knup on into the heavy rain', (x) => [...atHook(x + 5, 'swap to the small knup'), { hold: 'R', until: done, max: 1500 }], 'shl-slap'),
     inAct('SHL-04', 'shl04-khynnah', 'keep the big knup through the school lane', () => [{ hold: 'R', until: done, max: 1500 }], 'shl-lintel'),
   ],
+  'SHL-05': [
+    inAct('SHL-05', 'shl05-ar', 'go as the second sister starts to thin', (x) => [
+      { policy: fordWalk('shl5', x + 7), until: and(ground, X(x + 11)), max: 4000 },
+      { hold: 'R', until: X(x + 19.5), max: 600 },
+      { hold: '', until: (w) => (w.flags.shl5 as Fall[]).find((f) => f.c0 === x + 22)!.at(w).k === 'fade', max: 1500 },
+      { hold: 'R', until: done, max: 600 },
+    ], 'shl-um'),
+    inAct('SHL-05', 'shl05-pung', 'cross the basin when the nearer sister is on her mark, never mind the far one', (x) => [
+      { hold: 'R', until: X(x + 3), max: 600 },
+      { hold: '', until: (w) => { const f = (w.flags.shl5 as Fall[]).find((q) => q.c0 === x + 6)!.at(w); const g = (w.flags.shl5 as Fall[]).find((q) => q.c0 === x + 14)!.at(w); return f.k === 'mark' && f.left > 1.0 && g.k !== 'mark'; }, max: 3000 },
+      { hold: 'R', until: done, max: 900 },
+    ], 'shl-pung'),
+  ],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'shl05-ar': act05,
+  'shl05-pung': act05b,
   'shl02-sngi': act02,
   'shl02-lyoh': (x) => [{ policy: cloudWalk('shl2b', x + 21), until: and(ground, X(x + 21.5)), max: 5000, note: 'beam to beam with the sun out and time in hand' }, { hold: 'R', until: X(x + 28), max: 400 }],
   'shl03-wake': act03,
@@ -269,6 +337,7 @@ const endingPolicies: Record<string, Policy> = {
   'shl-dish': dishPolicy,
   'shl-tollbar': tollbarPolicy,
   'shl-halfdoor': halfdoorPolicy,
+  'shl-pool': poolPolicy,
 };
 
 export const test: CityTests = {
@@ -278,5 +347,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['SHL-02', 'SHL-03', 'SHL-04'],
+  fair: ['SHL-02', 'SHL-03', 'SHL-04', 'SHL-05'],
 };

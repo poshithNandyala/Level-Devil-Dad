@@ -9,9 +9,12 @@ export const causeLines: Record<string, string[]> = {
   'shl-sway': ['The deck swung you off into the Umngot.', 'The swing is your own running. Walk the deck in short bursts: a few steps, a stop, a few steps.'],
   'shl-wake': ['The boat’s wake added a swing, and the deck threw you.', 'When a boat is coming under the span, stand on the tower, not on the deck. Cross after its wake.'],
   'shl-slip': ['You slid on the wet planks, and the slide swung the deck until it threw you.', 'On wet planks a stop is not a stop at once: you slide on. Stop earlier, stand longer, then the next burst.'],
-  'shl-wah': ['Into the river.', 'Stay on the deck and the towers; the river is deep.'],
+  'shl-dawki': ['Into the Umngot.', 'Stay on the deck and the towers; the river is deep.'],
   'shl-bar': ['The toll bar came down on you: the deck was still swinging.', 'Stop short of the bar until the red line on the deck is gone, then walk through.'],
   'shl-dieng': ['The branch caught your knup.', 'The knup stands high and wide over your head. Jump at the hook before the branch to hang it up, and take it again after.'],
   'shl-drip': ['The awning’s drips hit your bare head.', 'Those drips are a spike row to a bare head. Jump at the hook before the awning to put the knup on.'],
+  'shl-um': ['You walked into the fall while it was pouring.', 'Full and thinning both kill. Wait for the water to sit on the white mark on the rock, then cross.'],
+  'shl-wah': ['You went in while it was dry, and the fall came back on you.', 'The dry moment is the lure: the water returns with no warning. Cross when it sits on the mark, not after.'],
+  'shl-pung': ['The basin flooded with you in it.', 'The basin floods whenever either sister is full or thinning. Cross it only when both sit on their marks, and go at once.'],
   'shl-lintel': ['The low lintel caught your knup.', 'A low arch or a half-door needs the knup off: jump at the hook before it. A tall arch does not.'],
 };

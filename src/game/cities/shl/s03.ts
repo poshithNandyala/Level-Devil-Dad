@@ -100,7 +100,7 @@ export function river(w: World, c0: number, c1: number) {
   w.add(
     new Rig(px(c0), FL + 22, px(c1 - c0 + 1), 30, {
       layer: 0,
-      cause: 'shl-wah',
+      cause: 'shl-dawki',
       inset: 0,
       paint: (ctx, r, w2) => {
         ctx.fillStyle = 'rgba(120,200,210,0.35)';
