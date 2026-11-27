@@ -164,6 +164,10 @@ export function cart(w: World, c0: number, cBale: number, key: string, o: { v0: 
         }
       }
       ctx.globalAlpha = 1;
+      if (st.shed) {
+        box(ctx, st.shed[0], FL - 76, st.shed[1] - st.shed[0], 8, '#5D4037');
+        for (let x = st.shed[0]; x < st.shed[1]; x += 48) box(ctx, x, FL - 68, 3, 68, '#5D4037');
+      }
       if (st.mist) {
         ctx.fillStyle = 'rgba(214,226,232,0.45)';
         ctx.fillRect(x0 + DECK_W + 40, FL - 90, stopX - x0, 92);
@@ -261,6 +265,15 @@ export const acts: Act[] = [
   ride('koh07-dui-chikna', 'DUI CHIKNA', A + 'two wet patches. After the first your lean is mirrored; after the second it is mirrored again, back to normal.', 58, { v0: 100, v1: 160, obs: [[8, 'beam'], [14, 'slick'], [21, 'hole'], [27, 'slick'], [34, 'beam'], [42, 'hole']] }),
   ride('koh07-bazaar', 'BAZAAR', A + 'past the bazaar the beams are awnings, low and close together. Front, front, then a hole, then front again.', 56, { v0: 110, v1: 170, obs: [[8, 'beam'], [13, 'beam'], [20, 'hole'], [26, 'beam'], [31, 'beam'], [40, 'hole']] }),
   ride('koh07-kohra-dui', 'KOHRA DUI', A + 'mist again, and a wet patch in it: listen for the slide.', 58, { v0: 100, v1: 150, obs: [[8, 'hole'], [15, 'beam'], [22, 'slick'], [29, 'hole'], [36, 'beam'], [43, 'hole']], mist: true }),
+  ride('koh07-chhaon', 'CHHAON', A + 'a long shed over the lane (the shelter beat): its rafters are beams, one after another, so stay at the front the whole way under it, and go back only for the hole where it ends.', 58, { v0: 100, v1: 150, obs: [[8, 'beam'], [12, 'beam'], [16, 'beam'], [20, 'beam'], [24, 'beam'], [31, 'hole'], [40, 'beam']], shed: [7, 26] }),
+  ride('koh07-khonoma', 'KHONOMA', A + 'towards Khonoma: holes in a row, then one beam between them. Back, back, front, back.', 54, { v0: 100, v1: 150, obs: [[8, 'hole'], [14, 'hole'], [21, 'beam'], [28, 'hole'], [36, 'hole']] }),
+  ride('koh07-jotsoma', 'JOTSOMA', A + 'the Jotsoma turn: a wet patch right after a beam, so the hole after it wants the mirrored lean.', 56, { v0: 110, v1: 160, obs: [[8, 'beam'], [12, 'slick'], [19, 'hole'], [27, 'beam'], [35, 'hole'], [42, 'beam']] }),
+  ride('koh07-tez-dui', 'TEZ DUI', A + 'quicker again, and the gaps between the obstacles are short: commit early.', 56, { v0: 120, v1: 190, obs: [[8, 'hole'], [13, 'beam'], [18, 'hole'], [23, 'beam'], [29, 'hole'], [35, 'beam'], [42, 'hole']] }),
+  ride('koh07-kohra-teen', 'KOHRA TEEN', A + 'the thickest mist: nothing to see at all. The sound after each obstacle names the next.', 58, { v0: 100, v1: 150, obs: [[8, 'hole'], [15, 'hole'], [22, 'beam'], [29, 'hole'], [36, 'beam'], [43, 'beam']], mist: true }),
+  ride('koh07-bazaar-dui', 'BAZAAR DUI', A + 'the lower bazaar: awnings and potholes alternate, and a wet patch in the middle.', 58, { v0: 110, v1: 170, obs: [[8, 'beam'], [14, 'hole'], [20, 'beam'], [25, 'slick'], [31, 'hole'], [37, 'beam'], [44, 'hole']] }),
+  ride('koh07-dhalan-dui', 'DHALAN DUI', A + 'the second steep lane: the quickest yet. Two beams, two holes, a beam.', 60, { v0: 130, v1: 210, obs: [[8, 'beam'], [14, 'beam'], [21, 'hole'], [27, 'hole'], [34, 'beam'], [42, 'hole']] }),
+  ride('koh07-mod-teen', 'MOD TEEN', A + 'three bends: beam, hole, beam, hole, each a little closer than the last.', 56, { v0: 110, v1: 170, obs: [[8, 'beam'], [16, 'hole'], [23, 'beam'], [29, 'hole'], [34, 'beam'], [42, 'hole']] }),
+  ride('koh07-chikna-teen', 'CHIKNA TEEN', A + 'three wet patches in one lane: mirrored, back, mirrored again. Count them.', 60, { v0: 100, v1: 160, obs: [[8, 'hole'], [12, 'slick'], [18, 'beam'], [23, 'slick'], [29, 'hole'], [34, 'slick'], [40, 'beam'], [47, 'hole']] }),
   ride('koh07-aakhri', 'AAKHRI', A + 'the last lane down to the garage: everything at once, and quick.', 60, { v0: 120, v1: 210, obs: [[8, 'beam'], [14, 'hole'], [20, 'beam'], [26, 'slick'], [32, 'hole'], [38, 'beam'], [45, 'hole']] }),
 ];
 

@@ -498,9 +498,8 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'KOH-07': [
     { what: 'ride at the back all the way', steps: [{ policy: ridePolicy('koh7', 'back'), until: done, max: 3000 }], cause: 'koh-balli' },
     ...acts07.flatMap((a) => {
-      const first = a.id === 'koh07-mod' || a.id === 'koh07-chikna' || a.id === 'koh07-dhalan' || a.id === 'koh07-kohra-dui' ? 'hole' : 'beam';
       return [
-        inAct('KOH-07', a.id, `${a.id}: board and stay at the front`, () => [{ policy: ridePolicy(`${a.id}:cart`, 'front'), until: done, max: 3000 }], first === 'hole' ? 'koh-gaddha' : 'koh-gaddha'),
+        inAct('KOH-07', a.id, `${a.id}: board and stay at the front`, () => [{ policy: ridePolicy(`${a.id}:cart`, 'front'), until: done, max: 3000 }], 'koh-gaddha'),
         inAct('KOH-07', a.id, `${a.id}: board and stay at the back`, () => [{ policy: ridePolicy(`${a.id}:cart`, 'back'), until: done, max: 3000 }], 'koh-balli'),
         inAct('KOH-07', a.id, `${a.id}: hop the cart and walk the lane`, (x) => walkLane(x), 'koh-dhalan'),
       ];
