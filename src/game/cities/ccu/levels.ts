@@ -14,7 +14,7 @@ import { Bus, Rail, feet } from './entities';
 import { NALA } from './endings';
 import { Customer, Muck, Stack, Stall } from './books';
 import { Junction, OtherTram, Points, Tram } from './tram';
-import { BookPorter, ChaiBoard, Girders, Pointer, Porter, Road, SHORT, TALL } from './porters';
+import { BookPorter, ChaiBoard, Girders, Horn, Pointer, Porter, Road, SHORT, TALL } from './porters';
 import { Adda, House, TeaSeller, Wash } from './adda';
 import { ClothPanel, Decorator, DhakFrame, Lowered, Queue, Skeleton, Stakes } from './pandal';
 import { Tin } from './muri';
@@ -338,6 +338,27 @@ const baan: Act = {
     });
     sign(w, c.x + 0.4, 10.4, 3.4, 'BAAN', 'green', null, 'tide table');
     w.flags.baan = bore;
+  },
+};
+
+/** CCU-07 act (allocation v3 F481, the sound beat): a long span, and a lorry's horn behind. On each horn every
+ *  porter steps one stride toward the parapet, and his load jumps back under you without taking you along:
+ *  be on its back third when the horn goes. Don't hop to the next load on the horn: it steps too */
+const horn: Act = {
+  id: 'ccu07-horn',
+  w: 36,
+  cp0: false,
+  advice: 'A lorry behind is leaning on its horn: on every blare the porters step toward the parapet, and the load under you jumps back a stride without you. Be on the back of the load when the horn goes, and walk back to it again after each one. Don’t hop to the porter in front on the horn: he steps too.',
+  paint: (g, c) => {
+    g.fill(c.x, c.x + 3, 14, 14, '#').fill(c.x + 1, c.x + 3, 13, 13, '#');
+  },
+  build: (w, c) => {
+    w.add(new Girders(c.X(0), c.X(36)));
+    w.add(new Road(c.X(4), c.X(36), (w2) => (w2.flags.tipped && w2.tick - w2.flags.tipped < 120 ? 'ccu-parapet' : w2.flags.cha ? 'ccu-cha' : 'ccu-gaari')));
+    const p1 = w.add(new Porter({ x: c.X(5), v: 50, h: TALL, rests: [[c.X(36.8), Infinity]], go: (w2, me) => w2.player.isRiding(me.load), kind: 'sack' }));
+    const p2 = w.add(new Porter({ x: c.X(10), v: 50, h: TALL, go: walking(p1), off: c.X(36), kind: 'books' }));
+    const h = w.add(new Horn([p1, p2], [c.X(11), c.X(22)]));
+    w.flags.horn = { p1, p2, h };
   },
 };
 
@@ -1220,7 +1241,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: boiRoom(), par: 23, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
   longStage({ base: kumartuliRoom(), par: 31, acts: [lane, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
   longStage({ base: poleRoom(), par: 77, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
-  longStage({ base: howrahRoom(), par: 110, acts: [girder, dui, ulto, pylon, jowar], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
+  longStage({ base: howrahRoom(), par: 110, acts: [girder, dui, horn, pylon, jowar], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 32, acts: [rok], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
   longStage({ base: pandalRoom(), par: 72, acts: [sinri, toran, chala, dhak, uthan, line], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
   longStage({ base: finaleRoom(), par: 119, acts: [bus10, tram10, chhad, phire, pherot, kumor10, khola, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),

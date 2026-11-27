@@ -22,6 +22,7 @@ export const causeLines: Record<string, string[]> = {
   'ccu-ganga': ['Into the ghat’s mud.', 'Figure to figure: they’re close enough to hop.'],
   'ccu-kumir': ['On to the chalk river while the kumir was looking. Caught!', 'Wait on the bank till he covers his eyes and counts, then run across.'],
   'ccu-line': ['Nobody climbs over the queue, Dad. They shoved you off.', 'Move up behind them, one bamboo a beat.'],
+  'ccu-parapet': ['The horn went, the porter stepped toward the parapet, and his load went out from under you.', 'On the horn, be on the back of the load.'],
   'ccu-baan': ['The bore came up the river and over the ghat steps, and over you.', 'Be on the launch before the wave comes: it floats.'],
   'ccu-ghat': ['Into the Hooghly. The jetty is far too high without the tide.', 'Wait on the launch for the bore to lift you level with it.'],
   'ccu-dui': ['A tram on the other line came past and brushed you off the step.', 'At the double-line island, get off and let it go by.'],

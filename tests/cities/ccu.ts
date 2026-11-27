@@ -511,6 +511,23 @@ const lineRoute = (x: number, bad?: 'heads' | 'under'): Step[] => {
   return [...head, ...moves, steerHop(px(x + 27), 12, 'on to the gate’s deck'), walk(x + 29.4)];
 };
 
+// ------------------------------------------------------------------ CCU-07 the lorry's horn
+const hornRoute = (x: number, bad?: 'centre' | 'hop'): Step[] => {
+  const H = (w: World) => w.flags.horn as { p1: Porter; p2: Porter; h: { tellAt: number } };
+  // up the pylon step and on to the first load, the relay's own way
+  const relay = relayRoute(x, [50, 50, 50], true);
+  const head: Step[] = relay.slice(0, relay.findIndex((st) => st.note?.startsWith('till the short porter')));
+  if (bad === 'centre') return [...head, { hold: '', until: done, max: 1500, note: 'stand in the middle of the load' }];
+  const back = (): Step => ({ hold: 'L', until: (w) => w.player.x <= H(w).p1.load.x + 3, max: 90, note: 'to the back of the load' });
+  if (bad === 'hop') return [...head, back(), { hold: '', until: (w) => H(w).h.tellAt >= 0, max: 1500, note: 'wait for the horn' }, { hold: 'R', jump: 10, ticks: 30, note: 'hop to the porter in front on the horn' }, { hold: '', until: done, max: 400 }];
+  return [
+    ...head,
+    back(),
+    { hold: '', until: (w) => (H(w).h as any).next >= 1, max: 1800, note: 'ride the back of the load through the first horn' },
+    back(),
+    { hold: '', until: (w) => H(w).p1.state !== 'walk', max: 2400, note: 'and back again before the second' }, { hold: 'R', until: (w) => w.player.onGround && !H(w).p1.riding(w), max: 120, note: 'off on to the next pylon' }];
+};
+
 // ------------------------------------------------------------------ CCU-07 the bore's front
 const jowarRoute = (x: number, bad?: 'stop' | 'long'): Step[] => {
   const hop = (from: number, to: number): Step[] => [{ hold: 'R', until: X(x + from), max: 200 }, steerHop(px(x + to), 10, 'a short hop over the drain')];
@@ -715,11 +732,9 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   ],
 
   'CCU-07': [
-    { what: 'staying on the first porter of the upside-down span', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false).slice(0, 2), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
-    { what: 'staying on the tall porter of the upside-down span', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false).slice(0, 3), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
-    { what: 'stopping at the first drain on the causeway', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...PYL(184), ...jowarRoute(224, 'stop')], cause: 'ccu-baan' },
-    { what: 'a long jump at the first drain on the causeway', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...PYL(184), ...jowarRoute(224, 'long')], cause: 'ccu-nala' },
-    { what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), walk(184 + 3.9), ...hopTo(px(190.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
+    { what: 'stopping at the first drain on the causeway', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...hornRoute(124), ...PYL(160), ...jowarRoute(200, 'stop')], cause: 'ccu-baan' },
+    { what: 'a long jump at the first drain on the causeway', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...hornRoute(124), ...PYL(160), ...jowarRoute(200, 'long')], cause: 'ccu-nala' },
+    { what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...hornRoute(124), walk(160 + 3.9), ...hopTo(px(166.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
   'CCU-02': [
     {
       what: 'stepping off backwards on the crawl',
@@ -737,6 +752,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'ccu10-setu': (x) => relayRoute(x, [45, 63, 83], true),
   'ccu07-ulto': (x) => relayRoute(x, [41, 59, 79], false),
   'ccu07-jowar': (x) => jowarRoute(x),
+  'ccu07-horn': (x) => hornRoute(x),
   'ccu09-toran': (x) => [
     steerHop(px(x + 3), 12, 'on to the bamboo: two panels go up'),
     steerHop(px(x + 7), 34, 'a full jump on to the first', true),
@@ -914,7 +930,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   const AT: Record<string, [string, number][]> = {
     'CCU-05': [['ccu05-lane', 32], ['ccu05-ghat', 66]],
     'CCU-06': [['ccu06-points', 32], ['ccu06-duiline', 80]],
-    'CCU-07': [['ccu07-girder', 32], ['ccu07-dui', 80], ['ccu07-ulto', 124], ['ccu07-pylon', 184], ['ccu07-jowar', 224]],
+    'CCU-07': [['ccu07-girder', 32], ['ccu07-dui', 80], ['ccu07-horn', 124], ['ccu07-pylon', 160], ['ccu07-jowar', 200]],
     'CCU-08': [['ccu08-rok', 32]],
     'CCU-09': [['ccu09-sinri', 32], ['ccu09-toran', 62], ['ccu09-chala', 88], ['ccu09-dhak', 128], ['ccu09-uthan', 152], ['ccu09-line', 182]],
     'CCU-10': [['ccu10-bus', 32], ['ccu10-tram', 72], ['ccu10-chhad', 116], ['ccu10-phire', 142], ['ccu10-pherot', 172], ['ccu10-kumor', 196], ['ccu10-khola', 220], ['ccu10-setu', 252]],
@@ -939,8 +955,10 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   act('CCU-07', 'ccu07-girder', 0, 'jump', 'jumping off the pylon at the first load', 'ccu-gaari');
   act('CCU-07', 'ccu07-dui', 3, 'stay', 'staying on the short porter of the two streams', 'ccu-cha');
   act('CCU-07', 'ccu07-dui', 0, 'jump', 'a long jump off the pylon into the two streams', 'ccu-gaari');
-  act('CCU-07', 'ccu07-ulto', 2, 'stay', 'staying on the short porter of the long span', 'ccu-cha');
-  act('CCU-07', 'ccu07-ulto', 0, 'jump', 'a long jump off the pylon on to the long span', 'ccu-gaari');
+  (mistakes['CCU-07'] ??= []).push(
+    { what: 'standing in the middle of the load when the horn goes', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...hornRoute(124, 'centre')], cause: 'ccu-parapet' },
+    { what: 'hopping to the porter in front on the horn', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...hornRoute(124, 'hop')], cause: 'ccu-gaari' },
+  );
   act('CCU-07', 'ccu07-pylon', 1, 'jump', 'jumping off the second pylon rather than wait', 'ccu-gaari');
   act('CCU-09', 'ccu09-sinri', 0, 'jump', 'a long jump at the cloth staircase', 'ccu-bansh');
   act('CCU-09', 'ccu09-toran', 0, 'jump', 'a long jump at the gate arch’s bamboo', 'ccu-bansh');

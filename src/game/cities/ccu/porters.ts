@@ -359,3 +359,49 @@ export class Pointer extends Entity {
     }
   }
 }
+
+/** CCU-07 (allocation v3 F481, horn-shifts-the-carrier): a lorry's horn behind, and every porter on the
+ *  span steps one stride toward the parapet. His load jumps back under you without carrying you: be on its
+ *  back third when the horn goes, or you're off the front, over the rail */
+export class Horn extends Entity {
+  next = 0;
+  tellAt = -1;
+  constructor(
+    readonly porters: Porter[],
+    /** the lead porter's x (px) at which each horn sounds */
+    readonly at: number[],
+    readonly shift = 20,
+  ) {
+    super();
+    this.layer = 3;
+  }
+  update(w: World) {
+    const lead = this.porters[0];
+    if (this.tellAt < 0 && this.next < this.at.length && lead.state === 'walk' && lead.x >= this.at[this.next]) {
+      this.tellAt = w.tick;
+      w.sfx('rumble', lead.x, FLOOR - 40);
+    }
+    if (this.tellAt >= 0 && w.tick - this.tellAt >= 96) {
+      this.tellAt = -1;
+      this.next++;
+      const p = w.player;
+      for (const q of this.porters) {
+        if (q.state !== 'walk') continue;
+        const was = q.riding(w);
+        q.load.x -= this.shift;
+        q.x = q.load.x + LW / 2;
+        if (was && (p.x + p.w <= q.load.x || p.x >= q.load.x + LW)) w.flags.tipped = w.tick;
+      }
+    }
+  }
+  draw(ctx: CanvasRenderingContext2D, w: World) {
+    if (this.tellAt < 0) return;
+    // the lorry's horn: a blare over the traffic, the tell
+    const lead = this.porters[0];
+    const k = ((w.tick - this.tellAt) / 8) % 2 < 1;
+    ctx.fillStyle = k ? '#F2C14E' : '#FFFFFF';
+    ctx.font = '800 9px "Baloo 2", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('PAAP!', lead.x - 40, FLOOR - 80);
+  }
+}
