@@ -501,9 +501,9 @@ const ultaRoute = (key: string, cfg: { period: number; out: number }) => (x: num
   { hold: 'R', until: ground, max: 300 },
 ];
 const act06d = (x: number): Step[] => [
-  { policy: stepper(), until: and(ground, X(x + 8.2), (w) => w.player.y + w.player.h <= 193), max: 900, note: 'up to the step below the top' },
+  { policy: stepper(), until: and(ground, X(x + 11.2), (w) => w.player.y + w.player.h <= 193), max: 900, note: 'up to the step below the top' },
   { hold: '', until: parked('gtk6a', STAND2), max: 900, note: 'wait while the taxi backs out over the top step' },
-  { policy: stepper(), until: and(ground, X(x + 29)), max: 600, note: 'up and past it' },
+  { policy: stepper(), until: and(ground, X(x + 32)), max: 600, note: 'up and past it' },
 ];
 const act06i = (x: number): Step[] => [{ policy: gapJumper(), until: and(ground, X(x + 31)), max: 1500, note: 'roof to roof down the hill, hopping each gap' }, { policy: stepper(), until: X(x + 35.5), max: 300 }];
 const bothParked = (w: World) => {

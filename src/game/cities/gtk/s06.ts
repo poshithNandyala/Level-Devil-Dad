@@ -232,17 +232,18 @@ export const act3 = ultaAct('gtk06-ulta', 'gtk6u', STAND3);
 /** act 4: the stair up comes out at the top among the taxis: wait on the step below the top while one backs out */
 export const act4: Act = {
   id: 'gtk06-adda',
-  w: 30,
+  // three tiles of ground before the stair: a jump off the top loop lands there, on the act's checkpoint side
+  w: 33,
   advice: 'This stair goes up, and comes out at a taxi stand on the road above. Wait on the step below the top while the taxi backs out across it; when it has pulled back in, up and past it.',
   paint: (g, c) => {
     const x = c.x;
-    g.fill(x + 4, x + 5, 14, 17, '#');
-    g.fill(x + 6, x + 7, 13, 17, '#');
-    g.fill(x + 8, x + 9, 12, 17, '#');
-    g.fill(x + 10, x + 29, 11, 17, '#');
+    g.fill(x + 7, x + 8, 14, 17, '#');
+    g.fill(x + 9, x + 10, 13, 17, '#');
+    g.fill(x + 11, x + 12, 12, 17, '#');
+    g.fill(x + 13, x + 32, 11, 17, '#');
   },
   build: (w, c) => {
-    standTaxi(w, c.X(15), c.X(10.1), px(11), c.X(2), 'gtk6a', STAND2);
+    standTaxi(w, c.X(18), c.X(13.1), px(11), c.X(5), 'gtk6a', STAND2);
     sign(w, c.x + 1, 9.4, 3.6, 'TAXI STAND', 'green', 'up', 'seedhi');
   },
 };
