@@ -236,11 +236,11 @@ function howrahRoom(): LevelDef {
 
 /** CCU-07 act 1 (fix 3: one span of the room's relay, from pylon to pylon): the tall porter from the pylon
  *  step, and the short one overtaking under him before his chai stop */
-const girder = relayHalf('ccu07-girder', [58, 84], true, 'From the pylon step, on to the tall porter’s load. His chai stop is ahead on the road: a short porter comes up from behind, faster, and passes under you. Walk off the front of your load on to his as he goes by, and ride him to the next pylon.', [-0.5]);
+const girder = relayHalf('ccu07-girder', [66, 96], true, 'From the pylon step, on to the tall porter’s load. His chai stop is ahead on the road: a short porter comes up from behind, faster, and passes under you. Walk off the front of your load on to his as he goes by, and ride him to the next pylon.', [-3]);
 
 /** CCU-07 act 2 (fix 3: one span): two streams. A tall load comes the other way over your head while you ride a
  *  short one; the tall porter going your way overtakes. Hop up to him, but never while an oncoming load is over you */
-const dui = relayHalf('ccu07-dui', [66, 100], false, 'Two streams now. You ride a short porter, and a tall load comes the other way, over your head: harmless, unless you jump into it. A tall porter going your way overtakes before the CHA board: hop up on to his load, but only when no oncoming load is over you.', [-0.5]);
+const dui = relayHalf('ccu07-dui', [70, 106], false, 'Two streams now. You ride a short porter, and a tall load comes the other way, over your head: harmless, unless you jump into it. A tall porter going your way overtakes before the CHA board: hop up on to his load, but only when no oncoming load is over you.', [-1.5]);
 
 
 /** CCU-07 long acts: a relay of three porters over a long span of road. `v` are the speeds of the first,
@@ -282,7 +282,7 @@ const jowar: Act = {
   w: 40,
   // the start is under the front once it's coming: the checkpoint is up the ghat steps past it
   cp0: false,
-  cps: [1.2, 3.5, 36],
+  cps: [1.2, 36],
   advice: 'The low causeway along the river, and the bore’s front is coming up behind you: everything it has passed is under water. Don’t stop. Hop each drain short (they’re close together) and keep running till you’re up the ghat steps at the end.',
   paint: (g, c) => {
     const x = c.x;
