@@ -75,15 +75,18 @@ const floodFrogger: Act = {
   build: (w, c) => {
     const { X } = c;
     pool(w, c.x + 4, c.x + 28, 15.05, { colors: ['rgba(120,150,120,0.86)', 'rgba(50,70,60,0.96)'], cause: 'flood' });
+    // round 2 (human timing): the board, crate and log are 8 px longer each (48/40/42, were 40/32/34) and the gap
+    // between things 26 px (was 30): a hop that lands 12 ticks late still lands on wood. The pot is still 16 px
+    // and still sinks.
     const kinds: [ThingKind, number, number][] = [
-      ['board', 40, 10],
-      ['crate', 32, 14],
-      ['log', 34, 10],
+      ['board', 48, 10],
+      ['crate', 40, 14],
+      ['log', 42, 10],
       ['kudam', 16, 16],
     ];
     const floats: { t: Thing; x: number; sinkAt: number }[] = [];
     let n = 0;
-    const GAP = 30;
+    const GAP = 26;
     const launch = (x: number) => {
       const [kind, ww, hh] = kinds[n++ % kinds.length];
       const t = new Thing(kind, x, 244 - hh, { w: ww, h: hh, layer: 4, oneWay: true });
@@ -426,10 +429,13 @@ export const levels = (): LevelDef[] => [
       panel(w, 8, 10, 15, 0.5, '#4A5F68', 'rgba(0,0,0,0)', 64);
       const flood = w.add(new Water(17.5, { rate: 0, minTy: 5.44, colors: ['rgba(120,150,120,0.85)', 'rgba(50,70,60,0.95)'], cause: 'flood' }));
       const drum = w.add(new Floater(flood, 14, 14.125, 3, 'drum'));
+      // round 2 (human timing): the flood starts when you are on the subway floor itself (y > 212; was 200, the last
+      // stair), and rises at 120 px/s (was 150): the hop on to the drum has 0.33 s, not 0.2, so a press 12 ticks
+      // late still makes it. Everyone who dawdles on the floor still drowns.
       w.when(
-        (w2) => (w2.player.onGround && w2.player.y > 200) || w2.standing(drum.solid),
+        (w2) => (w2.player.onGround && w2.player.y > 212) || w2.standing(drum.solid),
         () => {
-          flood.rate = 150;
+          flood.rate = 120;
           w.say('Subway niranjiduchu! | The subway is flooding!', px(15), px(11), 1.4, 'npc');
           w.sfx('splash', px(15), px(15));
         },

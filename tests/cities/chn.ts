@@ -4,6 +4,7 @@
 // and the city's stage files. After a change on purpose: npm run refreeze -- CHN (docs/CITY-MODULE.md).
 import type { World } from '../../src/game/world';
 import { Door } from '../../src/game/entities/basics';
+import { Thing } from '../../src/game/entities/traps';
 import { type Step, X, and, done, ground, thingOf } from '../runner';
 import type { CityTests } from '../city-tests';
 import { ladleOf, murukkuOf, pressOf } from '../../src/game/cities/chn/murukku';
@@ -187,6 +188,17 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
       { hold: 'R', until: and(ground, X(14.4)), max: 300 },
       ...R.slice(j + 2),
     ];
+  }
+  // 03 (human timing, route only): hop on to the drum from the last stair (11.0), not from the subway floor: the
+  // shipped route dropped off the stair, landed against the drum's side with no run left, and the flood took it
+  {
+    const R = S['CHN-03'];
+    const k = R.findIndex((st) => st.note === 'onto the drum, now');
+    if (k < 1) throw new Error("CHN-03: no step 'onto the drum, now'");
+    R[k - 1] = { hold: 'R', until: and(ground, X(11.0)), max: 400, note: 'down the stairs' };
+    R[k] = { hold: 'R', jump: 12, ticks: 12, note: 'onto the drum, now' };
+    // keep running through the hop: the drum's top is 14 px up at 14-17
+    R[k + 1] = { hold: 'R', until: (w) => w.player.onGround && w.player.y < 220 && w.player.x >= px(13.5), max: 200 };
   }
   // 04 (human timing, route only): leave the pigeons' ledge from 16.2 (was 16.8): a hop 12 ticks late then still
   // lands short of the kaapi streams at 22
@@ -391,7 +403,48 @@ const runHopping = (until: (w: World) => boolean, lead: number, note: string, di
   };
 };
 
+/** CHN-03's floaters (round 2, human timing): the shared hopper waits at an edge till the next thing is within 46 px
+ *  and steers on to it with a 3 px slack; a press 12 ticks behind made that a late take-off and a late correction.
+ *  This one takes off at 58 px and steers with a 6 px slack, so the corrections are fewer and earlier */
+const floatHopper = (kinds: string[], bankX: number, untilX: number) => {
+  let left = 0;
+  let target: { x: number; w: number; e: any } | null = null;
+  return (w: World): Out => {
+    const p = w.player;
+    const tx = () => (target!.e ? target!.e.solid.x : target!.x) + target!.w / 2;
+    const steer = (): Move => {
+      if (!target) return 'R';
+      const c = tx();
+      return p.cx < c - 6 ? 'R' : p.cx > c + 6 ? 'L' : '';
+    };
+    if (left > 0) {
+      left--;
+      return { move: steer(), jump: true };
+    }
+    if (p.x >= px(untilX)) return { move: 'R', jump: false };
+    if (!p.onGround) return { move: steer(), jump: false };
+    target = null;
+    const right = p.x + p.w;
+    const cands = (w.entities as any[])
+      .filter((e) => e instanceof Thing && kinds.includes(e.kind) && e.alive && e.solid.collidable && e.solid.y < 240)
+      .map((e) => ({ x: e.solid.x as number, w: e.solid.w as number, e }))
+      .concat([{ x: px(bankX), w: 32, e: null }])
+      .filter((c) => c.x > right - 2)
+      .sort((a, b) => a.x - b.x);
+    const d = (cands[0]?.x ?? Infinity) - right;
+    const gs: any = (p as any).groundSolid;
+    const edge = gs && gs !== true && gs.w !== undefined ? right + 3 >= gs.x + gs.w : !w.solidAt(right + 2, p.y + p.h + 1, 3, 3);
+    if (d <= 64 && d > 2 && edge) {
+      left = 18;
+      target = cands[0];
+      return { move: 'R', jump: true };
+    }
+    return { move: edge ? '' : 'R', jump: false };
+  };
+};
+
 const actRoutes: Record<string, (x: number, p: any) => Step[]> = {
+  'chn03-frogger': (x) => [{ policy: floatHopper(['board', 'crate', 'log', 'kudam'], x + 28, x + 28), until: and(ground, X(x + 30)), max: 3000, note: 'hop the floating things' }],
   // CHN-04's act (round 2, human timing): the same run, hopping each ground ball 0.25 s ahead instead of 0.13
   'chn04-cricket': (x) => [runHopping(X(x + 36), 0.25, 'hop the balls on the ground, stay down for the bouncer')],
   // CHN-05's act (round 2): the second hole moved a tile on (15), so its take-off is at 14.2 (was 13.2)
@@ -498,6 +551,27 @@ const endingPolicies: Record<string, Policy> = {
     if (w.input.jump) return { move: 'R', jump: false };
     m.hold = 29;
     return { move: 'R', jump: true };
+  },
+  // CHN-03's bull (round 2, human timing): the shared policy leaps when the bull is 26 px off (0.11 s at 230 px/s),
+  // which a press 12 ticks behind turns into a goring. Leap at 56 px (0.24 s): a 24-tick jump stays up long enough
+  // for the bull and its width to pass under either way
+  'chn-bull'(w, m, d) {
+    const p = w.player;
+    const tw = w.flags.twist,
+      bx = w.flags.bullX as number,
+      bw = w.flags.bullW as number;
+    const leap = (): Out => {
+      if (w.input.jump) return { move: '', jump: false };
+      m.hold = 23;
+      return { move: '', jump: true };
+    };
+    if (tw === 'gone' || (tw === 'back' && bx + bw < p.x - 2)) return go(toward(w, d.x + 8));
+    if (!p.onGround) return go('');
+    if (tw === 'charge' && p.x - (bx + bw) < 60 && p.x - (bx + bw) > -4) return leap();
+    if (tw === 'back' && bx - (p.x + p.w) < 64 && bx - (p.x + p.w) > -4) return leap();
+    if (tw === 'pen' || tw === 'snort' || tw === 'charge') return go(p.x < d.x - px(5) ? 'R' : '');
+    if (tw === 'dazed') return go(bx - (p.x + p.w) < 48 ? 'L' : '');
+    return go('');
   },
   // walk straight through the pale curtain; never stop in front of it
   'chn-fresh-curtain'(w, _m, d) {
