@@ -8,7 +8,7 @@ import { LEVEL_BY_ID } from '../../src/game/levels';
 import { STROKE, SWEEP_PERIOD, type Sweep } from '../../src/game/cities/gtk/s01';
 import { VENT, type Steamer } from '../../src/game/cities/gtk/s02';
 import type { Bag } from '../../src/game/cities/gtk/s03';
-import { FLOORS } from '../../src/game/cities/gtk/s04';
+import { FLOORS, UP_FLOORS } from '../../src/game/cities/gtk/s04';
 import type { Rule } from '../../src/game/cities/gtk/s05';
 import { TANK, STAND2, STAND3, STAND5, STAND6, JEEP } from '../../src/game/cities/gtk/s06';
 import type { Cloud } from '../../src/game/cities/gtk/s07';
@@ -299,8 +299,36 @@ function houseRoute(c: number, exit: number): (w: World) => Out {
     return go(dir);
   };
 }
+/** up through the house entered from below: to each floor's stairwell, hop up its one-way steps, out at floor `exit` */
+function upHouseRoute(c: number, exit: number): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: '', jump: true };
+    }
+    const p = w.player;
+    if (!p.onGround) return go('');
+    const fr = Math.round((p.y + p.h) / 16);
+    if (p.x + p.w > px(c + 12) || fr <= UP_FLOORS[exit]) return go('R');
+    let k = 0;
+    for (let i = 0; i < UP_FLOORS.length; i++) if (UP_FLOORS[i] >= fr) k = i;
+    const [a, b] = k % 2 === 0 ? [c + 8, c + 10] : [c + 1, c + 3];
+    const cx = p.cx;
+    if (cx < px(a) + 6) return go('R');
+    if (cx > px(b + 1) - 6) return go('L');
+    jt = 10;
+    return { move: '', jump: true };
+  };
+}
 const room04 = (): Step[] => [{ policy: houseRoute(10, 3), until: and(ground, X(27)), max: 2400, note: 'three flights down, out of the third floor down' }, { hold: 'R', until: X(30), max: 300 }];
 const act04 = (x: number): Step[] => [{ policy: houseRoute(x + 8, 1), until: and(ground, X(x + 26)), max: 2400, note: 'up the steps, one flight down, out' }, { hold: 'R', until: X(x + 27.5), max: 300 }];
+const act04b = (x: number): Step[] => [{ policy: upHouseRoute(x + 3, 4), until: and(ground, X(x + 20)), max: 3000, note: 'four flights up, out at the top' }, { hold: 'R', until: X(x + 24.5), max: 300 }];
 /** the goods lift: on to the cage, jump up and press 1, ride down, walk in */
 const liftPolicy: Policy = (w, _m, d) => {
   const st = w.flags.gtk4e as { down: boolean; y: number };
@@ -908,6 +936,11 @@ function actDeaths() {
     { policy: stepper(), until: done, max: 900 },
   ], 'gtk-taxi');
   actDeath('GTK-06', r6, 'gtk06-chhatein', 'walk off the roof without a hop', straight, 'gtk-khaai');
+  const r4 = room04();
+  actDeath('GTK-04', r4, 'gtk04-upar', 'out of the first door you meet', () => [{ policy: stepper(), until: done, max: 2400 }], 'gtk-jhora');
+  actDeath('GTK-04', r4, 'gtk04-upar', 'three flights up, as in the first house', (x) => [{ policy: upHouseRoute(x + 3, 3), until: done, max: 3000 }], 'gtk-galat-tala');
+  actDeath('GTK-04', r4, 'gtk04-beech', 'out of the first door you meet', () => [{ policy: stepper(), until: done, max: 2400 }], 'gtk-jhora');
+  actDeath('GTK-04', r4, 'gtk04-beech', 'all the way up to G, as in the last house', (x) => [{ policy: upHouseRoute(x + 3, 4), until: done, max: 3000 }], 'gtk-galat-tala');
   const r8 = room08();
   const early = (key: string, i: number): Step[] => [
     { policy: chain(key), until: (w) => { const c = (w.flags[key] as Rig[])[i]; return c.carries(w) && (c.s.ph === 'up' || c.s.ph === 'down') && c.s.k > 0.4 && c.s.k < 0.7; }, max: 6000 },
@@ -1030,6 +1063,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk03-jaanch': act03,
   'gtk03-ulto': act03b,
   'gtk04-ghar': act04,
+  'gtk04-upar': act04b,
+  'gtk04-beech': (x: number): Step[] => [{ policy: upHouseRoute(x + 3, 2), until: and(ground, X(x + 20)), max: 3000, note: 'two flights up, out' }, { hold: 'R', until: X(x + 26.5), max: 300 }],
   'gtk05-shaam': act05,
   'gtk05-kachra': act05b,
   'gtk05-raat': act05b,

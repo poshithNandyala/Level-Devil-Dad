@@ -68,7 +68,7 @@ export function houseDecor(w: World, c: number, doors: ('none' | 'exit' | 'drop'
   // out of a door above the lower road: the drop down the gully is what gets you, whatever you land on
   const air = { from: -1 };
   w.add(
-    new Rig(px(c + 12), 0, px(9), px(18), {
+    new Rig(px(c + 12), 0, px(7), px(18), {
       layer: 0,
       tick: (r, w2) => {
         const p = w2.player;
@@ -157,6 +157,67 @@ export const act: Act = {
   },
 };
 
+/** a house entered from below, at the lower road's G: floors stacked up the slope, the stairwell a climb of
+ *  one-way steps (right end on the ground floor, left end on the next, ...). UP_FLOORS: tile rows, bottom first */
+export const UP_FLOORS = [16, 13, 10, 7, 4];
+export function upHouse(g: Grid, c: number, doors: ('none' | 'exit' | 'drop')[], exitW: number) {
+  g.fill(c, c + 11, 0, 17, '.');
+  UP_FLOORS.forEach((r, i) => g.fill(c, c + 11, r, i === 0 ? 17 : r, '#'));
+  UP_FLOORS.forEach((_r, i) => {
+    if (i === UP_FLOORS.length - 1) return;
+    // the stairwell up from floor i: one-way steps in the slab above (right end from even floors, left from odd)
+    const up = UP_FLOORS[i + 1];
+    const [a, b] = i % 2 === 0 ? [c + 8, c + 10] : [c + 1, c + 3];
+    g.fill(a, b, up, up, '=');
+    g.fill(a, b, up + 1, up + 1, '=');
+  });
+  g.fill(c + 12, c + 12, 0, 17, '#');
+  doors.forEach((d, i) => {
+    if (d === 'none') return;
+    const r = UP_FLOORS[i];
+    g.fill(c + 12, c + 12, r - 2, r - 1, '.');
+  });
+  g.fill(c + 13, c + 15, 0, 17, '.');
+  const re = UP_FLOORS[doors.indexOf('exit')];
+  g.fill(c + 13, c + 15, re, re, '#');
+  g.fill(c + 16, c + 15 + exitW, re, 17, '#');
+}
+/** act 2: the next house is entered from below, at the lower road's G, and the way out is the upper road's G at
+ *  the top. "G" is up there too: count all four flights, past the third floor's door */
+const UP_DOORS: ('none' | 'exit' | 'drop')[] = ['drop', 'drop', 'none', 'drop', 'exit'];
+export const act2: Act = {
+  id: 'gtk04-upar',
+  w: 25,
+  advice: 'This house you enter from below, on the lower road’s ground floor, and the sign says the upper road is G. It is: the top floor. Climb all four flights (the first door, the third floor’s door, all open on the gully) and go out at the very top.',
+  paint: (g, c) => {
+    g.fill(c.x, c.x + 1, 16, 17, '#');
+    upHouse(g, c.x + 3, UP_DOORS, 6);
+    // the house's back wall: in only by the lower road's door at the bottom
+    g.fill(c.x + 2, c.x + 2, 0, 13, '#');
+  },
+  build: (w, c) => {
+    houseDecor(w, c.x + 3, ['drop', 'drop', 'drop', 'drop', 'drop'], 'gtk4u');
+    sign(w, c.x + 0.2, 11.4, 3.4, 'UPPER RD', 'green', 'up', 'G');
+  },
+};
+
+/** act 3: one more house from below; this one's upper road is only two floors up, its doors on every floor */
+const UP_DOORS2: ('none' | 'exit' | 'drop')[] = ['drop', 'drop', 'exit', 'drop', 'drop'];
+export const act3: Act = {
+  id: 'gtk04-beech',
+  w: 27,
+  advice: 'The last house before the lift: entered from below again, and its upper road is two floors up. Count two flights from where you came in, and out of that door; every other door opens on the gully.',
+  paint: (g, c) => {
+    g.fill(c.x, c.x + 1, 16, 17, '#');
+    upHouse(g, c.x + 3, UP_DOORS2, 8);
+    g.fill(c.x + 2, c.x + 2, 0, 13, '#');
+  },
+  build: (w, c) => {
+    houseDecor(w, c.x + 3, ['drop', 'drop', 'drop', 'drop', 'drop'], 'gtk4b');
+    sign(w, c.x + 0.2, 11.4, 3.4, 'UPPER RD', 'green', 'up', '2 floors up');
+  },
+};
+
 /** door: the goods lift. Its buttons count from the top road: G is where you are; the door is on 1 */
 export const ending: Ending = {
   space: 12,
@@ -180,7 +241,7 @@ export const ending: Ending = {
         layer: 2,
         tick: (r, w2) => {
           const ty = st.down ? FL + 32 : FL;
-          if (r.y < ty) r.moveTo(w2, r.x, Math.min(ty, r.y + 0.5));
+          if (r.y < ty) r.moveTo(w2, r.x, Math.min(ty, r.y + 0.3));
           st.y = r.y;
         },
         paint: (ctx, r) => {
