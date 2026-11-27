@@ -269,6 +269,22 @@ const act03b = (x: number): Step[] => [{ policy: bagHop('gtk3b', { over: true })
 type Kalam = { writing: boolean; wrote: boolean };
 const kalamGate = (wait: number, until: 'writing' | 'wrote') => (w: World, i: number) => i !== wait || (w.flags.gtk3ki as Kalam)[until];
 const act03e = (x: number): Step[] => [{ policy: bagHop('gtk3k', { every: true, gate: kalamGate(1, 'writing') }), until: and(ground, X(x + 26)), max: 3000, note: 'wait on the second cloth bag; go while his pen moves, over the polythene and under him' }, { hold: 'R', until: X(x + 29.5), max: 300 }];
+const act07m = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 3.3), max: 600, note: 'towards the bells' },
+  { hold: 'R', jump: 10, ticks: 18, note: 'up on to the step' },
+  { hold: 'R', until: X(x + 5.2), max: 200 },
+  { hold: 'R', jump: 10, ticks: 18, note: 'up on to the mule track' },
+  { hold: 'R', until: X(x + 33.5), max: 900, note: 'along the track past the resting mules, and down' },
+];
+type Paani = { raining: boolean; over: boolean };
+const paani = (w: World) => w.flags.gtk7p as Paani;
+const act07n = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 3.5), max: 600 },
+  { hold: '', until: (w) => paani(w).raining, max: 600, note: 'the rain starts: it drips in a line ahead' },
+  { hold: 'R', until: X(x + 6.2), max: 300, note: 'between the drip lines' },
+  { hold: '', until: (w) => paani(w).over, max: 600, note: 'till it stops' },
+  { policy: gapJumper(), until: X(x + 29.5), max: 900, note: 'on, over the gap where the stall was' },
+];
 const act03 = (x: number): Step[] => [{ policy: bagHop('gtk3a'), until: and(ground, X(x + 26)), max: 2400, note: 'cloth to cloth, ahead of the inspector' }, { hold: 'R', until: X(x + 30), max: 300 }];
 /** the jhola stall: jump up for the bag on the hook, then in */
 const jholaPolicy: Policy = (w, _m, d) => {
@@ -1021,6 +1037,10 @@ function actDeaths() {
   actDeath('GTK-02', r2, 'gtk02-ulta', 'ride the top tier and stay on', () => [{ policy: rideTier('gtk2b', false, 'stay'), until: done, max: 3000 }], 'gtk-bhaap');
   actDeath('GTK-02', r2, 'gtk02-ulta', 'let the top tier go, get on the second', () => [{ policy: rideTier('gtk2b', false, 'second'), until: done, max: 3000 }], 'gtk-dhakkan');
   const r3 = room03();
+  actDeath('GTK-07', room07(), 'gtk07-ghanti', 'follow the rope along the road', () => blind(), 'gtk-badal');
+  actDeath('GTK-07', room07(), 'gtk07-ghanti', 'stand and wait for the bells to come to you', (x) => [{ hold: 'R', until: X(x + 3), max: 600 }, { hold: '', until: done, max: 1800 }], 'gtk-khachar');
+  actDeath('GTK-07', room07(), 'gtk07-paani', 'run for the tea-stall awning', (x) => [{ hold: 'R', until: X(x + 3.5), max: 600 }, { hold: '', until: (w) => paani(w).raining, max: 600 }, { hold: 'R', until: done, max: 600 }], 'gtk-khaai');
+  actDeath('GTK-07', room07(), 'gtk07-paani', 'stand still in the open till it passes', (x) => [{ hold: 'R', until: X(x + 3.5), max: 600 }, { hold: '', until: done, max: 900 }], 'gtk-chiplo');
   actDeath('GTK-03', r3, 'gtk03-kalam', 'wait till he’s done, then go', () => [{ policy: bagHop('gtk3k', { every: true, gate: kalamGate(1, 'wrote') }), until: done, max: 3000 }], 'gtk-jhora');
   actDeath('GTK-03', r3, 'gtk03-kalam', 'on to the bag in front of him, and wait there for him to finish', () => [{ policy: bagHop('gtk3k', { every: true, gate: kalamGate(2, 'wrote') }), until: done, max: 3000 }], 'gtk-polythene');
   actDeath('GTK-03', r3, 'gtk03-ulto', 'on to every bag', () => [{ policy: bagHop('gtk3b', { every: true, dwell: 0.3 }), until: done, max: 3000 }], 'gtk-polythene');
@@ -1140,6 +1160,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk03-jaanch': act03,
   'gtk03-ulto': act03b,
   'gtk03-kalam': act03e,
+  'gtk07-ghanti': act07m,
+  'gtk07-paani': act07n,
   'gtk03-jaldi': (x: number): Step[] => [{ policy: bagHop('gtk3c'), until: and(ground, X(x + 26)), max: 2400, note: 'no stopping, ahead of him' }, { hold: 'R', until: X(x + 30), max: 300 }],
   'gtk04-ghar': act04,
   'gtk04-upar': act04b,

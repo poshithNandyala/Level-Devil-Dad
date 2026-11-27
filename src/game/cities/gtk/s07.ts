@@ -6,7 +6,7 @@
 import type { LevelDef, World } from '../../world';
 import type { Act } from '../../levels/acts';
 import type { Ending } from '../../levels/endkit';
-import { tara } from '../../levels/endkit';
+import { npc, tara } from '../../levels/endkit';
 import { Grid } from '../../levels/grid';
 import { collectible, door, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
@@ -320,6 +320,128 @@ export const chaiAct = (id: string, PITS: [number, number][], CL: Cloud, key: st
 });
 export const act10 = chaiAct('gtk07-chiya', [[6, 7], [11, 12], [17, 18], [23, 24], [35, 36], [41, 42], [47, 48], [53, 54]], { t0: -1, thick: 3.0, clear: 1.6 }, 'gtk7j');
 export const act12 = ghumtiAct('gtk07-jaldi', [[4, 5], [8, 9], [13, 14], [18, 19], [23, 24], [28, 29], [33, 34], [37, 38]], { t0: -1, thick: 0, clear: 0, roll: 110 }, 'gtk7l');
+/** F485 walk-to-sound (the sound beat): thick cloud, and the lower road has slid away under the kerb rope, which
+ *  went down with it. The mule train resting on the path above rings its bells: walk to the sound, up on to that
+ *  path and past them. Wait for the bells to come to you and the train comes down on to the road, through you */
+export const GHANTI = { start: 3.4, speed: 60, ring: 1.0 };
+export const act13: Act = {
+  id: 'gtk07-ghanti',
+  w: 34,
+  advice: 'Thick cloud, and the road ahead has slid away, rope and all. Listen: the mule train is resting on the path above, ringing its bells. Walk to the sound: up on to that path, and on past them before they move off down towards you.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 12, x + 18);
+    // the path above: a step up, then the path, which you can walk under
+    g.fill(x + 4, x + 5, 13, 13, '=');
+    g.fill(x + 6, x + 30, 12, 12, '=');
+  },
+  build: (w, c) => {
+    const st = { t0: -1, walking: false };
+    w.flags.gtk7g = st;
+    onPass(w, c.X(2), (w2) => {
+      if (st.t0 < 0) st.t0 = w2.tick;
+    });
+    fog(w, c.x + 3, c.x + 33, null);
+    drops(w, [[c.x + 12, c.x + 18]], 'gtk-badal');
+    rope(w, c.x + 1, c.x + 11, []);
+    rope(w, c.x + 19, c.x + 33, []);
+    // the rope that went down with the slide: its posts lean down into the hole
+    decor(w, 3, (ctx) => {
+      for (let i = 0; i < 3; i++) box(ctx, c.X(12.5 + i * 2.2), FL - 6 + i * 10, 3, 14, '#F4F1EA');
+    });
+    const upY = px(12) - 22,
+      lowY = FL - 22;
+    for (const [k, x0] of [[0, c.X(10)], [1, c.X(11.6)]] as [number, number][]) {
+      w.add(
+        new Rig(x0, upY, 22, 22, {
+          layer: 1,
+          cause: 'gtk-khachar',
+          inset: 2,
+          live: () => st.walking,
+          tick: (r, w2) => {
+            if (st.t0 < 0) return;
+            const u = (w2.tick - st.t0) / 120;
+            if (k === 0 && u % GHANTI.ring < 1 / 120) npc(w2, 'Ting! | Ting!', r.x + 10, upY - 20, 0.6);
+            if (u < GHANTI.start) return;
+            st.walking = true;
+            r.x -= GHANTI.speed / 120;
+            // down the step on to the road, and on towards the start
+            if (r.x < c.X(6)) r.y = Math.min(lowY, r.y + 1.5);
+          },
+          paint: (ctx, r) => {
+            box(ctx, r.x + 2, r.y + 6, 18, 9, '#7A6250');
+            box(ctx, r.x - 3, r.y + 2, 6, 8, '#7A6250');
+            for (const lx of [r.x + 3, r.x + 16]) box(ctx, lx, r.y + 15, 3, 7, '#4A3B30');
+            box(ctx, r.x + 4, r.y + 2, 12, 5, '#C0392B');
+            box(ctx, r.x - 2, r.y + 10, 3, 3, '#F4D35E');
+          },
+        }),
+      );
+    }
+    sign(w, c.x + 0.6, 8.6, 4.2, 'NH 10', 'green', null, 'mule track above');
+  },
+};
+
+/** F486 drip-line-shelter: a shower comes through the cloud. Somewhere above, a balcony the cloud hides keeps it
+ *  off: when the rain starts it drips in a line on to the road along its edges. Stand between the drip lines.
+ *  The tea-stall awning you remember from the last stall has gone with the stall, and the road with it */
+export const PAANI = { start: 2.4, rain: 3.0, slip: 2.0, roof: [5, 8.5] as [number, number], gap: [10, 11] as [number, number] };
+export const act14: Act = {
+  id: 'gtk07-paani',
+  w: 30,
+  advice: 'A shower comes through the cloud, and out in it the wet slope takes your feet. When it starts, look at the road: where it drips in a line, a balcony is up there in the cloud. Stand between the drip lines till it stops. The tea-stall awning is not where you remember it.',
+  paint: (g, c) => {
+    g.pit(c.x + PAANI.gap[0], c.x + PAANI.gap[1]);
+  },
+  build: (w, c) => {
+    const st = { t0: -1, wet: 0, raining: false, over: false };
+    w.flags.gtk7p = st;
+    onPass(w, c.X(1), (w2) => {
+      if (st.t0 < 0) st.t0 = w2.tick;
+    });
+    const [r0, r1] = PAANI.roof.map((k) => c.X(k));
+    fog(w, c.x + 3, c.x + 29, null);
+    drops(w, [[c.x + PAANI.gap[0], c.x + PAANI.gap[1]]], 'gtk-khaai');
+    rope(w, c.x + 1, c.x + 29, [[c.x + PAANI.gap[0], c.x + PAANI.gap[1]]]);
+    // the balcony up in the cloud (behind the fog) and the stall's broken awning frame beyond the gap
+    decor(w, -1, (ctx) => {
+      box(ctx, r0, FL - 70, r1 - r0, 6, '#8C8678');
+      box(ctx, c.X(PAANI.gap[0]) + 4, FL - 44, px(3) - 8, 3, '#E07A5F');
+    });
+    w.add(
+      new Rig(c.X(0), 0, px(30), FL, {
+        layer: 4,
+        tick: (_r, w2) => {
+          if (st.t0 < 0) return;
+          const u = (w2.tick - st.t0) / 120;
+          st.raining = u >= PAANI.start && u < PAANI.start + PAANI.rain;
+          st.over = u >= PAANI.start + PAANI.rain;
+          if (!st.raining) return;
+          const p = w2.player;
+          const under = p.x >= r0 && p.x + p.w <= r1;
+          if (under) st.wet = 0;
+          else if (++st.wet > PAANI.slip * 120 && w2.state === 'play') w2.die('gtk-chiplo');
+        },
+        paint: (ctx, r, w2) => {
+          if (!st.raining) return;
+          // rain everywhere but under the balcony; and the drip lines along its edges
+          ctx.fillStyle = 'rgba(170,190,205,0.55)';
+          for (let x = r.x; x < r.x + r.w; x += 7) {
+            if (x > r0 && x < r1) continue;
+            const y = ((w2.tick * 9 + x * 13) % (FL - 100)) + 100;
+            ctx.fillRect(x, y, 1, 7);
+          }
+          for (const ex of [r0, r1 - 2])
+            for (let k = 0; k < 4; k++) box(ctx, ex, FL - 4 - (((w2.tick >> 1) + k * 9) % 36), 2, 3, 'rgba(210,225,235,0.9)');
+          box(ctx, r0 - 1, FL - 2, 3, 2, '#9DB8C9');
+          box(ctx, r1 - 2, FL - 2, 3, 2, '#9DB8C9');
+        },
+      }),
+    );
+    sign(w, c.x + PAANI.gap[1] + 1, 8.2, 3.4, 'CHIYA', 'shop', null, 'tea, 10 m');
+  },
+};
+
 /** door: up the hillside in thick cloud; the rope's posts climb with the hidden steps, the only guide to them */
 export const ending: Ending = {
   space: 12,

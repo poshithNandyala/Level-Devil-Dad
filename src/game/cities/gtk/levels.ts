@@ -9,6 +9,8 @@ import { px } from './entities';
 
 /** Tara at the start of an act, urging the play its trap waits for (she lies; the guide never does) */
 const INTRO: Record<string, string> = {
+  'gtk07-paani': 'Hajur! Under the tea stall, Dad, quick!',
+  'gtk07-ghanti': 'Hajur! Follow the rope, Dad!',
   'gtk03-kalam': 'Hajur! Wait till he’s done, Dad!',
   'gtk02-ulta': 'Hajur! Stay on, it comes back down!',
   'gtk03-ulto': 'Hajur! Check each bag for stitches, slowly!',
@@ -48,7 +50,7 @@ import { room as room03, act as act03, act2 as act03b, act4 as act03d, act5 as a
 import { room as room04, act as act04, act2 as act04b, act3 as act04c, meta04 } from './s04';
 import { room as room05, act1 as act05a, act2 as act05b, act3 as act05c, act5 as act05e, act6 as act05f, act7 as act05g, meta05 } from './s05';
 import { room as room06, act as act06, act2 as act06b, act3 as act06c, act4 as act06d, act6 as act06f, act9 as act06i, meta06 } from './s06';
-import { room as room07, act1 as act07a, act2 as act07b, act3 as act07c, act7 as act07g, act10 as act07j, act12 as act07l, meta07 } from './s07';
+import { room as room07, act1 as act07a, act2 as act07b, act3 as act07c, act7 as act07g, act10 as act07j, act12 as act07l, act13 as act07m, act14 as act07n, meta07 } from './s07';
 import { room as room08, act as act08, act6 as act08f, meta08 } from './s08';
 import { room as room09, act as act09, act2 as act09b, act3 as act09c, act4 as act09d, meta09 } from './s09';
 import { room as room10, act1 as act10a, act2 as act10b, act3 as act10c, act4 as act10d, act5 as act10e, act7 as act10g, act8 as act10h, act9 as act10i, act10 as act10j, act11 as act10k, act12 as act10l, meta10 } from './s10';
@@ -60,8 +62,8 @@ export const levels = (): LevelDef[] => [
   longStage({ base: room04(), acts: withIntros([act04, act04b, act04c]), twist: 'gtk-lift-counts-down', par: 34, shape: 'long', meta: meta04 }),
   longStage({ base: room05(), acts: withIntros([act05a, { ...act05b, cps: [1.5, 19.5] }, { ...act05e, cps: [16.5] }, act05c, act05f, act05g]), twist: 'gtk-taxi-meter', par: 74, shape: 'wtf', meta: meta05 }),
   longStage({ base: room06(), acts: withIntros([act06, act06b, { ...act06c, cps: [22, 33] }, act06d, act06f, act06i]), twist: 'gtk-tank-overflow', par: 53, shape: 'long', meta: meta06 }),
-  longStage({ base: room07(), acts: withIntros([act07a, act07b, act07c, act07g, { ...act07j, cps: [30] }, act07l]), twist: 'gtk-rope-climbs-to-door', par: 99, shape: 'marathon', lives: 'act', meta: meta07 }),
+  longStage({ base: room07(), acts: withIntros([act07a, act07b, act07c, act07m, act07g, act07n, { ...act07j, cps: [30] }, act07l]), twist: 'gtk-rope-climbs-to-door', par: 99, shape: 'marathon', lives: 'act', meta: meta07 }),
   longStage({ base: room08(), acts: withIntros([act08f, act08]), twist: 'gtk-cabin-both-doors', par: 71, shape: 'wtf', meta: meta08 }),
   longStage({ base: room09(), cps: [26.5], acts: withIntros([act09, { ...act09c, cps: [23.5] }, { ...act09d, cps: [19.5] }, act09b]), twist: 'gtk-gate-yak-snowbank', par: 94, shape: 'long', meta: meta09 }),
-  longStage({ base: room10(), acts: withIntros([act10a, act10b, act10c, act10d, act10e, act10g, act10j, act10h, { ...act10i, cps: [21.5] }, act10k, act10l]), twist: 'gtk-viewpoint-second-floor', par: 123, shape: 'marathon', lives: 'act', meta: meta10 }),
+  longStage({ base: room10(), acts: withIntros([act10a, act10b, act10c, act10d, act10e, act10g, act10j, { ...act10h, cps: [31] }, { ...act10i, cps: [21.5] }, { ...act10k, cps: [26] }, act10l]), twist: 'gtk-viewpoint-second-floor', par: 123, shape: 'marathon', lives: 'act', meta: meta10 }),
 ];
