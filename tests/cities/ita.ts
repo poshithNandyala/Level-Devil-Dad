@@ -229,33 +229,134 @@ const shedPolicy: Policy = (w) => {
   return go('');
 };
 
+// ------------------------------------------------------------------ ITA-05
+type CanopySt = { t0: number; figs: { c: number; at: number }[]; rigs: { x: number; w: number; s: { down?: boolean; falling?: boolean } }[] };
+const FIGW = 56;
+/** across the canopy: step on to a platform once it is down; while waiting, stand on the half away from the one that drops next */
+function canopyWalk(key: string, o: { wrongRead?: boolean; noJumpWhen?: (w: World, st: CanopySt) => boolean } = {}): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const st = w.flags[key] as CanopySt;
+    const p = w.player;
+    if (st.t0 < 0) return go('R');
+    if (!p.onGround) return go('R');
+    const rigs = st.rigs.map((r, i) => ({ r, at: st.figs[i].at, i })).sort((a, b) => a.r.x - b.r.x);
+    const ni = rigs.findIndex((q) => q.r.x > p.x + p.w - 6);
+    if (ni < 0) return go('R');
+    const next = rigs[ni];
+    const ci = ni - 1;
+    const cur = ci >= 0 ? rigs[ci] : null;
+    const pending = rigs.filter((q) => !q.r.s.down);
+    const soon = pending.length ? pending.reduce((a, b) => (o.wrongRead ? (b.at > a.at ? b : a) : b.at < a.at ? b : a)) : null;
+    const soonIdx = soon ? rigs.indexOf(soon) : -1;
+    const t = (w.tick - st.t0) / 120;
+    const soonClose = soon && Math.abs(soonIdx - ni) <= 1 && (soon.r.s.falling || soon.at - t < 1.0);
+    if (next.r.s.down && !soonClose) {
+      const from = cur ? cur.r.x + FIGW : -1;
+      const gap = next.r.x - (cur ? from : p.x + p.w);
+      const needHop = cur ? gap > 12 : true;
+      if (!needHop) return go('R');
+      if (p.x + p.w >= next.r.x - (cur ? 36 : 46)) {
+        if (o.noJumpWhen && o.noJumpWhen(w, st)) return go('');
+        jt = cur ? 12 : 14;
+        return { move: 'R', jump: true };
+      }
+      return go('R');
+    }
+    // wait: on the bank well short of the first platform's landing zone, or on the half of my platform away from the next drop
+    if (!cur) return go(p.x + p.w >= rigs[0].r.x - 80 ? '' : 'R');
+    let tx = cur.r.x + FIGW / 2 - p.w / 2;
+    if (soonIdx === ci + 1) tx = cur.r.x + 6;
+    else if (soonIdx === ci - 1) tx = cur.r.x + FIGW - p.w - 6;
+    return go(p.x < tx - 3 ? 'R' : p.x > tx + 3 ? 'L' : '');
+  };
+}
+/** the squirrel act: no hop from a second before the chirp's glide until it has gone through */
+const squirrelOut = (_w: World, st: CanopySt) => {
+  const t = ((_w.tick - st.t0) / 120 + 0.1) % 5;
+  return t >= 1.5 && t <= 3.95;
+};
+const room05 = (): Step[] => [{ policy: canopyWalk('ita5'), until: and(ground, X(27.5)), max: 3000, note: 'across the canopy as it ripens' }, { hold: 'R', until: X(29), max: 400 }];
+const act05 = (x: number): Step[] => [{ policy: canopyWalk('ita5a'), until: and(ground, X(x + 33.5)), max: 4000, note: 'dusk: the darkest is next' }, { hold: 'R', until: X(x + 37.4), max: 400 }];
+const act05b = (x: number): Step[] => [{ policy: canopyWalk('ita5b', { noJumpWhen: squirrelOut }), until: and(ground, X(x + 30.5)), max: 4000, note: 'hop only when the squirrel is not coming' }, { hold: 'R', until: X(x + 35.4), max: 400 }];
+/** the hollow: hop on to the round fig, run straight over its middle without stopping, hop off at the far end */
+const hollowPolicy: Policy = (w, m) => {
+  const st = w.flags.ita5e as { x0: number; x1: number };
+  const p = w.player;
+  if (m.hold > 0) return { move: 'R', jump: true };
+  const edges = [st.x0, st.x1 + 16];
+  const e = edges.find((x) => p.x + p.w < x);
+  if (e !== undefined && p.onGround && p.x + p.w >= e - 30 && w.tick > (m.cool ?? 0)) {
+    m.hold = 11;
+    m.cool = w.tick + 40;
+    return { move: 'R', jump: true };
+  }
+  return go('R');
+};
+
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-01': { steps: [...courseRoute(), ...hop(62.4, 'hop the fort wall like the others'), { hold: 'R', until: done, max: 900 }], cause: 'ita-ita' },
   'ITA-02': { steps: [...hopGaps([12, 18]), { hold: 'R', until: done, max: 2400 }], cause: 'ita-bhaar' },
   'ITA-03': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-keechad' },
   'ITA-04': { steps: [{ hold: 'R', until: X(9.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12, note: 'jump for the oranges in the tree' }, { hold: '', until: done, max: 600 }], cause: 'ita-santra' },
+  'ITA-05': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-khai' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-01': { steps: [...upTo(24), { hold: 'R', until: X(77.0), max: 600 }, { hold: 'R', jump: 16, ticks: 16, note: 'skip the first brick, as on the first wall' }, { hold: 'R', until: done, max: 900 }], cause: 'ita-pop' },
   'ITA-02': { steps: [{ hold: 'R', until: (w) => w.player.x >= px(12) && w.player.y > FL - 8, max: 900, note: 'step aside into the first bay' }, { hold: '', until: done, max: 2400, note: 'and wait there' }], cause: 'ita-bans' },
   'ITA-03': { steps: [{ policy: herdWalk('ita3', 0.05), until: done, max: 3000, note: 'wait for the lead’s dip, then hop on in rhythm' }], cause: 'ita-seeng' },
   'ITA-04': { steps: [...shake(5.2, 4), { hold: '', until: done, max: 600 }], cause: 'ita-tokri' },
+  'ITA-05': {
+    steps: [
+      { hold: 'R', until: X(4), max: 600 },
+      { hold: '', until: (w) => !!(w.flags.ita5 as CanopySt).rigs[0].s.down, max: 900, note: 'wait for the first cluster to land' },
+      { hold: 'R', until: X(6.2), max: 300 },
+      { hold: 'R', jump: 12, ticks: 12, note: 'hop on' },
+      { hold: 'R', until: (w) => w.player.x + w.player.w >= (w.flags.ita5 as CanopySt).rigs[0].x + FIGW - 1, max: 600, note: 'to its right edge, to wait for the next' },
+      { hold: '', until: done, max: 1500 },
+    ],
+    cause: 'ita-anjeer',
+  },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
   'ITA-03': [{ what: 'wait on the young one’s back for the next to dip', steps: [{ policy: herdWalk('ita3'), until: (w) => w.player.x >= px(15), max: 3000 }, { hold: '', until: done, max: 1500 }], cause: 'ita-seeng' }],
   'ITA-04': [{ what: 'shake from the downhill side of the trunk', steps: [...shake(8.6, 1), { hold: '', until: done, max: 600 }], cause: 'ita-santra' }],
+  'ITA-05': [
+    { what: 'at dusk, read the brightest cluster as the next to drop (the day rule)', steps: [...room05(), { policy: canopyWalk('ita5a', { wrongRead: true }), until: done, max: 5000 }], cause: 'ita-anjeer' },
+    {
+      what: 'in the squirrel’s canopy, hop across the moment each cluster lands',
+      get steps(): Step[] {
+        const x = actX0('ITA-05', 'ita05-gilahri');
+        return [...room05(), ...act05(actX0('ITA-05', 'ita05-shaam')), { policy: canopyWalk('ita5b'), until: done, max: 5000 }, { hold: 'R', until: X(x + 40), max: 100 }];
+      },
+      cause: 'ita-gilahri',
+    },
+  ],
   'ITA-02': [{ what: 'wait in the deep bay for the first porter only, then run on', steps: [...hopGaps([12]), { hold: 'R', until: (w) => w.player.x >= px(18) && w.player.y > FL - 8, max: 900 }, { hold: '', until: (w) => (w.flags.ita2 as DeckSt).porters[0].x < px(18) - 34, max: 1500 }, { hold: 'R', jump: 16, ticks: 16 }, { hold: 'R', until: done, max: 1500 }], cause: 'ita-bhaar' }],
 };
+const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'ita02-dusra': act02,
   'ita03-jhund': act03,
   'ita04-upar': act04,
+  'ita05-shaam': act05,
+  'ita05-gilahri': act05b,
 };
 const endingPolicies: Record<string, Policy> = {
   'ita-phatak': gatePolicy,
   'ita-baada': penPolicy,
   'ita-peti': shedPolicy,
+  'ita-khokhla': hollowPolicy,
 };
 
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
@@ -266,9 +367,10 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('ITA-03', 0, []);
   S['ITA-04'] = room04();
   lengthen('ITA-04', 0, []);
+  S['ITA-05'] = room05();
+  lengthen('ITA-05', 0, []);
 }
 
-void LEVEL_BY_ID;
 export const test: CityTests = {
   solutions,
   naive,
@@ -276,5 +378,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['ITA-02', 'ITA-03', 'ITA-04'],
+  fair: ['ITA-02', 'ITA-03', 'ITA-04', 'ITA-05'],
 };

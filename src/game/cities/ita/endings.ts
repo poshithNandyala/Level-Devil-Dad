@@ -3,8 +3,9 @@ import type { Ending } from '../../levels/endkit';
 import { ending as e02 } from './s02';
 import { ending as e03 } from './s03';
 import { ending as e04 } from './s04';
+import { ending as e05 } from './s05';
 
-export type ItaEndingKind = 'ita-phatak' | 'ita-baada' | 'ita-peti';
+export type ItaEndingKind = 'ita-phatak' | 'ita-baada' | 'ita-peti' | 'ita-khokhla';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<ItaEndingKind, true> {}
@@ -14,4 +15,5 @@ export const endings: Record<ItaEndingKind, Ending> = {
   'ita-phatak': e02,
   'ita-baada': e03,
   'ita-peti': e04,
+  'ita-khokhla': e05,
 };

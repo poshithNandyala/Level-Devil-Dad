@@ -11,4 +11,7 @@ export const causeLines: Record<string, string[]> = {
   'ita-santra': ['The oranges rolled downhill into you.', 'Shake the tree from its uphill side, left of the trunk, and let the oranges roll away from you into the baskets.'],
   'ita-tokri': ['The harvester’s basket came down on you: that was one shake too many.', 'The basket over the shaking spot drops a notch per shake. Count: three shakes fill the stair. Stop there.'],
   'ita-peti': ['A crate landed on you at the packing shed.', 'The rope’s shadow slides to where the next crate lands. Cross right after a drop, behind the shadow.'],
+  'ita-khai': ['You went down into the gorge: there was no platform there yet.', 'A cluster is a platform only once it has dropped. Wait for it to land before you step across.'],
+  'ita-anjeer': ['A ripe cluster came down on you.', 'A dropping cluster lands over the edges of its neighbours. Wait on the far side of your platform from the one that is next: the nearest to orange (at dusk, the darkest).'],
+  'ita-gilahri': ['The flying squirrel took you in mid-air.', 'It chirps a second before it glides through. Be standing on a platform, not jumping, when it passes.'],
 };
