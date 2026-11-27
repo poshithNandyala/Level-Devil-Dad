@@ -351,7 +351,7 @@ const horn: Act = {
   w: 36,
   // on the long pylon step, before the porters
   cp0: false,
-  cps: [3],
+  cps: [4.5],
   advice: 'A lorry behind is leaning on its horn: on every blare the porters step toward the parapet, and the load under you jumps back a stride without you. Be on the back of the load when the horn goes, and walk back to it again after each one. Don’t hop to the porter in front on the horn: he steps too.',
   paint: (g, c) => {
     g.fill(c.x, c.x + 8, 14, 14, '#').fill(c.x + 1, c.x + 8, 13, 13, '#');
