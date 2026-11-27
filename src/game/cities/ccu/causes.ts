@@ -15,7 +15,7 @@ export const causeLines: Record<string, string[]> = {
   'ccu-arch': ['The station arch swept you off the load.', 'Step off on to the platform before the arch.'],
   'ccu-adda': ['The old men held you in their adda, and the maid’s water came along the rok while you sat.', 'Never stop beside the old men: walk straight through them.'],
   'ccu-dhowa': ['The maid’s water came along the rok and swept you off it.', 'Watch the door: when it opens, hop the sheet of water.'],
-  'ccu-bansh': ['On to the cut bamboo stakes. The cloth went up where you were jumping.', 'Watch the decorator with the roll: jump on to the top of his panel.'],
+  'ccu-bansh': ['Off the bamboo, down on to the cut stakes.', 'Watch the decorator with the roll: jump on to the top of his panel.'],
   'ccu-muri': ['He shook the tin, and you went under the muri.', 'When he lifts the tin, be on a peanut.'],
   'ccu-lonka': ['A green chilli came up right where you landed.', 'From the second shake on, hop to the next peanut as he shakes.'],
   'ccu-murti': ['The paint reached the top, and they carried the figure out, with you on it.', 'Stand only on figures painted below the waist.'],
@@ -31,5 +31,5 @@ export const causeLines: Record<string, string[]> = {
   'ccu-pherot': ['That stack was being bought down. The one he pointed at was growing: books coming back.', 'Tonight the pointed stack is the safe one. Ride it up.'],
   'ccu-khola': ['They’re taking the pandal down: that cloth top was untied, and it dropped you on to the stakes.', 'Tonight the bamboo holds and the cloth doesn’t. Stay on the bamboo.'],
   'ccu-kumir10': ['Tonight he counted with his eyes open. Crossing while he counts is crossing while he looks.', 'Cross when he STOPS counting and covers his eyes.'],
-  'ccu-danga': ['The chalk river is too wide to jump, and you came down in it.', 'Wait on the bank for him to cover his eyes.'],
+  'ccu-danga': ['Into the chalk river: tonight it’s too wide to clear, so he had you.', 'Wait on the bank for him to cover his eyes.'],
 };

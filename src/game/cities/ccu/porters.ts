@@ -88,7 +88,8 @@ export class Porter extends Entity {
         this.state = 'down';
         this.t = 0;
         this.load.velX = 0;
-        if (this.riding(w)) {
+        // a chai stop on the road (a set-down for good is on a pylon step or the causeway: not a chai death)
+        if (this.riding(w) && r[1] !== Infinity) {
           w.flags.cha = 1;
           w.flags.chaBy = this;
         }
