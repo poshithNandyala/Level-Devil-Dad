@@ -1,5 +1,8 @@
 /** Tara's line for each new death cause ('svp-...'): [what happened, how to beat it] */
 export const causeLines: Record<string, string[]> = {
+  'svp-kichad2': ['Kichad! The branch springs back with the parrots gone, and the next creek was mud too.', 'Each creek has its own flock and its own horn: be on its branch when it lifts, not before.'],
+  'svp-magar2': ['Magarmachh! It was under the log the arrow pointed away from.', 'The arrow follows the crocodile under the logs: cross a gap only while the arrow points somewhere else.'],
+  'svp-hiran2': ['Hiran! At the second landing the herd was on you too.', 'The stall is three tiles from the edge here: put the fritter down at the stall, not at the edge.'],
   'svp-kichad': ['Kichad! The piece you stood on was the piece they cut.', 'Stand on the end that stays: the boarding end of the first log, the middle of the second.'],
   'svp-aari': ['Aari! You were standing where the saw cuts.', 'The blade cuts at one line of the log. Keep a plank away from it.'],
   'svp-lakdi': ['Lakdi! A plank came down on your head.', 'Wait back from the stack: the shadow shows where the next one lands.'],
@@ -11,9 +14,12 @@ export const causeLines: Record<string, string[]> = {
   'svp-jahaz': ['Jahaz! You got on the first ship, and it sailed.', 'The first ship is the crowd’s. Wait for the second, and step over to it when it docks.'],
   'svp-baarish': ['Baarish! The rain came in hard from the other side.', 'Only the lee end of an awning is dry: the end the wind blows towards. When the cloud bank shows on the other horizon, change ends.'],
   'svp-nala': ['Nala! The gutter runs like a river while it rains.', 'Cross the gutter in the lull, when it has drained.'],
+  'svp-eent2': ['Eent! The brick of the cellar floor went under you, a moment after you landed.', 'The cellar is brick all the way across: only the green roots over it hold, and the middle one swings.'],
   'svp-eent': ['Eent! The brick gave way under you.', 'Brick crumbles a moment after you land on it. Roots hold, and a dead grey root is no better than brick.'],
   'svp-baha': ['Baha! The sheet of rain water carried you back into the drain.', 'Wait under the awning until the sun is out: the cloud has two lobes, and the lull between them is not the end.'],
   'svp-rassi': ['Rassi! You jumped for a boat that was still tied up on the far bank.', 'The rope answers hops by the bollard. Hop there until the boat is alongside, then step on.'],
+  'svp-rassi2': ['Rassi! The long creek takes more pulls, and its bollard is a long way back from the edge.', 'Hop by the second bollard, not at the water: five or six pulls bring this boat in. Then step on.'],
+  'svp-chuna2': ['Chuna! The wall’s formation was dripping too, and the floor behind it slid you into the drain.', 'The wall is a hop too: rap it, then wait on top of the wall until the dripping stops, then climb down.'],
   'svp-chuna': ['Chuna! The wet limestone slid you back into the drain.', 'Hop, then wait on the dry side: the formation drips for seven seconds, and the floor is only slippery while it does.'],
   'svp-uthao': ['Uthao! The lift overran the floor and you were still on it.', 'The lift stops at every floor for a few seconds. Step off at the last stop, not the first, and never stay aboard after it.'],
   'svp-khula': ['Khula! The bridge lifted for the ship, and you were on it.', 'When the lights flash the deck is about to lift. Wait on the road for the green, then cross at once.'],

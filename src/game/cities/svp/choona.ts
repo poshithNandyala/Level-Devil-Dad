@@ -29,6 +29,7 @@ export class Formation extends Entity {
     readonly patch: [number, number],
     /** the drain at its foot: [x0, x1] px */
     readonly pit: [number, number],
+    readonly cause = 'svp-chuna',
   ) {
     super();
     this.layer = 5;
@@ -66,7 +67,7 @@ export class Formation extends Entity {
       p.pushVx = PUSH;
       this.lastPush = w.tick;
     }
-    this.drain.cause = w.tick - this.lastPush < 150 ? 'svp-chuna' : 'fell';
+    this.drain.cause = w.tick - this.lastPush < 150 ? this.cause : 'fell';
     void DT;
   }
   draw(ctx: Ctx, w: World) {
@@ -144,7 +145,7 @@ export const choona: Act = {
   build: (w, c) => {
     const x = c.x;
     const a = new Formation(px(x + 12) + 8, 44, [px(x + 20), px(x + 29)], [px(x + 18), px(x + 20)]).install(w);
-    const b = new Formation(px(x + 42) + 8, 56, [px(x + 50), px(x + 59)], [px(x + 48), px(x + 50)]).install(w);
+    const b = new Formation(px(x + 42) + 8, 56, [px(x + 50), px(x + 59)], [px(x + 48), px(x + 50)], 'svp-chuna2').install(w);
     (w.flags.forms ??= []).push(a, b);
   },
 };

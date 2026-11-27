@@ -194,13 +194,13 @@ export class Root extends Entity {
 }
 
 /** the ruined cellar floor: brick all the way across [c0, c1] over a pit, in pieces of `piece` tiles */
-function cellar(w: World, c0: number, c1: number, piece = 4, delay = 30) {
+function cellar(w: World, c0: number, c1: number, piece = 4, delay = 30, cause = 'svp-eent') {
   const bricks: Crumbler[] = [];
   for (let c = c0; c <= c1; c += piece) {
     const wd = Math.min(piece, c1 - c + 1);
     bricks.push(new Crumbler(px(c), FLOOR, px(wd), 16, 'brick', delay).install(w));
   }
-  w.add(new Hurt(px(c0), FLOOR + 16, px(c1 - c0 + 1), 40, 'svp-eent', null));
+  w.add(new Hurt(px(c0), FLOOR + 16, px(c1 - c0 + 1), 40, cause, null));
   w.add(
     new Fx(null, (ctx) => {
       const g = ctx.createLinearGradient(0, FLOOR + 14, 0, FLOOR + 60);
@@ -255,10 +255,10 @@ export const pul: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    cellar(w, x + 3, x + 19);
-    cellar(w, x + 28, x + 44);
-    cellar(w, x + 51, x + 70);
-    cellar(w, x + 79, x + 107);
+    cellar(w, x + 3, x + 19, 4, 30, 'svp-eent2');
+    cellar(w, x + 28, x + 44, 4, 30, 'svp-eent2');
+    cellar(w, x + 51, x + 70, 4, 30, 'svp-eent2');
+    cellar(w, x + 79, x + 107, 4, 30, 'svp-eent2');
     // first creek of ruin: green, green (swinging), a grey step to tempt you, green
     const y = FLOOR - 28;
     new Root(px(x + 4), y, 64).install(w);

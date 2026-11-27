@@ -32,6 +32,7 @@ export class Rope extends Entity {
     readonly bollard: number,
     readonly boatW = 80,
     readonly pull = 38,
+    readonly cause = 'svp-rassi',
   ) {
     super();
     this.layer = 1;
@@ -42,7 +43,7 @@ export class Rope extends Entity {
   install(w: World) {
     w.add(this);
     w.add(this.boat);
-    w.add(new Hurt(this.nearX, FLOOR + 12, this.farX - this.nearX, 40, 'svp-rassi', null));
+    w.add(new Hurt(this.nearX, FLOOR + 12, this.farX - this.nearX, 40, this.cause, null));
     w.add(new Fx(null, (ctx, w2) => this.water(ctx, w2), 5));
     return this;
   }
@@ -169,7 +170,7 @@ export const rassi: Act = {
   build: (w, c) => {
     const x = c.x;
     const a = new Rope(px(x + 10), px(x + 24), px(x + 4) + 8, 80, 38).install(w);
-    const b = new Rope(px(x + 34), px(x + 52), px(x + 27) + 8, 96, 40).install(w);
+    const b = new Rope(px(x + 34), px(x + 52), px(x + 27) + 8, 96, 40, 'svp-rassi2').install(w);
     (w.flags.ropes ??= []).push(a, b);
   },
 };

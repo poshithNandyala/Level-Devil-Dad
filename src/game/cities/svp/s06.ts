@@ -174,8 +174,8 @@ export class Bough extends Entity {
   }
 }
 
-function mud(w: World, x0: number, x1: number) {
-  w.add(new Hurt(x0, FLOOR + 10, x1 - x0, 40, 'svp-kichad', null));
+function mud(w: World, x0: number, x1: number, cause = 'svp-kichad') {
+  w.add(new Hurt(x0, FLOOR + 10, x1 - x0, 40, cause, null));
   w.add(
     new Fx(null, (ctx, w2) => {
       const g = ctx.createLinearGradient(0, FLOOR + 8, 0, FLOOR + 48);
@@ -244,8 +244,8 @@ export const sanjh: Act = {
     const b2 = new Bough(f2, px(x + 26), px(x + 33)).install(w);
     (w.flags.flocks ??= []).push(f1, f2);
     (w.flags.boughs ??= []).push(b1, b2);
-    mud(w, px(x + 4), px(x + 12));
-    mud(w, px(x + 26), px(x + 34));
+    mud(w, px(x + 4), px(x + 12), 'svp-kichad2');
+    mud(w, px(x + 26), px(x + 34), 'svp-kichad2');
   },
 };
 

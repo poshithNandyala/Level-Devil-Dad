@@ -94,6 +94,7 @@ export class Herd extends Entity {
     readonly pit: [number, number],
     /** the deer don't go past this x (px) */
     readonly limit: number,
+    readonly cause = 'svp-hiran',
   ) {
     super();
     this.layer = 2;
@@ -151,7 +152,7 @@ export class Herd extends Entity {
         this.lastNudge = w.tick;
       }
     }
-    this.hurt.cause = w.tick - this.lastNudge < 180 ? 'svp-hiran' : 'fell';
+    this.hurt.cause = w.tick - this.lastNudge < 180 ? this.cause : 'fell';
   }
   draw(ctx: Ctx, w: World) {
     for (const s of this.stalls) {
@@ -306,7 +307,7 @@ export const ghat: Act = {
   build: (w, c) => {
     const x0 = px(c.x + 17),
       x1 = px(c.x + 23);
-    const herd = new Herd([px(c.x + 1) + 6, px(c.x + 2) + 6, px(c.x + 3) + 6], [{ x: px(c.x + 13) + 8, used: false }], [x0, x1], x0 - 8).install(w);
+    const herd = new Herd([px(c.x + 1) + 6, px(c.x + 2) + 6, px(c.x + 3) + 6], [{ x: px(c.x + 13) + 8, used: false }], [x0, x1], x0 - 8, 'svp-hiran2').install(w);
     const boat = new LateBoat(herd, x0, x1 - 40, 3.6, 1.8).install(w);
     (w.flags.herds ??= []).push(herd);
     (w.flags.boats ??= []).push(boat);

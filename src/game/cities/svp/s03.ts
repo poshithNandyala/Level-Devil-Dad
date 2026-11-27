@@ -260,7 +260,7 @@ class Patrol extends Entity {
     super();
     this.layer = 5;
     this.cx = gaps[0];
-    this.hurt = new Hurt(0, FLOOR - 40, 22, 48, 'svp-magar', null);
+    this.hurt = new Hurt(0, FLOOR - 40, 22, 48, 'svp-magar2', null);
     this.hurt.on = false;
   }
   aim() {

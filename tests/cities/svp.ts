@@ -721,9 +721,52 @@ actDeath('SVP-07', 'svp07-doosra', 'out of the trench the moment the real call c
   { hold: 'R', until: (w) => w.state !== 'play', max: 1500, note: 'and on' },
 ]);
 actDeath('SVP-07', 'svp07-teesra', 'sit down on the luggage like everyone, a third time', 'svp-bheed', (x) => [hopUntil(and(ground, X(x + 11.5)), 'on to the luggage'), { hold: '', until: (w) => w.state !== 'play', max: 3000, note: 'wait for the ship' }]);
+// the second attempt of 01 to 06: the room (and the acts before) done properly, then a different trap in the next beat
+const later = (id: string, act: string, cause: string, then: (x: number) => Step[]) => {
+  fix[id] = {
+    cause,
+    get steps() {
+      return atAct(id, act, then);
+    },
+  };
+};
+later('SVP-09', 'svp09-pul', 'svp-eent2', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'across the brick of the cellar' }]);
+// 08: the street and the longer street done properly, then the gutter at the door: wait for the rain, then cross it
+fix['SVP-08'] = {
+  cause: 'svp-nala',
+  get steps(): Step[] {
+    const def = LEVELS.find((l) => l.id === 'SVP-08')!;
+    const out: Step[] = [...ROOM['SVP-08']];
+    for (const p of def.parts ?? []) out.push(...actRoutes[p.kind](p.x0));
+    return [
+      ...out,
+      streetUntil(7, 'to the last awning, before the gutter'),
+      { hold: '', until: (w) => (w.flags.gutter as { flood: number }).flood > 0.5, max: 4000, note: 'wait there for the rain: the gutter fills' },
+      { hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'and cross it now, the awnings are dry' },
+    ];
+  },
+};
+later('SVP-02', 'svp02-chirai', 'svp-kichad', (x) => [
+  { hold: 'R', until: (w) => w.player.x >= px(x + 4) + 6 && w.player.onGround, max: 900, note: 'on to the boarding end' },
+  { policy: (w) => go(toward(w, hall(w, 0).L + 12, 2)), until: (w) => w.state !== 'play', max: 2400, note: 'and stay on it, as the first log taught' },
+]);
+later('SVP-03', 'svp03-nala', 'svp-magar2', () => [hopUntil((w) => w.state !== 'play', 'hop the logs')]);
+later('SVP-04', 'svp04-ghat', 'svp-hiran2', (x) => [
+  { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },
+  { hold: 'R', until: X(x + 15.5), max: 600 },
+  ...Array.from({ length: 40 }, (): Step => ({ hold: '', jump: 8, ticks: 40, note: 'hopping at the edge to keep warm' })),
+]);
+later('SVP-05', 'svp05-rassi', 'svp-rassi', (x) => [
+  { hold: 'R', until: X(x + 9.4), max: 600 },
+  { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'jump for the boat from the edge' },
+]);
+later('SVP-06', 'svp06-sanjh', 'svp-kichad2', (x) => [
+  { hold: 'R', until: X(x + 3.4), max: 600 },
+  { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'jump for the next cliff, no branch' },
+]);
 // 10: the second attempt gets through the mill with the food put down, and dies at the creek (a different trap from the blade)
 fix['SVP-10'] = {
-  cause: 'svp-magar',
+  cause: 'svp-magar2',
   get steps() {
     return atAct('SVP-10', 'svp10-nadi', () => [hopUntil((w) => w.state !== 'play', 'hop the logs without reading the arrow')]);
   },
@@ -733,9 +776,9 @@ fix['SVP-10'] = {
   cause: 'svp-aari',
   steps: [{ hold: 'R', until: (w) => herd0(w).carrying, max: 600 }, putDown(herd0, 'put it down'), board((w) => hall(w, -1), 'on to the log'), { policy: (w) => go(toward(w, hall(w, -1).L + 48, 2)), until: (w) => w.state !== 'play', max: 2400, note: 'the middle of the log' }],
 });
-actDeath('SVP-10', 'svp10-jad', 'walk the brick floor of the cellar', 'svp-eent', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'across the brick' }]);
+actDeath('SVP-10', 'svp10-jad', 'walk the brick floor of the cellar', 'svp-eent2', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'across the brick' }]);
 actDeath('SVP-10', 'svp10-saman', 'sit down on the luggage like everyone', 'svp-bheed', (x) => [hopUntil(and(ground, X(x + 11.5)), 'on to the luggage'), { hold: '', until: (w) => w.state !== 'play', max: 2400, note: 'wait for the ship' }]);
-actDeath('SVP-10', 'svp10-ghat', 'carry the food to the edge and hop there waiting for the boat', 'svp-hiran', (x) => [
+actDeath('SVP-10', 'svp10-ghat', 'carry the food to the edge and hop there waiting for the boat', 'svp-hiran2', (x) => [
   { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },
   { hold: 'R', until: X(x + 15.5), max: 600 },
   ...Array.from({ length: 40 }, (): Step => ({ hold: '', jump: 8, ticks: 40, note: 'hopping at the edge to keep warm' })),
@@ -784,21 +827,17 @@ actDeath('SVP-06', 'svp06-lehar', 'wait for the first float, then hop on without
   hopUntil((w) => w.state !== 'play', 'then hop on, hop on'),
 ]);
 actDeath('SVP-05', 'svp05-choona', 'hop everything in the cave', 'svp-chuna', () => [hopUntil((w) => w.state !== 'play', 'hop the rock, the drain, on')]);
-actDeath('SVP-05', 'svp05-choona', 'hop the rock, wait a little, then go', 'svp-chuna', (x) => [
-  { hold: 'R', until: X(x + 10.6), max: 900 },
-  { hold: 'R', jump: 12, ticks: 12, note: 'hop it' },
-  { hold: 'R', until: and(ground, X(x + 14.2)), max: 400 },
-  { hold: '', ticks: 360, note: 'wait a few seconds' },
+actDeath('SVP-05', 'svp05-choona', 'wait out the first drip, then hop the wall without waiting', 'svp-chuna2', (x) => [
+  ...caveBeat(0, x + 10.6, 12, x + 14.2, x + 16.8, x + 32),
   hopUntil((w) => w.state !== 'play', 'then on, hopping'),
 ]);
 actDeath('SVP-05', 'svp05-rassi', 'run to the edge and jump for the tied-up boat', 'svp-rassi', (x) => [
   { hold: 'R', until: X(x + 9.4), max: 600 },
   { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'jump for the boat from the edge' },
 ]);
-actDeath('SVP-05', 'svp05-rassi', 'two hops at the bollard, then jump for the boat from the edge', 'svp-rassi', (x) => [
-  { policy: (w) => go(toward(w, px(x + 4) + 8, 3)), until: (w) => Math.abs(w.player.cx - (px(x + 4) + 8)) < 6 && w.player.onGround, max: 900 },
-  { policy: (w) => ({ move: '', jump: w.player.onGround }), until: (w) => rope(0)(w).hauls >= 2, max: 900, note: 'a couple of hops' },
-  { hold: 'R', until: X(x + 9.4), max: 600 },
+actDeath('SVP-05', 'svp05-rassi', 'over the first creek by the rope, then run for the second boat and jump from the edge', 'svp-rassi2', (x) => [
+  ...ropeCross(0, x + 4, x + 29),
+  { hold: 'R', until: X(x + 33.4), max: 600 },
   { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'and jump for it' },
 ]);
 
@@ -806,10 +845,9 @@ actDeath('SVP-10', 'svp10-rassi', 'run to the edge and jump for the tied-up boat
   { hold: 'R', until: X(x + 9.4), max: 600 },
   { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'jump for the boat from the edge' },
 ]);
-actDeath('SVP-10', 'svp10-rassi', 'two hops at the bollard, then jump for the boat from the edge', 'svp-rassi', (x) => [
-  { policy: (w) => go(toward(w, px(x + 4) + 8, 3)), until: (w) => Math.abs(w.player.cx - (px(x + 4) + 8)) < 6 && w.player.onGround, max: 900 },
-  { policy: (w) => ({ move: '', jump: w.player.onGround }), until: (w) => rope(0)(w).hauls >= 2, max: 900, note: 'a couple of hops' },
-  { hold: 'R', until: X(x + 9.4), max: 600 },
+actDeath('SVP-10', 'svp10-rassi', 'over the first creek by the rope, then run for the second boat and jump from the edge', 'svp-rassi2', (x) => [
+  ...ropeCross(0, x + 4, x + 29),
+  { hold: 'R', until: X(x + 33.4), max: 600 },
   { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 400, long: true, note: 'and jump for it' },
 ]);
 
