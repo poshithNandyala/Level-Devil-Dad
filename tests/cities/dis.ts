@@ -23,6 +23,7 @@ import type { Sluice } from '../../src/game/cities/dis/sluice';
 import type { Tekeli } from '../../src/game/cities/dis/tekeli';
 import type { RopeWalk } from '../../src/game/cities/dis/rope';
 import { GrassRhino } from '../../src/game/cities/dis/egret';
+import { Tunnels } from '../../src/game/cities/dis/tunnel';
 
 type Out = { move: 'L' | 'R' | ''; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
@@ -463,6 +464,7 @@ act('dis05-feast', 'DIS-05', [(x) => [{ hold: 'R', until: X(x + 6.6), max: 600 }
 act('dis05-kaath', 'DIS-05', [(x) => [...hopR(x + 9.2, 'an ordinary hop over the split', 8), { hold: 'R', until: done, max: 300 }], 'dis-kaath', 'hops the first split the ordinary way: it slides ahead under his landing'], [(x) => [{ hold: 'R', until: X(x + 8.5), max: 600 }, { hold: '', jump: 8, ticks: 8, note: 'a hop on the spot to set it sliding' }, { hold: '', until: ground, max: 200 }, { hold: '', ticks: 240, note: 'wait for it to settle' }, ...hopR(x + 11.8, 'over the first split where it stopped', 8), ...hopR(x + 16.4, 'over the second', 8), { hold: 'R', until: done, max: 600 }], 'dis-gamosa', 'stops to let the split settle: the wife catches him with the third gamosa and, blind, he walks into the ditch']);
 act('dis06-flag', 'DIS-06', [(x) => [...hopR(x + 13.3, 'down on the gangplank', 8), ...hopR(x + 17.3, 'over the ghat man', 12), { hold: 'R', until: X(x + 21.6), max: 300 }, { hold: 'R', jump: 8, until: X(x + 23.4), max: 100, note: 'a hop to the flag' }, { hold: '', until: done, max: 300 }], 'dis-luit', 'hops to the flag over the water: the river'], [(x) => [...hopR(x + 13.3, 'down on the gangplank', 8), { hold: 'R', until: done, max: 600, note: 'along the plank to where the flag was' }], 'dis-gamosa', 'goes to where the flag was: the ghat man’s third gamosa, and blind he walks off the plank’s end']);
 act('dis08-bogoli', 'DIS-08', [() => [{ hold: 'R', until: done, max: 900 }], 'dis-bogoli', 'walks into the grass with the egrets up: the rhino is charging'], [(x) => [{ hold: 'R', until: X(x + 4.8), max: 600 }, { hold: '', until: (w) => rhinoOf(w).t > (2 * rhinoOf(w).up + rhinoOf(w).sit) * 120, max: 1200, note: 'waits for the egrets to go up once more and settle before trusting them' }, { hold: 'R', until: done, max: 900 }], 'dis-jui', 'waits a whole round of the egrets: the rangers’ burn has come back through the grass']);
+act('dis09-tunnels', 'DIS-09', [(x) => [{ hold: 'R', until: X(x + 0.1), max: 300 }, { hold: 'R', jump: 12, ticks: 12, note: 'up on the step' }, { hold: 'R', until: ground, max: 200 }, { hold: 'R', jump: 12, ticks: 12, note: 'up on the beam' }, { hold: 'R', until: done, max: 900 }], 'dis-roof', 'skips the tunnels and runs the oiled beam: the oil balls'], [(x) => [{ hold: 'R', until: X(x + 3.5), max: 600 }, ...throughMouth(-1), { hold: 'R', until: done, max: 300, note: 'runs on ahead' }], 'dis-vault', 'takes the first tunnel and runs on: the next grate is still down, off the pier into the vault']);
 act('dis05-machan', 'DIS-05', [(x) => [{ policy: (w) => ({ move: floorAhead(w, 3) ? 'R' : '', jump: false }), until: and(ground, X(x + 16)), max: 1500 }, { hold: '', until: done, max: 900 }], 'dis-machan', 'waits on the last plank for one more: the drum rolls'], [() => [{ hold: 'R', until: done, max: 900 }], 'dis-luit', 'runs on ahead of the carpenter: the far end is not built']);
 act('dis06-wake', 'DIS-06', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-dhal', 'runs to outrun the wake'], [(x) => [{ hold: 'R', until: X(x + 6.3), max: 600 }, { hold: '', until: (w) => wakes(w)[0].running && w.player.cx - wakes(w)[0].x < 50, max: 600 }, { hold: '', jump: 14, ticks: 14, note: 'hops the wave' }, { hold: '', until: done, max: 600 }], 'dis-bank', 'waits for the wake on the undercut bank and hops it: the landing breaks the slab off']);
 act('dis06-traps', 'DIS-06', [(x) => [...onTrap(x, 0), { hold: '', until: done, max: 900 }], 'dis-dirru', 'stands on the first trap as on a floor: it rings and is hoisted'], [(x) => [...onTrap(x, 0), { hold: '', until: (w) => traps(w)[0].state(w) === 'ring', max: 900 }, ...onTrap(x, 1), { hold: '', until: done, max: 600 }], 'dis-tip', 'hops on at the ring to the next trap: it is still slack and tips']);
@@ -759,6 +761,12 @@ const ghatWait = (g0: number, g1: number): Step[] => [
   { hold: 'R', until: ground, max: 200 },
 ];
 const rhinoOf = (w: World) => w.entities.find((e) => e instanceof GrassRhino) as GrassRhino;
+const tunnelsOf = (w: World) => w.entities.find((e) => e instanceof Tunnels) as Tunnels;
+/** one mouth of the chain: wait on the pier for its grate, then walk in */
+const throughMouth = (i: number): Step[] => [
+  { hold: '', until: (w) => tunnelsOf(w).at === i && tunnelsOf(w).open(w, i), max: 300, note: i < 0 ? '' : 'wait for the grate to lift' },
+  { hold: 'R', until: (w) => tunnelsOf(w).at === i + 1, max: 200, note: 'in at the mouth' },
+];
 const changsOf = (w: World) => (w.flags.changs ?? []) as { boy: { down: boolean }; rung: { solid: any } }[];
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'dis05-char': mark('dis05-char', (x) => [{ policy: crossSand(), until: and(ground, X(x + 41)), max: 4000, note: 'givers, the taker on the bar, the bars at the siren' }]),
@@ -918,6 +926,12 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: X(x + 4.8), max: 600, note: 'to the edge of the grass: the egrets are up' },
     { hold: '', until: (w) => rhinoOf(w).t > 0 && !rhinoOf(w).flying, max: 600, note: 'wait for them to settle on its back' },
     { hold: 'R', until: and(ground, X(x + 25)), max: 600, note: 'through the grass at once, while they sit' },
+  ]),
+  'dis09-tunnels': mark('dis09-tunnels', (x) => [
+    { hold: 'R', until: X(x + 3.5), max: 600 },
+    ...[-1, 0, 1, 2, 3, 4].flatMap(throughMouth),
+    { hold: '', until: (w) => tunnelsOf(w).bridge.collidable, max: 600, note: 'on the last pier: wait for the plank bridge' },
+    { hold: 'R', until: and(ground, X(x + 55)), max: 600 },
   ]),
   'dis06-wake': mark('dis06-wake', (x) => [
     ...hopR(x + 8.9, 'over the spur into its lee', 12),

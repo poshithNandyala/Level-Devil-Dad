@@ -29,6 +29,7 @@ export const causeLines: Record<string, string[]> = {
   'dis-japi-gat': ['Gat! You jumped the second split long as well, into the ditch beyond.', 'The second split slides back toward you: an ordinary hop clears it and lands short of the ditch. Then hop the ditch from its edge.'],
   'dis-bogoli': ['Gorh! The egrets were up: the rhino was charging under them.', 'The white egrets sit on the hidden rhino’s back. While they sit it lies still: walk through. When they rise, wait at the edge of the grass.'],
   'dis-jui': ['Jui! The rangers’ burn came back through the grass.', 'They light it at the far end when the egrets next go up. Cross the first time the egrets settle; don’t wait a whole round.'],
+  'dis-vault': ['Garh! The grate was still down, and you ran on off the pier into the vault.', 'Each tunnel mouth brings you up a step behind the next one, and its grate lifts a moment later. Stop, wait for it, then walk in. On the last pier wait for the plank bridge.'],
   'dis-luit': ['Luit! The sandbar was not there, or it went out from under you.', 'Read the level post. When the siren goes the next bar comes up first, the bar you stand on goes last, and a bar that narrows keeps its left end. The hut never moves.'],
   'dis-basket': ['Tokari! The plucker’s basket swung into you.', 'Stay a few steps behind her and follow. Never hop over her, and when the path is wet wait before it: you can’t stop on it.'],
   'dis-tawa': ['Zui! You fell on the hot pan.', 'Hop only when the next crepe is poured and shiny.'],
