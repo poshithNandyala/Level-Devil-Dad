@@ -17,4 +17,6 @@ export const causeLines: Record<string, string[]> = {
   'ita-doob': ['You walked into a full tank: deep water.', 'A tank is a floor only when it is low. Pull the lever on its bund and wait a second for it to drain.'],
   'ita-bahaav': ['The surge from the channel swept you out of the tank.', 'The water you drained goes down the channel into another tank, a second and a half later. Read the channel, and never be in that tank when it arrives: wait on the bund.'],
   'ita-mori': ['The sluice took you: the pour, or the gate coming down.', 'Pull the lever and let the water pour through. The gate stays up a second and a half after the pour stops: go through then.'],
+  'ita-dhuan': ['The exhaust coughed black smoke over you.', 'The driver tries the engine while the truck is moving: the cab shakes (or the engine turns over) a second before. Be off the truck then: rest only where it has settled past a chock.'],
+  'ita-truck': ['You let go between chocks and the truck rolled back over you.', 'Let go only when the wheel has just dropped over a chock: the truck settles a step ahead of you and rolls back no further than that stone.'],
 };

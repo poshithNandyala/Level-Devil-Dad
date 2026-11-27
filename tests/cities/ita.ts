@@ -378,6 +378,50 @@ const sluicePolicy: Policy = (w, m, d) => {
   return go(p.x + p.w >= px(D - 3) - 30 ? '' : 'R');
 };
 
+// ------------------------------------------------------------------ ITA-07
+type TruckSt = { t0: number; x0: number; chocks: number[]; bay: number; coughs: number[]; rig: { x: number }; rolled: number; parked: boolean; atRest: boolean };
+const PUSH7 = 46;
+/** push in bursts: start a burst only from a rest spot when it will end before the next cough; never let go mid-burst */
+function pushBursts(key: string): (w: World) => Out {
+  return (w) => {
+    const st = w.flags[key] as TruckSt;
+    const p = w.player;
+    if (!st || st.parked || st.t0 < 0) return go('R');
+    const t = (w.tick - st.t0) / 120;
+    const rig = st.rig;
+    if (!st.atRest) return go('R');
+    const target = st.chocks.map((c) => px(c)).find((cx) => rig.x < cx) ?? px(st.bay);
+    const approach = Math.max(0, rig.x - (p.x + p.w)) / 140;
+    const dur = approach + (target - rig.x) / PUSH7;
+    const next = st.coughs.find((c) => c + 0.7 > t);
+    const safe = next === undefined || (t < next && next - t > dur + 0.35);
+    if (safe) return go('R');
+    return go(p.x + p.w > rig.x - 12 ? 'L' : '');
+  };
+}
+const room07 = (): Step[] => [{ policy: pushBursts('ita7'), until: (w) => (w.flags.ita7 as TruckSt).parked, max: 6000, note: 'push the truck to the lay-by, chock to chock, between coughs' }, { hold: 'R', until: X(29), max: 600 }];
+const act07 = (x: number): Step[] => [{ policy: pushBursts('ita7a'), until: (w) => (w.flags.ita7a as TruckSt).parked, max: 9000, note: 'the climb: uneven bursts, watch the cab' }, { hold: 'R', until: X(x + 43.4), max: 600 }];
+const act07b = (x: number): Step[] => [{ policy: pushBursts('ita7b'), until: (w) => (w.flags.ita7b as TruckSt).parked, max: 9000, note: 'the snow: listen for the engine' }, { hold: 'R', until: X(x + 43.4), max: 600 }];
+/** the tailgate: wait clear of the exhaust, walk in right after a cough */
+const tailgatePolicy: Policy = (w, _m, d) => {
+  const e = w.flags.ita7e as { P: number };
+  const p = w.player;
+  const t = (w.tick / 120) % e.P;
+  const need = Math.max(0, d.x + 8 - (p.x + p.w)) / 140;
+  if (t + need + 0.1 < e.P - 0.6) return go('R');
+  return go(p.x + p.w > d.x - 26 ? 'L' : '');
+};
+/** release when the cab shakes, wherever the truck is, and stand there */
+function releaseAtTell(key: string): (w: World) => Out {
+  return (w) => {
+    const st = w.flags[key] as TruckSt;
+    if (!st || st.t0 < 0) return go('R');
+    const t = (w.tick - st.t0) / 120;
+    const telling = st.coughs.some((c) => t >= c - 1.0 && t < c + 0.6);
+    return go(telling ? '' : 'R');
+  };
+}
+
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-01': { steps: [...courseRoute(), ...hop(62.4, 'hop the fort wall like the others'), { hold: 'R', until: done, max: 900 }], cause: 'ita-ita' },
@@ -386,6 +430,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-04': { steps: [{ hold: 'R', until: X(9.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12, note: 'jump for the oranges in the tree' }, { hold: '', until: done, max: 600 }], cause: 'ita-santra' },
   'ITA-05': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-khai' },
   'ITA-06': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-doob' },
+  'ITA-07': { steps: [{ hold: 'R', until: done, max: 2400, note: 'push without stopping' }], cause: 'ita-dhuan' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-01': { steps: [...upTo(24), { hold: 'R', until: X(77.0), max: 600 }, { hold: 'R', jump: 16, ticks: 16, note: 'skip the first brick, as on the first wall' }, { hold: 'R', until: done, max: 900 }], cause: 'ita-pop' },
@@ -413,6 +458,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
     ],
     cause: 'ita-bahaav',
   },
+  'ITA-07': { steps: [{ policy: releaseAtTell('ita7'), until: done, max: 3000, note: 'let go when the cab shakes, wherever the truck is' }], cause: 'ita-truck' },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
   'ITA-03': [{ what: 'wait on the young one’s back for the next to dip', steps: [{ policy: herdWalk('ita3'), until: (w) => w.player.x >= px(15), max: 3000 }, { hold: '', until: done, max: 1500 }], cause: 'ita-seeng' }],
@@ -456,6 +502,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'ita05-shaam': act05,
   'ita05-gilahri': act05b,
   'ita06-nahar': act06,
+  'ita07-chadhai': act07,
+  'ita07-barf': act07b,
 };
 const endingPolicies: Record<string, Policy> = {
   'ita-phatak': gatePolicy,
@@ -463,6 +511,7 @@ const endingPolicies: Record<string, Policy> = {
   'ita-peti': shedPolicy,
   'ita-khokhla': hollowPolicy,
   'ita-mori': sluicePolicy,
+  'ita-tailgate': tailgatePolicy,
 };
 
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
@@ -477,6 +526,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('ITA-05', 0, []);
   S['ITA-06'] = room06();
   lengthen('ITA-06', 0, []);
+  S['ITA-07'] = room07();
+  lengthen('ITA-07', 0, []);
 }
 
 export const test: CityTests = {
@@ -486,5 +537,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['ITA-02', 'ITA-03', 'ITA-04', 'ITA-05', 'ITA-06'],
+  fair: ['ITA-02', 'ITA-03', 'ITA-04', 'ITA-05', 'ITA-06', 'ITA-07'],
 };
