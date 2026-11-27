@@ -820,7 +820,7 @@ const highTuna: Act = {
     let on = false;
     const fling = () => {
       if (w.state !== 'play') return;
-      if (w.player.x < X(33)) shot(w, 'kvt-tuna', X(34), FLOOR - 34, -170, 0, 0, 'hit');
+      if (w.player.x < X(33)) shot(w, 'kvt-tuna', X(34), FLOOR - 50, -170, 0, 0, 'hit');
       w.after(1.3, fling);
     };
     onPass(w, X(1), () => {
@@ -838,17 +838,25 @@ const highTuna: Act = {
  *  you. Keep going, and over the water before they get there. */
 const turtlesBehind: Act = {
   id: 'kvt10-aama',
-  w: 28,
-  advice: 'A nest hatches behind you and the babies run the way you are going, to the water ahead: don’t stop for them this time. Run on and hop the water before they reach it.',
+  w: 42,
+  advice: 'A nest hatches behind you and the babies run the way you are going, to the water ahead: don’t stop for them this time, run on and hop the water. The next nest is ahead of you: that one you wait for, till every baby is in.',
   paint: (g, c) => {
-    g.pit(c.x + 20, c.x + 21);
+    g.pit(c.x + 20, c.x + 21).pit(c.x + 37, c.x + 38);
   },
   build: (w, c) => {
     const { X } = c;
     pool(w, c.x + 20, c.x + 22, 15.3, { colors: LAGOON });
+    pool(w, c.x + 37, c.x + 39, 15.3, { colors: LAGOON });
     const nest = Nest.place(w, { tx: c.x + 3, groundTy: 15, waterTx: c.x + 20, line: 'Aamakkunjungal! Kadalilekku! | Baby turtles! Off to the sea!' });
     onPass(w, X(5), (w2) => nest.hatch(w2));
     onPass(w, X(8), (w2) => taraSays(w2, 'Nilkku, Dad! Kunjungal pokatte! | Stop, Dad! Let the babies go first!', 2.4));
+    // the second nest is ahead of you: its babies cross in front, and this time you do wait
+    const ahead = Nest.place(w, { tx: c.x + 29, groundTy: 15, waterTx: c.x + 37 });
+    onPass(w, X(24), (w2) => ahead.hatch(w2));
+    w.onTick((w2) => {
+      w2.flags[c.f('ahead')] = ahead.done ? 1 : 0;
+    });
+    onPass(w, X(25), (w2) => taraSays(w2, 'Odu, Dad! Ippozhum odu! | Run, Dad! Keep running!', 2.4));
   },
 };
 
@@ -875,17 +883,20 @@ const twiceEels: Act = {
  *  jump in the calm: wait for the sea breeze to blow, and let it carry you over. */
 const breeze: Act = {
   id: 'kvt10-kaattu',
-  w: 22,
-  advice: 'This inlet is too wide for a jump in the calm. Wait at the edge for the breeze to blow (the sand streaks show it), and jump while it blows: it carries you over.',
+  w: 36,
+  advice: 'This inlet is too wide for a jump in the calm: wait at the edge for the breeze to blow (the sand streaks show it), and jump while it blows. The next inlet has the breeze in your face: that one you jump in the calm.',
   paint: (g, c) => {
-    g.pit(c.x + 5, c.x + 9);
+    g.pit(c.x + 5, c.x + 9).pit(c.x + 21, c.x + 22);
   },
   build: (w, c) => {
     const { X } = c;
     pool(w, c.x + 5, c.x + 10, 15.3, { colors: LAGOON });
+    pool(w, c.x + 21, c.x + 23, 15.3, { colors: LAGOON });
     gust(w, c.x + 5.5, 9, 4.5, 7, 95, { period: 3.0, on: 1.4, phase: 0 });
+    gust(w, c.x + 21, 9, 2, 7, -95, { period: 3.0, on: 1.4, phase: 1.5 });
     sign(w, c.x + 0.4, G - 4.4, 3.4, 'BREEZE', 'green', 'right', 'from the sea');
     onPass(w, X(2), (w2) => taraSays(w2, 'Kaattu nilkkumbol chaadu! | Jump when the wind stops!', 2.4));
+    onPass(w, X(17), (w2) => taraSays(w2, 'Kaattu varumbol chaadu! | Jump with the wind!', 2.4));
   },
 };
 
