@@ -335,7 +335,6 @@ actRoutes['lko02-takrar'] = (x) => [
   hop(x + 13, x + 15.5, 'over the hole he left'),
   runTo(x + 23, 300),
 ];
-const aadaabOk = (i: number) => (w: World) => (w.flags[`lko02-aadaab:g${i}`] as { s: string } | undefined)?.s === 'ok';
 const rangPh = (w: World) => ((w.flags['lko03-rang:ph'] as ((w: World) => number) | undefined)?.(w) ?? -1);
 /** the far half has just come up out of the dye */
 const rangUp = (w: World) => {
@@ -356,14 +355,6 @@ actRoutes['lko03-adda'] = (x) => [
   hops([x + 29.1, x + 32.6], 'off the far side'),
   runTo(x + 35, 300),
 ];
-const BADAL = [4, 6.5, 9, 11.5, 18.5, 21, 23.5, 26, 28.5];
-/** a cup is safe to land on when the cloud's shadow covers it with room to spare */
-const shaded = (x: number, d: number) => (w: World) => {
-  const B = w.flags['lko04-badal:cloud'] as { x: number; w: number };
-  const cx = px(x + d) + 8;
-  return cx > B.x - B.w / 2 + 36 && cx < B.x + B.w / 2 - 18;
-};
-const DUM = [3, 6, 9, 12, 15];
 const sizzling = (i: number) => (w: World) => !!(w.flags['lko05-ghee:heaps'] as { low: boolean }[] | undefined)?.[i]?.low;
 const spit = (lo: number, hi: number) => (w: World) => {
   const f = w.flags['lko05-charkhi:state'] as ((w: World) => { flatFor: number }) | undefined;
@@ -506,21 +497,6 @@ const guruFwd = (x: number, to: number, old = false, key = 'lko06-guru', mirror 
   };
 };
 actRoutes['lko06-guru'] = (x) => [guruFwd(x, x + 25.5), runTo(x + 27.5, 300)];
-/** keep your feet moving on a covered board (a pause there is a bow) until `f` */
-const pace10 = (x0: number, x1: number, f: (w: World) => boolean): Step => {
-  let to = x1;
-  return {
-    policy: (w) => {
-      const t = px(to) + 8;
-      if (Math.abs(w.player.cx - t) <= 3) to = to === x1 ? x0 : x1;
-      return go(toward(w, px(to) + 8, 1));
-    },
-    until: f,
-    max: 1200,
-    note: 'keep moving on the covered board till sam',
-  };
-};
-const samDo = (w: World) => afterSam(w, 'lko10-do');
 const warped = (id: string) => (w: World) => !!(w.flags[`${id}:d`] as { warped: boolean } | undefined)?.warped;
 actRoutes['lko10-thahra'] = (x) => [
   walkTo(x + 2, 300, 'to the hall door'),
@@ -530,8 +506,6 @@ actRoutes['lko10-thahra'] = (x) => [
   runTo(x + 31.6, 400),
 ];
 actRoutes['lko10-seedha'] = (x) => [guruFwd(x, x + 25.5, false, 'lko10-seedha'), runTo(x + 27.5, 300)];
-const tihaiAt = (w: World, id = 'lko06-tihai') => (w.flags[`${id}:at`] as ((w: World) => { n: number; k: number }) | undefined)?.(w) ?? { n: -1, k: -1 };
-const afterSam = (w: World, id = 'lko06-tihai') => { const a = tihaiAt(w, id); return a.n === 0 && a.k > 2 && a.k < 40; };
 const awningDown = (id: string, k: number) => (w: World) => {
   const st = w.flags[`${id}:st`] as { t: number }[] | undefined;
   return !!st && st[k].t >= 0 && w.tick - st[k].t > 42;
@@ -611,7 +585,6 @@ actRoutes['lko07-photo'] = (x) => [
   until(flash(1), 900, 'not the short test flash: the real one'),
   runTo(x + 33, 300),
 ];
-const R_lko07_chauraha = (id: string) => (x: number): Step[] => [walkTo(x + 3, 300), hop(x + 5, x + 7.3, 'over the nala'), pause('pause before the strollers'), runTo(x + 31, 600, 'stroll up, then run through')];
 
 type Court = { t0: number; k: number; cur: number; lit: Set<number>; piece: number; n: number };
 const R_lko08_chausar = (id: string, c0off = 5, n = 10, period = 200, mindPiece = true, mindBow = true, key = 'court', land = 3 * n + 1.5) => (x: number): Step[] => {
@@ -645,8 +618,7 @@ const R_lko08_chausar = (id: string, c0off = 5, n = 10, period = 200, mindPiece 
           jt = 12;
           return { move: 'R', jump: true };
         }
-        const bowed = (w.flags[`${id}:${key}:bowed`] as { i: number } | undefined)?.i ?? -1;
-        if (S.lit.has(nxt) && (!mindPiece || S.piece !== nxt) && (!mindBow || bowed !== nxt) && left > 75) {
+        if (S.lit.has(nxt) && (!mindPiece || S.piece !== nxt) && left > 75) {
           tgt = nxt;
           jt = 12;
           return { move: 'R', jump: true };
@@ -791,10 +763,6 @@ actRoutes['lko10-daana'] = (x) => [
   hops([x + 15.4, [x + 19.6, redNow('lko10-daana:k', 1.0)], x + 24.1, [x + 27.8, redNow('lko10-daana:k', 1.0)]], 'then on the red, as on the roofs'),
   runTo(x + 29, 300),
 ];
-const lampPast = (x: number, d: number) => (w: World) => {
-  const L = w.flags['lko10-chirag:ll'] as { x: number } | undefined;
-  return !!L && L.x < px(x + d) - 8;
-};
 const tflash = (need = 120) => (w: World) => ((w.flags['lko10-tasveer:g'] as Ph | undefined)?.blind ?? 0) > need;
 actRoutes['lko10-tasveer'] = (x) => [
   walkTo(x + 6.6, 300, 'wait on the plain board, back from the covers'),
@@ -896,8 +864,6 @@ mistakes['LKO-07'] = [
     cause: 'lko-seedhi',
   },
 ];
-const pre08 = () => [...room08, ...actRoutes0('lko08-chausar', actX('LKO-08', 0))];
-const court08 = (w: World) => w.flags['lko08-chausar:court'] as Court;
 mistakes['LKO-08'] = [
   { what: 'on the pachisi court, hopping on square after square', steps: [...room08, walkTo(actX('LKO-08', 0) + 3.2, 300), hops([0, 1, 2, 3, 4, 5].map((i) => actX('LKO-08', 0) + 5 + 3 * i + 0.5)), until(done, 300)], cause: 'lko-goti-andhera' },
   {
@@ -931,9 +897,7 @@ mistakes['LKO-09'] = [
   { what: 'walking up to the white dome', steps: [...room09, { hold: 'R', until: done, max: 900 }], cause: 'lko-gumbad' },
   { what: 'jumping for the dome from far back, where it looked big', steps: [...room09, walkTo(actX('LKO-09', 0) + 2.2, 300), { hold: 'R', jump: 14, ticks: 60 }, until(done, 300)], cause: 'lko-gumbad-uncha' },
 ];
-const DK = (i: number) => (w: World) => (w.flags['lko05-dum:kebabs'] ?? [])[i]?.stage === 1;
-mistakes['LKO-05'] = [
-];
+mistakes['LKO-05'] = [];
 mistakes['LKO-05'].push(
   { what: 'down the long tawa, hopping straight off the first full heap', steps: [...room05, runTo(actX('LKO-05', 0) + 0.5, 300), hops([actX('LKO-05', 0) + 3, actX('LKO-05', 0) + 6]), until(done, 300)], cause: 'lko-seekh' },
   { what: 'down the long tawa, waiting on a flat one for it to squash, as on the full ones', steps: [...room05, runTo(actX('LKO-05', 0) + 0.5, 300), hops([actX('LKO-05', 0) + 3, [actX('LKO-05', 0) + 6, kflat('lko05-tawa:kebabs', 0)]]), until(done, 600)], cause: 'lko-tawa' },

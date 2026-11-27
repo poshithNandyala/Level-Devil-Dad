@@ -488,6 +488,17 @@ export const roshandan: Act = {
           ctx.lineTo(x0 - 12, px(4));
           ctx.closePath();
           ctx.fill();
+          // the beam's two edges drawn as rays, bright at the hole and spreading upwards: a beam, not a patch
+          ctx.strokeStyle = 'rgba(255,240,200,0.85)';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(x0 + 2, fy);
+          ctx.lineTo(x0 - 12, px(4));
+          ctx.moveTo(x0 + 30, fy);
+          ctx.lineTo(x0 + 44, px(4));
+          ctx.moveTo(x0 + 16, fy);
+          ctx.lineTo(x0 + 16, px(4));
+          ctx.stroke();
           // the hole: a black opening in the floor with its broken lip lit from beneath
           ctx.fillStyle = '#0B0806';
           ctx.fillRect(x0 + 2, fy, 28, 6);

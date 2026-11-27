@@ -21,8 +21,8 @@ export const levels = (): LevelDef[] => [
   longStage({ base: s04.room(), acts: s04.acts, twist: 'lko-kulhad', par: 14, shape: 'short', meta: meta04 }),
   longStage({ base: s05.room(), acts: s05.acts, twist: 'lko-sheermal', par: 56, shape: 'long', lives: 'act', meta: meta05 }),
   longStage({ base: s06.room(), acts: s06.acts, twist: 'lko-sam', par: 49, shape: 'long', lives: 'act', meta: meta06 }),
-  longStage({ base: s07.room(), acts: s07.acts, twist: 'lko-darban', par: 67, shape: 'marathon', lives: 'act', meta: meta07 }),
+  longStage({ base: s07.room(), acts: s07.acts, twist: 'lko-darban', par: 65, shape: 'marathon', lives: 'act', meta: meta07 }),
   longStage({ base: s08.room(), acts: s08.acts, twist: 'lko-489', par: 50, shape: 'wtf', lives: 'act', meta: meta08 }),
   longStage({ base: s09.room(), acts: s09.acts, twist: 'lko-chhatri', par: 80, shape: 'long', lives: 'act', cps: [8.2, 23.3], meta: meta09 }),
-  longStage({ base: s10.room(), acts: s10.acts, twist: 'lko-tehzeeb', par: 51, shape: 'long', lives: 'act', meta: meta10 }),
+  longStage({ base: s10.room(), acts: s10.acts, twist: 'lko-tehzeeb', par: 32, shape: 'long', lives: 'act', meta: meta10 }),
 ];

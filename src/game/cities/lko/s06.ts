@@ -305,12 +305,6 @@ export const mehfil: Act = {
   },
 };
 
-// ================================================================ act: tihai, the phrase played three times
-/** The tabla plays a tihai: one phrase three times over, landing on sam. The grey strips have their bells
- *  tied up in cloth and stay silent through the first two phrases; on the sam that ends the third, every bell
- *  on the stage rings, tied or not, and she spins to it. Count the phrases; on the third, be on plain board. */
-const TIHAI = { first: 200, phrase: 80, cycle: 420, boards: [9, 18], bw: 4 };
-
 // ================================================================ act: guru, the student mirrors her
 /** The guru's rule: the student mirrors her. At every stamp of her foot Dad's left and right swap, and at
  *  the next stamp they swap back. Every stamp is a change of state: press the other way, at once. Go back

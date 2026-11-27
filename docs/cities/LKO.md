@@ -10,7 +10,10 @@ The table below is the build history. Since fix round 6 these parts are gone fro
 - The doors of 04 `lko-kulhad`, 06 `lko-sam`, 07 `lko-darban`, 08 `lko-489`, 09 `lko-chhatri` and 10 `lko-tehzeeb` are **plain doors**: no idea, walk in. Each one re-asked its own room (C1). The ids stay.
 - Acts cut (C2, C3, C4): `lko02-aadaab`, `lko04-badal`, `lko05-dum`, `lko06-tihai`, `lko07-chauraha`, `lko08-minar`, `lko08-mehrab`, `lko10-dhulai`, `lko10-julus`, `lko10-raasta`, `lko10-chirag`, `lko10-do`, `lko10-galiyara`.
 - `lko09-hawa` has four roofs. For the last one the flyer walks round in front (`lko-hawa-ulta`).
-- The finale keeps only the callbacks that break their rule: `darbar`, `tasveer`, `jawab`, `daana`, `seedha`, `thahra`.
+- The finale keeps only the callbacks that break their rule. Since fix round 7 (QA FAIL-3) that is `tasveer`, `daana`, `seedha` and `thahra`. `darbar` and `jawab` are cut: darbar borrowed 02's refusal of the offered way, and jawab broke a greeting the city no longer teaches.
+- Fix round 7 also changed `lko07-shaam` and the death lines:
+  - `lko07-shaam` keeps one trap, the shivering awning.
+  - Every callback and every place with a different lesson has its own cause id and line, in `causes.ts`.
 
 ## Stages
 

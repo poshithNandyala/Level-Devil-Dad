@@ -185,7 +185,7 @@ export const s01 = () =>
         'Shukriya, aage chaliye. | Thank you, go ahead.',
       ],
       shouts: [
-        [30, 'Ek cup aur, janab? | One more cup, sir?'],
+        [30, 'Ek chai aur, janab? | One more chai, sir?'],
         [84, 'Nahin nahin, pehle aap! | No no, after you!'],
       ],
       ride: 'cart',
