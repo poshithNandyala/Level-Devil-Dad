@@ -345,7 +345,7 @@ export const badal: Act = {
   },
   build: (w, c) => {
     const x = c.x;
-    const B = { x: c.X(1), go: false, w: 88 };
+    const B = { x: c.X(-3), go: false, w: 88 };
     w.flags[c.f('cloud')] = B;
     const inShade = (cx: number) => cx > B.x - B.w / 2 && cx < B.x + B.w / 2;
     const kz = karahi(w, x + 3, x + 12);

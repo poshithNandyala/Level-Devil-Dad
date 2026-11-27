@@ -13,7 +13,7 @@ import { tara } from './s02';
 
 /** An arch at world x on the level whose floor is at y. Cross it in the air and you come out at `up`
  *  (one level higher, a step past the arch); cross it on your feet and nothing happens. */
-export function arch(w: World, x: number, floorY: number, up: { x: number; y: number } | null, key: string, down: { x: number; y: number } | null = null) {
+export function arch(w: World, x: number, floorY: number, up: { x: number; y: number } | null, key: string, down: { x: number; y: number } | null = null, back: { x: number; y: number } | null = null) {
   let prev = w.player.cx;
   w.onTick((w2) => {
     const p = w2.player;
@@ -27,6 +27,12 @@ export function arch(w: World, x: number, floorY: number, up: { x: number; y: nu
       p.vx = vx * 0.5;
       w2.flags[key] = (w2.flags[key] ?? 0) + 1;
       w2.sfx('blink', to.x, to.y - 8);
+    }
+    // taken backwards (right to left) at a jump, an arch takes you a floor down
+    if (back && prev > x && cx <= x && atLevel && !p.onGround) {
+      w2.warp(back.x - p.w / 2, back.y - p.h, 'blink');
+      w2.flags[key + ':back'] = (w2.flags[key + ':back'] ?? 0) + 1;
+      w2.sfx('blink', back.x, back.y - 8);
     }
     prev = cx;
   });
@@ -396,5 +402,35 @@ export const utar: Act = {
   },
 };
 
-export const s08 = { room: bhoolRoom, acts: [chaupar, minar, mehrab, utar] };
+// ================================================================ act: wapas, back through the arch
+/** Up through the first arch on to a gallery over the well, and the gallery goes nowhere: forward through
+ *  its arch at a jump is the hook roof, and its end is over the well. Walk past that arch, turn, and jump
+ *  back through it the other way: an arch taken backwards takes you a floor DOWN, and out on the far side
+ *  of the well. */
+export const wapas: Act = {
+  id: 'lko08-wapas',
+  w: 22,
+  advice: 'Up through the first arch on to a gallery over the well, and the gallery goes nowhere: forward through its arch at a jump is the hook roof, and its end is over the well. Walk on past that arch, turn round, and jump back through it the other way: an arch taken backwards takes you a floor down, out past the well.',
+  cps: [17.5],
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 4, x + 15, 15);
+    g.fill(x + 3, x + 14, 11, 11, '=');
+    g.fill(x + 12, x + 16, 7, 7, '#');
+    g.fill(x + 20, x + 21, 11, 11, '=');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    mazeWall(w, x, x + 21, [7, 11, 15]);
+    // and a plain arch at the end, back up to the gallery that leads to the door
+    arch(w, c.X(19) + 8, FLOOR, { x: c.X(21) + 8, y: px(11) }, c.f('a3'));
+    well(w, x + 4, x + 15);
+    arch(w, c.X(2) + 8, FLOOR, { x: c.X(4) + 8, y: px(11) }, c.f('a1'));
+    arch(w, c.X(11) + 8, px(11), { x: c.X(13) + 8, y: px(7) }, c.f('a2'), null, { x: c.X(17) + 8, y: FLOOR });
+    hooks(w, x + 12, x + 16, px(6), 'lko-bhool', false);
+    sign(w, x + 0.2, 10.4, 3, 'WAPAS', 'shop', null, 'ulte paon');
+  },
+};
+
+export const s08 = { room: bhoolRoom, acts: [chaupar, minar, mehrab, utar, wapas] };
 export const meta08 = { family: 'entry-height-routes-level', betrayals: ['enter-height'], ending: 'lko-489' } as StageMeta;

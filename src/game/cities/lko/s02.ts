@@ -420,7 +420,8 @@ export const aadaab: Act = {
           w2.say('Aadaab! | Respectful greetings!', c.X(n) + 8, FLOOR - 44, 1.6, 'npc');
         } else if (S.s === 'bowed') {
           G.bow = Math.min(1, age / 16);
-          if (still() > 30) S.s = 'ok';
+          // his greeting is a long, slow one: return it once he has finished, not while he is still bowing
+          if (age > 160 && still() > 30) S.s = 'ok';
           else if (p.cx > c.X(n) - 4) shove(w2, 'lko-aadaab');
         } else if (S.s === 'ok') {
           G.bow = Math.max(0, G.bow - 0.04);

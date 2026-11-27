@@ -591,6 +591,15 @@ actRoutes['lko08-utar'] = (x) => [
   hop(x + 21, x + 23, 'at a jump through the plain arch, back up to the gallery'),
   runTo(x + 23.6, 300),
 ];
+actRoutes['lko08-wapas'] = (x) => [
+  hop(x + 2, x + 4.5, 'at a jump through the first arch: up on to the gallery'),
+  walkTo(x + 13.4, 300, 'on foot past its arch'),
+  { policy: () => ({ move: 'L', jump: true }), ticks: 12, note: 'turn and jump back through it' },
+  { hold: 'L', until: (w) => w.player.onGround, max: 200 },
+  walkTo(x + 17.6, 300, 'out past the well'),
+  hop(x + 19, x + 21, 'up through the plain arch to the gallery'),
+  runTo(x + 21.6, 200),
+];
 actRoutes['lko08-mehrab'] = (x) => [runTo(x + 12, 400, 'on foot through the vault arch'), hop(x + 14.6, x + 17, 'at a jump through the next, up past the well', 30), runTo(x + 29.5, 300)];
 
 const R_lko09_hawa = (id: string) => (x: number): Step[] => {
@@ -847,7 +856,7 @@ mistakes['LKO-08'] = [
     cause: 'lko-goti',
   },
   { what: 'in the vault, hopping the drain into the arch', steps: [...through('LKO-08', room08, 2), runTo(actX('LKO-08', 2) + 1, 300), hop(actX('LKO-08', 2) + 3, actX('LKO-08', 2) + 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-mehrab' },
-  { what: 'hopping the crack into the last arch', steps: [...through('LKO-08', room08, 2), ...actRoutes0('lko08-mehrab', actX('LKO-08', 2)), ...actRoutes0('lko08-utar', actX('LKO-08', 3)), runTo(doorX('LKO-08') - 8.5, 300), hop(doorX('LKO-08') - 6, doorX('LKO-08') - 2), { hold: 'R', until: done, max: 400 }], cause: 'lko-bhool' },
+  { what: 'hopping the crack into the last arch', steps: [...through('LKO-08', room08, 2), ...actRoutes0('lko08-mehrab', actX('LKO-08', 2)), ...actRoutes0('lko08-utar', actX('LKO-08', 3)), ...actRoutes0('lko08-wapas', actX('LKO-08', 4)), runTo(doorX('LKO-08') - 8.5, 300), hop(doorX('LKO-08') - 6, doorX('LKO-08') - 2), { hold: 'R', until: done, max: 400 }], cause: 'lko-bhool' },
 ];
 /** the room's route and the routes of the stage's first n acts */
 function through(id: string, room: Step[], n: number): Step[] {
@@ -909,7 +918,7 @@ mistakes['LKO-02'].push(
 );
 mistakes['LKO-03'].push(
   { what: 'the dyer: waiting on a stitched flower in his half, as learned', steps: [...through('LKO-03', room03, 2), walkTo(actX('LKO-03', 2) + 2, 300), hops([actX('LKO-03', 2) + 4, actX('LKO-03', 2) + 7, actX('LKO-03', 2) + 10]), until(rangUp, 900), hops([actX('LKO-03', 2) + 10, actX('LKO-03', 2) + 13]), until(done, 900)], cause: 'lko-rang' },
-  { what: 'the dyer: hopping on to his half while it is under', steps: [...through('LKO-03', room03, 2), walkTo(actX('LKO-03', 2) + 2, 300), hops([actX('LKO-03', 2) + 4, actX('LKO-03', 2) + 7, actX('LKO-03', 2) + 10]), until((w) => rangPh(w) >= 262, 900), hops([actX('LKO-03', 2) + 10, actX('LKO-03', 2) + 13]), until(done, 600)], cause: 'lko-rang-kood' },
+  { what: 'the dyer: hopping on to his half while it is under', steps: [...through('LKO-03', room03, 2), walkTo(actX('LKO-03', 2) + 2, 300), hops([actX('LKO-03', 2) + 4, actX('LKO-03', 2) + 7, actX('LKO-03', 2) + 10]), until((w) => rangPh(w) >= 352, 900), hops([actX('LKO-03', 2) + 10, actX('LKO-03', 2) + 13]), until(done, 600)], cause: 'lko-rang-kood' },
 );
 mistakes['LKO-04'].push(
   { what: 'under the cloud: hopping on before its shadow comes', steps: [...through('LKO-04', room04, 1), walkTo(actX('LKO-04', 1) + 2.4, 300), hops([actX('LKO-04', 1) + 3.5, actX('LKO-04', 1) + 6]), until(done, 300)], cause: 'lko-badal' },
@@ -954,6 +963,11 @@ mistakes['LKO-07'].push(
   { what: 'at the photograph, pausing so they part, as the strollers taught', steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), walkTo(actX('LKO-07', 3) + 4.5, 300), hop(actX('LKO-07', 3) + 6, actX('LKO-07', 3) + 8.5), walkTo(actX('LKO-07', 3) + 9.2, 300), pause(), { hold: 'R', until: done, max: 600 }], cause: 'lko-photo' },
   { what: 'at the photograph, rushing them', steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), walkTo(actX('LKO-07', 3) + 4.5, 300), hop(actX('LKO-07', 3) + 6, actX('LKO-07', 3) + 8.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-photo-jaldi' },
   { what: 'at the second camera, going on the test flash', steps: [...pre07(), ...actRoutes0('lko07-julus', actX('LKO-07', 2)), ...actRoutes0('lko07-photo', actX('LKO-07', 3)).slice(0, 7), until((w) => (w.flags['lko07-photo:g1'] as Ph).test, 900), { hold: 'R', until: done, max: 600 }], cause: 'lko-photo-test' },
+);
+
+mistakes['LKO-08'].push(
+  { what: 'on the gallery, jumping on through its arch, as everywhere', steps: [...through('LKO-08', room08, 4), hop(actX('LKO-08', 4) + 2, actX('LKO-08', 4) + 4.5), hop(actX('LKO-08', 4) + 10, actX('LKO-08', 4) + 13), until(done, 400)], cause: 'lko-bhool' },
+  { what: 'on the gallery, walking off its end, as at the hanging arch', steps: [...through('LKO-08', room08, 4), hop(actX('LKO-08', 4) + 2, actX('LKO-08', 4) + 4.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
 );
 
 export const test: CityTests = {
