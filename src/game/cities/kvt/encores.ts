@@ -766,15 +766,15 @@ export class SinkStep extends Entity {
  *  stand on one. The tour taught you to wait on the top before the hop off: here you never stop. */
 const risingTide: Act = {
   id: 'kvt10-veliyettam',
-  w: 24,
+  w: 44,
   advice: 'The tide is coming in now: the coral heads don’t shrink, they go under if you stop on one. Hop from head to head without stopping.',
   paint: (g, c) => {
-    g.pit(c.x + 3, c.x + 18);
+    g.pit(c.x + 3, c.x + 38);
   },
   build: (w, c) => {
     const { X } = c;
-    pool(w, c.x + 3, c.x + 19, 15.3, { colors: LAGOON });
-    for (const tx of [4, 9, 14]) w.add(new SinkStep(c.x + tx, 14));
+    pool(w, c.x + 3, c.x + 39, 15.3, { colors: LAGOON });
+    for (const tx of [4, 9, 14, 19, 24, 29, 34]) w.add(new SinkStep(c.x + tx, 14));
     sign(w, c.x + 0.4, G - 4.4, 3.4, 'HIGH TIDE', 'wood', null, 'coming in');
     onPass(w, X(1), (w2) => taraSays(w2, 'Oro padiyilum nilkku, sookshichu! | Stop on each one, carefully!', 2.4));
   },
@@ -1144,7 +1144,55 @@ const lowerBasket: Act = {
   },
 };
 
-export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, archDolphin, shadowSteps, risingTide, jumpReef, lowerBasket, leavingBoat, tideHoles] };
+/** KVT-10 act, KVT-02's glass jetty turned over: there the gap was glass you walked across. This glass is old
+ *  and cracked: it holds a dad running flat out, and gives under one who slows down on it to look at the fish. */
+const crackedGlass: Act = {
+  id: 'kvt10-kannadi',
+  w: 20,
+  advice: 'The glass over the lagoon is cracked this time: it holds you while you run flat out, and gives way if you slow down or stop on it. Run straight across.',
+  paint: (g, c) => {
+    g.pit(c.x + 4, c.x + 13);
+  },
+  build: (w, c) => {
+    const { X } = c;
+    pool(w, c.x + 4, c.x + 14, 15.3, { colors: LAGOON });
+    const glass = new Solid(X(4), px(G), px(10), 6);
+    let slow = 0;
+    w.add(
+      new (class extends Entity {
+        solid = glass;
+        update(w2: World) {
+          if (!glass.collidable) return;
+          const p = w2.player;
+          slow = w2.standing(glass) && Math.abs(p.vx) < 100 ? slow + 1 : 0;
+          if (slow >= 24) {
+            glass.collidable = false;
+            w2.sfx('crack', p.cx, glass.y);
+            w2.say('Kannadi poyi! | The glass went!', p.cx, glass.y - 30, 1, 'npc');
+          }
+        }
+        draw(ctx: CanvasRenderingContext2D) {
+          if (!glass.collidable) return;
+          ctx.fillStyle = 'rgba(205,245,255,0.32)';
+          ctx.fillRect(glass.x, glass.y, glass.w, glass.h);
+          ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+          ctx.lineWidth = 0.7;
+          ctx.beginPath();
+          for (const t of [1.5, 4.2, 7.1, 8.6]) {
+            ctx.moveTo(glass.x + px(t), glass.y);
+            ctx.lineTo(glass.x + px(t) + 5, glass.y + 6);
+            ctx.lineTo(glass.x + px(t) - 2, glass.y + 6);
+          }
+          ctx.stroke();
+        }
+      })(),
+    );
+    sign(w, c.x + 0.2, G - 4.4, 3.4, 'GLASS', 'wood', null, 'cracked');
+    onPass(w, X(3), (w2) => taraSays(w2, 'Pathukke nadakku, meene kaanam! | Walk slowly, see the fish!', 2.4));
+  },
+};
+
+export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, archDolphin, shadowSteps, risingTide, jumpReef, lowerBasket, crackedGlass, leavingBoat, tideHoles] };
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {

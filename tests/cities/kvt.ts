@@ -292,6 +292,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { hold: 'R', until: and(ground, X(x + 24)), max: 300 },
     ];
   },
+  'kvt10-kannadi': (x) => [{ hold: 'R', until: and(ground, X(x + 20)), max: 400, note: 'run straight across the cracked glass, flat out' }],
   'kvt10-thoni': (x) => {
     const boat = (w: World) => w.flags['kvt10-thoni:boat'] as any;
     return [
@@ -304,7 +305,17 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { hold: 'R', until: and(ground, X(x + 30)), max: 300 },
     ];
   },
-  'kvt10-veliyettam': (x) => [...hop(x + 1.6, 12, 'from head to head, never stopping'), ...hop(x + 6.6, 12, 'the next head'), ...hop(x + 11.6, 12, 'the next'), ...hop(x + 16.6, 12, 'and the shore'), { hold: 'R', until: X(x + 24), max: 300 }],
+  'kvt10-veliyettam': (x) => [
+    ...hop(x + 1.6, 12, 'from head to head, never stopping'),
+    ...hop(x + 6.6, 12, 'the next head'),
+    ...hop(x + 11.6, 12, 'the next'),
+    ...hop(x + 16.6, 12, 'and the next'),
+    ...hop(x + 21.6, 12, 'and on'),
+    ...hop(x + 26.6, 12, 'on'),
+    ...hop(x + 31.6, 12, 'the last'),
+    ...hop(x + 36.6, 12, 'and the shore'),
+    { hold: 'R', until: X(x + 44), max: 300 },
+  ],
   'kvt10-irakkam': (x) => {
     const tide = (i: number) => (w: World) => (w.flags['kvt10-irakkam:tide'] as boolean[])[i] && still(w);
     const eelRests = (w: World) => w.entities.some((e) => e instanceof Eel && e.state === 'rest' && e.x > px(x + 10)) && still(w);
@@ -936,7 +947,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { what: 'stop on the first coral head in the incoming tide, as on the tour', steps: [...upTo(S['KVT-10'], 'from head to head, never stopping'), ...hop(362 + 1.6, 12, 'on to the first head', true), { hold: '', until: done, max: 400 }], cause: 'splash' },
     { what: 'walk off the edge on to the reef, as off the jetty at Supari Light', steps: [...upTo(S['KVT-10'], 'jump out over the water: this reef comes up for a jumper'), { hold: 'R', until: done, max: 300 }], cause: 'splash' },
     { what: 'stay in the fish basket till it stops, as in Minicoy', steps: [...upTo(S['KVT-10'], 'step off on to the landing as it passes'), { steer: (w: World) => (w.player.cx < (w.flags['kvt10-kotta:basket'] as any).cx - 2 ? 'R' : w.player.cx > (w.flags['kvt10-kotta:basket'] as any).cx + 2 ? 'L' : '') as Move, until: done, max: 900 }], cause: 'splash' },
-    { what: 'wait at the end of the jetty for the boat to come back, as at Kavaratti', steps: [...upTo(S['KVT-10'], 'run down the jetty after the boat: it is not coming back'), { hold: 'R', until: X(432 + 5.0), max: 400 }, { hold: '', until: done, max: 900 }], cause: 'splash' },
+    { what: 'walk slowly over the glass to see the fish, as Tara says', steps: [...upTo(S['KVT-10'], 'run straight across the cracked glass, flat out'), { hold: 'R', until: X(452 + 6), max: 300 }, { hold: '', until: done, max: 600 }], cause: 'splash' },
+    { what: 'wait at the end of the jetty for the boat to come back, as at Kavaratti', steps: [...upTo(S['KVT-10'], 'run down the jetty after the boat: it is not coming back'), { hold: 'R', until: X(472 + 5.0), max: 400 }, { hold: '', until: done, max: 900 }], cause: 'splash' },
     { what: 'run straight over the hole with eyes', steps: [...upTo(S['KVT-10'], 'the hole with eyes: let the moray lunge and go back in'), { hold: 'R', until: done, max: 300 }], cause: 'kvt-bitten' },
     { what: 'walk into the door', steps: [...upTo(S['KVT-10'], 'the door: kvt-sand-arm'), { hold: 'R', until: done, max: 900 }], cause: 'kvt-octopus' },
   ];
