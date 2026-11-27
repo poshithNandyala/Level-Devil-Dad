@@ -147,7 +147,7 @@ export const levels = (): LevelDef[] => [
       return g.put(1, 12, '@').put(93, 11, 'E').rows();
     })(),
     build(w: World) {
-      for (const tx of [48]) checkpoint(w, tx);
+      for (const tx of [86]) checkpoint(w, tx);
       exitTwist(w, door(w), 'tvm-knock');
       // the flood: only the bus is dry
       water(w, 14.4, { rate: 0, minTy: 14.4, colors: ['rgba(86,140,150,0.88)', 'rgba(36,80,92,0.96)'], cause: 'splash' });
@@ -310,7 +310,7 @@ export const levels = (): LevelDef[] => [
       return g.put(2, 14, '@').put(77, 14, 'E').rows();
     })(),
     build(w: World) {
-      for (const tx of [47]) checkpoint(w, tx);
+      for (const tx of [41.5]) checkpoint(w, tx);
       exitTwist(w, door(w), 'swap', { to: 69 });
       water(w, 16.5, { rate: 0, minTy: 16.5, colors: ['#8C6A44', '#4E3620'], cause: 'burnt', behind: true });
       prop(w, 'teastall', 4, 15, { label: 'CHAAYA' });
@@ -405,7 +405,7 @@ export const levels = (): LevelDef[] => [
     par: 18,
     map: Grid.ground(15, 96).pit(15, 16).pit(36, 45).pit(78, 79).fill(80, 83, 15, 17, 'k').fill(51, 52, 15, 17, 'f').put(2, 14, '@').put(92, 14, 'E').rows(),
     build(w: World) {
-      for (const tx of [46]) checkpoint(w, tx);
+      for (const tx of [56.5]) checkpoint(w, tx);
       exitTwist(w, door(w), 'fake');
       // the far bank of the last gap backs off from the first jump at it, then creeps back: bait it
       shyLedge(w, 'k', { dx: px(3), from: px(72), back: 1.1 });
@@ -519,7 +519,7 @@ export const levels = (): LevelDef[] => [
       return g.put(3, 14, '@').put(86, 14, 'E').rows();
     })(),
     build(w: World) {
-      for (const tx of [38]) checkpoint(w, tx);
+      for (const tx of [35.5]) checkpoint(w, tx);
       const d = door(w);
       water(w, 15.8, { rate: 0, minTy: 15.8, colors: ['#5B7F6E', '#2F4E43'], cause: 'splash', behind: true });
       prop(w, 'umbrellas', 8, 15, { n: 2 });
@@ -863,7 +863,7 @@ export const levels = (): LevelDef[] => [
       .put(94, 12, 'E')
       .rows(),
     build(w: World) {
-      for (const tx of [50]) checkpoint(w, tx);
+      for (const tx of [89.5]) checkpoint(w, tx);
       exitTwist(w, door(w), 'none');
       water(w, 13.85, { rate: 0, minTy: 13.85, colors: ['rgba(70,140,120,0.85)', 'rgba(25,70,60,0.95)'], cause: 'splash' });
       // whitewashed footbridges with red-oxide edges

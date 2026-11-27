@@ -103,7 +103,7 @@ function lagged(id: string, steps: Step[], lag: number, idle: number) {
 }
 
 import { NAIVE, FIX, MISTAKES } from '../../solutions';
-import { replay, encodeInput } from '../../../src/game/replay';
+import { replay, encodeInput, decodeInput } from '../../../src/game/replay';
 it.runIf(!!process.env.LDD_TVMPROBE)('probe4', () => {
   const out: string[] = [];
   for (const id of (process.env.LDD_IDS ?? 'TVM-09,TVM-10').split(',')) {
@@ -257,3 +257,45 @@ it.runIf(!!process.env.LDD_TVMPROBE)('probe7', () => {
   }
   console.log(out.join('\n'));
 });
+// probe8: where could a stage's checkpoint go? For each half tile along the route (first time Dad stands there),
+// the cpsafe plays (idle 4 s; run 0.3 s / tap jump, at lag 0, 6, 12): prints the x that pass them all.
+//   LDD_CAND=TVM-04 LDD_TVMPROBE=1 npx vitest run tests/cities/tvm/probe.test.ts -t probe8 --silent=false
+it.runIf(!!process.env.LDD_CAND)('probe8', () => {
+  const id = process.env.LDD_CAND!;
+  const def = LEVELS.find((l) => l.id === id)!;
+  const r = lagged(id, SOLUTIONS[id], 0, 0) as any;
+  const rec: number[] = r.rec;
+  const w = new World(def, INFO);
+  def.build?.(w);
+  const firstAt = new Map<number, number>();
+  for (let i = 0; i < rec.length && w.state === 'play'; i++) {
+    w.step(decodeInput(rec[i]));
+    if (!w.player.onGround) continue;
+    const hx = Math.floor((w.player.cx / 16) * 2) / 2;
+    for (let x = 0; x <= hx; x += 0.5) if (!firstAt.has(x)) firstAt.set(x, i + 1);
+  }
+  const N = { left: false, right: false, jump: false, jumpPressed: false };
+  const ok: number[] = [];
+  const why: string[] = [];
+  for (const [x, t] of [...firstAt].sort((a, b) => a[0] - b[0])) {
+    let fail = '';
+    for (const [kind, lag] of [['idle', 0], ['run', 0], ['run', 6], ['run', 12], ['tap', 0], ['tap', 6], ['tap', 12]] as [string, number][]) {
+      const q = replay(def, INFO, rec.slice(0, t));
+      q.player.vx = 0;
+      let landed = false;
+      for (let k = 0; k < 480 && q.state === 'play'; k++) {
+        let inp = N;
+        if (kind === 'run' && k >= lag && k < lag + 36) inp = { ...N, right: true };
+        if (kind === 'tap' && k >= lag && !landed) {
+          const j = k - lag;
+          if (j > 6 && q.player.onGround) landed = true;
+          if (!landed && j <= 240) inp = { ...N, right: true, jump: j < 6, jumpPressed: j === 0 };
+        }
+        q.step(inp);
+      }
+      if (q.state !== 'play') { fail = `${kind} ${lag}: ${q.deathCause}`; break; }
+    }
+    if (fail) why.push(`x${x}: ${fail}`); else ok.push(x);
+  }
+  console.log(`${id} calm x: ${ok.join(' ')}\n  (first fails: ${why.slice(0, 80).join('; ')})`);
+}, 1800000);
