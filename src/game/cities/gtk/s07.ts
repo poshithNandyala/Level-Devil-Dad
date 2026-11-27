@@ -332,7 +332,7 @@ export const act13: Act = {
     const x = c.x;
     g.pit(x + 12, x + 18);
     // the path above: a step up, then the path, which you can walk under
-    g.fill(x + 4, x + 5, 13, 13, '=');
+    g.fill(x + 3, x + 8, 13, 13, '=');
     g.fill(x + 6, x + 30, 12, 12, '=');
   },
   build: (w, c) => {

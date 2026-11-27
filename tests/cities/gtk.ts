@@ -270,10 +270,18 @@ type Kalam = { writing: boolean; wrote: boolean };
 const kalamGate = (wait: number, until: 'writing' | 'wrote') => (w: World, i: number) => i !== wait || (w.flags.gtk3ki as Kalam)[until];
 const act03e = (x: number): Step[] => [{ policy: bagHop('gtk3k', { every: true, gate: kalamGate(1, 'writing') }), until: and(ground, X(x + 26)), max: 3000, note: 'wait on the second cloth bag; go while his pen moves, over the polythene and under him' }, { hold: 'R', until: X(x + 29.5), max: 300 }];
 const act07m = (x: number): Step[] => [
-  { hold: 'R', until: X(x + 3.3), max: 600, note: 'towards the bells' },
-  { hold: 'R', jump: 10, ticks: 18, note: 'up on to the step' },
-  { hold: 'R', until: X(x + 5.2), max: 200 },
-  { hold: 'R', jump: 10, ticks: 18, note: 'up on to the mule track' },
+  {
+    // towards the bells, and up: from the road, jump (the step and the track are planks you can jump up through)
+    policy: (w) => {
+      const p = w.player;
+      const feet = p.y + p.h;
+      if (p.onGround && feet > px(12) + 1 && p.x >= px(x + 2.2)) return { move: 'R', jump: true };
+      return go('R');
+    },
+    until: (w) => w.player.onGround && w.player.y + w.player.h <= px(12) + 1,
+    max: 900,
+    note: 'up on to the mule track',
+  },
   { hold: 'R', until: X(x + 33.5), max: 900, note: 'along the track past the resting mules, and down' },
 ];
 type Paani = { raining: boolean; over: boolean };
