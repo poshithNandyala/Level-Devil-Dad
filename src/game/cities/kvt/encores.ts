@@ -1108,7 +1108,43 @@ const jumpReef: Act = {
   },
 };
 
-export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, archDolphin, shadowSteps, risingTide, jumpReef, leavingBoat, tideHoles] };
+/** KVT-10 act, KVT-05's fish basket turned over: in Minicoy it hauled you up and you got off at the top. This
+ *  one lowers you from the high pier to the boats, and it doesn't stop at the bottom: it goes on into the water.
+ *  Step off on to the landing as it passes. */
+const lowerBasket: Act = {
+  id: 'kvt10-kotta',
+  w: 24,
+  advice: 'Up the steps to the high pier. This fish basket lowers you, and it doesn’t stop at the bottom: it goes on into the water. Step off on to the landing as it goes past.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 1, x + 2, 13, 17, '#').fill(x + 3, x + 6, 11, 17, '#');
+    g.pit(x + 7, x + 9);
+  },
+  build: (w, c) => {
+    const { X } = c;
+    pool(w, c.x + 7, c.x + 10, 15.3, { colors: LAGOON });
+    const basket = w.add(new Thing('crate', X(7), px(11), { w: px(3), h: 12 }));
+    basket.tint = '#B07A3A';
+    let down = false;
+    let by = basket.solid.y;
+    w.onTick((w2) => {
+      if (!down && w2.standing(basket.solid)) {
+        down = true;
+        w2.sfx('creak', basket.cx, basket.y);
+        w2.say('Thazhekku! | Going down!', basket.cx, basket.y - 30, 1, 'npc');
+      }
+      if (down && by < px(17)) {
+        by += 40 * DT;
+        basket.place(w2, basket.solid.x, by);
+      }
+    });
+    w.flags[c.f('basket')] = basket;
+    sign(w, c.x + 3.2, 11 - 4.4, 3.4, 'FISH', 'wood', 'right', 'to the boats');
+    onPass(w, X(4), (w2) => taraSays(w2, 'Avasaanam vare irunno! | Stay in till the end!', 2.4));
+  },
+};
+
+export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, archDolphin, shadowSteps, risingTide, jumpReef, lowerBasket, leavingBoat, tideHoles] };
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {
