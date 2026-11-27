@@ -293,6 +293,33 @@ export const act6: Act = {
   },
 };
 
+/** act 7: the stair up is behind you. The road runs on into a dead end at the hill; the way on starts back where
+ *  you came in: up the stair there, then along the loop above, forwards, over the hill */
+export const act7: Act = {
+  id: 'gtk06-peeche',
+  w: 34,
+  advice: 'This road runs into the hillside. The way on is the stair up back near where you came in: go back, up it, and along the loop above, forwards, over the hill.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 30, x + 33, 10, 17, '#');
+    g.fill(x + 3, x + 6, 13, 13, '=');
+    g.fill(x + 1, x + 4, 11, 11, '=');
+    g.fill(x - 2, x + 33, 9, 9, '=');
+  },
+  build: (w, c) => {
+    stairArt(w, [
+      [c.x + 3, 13],
+      [c.x + 1, 11],
+    ]);
+    // and the stand at the dead end, a taxi waiting to back out the moment you get there
+    standTaxi(w, c.X(26), c.X(20.5), FL, c.X(14), 'gtk6r', STAND5);
+    decor(w, -3, (ctx) => {
+      box(ctx, c.X(25), px(12), px(5), 3, '#2E86AB');
+    });
+    sign(w, c.x + 20, 5.2, 3.6, 'DEAD END', 'warn', null, 'taxi stand');
+  },
+};
+
 /** door: the roof's water tank overflows down the house front, over the doorway, and the gush shoves you back */
 export const TANK = { period: 3.0, on: 1.1 };
 export const ending: Ending = {

@@ -440,6 +440,12 @@ const act06e = (x: number): Step[] => [
   { hold: 'R', until: and(ground, X(x + 24)), max: 600, note: 'across the pocket, down the second stair' },
   { policy: stepper(), until: X(x + 33.5), max: 400 },
 ];
+const act06g = (x: number): Step[] => [
+  { hold: 'R', until: and(ground, X(x + 7.5)), max: 400 },
+  { policy: stairUpLeft(), until: (w) => w.player.onGround && w.player.y + w.player.h <= 144, max: 1200, note: 'back, and up the stair behind you' },
+  { hold: 'R', until: X(x + 34.2), max: 900, note: 'along the loop above, over the hill' },
+  { hold: 'R', until: ground, max: 300 },
+];
 const bothParked = (w: World) => {
   const a = w.flags.gtk6p as { t0: number };
   if (a.t0 < 0) return false;
@@ -964,6 +970,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk06-adda': act06d,
   'gtk06-neeche': act06e,
   'gtk06-upar2': act06f,
+  'gtk06-peeche': act06g,
   'gtk07-thau': act07a,
   'gtk07-chitra': act07b,
   'gtk07-ghumti': act07c,
