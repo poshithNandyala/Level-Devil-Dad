@@ -27,20 +27,20 @@ Every spoken line is from the city bible's VERIFIED list (standard Lakhnavi Hind
 
 `lko-malai` (makhan malai in a kulhad), `lko-chikan` (a folded chikan kurta), `lko-galouti`, `lko-ghungroo`, `lko-kulfi` (matka kulfi), `lko-sheermal`.
 
-## Fairness (`npm run fair -- LKO`, 40 runs a lag)
+## Fairness (`LDD_N=80 npm run fair -- LKO`, after fix round 2)
 
 | Stage | quick 0-6t | average 0-12t | relaxed 0-18t | every stretch at 0-12t |
 | --- | --- | --- | --- | --- |
-| LKO-01 | 100% | 100% | 85% | 100% |
-| LKO-02 | 100% | 100% | 100% | `lko02-gali`: a man behind offers you the way, stand still and he goes first; `lko02-takrar`: a stand-off at a doorway, whoever stops bowing first goes first, keep bowing till he gives up; `lko02-aadaab`: gentlemen greet you from their chabutras; return it with one short bow after his greeting, not walking past and not bowing on |
-| LKO-03 | 100% | 100% | 80% | `lko03-kunda`: three vats where the print is the only way, run it without stopping; `lko03-adda`: the karigar's embroidery hoop carries you over the vat from flower to flower, step off on the far side (waiting on the next flower gets you clamped); `lko03-rang`: the rangrez dips the far half of the muslin into his neel, stitch and all: cross it in one go as it comes up | `lko-balti`: the door is real, but its threshold is cloth over the vat; the print washes and the dhobi's bucket comes down on whoever is on the cloth 
-| LKO-04 | 100% | 100% | 80% | `lko04-chowk`: single cups shaded only by the long shadow of a kulhad stack, the shadows shorten as the sun climbs; `lko04-badal`: a cloud's moving shadow over single cups, go with it, not ahead, not behind |
-| LKO-05 | 100% (lives: act) | 100% | 80% | `lko05-tawa`: six heaps, some already thin (hop at once); `lko05-lane`: a slab under the lowest rack squashes from your feet forward; `lko05-ulta`: the cook presses the slab from his end with his kafgir, wait off it; `lko05-bhara`: a low rack he hoists now and then, keep your heap full by stepping between a pair; the last time he only half-hoists it, so squash first; `lko05-dum`: double heaps (two squashes), the last a triple |
-| LKO-06 | 100% (lives: act) | 100% | 90% | `lko06-tatkar`: her tatkar patch moves to and fro; hop it as it comes at you; `lko06-mehfil`: she spins the stage end to end without stopping, shelter on the musicians' takhts |
-| LKO-07 | 100% | 100% | 100% | 100% |
-| LKO-08 | Bhool Bhulaiya (HWIK, lives: act) | 100% | 100% | `lko08-chausar` (Pachisi reserve): two half courts with a calm chabutra between; a cowrie throw lights that many squares ahead, only lit ones hold, never the courtier's; `lko08-minar`: three arches stacked a floor apart, jump, jump, walk; `lko08-mehrab`: a low vault (walk) then the well (jump); `lko08-utar`: the hanging arch takes you a floor DOWN if you come through it falling; `lko08-wapas`: an arch taken backwards at a jump takes you a floor down |
-| LKO-09 | 100% (lives: act) | 100% | 80% | `lko09-gumbad` (a Chota Imambara-style garden tank): white domes seem bigger the farther you stand, jump from the red paving line; the third is the reflection; `lko09-hawa`: the flyer is behind you and the flag has two faces, the birds go by the far face (death `lko-hawa`); `lko09-jhande`: two flyers, the flock obeys the nearer flag |
-| LKO-10 | 100% | 98% | 80% | `lko10-dhulai` wash line + malai heaps in the low sun; `lko10-darbar`: the court again, but the courtier bows you on to the square between ('pehle aap') and it does not hold; `lko10-julus`: the procession again over covered bells, pause only on the plain boards; `lko10-galiyara`: arches + covered bells |
+| LKO-01 | 100% | 100% | 84% | 100% |
+| LKO-02 | 100% | 100% | 100% | 100% |
+| LKO-03 | 100% | 100% | 76% | 100% |
+| LKO-04 | 100% | 100% | 76% | 100% |
+| LKO-05 | 100% | 100% | 76% | 100% |
+| LKO-06 | 100% | 100% | 93% | 100% |
+| LKO-07 | 100% | 100% | 98% | 100% |
+| LKO-08 | 100% | 100% | 93% | 100% |
+| LKO-09 | 100% | 100% | 76% | 100% |
+| LKO-10 | 100% | 100% | 80% | 100% |
 
 ## Clear times (scripted route, after fix round 2)
 
