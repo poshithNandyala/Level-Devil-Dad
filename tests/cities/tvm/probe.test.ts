@@ -148,7 +148,21 @@ it.runIf(!!process.env.LDD_TVMPROBE)('probe5', () => {
       }
     }
     const worst = new Map<number, [number, string]>();
-    for (let t = 0; t < rec.length; t += 30) {
+    // branch ticks: every LDD_STEP ticks (default 1, per tick) wherever a death could replay more than LDD_FINE s
+    // (default 3.5) back to its checkpoint, i.e. from that long after each checkpoint on; every 30 ticks before it.
+    // A branch is cut 4 s after it starts, so a branch earlier than cp + (8 - 4) s can't reach an 8 s replay.
+    const step = +(process.env.LDD_STEP ?? 1),
+      fine = +(process.env.LDD_FINE ?? 3.5) * 120;
+    const cpT = [0, ...r.cpTicks.map((c: number[]) => c[1])];
+    const fromCp = (t: number) => t - Math.max(...cpT.filter((c) => c <= t));
+    const ticks: number[] = [];
+    for (let t = 0; t < rec.length; t += fromCp(t) >= fine ? step : 30) ticks.push(t);
+    if (process.env.LDD_ONLY) {
+      const [a0, a1] = process.env.LDD_ONLY.split('-').map((v) => +v * 120);
+      ticks.splice(0, ticks.length, ...ticks.filter((t) => t >= a0 && t <= a1));
+    }
+    out.push(`${id} branches: ${ticks.length} start ticks (step ${step} after cp + ${fine / 120} s)`);
+    for (const t of ticks) {
       for (const [name, f] of [['stop', () => I], ['run on', () => Rr], ['run+jump', (i: number) => ({ ...Rr, jump: i % 40 < 14, jumpPressed: i % 40 === 0 })]] as [string, (i: number) => any][]) {
         const w = replay(def, INFO, rec.slice(0, t));
         for (let i = 0; i < 480 && w.state === 'play'; i++) w.step(f(i));
@@ -158,7 +172,7 @@ it.runIf(!!process.env.LDD_TVMPROBE)('probe5', () => {
         if (!cur || back > cur[0]) worst.set(w.cp, [back, `${name}@${(t / 120).toFixed(1)}s -> ${w.deathCause} x${(w.player.cx / 16).toFixed(1)}`]);
       }
     }
-    for (const [cp, [b, what]] of [...worst].sort((a, b) => a[0] - b[0])) out.push(`${id} stretch from cp${cp}: worst replay ${b.toFixed(1)}s (${what})`);
+    for (const [cp, [b, what]] of [...worst].sort((a, b) => a[0] - b[0])) out.push(`${id} stretch from cp${cp}: worst replay ${b.toFixed(3)}s (${what})`);
     let prev = 0,
       longest = 0;
     for (const [, t] of r.cpTicks) (longest = Math.max(longest, t - prev)), (prev = t);

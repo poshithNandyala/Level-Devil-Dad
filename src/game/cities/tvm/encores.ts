@@ -202,7 +202,7 @@ export const theeram: Act = {
         strip: x + 6,
         waves: [
           { at: x + 7, moves: [{ to: x + 20, sec: 1.4 }], inAt: 3.0, inFor: 2.6 },
-          { at: x + 27.5, moves: [{ to: x + 6, sec: 1.6 }], inAt: 3.2, inFor: 2.6 },
+          { at: x + 27.5, moves: [{ to: x + 6, sec: 1.6 }], inAt: 3.2, inFor: 2.0 },
           { at: x + 34.2, moves: [{ to: x + 13, sec: 1.4 }], inAt: 3.2, inFor: 2.6 },
         ],
       }),

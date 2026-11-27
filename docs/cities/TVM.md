@@ -56,4 +56,9 @@ moved into it, same text; 09 "Flag okke chumma, Dad! Neenthi po!", 10 "Enna onnu
 Stage behaviour changed in 02-08: only TVM-03 (the counter's tea glasses slide at 85 px/s, was 100). The city's ground
 caps lost their yellow flowers (white and pink now), so nothing on the ground looks like Dhara's amber oil.
 
-Replay/calm probe: `LDD_TVMPROBE=1 npx vitest run tests/cities/tvm/probe.test.ts --silent=false`.
+Replay/calm probe: `LDD_TVMPROBE=1 npx vitest run tests/cities/tvm/probe.test.ts --silent=false` (`LDD_IDS`, `LDD_LAG`,
+`LDD_IDLE` pick the stage, the route's press lag and the spawn idle). Method since fix round 3: probe5 branches the wrong
+move (stop / run on / run and jump, each cut 4 s after it starts) on **every tick** wherever a death could replay more
+than 3.5 s back to its checkpoint (`LDD_STEP`, default 1), and every 30 ticks only in the first 3.5 s after a checkpoint,
+where no 4 s branch can reach the 8 s bar. Before round 3 it branched every 0.25 s, which read TVM-10 cp4 as 7.9 s when
+the per-tick worst was 8.03 s. probe6 checks mid-wave captures; probe7 the 3.5-tile distance to every trigger.
