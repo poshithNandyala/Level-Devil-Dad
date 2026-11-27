@@ -777,4 +777,78 @@ export const ending: Ending = {
   },
 };
 
+/** act 19, the ghungur (ALLOCATION v3 F467, 07's sound beat): between pieces the lamps go out and the boys take
+ *  new places on the floor to whirl in the dark. You cannot see them; you can see their ankle bells ringing.
+ *  Jump where the bells ring, walk where it is quiet. When the lamps come back the next piece starts and the
+ *  whole troupe sweeps the floor. */
+export const GHUNGUR = { c0: 4, c1: 19, lit: [9.5, 14.5], dark: [7, 12, 17], darkFor: 5, sweep: 1.5, litFor: 3 };
+export const act19: Act = {
+  id: 'bbi07-ghungur',
+  w: 23,
+  advice: 'Between pieces the lamps go out and the boys whirl in new places in the dark. Don’t go by where you saw them: listen. Jump where the ankle bells ring, walk where it is quiet, and be off the floor before the lamps come back and the next piece sweeps it.',
+  cps: [],
+  paint: () => {},
+  build: (w, c) => {
+    const st = { t0: -1, phase: 'lit' as 'lit' | 'dark' | 'sweep' };
+    w.flags.bbi7gh = st;
+    onPass(w, c.X(3), (w2) => (st.t0 = w2.tick));
+    const G = GHUNGUR;
+    const cyc = G.darkFor + G.sweep + G.litFor;
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        tick: (_r, w2) => {
+          if (st.t0 < 0) return;
+          const r = since(w2, st.t0) % cyc;
+          st.phase = r < G.darkFor ? 'dark' : r < G.darkFor + G.sweep ? 'sweep' : 'lit';
+        },
+      }),
+    );
+    const spot = (col: number, when: 'lit' | 'dark') =>
+      w.add(
+        new Rig(c.X(col), FL - 26, 16, 26, {
+          cause: 'bbi-nacha',
+          inset: 2,
+          layer: 4,
+          live: () => st.phase === when,
+          paint: (ctx, r, w2) => {
+            if (st.phase !== when) return;
+            if (when === 'dark') {
+              // only the bells show in the dark: little flashes at the ankles, jumping with the beat
+              for (let i = 0; i < 3; i++) box(ctx, r.x + 3 + i * 4, FL - 4 - ((w2.tick >> 2) + i) % 3 * 2, 2, 2, '#FFE066');
+              box(ctx, r.x + 6, FL - 30 - ((w2.tick >> 3) % 2) * 2, 4, 3, '#FFE066');
+            } else dancer(ctx, r.x + 8, FL, col | 0, false, w2.tick / 8);
+          },
+        }),
+      );
+    for (const col of G.lit) spot(col, 'lit');
+    for (const col of G.dark) spot(col, 'dark');
+    // the next piece: the whole troupe whirls across the floor
+    w.add(
+      new Rig(c.X(G.c0), FL - 26, px(G.c1 - G.c0 + 1), 26, {
+        cause: 'bbi-thrown',
+        inset: 2,
+        layer: 4,
+        live: () => st.phase === 'sweep',
+        paint: (ctx, r, w2) => {
+          if (st.phase !== 'sweep') return;
+          for (let x = r.x + 8; x < r.x + r.w; x += 24) dancer(ctx, x, FL, x >> 4, false, w2.tick / 6 + x);
+        },
+      }),
+    );
+    // the lamps: out between pieces (a dark wash over the floor), the drummer resting on the far bank
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: 6,
+        paint: (ctx) => {
+          if (st.phase === 'dark') {
+            ctx.fillStyle = 'rgba(10,8,20,0.82)';
+            ctx.fillRect(c.X(G.c0) - 8, FL - 120, px(G.c1 - G.c0 + 1) + 16, 120);
+          }
+          for (let k = 0; k < 4; k++) box(ctx, c.X(G.c0 + 1 + k * 4), FL - 96, 4, 6, st.phase === 'dark' ? '#3A3020' : '#FFB703');
+        },
+      }),
+    );
+  },
+};
+
 export const meta07 = { family: 'troupe-pose-platform-shapes', betrayals: ['pose-shapes'], ending: 'bbi-pose-gate' };

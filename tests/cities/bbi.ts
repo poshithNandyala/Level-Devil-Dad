@@ -788,6 +788,10 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'stay on your badi', cause: 'bbi-bhanwar', steps: (x) => [...hop(x + 1.4, 'up on the rim'), { hold: '', until: ground, max: 300 }, leap((w) => pl(w).bx[0] + 13, 'on to it', () => true, 5), { hold: '', until: done, max: 1500 }] },
     { what: 'hop for the far rim at the last moment', cause: 'bbi-pakhala', steps: (x) => [...hop(x + 1.4, 'up on the rim'), { hold: '', until: ground, max: 300 }, leap((w) => pl(w).bx[0] + 13, 'on to it', () => true, 5), stayOn((w) => pl(w).bx[0] + 13, (w) => pl(w).bx[0] + 13 > px(x + 9) - 10, 'to the hole', 1500), { hold: 'R', jump: 15, ticks: 15 }, { hold: 'R', until: done, max: 600 }] },
   ],
+  'bbi07-ghungur': [
+    { what: 'walk through where you saw the gaps', cause: 'bbi-nacha', steps: (x) => [{ hold: 'R', until: X(x + 8.6), max: 400 }, { hold: 'R', jump: 12, ticks: 12, note: 'over where a boy was' }, { hold: 'R', until: done, max: 600 }] },
+    { what: 'wait at the edge for the lamps', cause: 'bbi-thrown', steps: (x) => [{ hold: 'R', until: X(x + 3.2), max: 400 }, waitFor((w) => (w.flags.bbi7gh as { phase: string }).phase !== 'dark' && (w.flags.bbi7gh as { t0: number }).t0 >= 0, 'the lamps come back'), { hold: 'R', until: done, max: 600 }] },
+  ],
   'bbi08-ghurni': [
     { what: 'jump on the first badi as soon as it is in reach', cause: 'bbi-ghurni', steps: (x) => [{ hold: 'R', until: X(x + 3.0), max: 400 }, waitFor((w) => { const c = Math.cos(gh(w).th[0]); return Math.sin(gh(w).th[0]) > 0.6 && c < 0; }, 'it races towards you'), { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 600 }] },
     { what: 'get on at the edge and wait for the stir to stop', cause: 'bbi-chamacha', steps: (x) => [{ hold: 'R', until: X(x + 3.0), max: 400 }, waitFor((w) => Math.cos(gh(w).th[0]) < -0.97, 'the near edge'), leap((w) => gh(w).rigs[0].x + 13, 'on at the slow edge'), stayOn((w) => gh(w).rigs[0].x + 13, done, 'and wait', 900)] },
@@ -1025,6 +1029,8 @@ const ghurniRun = (x: number): Step[] => [
   leap(() => px(x + 21.5), 'off on to the far rim'),
   { hold: 'R', until: X(x + 23.5), max: 300 },
 ];
+/** the ghungur: in the dark, jump each ringing spot (7, 12, 17), walk the quiet floor between */
+const ghungurRun = (x: number): Step[] => [...hop(x + 5.3, 'over the bells at 7'), ...hop(x + 10.3, 'over the bells at 12'), ...hop(x + 15.3, 'over the bells at 17'), { hold: 'R', until: X(x + 22.5), max: 300 }];
 const phingaRun = (x: number): Step[] => [
   { hold: 'R', until: X(x + 2.6), max: 400, note: 'to the rim' },
   waitFor((w) => ph(w).t0 >= 0 && (w.tick - ph(w).t0) / 120 > 0.9 + 0.6, 'the first lands soft'),
@@ -1165,6 +1171,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi07-sajaghara': sa
   'bbi06-tantu': tantuRun,
   'bbi08-phinga': phingaRun,
   'bbi08-ghurni': ghurniRun,
+  'bbi07-ghungur': ghungurRun,
   'bbi09-ulta': chAct('bbi9u', 9, 8),
   'bbi09-udaya': (x) => {
     const out: Step[] = [{ hold: 'R', until: X(x + 1.4), max: 300 }];
