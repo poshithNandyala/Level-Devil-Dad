@@ -106,6 +106,25 @@ labelled momentum beats).
 
 `dis10-thanda` (the cold pan) went with 04's shine rule.
 
+## Length, round 5: the rest of v3 and v3.1, and a Talatal act
+
+Every v3/v3.1 row assigned to DIS is now built (F453 stays withdrawn). New in round 5:
+
+| Act | Stage | Family | Decision | NAIVE / FIX (cause) |
+| --- | --- | --- | --- | --- |
+| `dis02-bhutbhuti` | 02 | F447 false-cue-among-true | The ferry's horn sounds like the siren but the level post does not move: stay, walk back along the narrowing bar, hop at the real siren. | hop on the horn: `dis-luit`; wait it out at the far end: `dis-char-sink` |
+| `dis04-batah` | 04 | Talatal's own place (round 5) | Of three stairwells down, go down the one your lamp's flame leans toward: the lit one is the flooded vault, one dark one has fallen in. | the lit well: `dis-kup`; the first dark one: `dis-garh` |
+| `dis05-kaath` | 05 | F451 spike-slides-under-jump | Each split slides when you jump at it: hop short on to where the first was, then over it where it stopped; don't wait for it to settle. | an ordinary hop: `dis-kaath`; wait: the wife's third gamosa, `dis-gamosa` |
+| `dis06-flag` | 06 | F455 marker-moves-floor-stays | The flag moves twice as the river rises, the gangplank stays: hop the ghat man and run-jump from the plank's end to the bank. | hop to the flag: `dis-luit`; go where it was: his third gamosa, `dis-gamosa` |
+| `dis07-pepa` | 07 | F457 (the marathon's sound beat) | The leaving group won't stop: wait back from the gate and go through in the coming group's ring. | run after it: `dis-gate`; wait under the gate: `dis-stakes` |
+| `dis07-rope` | 07 | v3.1 re-skin of the dheki | Cross from the anchored end; never wait at the moving end. | walk straight across: `dis-pat`; wait at the twisters' end: `dis-paakoni` |
+| `dis07-cart` | 07 | F459 treat-trail | Never stop on the rolling cart: walk forward and jump up on to the jetty. | stop for a pitha: `dis-herd`; run off its front: `dis-pukhuri` |
+| `dis08-bogoli` | 08 | F461 birds-up-means-charge | Cross while the egrets sit on the hidden rhino; wait at the edge while they are up; don't wait a whole round. | go with them up: `dis-bogoli`; a whole round: `dis-jui` |
+| `dis09-tunnels` | 09 | F462 portal-chain-backwards | Walk the chain of tunnel mouths: step, wait for the grate, step; on the last pier wait for the bridge. | the oiled beam: `dis-roof`; run on: `dis-vault` |
+
+The SandField has a timed mode (`go(w, silent)`) for 02's horn act; nothing else uses it. The chaser in `kaath.ts` and the
+ghat man in `flag.ts` are DIS entities (givers that move).
+
 ## Fairness (`LDD_N=80 npm run fair -- DIS`)
 
 | Stage | quick / avg / relaxed | worst stretch at avg |

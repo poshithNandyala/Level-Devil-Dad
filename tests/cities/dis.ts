@@ -912,7 +912,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   ]),
   'dis05-kaath': mark('dis05-kaath', (x) => [
     ...hopR(x + 7.3, 'a short hop: down where the first split was, as it slides ahead', 8),
-    ...hopR(x + 11.8, 'over the first split where it stopped', 8),
+    ...hopR(x + 11.0, 'over the first split where it stopped, at once', 8),
     ...hopR(x + 16.4, 'an ordinary hop over the second: it slides back under me', 8),
     ...hopR(x + 21.2, 'over the ditch', 12),
     { hold: 'R', until: and(ground, X(x + 29)), max: 600, note: 'give the two gamosas away' },
