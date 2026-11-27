@@ -287,7 +287,7 @@ const jowar: Act = {
   build: (w, c) => {
     for (const d of [8, 12, 18, 24]) pool(w, c.x + d, c.x + d + 2, 16, { colors: NALA, cause: 'ccu-nala' });
     const front = w.add(new Front(c.X(-2), c.X(33), 80));
-    onPass(w, c.X(7.6), (w2) => {
+    onPass(w, c.X(10.2), (w2) => {
       if (front.t0 < 0) front.t0 = w2.tick + 60;
     });
     sign(w, c.x + 0.3, 10.4, 3.4, 'CAUSEWAY', 'green', null, 'low tide only');

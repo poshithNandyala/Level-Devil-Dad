@@ -566,7 +566,7 @@ const boardRoute = (x: number, bad?: 'switch' | 'back'): Step[] => {
 // ------------------------------------------------------------------ CCU-07 the bore's front
 const jowarRoute = (x: number, bad?: 'stop' | 'long'): Step[] => {
   const hop = (from: number, to: number): Step[] => [{ hold: 'R', until: X(x + from), max: 200 }, steerHop(px(x + to), 10, 'a short hop over the drain')];
-  if (bad === 'stop') return [walk(x + 7.4), { hold: '', until: done, max: 900, note: 'stop at the first drain to line up the jump' }];
+  if (bad === 'stop') return [...hop(7.4, 10.6), walk(x + 11.4), { hold: '', until: done, max: 900, note: 'stop at the second drain to line up the jump' }];
   if (bad === 'long') return [{ hold: 'R', until: X(x + 7.4), max: 200 }, { hold: 'R', jump: 34, ticks: 34, long: true, note: 'never stop: a long jump at the first drain' }, { hold: 'R', until: done, max: 300 }];
   return [...hop(7.4, 10.6), ...hop(11.4, 14.6), ...hop(17.4, 20.6), ...hop(23.4, 26.6), { hold: 'R', until: X(x + 31.6), max: 200 }, steerHop(px(x + 34), 10, 'up the ghat step, past the front'), walk(x + 39.4)];
 };
@@ -782,7 +782,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   ],
 
   'CCU-07': [
-    { what: 'stopping at the first drain on the causeway', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [58, 92, 0], false, 32.6), ...hornRoute(98), ...boardRoute(134), ...PYL(174), ...jowarRoute(214, 'stop')], cause: 'ccu-baan' },
+    { what: 'stopping at the second drain on the causeway', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [58, 92, 0], false, 32.6), ...hornRoute(98), ...boardRoute(134), ...PYL(174), ...jowarRoute(214, 'stop')], cause: 'ccu-baan' },
     { what: 'a long jump at the first drain on the causeway', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [58, 92, 0], false, 32.6), ...hornRoute(98), ...boardRoute(134), ...PYL(174), ...jowarRoute(214, 'long')], cause: 'ccu-nala' },
     { what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...relayRoute(32, [58, 84, 0], true, 32.6), ...relayRoute(65, [58, 92, 0], false, 32.6), ...hornRoute(98), ...boardRoute(134), walk(174 + 3.9), ...hopTo(px(180.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 174, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
   'CCU-02': [
