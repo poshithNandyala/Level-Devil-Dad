@@ -335,5 +335,35 @@ const raasta: Act = {
   },
 };
 
-export const s10 = { room: tehzeebRoom, acts: [dhulai, darbar, tasveer, julusBells, jawab, raasta, galiyara] };
+/** The wash line again, but chikan is worked in coloured thread too: some blue lines are blue STITCHES,
+ *  raised (stitch ticks across them), and they stay through both washes; the white here is jali. 03 taught:
+ *  white stays, blue goes. Read the thread, not the colour. */
+const taaga: Act = {
+  id: 'lko10-taaga',
+  w: 20,
+  cp0: false,
+  cps: [-2],
+  advice: 'The wash line again, but this chikan is worked in coloured thread too: the raised blue lines with stitch ticks across them are blue stitching, and they stay through both washes; the white here is jali, and the second wash takes it. Read the thread, not the colour: wait on the raised blue.',
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 16);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const L = washLine(w, x + 3, 'bjpbjpbjpbjpbs', c.f('wash'), { dhobiAt: x + 18 });
+    let start = -1;
+    w.onTick((w2) => {
+      if (start < 0 && L.cloth.some((cl) => on(w2, cl.solid))) start = w2.tick;
+      if (start < 0) return;
+      const t = w2.tick - start;
+      if (t === 40) w2.flags[c.f('wash') + ':blow'] = w2.tick;
+      if (t === 66) L.dh.wash(w2, ['p'], 'lko-chhapa');
+      if (t === 200) w2.flags[c.f('wash') + ':blow'] = w2.tick;
+      if (t === 220) L.dh.wash(w2, ['j'], 'lko-taaga');
+    });
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Bas zara sa! | Just a little!', 2.2));
+    sign(w, x + 0.2, 10.4, 3, 'TAAGA', 'shop', null, 'rangeen');
+  },
+};
+
+export const s10 = { room: tehzeebRoom, acts: [dhulai, taaga, darbar, tasveer, julusBells, jawab, raasta, galiyara] };
 export const meta10 = { family: 'finale-bow-meets-bells', betrayals: ['bow-vs-bells'], ending: 'lko-tehzeeb' } as StageMeta;
