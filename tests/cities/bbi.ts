@@ -681,6 +681,21 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi02-corner': act02
   'bbi07-deepa': (x) => [...crossTroupe('bbi7l', x, 4, 8, 'bridge'), { hold: 'R', until: X(x + 15.5), max: 300 }],
   'bbi07-shrinkhala': (x) => [...onBridge('bbi7k0', x + 4, x + 22.2, 'on at the stop, then walk the whole chain'), { hold: 'R', until: X(x + 25.5), max: 300 }],
   'bbi07-dweepa': (x) => [...crossTroupe('bbi7i0', x, 4, 6, 'bridge'), ...crossTroupe('bbi7i1', x, 12, 7, 'bridge'), { hold: 'R', until: X(x + 21.5), max: 300 }],
+  'bbi06-sidhi': (x) => {
+    const out: Step[] = [{ hold: 'R', until: X(x + 1.6), max: 300 }, waitFor((w) => lm(w, 'bbi6s').bridge && lm(w, 'bbi6s').into < 0.3, 'the motif beat: the steps line up')];
+    out.push({ note: 'hop up the steps, one each', max: 400, policy: (w) => ({ move: 'R', jump: w.player.onGround && w.tick % 6 < 3 }), until: and(ground, X(x + 10.4)) });
+    out.push({ hold: 'R', until: X(x + 15.5), max: 300 });
+    return out;
+  },
+  'bbi06-rachh': loomRun('bbi6q', 8, 0.5),
+  'bbi06-dui': (x) => [
+    { hold: 'R', until: X(x + 0.2), max: 300 },
+    waitFor((w) => lm(w, 'bbi6t').bridge && lm(w, 'bbi6t').into > 0.5, 'the first motif'),
+    { hold: 'R', until: and(ground, X(x + 9.3)), max: 400, note: 'across' },
+    waitFor((w) => lm(w, 'bbi6u').bridge && lm(w, 'bbi6u').into > 0.5, 'the second motif, on its own beat'),
+    { hold: 'R', until: and(ground, X(x + 18.4)), max: 400, note: 'across' },
+    { hold: 'R', until: X(x + 20.5), max: 300 },
+  ],
   'bbi10-mela': (x) => [...crossTroupe('bbi10m0', x, 3, 6, 'bridge'), ...crossTroupe('bbi10m1', x, 13, 7, 'wheel'), { hold: 'R', until: X(x + 23.5), max: 300 }],
 };
 const endingPolicies: Record<string, Policy> = { 'bbi-goal-net': goalPolicy, 'bbi-lantern-drop': lanternPolicy, 'bbi-curl-stair': curlStair, 'bbi-behind-step': behindStep, 'bbi-motif-door': motifPolicy, 'bbi-pose-gate': gatePolicy, 'bbi-leaf-plate': platePolicy, 'bbi-horse-gap': horseGap, 'bbi-ribbon-snip': ribbonPolicy };

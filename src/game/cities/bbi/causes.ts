@@ -30,4 +30,5 @@ export const causeLines: Record<string, string[]> = {
   'bbi-ghoda': ['The horses’ plinths slid together, with you between.', 'Don’t touch the horses: jump right over the near one into the gap.'],
   'bbi-kainchi': ['Snip! The ceremonial scissors caught you, Dad.', 'Wait while the blades close, and walk through as they open.'],
   'bbi-deepa': ['Your head hit the lamps, Dad: the wheel was too high under them.', 'Under the lamp string, wait for the bridge and walk under.'],
+  'bbi-rachh': ['The beater swept the warp, with you on it.', 'Cross the moment the shuttle has gone: be off before the beater sweeps.'],
 };
