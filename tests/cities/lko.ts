@@ -750,7 +750,7 @@ const R_lko09_hawa = (id: string) => (x: number): Step[] => {
 actRoutes['lko09-hawa'] = (x) => [stroll(x + 3, 'up on to the roofs'), ...R_lko09_hawa('lko09-hawa')(x)];
 const R_lko09_jhande = (ok: (w: World) => boolean) => (x: number): Step[] => [
   walkTo(x + 3.4, 300),
-  hops([...JHANDE_L.flatMap(([a, , wd]) => [[x + a + 0.6, ok] as [number, (w: World) => boolean], x + a + wd - 0.9]), [x + after(JHANDE_L) + 0.6, ok], x + after(JHANDE_L) + 2], 'cross on the red of the nearer flag'),
+  hops([...JHANDE_L.flatMap(([a, , wd]) => [[x + a + 0.6, ok] as [number, (w: World) => boolean], x + a + wd - 0.9]), [x + after(JHANDE_L) + 0.6, ok], x + after(JHANDE_L) + 2], 'cross on the red of the nearer flag', 12, 60),
 ];
 actRoutes['lko09-jhande'] = (x) => [...R_lko09_jhande(redNow('lko09-jhande:k'))(x), runTo(x + after(JHANDE_L) + 9, 300)];
 const redOf = (who: 'a' | 'b') => (w: World) => {
