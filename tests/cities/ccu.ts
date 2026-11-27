@@ -508,11 +508,15 @@ const lineRoute = (x: number, bad?: 'heads' | 'under'): Step[] => {
   const Q = (w: World) => w.flags.line as Queue;
   const at = (k: number) => px(x + 3 + 3 * k + 0.6);
   const head: Step[] = [steerHop(px(x + 1.5), 12, 'up on the block'), steerHop(at(0), 12, 'on to the first bamboo, behind the queue')];
-  if (bad === 'heads') return [...head, steerHop(at(1), 24, 'up on to the queue, like a cloth top'), { hold: '', until: done, max: 300 }];
+  if (bad === 'heads') return [...head, { hold: '', until: (w) => !Q(w).taken(1), max: 600 }, steerHop(at(1), 12, 'into the bamboo just left'), steerHop(at(2), 34, 'up on to the queue, like a cloth top', true), { hold: '', until: done, max: 300 }];
   if (bad === 'under') return [...head, { hold: 'R', until: done, max: 300, note: 'the queue is in the way: walk off and go under it' }];
+  const Q2 = (w: World) => w.flags.line2 as Queue;
+  const at2 = (k: number) => px(x + 25 + 3 * k + 0.6);
   const moves: Step[] = [];
-  for (let k = 1; k < 10; k++) moves.push({ hold: '', until: (w) => !Q(w).taken(k), max: 600, note: 'wait for the beat' }, steerHop(at(k), 12, 'into the bamboo just left'));
-  return [...head, ...moves, steerHop(px(x + 33), 12, 'on to the gate’s deck'), walk(x + 35.4)];
+  for (let k = 1; k < 5; k++) moves.push({ hold: '', until: (w) => !Q(w).taken(k), max: 600, note: 'wait for the beat' }, steerHop(at(k), 12, 'into the bamboo just left'));
+  moves.push(steerHop(px(x + 18), 12, 'on to the inner gate’s deck'), walk(x + 23.4, 'across the deck: the second queue starts'), steerHop(at2(0), 12, 'on to its first bamboo'));
+  for (let k = 1; k < 5; k++) moves.push({ hold: '', until: (w) => !Q2(w).taken(k), max: 600, note: 'wait for the beat' }, steerHop(at2(k), 12, 'into the bamboo just left'));
+  return [...head, ...moves, steerHop(px(x + 41), 12, 'on to the gate’s deck'), walk(x + 43.4)];
 };
 
 // ------------------------------------------------------------------ CCU-07 the lorry's horn

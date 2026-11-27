@@ -1168,26 +1168,35 @@ const dhak: Act = {
 const line: Act = {
   id: 'ccu09-line',
   cp0: false,
-  cps: [-1.8, 29],
-  // 09's labelled momentum beat: ten bamboos, two more beats of the queue than it needs to teach
-  w: 36,
-  advice: 'Opening night, and the queue for the pandal: one person to a bamboo, and on each beat of the dhak they all step one bamboo on. Nobody climbs over the queue, and under it are the stakes. Move up into the bamboo they’ve just left, one beat at a time.',
+  cps: [-1.8, 17.6, 42],
+  // 09's labelled momentum beat: two queues of five bamboos, the second starting when Dad is on the deck
+  // between them (fix 3: each queue is one segment of about 7 s, with a calm checkpoint on the deck)
+  w: 44,
+  advice: 'Opening night, and the queue for the pandal: one person to a bamboo, and on each beat of the dhak they all step one bamboo on. Nobody climbs over the queue, and under it are the stakes. Move up into the bamboo they’ve just left, one beat at a time. At the inner gate there’s a second queue: it starts when you’re on the deck.',
   paint: (g, c) => {
     const x = c.x;
     g.fill(x + 1, x + 1, 13, 14, '#');
-    for (let k = 0; k < 10; k++) g.fill(x + 3 + 3 * k, x + 4 + 3 * k, 12, 12, '=');
-    g.fill(x + 32, x + 35, 12, 14, '#');
+    for (let k = 0; k < 5; k++) g.fill(x + 3 + 3 * k, x + 4 + 3 * k, 12, 12, '=');
+    g.fill(x + 17, x + 23, 12, 14, '#');
+    for (let k = 0; k < 5; k++) g.fill(x + 25 + 3 * k, x + 26 + 3 * k, 12, 12, '=');
+    g.fill(x + 40, x + 43, 12, 14, '#');
   },
   build: (w, c) => {
-    w.add(new Skeleton(c.X(1), c.X(32)));
-    w.add(new Stakes(c.X(2), c.X(32)));
-    const xs = Array.from({ length: 10 }, (_, k) => c.X(3 + 3 * k) + 8);
-    const q = w.add(new Queue(xs, px(12), [1, 2, 3]));
+    w.add(new Skeleton(c.X(1), c.X(40)));
+    w.add(new Stakes(c.X(2), c.X(17)));
+    w.add(new Stakes(c.X(24), c.X(40)));
+    const qa = w.add(new Queue(Array.from({ length: 5 }, (_, k) => c.X(3 + 3 * k) + 8), px(12), [1, 2, 3]));
+    const qb = w.add(new Queue(Array.from({ length: 5 }, (_, k) => c.X(25 + 3 * k) + 8), px(12), [1, 2, 3]));
     onPass(w, c.X(1), (w2) => {
-      if (q.t0 < 0) q.t0 = w2.tick + 120;
+      if (qa.t0 < 0) qa.t0 = w2.tick + 60;
     });
-    sign(w, c.x + 32.4, 8.4, 3.2, 'QUEUE', 'green', null, 'this way');
-    w.flags.line = q;
+    onPass(w, c.X(23), (w2) => {
+      if (qb.t0 < 0) qb.t0 = w2.tick + 60;
+    });
+    sign(w, c.x + 17.4, 8.4, 3.2, 'INNER GATE', 'green', null, 'queue here');
+    sign(w, c.x + 40.4, 8.4, 3.2, 'QUEUE', 'green', null, 'this way');
+    w.flags.line = qa;
+    w.flags.line2 = qb;
   },
 };
 
@@ -1199,11 +1208,11 @@ function liftAct(id: string, wait: number, advice: string): Act {
     id,
     w: 30,
     cp0: false,
-    cps: [-4, 11.6, 27],
+    cps: [-4, 6.8, 11.6, 27],
     advice,
     paint: (g, c) => {
       const x = c.x;
-      g.fill(x + 1, x + 1, 13, 14, '#').fill(x + 3, x + 4, 12, 12, '=').fill(x + 6, x + 7, 7, 7, '=').fill(x + 9, x + 10, 7, 7, '=').fill(x + 11, x + 22, 3, 3, '=').fill(x + 8, x + 11, 1, 1, '#');
+      g.fill(x + 1, x + 1, 13, 14, '#').fill(x + 3, x + 4, 12, 12, '=').fill(x + 6, x + 8, 7, 7, '=').fill(x + 9, x + 10, 7, 7, '=').fill(x + 11, x + 22, 3, 3, '=').fill(x + 8, x + 11, 1, 1, '#');
     },
     build: (w, c) => {
       const x = c.x;
