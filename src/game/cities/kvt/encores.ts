@@ -54,7 +54,7 @@ export class RubbleBank extends Entity {
   on(w: World): RubbleRect | undefined {
     const p = w.player;
     const feet = Math.round(p.y + p.h);
-    return this.rects.find((r) => feet === px(r.top) && p.x + p.w > px(r.c0) + 1 && p.x < px(r.c1 + 1) - 1);
+    return this.rects.find((r) => feet === px(r.top) && p.x + p.w > px(r.c0) && p.x < px(r.c1 + 1));
   }
   update(w: World) {
     const p = w.player;
@@ -162,27 +162,27 @@ function stormBankRoom(): LevelDef {
 /** KVT-09 act 1: the second face, under a lip of storm-cemented beach rock. A full leap meets its jagged underside. */
 const overhang: Act = {
   id: 'kvt09-pavizham',
-  w: 34,
-  advice: 'The second face has a lip of cemented beach rock over it, jagged underneath: a full leap hits it. Take these steps with a middling jump, still landing deep.',
+  w: 42,
+  advice: 'The second face is taller, with a lip of cemented beach rock over it, jagged underneath: a full leap hits it. Take these steps with a middling jump, still landing deep.',
   paint: (g, c) => {
     const x = c.x;
     g.pit(x + 4, x + 5);
-    bankUp(g, x + 6, 5, 3, 14);
-    // the lip of beach rock over the near two tiles of steps 2-4, jagged underneath, four rows over each: a tap
+    bankUp(g, x + 6, 7, 3, 14);
+    // the lip of beach rock over the near two tiles of steps 2-6, jagged underneath, four rows over each: a tap
     // from the step below clears it, a full leap doesn't
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= 5; i++) {
       const c0 = x + 6 + i * 3,
         top = 14 - i;
       g.fill(c0, c0 + 2, top - 6, top - 5, '#');
       g.fill(c0, c0 + 1, top - 4, top - 4, 'v');
     }
-    g.fill(x + 21, x + 27, 10, 17, '#');
-    g.fill(x + 28, x + 29, 12, 17, '#').fill(x + 30, x + 31, 14, 17, '#');
+    g.fill(x + 27, x + 33, 8, 17, '#');
+    g.fill(x + 34, x + 35, 10, 17, '#').fill(x + 36, x + 37, 12, 17, '#').fill(x + 38, x + 39, 14, 17, '#');
   },
   build: (w, c) => {
     const { X } = c;
     pool(w, c.x + 4, c.x + 6, 15.3, { colors: LAGOON });
-    w.add(new RubbleBank(bankUpRects(c.x + 6, 5, 3, 14)));
+    w.add(new RubbleBank(bankUpRects(c.x + 6, 7, 3, 14)));
     sign(w, c.x + 0.4, G - 4.4, 3.4, 'LOOSE', 'warn', null, 'coral rubble');
     onPass(w, X(1), (w2) => w2.guide('Randaamathe kunnu, Dad. | The second bank, Dad.', (w3) => w3.player.x < X(9)));
   },
@@ -310,35 +310,90 @@ function bankWidths(c: number, widths: number[], top: number): RubbleRect[] {
     return r;
   });
 }
-const SUMMIT = [3, 3, 3, 2, 2, 2];
-/** the far side of the summit: rubble steps going down to the right, three tiles each, from row 9 to row 14 */
-const DOWN = (x: number): RubbleRect[] => Array.from({ length: 6 }, (_, i) => ({ c0: x + 26 + i * 3, c1: x + 28 + i * 3, top: 9 + i }));
+const SUMMIT = [3, 3, 3, 3, 2, 2, 2, 2];
+/** the far side of the summit: rubble steps going down to the right, three tiles each, from row 7 to row 14 */
+const DOWN = (x: number): RubbleRect[] => Array.from({ length: 8 }, (_, i) => ({ c0: x + 31 + i * 3, c1: x + 33 + i * 3, top: 7 + i }));
 /** KVT-09 act 3: the highest part of the bank, where the steps narrow to two tiles. The slide still takes a tile. */
 const summit: Act = {
   id: 'kvt09-kodumudi',
-  w: 48,
+  w: 60,
   advice: 'Near the top the steps narrow to two tiles, and the slide still takes one: land on the far tile of each. Over the top the lagoon is on the other side, so the slide goes the other way: walk off each step, never hop down.',
   paint: (g, c) => {
     const x = c.x;
     g.pit(x + 3, x + 4);
     for (const r of bankWidths(x + 5, SUMMIT, 14)) g.fill(r.c0, r.c1, r.top, 17, '#');
-    g.fill(x + 20, x + 25, 8, 17, '#');
+    g.fill(x + 25, x + 30, 6, 17, '#');
     for (const r of DOWN(x)) g.fill(r.c0, r.c1, r.top, 17, '#');
-    g.pit(x + 44, x + 45);
+    g.pit(x + 55, x + 56);
   },
   build: (w, c) => {
     const { X } = c;
     pool(w, c.x + 3, c.x + 5, 15.3, { colors: LAGOON });
-    pool(w, c.x + 44, c.x + 46, 15.3, { colors: LAGOON });
+    pool(w, c.x + 55, c.x + 57, 15.3, { colors: LAGOON });
     w.add(new RubbleBank(bankWidths(c.x + 5, SUMMIT, 14)));
     w.add(new RubbleBank(DOWN(c.x), 1));
-    onPass(w, X(24), (w2) => taraSays(w2, 'Chaadi irangu, Dad! Vegam! | Hop down, Dad! Quick!', 2.4));
+    onPass(w, X(29), (w2) => taraSays(w2, 'Chaadi irangu, Dad! Vegam! | Hop down, Dad! Quick!', 2.4));
     sign(w, c.x + 0.4, G - 4.4, 3.4, 'KODUMUDI', 'wood', null, 'the top');
-    onPass(w, X(1), (w2) => w2.guide('Mukalil padikal cheruthaanu. | The steps are small at the top.', (w3) => w3.player.x < X(14)));
+    onPass(w, X(1), (w2) => w2.guide('Mukalil padikal cheruthaanu. | The steps are small at the top.', (w3) => w3.player.x < X(18)));
   },
 };
 
-export const kvt09 = { room: stormBankRoom, acts: [overhang, summit, breaches] };
+/** KVT-09 act: the sea wall the islanders built along the bank, broken by the storm in two places. In the first
+ *  break the rubble is a heap you land deep on, as on the bank; in the second it is a single block: land on it
+ *  and the slide takes you straight off. Jump that break whole. */
+const seaWall: Act = {
+  id: 'kvt09-kadalbhitti',
+  w: 50,
+  advice: 'Up the rubble to the sea wall. The storm broke the wall twice: the first break is a heap of rubble, land deep on it; the second is one loose block, and the slide takes you straight off it, so jump that break in one.',
+  paint: (g, c) => {
+    const x = c.x;
+    bankUp(g, x + 2, 6, 3, 14);
+    g.fill(x + 20, x + 43, 8, 17, '#');
+    g.pit(x + 25, x + 26, 8).fill(x + 27, x + 29, 9, 17, '#').fill(x + 27, x + 29, 8, 8, '.');
+    g.pit(x + 33, x + 33, 8).fill(x + 34, x + 34, 9, 17, '#').fill(x + 34, x + 34, 8, 8, '.').pit(x + 35, x + 35, 8);
+    g.fill(x + 44, x + 45, 10, 17, '#').fill(x + 46, x + 47, 12, 17, '#').fill(x + 48, x + 49, 14, 17, '#');
+  },
+  build: (w, c) => {
+    const { X } = c;
+    w.add(new RubbleBank([...bankUpRects(c.x + 2, 6, 3, 14), { c0: c.x + 27, c1: c.x + 29, top: 9 }, { c0: c.x + 34, c1: c.x + 34, top: 9 }]));
+    pool(w, c.x + 25, c.x + 27, 15.3, { colors: LAGOON });
+    pool(w, c.x + 33, c.x + 34, 15.3, { colors: LAGOON });
+    pool(w, c.x + 35, c.x + 36, 15.3, { colors: LAGOON });
+    sign(w, c.x + 21, 8 - 4.4, 3.6, 'SEA WALL', 'green', null, 'PWD Kalpeni');
+    onPass(w, X(30.5), (w2) => taraSays(w2, 'Aa kallil chaadi nilkku! | Land on that rock!', 2.4));
+  },
+};
+
+const DOWN2 = (x: number): RubbleRect[] => [
+  { c0: x + 15, c1: x + 17, top: 10 },
+  { c0: x + 18, c1: x + 18, top: 11 },
+  { c0: x + 19, c1: x + 21, top: 12 },
+  { c0: x + 22, c1: x + 22, top: 13 },
+  { c0: x + 23, c1: x + 25, top: 14 },
+];
+/** KVT-09 act: down to the lagoon again, but every other step is one tile: walk off on to one of those and the
+ *  slide carries you over its front edge. Hop over the narrow ones. (Up a plain rock stair first.) */
+const downAgain: Act = {
+  id: 'kvt09-irangal',
+  w: 38,
+  advice: 'Down to the lagoon side again, but every other step is a single tile: walk off on to one and the slide takes you straight over its edge. Hop over each narrow step to the wide one below it.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 2, x + 4, 13, 17, '#').fill(x + 5, x + 7, 11, 17, '#');
+    g.fill(x + 8, x + 14, 9, 17, '#');
+    for (const r of DOWN2(x)) g.fill(r.c0, r.c1, r.top, 17, '#');
+    g.pit(x + 26, x + 27);
+  },
+  build: (w, c) => {
+    const { X } = c;
+    w.add(new RubbleBank(DOWN2(c.x), 1));
+    pool(w, c.x + 26, c.x + 28, 15.3, { colors: LAGOON });
+    sign(w, c.x + 12.2, 9 - 4.4, 3.4, 'IRAKKAM', 'wood', 'right', 'lagoon side');
+    onPass(w, X(13), (w2) => taraSays(w2, 'Padi padiyaayi nadannu irangu! | Walk down step by step!', 2.4));
+  },
+};
+
+export const kvt09 = { room: stormBankRoom, acts: [overhang, summit, seaWall, downAgain, breaches] };
 
 // ================================================================== KVT-10: the octopus
 const CORAL: Record<string, [string, string]> = {

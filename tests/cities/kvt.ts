@@ -55,7 +55,7 @@ const dies: Step = { hold: '', until: done, max: 900 };
 
 // ------------------------------------------------------------------ the storm bank (KVT-09)
 /** standing still, the rubble done sliding */
-const still = (w: World) => w.player.onGround && !w.flags.kvtSlide && Math.abs(w.player.vx) < 1;
+const still = (w: World) => w.player.onGround && !w.flags.kvtSlide && w.player.stun === 0 && Math.abs(w.player.vx) < 1;
 /** walk to the far end of the rubble step ending at column c1 (against the next riser), stop, and tap up */
 const stepUp = (c1: number, note = 'walk to the far end of the step, then up'): Step[] => [
   { hold: 'R', until: X(c1 + 0.3), max: 200, note },
@@ -212,25 +212,71 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...stepUp(x + 11),
     ...stepUp(x + 14),
     ...stepUp(x + 17),
-    { hold: 'R', until: X(x + 32.6), max: 600, note: 'along the crest and down' },
+    ...stepUp(x + 20),
+    ...stepUp(x + 23),
+    { hold: 'R', until: X(x + 40.6), max: 600, note: 'along the crest and down' },
   ],
   'kvt09-kodumudi': (x) => [
     ...deepOn(x + 2.3, 20, 'stop at the water, land deep'),
     ...stepUp(x + 7),
     ...stepUp(x + 10),
-    ...stepUp(x + 13, 'the narrow steps: walk to the far tile, then up'),
-    ...stepUp(x + 15),
-    ...stepUp(x + 17),
-    ...stepUp(x + 19),
-    { hold: 'R', until: X(x + 25.2), max: 300, note: 'along the top' },
+    ...stepUp(x + 13),
+    ...stepUp(x + 16, 'the narrow steps: walk to the far tile, then up'),
+    ...stepUp(x + 18),
+    ...stepUp(x + 20),
+    ...stepUp(x + 22),
+    ...stepUp(x + 24),
+    { hold: 'R', until: X(x + 30.2), max: 300, note: 'along the top' },
     // down the far side: walk off each step (you land at its back, the slide puts you in the middle)
-    ...Array.from({ length: 6 }, (_, i): Step[] => [
-      { hold: 'R', until: (w) => w.player.x >= px(x + 26 + i * 3 - 0.2) || w.state !== 'play', max: 200, ...(i === 0 ? { note: 'walk off each step, never hop down' } : {}) },
-      { hold: '', until: (w) => (w.player.onGround && !w.flags.kvtSlide && w.player.x >= px(x + 26 + i * 3)) || w.state !== 'play', max: 200 },
+    ...Array.from({ length: 8 }, (_, i): Step[] => [
+      { hold: 'R', until: (w) => w.player.x >= px(x + 31 + i * 3 - 0.2) || w.state !== 'play', max: 200, ...(i === 0 ? { note: 'walk off each step, never hop down' } : {}) },
+      { hold: '', until: (w) => (w.player.onGround && !w.flags.kvtSlide && w.player.x >= px(x + 31 + i * 3)) || w.state !== 'play', max: 200 },
     ]).flat(),
-    { hold: 'R', until: X(x + 42.6), max: 200 },
+    { hold: 'R', until: X(x + 53.6), max: 200 },
     { hold: 'R', jump: 12, ticks: 12, note: 'over the water at the bottom' },
-    { hold: 'R', until: and(ground, X(x + 47)), max: 300 },
+    { hold: 'R', until: and(ground, X(x + 59)), max: 300 },
+  ],
+  'kvt09-kadalbhitti': (x) => [
+    { hold: 'R', until: X(x + 1.3), max: 300, note: 'to the foot of the rubble' },
+    { hold: '', until: still, max: 60 },
+    { hold: 'R', jump: 12, ticks: 12 },
+    { hold: 'R', until: ground, max: 200 },
+    { hold: '', until: still, max: 200 },
+    ...stepUp(x + 4),
+    ...stepUp(x + 7),
+    ...stepUp(x + 10),
+    ...stepUp(x + 13),
+    ...stepUp(x + 16),
+    ...stepUp(x + 19, 'up on to the sea wall'),
+    ...deepOn(x + 24.3, 30, 'the first break: land deep on the heap'),
+    ...stepUp(x + 29, 'back up on to the wall'),
+    ...deepOn(x + 32.3, 30, 'the second break: one loose block, jump it whole'),
+    { hold: 'R', until: and(ground, X(x + 50)), max: 600, note: 'along the wall and down' },
+  ],
+  'kvt09-irangal': (x) => [
+    // up the plain rock stair: from the foot of each riser, a tap with the thumb off the stick mid-air
+    ...[1, 4, 7].flatMap((c, i): Step[] => [
+      { hold: 'R', until: X(x + c + 0.3), max: 300, ...(i === 0 ? { note: 'up the rock stair' } : {}) },
+      { hold: '', until: still, max: 60 },
+      { hold: 'R', jump: 14, ticks: 24 },
+      { hold: '', until: ground, max: 200 },
+      { hold: '', until: still, max: 200 },
+    ]),
+    { hold: 'R', until: X(x + 15), max: 300, note: 'walk off the top on to the first wide step' },
+    { hold: '', until: ground, max: 200 },
+    { hold: '', ticks: 4 },
+    { hold: '', until: still, max: 200 },
+    { hold: 'R', jump: 10, ticks: 38, note: 'over the narrow step' },
+    { hold: '', until: ground, max: 200 },
+    { hold: '', ticks: 4 },
+    { hold: '', until: still, max: 200 },
+    { hold: 'R', jump: 10, ticks: 38, note: 'and the next narrow one' },
+    { hold: '', until: ground, max: 200 },
+    { hold: '', ticks: 4 },
+    { hold: '', until: still, max: 200 },
+    { hold: 'R', jump: 20, ticks: 20, long: true, note: 'over the water' },
+    { hold: 'R', until: ground, max: 200 },
+    { hold: 'R', until: X(x + 38), max: 400 },
   ],
   'kvt09-murivu': (x) => [
     { hold: 'R', until: X(x - 0.2), max: 200 },
@@ -665,8 +711,9 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     cause: 'spikes',
   };
   mistakes['KVT-09'] = [
+    { what: 'land on the one loose block in the second break, like the heap in the first', steps: [...upTo(S['KVT-09'], 'the second break: one loose block, jump it whole'), { hold: 'R', until: X(136 + 32.3), max: 300 }, { hold: '', until: still, max: 60 }, { hold: 'R', jump: 8, ticks: 10 }, { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, dies], cause: 'splash' },
     { what: 'hop down the far side of the summit, as Tara says', steps: [...upTo(S['KVT-09'], 'walk off each step, never hop down'), ...Array.from({ length: 5 }, (): Step[] => [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, { hold: '', until: (w) => !w.flags.kvtSlide || w.state !== 'play', max: 200 }]).flat(), dies], cause: 'splash' },
-    { what: 'a little hop over the storm cut, as Tara says', steps: [...upTo(S['KVT-09'], 'well past the first cut').slice(0, -1), { hold: 'R', until: X(116 + 5.2), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 400 }], cause: 'splash' },
+    { what: 'a little hop over the storm cut, as Tara says', steps: [...upTo(S['KVT-09'], 'well past the first cut').slice(0, -1), { hold: 'R', until: X(224 + 5.2), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 400 }], cause: 'splash' },
   ];
   // hop straight up the steps from wherever you land
   naive['KVT-09'] = {
