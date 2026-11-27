@@ -144,10 +144,17 @@ function gapWater(ctx: Ctx, x0: number, x1: number, w: World) {
 
 /** a deep gap: water at the bottom and a hurt box, drawn in front; `segs` are the open stretches [x0, x1] (px) */
 function gap(w: World, ...segs: [number, number][]) {
+  return gapC(w, 'svp-nazar', ...segs);
+}
+function gapC(w: World, cause: string, ...segs: [number, number][]) {
+  const hs: Hurt[] = [];
   for (const [x0, x1] of segs) {
-    w.add(new Hurt(x0, FLOOR + 12, x1 - x0, 40, 'svp-nazar', null));
+    const h = new Hurt(x0, FLOOR + 12, x1 - x0, 40, cause, null);
+    hs.push(h);
+    w.add(h);
     w.add(new Fx(null, (ctx, w2) => gapWater(ctx, x0, x1, w2), 5));
   }
+  return hs;
 }
 
 // ================================================================== the room
@@ -176,29 +183,21 @@ export function tasveerRoom(): LevelDef {
 // ================================================================== the act
 export const dekho: Act = {
   id: 'svp05-dekho',
-  w: 112,
-  advice: 'More views, further on. The first has two benches: the first picture takes you to the little island in the middle, and the island has a bench of its own for the rest. The next has its footprints a long way from the bench: it’s the footprints that count. After it the ledge is a stair going up, and the last view is a long gap that holds a little longer.',
-  cps: [15.6, 30, 57, 84],
+  w: 36,
+  advice: 'One more view, further on, and this time the bench is not where the picture was taken: it stands three tiles before the footprints. It is the footprints that count. Stand on them, and go while the ledge holds: it does not hold for ever.',
+  cps: [],
   paint: (g, c) => {
-    const x = c.x;
-    // gap 1 with an island in the middle; gap 2 further on
-    g.pit(x + 8, x + 25).fill(x + 15, x + 18, 15, 17, '#');
-    g.pit(x + 38, x + 49);
-    // a stair of ledge going up to a raised landing, then a long gap
-    g.pit(x + 62, x + 74);
-    g.fill(x + 75, x + 78, 13, 14, '#');
-    g.pit(x + 88, x + 105);
+    g.pit(c.x + 10, c.x + 21);
   },
   build: (w, c) => {
     const x = c.x;
-    const a = new Viewpoint(px(x + 4) + 8, [{ x: px(x + 8), w: px(7) }], 300).install(w);
-    const b = new Viewpoint(px(x + 16) + 8, [{ x: px(x + 19), w: px(7) }], 300, px(x + 16) + 30).install(w);
-    // the third: the bench stands by the road, the footprints are three tiles on
-    const cc = new Viewpoint(px(x + 32) + 8, [{ x: px(x + 38), w: px(12) }], 300, px(x + 29) + 8).install(w);
-    const d = new Viewpoint(px(x + 58) + 8, [{ x: px(x + 62), w: px(5) }, { x: px(x + 67), w: px(4), y: FLOOR - 16 }, { x: px(x + 71), w: px(4), y: FLOOR - 32 }], 320, px(x + 55) + 8).install(w);
-    const e = new Viewpoint(px(x + 84) + 8, [{ x: px(x + 88), w: px(18) }], 420, px(x + 81) + 8).install(w);
-    (w.flags.vps ??= []).push(a, b, cc, d, e);
-    gap(w, [px(x + 8), px(x + 15)], [px(x + 19), px(x + 26)], [px(x + 38), px(x + 50)], [px(x + 62), px(x + 75)], [px(x + 88), px(x + 106)]);
+    const a = new Viewpoint(px(x + 4) + 8, [{ x: px(x + 10), w: px(12) }], 300, px(x + 1) + 8).install(w);
+    const [h] = gapC(w, 'svp-nazar', [px(x + 10), px(x + 22)]);
+    // fell off a ledge that held for a while and was let go of: the picture only lined up for a time
+    w.onTick(() => {
+      h.cause = a.everAligned ? 'svp-nazar3' : 'svp-nazar';
+    });
+    (w.flags.vps ??= []).push(a);
   },
 };
 

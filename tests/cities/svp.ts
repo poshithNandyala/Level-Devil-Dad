@@ -626,13 +626,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     rootsPolicy([x + 4, x + 10, x + 17], px(x + 20), 'the green roots, skipping the grey step', and(ground, (w) => w.player.x >= px(x + 20) + 2)),
     { hold: 'R', until: and(ground, X(x + 22.5)), max: 300 },
     rootsPolicy([x + 29, x + 35, x + 41], px(x + 45), 'the second creek of ruin', and(ground, (w) => w.player.x >= px(x + 45) + 2), 74, 26),
-    { hold: 'R', until: and(ground, X(x + 50)), max: 300 },
-    rootsPolicy([x + 52, x + 57, x + 62, x + 67], px(x + 71), 'the stair of roots, up and down', and(ground, (w) => w.player.x >= px(x + 71) + 2), 74, 26),
-    { hold: 'R', until: and(ground, X(x + 74.5)), max: 300 },
-    rootsPolicy([x + 80, x + 86], px(x + 91), 'the first half of the long cellar', and(ground, (w) => w.player.x >= px(x + 91) + 2), 74, 26),
-    { hold: 'R', until: and(ground, X(x + 94.5)), max: 300, note: 'across the sound floor in the middle' },
-    rootsPolicy([x + 98, x + 104], px(x + 108), 'the second half of the long cellar', and(ground, (w) => w.player.x >= px(x + 108) + 2), 60, 24),
-    { hold: 'R', until: and(ground, X(x + 110)), max: 300 },
+    { hold: 'R', until: and(ground, X(x + 48)), max: 300 },
   ])(x0 + 3),
   'svp08-gali': () => [streetUntil(6, 'the longer street, awning to awning')],
   'svp08-chhajja': (x) => [
@@ -668,18 +662,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: and(ground, X(x + 45)), max: 600 },
   ],
   'svp05-dekho': (x) => [
-    standOn(vpN(0), 'the first footprints'),
-    hopUntil(and(ground, (w) => w.player.x >= px(x + 15.5)), 'over the first slabs to the island'),
-    standOn(vpN(1), 'the island’s own footprints'),
-    hopUntil(and(ground, X(x + 28)), 'over the rest'),
-    standOn(vpN(2), 'the third footprints: not at the bench'),
-    hopUntil(and(ground, X(x + 51)), 'across the long ledge'),
-    standOn(vpN(3), 'the fourth footprints: the ledge is a stair going up'),
-    hopUntil(and(ground, X(x + 76)), 'up the stair to the landing'),
-    { hold: 'R', until: and(ground, X(x + 82)), max: 600, note: 'down off the landing' },
-    standOn(vpN(4), 'the last footprints: the long gap'),
-    hopUntil(and(ground, X(x + 107)), 'the whole long ledge'),
-    { hold: 'R', until: and(ground, X(x + 111)), max: 300 },
+    standOn(vpN(0), 'the footprints, not the bench three tiles before them'),
+    hopUntil(and(ground, X(x + 23)), 'across the ledge while it holds'),
+    { hold: 'R', until: and(ground, X(x + 35)), max: 600 },
   ],
   'svp05-ooncha': (x) => [
     ...onBench(x),
@@ -967,6 +952,12 @@ actDeath('SVP-07', 'svp07-bus', 'over the bus and on down the lane ahead of it',
   { hold: 'R', until: (w) => w.player.onGround && w.player.y + w.player.h > FLOOR_Y - 2 && w.player.cx > px(x + 14), max: 600, note: 'along the roof and down off its nose' },
   { hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'on down the lane ahead of it' },
 ]);
+actDeath('SVP-09', 'svp09-pul', 'hop along every root, the grey one too', 'svp-grey', (x) => [rootsPolicy([x + 7, x + 13], px(x + 18.5), 'root to root, then the grey one too', (w) => w.state !== 'play')]);
+actDeath('SVP-09', 'svp09-pul', 'the first creek by the green roots, then across the brick of the second', 'svp-eent2', (x) => [
+  rootsPolicy([x + 7, x + 13, x + 20], px(x + 23), 'the green roots, skipping the grey step', and(ground, (w) => w.player.x >= px(x + 23) + 2)),
+  { hold: 'R', until: and(ground, X(x + 25.5)), max: 300 },
+  { hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'on across the brick of the second creek' },
+]);
 actDeath('SVP-09', 'svp09-patta', 'let go under the middle of the pontoon', 'svp-hull', (x) => [
   { hold: 'R', until: and(ground, X(x + 15)), max: 900, note: 'to under the middle of the pontoon' },
   { hold: '', until: (w) => w.state !== 'play', max: 900, note: 'stand still: up into the hull' },
@@ -974,6 +965,16 @@ actDeath('SVP-09', 'svp09-patta', 'let go under the middle of the pontoon', 'svp
 actDeath('SVP-09', 'svp09-patta', 'walk the seabed to the end and let go there', 'svp-pankha', (x) => [
   { hold: 'R', until: and(ground, X(x + 22.6)), max: 1500, note: 'to the foot of the pillar' },
   { hold: '', until: (w) => w.state !== 'play', max: 900, note: 'and let go there' },
+]);
+actDeath('SVP-05', 'svp05-dekho', 'stand at the bench, three tiles before the footprints, then go', 'svp-nazar', (x) => [
+  { hold: 'R', until: and(ground, X(x + 1.4)), max: 900, note: 'to the bench' },
+  { hold: '', ticks: 200, note: 'wait there for the picture' },
+  { hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'and go' },
+]);
+actDeath('SVP-05', 'svp05-dekho', 'on the footprints till the picture lines up, then stay looking at it', 'svp-nazar3', (x) => [
+  standOn(vpN(0), 'the footprints'),
+  { hold: '', until: (w) => vpN(0)(w).aligned === 0, max: 900, note: 'and look at it until the ledge has gone' },
+  { hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'and go' },
 ]);
 actDeath('SVP-05', 'svp05-ooncha', 'stand on the footprints, then step out on to the ledge', 'svp-nazar', (x) => [
   ...onBench(x),

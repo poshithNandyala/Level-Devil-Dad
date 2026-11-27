@@ -212,7 +212,8 @@ function cellar(w: World, c0: number, c1: number, piece = 4, delay = 30, cause =
     const wd = Math.min(piece, c1 - c + 1);
     bricks.push(new Crumbler(px(c), FLOOR, px(wd), 16, 'brick', delay).install(w));
   }
-  w.add(new Hurt(px(c0), FLOOR + 16, px(c1 - c0 + 1), 40, cause, null));
+  const hurt = new Hurt(px(c0), FLOOR + 16, px(c1 - c0 + 1), 40, cause, null);
+  w.add(hurt);
   w.add(
     new Fx(null, (ctx) => {
       const g = ctx.createLinearGradient(0, FLOOR + 14, 0, FLOOR + 60);
@@ -225,7 +226,7 @@ function cellar(w: World, c0: number, c1: number, piece = 4, delay = 30, cause =
       for (let x = px(c0) + 6; x < px(c1 + 1) - 8; x += 40) ctx.fillRect(x, FLOOR + 22, 10, 30);
     }, 0),
   );
-  return bricks;
+  return Object.assign(bricks, { hurt });
 }
 
 // ================================================================== the room
@@ -256,46 +257,33 @@ export function jadRoom(): LevelDef {
 // ================================================================== the act
 export const pul: Act = {
   id: 'svp09-pul',
-  w: 115,
-  advice: 'Not every root is alive. A dead root is grey and bare, with no leaves, and it crumbles like brick: only the green ones hold. Take the green ones, and skip the grey ones between them. The middle green one swings. Then the roots make a stair up and down, and a long cellar with more swinging ones.',
-  cps: [24.5, 47.5, 77, 96.5],
+  w: 52,
+  advice: 'Not every root is alive. A dead root is grey and bare, with no leaves, and it crumbles like brick: only the green ones hold. Take the green ones, and skip the grey ones between them. The middle green one swings. A second creek has a grey step lower down, under the gap, and swings again.',
+  cps: [24.5],
   paint: (g, c) => {
     g.pit(c.x + 6, c.x + 22);
     g.pit(c.x + 31, c.x + 47);
-    g.pit(c.x + 56, c.x + 73);
-    g.pit(c.x + 82, c.x + 93);
-    g.pit(c.x + 100, c.x + 110);
   },
   build: (w, c) => {
     const x = c.x + 3;
-    cellar(w, x + 3, x + 19, 4, 30, 'svp-eent2');
+    const first = cellar(w, x + 3, x + 19, 4, 30, 'svp-eent2');
     cellar(w, x + 28, x + 44, 4, 30, 'svp-eent2');
-    cellar(w, x + 53, x + 70, 4, 30, 'svp-eent2');
-    cellar(w, x + 79, x + 90, 4, 30, 'svp-eent2');
-    cellar(w, x + 97, x + 107, 4, 30, 'svp-eent2');
     // first creek of ruin: green, green (swinging), a grey step to tempt you, green
     const y = FLOOR - 28;
     new Root(px(x + 4), y, 64).install(w);
     const sw = new Root(px(x + 10), y, 64, 12, 520, px(x + 5)).install(w);
-    new Crumbler(px(x + 15) + 8, y, 16, 7, 'dead', 20).install(w);
+    const grey = new Crumbler(px(x + 15) + 8, y, 16, 7, 'dead', 20).install(w);
     new Root(px(x + 17), y, 48).install(w);
+    // whoever has stood on the grey root and gone down is told about the grey root
+    w.onTick(() => {
+      first.hurt.cause = grey.t >= 0 ? 'svp-grey' : 'svp-eent2';
+    });
     // second: a swing, a grey step lower down under the gap (it will not hold you if you fall short), and the last green on to the road
     new Root(px(x + 29), y, 64).install(w);
     const sw2 = new Root(px(x + 35), y, 64, 12, 540, px(x + 27), 1.2).install(w);
     new Crumbler(px(x + 39) + 8, y + 18, 16, 7, 'dead', 20).install(w);
     new Root(px(x + 41), y, 48).install(w);
-    // third: a stair of roots up and down, with a brick landing at the top that is not a landing
-    new Root(px(x + 52), FLOOR - 28, 64).install(w);
-    new Root(px(x + 57), FLOOR - 56, 64).install(w);
-    new Root(px(x + 62), FLOOR - 56, 64).install(w);
-    new Root(px(x + 67), FLOOR - 28, 64).install(w);
-    new Crumbler(px(x + 59), FLOOR - 12, 32, 12, 'brick', 20).install(w);
-    // fourth: a long cellar of roots, two of them swinging, with a stretch of sound floor in the middle to get your breath on
-    const sw3 = new Root(px(x + 86), y, 64, 12, 520, px(x + 77.5), 0.4).install(w);
-    const sw4 = new Root(px(x + 98), y, 64, 12, 560, px(x + 77.5), 2.1).install(w);
-    new Root(px(x + 80), y, 64).install(w);
-    new Root(px(x + 104), y, 64).install(w);
-    (w.flags.swingers ??= []).push(sw, sw2, sw3, sw4);
+    (w.flags.swingers ??= []).push(sw, sw2);
   },
 };
 
