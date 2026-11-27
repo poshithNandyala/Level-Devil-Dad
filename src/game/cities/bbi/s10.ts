@@ -14,7 +14,7 @@ import { FL, channel, cyc, since, taraScript } from './common';
 import { keeperOn } from './s02';
 import { parasol } from './s03';
 import { chheliAct, patraAct, thakaAct } from './s05';
-import { loom, pattaAct, tantuAct, type LoomCfg } from './s06';
+import { loom, palaaAct, pattaAct, tantuAct, type LoomCfg } from './s06';
 import { bagudiAct, deepaAct, ghungurAct, padaAct, stagePit, troupe, troupeAct, type TroupeCfg } from './s07';
 import { phingaAct } from './s08';
 import { chariot, chariotAct, risingSpokes, templeWall, type ChariotCfg } from './s09';
@@ -159,6 +159,8 @@ export const act13 = phingaAct('bbi10-phinga', 'bbi10ph', true);
 /** law 7 on 06's plain thread: tonight it holds the motif; snap the first coloured thread */
 export const act14 = tantuAct('bbi10-tantu', 'bbi10tn', true);
 /** law 7 on 09's hub: tonight the hub is fixed to the stone and slides with it; the rim above stays */
+/** law 7 on 06's running shuttle: the weaver holds this one; step straight on */
+export const act16 = palaaAct('bbi10-palaa', 'bbi10pl', true);
 export const act15 = chariotAct('bbi10-chakra', 8, 7, 14, 'bbi10ck', 'Look at the hub: tonight it stands on a post on the stone and slides with it into the wall. The wheel’s rim above it stays still: from the hub, go up on to the rim before the slam, then down on to the stone and up the wall.', true);
 
 /** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */

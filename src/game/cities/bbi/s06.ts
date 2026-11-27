@@ -340,10 +340,15 @@ export const act12 = tantuAct('bbi06-tantu', 'bbi6p');
  *  the warp; when it reaches the edge the beater beats the bank. Get on where it is now, out over the pit, and it
  *  takes you back to the edge and then across. */
 export const PALAA = { c0: 4, c1: 16, near: 40, away: 160, back: 50, fly: 150, rest: 0.6 };
-export const act13: Act = {
-  id: 'bbi06-palaa',
+/** `stays` (the finale's turn, law 7): the weaver holds this shuttle for you: it does not run, it waits at the
+ *  edge, and it flies the moment you are on it. Hang back and the beater beats the bank */
+export function palaaAct(id: string, key: string, stays = false): Act {
+  return {
+  id,
   w: 21,
-  advice: 'The shuttle box at the edge runs from you: come at it and it jumps away over the pit, then comes back along the warp. Don’t wait for it at the edge: when it gets there the beater beats the bank. Jump on where it is, out over the pit, and ride it back and across.',
+  advice: stays
+    ? 'The weaver is holding this shuttle for you: it will not run. Step straight on to it and it flies you across. Hang about at the edge waiting for it to run and the beater beats the bank.'
+    : 'The shuttle box at the edge runs from you: come at it and it jumps away over the pit, then comes back along the warp. Don’t wait for it at the edge: when it gets there the beater beats the bank. Jump on where it is, out over the pit, and ride it back and across.',
   cps: [],
   paint: (g, c) => {
     g.pit(c.x + PALAA.c0, c.x + PALAA.c1);
@@ -352,8 +357,8 @@ export const act13: Act = {
     channel(w, c.x + PALAA.c0, c.x + PALAA.c1, 'bbi-ranga', 'water');
     const x0 = c.X(PALAA.c0);
     const xEnd = c.X(PALAA.c1 + 1) - 32;
-    const st = { phase: 'rest' as 'rest' | 'jump' | 'back' | 'beat' | 'fly' | 'done', t: 0, x: x0, box: null as Rig | null };
-    w.flags.bbi6pl = st;
+    const st = { phase: 'rest' as 'rest' | 'jump' | 'back' | 'beat' | 'fly' | 'done', t: 0, x: x0, box: null as Rig | null, near: 0 };
+    (w.flags[key] as unknown) = st;
     const set = (p: typeof st.phase, w2: World) => {
       st.phase = p;
       st.t = w2.tick;
@@ -365,7 +370,16 @@ export const act13: Act = {
         tick: (r, w2) => {
           const p = w2.player;
           const t = since(w2, st.t);
-          if (st.phase === 'rest' && p.cx > x0 - PALAA.near && p.cx < x0) set('jump', w2);
+          if (stays && st.phase === 'rest') {
+            // held for you: it flies as soon as you are on it; hang about by it and the beater comes
+            if (r.rides(w2)) set('fly', w2);
+            else if (p.cx > x0 - PALAA.near && p.cx < x0 && p.onGround) st.near++;
+            if (st.near > 1.2 * 120) {
+              st.near = 0;
+              set('beat', w2);
+            }
+          } else if (stays && st.phase === 'beat' && t > PALAA.rest) set('rest', w2);
+          else if (st.phase === 'rest' && p.cx > x0 - PALAA.near && p.cx < x0) set('jump', w2);
           else if (st.phase === 'jump' && t > 0.3) {
             st.x = x0 + PALAA.away;
             set('back', w2);
@@ -425,6 +439,8 @@ export const act13: Act = {
     );
   },
 };
+}
+export const act13 = palaaAct('bbi06-palaa', 'bbi6pl');
 export const act7 = loomAct('bbi06-rachh', 16, L06R, 'bbi6q', 'Here the beater sweeps the warp at the end of the motif beat. Let the shuttle by, then cross at once: be off the threads before the beater comes.');
 /** act 11, the undyed thread (loom family): one warp thread here was never tied and dyed, so it carries no
  *  patch: the motif lines up with a hole in it. A2: the shuttle still goes first. A3: and then the hole, which

@@ -792,6 +792,10 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'stay on your badi', cause: 'bbi-bhanwar', steps: (x) => [...hop(x + 1.4, 'up on the rim'), { hold: '', until: ground, max: 300 }, leap((w) => pl(w).bx[0] + 13, 'on to it', () => true, 5), { hold: '', until: done, max: 1500 }] },
     { what: 'hop for the far rim at the last moment', cause: 'bbi-pakhala', steps: (x) => [...hop(x + 1.4, 'up on the rim'), { hold: '', until: ground, max: 300 }, leap((w) => pl(w).bx[0] + 13, 'on to it', () => true, 5), stayOn((w) => pl(w).bx[0] + 13, (w) => pl(w).bx[0] + 13 > px(x + 9) - 10, 'to the hole', 1500), { hold: 'R', jump: 15, ticks: 15 }, { hold: 'R', until: done, max: 600 }] },
   ],
+  'bbi10-palaa': [
+    { what: 'let it run, and wait for it to come back, as before', cause: 'bbi-rachh', steps: (x) => [{ hold: 'R', until: X(x + 2.4), max: 400 }, { hold: '', until: done, max: 1200 }] },
+    { what: 'jump out to where it came back last time', cause: 'bbi-ranga', steps: (x) => [{ hold: 'R', until: X(x + 2.4), max: 400 }, leap(() => px(x + 6.5), 'out over the pit'), { hold: '', until: done, max: 600 }] },
+  ],
   'bbi10-chakra': [
     { what: 'wait on the hub for the slam, as before', cause: 'bbi-chakka', steps: (x) => [...chakraRun(x).slice(0, 7), { hold: '', until: done, max: 900 }] },
     cFix(8, 'bbi10ck'),
@@ -1040,6 +1044,15 @@ const palaaRun = (x: number): Step[] => [
   { hold: 'R', until: and(ground, X(x + 17.5)), max: 400, note: 'off on to the far bank' },
   { hold: 'R', until: X(x + 20.5), max: 300 },
 ];
+const pl10 = (w: World) => w.flags.bbi10pl as { phase: string; x: number; box: { x: number } };
+/** the finale's shuttle: straight on to it, ride it across */
+const palaa10Run = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 2.4), max: 400 },
+  leap((w) => pl10(w).box.x + 16, 'straight on to it'),
+  stayOn((w) => pl10(w).box.x + 16, (w) => pl10(w).phase === 'done', 'it flies you across', 900),
+  { hold: 'R', until: and(ground, X(x + 17.5)), max: 400 },
+  { hold: 'R', until: X(x + 20.5), max: 300 },
+];
 const tantuRun = (x: number): Step[] => [
   { hold: 'R', until: X(x + 2.6), max: 400, note: 'under the plain thread' },
   { hold: '', until: (w) => Math.abs(w.player.vx) < 5, max: 120 },
@@ -1252,6 +1265,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi07-sajaghara': sa
   'bbi06-rachh': loomRun('bbi6q', 8, 0.5),
   'bbi06-tantu': tantuRun,
   'bbi06-palaa': palaaRun,
+  'bbi10-palaa': palaa10Run,
   'bbi08-phinga': phingaRun,
   'bbi08-ghurni': ghurniRun,
   'bbi07-ghungur': ghungurRun,
