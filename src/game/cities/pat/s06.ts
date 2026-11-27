@@ -157,7 +157,7 @@ export const act2: Act = {
   id: 'pat06-nau',
   w: 58,
   advice: 'The far end of the bridge is eight spans long, and the truck carries three sacks again: the three and the six are tarps. Walk the others, and jump those two from the deck.',
-  cps: [14, 36],
+  cps: [13, 39.5],
   paint: (g, c) => {
     for (const x of [6, 12, 18, 24, 30, 36, 42, 48]) g.fill(c.x + x, c.x + x + 1, 15, 17, '.');
   },
