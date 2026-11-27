@@ -699,5 +699,80 @@ export const sargoshi: Act = {
   },
 };
 
-export const s08 = { room: bhoolRoom, acts: [chaupar, upar, minar, toota, mehrab, utar, wapas, sargoshi, roshandan] };
+// ================================================================ act: darwaza, the hall door
+/** A hall door in the maze: walk through and it puts you down a little further on, and while you were in
+ *  it the maze moved. The arch you saw before the door, the one over the well's edge, is gone; there is one
+ *  nearer now. Take the calm on arrival to look again. Hop over the door and nothing moves, but the arch you
+ *  saw from out here lifts you only into the old lamp hooks. */
+const DARWAZA = { door: 4, out: 6.5, before: 17, after: 13 };
+export const darwaza: Act = {
+  id: 'lko08-darwaza',
+  w: 32,
+  cp0: false,
+  cps: [-2, 24],
+  advice: 'A hall door: walk through it and it sets you down a little further on, and while you were in it the arches moved. The one you saw over the well’s edge is gone; there is one nearer now. Look again before you jump. Hop over the door and nothing moves, but that arch lifts you only into the old lamp hooks.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 19, x + 31, 15);
+    g.fill(x + 14, x + 31, 11, 11, '=');
+    g.fill(x + 18, x + 21, 7, 7, '=');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    mazeWall(w, x, x + 31, [7, 11, 15]);
+    well(w, x + 19, x + 31);
+    hooks(w, x + 18, x + 21, px(7));
+    const D = { warped: false };
+    w.flags[c.f('d')] = D;
+    const archAt = () => c.X(D.warped ? DARWAZA.after : DARWAZA.before) + 8;
+    let prev = w.player.cx;
+    w.onTick((w2) => {
+      const p = w2.player;
+      // walk into the door and it sets you down further on; the maze has moved
+      if (!D.warped && prev < c.X(DARWAZA.door) + 8 && p.cx >= c.X(DARWAZA.door) + 8 && p.onGround) {
+        D.warped = true;
+        w2.warp(c.X(DARWAZA.out) + 8 - p.w / 2, FLOOR - p.h, 'blink');
+        w2.sfx('blink', c.X(DARWAZA.out), FLOOR - 8);
+      }
+      // the one arch, wherever it stands now: at a jump it lifts you a floor (the old one: into the hooks)
+      const ax = archAt();
+      if (prev < ax && p.cx >= ax && !p.onGround && p.y + p.h > FLOOR - 56) {
+        const to = D.warped ? { x: c.X(15) + 8, y: px(11) } : { x: c.X(19) + 8, y: px(7) };
+        w2.warp(to.x - p.w / 2, to.y - p.h, 'blink');
+        w2.sfx('blink', to.x, to.y - 8);
+      }
+      prev = p.cx;
+    });
+    w.add(
+      new Art((ctx) => {
+        // the hall door
+        const dx = c.X(DARWAZA.door);
+        ctx.fillStyle = '#6D4C33';
+        ctx.fillRect(dx, FLOOR - 40, 16, 40);
+        ctx.fillStyle = '#2B2018';
+        ctx.fillRect(dx + 3, FLOOR - 36, 10, 36);
+        // the arch, where it stands now
+        const ax = archAt();
+        const top = FLOOR - 50;
+        ctx.fillStyle = '#E9DCC4';
+        ctx.fillRect(ax - 14, top - 8, 5, 58);
+        ctx.fillRect(ax + 9, top - 8, 5, 58);
+        ctx.fillRect(ax - 14, top - 10, 28, 6);
+        ctx.strokeStyle = '#B9A47E';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(ax - 9, FLOOR);
+        ctx.lineTo(ax - 9, top + 14);
+        ctx.quadraticCurveTo(ax - 9, top + 2, ax - 4, top + 3);
+        ctx.quadraticCurveTo(ax, top - 3, ax + 4, top + 3);
+        ctx.quadraticCurveTo(ax + 9, top + 2, ax + 9, top + 14);
+        ctx.lineTo(ax + 9, FLOOR);
+        ctx.stroke();
+      }, 4),
+    );
+    sign(w, x + 0.4, 10.4, 3.4, 'DARWAZA', 'shop', null, 'hall');
+  },
+};
+
+export const s08 = { room: bhoolRoom, acts: [chaupar, upar, minar, toota, mehrab, utar, wapas, darwaza, sargoshi, roshandan] };
 export const meta08 = { family: 'entry-height-routes-level', betrayals: ['enter-height'], ending: 'lko-489' } as StageMeta;

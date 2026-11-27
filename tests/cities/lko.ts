@@ -705,12 +705,19 @@ actRoutes['lko08-upar'] = (x) => [
   hops([x + 5.6, x + 9.6, x + 13.6, x + 17.6, x + 21.5], 'down on to the arch tops from above, top to top, and down past the well'),
   runTo(x + 25, 300),
 ];
+actRoutes['lko08-darwaza'] = (x) => [
+  walkTo(x + 2, 300, 'down off the gallery, to the hall door'),
+  { hold: 'R', until: (w) => !!(w.flags['lko08-darwaza:d'] as { warped: boolean } | undefined)?.warped, max: 200, note: 'walk through the door' },
+  walkTo(x + 9.5, 300, 'look again: the arch is nearer now'),
+  hop(x + 11.6, x + 16, 'at a jump through it, up on to the gallery', 8, 16),
+  runTo(x + 31.6, 400),
+];
 actRoutes['lko08-sargoshi'] = (x) => [
   walkTo(x + 0.8, 300, 'down on the gallery floor: keep to the middle'),
   hop(x + 7.4, x + 10.6, 'over the hole where light comes up', 6, 16),
   runTo(x + 13, 300),
   hop(x + 16.4, x + 19.6, 'over the next', 6, 16),
-  hop(x + 21.6, x + 23, 'up the end steps'),
+  hop(x + 22.8, x + 23, 'up the end steps'),
   hop(x + 23.4, x + 24.4, '', 8, 16),
   runTo(x + 25.6, 200),
 ];
@@ -993,7 +1000,7 @@ mistakes['LKO-08'] = [
     cause: 'lko-goti',
   },
   { what: 'in the vault, hopping the drain into the arch', steps: [...through('LKO-08', room08, 4), runTo(actX('LKO-08', 4) + 1, 300), hop(actX('LKO-08', 4) + 3, actX('LKO-08', 4) + 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-mehrab' },
-  { what: 'hopping the crack into the last arch', steps: [...through('LKO-08', room08, 4), ...actRoutes0('lko08-mehrab', actX('LKO-08', 4)), ...actRoutes0('lko08-utar', actX('LKO-08', 5)), ...actRoutes0('lko08-wapas', actX('LKO-08', 6)), ...actRoutes0('lko08-sargoshi', actX('LKO-08', 7)), ...actRoutes0('lko08-roshandan', actX('LKO-08', 8)), runTo(doorX('LKO-08') - 8.5, 300), hop(doorX('LKO-08') - 6, doorX('LKO-08') - 2), { hold: 'R', until: done, max: 400 }], cause: 'lko-bhool' },
+  { what: 'hopping the crack into the last arch', steps: [...through('LKO-08', room08, 4), ...actRoutes0('lko08-mehrab', actX('LKO-08', 4)), ...actRoutes0('lko08-utar', actX('LKO-08', 5)), ...actRoutes0('lko08-wapas', actX('LKO-08', 6)), ...actRoutes0('lko08-darwaza', actX('LKO-08', 7)), ...actRoutes0('lko08-sargoshi', actX('LKO-08', 8)), ...actRoutes0('lko08-roshandan', actX('LKO-08', 9)), runTo(doorX('LKO-08') - 8.5, 300), hop(doorX('LKO-08') - 6, doorX('LKO-08') - 2), { hold: 'R', until: done, max: 400 }], cause: 'lko-bhool' },
 ];
 /** the room's route and the routes of the stage's first n acts */
 function through(id: string, room: Step[], n: number): Step[] {
@@ -1105,7 +1112,7 @@ mistakes['LKO-07'].push(
 
 mistakes['LKO-08'].push(
   { what: 'on the gallery, jumping on through its arch, as everywhere', steps: [...through('LKO-08', room08, 6), hop(actX('LKO-08', 6) + 2, actX('LKO-08', 6) + 4.5), hop(actX('LKO-08', 6) + 10, actX('LKO-08', 6) + 13), until(done, 400)], cause: 'lko-bhool' },
-  { what: 'on the gallery, walking off its end, as at the hanging arch', steps: [...through('LKO-08', room08, 6), hop(actX('LKO-08', 6) + 2, actX('LKO-08', 6) + 4.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-roshandan' },
+  { what: 'on the gallery, walking off its end, as at the hanging arch', steps: [...through('LKO-08', room08, 6), hop(actX('LKO-08', 6) + 2, actX('LKO-08', 6) + 4.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-kuan' },
 );
 
 mistakes['LKO-10'].push(
@@ -1131,8 +1138,8 @@ mistakes['LKO-05'].push(
 );
 
 mistakes['LKO-08'].push(
-  { what: 'in the dark, walking on to the next patch of light', steps: [...through('LKO-08', room08, 8), hop(actX('LKO-08', 8) + 5, actX('LKO-08', 8) + 7.4), hops([actX('LKO-08', 8) + 7.6]), { hold: 'R', until: done, max: 400 }], cause: 'lko-roshandan' },
-  { what: 'in the dark, keeping off the light and walking on', steps: [...through('LKO-08', room08, 8), { hold: 'R', until: done, max: 400 }], cause: 'lko-kuan' },
+  { what: 'in the dark, walking on to the next patch of light', steps: [...through('LKO-08', room08, 9), hop(actX('LKO-08', 9) + 5, actX('LKO-08', 9) + 7.4), hops([actX('LKO-08', 9) + 7.6]), { hold: 'R', until: done, max: 400 }], cause: 'lko-roshandan' },
+  { what: 'in the dark, keeping off the light and walking on', steps: [...through('LKO-08', room08, 9), { hold: 'R', until: done, max: 400 }], cause: 'lko-kuan' },
 );
 
 mistakes['LKO-10'].push(
@@ -1191,8 +1198,13 @@ mistakes['LKO-10'].push(
 );
 
 mistakes['LKO-08'].push(
-  { what: 'the whispering gallery: up on the ledge by the handrail, as anyone would', steps: [...through('LKO-08', room08, 7), hop(actX('LKO-08', 7), actX('LKO-08', 7) + 4.5, '', 4), { hold: 'R', until: done, max: 900 }], cause: 'lko-sargoshi' },
-  { what: 'the whispering gallery: running the middle, never mind the light coming up', steps: [...through('LKO-08', room08, 7), walkTo(actX('LKO-08', 7) + 0.8, 300), { hold: 'R', until: done, max: 600 }], cause: 'lko-roshandan' },
+  { what: 'the whispering gallery: up on the ledge by the handrail, as anyone would', steps: [...through('LKO-08', room08, 8), hop(actX('LKO-08', 8), actX('LKO-08', 8) + 4.5, '', 4), { hold: 'R', until: done, max: 900 }], cause: 'lko-sargoshi' },
+  { what: 'the whispering gallery: running the middle, never mind the light coming up', steps: [...through('LKO-08', room08, 8), walkTo(actX('LKO-08', 8) + 0.8, 300), { hold: 'R', until: done, max: 600 }], cause: 'lko-roshandan' },
+);
+
+mistakes['LKO-08'].push(
+  { what: 'the hall door: jumping at the arch you saw before the door', steps: [...through('LKO-08', room08, 7), walkTo(actX('LKO-08', 7) + 2, 300), { hold: 'R', until: (w) => !!(w.flags['lko08-darwaza:d'] as { warped: boolean } | undefined)?.warped, max: 200 }, runTo(actX('LKO-08', 7) + 14.5, 300), hop(actX('LKO-08', 7) + 15.6, actX('LKO-08', 7) + 20, '', 8, 16), until(done, 400)], cause: 'lko-kuan' },
+  { what: 'the hall door: hopping over it, so nothing moves', steps: [...through('LKO-08', room08, 7), walkTo(actX('LKO-08', 7) + 2, 300), hop(actX('LKO-08', 7) + 3, actX('LKO-08', 7) + 6.5), runTo(actX('LKO-08', 7) + 14.5, 300), hop(actX('LKO-08', 7) + 15.6, actX('LKO-08', 7) + 20, '', 8, 16), until(done, 400)], cause: 'lko-bhool' },
 );
 
 export const test: CityTests = {
