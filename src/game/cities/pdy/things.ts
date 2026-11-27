@@ -3,13 +3,17 @@ import type { ThingDraw } from '../../../render/art/things';
 
 declare module '../../../render/art/things' {
   interface ModuleThingKinds {
-    bollard: true;
-    awning: true;
-    umbrella: true;
-    croissant: true;
-    lights: true;
-    surfboard: true;
-    rocket: true;
+    'pdy-bollard': true;
+    'pdy-awning': true;
+    'pdy-umbrella': true;
+    'pdy-croissant': true;
+    'pdy-lights': true;
+    'pdy-surfboard': true;
+    'pdy-rocket': true;
+    'pdy-boule': true;
+    'pdy-cochonnet': true;
+    'pdy-leaf': true;
+    'pdy-square': true;
   }
 }
 
@@ -104,12 +108,83 @@ const rocket: ThingDraw = (ctx, x, y, w, h, o) => {
   circle(ctx, x + w / 2, y + h - 1, 2 + Math.sin(t * 0.9), '#FFB300');
 };
 
+/** a steel pétanque boule: dull silver with its two grooves */
+const boule: ThingDraw = (ctx, x, y, w, h, o) => {
+  const r = Math.min(w, h) / 2;
+  if (w >= h * 1.8) {
+    // a heap: two boules side by side in one box
+    circle(ctx, x + r, y + h / 2, r, o.tint ?? '#9FA8B3');
+    circle(ctx, x + w - r, y + h / 2, r, o.tint ?? '#8A939E');
+    return;
+  }
+  circle(ctx, x + w / 2, y + h / 2, r, o.tint ?? '#9FA8B3');
+  circle(ctx, x + w / 2 - r * 0.3, y + h / 2 - r * 0.3, r * 0.35, 'rgba(255,255,255,0.55)');
+  ctx.strokeStyle = 'rgba(40,45,55,0.6)';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  ctx.arc(x + w / 2, y + h / 2, r * 0.7, 0.3, Math.PI - 0.3);
+  ctx.stroke();
+};
+
+/** the cochonnet (the jack): a small bright wooden ball */
+const cochonnet: ThingDraw = (ctx, x, y, w, h) => {
+  circle(ctx, x + w / 2, y + h / 2, w / 2, '#E53935');
+  circle(ctx, x + w / 2 - 1.2, y + h / 2 - 1.2, 1.1, 'rgba(255,255,255,0.7)');
+};
+
+/**
+ * a mimosa (thottal sinungi) leaf: a rib with paired leaflets. look 'open': leaflets spread flat
+ * (a broad inviting platform); 'fold': closing; 'shut': pressed together into a thin stiff bar.
+ */
+const leaf: ThingDraw = (ctx, x, y, w, h, o) => {
+  const look = o.look ?? 'open';
+  const k = look === 'shut' ? 1 : look === 'fold' || look === 'reopen' ? 0.55 : 0;
+  const cy = y + h / 2;
+  // the rib
+  ctx.strokeStyle = '#4E7A3A';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x + 1, cy);
+  ctx.lineTo(x + w - 1, cy);
+  ctx.stroke();
+  const n = Math.max(3, Math.floor(w / 9));
+  for (let i = 0; i < n; i++) {
+    const lx = x + 5 + (i * (w - 10)) / (n - 1);
+    const len = 7 - k * 4.5;
+    const lift = k * 5;
+    ctx.fillStyle = i % 2 ? '#7CB342' : '#8BC34A';
+    ctx.beginPath();
+    ctx.ellipse(lx, cy - 1 - lift, len, 2.2, (k * Math.PI) / 2.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = i % 2 ? '#689F38' : '#7CB342';
+    ctx.beginPath();
+    ctx.ellipse(lx, cy + 1 + lift * 0.4, len, 2.2, (-k * Math.PI) / 2.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  if (look === 'shut') {
+    ctx.fillStyle = '#558B2F';
+    ctx.fillRect(x + 1, cy - 2, w - 2, 4);
+  }
+};
+
+/** the Promenade's painted yellow landing square (a plywood square, yellow as the bollards) */
+const square: ThingDraw = (ctx, x, y, w, h, o) => {
+  fillRR(ctx, x, y, w, h, 1.5, o.tint ?? '#FFD54F', '#B8860B');
+  ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+  ctx.lineWidth = 0.8;
+  ctx.strokeRect(x + 3, y + 3, w - 6, h - 6);
+};
+
 export const things = {
-  bollard: { size: [8, 16] as [number, number], draw: bollard },
-  awning: { size: [32, 8] as [number, number], draw: awning },
-  umbrella: { size: [16, 16] as [number, number], draw: umbrella },
-  croissant: { size: [12, 12] as [number, number], draw: croissant },
-  lights: { size: [32, 12] as [number, number], draw: lights },
-  surfboard: { size: [32, 6] as [number, number], draw: surfboard },
-  rocket: { size: [6, 14] as [number, number], draw: rocket },
+  'pdy-bollard': { size: [8, 16] as [number, number], draw: bollard },
+  'pdy-awning': { size: [32, 8] as [number, number], draw: awning },
+  'pdy-umbrella': { size: [16, 16] as [number, number], draw: umbrella },
+  'pdy-croissant': { size: [12, 12] as [number, number], draw: croissant },
+  'pdy-lights': { size: [32, 12] as [number, number], draw: lights },
+  'pdy-surfboard': { size: [32, 6] as [number, number], draw: surfboard },
+  'pdy-rocket': { size: [6, 14] as [number, number], draw: rocket },
+  'pdy-boule': { size: [12, 12] as [number, number], draw: boule },
+  'pdy-cochonnet': { size: [6, 6] as [number, number], draw: cochonnet },
+  'pdy-leaf': { size: [64, 6] as [number, number], draw: leaf },
+  'pdy-square': { size: [16, 4] as [number, number], draw: square },
 };

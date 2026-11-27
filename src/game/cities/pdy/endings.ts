@@ -6,16 +6,21 @@ import { Thing } from '../../entities/traps';
 import { secs, DT } from '../../constants';
 import { px } from '../../levels/kit';
 import type { Ending } from '../../levels/endkit';
+import { boulePile, nightLeaf } from './encores';
 
-export type PdyEndingKind = 'bells' | 'fakewin' | 'shuffle' | 'mirror' | 'mime' | 'lamp';
+export type PdyEndingKind = 'pdy-bells' | 'pdy-fakewin' | 'pdy-shuffle' | 'pdy-mirror' | 'pdy-mime' | 'pdy-lamp' | 'pdy-boule-pile' | 'pdy-night-leaf';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<PdyEndingKind, true> {}
 }
 
 export const endings: Record<PdyEndingKind, Ending> = {
+  /** PDY-09: the lobs that fell pile into the steps up to the terrace door */
+  'pdy-boule-pile': boulePile,
+  /** PDY-10: the big leaf before the door sleeps shut in the dark: cross it then */
+  'pdy-night-leaf': nightLeaf,
   /** The church bells: jump exactly on three chimes in a row and the church door opens. */
-  bells: {
+  'pdy-bells': {
     space: 10,
     advice: 'The church door opens for those who keep time: jump exactly on the bell, three chimes in a row. Off the beat and you start again.',
     build(w, d) {
@@ -102,7 +107,7 @@ export const endings: Record<PdyEndingKind, Ending> = {
   },
 
   /** Fireworks, ESCAPED!... and then the sky falls exactly where the party is. */
-  fakewin: {
+  'pdy-fakewin': {
     space: 11,
     advice: 'The first door is a fake finish: when ESCAPED! goes up, get away from that door at once, something falls on it. The real door comes after.',
     build(w, d) {
@@ -158,7 +163,7 @@ export const endings: Record<PdyEndingKind, Ending> = {
   // ================================================================ Puducherry
   /** Three blue doors of the French quarter. The real one glows, then they shuffle like a shell game.
    *  Pick wrong and you're bounced out, and they shuffle again. Jump over the wrong ones. */
-  shuffle: {
+  'pdy-shuffle': {
     space: 12,
     advice: 'Watch the glowing door while the three shuffle, then go to it. Jump over the others: walk into a wrong one and it bounces you out.',
     build(w, d) {
@@ -246,13 +251,16 @@ export const endings: Record<PdyEndingKind, Ending> = {
   },
 
   /** Miroir: near the door the whole picture turns into its mirror image. Your buttons don't. */
-  mirror: {
-    space: 11,
+  'pdy-mirror': {
+    // (round 2: 11 -> 12, so the door's checkpoint stays 4.5 tiles before the first spike row, which moved a tile out)
+    space: 12,
     advice: 'Near the door the screen turns into its mirror image, but right is still right: trust your thumbs, not your eyes, and jump both spike rows.',
     build(w, d) {
-      for (const k of [7, 3]) w.add(new Thing('spikerow', d.x - px(k), FLOOR - 10, { solid: false, deadly: 'spikes', layer: -1, w: 32 }));
+      // (round 2: the first row moved a tile out, 7 -> 8 tiles before the door, so the landing between the rows
+      // is 3 tiles, not 2: a person's jump a little late or early still comes down between them)
+      for (const k of [8, 3]) w.add(new Thing('spikerow', d.x - px(k), FLOOR - 10, { solid: false, deadly: 'spikes', layer: -1, w: 32 }));
       w.flags.twist = 'mirror';
-      w.flags.spikes = [d.x - px(7), d.x - px(3)];
+      w.flags.spikes = [d.x - px(8), d.x - px(3)];
       let said = false;
       w.onTick((w2) => {
         const on = w2.player.x > d.x - px(10) && w2.state === 'play';
@@ -268,7 +276,7 @@ export const endings: Record<PdyEndingKind, Ending> = {
 
   /** A street mime stands in front of the door and copies you, mirror-wise. Whatever you do, he does.
    *  Except that he's stuck in his invisible box, so he can't jump high. */
-  mime: {
+  'pdy-mime': {
     space: 10,
     advice: 'The mime mirrors you and pushes you back if you touch him, but his invisible box stops his jumps: jump high and long, and go over him.',
     build(w, d) {
@@ -327,7 +335,7 @@ export const endings: Record<PdyEndingKind, Ending> = {
   },
   /** At six the street lamp comes on, and the door only exists in its light. In the dark the paving
    *  in front of it bristles with spikes. */
-  lamp: {
+  'pdy-lamp': {
     advice: 'The door is only there while the lamp is lit, and in the dark spikes come up in front of it: wait outside the light, then dash in the moment it comes on.',
     build(w, d) {
       const P = 2.5,

@@ -10,6 +10,9 @@ import { tour } from '../../levels/tour';
 import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
 import { Kepi } from '../../entities/tamil';
+import { MIMOSA_META, PETANQUE_META, aaru, alai, doublette, kuzhi, meneNulle, mimosaRoom, petanqueRoom, pitFloor, pointe, thenga, tir } from './encores';
+/** the sea where it has eaten the Promenade: a splash */
+const seaFloor = (w: World, x0: number, x1: number) => pitFloor(w, x0, x1, 'splash');
 
 // Puducherry: yellow walls, cobbled rues, a rocky seafront that sneezes,
 // bollards that close the beach road at six, and a canal bridge that opens
@@ -91,10 +94,11 @@ const sixOClock: Act = {
     const rows: { t: number; s: Thing; up: boolean }[] = [];
     for (let t = 0; t < 29; t++) if (!skip.has(t)) rows.push({ t, s: w.add(new Thing('spikerow', X(t), px(G) + 1, { solid: false, deadly: 'spikes', layer: -4 })), up: false });
     let t0 = -1;
-    onPass(w, X(3), (w2) => {
+    // the bell rings 4.5 tiles past the act's checkpoint (X(0.5)): a respawn that runs or hops a moment does not ring it
+    onPass(w, X(5), (w2) => {
       t0 = w2.tick;
-      w2.sfx('bell', X(4), px(G));
-      say(w2, 'Six mani! Road close! | Six o’clock! The road is closed!', X(6), G - 4);
+      w2.sfx('bell', X(6), px(G));
+      say(w2, 'Six mani! Road close! | Six o’clock! The road is closed!', X(8), G - 4);
     });
     w.onTick((w2) => {
       if (t0 < 0) return;
@@ -290,7 +294,7 @@ export const levels = (): LevelDef[] => [
       [88, "Cycle vaadagaikku! | Bicycles for hire!"],
     ],
     ride: "cart",
-    item: "croissant",
+    item: "pdy-croissant",
     signs: [[8, "RUE DE LA PLAGE", "beach road"], [55, "WHITE TOWN", "quartier français"], [102, "PROMENADE", "rock beach"]],
     props: [
       ["bougain", 4, {}],
@@ -301,10 +305,33 @@ export const levels = (): LevelDef[] => [
       ["bougain", 106, {}],
     ],
     things: [["cyclist", 24]],
-    hint: 'After the café terrace, the sea breeze takes a policeman’s red cap down the street and he comes running after it. Don’t stand in his way and don’t hop him (he leaps for his cap). Jump up and catch the cap as it goes over you: he stops and takes it back.',
+    // the checkpoint after the terrace steps sits on the terrace itself (63.5, not 67.5): the cap blows at 69,
+    // and a dad who respawns at 67.5 and runs is in the policeman's way at once
+    cps: [28.5, 35.5, 47.5, 63.5, 89.5],
+    hint: 'After the café terrace, the sea breeze takes a policeman’s red cap down the street and he comes running after it. Don’t stand in his way and don’t hop him (he leaps for his cap). Jump up and catch the cap as it goes over you: he stops and takes it back. On the Promenade the sea has eaten the path, and a yellow plywood square lies on the far side of the gap like a landing mat: it is not the far side. The moment you jump for it, it slides a tile on and the water it covered is under you. Jump long, for the sea wall itself, not for the paint.',
+    // (tour-pdy-b20) the Promenade: the sea has taken four tiles of path past the deck; the yellow
+    // square that seems to be the landing is a loose plywood lid over the last tile of water
+    paint: (g) => g.pit(103, 106).fill(103, 106, 17, 17, '#'),
     extra: (w) => {
       const kepi = Kepi.place(w, { hatTx: 85, copTx: 85, giveUpTx: 40, groundTy: 15 });
       onPass(w, px(69), (w2) => kepi.start(w2));
+      // the Promenade's gap: sea water, and the painted landing square that is not a landing
+      seaFloor(w, px(103), px(107));
+      const square = thing(w, 'pdy-square', 106, 15, { dy: -4, oneWay: true, layer: 2 });
+      w.flags.square = 'lid';
+      onPass(w, px(99.5), (w2) => w2.say('Manjal square-la land pannu, Dad! Easy! | Land on the yellow square, Dad! Easy!', w2.player.cx, w2.player.y, 2.2, 'rival'));
+      onPass(w, px(100.6), (w2) => w2.guide('Paint-a nambaadhe, Dad. Suvar-a nambu. | Don’t trust the paint, Dad. Trust the wall.'));
+      // commit to the jump and the lid slides a tile on, on to the sea wall, where it was never needed
+      w.when(
+        (w2) => w2.player.jumpTick === w2.tick && w2.player.cx >= px(100.4) && w2.player.cx < px(103.2) && w2.player.y + w2.player.h >= px(15) - 2,
+        (w2) => {
+          w2.flags.square = 'sliding';
+          w2.sfx('creak', square.cx, square.y);
+          square.moveTo(w2, px(107), square.y, 0.22, 'out', (w3) => {
+            w3.flags.square = 'slid';
+          });
+        },
+      );
     },
   }),
   longStage({
@@ -330,12 +357,12 @@ export const levels = (): LevelDef[] => [
       prop(w, 'umbrellas', 27, 12, { n: 2 });
       thing(w, 'lighthouse', 1, 4, { solid: false, layer: -6 });
       rival(w, 26, 12, -1, tara(0, -1));
-      collectible(w, 'croissant', 14, 9.2);
+      collectible(w, 'pdy-croissant', 14, 9.2);
     },
   },
     par: 15,
     acts: [rockPools],
-    twist: 'shuffle',
+    twist: 'pdy-shuffle',
   }),
   longStage({
     base: {
@@ -368,7 +395,7 @@ export const levels = (): LevelDef[] => [
           scooter.moveTo(w2, px(-3), scooter.y, 0.7, 'in', () => scooter.hide());
         }
       });
-      thing(w, 'awning', 12.5, 11.75, { oneWay: true, tint: '#1E88E5' });
+      thing(w, 'pdy-awning', 12.5, 11.75, { oneWay: true, tint: '#1E88E5' });
       let chased = false;
       w.when(
         (w2) => !chased && w2.player.onGround && w2.player.x >= px(18) && w2.player.y > px(13),
@@ -382,12 +409,12 @@ export const levels = (): LevelDef[] => [
       prop(w, 'bougain', 16, 10);
       prop(w, 'rueplaque', 21, 15, { label: 'Rue Dumas' });
       rival(w, 25, 15, -1, tara(2, -1));
-      collectible(w, 'croissant', 16, 7.6);
+      collectible(w, 'pdy-croissant', 16, 7.6);
     },
   },
     par: 13,
     acts: [frenchSigns],
-    twist: 'mirror',
+    twist: 'pdy-mirror',
   }),
   longStage({
     base: {
@@ -417,15 +444,16 @@ export const levels = (): LevelDef[] => [
       const sockets = [11, 15, 19, 23];
       const lit = [true, true, true, false];
       sockets.forEach((tx, i) => {
-        const b = thing(w, 'bollard', tx, 15, { dx: 4, w: 8, h: 24, layer: -4 });
+        const b = thing(w, 'pdy-bollard', tx, 15, { dx: 4, w: 8, h: 24, layer: -4 });
         const cx = px(tx) + 8;
-        if (lit[i]) thing(w, 'lights', tx, 7.6, { dx: -8, solid: false, deadly: 'burnt' });
+        if (lit[i]) thing(w, 'pdy-lights', tx, 7.6, { dx: -8, solid: false, deadly: 'burnt' });
         let up = false;
         w.onTick((w2) => {
           if (!six || up) return;
-          // it fires the moment anything passes over its socket
+          // it fires the moment anything passes over its socket at road level (a proper hop clears it;
+          // a late, low one used to be launched from mid-air into the lights)
           const p = w2.player;
-          if (p.x + p.w <= b.x + 1 || p.x >= b.x + 7) return;
+          if (p.x + p.w <= b.x + 1 || p.x >= b.x + 7 || p.y + p.h < px(15) - 16) return;
           up = true;
           w2.sfx('boing', cx, px(15));
           b.moveTo(w2, b.x, px(15) - 24, 0.08, 'out', (w3) => {
@@ -443,12 +471,12 @@ export const levels = (): LevelDef[] => [
       prop(w, 'umbrellas', 3, 15, { n: 1 });
       sign(w, 25.4, 5.6, 3.2, 'CAFÉ', 'shop', null, 'balcony seats', false);
       rival(w, 26, 9, -1, tara(3, -1));
-      collectible(w, 'croissant', 22, 7.4);
+      collectible(w, 'pdy-croissant', 22, 7.4);
     },
   },
     par: 15,
     acts: [sixOClock],
-    twist: 'lamp',
+    twist: 'pdy-lamp',
   }),
   longStage({
     base: {
@@ -503,13 +531,13 @@ export const levels = (): LevelDef[] => [
       prop(w, 'bougain', 4, 15);
       sign(w, 6, 10.6, 3.6, 'GRAND CANAL', 'green', 'right', 'Tamil town this side');
       rival(w, 25, 15, -1, tara(4, -1));
-      collectible(w, 'croissant', 11, 11.4);
+      collectible(w, 'pdy-croissant', 11, 11.4);
       void Thing;
     },
   },
     par: 22,
     acts: [ferries],
-    twist: 'bells',
+    twist: 'pdy-bells',
   }),
   // ------------------------------------------------------------------ around Puducherry
   longStage({
@@ -545,7 +573,7 @@ export const levels = (): LevelDef[] => [
         w2.flags.dryLeft = m >= 1.6 && m < 2.7 ? 2.7 - m : 0;
       });
       // the big beach umbrella: folds the first time, bounces you the second
-      const umb = thing(w, 'umbrella', 24.5, 0, { dy: 208, w: 34, h: 32, oneWay: true, tint: '#E8572A' });
+      const umb = thing(w, 'pdy-umbrella', 24.5, 0, { dy: 208, w: 34, h: 32, oneWay: true, tint: '#E8572A' });
       let folded = false;
       let busy = false;
       w.onTick((w2) => {
@@ -570,12 +598,12 @@ export const levels = (): LevelDef[] => [
         }
       });
       rival(w, 28, 9, -1, { intro: 'Paradise Beach-ku vaa! Tide paathu po! | Come to Paradise Beach! Watch the tide!', point: -1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
-      collectible(w, 'croissant', 16, 10.6);
+      collectible(w, 'pdy-croissant', 16, 10.6);
     },
   },
     par: 24,
     acts: [jumpyPalms],
-    twist: 'mime',
+    twist: 'pdy-mime',
   }),
   longStage({
     base: {
@@ -593,7 +621,7 @@ export const levels = (): LevelDef[] => [
       const sea = water(w, 14.5, { rate: 0, minTy: 6, colors: ['rgba(40,140,200,0.8)', 'rgba(10,60,120,0.95)'], cause: 'splash' });
       const tints = ['#FF7043', '#26C6DA', '#FFCA28', '#AB47BC', '#66BB6A'];
       [5, 9, 13, 17, 21].forEach((tx, i) => {
-        const b = thing(w, 'surfboard', tx, 0, { dy: 220, oneWay: true, tint: tints[i] });
+        const b = thing(w, 'pdy-surfboard', tx, 0, { dy: 220, oneWay: true, tint: tints[i] });
         w.onTick((w2) => {
           const t = w2.tick * DT;
           b.place(w2, px(tx) + Math.sin(t * 0.9 + i * 1.7) * 10, 218 + Math.sin(t * 2.2 + i) * 5);
@@ -611,7 +639,7 @@ export const levels = (): LevelDef[] => [
         },
       );
       rival(w, 29, 7, -1, { intro: 'Surf pannalaam vaa! Board mela yeru! | Let’s surf! Get on a board!', point: -1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[1] });
-      collectible(w, 'croissant', 12.5, 10.4);
+      collectible(w, 'pdy-croissant', 12.5, 10.4);
     },
   },
     // the only way on is over the top platform: a wall, then steps down to the road
@@ -639,14 +667,16 @@ export const levels = (): LevelDef[] => [
       const street = (cx: number, period: number, phase: number) => {
         const fire = () => {
           if (w.state !== 'play') return;
-          const r = shot(w, 'rocket', cx - 3, 290, 0, -330, 0, 'burnt');
+          const r = shot(w, 'pdy-rocket', cx - 3, 290, 0, -330, 0, 'burnt');
           w.sfx('whistle', cx, 280);
           w.after(0.75, () => {
             if (!r.alive) return;
             r.alive = false;
             r.hazard.active = false;
             w.emit('fx', r.x, r.y, { kind: 'sparkle' });
-            for (let i = 0; i < 6; i++) shot(w, 'spark', r.x, r.y, Math.cos((i / 6) * Math.PI * 2) * 60, Math.sin((i / 6) * Math.PI * 2) * 60 - 30, 260, 'burnt').stopOnSolid = true;
+            // the burst's sparks fall back into the street they came from (spread 12 px/s: they used to reach
+            // 70 px either side and rain on both roofs, so a person waiting for the gap was burnt where he stood)
+            for (let i = 0; i < 6; i++) shot(w, 'spark', r.x, r.y, Math.cos((i / 6) * Math.PI * 2) * 12, Math.sin((i / 6) * Math.PI * 2) * 60 - 30, 260, 'burnt').stopOnSolid = true;
           });
           w.after(period, fire);
         };
@@ -681,11 +711,15 @@ export const levels = (): LevelDef[] => [
         for (let i = 0; i < 12; i++) w2.after(i * 0.09, () => (shot(w2, 'spark', px(25.5) + (i % 6) * 14, -10 - (i % 3) * 20, (i % 2 ? 1 : -1) * 12, 60, 300, 'burnt').stopOnSolid = true));
       });
       rival(w, 28, 11, -1, { intro: 'Bastille Day! Rooftop-la vaa, Dad! | Bastille Day! Come up on the rooftops, Dad!', point: -1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
-      collectible(w, 'croissant', 21.5, 5.2);
+      collectible(w, 'pdy-croissant', 21.5, 5.2);
     },
   },
     par: 17,
-    twist: 'fakewin',
+    twist: 'pdy-fakewin',
     acts: [sparkRain],
   }),
+  // ------------------------------------------------------------------ encores (the new bar: ten stages)
+  // (round 2: the carreau act was cut, a shipped TVM-09 thought in Puducherry clothes; its recast was Agartala's carrom reserve)
+  longStage({ base: petanqueRoom(), acts: [pointe, doublette, tir, meneNulle], twist: 'pdy-boule-pile', par: 70, shape: 'long', meta: PETANQUE_META }),
+  longStage({ base: mimosaRoom(), acts: [kuzhi, thenga, aaru, alai], twist: 'pdy-night-leaf', par: 75, shape: 'long', lives: 'act', meta: MIMOSA_META }),
 ];
