@@ -517,13 +517,13 @@ const phuchkaRoute = (x: number, bad?: 'eat' | 'climb'): Step[] => {
 // ------------------------------------------------------------------ CCU-09 the opening-night queue
 const lineRoute = (x: number, bad?: 'heads' | 'under'): Step[] => {
   const Q = (w: World) => w.flags.line as Queue;
-  const at = (k: number) => px(x + 3 + 2 * k + 0.4);
+  const at = (k: number) => px(x + 3 + 3 * k + 0.6);
   const head: Step[] = [steerHop(px(x + 1.5), 12, 'up on the block'), steerHop(at(0), 12, 'on to the first bamboo, behind the queue')];
   if (bad === 'heads') return [...head, steerHop(at(1), 24, 'up on to the queue, like a cloth top'), { hold: '', until: done, max: 300 }];
   if (bad === 'under') return [...head, { hold: 'R', until: done, max: 300, note: 'the queue is in the way: walk off and go under it' }];
   const moves: Step[] = [];
   for (let k = 1; k < 8; k++) moves.push({ hold: '', until: (w) => !Q(w).taken(k), max: 600, note: 'wait for the beat' }, steerHop(at(k), 12, 'into the bamboo just left'));
-  return [...head, ...moves, steerHop(px(x + 20.5), 12, 'on to the gate’s deck'), walk(x + 23.4)];
+  return [...head, ...moves, steerHop(px(x + 27), 12, 'on to the gate’s deck'), walk(x + 29.4)];
 };
 
 // ------------------------------------------------------------------ CCU-05 the straw yard

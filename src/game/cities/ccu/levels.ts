@@ -1242,24 +1242,24 @@ const dhak: Act = {
  *  stakes. Move up into the bamboo just left, beat by beat */
 const line: Act = {
   id: 'ccu09-line',
-  w: 24,
+  w: 30,
   cps: [3.4],
   advice: 'Opening night, and the queue for the pandal: one person to a bamboo, and on each beat of the dhak they all step one bamboo on. Nobody climbs over the queue, and under it are the stakes. Move up into the bamboo they’ve just left, one beat at a time.',
   paint: (g, c) => {
     const x = c.x;
     g.fill(x + 1, x + 1, 13, 14, '#');
-    for (let k = 0; k < 8; k++) g.fill(x + 3 + 2 * k, x + 3 + 2 * k, 12, 12, '=');
-    g.fill(x + 19, x + 23, 12, 14, '#');
+    for (let k = 0; k < 8; k++) g.fill(x + 3 + 3 * k, x + 4 + 3 * k, 12, 12, '=');
+    g.fill(x + 26, x + 29, 12, 14, '#');
   },
   build: (w, c) => {
-    w.add(new Skeleton(c.X(1), c.X(19)));
-    w.add(new Stakes(c.X(2), c.X(19)));
-    const xs = Array.from({ length: 8 }, (_, k) => c.X(3 + 2 * k));
+    w.add(new Skeleton(c.X(1), c.X(26)));
+    w.add(new Stakes(c.X(2), c.X(26)));
+    const xs = Array.from({ length: 8 }, (_, k) => c.X(3 + 3 * k) + 8);
     const q = w.add(new Queue(xs, px(12), [1, 2, 3]));
     onPass(w, c.X(1), (w2) => {
       if (q.t0 < 0) q.t0 = w2.tick + 120;
     });
-    sign(w, c.x + 19.4, 8.4, 3.2, 'QUEUE', 'green', null, 'this way');
+    sign(w, c.x + 26.4, 8.4, 3.2, 'QUEUE', 'green', null, 'this way');
     w.flags.line = q;
   },
 };
