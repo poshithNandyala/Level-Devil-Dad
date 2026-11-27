@@ -616,6 +616,86 @@ export function bailAct(id: string, len: number, v: number, key: string, advice?
 export const act9 = bailAct('bbi05-bail', 14, 38, 'bbi5b');
 export const act10 = bailAct('bbi05-gali', 20, 22, 'bbi5g', 'A longer lane and slower bullocks: touch the cart, step back, and follow well behind it all the way to the gate.');
 
+/** act 12, the goat: Raja is a holiday for people, not for goats. The village's goat wanders back and forth
+ *  over the rice pounder, and every time it walks along the beam the pounder's head swings up over the pit.
+ *  A2: jump from the straw only when the head is down. A3: and only once the goat is on your side: on the far
+ *  bank it butts you back into the pit. */
+export const GOAT = { bales: [5, 7] as [number, number], pit: [9, 10] as [number, number], g0: 5, g1: 17, start: 8, v: 32, beam: [8, 12] as [number, number] };
+export const act12: Act = {
+  id: 'bbi05-chheli',
+  w: 26,
+  advice: 'Raja is a holiday for people, not for the goat. Each time it walks along the rice pounder, the pounder’s head swings up over the pit. Wait on the straw until the goat has crossed back to your side, then jump.',
+  cps: [],
+  paint: (g, c) => {
+    g.fill(c.x + GOAT.bales[0], c.x + GOAT.bales[1], 13, 14, '#');
+    g.pit(c.x + GOAT.pit[0], c.x + GOAT.pit[1]);
+  },
+  build: (w, c) => {
+    village(w, c.x, c.x + 26);
+    channel(w, c.x + GOAT.pit[0], c.x + GOAT.pit[1], 'bbi-dhenki', 'spikes');
+    const st = { t0: -1, x: c.X(GOAT.start), dir: 1, up: false };
+    w.flags.bbi5ch = st;
+    onPass(w, c.X(0.5), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
+    const onBeam = () => st.x + 9 > c.X(GOAT.beam[0]) && st.x + 9 < c.X(GOAT.beam[1]);
+    // the goat: walks the lane both ways, over the pounder's beam; butts anyone it meets
+    w.add(
+      new Rig(st.x, FL - 16, 18, 16, {
+        cause: 'bbi-sinha',
+        inset: 2,
+        layer: 4,
+        tick: (r) => {
+          if (st.t0 < 0) return;
+          st.x += (st.dir * GOAT.v) / 120;
+          if (st.x >= c.X(GOAT.g1)) st.dir = -1;
+          if (st.x <= c.X(GOAT.g0)) st.dir = 1;
+          st.up = onBeam();
+          r.x = st.x;
+          r.y = st.up ? FL - 22 : FL - 16;
+        },
+        paint: (ctx, r) => {
+          const f = st.dir;
+          box(ctx, r.x + 2, r.y + 4, 14, 7, '#F2EFE6');
+          box(ctx, r.x + 3, r.y + 11, 2, 5, '#5D4037');
+          box(ctx, r.x + 13, r.y + 11, 2, 5, '#5D4037');
+          box(ctx, f > 0 ? r.x + 14 : r.x - 2, r.y, 6, 6, '#F2EFE6');
+          box(ctx, f > 0 ? r.x + 17 : r.x - 2, r.y - 3, 2, 3, '#8D6E63');
+        },
+      }),
+    );
+    // the pounder: its beam lies over the pit; with the goat's weight on it the head swings up over the pit
+    w.add(
+      new Rig(c.X(GOAT.pit[0]) - 4, FL - 84, px(GOAT.pit[1] - GOAT.pit[0] + 1) + 8, 78, {
+        cause: 'bbi-chheli',
+        inset: 3,
+        layer: 3,
+        live: () => st.up,
+        paint: (ctx, r) => {
+          const x0 = c.X(GOAT.beam[0]);
+          const x1 = c.X(GOAT.beam[1]);
+          if (!st.up) box(ctx, x0, FL - 6, x1 - x0, 5, '#6E4A2E');
+          else {
+            box(ctx, x0, FL - 6, 6, 5, '#6E4A2E');
+            box(ctx, r.x + r.w / 2 - 3, r.y + 6, 6, r.h - 6, '#6E4A2E');
+            box(ctx, r.x + r.w / 2 - 7, r.y, 14, 12, '#4E3420');
+          }
+        },
+      }),
+    );
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: 2,
+        paint: (ctx) => {
+          for (let i = 0; i < 3; i++) {
+            box(ctx, c.X(GOAT.bales[0]) + i * 16, FL - 32, 16, 32, '#E3C16F');
+            box(ctx, c.X(GOAT.bales[0]) + i * 16, FL - 22, 16, 2, '#B8963F');
+            box(ctx, c.X(GOAT.bales[0]) + i * 16, FL - 10, 16, 2, '#B8963F');
+          }
+        },
+      }),
+    );
+  },
+};
+
 /** act 11, Talapatra (BBI reserve, stylus-cut-lines-soot): palm leaves laid over a ditch, all alike. A scribe
  *  walks them rubbing soot into his stylus lines, and only behind him does the writing show. The written leaves
  *  hold; the blank ones are rotten and drop under Dad. A2: wait for the soot. A3: the marks are the safe ones. */

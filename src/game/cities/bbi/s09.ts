@@ -277,6 +277,65 @@ export const act: Act = {
   },
 };
 
+/** act 9, Chhera Pahanra: before the chariot rolls, the king sweeps its deck with a golden broom. The deck is
+ *  the only way over the moat. The broom goes away from you slowly and comes back fast and low. A2: let it go
+ *  ahead, never walk into it. A3: it comes back before you reach the end: hop it on its way back. */
+export const CHHERA = { c0: 3, n: 18, rest: 0.8, out: 48, back: 150, h: 10 };
+export const act9: Act = {
+  id: 'bbi09-chhera',
+  w: 24,
+  advice: 'The king sweeps the chariot deck with the golden broom. Don’t walk into it: let it go ahead. It comes back fast and low before you reach the end: hop it as it comes, then walk off the deck.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + CHHERA.c0, c.x + CHHERA.c0 + CHHERA.n - 1);
+  },
+  build: (w, c) => {
+    channel(w, c.x + CHHERA.c0, c.x + CHHERA.c0 + CHHERA.n - 1, 'bbi-parikha', 'water');
+    const x0 = c.X(CHHERA.c0);
+    const x1 = c.X(CHHERA.c0 + CHHERA.n) - 20;
+    const st = { t0: -1, x: x0, dir: 0 };
+    w.flags.bbi9ch = st;
+    onPass(w, c.X(0.5), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
+    w.add(
+      new Rig(x0, FL, px(CHHERA.n), 8, {
+        solid: true,
+        layer: 2,
+        paint: (ctx, r) => {
+          box(ctx, r.x, r.y, r.w, r.h, '#8B5A2B');
+          for (let x = r.x + 8; x < r.x + r.w; x += 16) box(ctx, x, r.y + 1, 1, r.h - 2, '#5D3A1E');
+        },
+      }),
+    );
+    // the broom's cycle: rest at the near end, sweep away slowly, sweep back fast
+    const outT = (x1 - x0) / CHHERA.out;
+    const backT = (x1 - x0) / CHHERA.back;
+    w.add(
+      new Rig(x0, FL - CHHERA.h, 20, CHHERA.h, {
+        cause: 'bbi-chhera',
+        inset: 2,
+        layer: 4,
+        tick: (r, w2) => {
+          if (st.t0 < 0) return;
+          const t = since(w2, st.t0) % (CHHERA.rest + outT + backT);
+          if (t < CHHERA.rest) { st.x = x0; st.dir = 0; }
+          else if (t < CHHERA.rest + outT) { st.x = x0 + (t - CHHERA.rest) * CHHERA.out; st.dir = 1; }
+          else { st.x = x1 - (t - CHHERA.rest - outT) * CHHERA.back; st.dir = -1; }
+          r.x = st.x;
+          r.hazard!.cause = st.dir < 0 ? 'bbi-pahanra' : 'bbi-chhera';
+        },
+        paint: (ctx, r) => {
+          box(ctx, r.x + 2, r.y + 4, 16, 6, '#E9C46A');
+          for (let k = 0; k < 4; k++) box(ctx, r.x + 3 + k * 4, r.y + 8, 2, 2, '#B8860B');
+          box(ctx, r.x + 9, r.y - 18, 2, 22, '#B8860B');
+          box(ctx, r.x + 4, r.y - 34, 12, 16, '#F5F5F5');
+          box(ctx, r.x + 6, r.y - 40, 8, 6, '#C68642');
+        },
+      }),
+    );
+    sign(w, c.x + 21, 10.4, 3.4, 'RATHA', 'shop', null, 'D');
+  },
+};
+
 /** act 2: a second chariot, longer, its hub further along: start it, wait for the hub */
 export const act2: Act = {
   id: 'bbi09-ratha',
