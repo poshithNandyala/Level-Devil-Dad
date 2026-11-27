@@ -510,8 +510,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       { hold: '', until: landed(), max: 200 },
       // hop on the spot: each landing slides you a tile on, and the last one carries you off under the lip
       ...Array.from({ length: 4 }, (_, i): Step[] => [
-        { hold: '', until: settled(), max: 200, ...(i === 0 ? { note: 'hop on the spot: each landing slides you on' } : {}) },
-        { hold: '', jump: 6, ticks: 6 },
+        { hold: '', until: ((f) => (w: World) => f(w) || w.player.x > px(x + 9))(settled()), max: 200, ...(i === 0 ? { note: 'hop on the spot: each landing slides you on' } : {}) },
+        // (a hop only while still on the shingle: once it has carried you off, hands off)
+        { policy: (w: World) => ({ move: '' as Move, jump: w.player.onGround && w.player.x <= px(x + 9) }), ticks: 6 },
         { hold: '', until: or(landed(), done), max: 200 },
       ]).flat(),
       { hold: '', until: (w) => w.player.onGround && w.player.x > px(x + 12), max: 200, note: 'carried under the lip to the ledge' },
@@ -522,7 +523,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
       // the heap slides you to its far edge; a hop on the spot, and the next slide carries you off under the lip
       ...Array.from({ length: 2 }, (): Step[] => [
         { hold: '', until: ((f) => (w: World) => f(w) || w.player.x > px(x + 23))(settled()), max: 200 },
-        { hold: '', jump: 6, ticks: 6 },
+        { policy: (w: World) => ({ move: '' as Move, jump: w.player.onGround && w.player.x <= px(x + 23) }), ticks: 6 },
         { hold: '', until: or(landed(), done), max: 200 },
       ]).flat(),
       { hold: '', until: (w) => (w.player.onGround && w.player.x > px(x + 26)) || w.state !== 'play', max: 300 },
