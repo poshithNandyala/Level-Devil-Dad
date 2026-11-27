@@ -13,18 +13,20 @@ import { tara } from './s02';
 
 /** An arch at world x on the level whose floor is at y. Cross it in the air and you come out at `up`
  *  (one level higher, a step past the arch); cross it on your feet and nothing happens. */
-export function arch(w: World, x: number, floorY: number, up: { x: number; y: number } | null, key: string) {
+export function arch(w: World, x: number, floorY: number, up: { x: number; y: number } | null, key: string, down: { x: number; y: number } | null = null) {
   let prev = w.player.cx;
   w.onTick((w2) => {
     const p = w2.player;
     const cx = p.cx;
     const atLevel = p.y + p.h <= floorY + 2 && p.y + p.h > floorY - 56;
-    if (prev < x && cx >= x && atLevel && !p.onGround && up) {
+    // a down-arch (drawn cusp down) takes you a floor down if you come through it falling
+    const to = down && p.vy > 0 ? down : up;
+    if (prev < x && cx >= x && atLevel && !p.onGround && to) {
       const vx = p.vx;
-      w2.warp(up.x - p.w / 2, up.y - p.h, 'blink');
+      w2.warp(to.x - p.w / 2, to.y - p.h, 'blink');
       p.vx = vx * 0.5;
       w2.flags[key] = (w2.flags[key] ?? 0) + 1;
-      w2.sfx('blink', up.x, up.y - 8);
+      w2.sfx('blink', to.x, to.y - 8);
     }
     prev = cx;
   });
@@ -42,7 +44,7 @@ export function arch(w: World, x: number, floorY: number, up: { x: number; y: nu
       ctx.moveTo(x - 9, floorY);
       ctx.lineTo(x - 9, top + 14);
       ctx.quadraticCurveTo(x - 9, top + 2, x - 4, top + 3);
-      ctx.quadraticCurveTo(x, top - 3, x + 4, top + 3);
+      ctx.quadraticCurveTo(x, down ? top + 9 : top - 3, x + 4, top + 3);
       ctx.quadraticCurveTo(x + 9, top + 2, x + 9, top + 14);
       ctx.lineTo(x + 9, floorY);
       ctx.stroke();
@@ -147,7 +149,7 @@ function bhoolRoom(): LevelDef {
       well(w, 22, 25);
       sign(w, 2.2, 10.4, 4.6, 'BHOOL BHULAIYA', 'shop', null, '489 darwaze');
       rival(w, 3, 15, 1, tara(6));
-      onPass(w, px(4), (w2) => w2.guide('Har darwaza ek jaisa hai. | Every doorway is alike.'));
+      onPass(w, px(4), (w2) => taraNow(w2, 'Har darwaza ek jaisa hai. | Every doorway is alike.', 2.4));
       collectible(w, 'lko-sheermal', 16.5, 7.6);
     },
   };
@@ -221,7 +223,7 @@ export const doorway489: Ending = {
  *  the board too: land on his square and he knocks you off. */
 const CHAUSAR_THROWS = [2, 1, 3, 1, 2, 3, 1, 2, 2, 3, 1, 2];
 const CHAUSAR_PIECE = [5, 5, 6, 6, 3, 3, 7, 8, 8, 2, 2, 2];
-export function chausar(w: World, c0: number, n: number, key: string, period = 200, o: { bow?: boolean; well?: Zone } = {}) {
+export function chausar(w: World, c0: number, n: number, key: string, period = 200, o: { bow?: boolean; well?: Zone; off?: number } = {}) {
   const sq = Array.from({ length: n }, (_, i) => w.add(new Block(px(c0 + 3 * i), px(13), 32, 8, (ctx, b, w2) => drawSquare(ctx, b, i, w2, S), 2)));
   const S = { t0: -1, k: -1, cur: -1, lit: new Set<number>(), piece: -1, n: 0 };
   w.flags[key] = S;
@@ -245,8 +247,8 @@ export function chausar(w: World, c0: number, n: number, key: string, period = 2
     const k = Math.floor((w2.tick - S.t0) / period);
     if (k !== S.k) {
       S.k = k;
-      S.n = CHAUSAR_THROWS[k % CHAUSAR_THROWS.length];
-      S.piece = CHAUSAR_PIECE[k % CHAUSAR_PIECE.length];
+      S.piece = CHAUSAR_PIECE[(k + (o.off ?? 0)) % CHAUSAR_PIECE.length] - (o.off ?? 0);
+      S.n = CHAUSAR_THROWS[(k + (o.off ?? 0)) % CHAUSAR_THROWS.length];
       if (S.piece <= S.cur) S.piece = S.cur + 2;
       if (S.piece >= n - 1) S.piece = -1;
       bowed.i = -1;
@@ -313,19 +315,85 @@ function drawSquare(ctx: Ctx, b: Block, i: number, w: World, S: { lit: Set<numbe
 
 export const chaupar: Act = {
   id: 'lko08-chausar',
-  w: 40,
-  advice: 'A pachisi court over the well. Each throw of the cowries (count the dark mouths) lights that many squares ahead of yours; only lit squares and your own hold, and they go dark at the next throw. Never hop past the lit ones, and never on to the courtier’s square: wait on yours for a throw that takes you past him.',
-  cps: [1.5],
+  w: 44,
+  advice: 'A pachisi court over the well, in two halves with a stone chabutra between. Each throw of the cowries (count the dark mouths) lights that many squares ahead of yours; only lit squares and your own hold, and they go dark at the next throw. Never hop past the lit ones, and never on to the courtier’s square: wait on yours for a throw that takes you past him.',
+  cps: [1.5, 20.5],
   paint: (g, c) => {
-    g.pit(c.x + 4, c.x + 34, 15);
+    g.pit(c.x + 4, c.x + 38, 15);
+    // the chabutra between the two halves of the court: calm stone
+    g.fill(c.x + 19, c.x + 22, 13, 17, '#');
   },
   build: (w, c) => {
     const x = c.x;
-    well(w, x + 4, x + 34);
-    chausar(w, x + 5, 10, c.f('court'));
+    well(w, x + 4, x + 18);
+    well(w, x + 23, x + 38);
+    chausar(w, x + 5, 5, c.f('court'));
+    chausar(w, x + 24, 5, c.f('court2'), 200, { off: 2 });
     sign(w, x + 0.4, 10.4, 3.4, 'CHAUSAR', 'shop', null, 'pachisi');
   },
 };
 
-export const s08 = { room: bhoolRoom, acts: [chaupar, mehrab] };
+// ================================================================ act: the minaret of arches
+/** Three arches stacked one above the other, a floor apart, over the well. Each jump through one takes you
+ *  one floor up. The second floor stops short over the well; the top one (the roof) is full of old hooks.
+ *  The way on is the third floor: jump, jump, then walk. */
+export const minar: Act = {
+  id: 'lko08-minar',
+  w: 26,
+  advice: 'A minaret of arches, one above the other. Each jump through one takes you one floor up: the second floor stops short over the well, and the roof is full of old hooks. You want the third floor: jump through the first two, walk through the third, and step off its end.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x + 5, x + 21, 15);
+    g.fill(x + 5, x + 12, 11, 11, '#');
+    g.fill(x + 11, x + 21, 7, 7, '#');
+    g.fill(x + 17, x + 20, 3, 3, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    mazeWall(w, x + 5, x + 21, [3, 7, 11]);
+    well(w, x + 5, x + 21);
+    arch(w, c.X(3) + 8, FLOOR, { x: c.X(6) + 8, y: px(11) }, c.f('a1'));
+    arch(w, c.X(9) + 8, px(11), { x: c.X(12) + 8, y: px(7) }, c.f('a2'));
+    arch(w, c.X(16) + 8, px(7), { x: c.X(18) + 8, y: px(3) }, c.f('a3'));
+    hooks(w, x + 17, x + 20, px(2), 'lko-bhool', false);
+    w.add(
+      new Art((ctx) => {
+        // the minaret's lime-plaster shaft behind the arches
+        ctx.fillStyle = 'rgba(233,220,196,0.35)';
+        ctx.fillRect(c.X(2), px(1), px(19), FLOOR - px(1));
+      }, -5),
+    );
+    sign(w, x + 0.2, 10.4, 3.2, 'MINAR', 'shop', null, 'teen manzil');
+  },
+};
+
+// ================================================================ act: the down-arch
+/** On the gallery, one arch is cusped the other way (it hangs down). Jump through it up close, rising, as
+ *  everywhere else, and you come out a floor up among the hooks. Come through it falling (jump from three
+ *  tiles back, so you're on your way down) and you come out a floor below, on the ground past the well.
+ *  Walk through and nothing happens: the gallery ends over the well. Then a plain arch takes you back up. */
+export const utar: Act = {
+  id: 'lko08-utar',
+  w: 24,
+  advice: 'One arch hangs the other way: it takes you a floor DOWN if you come through it falling. Jump from three tiles back so you’re on your way down when you reach it. Up close, rising, it takes you up into the hooks; walking, the gallery just ends over the well. Below, jump through the plain arch back up.',
+  cps: [19.5],
+  paint: (g, c) => {
+    const x = c.x;
+    g.pit(x, x + 17, 15);
+    g.fill(x, x + 12, 11, 11, '=');
+    g.fill(x + 9, x + 12, 7, 7, '#');
+    g.fill(x + 22, x + 23, 11, 11, '=');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    mazeWall(w, x, x + 23, [7, 11, 15]);
+    well(w, x, x + 17);
+    arch(w, c.X(8) + 8, px(11), { x: c.X(10) + 8, y: px(7) }, c.f('a1'), { x: c.X(18) + 8, y: FLOOR });
+    hooks(w, x + 9, x + 12, px(6), 'lko-bhool', false);
+    arch(w, c.X(21) + 8, FLOOR, { x: c.X(23) + 8, y: px(11) }, c.f('a2'));
+    sign(w, x + 1, 6.4, 3, 'UTAR', 'shop', null, 'neeche');
+  },
+};
+
+export const s08 = { room: bhoolRoom, acts: [chaupar, minar, mehrab, utar] };
 export const meta08 = { family: 'entry-height-routes-level', betrayals: ['enter-height'], ending: 'lko-489' } as StageMeta;
