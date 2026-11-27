@@ -363,7 +363,10 @@ function atAct(id: string, act: string, then: (x: number) => Step[]): Step[] {
   throw new Error(`${id} has no act ${act}`);
 }
 /** a death that must happen in an added act: the NAIVE play and the obvious FIX of it */
+/** acts taken out of the stages after the uniqueness probe (docs: LENGTH.md): their routes and files stay, one line in levels.ts puts them back */
+const RETIRED = new Set(['svp06-lehar', 'svp07-khula', 'svp07-uthao', 'svp08-bazaar', 'svp09-hauz']);
 function actDeath(id: string, act: string, what: string, cause: string, then: (x: number) => Step[]) {
+  if (RETIRED.has(act)) return;
   (mistakes[id] ??= []).push({
     what,
     cause,
