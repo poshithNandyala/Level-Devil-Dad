@@ -208,7 +208,7 @@ const ventPolicy: Policy = (w, _m, d) => {
 
 // ------------------------------------------------------------------ GTK-03
 /** across the bags: cloth to cloth (or every bag, for the naive play), jumping off each one's far edge */
-function bagHop(key: string, o: { every?: boolean; dwell?: number; over?: boolean } = {}): (w: World) => Out {
+function bagHop(key: string, o: { every?: boolean; dwell?: number; over?: boolean; gate?: (w: World, i: number) => boolean } = {}): (w: World) => Out {
   let W: World | null = null;
   let jt = 0;
   let wait = 0;
@@ -247,6 +247,8 @@ function bagHop(key: string, o: { every?: boolean; dwell?: number; over?: boolea
       wait--;
       return go('');
     }
+    // a bag to wait on until something happens (the bag's index in the row)
+    if (on && o.gate && !o.gate(w, (w.flags[key + 'bags'] as Bag[]).indexOf(on))) return go('');
     const far = target ? target.x - (on ? on.x + on.w : first.x - 16) > 20 : true;
     if (o.over && target) {
       // he's coming the other way: go for the next bag only when he's well short of it, or already past it
@@ -264,6 +266,9 @@ function bagHop(key: string, o: { every?: boolean; dwell?: number; over?: boolea
 }
 const room03 = (): Step[] => [{ policy: bagHop('gtk3'), until: and(ground, X(24)), max: 2400, note: 'cloth to cloth' }, { hold: 'R', until: X(29), max: 300 }];
 const act03b = (x: number): Step[] => [{ policy: bagHop('gtk3b', { over: true }), until: and(ground, X(x + 26)), max: 3000, note: 'over his head, bag to bag' }, { hold: 'R', until: X(x + 30), max: 300 }];
+type Kalam = { writing: boolean; wrote: boolean };
+const kalamGate = (wait: number, until: 'writing' | 'wrote') => (w: World, i: number) => i !== wait || (w.flags.gtk3ki as Kalam)[until];
+const act03e = (x: number): Step[] => [{ policy: bagHop('gtk3k', { every: true, gate: kalamGate(1, 'writing') }), until: and(ground, X(x + 26)), max: 3000, note: 'wait on the second cloth bag; go while his pen moves, over the polythene and under him' }, { hold: 'R', until: X(x + 29.5), max: 300 }];
 const act03 = (x: number): Step[] => [{ policy: bagHop('gtk3a'), until: and(ground, X(x + 26)), max: 2400, note: 'cloth to cloth, ahead of the inspector' }, { hold: 'R', until: X(x + 30), max: 300 }];
 /** the jhola stall: jump up for the bag on the hook, then in */
 const jholaPolicy: Policy = (w, _m, d) => {
@@ -1016,6 +1021,8 @@ function actDeaths() {
   actDeath('GTK-02', r2, 'gtk02-ulta', 'ride the top tier and stay on', () => [{ policy: rideTier('gtk2b', false, 'stay'), until: done, max: 3000 }], 'gtk-bhaap');
   actDeath('GTK-02', r2, 'gtk02-ulta', 'let the top tier go, get on the second', () => [{ policy: rideTier('gtk2b', false, 'second'), until: done, max: 3000 }], 'gtk-dhakkan');
   const r3 = room03();
+  actDeath('GTK-03', r3, 'gtk03-kalam', 'wait till he’s done, then go', () => [{ policy: bagHop('gtk3k', { every: true, gate: kalamGate(1, 'wrote') }), until: done, max: 3000 }], 'gtk-jhora');
+  actDeath('GTK-03', r3, 'gtk03-kalam', 'on to the bag in front of him, and wait there for him to finish', () => [{ policy: bagHop('gtk3k', { every: true, gate: kalamGate(2, 'wrote') }), until: done, max: 3000 }], 'gtk-polythene');
   actDeath('GTK-03', r3, 'gtk03-ulto', 'on to every bag', () => [{ policy: bagHop('gtk3b', { every: true, dwell: 0.3 }), until: done, max: 3000 }], 'gtk-polythene');
   actDeath('GTK-03', r3, 'gtk03-jaldi', 'a look at the stitches on each bag', () => [{ policy: bagHop('gtk3c', { dwell: 1.2 }), until: done, max: 3000 }], 'gtk-jaanch');
   const r4 = room04();
@@ -1132,6 +1139,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk02-ulta': act02b,
   'gtk03-jaanch': act03,
   'gtk03-ulto': act03b,
+  'gtk03-kalam': act03e,
   'gtk03-jaldi': (x: number): Step[] => [{ policy: bagHop('gtk3c'), until: and(ground, X(x + 26)), max: 2400, note: 'no stopping, ahead of him' }, { hold: 'R', until: X(x + 30), max: 300 }],
   'gtk04-ghar': act04,
   'gtk04-upar': act04b,

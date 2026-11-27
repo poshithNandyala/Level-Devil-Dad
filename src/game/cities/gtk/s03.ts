@@ -37,7 +37,8 @@ function jhora(w: World, c0: number, c1: number, key: string) {
   w.add(new Rig(px(c0), FL + 8, px(c1 - c0 + 1), 40, { cause: 'gtk-polythene', inset: 0, live: (_r, w2) => !!w2.flags[key + 'torn'] }));
 }
 
-/** a row of bags on the rail from column c (thin ones marked 't', cloth 'c') */
+/** a row of bags on the rail from column c (thin ones marked 't', cloth 'c', doubled polythene 's': thin, but it
+ *  holds you for 1.2 s before it tears) */
 export function bags(w: World, c: number, pattern: string, key: string): Bag[] {
   const out: Bag[] = [];
   const x0 = px(c);
@@ -49,7 +50,8 @@ export function bags(w: World, c: number, pattern: string, key: string): Bag[] {
     }),
   );
   [...pattern].forEach((k, i) => {
-    const thin = k === 't';
+    const thin = k === 't' || k === 's';
+    const tearAt = (k === 's' ? 1.2 : BAG.tear) * 120;
     const b = w.add(
       new Rig(x0 + i * BAG.step, BAG.top, BAG.w, BAG.h, {
         solid: true,
@@ -65,7 +67,7 @@ export function bags(w: World, c: number, pattern: string, key: string): Bag[] {
           }
           if (thin && r.carries(w2)) {
             s.on++;
-            if (s.on >= BAG.tear * 120) {
+            if (s.on >= tearAt) {
               s.gone = s.torn = true;
               r.setSolid(false);
               w2.flags[key + 'torn'] = true;
@@ -231,6 +233,73 @@ export const act4 = inspectorAct(
   62,
   'Closing time: the inspector hurries down the last row behind you, quicker than before. No stopping at all: cloth to cloth, and over the thin ones, all the way.',
 );
+/** act 5 (F482 busy-warden-window): the inspector comes down the rail towards you and stops to write a tourist's
+ *  fine. While his pen is moving he lifts nothing: pass under him then. When the pen stops he looks up and lifts
+ *  the bag you are on; and the two bags in front of him are doubled polythene, which hold you a moment, not a wait */
+export const KALAM = { speed: 40, writeAt: 15, write: 2.4, start: 22 };
+export const act5: Act = {
+  id: 'gtk03-kalam',
+  w: 30,
+  advice: 'He comes down the rail towards you and stops to write a tourist’s fine. While his pen is moving he lifts nothing: go then, over the two polythene bags in front of him and under him. When the pen stops he looks up, and lifts the bag you are on.',
+  paint: (g, c) => {
+    g.pit(c.x + 4, c.x + 26);
+  },
+  build: (w, c) => {
+    const key = 'gtk3k';
+    jhora(w, c.x + 4, c.x + 26, key);
+    const row = bags(w, c.x + 5, 'ccsscccc', key);
+    const st = { t0: -1, x: c.X(KALAM.start) + 6, writing: false, wrote: false, wt: 0 };
+    w.flags[key + 'i'] = st;
+    onPass(w, c.X(3), (w2) => {
+      if (st.t0 < 0) st.t0 = w2.tick;
+    });
+    const stopX = c.X(KALAM.writeAt);
+    w.add(
+      new Rig(c.X(KALAM.start), BAG.top - 76, 12, 28, {
+        layer: 3,
+        tick: (r, w2) => {
+          if (st.t0 < 0) return;
+          if (!st.wrote && r.x <= stopX) {
+            // stopped at the tourist: writing, the pen moving
+            st.writing = true;
+            st.wt++;
+            if (st.wt >= KALAM.write * 120) {
+              st.writing = false;
+              st.wrote = true;
+              npc(w2, 'Hajur? | Yes?', r.x + 6, r.y - 4, 1.0);
+            }
+          } else r.x -= KALAM.speed / 120;
+          st.x = r.x + 6;
+          if (st.writing) return;
+          for (const b of row) {
+            const s = b.s;
+            if (s.gone || s.lifted > 0 || st.x < b.x + 4 || st.x > b.x + 8) continue;
+            if (s.thin) {
+              s.gone = true;
+              b.setSolid(false);
+            } else if (b.carries(w2)) {
+              s.lifted = Math.round(INSPECTOR.lift * 120);
+              b.setSolid(false);
+              w2.flags[key + 'lifted'] = true;
+            }
+          }
+        },
+        paint: (ctx, r, w2) => {
+          box(ctx, r.x - 40, r.y + 28, 80, 3, '#6B5A48');
+          local(ctx, r.x + 6, r.y, 28, '#4E6E5D', { cap: '#26323A' });
+          // the fine book, and the pen going while he writes
+          box(ctx, r.x - 2, r.y + 12, 8, 6, '#F4F1EA');
+          if (st.writing) box(ctx, r.x + ((w2.tick >> 2) % 6) - 2, r.y + 10, 1, 4, '#26323A');
+          // the tourist he is writing up, with a thin bag, beside him on the walkway
+          if (!st.wrote) local(ctx, r.x - 14, r.y, 26, '#C97B4A', { cap: '#F4D35E' });
+        },
+      }),
+    );
+    w.add(new Rig(c.X(4), FL + 8, px(23), 40, { cause: 'gtk-jaanch', inset: 0, live: (_r, w2) => !!w2.flags[key + 'lifted'] }));
+    sign(w, c.x + 0.6, 9.6, 4.6, 'NO PLASTIC', 'warn', null, 'fine: Rs 500');
+  },
+};
+
 /** door: the cloth-bag stall. Nobody goes in empty-handed: take a jhola off the hook over the door first */
 export const ending: Ending = {
   space: 11,

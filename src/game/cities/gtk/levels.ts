@@ -9,6 +9,7 @@ import { px } from './entities';
 
 /** Tara at the start of an act, urging the play its trap waits for (she lies; the guide never does) */
 const INTRO: Record<string, string> = {
+  'gtk03-kalam': 'Hajur! Wait till he’s done, Dad!',
   'gtk02-ulta': 'Hajur! Stay on, it comes back down!',
   'gtk03-ulto': 'Hajur! Check each bag for stitches, slowly!',
   'gtk03-jaldi': 'Hajur! Have a good look at each bag!',
@@ -43,7 +44,7 @@ const withIntros = (acts: Act[]): Act[] =>
   });
 import { tourLevel, meta01 } from './s01';
 import { room as room02, act2 as act02b, meta02 } from './s02';
-import { room as room03, act as act03, act2 as act03b, act4 as act03d, meta03 } from './s03';
+import { room as room03, act as act03, act2 as act03b, act4 as act03d, act5 as act03e, meta03 } from './s03';
 import { room as room04, act as act04, act2 as act04b, act3 as act04c, meta04 } from './s04';
 import { room as room05, act1 as act05a, act2 as act05b, act3 as act05c, act5 as act05e, act6 as act05f, act7 as act05g, meta05 } from './s05';
 import { room as room06, act as act06, act2 as act06b, act3 as act06c, act4 as act06d, act6 as act06f, act9 as act06i, meta06 } from './s06';
@@ -55,7 +56,7 @@ import { room as room10, act1 as act10a, act2 as act10b, act3 as act10c, act4 as
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: meta01 },
   longStage({ base: room02(), acts: withIntros([{ ...act02b, cps: [20] }]), cps: [16.5], twist: 'gtk-steam-vent', par: 47, shape: 'long', meta: meta02 }),
-  longStage({ base: room03(), acts: withIntros([act03, act03b, act03d]), twist: 'gtk-jhola-entry', par: 35, shape: 'long', meta: meta03 }),
+  longStage({ base: room03(), acts: withIntros([act03, act03b, act03e, act03d]), twist: 'gtk-jhola-entry', par: 35, shape: 'long', meta: meta03 }),
   longStage({ base: room04(), acts: withIntros([act04, act04b, act04c]), twist: 'gtk-lift-counts-down', par: 34, shape: 'long', meta: meta04 }),
   longStage({ base: room05(), acts: withIntros([act05a, { ...act05b, cps: [1.5, 19.5] }, { ...act05e, cps: [16.5] }, act05c, act05f, act05g]), twist: 'gtk-taxi-meter', par: 74, shape: 'wtf', meta: meta05 }),
   longStage({ base: room06(), acts: withIntros([act06, act06b, { ...act06c, cps: [22, 33] }, act06d, act06f, act06i]), twist: 'gtk-tank-overflow', par: 53, shape: 'long', meta: meta06 }),
