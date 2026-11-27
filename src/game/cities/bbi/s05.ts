@@ -320,7 +320,7 @@ export const act3: Act = {
   id: 'bbi05-khala',
   w: 34,
   advice: 'The threshing yard, everything close together: jump the channel over its hand mill, hop the cart without touching it, then up on the straw and over the pounder’s pit.',
-  cps: [9.5, 19.5],
+  cps: [9.5, 29.5],
   paint: (g, c) => {
     g.pit(c.x + 4, c.x + 6);
     g.fill(c.x + 22, c.x + 23, 13, 14, '#');
