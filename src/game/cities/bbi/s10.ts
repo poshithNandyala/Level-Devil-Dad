@@ -15,7 +15,7 @@ import { keeperOn } from './s02';
 import { parasol } from './s03';
 import { patraAct } from './s05';
 import { loom, type LoomCfg } from './s06';
-import { deepaAct, padaAct, stagePit, troupe, troupeAct, type TroupeCfg } from './s07';
+import { bagudiAct, deepaAct, padaAct, stagePit, troupe, troupeAct, type TroupeCfg } from './s07';
 import { chariot, templeWall, type ChariotCfg } from './s09';
 
 export const C10: ChariotCfg = { c0: 18, len: 10, stopAt: 36, hub: 30, hubY: FL - 58, wait: 0.35, any: true, bare: true };
@@ -131,6 +131,10 @@ export const act5 = troupeAct('bbi10-dui-baja', 15, T10F, 'bbi10db', 'Two drumme
 /** act 6, the falling tower turned round (law 7): it stands at your edge and falls away from you, and it is down
  *  only a moment: waiting back by the scuffs, as the Raja night taught, leaves you too far to cross */
 export const act6 = padaAct('bbi10-pada', 'bbi10pd', true);
+
+/** act 7, bagudi turned round (law 7): the yard taught you to pass "it" back at the line; tonight the boys let
+ *  "it" through and tackle anyone else, for a moment after the tag */
+export const act7 = bagudiAct('bbi10-bagudi', 'bbi10bg', true);
 
 /** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */
 export const RIB = { period: 2.2, shut: 0.5, at: 9 };

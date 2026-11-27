@@ -385,15 +385,20 @@ export const act10 = troupeAct('bbi07-dweepa', 22, T07I, 'bbi7i', 'A lamp plinth
  *  makes Dad "it", and the line of boys tackles whoever is it. He jumps for anyone hopping him, so the tag
  *  can't be dodged. A2: tagged, run back over the chalk line to pass it on. A3: hopping him is a tag too. */
 export const BAGUDI = { line: 3, p0: 6, p1: 12, v: 60, guards: 16, gw: 3 };
-export const act11: Act = {
-  id: 'bbi07-bagudi',
+/** `want` (the finale's turn, law 7): tonight the boys let 'it' through and tackle anyone else, but only for
+ *  a moment after the tag: be tagged, and go straight through */
+export function bagudiAct(id: string, key: string, want = false): Act {
+  return {
+  id,
   w: 24,
-  advice: 'Bagudi in the yard. The raider’s touch makes you “it”, and the line of boys tackles whoever is it. You can’t hop him: he jumps too. Let him tag you, run back over the chalk line to pass it on, then walk through.',
+  advice: want
+    ? 'Bagudi on the stadium lawn, the other way round: the boys let “it” through and tackle anyone else, and only for a moment after the tag. Let him tag you and walk straight through; don’t go back to the line.'
+    : 'Bagudi in the yard. The raider’s touch makes you “it”, and the line of boys tackles whoever is it. You can’t hop him: he jumps too. Let him tag you, run back over the chalk line to pass it on, then walk through.',
   cps: [],
   paint: () => {},
   build: (w, c) => {
-    const st = { t0: -1, x: c.X(BAGUDI.p1), dir: -1, it: false, air: false, out: false };
-    w.flags.bbi7bg = st;
+    const st = { t0: -1, x: c.X(BAGUDI.p1), dir: -1, it: false, air: false, out: false, tagT: -1 };
+    w.flags[key] = st;
     onPass(w, c.X(BAGUDI.line), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
     const raider = w.add(
       new Rig(st.x, FL - 26, 14, 26, {
@@ -410,6 +415,7 @@ export const act11: Act = {
           r.y = over ? FL - 58 : FL - 26;
           if (!st.it && p.x < r.x + r.w && p.x + p.w > r.x && p.y < r.y + r.h && p.y + p.h > r.y) {
             st.it = true;
+            st.tagT = w2.tick;
             st.air = !p.onGround;
           }
           if (st.it && p.x + p.w < c.X(BAGUDI.line)) {
@@ -429,9 +435,9 @@ export const act11: Act = {
         cause: 'bbi-bagudi',
         inset: 2,
         layer: 3,
-        live: () => st.it,
+        live: (_r, w2) => (want ? !st.it || since(w2, st.tagT) > 3.0 : st.it),
         tick: (r) => {
-          r.hazard!.cause = st.air ? 'bbi-chhuin' : 'bbi-bagudi';
+          r.hazard!.cause = want ? (st.it ? 'bbi-ghera' : 'bbi-bagudi') : st.air ? 'bbi-chhuin' : 'bbi-bagudi';
         },
         paint: (ctx, r) => {
           for (let i = 0; i < 3; i++) folk(ctx, r.x + 8 + i * 16, FL, 22, '#F4A261', { skirt: '#2A9D8F', face: -1, arm: st.it ? 1.2 : 0.2 });
@@ -451,6 +457,8 @@ export const act11: Act = {
     sign(w, c.x + 20, 10.4, 3.2, 'BAGUDI', 'shop', null, 'D');
   },
 };
+}
+export const act11 = bagudiAct('bbi07-bagudi', 'bbi7bg');
 
 /** act 12, the falling tower (pose-shapes family): this troupe never lies down as a bridge. Their tower stands
  *  at the far end of the pit and, on the drum's stop, falls over towards you: the tower IS the bridge, and its
