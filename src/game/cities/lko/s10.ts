@@ -436,5 +436,66 @@ const daana: Act = {
   },
 };
 
-export const s10 = { room: tehzeebRoom, acts: [dhulai, taaga, darbar, tasveer, julusBells, jawab, raasta, daana, galiyara] };
+/** The malai heaps again, at night. 04 taught: the light comes from one side, stand in the heap's shadow.
+ *  Here the only light is the lamplighter's lantern, and he walks the far rim of the karahi towards you: as
+ *  he passes each heap its shady side changes. Read where he is against each heap, not where he was. */
+const CHIRAG = { from: 20, to: 0.5, v: 0.7 };
+const chirag: Act = {
+  id: 'lko10-chirag',
+  w: 24,
+  cps: [21.6],
+  advice: 'The malai heaps again, but at night the only light is the lamplighter’s lantern, and he is walking towards you along the far rim. As he passes each heap its shady side changes: the side away from his lantern holds. Go before he reaches a heap and keep the left tiles, or wait for him to pass and take the right ones.',
+  paint: (g, c) => {
+    g.pit(c.x + 5, c.x + 20);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const L = { x: c.X(CHIRAG.from) + 8, go: false };
+    w.flags[c.f('ll')] = L;
+    const kz = karahi(w, x + 5, x + 20);
+    const heaps = [6, 9, 12, 15, 18].map((d, k) => {
+      const mid = c.X(d) + 16;
+      return new Heap(w, c.X(d), k % 2 ? px(14) : px(13), (): Light => (L.x > mid ? 'R' : 'L'));
+    });
+    shadows(w, heaps);
+    let cur: { h: Heap; i: number; lit: boolean } | null = null;
+    w.onTick((w2) => {
+      if (!L.go && w2.player.cx > c.X(4)) L.go = true;
+      if (L.go && L.x > c.X(CHIRAG.to) + 8) L.x -= CHIRAG.v;
+      const p = w2.player;
+      if (p.onGround) {
+        for (const h of heaps)
+          for (const i of [0, 1])
+            if (h.t[i].on && on(w2, h.t[i].solid) && (cur?.h !== h || cur.i !== i)) cur = { h, i, lit: h.litIndex(w2) === i };
+      }
+      // you stood on a lit side, or a shady side that the lantern came round to: two different mistakes
+      kz.hazard.cause = cur && !cur.lit ? 'lko-chirag' : 'lko-malai';
+    });
+    w.add(
+      new Art((ctx, w2) => {
+        // the lamplighter on the far rim, his lantern on a pole; the lamp post he is walking to
+        ctx.fillStyle = '#2E2A26';
+        ctx.fillRect(c.X(CHIRAG.to) + 6, FLOOR - 70, 3, 70);
+        const done = L.x <= c.X(CHIRAG.to) + 8;
+        ctx.fillStyle = done ? '#FFD54F' : '#6B6357';
+        ctx.fillRect(c.X(CHIRAG.to) + 4, FLOOR - 80, 7, 10);
+        gent(ctx, L.x, FLOOR, 24, '#6D5A48', { face: -1, arms: 0.6, skin: '#9C6B48' });
+        ctx.fillStyle = '#4E3B2C';
+        ctx.fillRect(L.x - 7, FLOOR - 46, 1.5, 30);
+        const ly = FLOOR - 48 + Math.sin(w2.tick * 0.12) * 1.2;
+        const g = ctx.createRadialGradient(L.x - 6, ly, 2, L.x - 6, ly, 46);
+        g.addColorStop(0, 'rgba(255,213,79,0.55)');
+        g.addColorStop(1, 'rgba(255,213,79,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(L.x - 52, ly - 46, 92, 92);
+        ctx.fillStyle = '#FFD54F';
+        ctx.fillRect(L.x - 9, ly - 3, 6, 7);
+      }, -2),
+    );
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Roshni chal rahi hai! | The light is moving!', 2.2));
+    sign(w, x + 0.2, 10.4, 3, 'CHIRAG', 'shop', null, 'raat');
+  },
+};
+
+export const s10 = { room: tehzeebRoom, acts: [dhulai, taaga, darbar, tasveer, julusBells, jawab, raasta, daana, chirag, galiyara] };
 export const meta10 = { family: 'finale-bow-meets-bells', betrayals: ['bow-vs-bells'], ending: 'lko-tehzeeb' } as StageMeta;

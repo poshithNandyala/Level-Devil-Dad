@@ -758,6 +758,15 @@ actRoutes['lko10-daana'] = (x) => [
   hops([x + 15.4, [x + 19.6, redNow('lko10-daana:k', 1.0)], x + 24.1, [x + 27.8, redNow('lko10-daana:k', 1.0)]], 'then on the red, as on the roofs'),
   runTo(x + 29, 300),
 ];
+const lampPast = (x: number, d: number) => (w: World) => {
+  const L = w.flags['lko10-chirag:ll'] as { x: number } | undefined;
+  return !!L && L.x < px(x + d) - 8;
+};
+actRoutes['lko10-chirag'] = (x) => [
+  walkTo(x + 3.6, 300, 'to the rim: he sets off towards us'),
+  until(lampPast(x, 6), 900, 'he has passed every heap: the light is from the left now'),
+  hops([x + 3.6, x + 7, x + 10, x + 13, x + 16, x + 19, x + 21.6], 'the right tiles, away from his lantern'),
+];
 actRoutes['lko10-darbar'] = (x) => [...R_lko08_chausar('lko10-darbar', 5, 5, 200, true, true, 'court', 14.6)(x), ...R_lko08_chausar('lko10-darbar', 5, 4, 200, true, true, 'court2')(x + 21)];
 /** behind the procession over the covered bells: blink-pauses only on the covers, real waits on plain boards */
 const R_lko10_julus = (id: string, jn = JN) => (x: number): Step[] => {
@@ -1047,8 +1056,8 @@ mistakes['LKO-06'] = [
   },
 ];
 mistakes['LKO-10'] = [
-  { what: 'stopping on the gallery’s covered bells', steps: [...through('LKO-10', room10, 8), runTo(actX('LKO-10', 8) + 12, 400), hop(actX('LKO-10', 8) + 14.6, actX('LKO-10', 8) + 17, '', 30), runTo(actX('LKO-10', 8) + 22, 300), until(done, 500)], cause: 'lko-tehzeeb' },
-  { what: 'bowing to the last door from right in front of it', steps: [...through('LKO-10', room10, 9), walkTo(doorX('LKO-10') - 1.5, 600), until(done, 600)], cause: 'lko-tehzeeb' },
+  { what: 'stopping on the gallery’s covered bells', steps: [...through('LKO-10', room10, 9), runTo(actX('LKO-10', 9) + 12, 400), hop(actX('LKO-10', 9) + 14.6, actX('LKO-10', 9) + 17, '', 30), runTo(actX('LKO-10', 9) + 22, 300), until(done, 500)], cause: 'lko-tehzeeb' },
+  { what: 'bowing to the last door from right in front of it', steps: [...through('LKO-10', room10, 10), walkTo(doorX('LKO-10') - 1.5, 600), until(done, 600)], cause: 'lko-tehzeeb' },
   { what: 'the court again: taking the square the courtier bows you on to', steps: [...through('LKO-10', room10, 2), ...R_lko08_chausar('lko10-darbar', 5, 5, 200, true, false, 'court', 14.6)(actX('LKO-10', 2)), walkTo(actX('LKO-10', 2) + 23.6, 300), until((w) => ((w.flags['lko10-darbar:court2:bowed'] as { i: number } | undefined)?.i ?? -1) === 0, 2400, 'he bows you on'), hops([actX('LKO-10', 2) + 26.6]), until(done, 600)], cause: 'lko-goti-pehle' },
   { what: 'the procession over the bells: waiting behind them on a cover, as learned', steps: [...through('LKO-10', room10, 4), walkTo(actX('LKO-10', 4) + 5, 300, 'up behind them, and wait on the cover'), until(done, 600)], cause: 'lko-tehzeeb' },
 ];
@@ -1070,7 +1079,7 @@ mistakes['LKO-10'].push(
   { what: 'the heaps again, on the sunny right tiles', steps: [...room10, ...actRoutes0('lko10-dhulai', actX('LKO-10', 0)).slice(0, 5), hops([actX('LKO-10', 0) + 24, actX('LKO-10', 0) + 27]), until(done, 600)], cause: 'lko-malai' },
   { what: 'the court again, hopping square after square', steps: [...through('LKO-10', room10, 2), walkTo(actX('LKO-10', 2) + 3.2, 300), hops([0, 1, 2, 3, 4].map((i) => actX('LKO-10', 2) + 5 + 3 * i + 0.5)), until(done, 300)], cause: 'lko-kuan' },
   { what: 'the procession again, keeping the rhythm of the first three nalas', steps: [...through('LKO-10', room10, 4), ...R_lko10_julus('lko10-julus', [12, 24, 36, 48])(actX('LKO-10', 4)), until(done, 600)], cause: 'lko-julus-nala' },
-  { what: 'the gallery, hopping the drain into the first arch', steps: [...through('LKO-10', room10, 8), runTo(actX('LKO-10', 8) + 1, 300), hop(actX('LKO-10', 8) + 3, actX('LKO-10', 8) + 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-kuan' },
+  { what: 'the gallery, hopping the drain into the first arch', steps: [...through('LKO-10', room10, 9), runTo(actX('LKO-10', 9) + 1, 300), hop(actX('LKO-10', 9) + 3, actX('LKO-10', 9) + 6), { hold: 'R', until: done, max: 400 }], cause: 'lko-kuan' },
 );
 
 mistakes['LKO-07'].push(
@@ -1139,6 +1148,11 @@ mistakes['LKO-10'].push(
 mistakes['LKO-10'].push(
   { what: 'the grain: crossing on the red flag, as on the roofs', steps: [...through('LKO-10', room10, 7), walkTo(actX('LKO-10', 7) + 4.3, 300), hops([actX('LKO-10', 7) + 4.3, actX('LKO-10', 7) + 8.2]), until((w) => { const k = w.flags['lko10-daana:k']; return !!k && k.sig.feeding(w) && k.f.order(w).c === 'red'; }, 900), { hold: 'R', until: done, max: 600 }], cause: 'lko-daana' },
   { what: 'the grain: hopping over the feeding birds', steps: [...through('LKO-10', room10, 7), walkTo(actX('LKO-10', 7) + 4.3, 300), hops([actX('LKO-10', 7) + 4.3, actX('LKO-10', 7) + 8.2]), until((w) => { const k = w.flags['lko10-daana:k']; return !!k && k.sig.feeding(w) && k.clock.t >= 0 && (w.tick - k.clock.t) % 420 > 80; }, 900), hops([actX('LKO-10', 7) + 8.2, actX('LKO-10', 7) + 9.6, actX('LKO-10', 7) + 14.4]), until(done, 600)], cause: 'lko-daana-udaan' },
+);
+
+mistakes['LKO-10'].push(
+  { what: 'the lantern: waiting on a heap’s shady left tile, as the low sun taught', steps: [...through('LKO-10', room10, 8), walkTo(actX('LKO-10', 8) + 3.6, 300), hops([actX('LKO-10', 8) + 3.6, actX('LKO-10', 8) + 6, actX('LKO-10', 8) + 9]), until(done, 900)], cause: 'lko-chirag' },
+  { what: 'the lantern: once he has passed, keeping to the left tiles', steps: [...through('LKO-10', room10, 8), walkTo(actX('LKO-10', 8) + 3.6, 300), until(lampPast(actX('LKO-10', 8), 6), 900), hops([actX('LKO-10', 8) + 3.6, actX('LKO-10', 8) + 6]), until(done, 600)], cause: 'lko-malai' },
 );
 
 export const test: CityTests = {
