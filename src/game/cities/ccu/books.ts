@@ -20,6 +20,8 @@ export class Stack extends Entity {
   pointH = 0;
   delay = 1.2;
   pulls = 0;
+  /** what a stack of one going from under you is called (the finale's quiet stack has its own, law 9) */
+  cause = 'ccu-boi';
   private dropTo = -1;
   private riseTo = -1;
   private goneT = -1;
@@ -68,13 +70,14 @@ export class Stack extends Entity {
       const p = w.player;
       if (p.isRiding(this.solid)) {
         // out from under him: no coyote hop off a book that isn't there
-        w.flags.yanked = 1;
+        // the cause the drain or road below tells (the finale's quiet stack has its own)
+        w.flags.yanked = this.cause;
         p.onGround = false;
         p.coyoteT = 0;
         p.bufferT = 0;
         p.stun = 30;
         p.vy = 160;
-        w.after(0.1, () => w.die('ccu-boi'));
+        w.after(0.1, () => w.die(this.cause));
       }
       this.solid.collidable = false;
       this.goneT = w.tick;

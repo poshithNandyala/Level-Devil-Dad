@@ -61,7 +61,8 @@ export class Kumir extends Entity {
       // he prowls the river towards Dad
       const want = Math.max(this.x0 + 10, Math.min(this.x1 - 10, p.cx));
       this.cx += Math.sign(want - this.cx) * Math.min(Math.abs(want - this.cx), 40 * DT);
-      if (this.onWater(w)) w.die('ccu-kumir');
+      // the finale's counting-backwards kumir has its own cause (law 9): 01's "cross while he counts" kills here
+      if (this.onWater(w)) w.die(this.backwards ? 'ccu-kumir10' : 'ccu-kumir');
     }
   }
   draw(ctx: CanvasRenderingContext2D, w: World) {

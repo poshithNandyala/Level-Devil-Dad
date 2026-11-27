@@ -120,6 +120,7 @@ export class Wash extends Entity {
   waves: { x: number; t: number }[] = [];
   hazard: Hazard;
   openT = -999;
+  heldNow = false;
   constructor(
     readonly x: number,
     readonly stop: number,
@@ -127,9 +128,13 @@ export class Wash extends Entity {
   ) {
     super();
     this.layer = 2;
+    const self = this;
     this.hazard = {
       active: true,
-      cause: 'ccu-dhowa',
+      // held in an adda when the water came, or walked into it on your own feet
+      get cause() {
+        return self.heldNow ? 'ccu-adda' : 'ccu-dhowa';
+      },
       // the water runs along the rok's top: anything standing in it goes over the edge
       hits: (x, y, w, h) => this.waves.some((v) => x < v.x + 12 && x + w > v.x - 12 && y + h > ROK - 5 && y + h <= ROK + 1),
     };
@@ -142,7 +147,8 @@ export class Wash extends Entity {
       w.sfx('splash', this.x, ROK);
     });
   }
-  update() {
+  update(w: World) {
+    this.heldNow = ((w.flags.addas ?? []) as Adda[]).some((a) => a.held);
     for (const v of this.waves) {
       v.x -= this.speed * DT;
       v.t += DT;

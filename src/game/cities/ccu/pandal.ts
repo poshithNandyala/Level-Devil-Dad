@@ -120,13 +120,14 @@ export class Stakes extends Entity {
   constructor(
     readonly x0: number,
     readonly x1: number,
+    readonly cause = 'ccu-bansh',
   ) {
     super();
     this.layer = 2;
   }
   update(w: World) {
     const p = w.player;
-    if (p.y + p.h > FLOOR - 9 && p.x + p.w > this.x0 + 2 && p.x < this.x1 - 2) w.die('ccu-bansh');
+    if (p.y + p.h > FLOOR - 9 && p.x + p.w > this.x0 + 2 && p.x < this.x1 - 2) w.die(this.cause);
   }
   draw(ctx: CanvasRenderingContext2D) {
     for (let x = this.x0 + 3; x < this.x1 - 2; x += 6) {

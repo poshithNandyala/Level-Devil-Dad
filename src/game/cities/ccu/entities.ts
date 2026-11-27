@@ -51,6 +51,8 @@ export interface BusSpec {
   label?: string;
   /** not there at all (drawn or solid) until it sets off */
   hidden?: boolean;
+  /** the cause for coming off it at speed (the finale's bus, into the depot, has its own: law 9) */
+  offCause?: string;
 }
 /**
  * A Kolkata private bus, seen side-on, and its footboard (a one-way step at the door). It never stops: it
@@ -132,7 +134,7 @@ export class Bus extends Entity {
     if (this.left && p.onGround && !on) {
       const l = this.left;
       this.left = null;
-      if (l.v > 50) w.die('ccu-gir');
+      if (l.v > 50) w.die(this.o.offCause ?? 'ccu-gir');
       else if (l.back) w.die('ccu-ulto');
     }
     if (on) this.left = null;

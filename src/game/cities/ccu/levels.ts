@@ -19,7 +19,7 @@ import { Adda, House, TeaSeller, Wash } from './adda';
 import { ClothPanel, Decorator, DhakFrame, Lowered, Queue, Skeleton, Stakes } from './pandal';
 import { Tin } from './muri';
 import { Kumir } from './kumir';
-import { Bore, Ebb, Front } from './baan';
+import { Ebb, Front } from './baan';
 import { BigFigure, Figure, Ghat } from './kumartuli';
 import type { Act } from '../../levels/acts';
 
@@ -52,9 +52,11 @@ function aasteRoom(): LevelDef {
 
 
 // ================================================================== CCU-04: Boi Para (College Street)
+/** what a stack or bundle pulled from under Dad is called: the stack's own cause, or 04's */
+const yankCause = (w: World) => (typeof w.flags.yanked === 'string' ? w.flags.yanked : 'ccu-boi');
 /** a drain of muck between the stalls from column c0 to c1, with Dad's death told by how he got in */
 export function boiDrain(w: World, c0: number, c1: number) {
-  w.add(new Muck(px(c0), px(c1), (w2) => (w2.flags.yanked ? 'ccu-boi' : 'ccu-kada')));
+  w.add(new Muck(px(c0), px(c1), (w2) => (w2.flags.yanked ? yankCause(w2) : 'ccu-kada')));
 }
 function boiRoom(): LevelDef {
   return {
@@ -295,27 +297,6 @@ const jowar: Act = {
   },
 };
 
-/** CCU-07 act (reserve R2, the Hooghly bore): down at the ghat under the bridge. The river is too wide and
- *  the jetty too high; the bore comes up on a timetable, drowns the ghat steps and floats the moored launch
- *  up level with the jetty. Be on the launch before it comes, step off at the crest */
-const baan: Act = {
-  id: 'ccu07-baan',
-  w: 28,
-  advice: 'Down at the ghat under the bridge: the river is too wide and the jetty far too high. Watch for the bore: a white line on the water, a rumble, then the wave comes up the steps and drowns them. Be on the moored launch before it comes and stay on: the wave floats it up the river and level with the jetty. Step off on to the jetty at the crest.',
-  paint: (g, c) => {
-    const x = c.x;
-    g.pit(x + 7, x + 13).fill(x + 14, x + 18, 10, 14, '#').fill(x + 19, x + 19, 11, 14, '#').fill(x + 20, x + 20, 12, 14, '#').fill(x + 21, x + 21, 13, 14, '#').fill(x + 22, x + 27, 14, 14, '#');
-  },
-  build: (w, c) => {
-    const bore = w.add(new Bore({ river: [c.X(7), c.X(14)], ghat: [c.X(2), c.X(7)], low: 250, high: 166, launch: [c.X(7) + 2, c.X(10)], launchTo: c.X(11) - 2, first: 2.5, every: 12 }));
-    onPass(w, c.X(2), (w2) => {
-      if (bore.t0 < 0) bore.t0 = w2.tick + 300;
-    });
-    sign(w, c.x + 0.4, 10.4, 3.4, 'BAAN', 'green', null, 'tide table');
-    w.flags.baan = bore;
-  },
-};
-
 /** CCU-07 act (allocation v3 F481, the sound beat): a long span, and a lorry's horn behind. On each horn every
  *  porter steps one stride toward the parapet, and his load jumps back under you without taking you along:
  *  be on its back third when the horn goes. Don't hop to the next load on the horn: it steps too */
@@ -415,57 +396,6 @@ function addaRoom(): LevelDef {
   };
 }
 
-
-/** CCU-08 act: the broken rok. A gap too wide to jump, and on the far side the tea seller, who only comes
- *  when someone's sitting in the adda: the workers lay a plank across for him. So this time, sit down. */
-const tokta: Act = {
-  id: 'ccu08-tokta',
-  w: 34,
-  cp0: false,
-  cps: [3.5],
-  advice: 'The rok is broken off ahead, too wide a gap to jump, and nobody crosses it but the tea seller. He only comes when someone is sitting in the adda: so this time, stand still among the old men. The workers lay a plank across for him; when he lets you go, cross on it behind him.',
-  paint: (g, c) => {
-    g.pit(c.x, c.x + 33).fill(c.x, c.x + 12, 13, 14, '#').fill(c.x + 20, c.x + 33, 13, 14, '#');
-  },
-  build: (w, c) => {
-    w.add(new House(c.X(0), c.X(34)));
-    khod(w, c.x, c.x + 34);
-    const a = w.add(new Adda(c.X(6), c.X(12), 3));
-    const t = teaRound(w, [a], c.X(30));
-    const plank = new Solid(c.X(13), px(13), px(7), 4);
-    plank.oneWay = true;
-    plank.collidable = false;
-    plank.velX = 0;
-    let laid = -1;
-    w.add(
-      new (class extends Entity {
-        solid = plank;
-        update(w2: World) {
-          // laid as he comes up to the gap; taken up again three seconds after he's crossed back
-          if (t.active && t.x < c.X(22) && laid < 0) {
-            laid = w2.tick;
-            plank.collidable = true;
-            w2.flags.plank = 1;
-          }
-          if (laid >= 0 && !t.active && w2.tick - laid > 600 && !w2.player.isRiding(plank)) {
-            plank.collidable = false;
-            laid = -1;
-            w2.flags.plank = 0;
-          }
-        }
-        draw(ctx: CanvasRenderingContext2D) {
-          if (!plank.collidable) return;
-          ctx.fillStyle = '#8B6B3E';
-          ctx.fillRect(plank.x, plank.y, plank.w, 4);
-          ctx.fillStyle = '#6B4A2E';
-          for (let x = plank.x + 10; x < plank.x + plank.w; x += 22) ctx.fillRect(x, plank.y, 1, 4);
-        }
-      })(),
-    );
-    w.flags.tokta = { a, t, plank };
-    w.flags.addas = [...(w.flags.addas ?? []), a];
-  },
-};
 
 /** CCU-08 act: more of the rok, two more addas, and a door that washes the rok on a beat */
 const rok: Act = {
@@ -573,32 +503,9 @@ const sinri: Act = {
   },
 };
 
-/** CCU-09 act: a wide panel across the next bamboo, and no roof frame over it: this time, ride the raise */
-const chala: Act = {
-  id: 'ccu09-chala',
-  w: 40,
-  cp0: false,
-  cps: [27.5],
-  advice: 'A wide panel goes up across the long bamboo: a full jump on to its top. Here there’s no roof frame over it, and the high bamboo ahead is out of reach: stay on the cloth while they tie the next panel on above, and ride it up to the high bamboo.',
-  paint: (g, c) => {
-    const x = c.x;
-    g.fill(x + 2, x + 3, 12, 12, '=').fill(x + 6, x + 11, 12, 12, '=').fill(x + 14, x + 17, 6, 6, '=').fill(x + 20, x + 23, 9, 9, '=');
-  },
-  build: (w, c) => {
-    const x = c.x;
-    w.add(new Skeleton(c.X(0), c.X(40)));
-    w.add(new Stakes(c.X(0), c.X(25)));
-    const wide = w.add(new ClothPanel(c.X(6), px(6), px(12), 2, 2));
-    w.add(new Decorator(c.X(12) + 6, px(12), wide));
-    tieWhenOn(w, wide, x + 2, x + 4);
-    stackWhenOn(w, wide, 3, 0.25);
-    w.flags.wide = wide;
-  },
-};
-
 
 // ================================================================== CCU-10: Kolkata Kolkata (the finale)
-const road10 = (w: World, x0: number, x1: number) => w.add(new Road(x0, x1, (w2) => (w2.flags.yanked ? 'ccu-boi' : w2.flags.cha ? 'ccu-cha' : 'ccu-gaari')));
+const road10 = (w: World, x0: number, x1: number) => w.add(new Road(x0, x1, (w2) => (w2.flags.yanked ? yankCause(w2) : w2.flags.cha ? 'ccu-cha' : 'ccu-gaari')));
 function finaleRoom(): LevelDef {
   return {
     id: 'CCU-10',
@@ -648,7 +555,7 @@ function stopBus(id: string, flag: string, stopName: string, label: string, advi
       pool(w, c.x + 12, c.x + 25, 16, { colors: NALA, cause: 'ccu-nala' });
       sign(w, c.x + 2, 10.4, 3.2, 'BUS STOP', 'green', null, stopName);
       const stop = [c.X(1), c.X(5)];
-      const bus = w.add(new Bus({ x: c.X(-14), go: (w2) => w2.player.cx > c.X(1), slow: [[c.X(25), c.X(27.2)]], end: c.X(29.4), fast: 130, crawl: 24, label, hidden: true }));
+      const bus = w.add(new Bus({ x: c.X(-14), go: (w2) => w2.player.cx > c.X(1), slow: [[c.X(25), c.X(27.2)]], end: c.X(29.4), fast: 130, crawl: 24, label, hidden: true, offCause: 'ccu-depot' }));
       w.flags[flag] = { bus, stop };
       w.add(
         new (class extends Entity {
@@ -664,26 +571,6 @@ function stopBus(id: string, flag: string, stopName: string, label: string, advi
   };
 }
 const bus10 = stopBus('ccu10-bus', 'bus10', 'Esplanade', 'ESPLANADE', 'A bus stop, and a drain too wide to jump. Stand still at the stop: the conductor crawls for you. Hop on the footboard, keep on over the drain, and step off forwards on his one “aaste” after it. There isn’t a second one: he turns into the depot.');
-
-/** CCU-10 act 2: the tram once more: through a junction on its step, off at the island before the points */
-const tram10: Act = {
-  id: 'ccu10-tram',
-  w: 44,
-  cp0: false,
-  cps: [1, 26.5],
-  advice: 'The tram: on to its rear step, never the roof. Through the junction on the step, and off at the island: the pointsman has it set for the other line.',
-  paint: (g, c) => {
-    g.pit(c.x + 6, c.x + 21);
-  },
-  build: (w, c) => {
-    khod(w, c.x + 6, c.x + 22);
-    w.add(new Junction(c.X(14)));
-    w.add(new Points(c.X(30), true));
-    sign(w, c.x + 1.5, 8.4, 3.6, 'TRAM STOP', 'green', null, 'route 25');
-    const t = w.add(new Tram({ x: c.X(2), speed: 60, stops: [{ x: c.X(2), dwell: 0.5, ride: true }, { x: c.X(22), dwell: 1.6 }], junctions: [c.X(14)], turnAt: c.X(28), label: '25' }));
-    w.flags.tram10 = t;
-  },
-};
 
 
 // ================================================================== CCU-03: Jhalmuri (the shaken tin)
@@ -758,35 +645,6 @@ function kumartuliRoom(): LevelDef {
   };
 }
 
-
-/** CCU-05 act: the drying yard: unpainted figures drying in the sun, at every height. Walk off a dry one on
- *  to one a tile lower and it holds; two tiles lower and it cracks even under a walk */
-const uthon: Act = {
-  id: 'ccu05-uthon',
-  w: 26,
-  advice: 'The drying yard: most of these are dry. A walk off on to a dry figure one step lower is fine; two steps lower and it cracks even under a walk. From the high dry one, hop across to the half-painted one instead, and quickly on.',
-  paint: (g, c) => {
-    g.pit(c.x, c.x + 21);
-  },
-  build: (w, c) => {
-    const x = c.x;
-    w.add(new Ghat(c.X(0), c.X(22)));
-    figures(
-      w,
-      [
-        [x + 1, 2, 0.2, 0.06, 'horse'],
-        [x + 3, 3, 0.1, 0.06, 'man'],
-        [x + 5, 4, 0.3, 0.06, 'woman'],
-        [x + 7, 3, 0, 0, 'man'],
-        [x + 9, 1, 0, 0, 'horse'],
-        [x + 12, 2, 0.5, 0.12, 'woman'],
-        [x + 14, 1, 0, 0, 'man'],
-        [x + 17, 2, 0.1, 0.06, 'horse'],
-      ],
-      c.X(0),
-    );
-  },
-};
 
 /** CCU-05 act: the lane where they're finishing in order, one after another behind you */
 const ghat: Act = {
@@ -898,6 +756,7 @@ const pherot: Act = {
     w.add(new Stall(c.X(2), c.X(10), 'RETURNS'));
     boiDrain(w, x + 2, x + 10);
     const b = w.add(new Stack(c.X(4), px(2), 2));
+    b.cause = 'ccu-pherot';
     const a = w.add(new Stack(c.X(7), px(2), 1));
     w.add(new Customer(c.X(9.2), '#00897B'));
     const buyer = w.add(new Customer(c.X(3.2), '#6D4C41'));
@@ -923,7 +782,7 @@ const kumir10: Act = {
   },
   build: (w, c) => {
     w.flags.kumir10 = w.add(new Kumir(c.X(4), c.X(8), 2.6, 4, 56, true));
-    pool(w, c.x + 9, c.x + 11, 16, { colors: NALA, cause: 'ccu-nala' });
+    pool(w, c.x + 9, c.x + 11, 16, { colors: NALA, cause: 'ccu-danga' });
     sign(w, c.x + 0.4, 10.4, 3.2, 'KUMIR-DANGA', 'green', null, 'tonight');
   },
 };
@@ -994,7 +853,7 @@ const khola: Act = {
   },
   build: (w, c) => {
     w.add(new Skeleton(c.X(1), c.X(28)));
-    w.add(new Stakes(c.X(2), c.X(27)));
+    w.add(new Stakes(c.X(2), c.X(27), 'ccu-khola'));
     const cloth = [5, 10, 15, 20, 25].map((k, i) => w.add(new ClothPanel(c.X(k), px(1), px(12), 2, i, true)));
     for (const p of cloth)
       w.when(
@@ -1076,33 +935,6 @@ const lane: Act = {
       ],
       c.X(0),
     );
-  },
-};
-
-
-/** CCU-09 act: the gate arch, where two panels go up at once across both next footholds, the far one under
- *  the arch's frame */
-const toran: Act = {
-  id: 'ccu09-toran',
-  cp0: false,
-  cps: [-3.2],
-  w: 26,
-  advice: 'At the gate arch two panels go up at once, across both the next bamboos: a full jump on to the first, run across both tops, and off the far end at once, because the second is under the arch’s frame and they tie another on above it.',
-  paint: (g, c) => {
-    const x = c.x;
-    g.fill(x + 2, x + 3, 12, 12, '=').fill(x + 6, x + 7, 12, 12, '=').fill(x + 8, x + 9, 12, 12, '=').fill(x + 12, x + 15, 12, 12, '=').fill(x + 8, x + 11, 7, 7, '#').fill(x + 18, x + 25, 12, 14, '#');
-  },
-  build: (w, c) => {
-    const x = c.x;
-    w.add(new Skeleton(c.X(0), c.X(26)));
-    w.add(new Stakes(c.X(0), c.X(18)));
-    const p1 = w.add(new ClothPanel(c.X(6), px(2), px(12), 2, 1));
-    const p2 = w.add(new ClothPanel(c.X(8), px(2), px(12), 2, 3));
-    w.add(new Decorator(c.X(10) + 6, px(12), p2));
-    tieWhenOn(w, p1, x + 2, x + 4);
-    tieWhenOn(w, p2, x + 2, x + 4);
-    stackWhenOn(w, p2, 2, 0.5);
-    w.flags.toran = p2;
   },
 };
 
@@ -1238,7 +1070,6 @@ function liftAct(id: string, wait: number, advice: string): Act {
   };
 }
 const uthan = liftAct('ccu09-uthan', 2.7, 'Up inside the pandal: stand on the tied panel and wait while they tie the next one on above it; it lifts you to the high bamboo. Do it again on the next, then step off on to the gallery straight away: there’s one more coming, up into the roof frame.');
-const uthan2 = liftAct('ccu09-uthan2', 3.1, 'The second tower: the same lift, the decorator slower up the ladder. Wait for it, and off on to the gallery the moment it stops.');
 
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
