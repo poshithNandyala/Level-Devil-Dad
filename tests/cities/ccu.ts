@@ -531,6 +531,23 @@ function boiRoute(skip: boolean, wait = 0): Step[] {
   ];
 }
 
+/** a tall pile bought down: wait on the pavement till it's three high, jump on, and on down the stacks */
+function thakRoute(flag: string, x: number): Step[] {
+  return [
+    walk(x + 0.6),
+    { hold: '', until: (w) => w.flags[flag].t2.n === 3 && !w.flags[flag].t2.pointed, max: 1200, note: 'wait on the pavement while he buys the tall pile down' },
+    { hold: 'R', until: X(x + 2.1), max: 120, note: 'a run up' },
+    steerHop(px(x + 7), 24, 'then a jump straight on to it', true),
+    { hold: 'R', until: X(x + 7.2), max: 60 },
+    steerHop(px(x + 11), 12, 'down to the next'),
+    { hold: 'R', until: X(x + 11.2), max: 60 },
+    steerHop(px(x + 15), 12, 'and the next'),
+    { hold: 'R', until: X(x + 15.2), max: 60 },
+    steerHop(px(x + 19), 12, 'on to the pavement'),
+    walk(x + 23.4),
+  ];
+}
+
 /** the obvious play per stage, and the cause it must die of */
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-01': { steps: tourRun('long'), cause: 'ccu-rail' },
@@ -567,7 +584,10 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     { what: 'staying on the step at the double-line island', steps: [...S06(), ...ACT06(32), { hold: '', until: done, max: 3000, note: 'stay on the step' }], cause: 'ccu-dui' },
     { what: 'climbing on to the roof for the double junction', steps: [...S06(), ...ACT06(32), { hold: '', jump: 10, ticks: 30, note: 'up on to the roof' }, { hold: '', until: done, max: 3000 }], cause: 'ccu-dando' },
   ],
-  'CCU-04': [{ what: 'waiting on the short stack in front of the tall pile', steps: [...boiRoute(true).slice(0, -1), walk(32 + 2.6), steerHop(px(32 + 5), 10, 'on to the short stack'), { hold: '', until: done, max: 900 }], cause: 'ccu-boi' }],
+  'CCU-04': [
+    { what: 'waiting on the short stack in front of the tall pile', steps: [...boiRoute(true).slice(0, -1), walk(32 + 2.6), steerHop(px(32 + 5), 10, 'on to the short stack'), { hold: '', until: done, max: 900 }], cause: 'ccu-boi' },
+    { what: 'waiting on the short stack in front of the rare-books pile', steps: [...boiRoute(true).slice(0, -1), ...thakRoute('thak', 32), walk(56 + 2.6), steerHop(px(56 + 5), 10, 'on to the short stack'), { hold: '', until: done, max: 900 }], cause: 'ccu-boi' },
+  ],
   'CCU-09': [{ what: 'resting on the new panel at the top of the staircase', steps: [...pandalRoute(), steerHop(px(35), 10, 'bamboo'), steerHop(px(38), 10, 'up'), steerHop(px(41), 10, 'up'), steerHop(px(45), 30, 'high', true), steerHop(px(49), 10, 'on to the new panel'), { hold: '', until: done, max: 300 }], cause: 'crushed' }],
   'CCU-08': [
     { what: 'waiting by the second adda for the water to stop', steps: [...addaRoute(), walk(32 + 24.5), { hold: '', until: done, max: 1500 }], cause: 'ccu-dhowa' },
@@ -592,6 +612,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
       steps: [{ hold: '', until: (w) => buses(w).some((b) => b.crawling() && b.v < 30 && b.x >= px(25)), max: 1800 }, { hold: 'L', until: (w) => w.state !== 'play', max: 300 }],
       cause: 'ccu-ulto',
     },
+    { what: 'staying on the Sealdah bus past its one “aaste”', steps: [...ride(px(25), px(28.5), 'off on the second'), walk(30), boardAtStop((w) => w.flags.bus02), { hold: '', until: done, max: 1200, note: 'stay on' }], cause: 'ccu-gir' },
   ],
 };
 
@@ -658,19 +679,9 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     walk(x + 23),
   ],
   'ccu03-dokan': (x) => [crossTin('tinB', px(x + 28)), walk(x + 29.4)],
-  'ccu04-thak': (x) => [
-    walk(x + 0.6),
-    { hold: '', until: (w) => w.flags.thak.t2.n === 3 && !w.flags.thak.t2.pointed, max: 1200, note: 'wait on the pavement while he buys the tall pile down' },
-    { hold: 'R', until: X(x + 2.1), max: 120, note: 'a run up' },
-    steerHop(px(x + 7), 24, 'then a jump straight on to it', true),
-    { hold: 'R', until: X(x + 7.2), max: 60 },
-    steerHop(px(x + 11), 12, 'down to the next'),
-    { hold: 'R', until: X(x + 11.2), max: 60 },
-    steerHop(px(x + 15), 12, 'and the next'),
-    { hold: 'R', until: X(x + 15.2), max: 60 },
-    steerHop(px(x + 19), 12, 'on to the pavement'),
-    walk(x + 23.4),
-  ],
+  'ccu04-thak': (x) => thakRoute('thak', x),
+  'ccu04-thak2': (x) => thakRoute('thak2', x),
+
   'ccu09-sinri': (x) => [
     steerHop(px(x + 3), 10, 'on to the bamboo'),
     steerHop(px(x + 6), 10, 'up the cloth staircase'),
@@ -713,6 +724,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     steerHop(px(x + 18.8), 10, 'down on to the last'),
     steerHop(px(x + 22.8), 10, 'down on to the lane'),
     walk(x + 25.5),
+  ],
+  'ccu02-depot': (x) => [
+    boardAtStop((w) => w.flags.bus02),
+    ...ride(px(x + 25), px(x + 28.5), 'over the drain, and off on his one “aaste”'),
+    walk(x + 38),
   ],
   'ccu10-bus': (x) => [
     boardAtStop((w) => w.flags.bus10),

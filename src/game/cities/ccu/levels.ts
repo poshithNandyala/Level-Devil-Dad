@@ -558,32 +558,37 @@ function finaleRoom(): LevelDef {
 
 /** CCU-10 act 1: the bus again, in a new order: it crawls for you at the stop, flies the drain, and its one
  *  "aaste" is the last chance before the depot */
-const bus10: Act = {
-  id: 'ccu10-bus',
-  w: 40,
-  cps: [3.5],
-  advice: 'A bus stop, and a drain too wide to jump. Stand still at the stop: the conductor crawls for you. Hop on the footboard, keep on over the drain, and step off forwards on his one “aaste” after it. There isn’t a second one: he turns into the depot.',
-  paint: (g, c) => {
-    g.pit(c.x + 12, c.x + 24);
-  },
-  build: (w, c) => {
-    pool(w, c.x + 12, c.x + 25, 16, { colors: NALA, cause: 'ccu-nala' });
-    sign(w, c.x + 2, 10.4, 3.2, 'BUS STOP', 'green', null, 'Esplanade');
-    const stop = [c.X(1), c.X(5)];
-    const bus = w.add(new Bus({ x: c.X(-14), go: (w2) => w2.player.cx > c.X(1), slow: [[c.X(25), c.X(28.5)]], end: c.X(31), fast: 130, crawl: 20, label: 'ESPLANADE', hidden: true }));
-    w.flags.bus10 = { bus, stop };
-    w.add(
-      new (class extends Entity {
-        update(w2: World) {
-          const p = w2.player;
-          const still = p.onGround && Math.abs(p.vx) < 4 && p.cx > stop[0] && p.cx < stop[1];
-          if (!bus.slowed && still && bus.x < stop[0] - 8 && bus.x > stop[0] - 150) bus.slowed = true;
-          if (bus.slowed && bus.x > c.X(9)) bus.slowed = false;
-        }
-      })(),
-    );
-  },
-};
+/** a bus stop before a drain too wide to jump: stand still and the conductor crawls for you; one “aaste” after the drain */
+function stopBus(id: string, flag: string, stopName: string, label: string, advice: string): Act {
+  return {
+    id,
+    w: 40,
+    cps: [3.5],
+    advice,
+    paint: (g, c) => {
+      g.pit(c.x + 12, c.x + 24);
+    },
+    build: (w, c) => {
+      pool(w, c.x + 12, c.x + 25, 16, { colors: NALA, cause: 'ccu-nala' });
+      sign(w, c.x + 2, 10.4, 3.2, 'BUS STOP', 'green', null, stopName);
+      const stop = [c.X(1), c.X(5)];
+      const bus = w.add(new Bus({ x: c.X(-14), go: (w2) => w2.player.cx > c.X(1), slow: [[c.X(25), c.X(28.5)]], end: c.X(31), fast: 130, crawl: 20, label, hidden: true }));
+      w.flags[flag] = { bus, stop };
+      w.add(
+        new (class extends Entity {
+          update(w2: World) {
+            const p = w2.player;
+            const still = p.onGround && Math.abs(p.vx) < 4 && p.cx > stop[0] && p.cx < stop[1];
+            if (!bus.slowed && still && bus.x < stop[0] - 8 && bus.x > stop[0] - 150) bus.slowed = true;
+            if (bus.slowed && bus.x > c.X(9)) bus.slowed = false;
+          }
+        })(),
+      );
+    },
+  };
+}
+const bus10 = stopBus('ccu10-bus', 'bus10', 'Esplanade', 'ESPLANADE', 'A bus stop, and a drain too wide to jump. Stand still at the stop: the conductor crawls for you. Hop on the footboard, keep on over the drain, and step off forwards on his one “aaste” after it. There isn’t a second one: he turns into the depot.');
+const depot = stopBus('ccu02-depot', 'bus02', 'Sealdah', 'SEALDAH', 'The next stop is a long way short of the drain, and nobody’s waiting there: stand still at the stop and he crawls for you. Hop on the footboard, ride over the drain, and step off forwards on his one “aaste”. Stay on and he takes you into the depot at full speed.');
 
 /** CCU-10 act 2: the tram once more: through a junction on its step, off at the island before the points */
 const tram10: Act = {
@@ -738,35 +743,40 @@ const ghat: Act = {
 
 /** CCU-04 act: the tall stack. A pile too tall to climb blocks the drain; a customer is working down it,
  *  bottom book by bottom book. The short stack in front of it is wanted too: wait on the pavement, not on it */
-const thak: Act = {
-  id: 'ccu04-thak',
-  w: 24,
-  advice: 'A pile too tall to climb stands in the drain, and a customer is buying it down from the bottom, one book at a time. The short stack in front of it is wanted too, so don’t wait on that: wait on the pavement till the tall pile is three high, then jump straight on to it.',
-  paint: (g, c) => {
-    g.pit(c.x + 3, c.x + 17);
-  },
-  build: (w, c) => {
-    const x = c.x;
-    w.add(new Stall(c.X(3), c.X(18), 'SECOND HAND'));
-    boiDrain(w, x + 3, x + 18);
-    const t1 = w.add(new Stack(c.X(4), px(2), 2));
-    const t2 = w.add(new Stack(c.X(6), px(2), 7));
-    const t3 = w.add(new Stack(c.X(10), px(2), 2));
-    const t4 = w.add(new Stack(c.X(14), px(2), 1));
-    const a = w.add(new Customer(c.X(7), '#6D4C41'));
-    const b = w.add(new Customer(c.X(4.5), '#5C6BC0'));
-    w.flags.thak = { t1, t2, t3, t4 };
-    w.when(
-      (w2) => w2.player.cx > c.X(0.5),
-      (w2) => {
-        [0.6, 1.6, 2.6, 3.6].forEach((t) => w2.after(t, () => a.ask(w2, t2, 1, 0.5)));
-        [0.4, 1.8].forEach((t) => w2.after(t, () => b.ask(w2, t1, 1, 0.6)));
-      },
-    );
-    void t3;
-    void t4;
-  },
-};
+/** a pile too tall to climb, bought down from the bottom; `tall` books to start, `flag` for the route */
+function thakAct(id: string, tall: number, flag: string, label: string, advice: string): Act {
+  return {
+    id,
+    w: 24,
+    advice,
+    paint: (g, c) => {
+      g.pit(c.x + 3, c.x + 17);
+    },
+    build: (w, c) => {
+      const x = c.x;
+      w.add(new Stall(c.X(3), c.X(18), label));
+      boiDrain(w, x + 3, x + 18);
+      const t1 = w.add(new Stack(c.X(4), px(2), 2));
+      const t2 = w.add(new Stack(c.X(6), px(2), tall));
+      const t3 = w.add(new Stack(c.X(10), px(2), 2));
+      const t4 = w.add(new Stack(c.X(14), px(2), 1));
+      const a = w.add(new Customer(c.X(7), '#6D4C41'));
+      const b = w.add(new Customer(c.X(4.5), '#5C6BC0'));
+      w.flags[flag] = { t1, t2, t3, t4 };
+      w.when(
+        (w2) => w2.player.cx > c.X(0.5),
+        (w2) => {
+          Array.from({ length: tall - 3 }, (_, k) => 0.6 + k).forEach((t) => w2.after(t, () => a.ask(w2, t2, 1, 0.5)));
+          [0.4, 1.8].forEach((t) => w2.after(t, () => b.ask(w2, t1, 1, 0.6)));
+        },
+      );
+      void t3;
+      void t4;
+    },
+  };
+}
+const thak = thakAct('ccu04-thak', 7, 'thak', 'SECOND HAND', 'A pile too tall to climb stands in the drain, and a customer is buying it down from the bottom, one book at a time. The short stack in front of it is wanted too, so don’t wait on that: wait on the pavement till the tall pile is three high, then jump straight on to it.');
+const thak2 = thakAct('ccu04-thak2', 10, 'thak2', 'RARE BOOKS', 'A taller pile still, and he’s after every one of them: the same patience. Wait on the pavement, never on the short stack he also wants, and go when the tall pile is three high.');
 
 
 /** CCU-03 act: the second seller's tin, wider, with fewer peanuts and a quicker hand */
@@ -1097,9 +1107,9 @@ export const levels = (): LevelDef[] => [
     }),
     meta: meta('rail-groove-sticks-foot', ['groove-catch'], 'ccu-esplanade-tram-shuttle'),
   },
-  longStage({ base: aasteRoom(), par: 24, twist: 'ccu-stop', shape: 'short', meta: meta('exit-moving-vehicle-on-shout', ['exit-facing-forward'], 'ccu-bus-crawls-for-whoever-waits') }),
+  longStage({ base: aasteRoom(), par: 24, acts: [depot], twist: 'ccu-stop', shape: 'short', meta: meta('exit-moving-vehicle-on-shout', ['exit-facing-forward'], 'ccu-bus-crawls-for-whoever-waits') }),
   longStage({ base: muriRoom(), par: 38, acts: [dui3], twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
-  longStage({ base: boiRoom(), par: 24, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
+  longStage({ base: boiRoom(), par: 24, acts: [thak, thak2], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
   longStage({ base: kumartuliRoom(), par: 80, acts: [uthon, lane, pratima, ghat, ghatpar], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
   longStage({ base: poleRoom(), par: 84, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 160, acts: [girder, dui, sandhya, ulto, bhor, dupur, raat, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
