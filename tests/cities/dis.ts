@@ -368,7 +368,7 @@ const bullLane = (x: number): Pol =>
   withHold((w, h) => {
     const p = w.player;
     const b = bull(w);
-    const up = p.onGround && p.y + p.h <= px(13);
+    const up = p.onGround && p.y + p.h <= px(14);
     // clear: it has charged past and is walking, well to the left (from A it walks back toward you, slower than you run)
     const onA0 = p.cx < px(x + 12);
     const clear = b.phase === 'walk' && b.x < p.cx - 56 && (b.dir < 0 || b.t < 30);
@@ -378,7 +378,7 @@ const bullLane = (x: number): Pol =>
       // on the ground: run for the next verandah (or the lane's end) and hop up on to it
       if (p.cx > px(x + 26.5)) return { move: 'R', jump: false };
       const nextV = p.cx < px(x + 8) ? x + 8 : p.cx < px(x + 17) ? x + 17 : -1;
-      if (nextV > 0 && p.cx >= px(nextV) - 12) {
+      if (nextV > 0 && p.cx >= px(nextV) - 14) {
         h(14);
         return { move: 'R', jump: true };
       }
@@ -386,7 +386,9 @@ const bullLane = (x: number): Pol =>
     }
     // up on a verandah: stay at its middle until the bull has charged past and walks away
     const onA = p.cx < px(x + 12);
-    if (!clear) return { move: p.cx < px(onA ? x + 9 : x + 18) ? 'R' : '', jump: false };
+    if (!clear) return { move: p.cx < px(onA ? x + 9.5 : x + 18.5) ? 'R' : '', jump: false };
+    // clear: go, and keep going (a late start must not leave you on the verandah)
+    h(40);
     return { move: 'R', jump: false };
   });
 const tekeli = (w: World) => (w.flags.tekeli as Tekeli[])[0];
@@ -396,7 +398,7 @@ const drained = (w: World) => { const t = sluice(w).t(w); return t >= 200 && t <
 const wakes = (w: World) => w.flags.wakes as Wake[];
 const traps = (w: World) => w.flags.traps as Trap[];
 /** on to trap i (from the bank or trap i-1) */
-const onTrap = (x: number, i: number): Step[] => hopR(x + (i ? 8.2 + (i - 1) * 4 : 5.2), 'on to the next trap', 11);
+const onTrap = (x: number, i: number): Step[] => hopR(x + (i ? 9.0 + (i - 1) * 4.5 : 5.2), 'on to the next trap', 11);
 const tug = (w: World) => (w.flags.tug as TugRope[]).find((r) => w.player.cx < r.d1 + 40)!;
 type Play = (x: number) => Step[];
 const ACT_DEATHS: { act: string; stage: string; naive: [Play, string, string]; fix?: [Play, string, string] }[] = [];
@@ -448,7 +450,7 @@ act('dis07-card', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis
 ACT_MORE.push(['dis07-card', 'DIS-07', (x) => [{ hold: 'R', until: X(x + 32), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'waits at the gate for the card: the deer cross there']);
 act('dis07-tekeli', 'DIS-07', [(x) => [{ hold: 'R', until: X(x + 9), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-lathi', 'stands still in the open by him: they shout his side'], [(x) => [{ hold: 'R', until: X(x + 6.2), max: 600 }, { hold: '', until: (w) => { const [i, k] = tekeli(w).at(w); return i === 0 && k >= 20; }, max: 300 }, { hold: 'R', until: done, max: 600 }], 'dis-lathi-ghur', 'runs through past him on the shout: across into the shouted side as he swings']);
 act('dis09-sluice', 'DIS-09', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-sluice', 'runs straight down the channel: the bell, and the flood'], [(x) => [{ hold: 'R', until: X(x + 4.6), max: 600 }, { hold: '', until: drained, max: 900 }, { hold: 'R', until: X(x + 10.1), max: 300 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: and(ground, X(x + 12)), max: 200 }, { hold: '', until: done, max: 1500 }], 'dis-roof', 'gets up on the embankment and stays there, safe from every flood: the oil slides him back in']);
-act('dis07-goru', 'DIS-07', [(x) => [{ hold: 'R', until: X(x + 6), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-goru', 'stands his ground in the lane: the bull stops, lowers its head and charges'], [(x) => [{ hold: 'R', until: done, max: 1500 }], 'dis-goru-lane', 'runs past the bull while it walks: it turns on him']);
+act('dis07-goru', 'DIS-07', [(x) => [{ hold: 'R', until: X(x + 6), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-goru', 'stands his ground in the lane: the bull stops, lowers its head and charges'], [(x) => [{ policy: withHold((w, h) => (w.player.onGround && wallAhead(w) ? (h(8), { move: 'R', jump: true }) : { move: 'R', jump: false })), until: and(ground, X(x + 9)), max: 900 }, { hold: '', until: (w) => bull(w).phase === 'walk' && bull(w).dir > 0 && bull(w).x < w.player.cx - 40, max: 1500 }, { hold: 'L', until: (w) => w.player.onGround && w.player.y + w.player.h >= 239, max: 200 }, { hold: 'R', until: done, max: 900 }], 'dis-goru-lane', 'drops back into the lane to get past the bull while it walks: it is in its lane, and he is trampled']);
 act('dis05-feast', 'DIS-05', [(x) => [{ hold: 'R', until: X(x + 6.6), max: 600 }, { hold: '', jump: 8, ticks: 8, note: 'up for the pitha on its stand' }, { hold: '', until: done, max: 600 }], 'dis-kol-paat', 'jumps up for a pitha: the leaf tips under the landing'], [(x) => [{ hold: 'R', until: X(x + 5.2), max: 600 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 600 }], 'dis-pit', 'jumps the whole feast at a run and lands at the ditch’s lip, running on into it']);
 act('dis05-machan', 'DIS-05', [(x) => [{ policy: (w) => ({ move: floorAhead(w, 3) ? 'R' : '', jump: false }), until: and(ground, X(x + 16)), max: 1500 }, { hold: '', until: done, max: 900 }], 'dis-machan', 'waits on the last plank for one more: the drum rolls'], [() => [{ hold: 'R', until: done, max: 900 }], 'dis-luit', 'runs on ahead of the carpenter: the far end is not built']);
 act('dis06-wake', 'DIS-06', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-dhal', 'runs to outrun the wake'], [(x) => [{ hold: 'R', until: X(x + 6.3), max: 600 }, { hold: '', until: (w) => wakes(w)[0].running && w.player.cx - wakes(w)[0].x < 50, max: 600 }, { hold: '', jump: 14, ticks: 14, note: 'hops the wave' }, { hold: '', until: done, max: 600 }], 'dis-bank', 'waits for the wake on the undercut bank and hops it: the landing breaks the slab off']);
@@ -557,7 +559,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { hold: 'R', jump: 14, ticks: 14, note: 'up on to the landing: the stair starts to fall' },
     { hold: 'R', until: and(ground, X(17.4)), max: 400, note: 'down with the fall, on to the step before the last' },
     { hold: '', until: (w) => stairs(w)[0].solids[5].y <= px(9), max: 600, note: 'wait on it as it rises' },
-    { hold: 'R', until: X(18.6), max: 100 },
+    { hold: 'R', until: X(19.0), max: 100 },
     { hold: 'R', jump: 14, ticks: 14, note: 'over to the far side' },
     { hold: 'R', until: and(ground, X(28)), max: 400 },
   ];
@@ -883,8 +885,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...onTrap(x, 1),
     { hold: '', until: (w) => traps(w)[2].state(w) === 'rest', max: 900 },
     ...onTrap(x, 2),
-    ...hopR(x + 16.2, 'on to the bank', 11),
-    { hold: 'R', until: and(ground, X(x + 22)), max: 400 },
+    { hold: 'R', until: and(ground, X(x + 22)), max: 400, note: 'off the last trap on to the bank' },
   ]),
   'dis07-dhol': mark('dis07-dhol', (x) => [{ policy: dholHop(), until: and(ground, X(x + 33)), max: 6000, note: 'one plank on every beat of the dhol' }]),
   'dis10-dhol': mark('dis10-dhol', (x) => [{ policy: dholHop(), until: and(ground, X(x + 30)), max: 6000, note: 'one plank on every beat, slow or fast' }]),

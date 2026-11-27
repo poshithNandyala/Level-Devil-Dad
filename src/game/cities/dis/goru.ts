@@ -44,11 +44,12 @@ export class Bull extends Entity {
     }
     this.t++;
     if (this.phase === 'walk') {
+      this.cause = 'dis-goru-lane';
       this.x += this.dir * this.walkSpeed * DT;
       if (this.x <= this.a || this.x >= this.b) this.dir = -this.dir;
       // pass it while it walks and it turns on you at once
       const behind = this.dir > 0 ? p.cx < this.x - 10 : p.cx > this.x + 10;
-      if (this.inLane(w) && behind && Math.abs(p.cx - this.x) < 48) {
+      if (this.inLane(w) && behind && Math.abs(p.cx - this.x) < 36) {
         this.dir = -this.dir;
         this.phase = 'charge';
         this.t = 0;
@@ -105,8 +106,8 @@ export const husGoru: Act = {
   paint: (g, c) => {
     const x = c.x;
     // two verandahs beside the lane, a step up
-    g.fill(x + 8, x + 10, 13, 13, '#');
-    g.fill(x + 17, x + 19, 13, 13, '#');
+    g.fill(x + 8, x + 11, 14, 14, '#');
+    g.fill(x + 17, x + 20, 14, 14, '#');
   },
   build: (w, c) => {
     const x = c.x;

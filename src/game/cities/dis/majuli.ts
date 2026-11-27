@@ -120,11 +120,11 @@ export class Trap extends Entity {
     readonly cycle = 480,
     readonly ring = 110,
     readonly up = 100,
-    readonly slack = 80,
+    readonly slack = 60,
   ) {
     super();
     this.layer = 2;
-    this.solid = new Solid(x, GROUND, px(2), 10);
+    this.solid = new Solid(x, GROUND, px(3), 10);
   }
   t(w: World) {
     return this.started < 0 ? -1 : (w.tick - this.started + this.phase) % this.cycle;
@@ -155,17 +155,17 @@ export class Trap extends Entity {
     // the rope to the beam, the bell, the bamboo trap (a polo basket on a platform)
     ctx.strokeStyle = '#6B5A3A';
     ctx.beginPath();
-    ctx.moveTo(this.x + 16, 40);
-    ctx.lineTo(this.x + 16, y);
+    ctx.moveTo(this.x + 24, 40);
+    ctx.lineTo(this.x + 24, y);
     ctx.stroke();
     ctx.fillStyle = st === 'ring' ? '#F2C14E' : '#9C8A55';
     ctx.beginPath();
     ctx.arc(this.x + 16 + (st === 'ring' ? Math.sin(w.tick * 0.8) * 3 : 0), 52, 5, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = st === 'slack' ? '#8A7A50' : '#A8874A';
-    ctx.fillRect(this.x, y + (st === 'slack' ? 2 : 0), 32, 8);
+    ctx.fillRect(this.x, y + (st === 'slack' ? 2 : 0), 48, 8);
     ctx.strokeStyle = '#6A4B1C';
-    for (let k = 4; k < 32; k += 6) ctx.strokeRect(this.x + k, y - 8, 3, 8);
+    for (let k = 4; k < 48; k += 6) ctx.strokeRect(this.x + k, y - 8, 3, 8);
   }
 }
 
@@ -182,7 +182,7 @@ export const majuliTraps: Act = {
     const x = c.x;
     river(w, x + 6, x + 19, 'dis-luit');
     // each trap is slack (just let down) while the one before it rings, and settles a moment later
-    const traps = [7, 11, 15].map((k, i) => w.add(new Trap(px(x + k), px(x + 4), [330, 60, 270][i])));
+    const traps = [7, 11.5, 16].map((k, i) => w.add(new Trap(px(x + k), px(x + 4), [330, 60, 390][i])));
     (w.flags.traps ??= []).push(...traps);
     onPass(w, px(x + 2), (w2) => tara(w2, 'Ghonta bazise? Bhal! | The bell is ringing? Good!', 2.4));
   },

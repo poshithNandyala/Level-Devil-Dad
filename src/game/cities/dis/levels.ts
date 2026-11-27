@@ -76,7 +76,7 @@ const tourLevel = () =>
     cps: [27.5, 50.5, 58.5, 75, 82.5, 99.6],
     extra: (w) => {
       // he walks at you along the promenade, and pours at the bench (tray set down) before walking on
-      w.add(new Carrier(px(92), px(60), px(62), 34, [0, 0], [px(bench) + 8], 300));
+      w.add(new Carrier(px(92), px(60), px(62), 34, [0, 0], [px(bench) + 8], 220));
       w.add(
         new Decor((ctx) => {
           // the bench where the tea boy stops to pour
@@ -243,11 +243,11 @@ function talatalRoom(): LevelDef {
           { c: 11, r: 11, w: 2, fall: 150 },
           { c: 13, r: 12, w: 2, fall: 180 },
           { c: 15, r: 13, w: 2, fall: 210 },
-          { c: 17, r: 14, w: 2, fall: Infinity, rise: [230, 5, 80] },
+          { c: 17, r: 14, w: 3, fall: Infinity, rise: [230, 5, 80] },
         ],
         6.4,
-        [6, 19],
-        [19, 21],
+        [6, 20],
+        [20, 21],
       );
       sign(w, 1.2, 10.4, 3.4, 'TALATAL', 'shop', null, 'palace stairs');
       rival(w, 2, 15, 1, tara(1));
@@ -655,7 +655,7 @@ const kaidhara: Act = {
   id: 'dis09-chaal',
   w: 40,
   advice: 'The roof goes on, and the oil pushes harder than you can run. Same way: stop on each grip pad, run along it, and clear the rib and the oil in one jump. A ball is rolling in every stretch.',
-  cps: [6.5, 20.5],
+  cps: [5.5, 19.5],
   paint: (g, c) => {
     for (let i = 0; i < 4; i++) g.put(c.x + 8 + i * 7, 14, '#');
   },
@@ -702,7 +702,7 @@ const runUp = (a: Act, s: number): Act => ({
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), shape: 'tour', meta: { family: 'carrier-spills-on-contact', betrayals: ['carrier-spill'], ending: 'dis-tea-tray' } },
   longStage({ base: charRoom(), acts: [chapori], twist: 'dis-hut-shut', par: 36, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
-  longStage({ base: teaRoom(), acts: [bagan], cps: [14.5], twist: 'dis-muga-reel', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-muga-reel' } }),
+  longStage({ base: teaRoom(), acts: [bagan], cps: [12], twist: 'dis-muga-reel', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-muga-reel' } }),
   longStage({ base: talatalRoom(), acts: [], twist: 'dis-laru-plate', par: 34, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } /* repo allocation.json label; v3 names this slot collapsing-stair-penultimate-rises (the integrator lands it) */ }),
   longStage({ base: gamosaRoom(), acts: [atithi, gamFeast, gamMachan], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
   longStage({ base: majuliRoom(), acts: [majuliWake, majuliTraps], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),

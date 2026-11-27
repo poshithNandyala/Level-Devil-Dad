@@ -85,7 +85,7 @@ export const endings: Record<DisEndingKind, Ending> = {
       w.solids.push(r.solid);
       w.flags.reel = r;
       w.flags.twist = 'reel';
-      checkpoint(w, D - 6); // after the bungalow steps: a death on the cocoon replays one cycle, not the walk
+      checkpoint(w, D - 8); // after the bungalow steps: a death on the cocoon replays one cycle, not the walk
     },
   },
   // ================================================================ DIS-04: the laru plate
