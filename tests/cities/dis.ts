@@ -939,7 +939,7 @@ const endingPolicies: Record<string, Policy> = {
     if (p.y + p.h <= px(11) && p.cx > r.solid.x + 32) return go(toward(w, d.x + 8, 1) || 'R');
     if (w.player.isRiding(r.solid as never)) return go(r.phase === 'top' ? 'R' : toward(w, r.solid.x + 16, 2));
     if (p.cx < r.solid.x - 24) return go('R');
-    if (r.phase === 'rest' && r.t < 100) {
+    if (r.phase === 'rest' && r.t < 60) {
       m.hold = 10;
       return { move: 'R', jump: true };
     }

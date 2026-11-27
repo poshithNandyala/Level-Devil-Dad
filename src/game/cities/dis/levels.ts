@@ -540,7 +540,7 @@ const ghar: Act = {
   cps: [14.5, 20.5, 44.5, 52.5],
   build: (w, c) => {
     const x = c.x;
-    husori(w, x + 4, x, [{ x: x + 24, ritual: 0, stay: 200 }, { x: x + 56, ritual: 0, stay: 200 }]);
+    husori(w, x + 4, x, [{ x: x + 24, ritual: 0, stay: 140 }, { x: x + 56, ritual: 0, stay: 140 }], 56);
     sign(w, x + 0.6, 10.4, 3.4, 'BOHAG', 'shop', null, 'ghar ghar');
   },
 };
@@ -553,7 +553,7 @@ const chowk: Act = {
   cps: [14.5, 18.5, 36.5, 42.5, 58.5, 66.5],
   build: (w, c) => {
     const x = c.x;
-    husori(w, x + 4, x, [{ x: x + 22, ritual: 0, stay: 200 }, { x: x + 46, ritual: 170, stay: 330 }, { x: x + 70, ritual: 0, stay: 200 }]);
+    husori(w, x + 4, x, [{ x: x + 22, ritual: 0, stay: 140 }, { x: x + 46, ritual: 120, stay: 240 }, { x: x + 70, ritual: 0, stay: 140 }], 56);
     sign(w, x + 0.6, 10.4, 3.4, 'CHOWK', 'shop', null, 'the yard');
   },
 };

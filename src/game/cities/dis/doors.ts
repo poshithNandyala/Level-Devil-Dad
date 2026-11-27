@@ -76,30 +76,30 @@ export class MugaReel extends Entity {
     this.yRest = GROUND - 8;
     this.solid = new Solid(x, this.yRest, 32, 8);
   }
-  /** cycle: rest 0-150, rise 150-450, top 450-560, reeled in 560-600, gone 600-700 */
+  /** cycle: rest 0-90, rise 90-250, top 250-340, reeled in 340-380, gone 380-470 */
   private yAt(t: number) {
-    if (t < 150) return this.yRest;
-    if (t < 450) return this.yRest + ((this.yTop - this.yRest) * (t - 150)) / 300;
-    if (t < 560) return this.yTop;
-    if (t < 600) return this.yTop - ((t - 560) * 60) / 40;
+    if (t < 90) return this.yRest;
+    if (t < 250) return this.yRest + ((this.yTop - this.yRest) * (t - 90)) / 160;
+    if (t < 340) return this.yTop;
+    if (t < 380) return this.yTop - ((t - 340) * 60) / 40;
     return this.yRest;
   }
   get phase() {
     const t = this.t;
-    return t < 0 ? 'wait' : t < 150 ? 'rest' : t < 450 ? 'rise' : t < 560 ? 'top' : t < 600 ? 'reel' : 'gone';
+    return t < 0 ? 'wait' : t < 90 ? 'rest' : t < 250 ? 'rise' : t < 340 ? 'top' : t < 380 ? 'reel' : 'gone';
   }
   update(w: World) {
     if (this.t < 0 && w.player.cx >= this.from) this.t = 0;
     if (this.t < 0) return;
-    this.t = (this.t + 1) % 700;
+    this.t = (this.t + 1) % 470;
     const ny = this.yAt(this.t);
     const riding = w.player.isRiding(this.solid);
     if (this.phase === 'reel' && w.state === 'play' && riding) {
       w.die('dis-reel');
       return;
     }
-    this.solid.collidable = this.t < 560 || this.t >= 600;
-    if (this.t >= 600) this.solid.place(this.x, this.yRest);
+    this.solid.collidable = this.t < 340 || this.t >= 380;
+    if (this.t >= 380) this.solid.place(this.x, this.yRest);
     else {
       const dy = Math.round(ny) - this.solid.y;
       if (dy !== 0) this.solid.moveBy(w, 0, dy);

@@ -4,7 +4,7 @@ import { lock, tara } from '../../levels/endkit';
 import { px, sand, river, Decor, GROUND, levelPost } from './entities';
 import { Hedge, PathBars, Plucker } from './pluck';
 import { Pan } from './pitha';
-import { roller } from '../../levels/kit';
+import { roller, checkpoint } from '../../levels/kit';
 import { Host, gam, machan } from './gamosa';
 import { TeaBoy } from './bank';
 import { MugaReel, UrukaNet } from './doors';
@@ -85,6 +85,7 @@ export const endings: Record<DisEndingKind, Ending> = {
       w.solids.push(r.solid);
       w.flags.reel = r;
       w.flags.twist = 'reel';
+      checkpoint(w, D - 6); // after the bungalow steps: a death on the cocoon replays one cycle, not the walk
     },
   },
   // ================================================================ DIS-04: the laru plate
@@ -270,6 +271,7 @@ export const endings: Record<DisEndingKind, Ending> = {
       pb.setup(w);
       levelPost(w, { level: 2, e: -1 } as never, D - 1.8, 3);
       w.flags.twist = 'post';
+      checkpoint(w, D - 36); // on the bank where you wait for the plucker
     },
   },
   // ================================================================ DIS-09: the royal seat
