@@ -467,6 +467,33 @@ function brokenRoute(id: string, x: number, segs: [number, number, number, numbe
   ];
 }
 
+
+// ------------------------------------------------------------------ CCU-09 lift acts
+function liftRoute(id: string, x: number, bad?: 'early' | 'stay'): Step[] {
+  const P = (w: World) => w.flags[id] as { p1: ClothPanel; p2: ClothPanel };
+  const head: Step[] = [
+    steerHop(px(x + 1.5), 12, 'up on the block'),
+    steerHop(px(x + 3.6), 12, 'on to the tied panel'),
+  ];
+  if (bad === 'early') return [...head, steerHop(px(x + 6.6), 34, 'a full jump straight at the high bamboo', true), { hold: '', until: done, max: 300 }];
+  const mid: Step[] = [
+    { hold: '', until: (w) => P(w).p1.top() <= px(7), max: 900, note: 'wait: they tie the next one on above, and up you go' },
+    steerHop(px(x + 6.6), 10, 'across to the high bamboo'),
+    { hold: 'R', until: X(x + 6.9), max: 120 },
+    steerHop(px(x + 9.6), 12, 'up on the next tied panel'),
+    { hold: '', until: (w) => P(w).p2.top() <= px(3), max: 900, note: 'wait for the lift again' },
+  ];
+  if (bad === 'stay') return [...head, ...mid, { hold: '', until: done, max: 900, note: 'rest at the top' }];
+  return [
+    ...head,
+    ...mid,
+    { hold: 'R', until: (w) => w.player.onGround && w.player.cx > px(x + 11.6), max: 120, note: 'walk off on to the gallery at once' },
+    walk(x + 22.6),
+    { hold: 'R', until: (w) => w.player.onGround && w.player.y + w.player.h === 240, max: 300, note: 'down off the end of the gallery' },
+    walk(x + 29.4),
+  ];
+}
+
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['CCU-01'] = tourRun('onto');
   S['CCU-02'] = [...ride(px(25), px(28.5), 'past the first “aaste” (over the drain), off on the second'), walk(30)];
@@ -572,6 +599,10 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
 const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'ccu09-uthan': (x) => liftRoute('ccu09-uthan', x),
+  'ccu09-uthan2': (x) => liftRoute('ccu09-uthan2', x),
+  'ccu09-uthan3': (x) => liftRoute('ccu09-uthan3', x),
+  'ccu09-uthan4': (x) => liftRoute('ccu09-uthan4', x),
   'ccu10-setu': (x) => relayRoute(x, [45, 63, 83], true),
   'ccu10-phera': (x) => relayRoute(x, [39, 57, 77], false),
   'ccu10-shesh': (x) => relayRoute(x, [46, 64, 84], true),
@@ -748,6 +779,16 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   mistakes['CCU-07'].push(
     { what: 'staying on the first porter of the morning span', steps: [...to244(), ...relayRoute(244, [43, 61, 81], true).slice(0, 4), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
     { what: 'staying on the tall porter of the midday span', steps: [...to244(), ...relayRoute(244, [43, 61, 81], true), ...relayRoute(304, [44, 60, 84], false).slice(0, 3), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
+  );
+}
+
+
+// CCU-09's lift acts: the obvious plays there
+{
+  const toLift = (): Step[] => [...pandalRoute(), ...actRoutes['ccu09-sinri'](32), ...actRoutes['ccu09-toran'](62), ...actRoutes['ccu09-chala'](88)];
+  mistakes['CCU-09'].push(
+    { what: 'jumping for the high bamboo before the lift', steps: [...toLift(), ...liftRoute('ccu09-uthan', 128, 'early')], cause: 'ccu-bansh' },
+    { what: 'resting on the lifted panel under the roof frame', steps: [...toLift(), ...liftRoute('ccu09-uthan', 128, 'stay')], cause: 'crushed' },
   );
 }
 

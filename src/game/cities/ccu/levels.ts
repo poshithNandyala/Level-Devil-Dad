@@ -1006,6 +1006,50 @@ const setu10a = relay('ccu10-setu', [45, 63, 83], true, 'Howrah Bridge again: ta
 const setu10c = relay('ccu10-shesh', [46, 64, 84], true, 'The last span before College Street: tall, short under you, tall over you, each before the CHA board.');
 const setu10b = relay('ccu10-phera', [39, 57, 77], false, 'And back the other way up: short porter, tall one overtaking, short one under you, each before the CHA board.');
 
+
+/** CCU-09 lift acts: up the inside of the pandal to its gallery. A panel already tied is your step; stand
+ *  on it and they tie the next one on above it (slowly: the decorator climbs up with the cloth), lifting
+ *  you to the next bamboo. At the top, under the roof frame, they tie one more: off before that. */
+function liftAct(id: string, wait: number, advice: string): Act {
+  return {
+    id,
+    w: 30,
+    cp0: false,
+    cps: [27],
+    advice,
+    paint: (g, c) => {
+      const x = c.x;
+      g.fill(x + 1, x + 1, 13, 14, '#').fill(x + 3, x + 4, 12, 12, '=').fill(x + 6, x + 7, 7, 7, '=').fill(x + 9, x + 10, 7, 7, '=').fill(x + 11, x + 22, 3, 3, '=').fill(x + 8, x + 11, 1, 1, '#');
+    },
+    build: (w, c) => {
+      const x = c.x;
+      w.add(new Skeleton(c.X(0), c.X(30)));
+      w.add(new Stakes(c.X(2), c.X(22)));
+      const p1 = w.add(new ClothPanel(c.X(3), px(2), px(12), 1, 2, true));
+      const p2 = w.add(new ClothPanel(c.X(9), px(2), px(7), 1, 0, true));
+      p1.speed = 1;
+      p2.speed = 1;
+      w.add(new Decorator(c.X(5) + 6, px(12), p1));
+      stackWhenOn(w, p1, 4, wait);
+      // at the top: rest on it and they tie on one more, up into the roof frame
+      w.when(
+        (w2) => w2.player.onGround && w2.player.isRiding(p2.solid),
+        (w2) =>
+          w2.after(wait, () => {
+            p2.raise(w2, 3);
+            w2.after(1.6 + wait, () => p2.raise(w2, 1));
+          }),
+      );
+      w.flags[id] = { p1, p2 };
+      void x;
+    },
+  };
+}
+const uthan = liftAct('ccu09-uthan', 2.7, 'Up inside the pandal: stand on the tied panel and wait while they tie the next one on above it; it lifts you to the high bamboo. Do it again on the next, then step off on to the gallery straight away: there’s one more coming, up into the roof frame.');
+const uthan3 = liftAct('ccu09-uthan3', 3.5, 'The third tower, its decorator slower still: wait on the step, ride up, and step off the moment it stops.');
+const uthan4 = liftAct('ccu09-uthan4', 3.9, 'The last tower before the gate: the same patience, the same quick step off at the top.');
+const uthan2 = liftAct('ccu09-uthan2', 3.1, 'The second tower: the same lift, the decorator slower up the ladder. Wait for it, and off on to the gallery the moment it stops.');
+
 /** built on demand: tour() and longStage() read this city's course, skin and endings, which the registry installs first */
 export const levels = (): LevelDef[] => [
   {
@@ -1060,6 +1104,6 @@ export const levels = (): LevelDef[] => [
   longStage({ base: poleRoom(), par: 84, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 160, acts: [girder, dui, sandhya, ulto, bhor, dupur, raat, pylon], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 80, acts: [rok, tokta, gali, duur], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
-  longStage({ base: pandalRoom(), par: 24, acts: [sinri, toran, chala], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
+  longStage({ base: pandalRoom(), par: 80, acts: [sinri, toran, chala, uthan, uthan2, uthan3, uthan4], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
   longStage({ base: finaleRoom(), par: 120, acts: [bus10, tram10, rok10, kumor10, setu10a, setu10b, setu10c], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];

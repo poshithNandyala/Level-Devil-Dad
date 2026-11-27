@@ -21,6 +21,8 @@ export class ClothPanel extends Entity {
   target = 0;
   tied = false;
   tiedAt = -1;
+  /** px a tick it unrolls at */
+  speed = 128 * DT * 4;
   constructor(
     readonly x: number,
     readonly wd: number,
@@ -61,7 +63,7 @@ export class ClothPanel extends Entity {
   }
   update(w: World) {
     if (!this.tied || this.h >= this.target) return;
-    const nh = Math.min(this.target, this.h + 128 * DT * 4);
+    const nh = Math.min(this.target, this.h + this.speed);
     const top = Math.round(this.base - nh);
     const s = this.solid;
     if (top !== s.y) s.moveBy(w, 0, top - s.y);
