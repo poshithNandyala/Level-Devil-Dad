@@ -160,7 +160,8 @@ export const THAU_PITS = [
   [26, 27],
   [33, 34],
 ];
-export const THAU: Cloud = { t0: -1, thick: 4.2, clear: 1.8 };
+// round 4: a shorter thick spell under the awning, so the wait replays in under 7.5 s (the holes are as before)
+export const THAU: Cloud = { t0: -1, thick: 2.6, clear: 1.8 };
 export const thauAct = (id: string, PITS: number[][], CL: Cloud, key: string): Act => ({
   id,
   w: 40,
