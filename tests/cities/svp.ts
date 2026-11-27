@@ -7,6 +7,7 @@ import type { CityTests } from '../city-tests';
 import { LEVELS } from '../../src/game/levels';
 import type { Rope } from '../../src/game/cities/svp/rassi';
 import type { Formation } from '../../src/game/cities/svp/choona';
+import type { Barge, Swell } from '../../src/game/cities/svp/lehar';
 import type { SawHall } from '../../src/game/cities/svp/s02';
 import type { Creek } from '../../src/game/cities/svp/s03';
 import type { Herd, LateBoat } from '../../src/game/cities/svp/s04';
@@ -436,7 +437,63 @@ const caveBeat = (i: number, hopTx: number, jump: number, waitTx: number, drainT
   { hold: 'R', jump: 14, ticks: 14, note: 'over the drain' },
   { hold: 'R', until: and(ground, X(farTx)), max: 900, note: 'across the dry floor' },
 ];
+// ------------------------------------------------------------------ SVP-06 act 2: the swell
+const swell = (k: number) => (w: World) => (w.flags.swells as Swell[])[k];
+const bargeOf = (w: World) => (w.flags.barges as Barge[])[0];
+/** along one row of floats: stand on the one you are on, and hop to the next when it is within a jump of you */
+function floatsStep(k: number, lastTx: number, note: string): Step {
+  let W: World | null = null;
+  let jt = 0;
+  return {
+    policy: (w) => {
+      if (W !== w) {
+        W = w;
+        jt = 0;
+      }
+      const p = w.player;
+      if (jt > 0) {
+        jt--;
+        return { move: 'R', jump: true };
+      }
+      if (!p.onGround) return go('R');
+      const sw = swell(k)(w);
+      const cur = sw.floats.findIndex((f) => w.standing(f.solid));
+      const curTop = cur < 0 ? FLOOR_Y : sw.floats[cur].y;
+      const next = cur + 1;
+      const t = w.tick;
+      if (next >= sw.floats.length) {
+        // off the last float on to the island
+        if (FLOOR_Y >= curTop - 30) {
+          jt = 22;
+          return { move: 'R', jump: true };
+        }
+        const f = sw.floats[cur];
+        return go(toward(w, f.x + f.w - 10, 2));
+      }
+      const f = sw.floats[next];
+      const edge = cur < 0 ? sw.water[0] - 14 : sw.floats[cur].x + sw.floats[cur].w - 10;
+      if (Math.abs(p.cx - edge) > 3) return go(toward(w, edge, 2));
+      const pred = sw.top(next, t + 36);
+      if (pred >= curTop - 30 && sw.top(next, t + 20) >= curTop - 34) {
+        jt = 22;
+        return { move: 'R', jump: true };
+      }
+      return go('');
+    },
+    until: (w) => w.player.onGround && w.player.x >= px(lastTx),
+    max: 6000,
+    note,
+  };
+}
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp06-lehar': (x) => [
+    { hold: 'R', until: X(x + 3.2), max: 600 },
+    floatsStep(0, x + 28, 'across the row of floats, a beat at a time'),
+    { policy: (w) => ({ move: 'R', jump: bargeOf(w).plat.y < FLOOR_Y - 14 && w.player.onGround && w.player.cx > px(x + 33.4) }), until: (w) => w.standing(bargeOf(w).plat.solid) && w.player.cx > bargeOf(w).plat.x + 30, max: 3000, note: 'on to the barge, a hop if it is up' },
+    { hold: '', until: (w) => bargeOf(w).state === 'docked', max: 4000, note: 'the barge goes across, heaving' },
+    { policy: (w) => ({ move: 'R', jump: bargeOf(w).plat.y <= FLOOR_Y - 20 && w.player.onGround }), until: and(ground, X(x + 62)), max: 1800, note: 'off to the far shore when the barge is up' },
+    { hold: 'R', until: and(ground, X(x + 66)), max: 300 },
+  ],
   'svp05-choona': (x) => [...caveBeat(0, x + 10.6, 12, x + 14.2, x + 16.8, x + 32), ...caveBeat(1, x + 39.4, 20, x + 45.2, x + 46.8, x + 61)],
   'svp05-rassi': (x) => [...ropeCross(0, x + 4, x + 29), ...ropeCross(1, x + 27, x + 57)],
   'svp10-rassi': (x) => actRoutes['svp05-rassi'](x),
@@ -588,6 +645,16 @@ const endingPolicies: Record<string, Policy> = {
 };
 
 // ------------------------------------------------------------------ the plays that must die in an added act
+actDeath('SVP-06', 'svp06-lehar', 'run and hop the floats without watching', 'svp-lehar', () => [hopUntil((w) => w.state !== 'play', 'hop on')]);
+actDeath('SVP-06', 'svp06-lehar', 'across the floats properly, then jump from the island for the far shore', 'svp-lehar', (x) => [
+  ...actRoutes['svp06-lehar'](x).slice(0, 3),
+  { hold: 'R', jump: 20, until: (w) => w.state !== 'play', max: 1200, long: true, note: 'jump from the island for the far shore' },
+]);
+actDeath('SVP-06', 'svp06-lehar', 'wait for the first float, then hop on without watching the rest', 'svp-lehar', (x) => [
+  { hold: 'R', until: X(x + 3.2), max: 600 },
+  { hold: '', until: (w) => swell(0)(w).top(0, w.tick + 30) >= FLOOR_Y - 20, max: 1500, note: 'the first float is level' },
+  hopUntil((w) => w.state !== 'play', 'then hop on, hop on'),
+]);
 actDeath('SVP-05', 'svp05-choona', 'hop everything in the cave', 'svp-chuna', () => [hopUntil((w) => w.state !== 'play', 'hop the rock, the drain, on')]);
 actDeath('SVP-05', 'svp05-choona', 'hop the rock, wait a little, then go', 'svp-chuna', (x) => [
   { hold: 'R', until: X(x + 10.6), max: 900 },
