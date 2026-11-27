@@ -8,7 +8,8 @@ import { Solid } from '../../body';
 import { tara } from '../../levels/endkit';
 import type { Act } from '../../levels/acts';
 import { onPass } from '../../levels/trolls';
-import { Danger, GROUND, px, river } from './entities';
+import { Danger, Decor, GROUND, px, river } from './entities';
+import { Host, gam } from './gamosa';
 
 /** banana leaves over the drain: they hold a walker, and tip under a landing */
 export class Leaves extends Entity {
@@ -145,5 +146,46 @@ export const gamMachan: Act = {
     );
     (w.flags.machan ??= []).push(m);
     onPass(w, px(x + 2), (w2) => tara(w2, 'Bihu machan, Dad! Lahe lahe. | The Bihu stage, Dad! Take it slow.', 2.4));
+  },
+};
+
+/** DIS-05 act (v3 F452 remembered-gap-is-bridged): three hosts at a wedding yard in Jorhat hang gamosas on you, and with
+ *  three you cannot see your feet. The nala you saw before the cloth came has since had a bamboo laid over it: its shadow
+ *  shows past the gap's drawn end. Walk it. A jump meets the low machan beam over it; backing off finds the ditch behind. */
+export const gamSanko: Act = {
+  id: 'dis05-sanko',
+  w: 24,
+  advice: 'A wedding yard in Jorhat: three hosts hang gamosas on you one after another, and with three you can’t see your feet. You saw the nala ahead before the cloth came, but someone has laid a bamboo over it since: look at its shadow, past the nala’s end. Walk across. Jump it and you hit the low beam of the wedding machan; back off to find a host and you are in the ditch behind you.',
+  paint: (g, c) => {
+    g.pit(c.x + 5, c.x + 6);
+    g.pit(c.x + 12, c.x + 16);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    onPass(w, px(x + 0.5), (w2) => (gam(w2).n = 0));
+    w.add(new Danger({ x: px(x + 5), y: GROUND + 4, w: px(2), h: 80 }, 'dis-pit'));
+    for (const k of [8, 9, 10]) w.add(new Host(px(x + k) + 8, GROUND, 'give'));
+    river(w, x + 12, x + 17, 'dis-pit');
+    // the bamboo laid over the nala, and its shadow on the far bank
+    const bamboo = new Solid(px(x + 12), GROUND, px(5), 6);
+    bamboo.collidable = false;
+    w.solids.push(bamboo);
+    // laid over the nala while the cloth was coming down: it is there once you are wearing three
+    w.onTick((w2) => {
+      if (gam(w2).n >= 3) bamboo.collidable = true;
+    });
+    w.add(new Danger({ x: px(x + 11), y: GROUND - 40, w: px(7), h: 14 }, 'dis-beam'));
+    w.add(
+      new Decor((ctx) => {
+        ctx.fillStyle = bamboo.collidable ? 'rgba(0,0,0,0.28)' : 'rgba(0,0,0,0)';
+        ctx.fillRect(px(x + 17), GROUND + 1, 24, 3);
+        ctx.fillStyle = '#7A5A22';
+        ctx.fillRect(px(x + 11), GROUND - 40, px(7), 6);
+        ctx.fillRect(px(x + 11), GROUND - 40, 3, 40);
+        ctx.fillRect(px(x + 18) - 3, GROUND - 40, 3, 40);
+      }, -2),
+    );
+    for (const k of [19, 21]) w.add(new Host(px(x + k) + 8, GROUND, 'take'));
+    onPass(w, px(x + 2), (w2) => tara(w2, 'Jump, Dad! Nala! | Jump, Dad! The drain!', 2.2));
   },
 };
