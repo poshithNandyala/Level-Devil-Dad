@@ -514,23 +514,31 @@ export const act8 = phingaAct('bbi08-phinga', 'bbi8ph');
  *  a badi on its circle is slow at the outer edge and fast through the middle: hop on and off only at the edge.
  *  Sit on one too long and his spoon scoops it. */
 export const GHURNI = { c0: 4, c1: 19, a: 8, b: 15, r: 3.5, per: 4.0, spin: 50, scoop: 4.5 };
-export const act9: Act = {
-  id: 'bbi08-ghurni',
-  w: 24,
-  advice: 'The uncle is stirring: every badi goes round. From the side it is slow at the edge of its circle and fast through the middle. Hop on and off only at the slow edge, and do not sit on one for long: his spoon scoops it.',
+/** `rev` (the finale's turn, law 7): the stir is reversed: each badi idles through the middle of its swing and is
+ *  flung round at the edges. Two small circles side by side: hop on, across and off in the middles */
+const GHURNI_REV = { c0: 4, c1: 13, a: 6, b: 10, r: 2.2 };
+export function ghurniAct(id: string, key: string, rev = false): Act {
+  const G = rev ? { ...GHURNI, ...GHURNI_REV } : GHURNI;
+  return {
+  id,
+  w: rev ? 17 : 24,
+  advice: rev
+    ? 'Tonight he stirs the other way: every badi idles through the middle of its swing and is flung round at the edges. Hop on, across and off only in the middle.'
+    : 'The uncle is stirring: every badi goes round. From the side it is slow at the edge of its circle and fast through the middle. Hop on and off only at the slow edge, and do not sit on one for long: his spoon scoops it.',
   cps: [],
   paint: (g, c) => {
-    g.pit(c.x + GHURNI.c0, c.x + GHURNI.c1);
+    g.pit(c.x + G.c0, c.x + G.c1);
   },
   build: (w, c) => {
-    const st = { t0: -1, rigs: [] as Rig[], th: [0, 0] };
-    w.flags.bbi8gh = st;
+    const st = { t0: -1, rigs: [] as Rig[], th: [0, 0], u: [0, 0], du: [0, 0] };
+    (w.flags[key] as unknown) = st;
     onPass(w, c.X(1), (w2) => (st.t0 = w2.tick));
-    channel(w, c.x + GHURNI.c0, c.x + GHURNI.c1, 'bbi-pakhala', 'water');
-    const om = (2 * Math.PI) / GHURNI.per;
-    [GHURNI.a, GHURNI.b].forEach((cx, i) => {
+    // reversed, what drops you in is a badi flung away at the edge of its swing: the death line says so
+    channel(w, c.x + G.c0, c.x + G.c1, rev ? 'bbi-ghurni' : 'bbi-pakhala', 'water');
+    const om = (2 * Math.PI) / G.per;
+    [G.a, G.b].forEach((cx, i) => {
       // badi A starts at the near edge of its circle; B at the near edge of its own, so they meet edge to edge
-      const sign = i === 0 ? 1 : -1;
+      const sign = i === 0 || rev ? 1 : -1;
       const ride = { on: false, since: -1 };
       st.rigs[i] = w.add(
         new Rig(c.X(cx) - 13, FL - 4, 26, 6, {
@@ -539,19 +547,28 @@ export const act9: Act = {
           tick: (r, w2) => {
             const t = st.t0 < 0 ? 0 : since(w2, st.t0);
             // A comes to its near edge 0.4 s after you pass the trigger, just as you reach the rim
-            const th = Math.PI + om * (t - 0.4);
+            // reversed, A is already swinging in towards its middle as you reach the rim
+            const th = Math.PI + (rev ? Math.PI - 0.95 : 0) + om * (t - 0.4);
             st.th[i] = th;
-            const x = c.X(cx) + 8 + sign * GHURNI.r * 16 * Math.cos(th) - 13;
-            const v = Math.abs(GHURNI.r * 16 * om * Math.sin(th));
+            let x = c.X(cx) + 8 + sign * G.r * 16 * Math.cos(th) - 13;
+            let v = Math.abs(G.r * 16 * om * Math.sin(th));
+            if (rev) {
+              // reversed: an even swing, slowed right down through the middle and flung at the ends
+              const u = (2 / Math.PI) * Math.asin(Math.sin(th));
+              st.du[i] = u - st.u[i];
+              st.u[i] = u;
+              x = c.X(cx) + 8 + G.r * 16 * Math.sign(u) * Math.abs(u) ** 2.5 - 13;
+              v = G.r * 16 * 2.5 * Math.abs(u) ** 1.5 * (4 / G.per);
+            }
             r.moveTo(w2, x, FL - 4);
             const on = r.rides(w2);
             // jumping on while it races through the middle spins you off into the rim
-            if (on && !ride.on && v > GHURNI.spin) w2.die('bbi-ghurni');
+            if (on && !ride.on && v > G.spin) w2.die('bbi-ghurni');
             if (on && ride.since < 0) ride.since = w2.tick;
             if (!on) ride.since = -1;
             ride.on = on;
-            r.s.spoon = on ? since(w2, ride.since) / GHURNI.scoop : 0;
-            if (on && since(w2, ride.since) > GHURNI.scoop) w2.die('bbi-chamacha');
+            r.s.spoon = on ? since(w2, ride.since) / G.scoop : 0;
+            if (on && since(w2, ride.since) > G.scoop) w2.die('bbi-chamacha');
           },
           paint: (ctx, r) => {
             ctx.fillStyle = '#9C5A1E';
@@ -573,12 +590,12 @@ export const act9: Act = {
         layer: 2,
         paint: (ctx, _r, w2) => {
           const t = st.t0 < 0 ? 0 : since(w2, st.t0);
-          folk(ctx, c.X(GHURNI.c1 + 2) + 8, FL, 26, '#2A9D8F', { skirt: '#E9E1CF', face: -1, arm: 0.4 + 0.3 * Math.sin(om * t) });
+          folk(ctx, c.X(G.c1 + 2) + 8, FL, 26, '#2A9D8F', { skirt: '#E9E1CF', face: rev ? 1 : -1, arm: 0.4 + 0.3 * Math.sin(om * t) });
           ctx.strokeStyle = 'rgba(255,255,255,0.5)';
           ctx.lineWidth = 1;
-          for (const cx of [GHURNI.a, GHURNI.b]) {
+          for (const cx of [G.a, G.b]) {
             ctx.beginPath();
-            ctx.ellipse(c.X(cx) + 8, FL + 2, GHURNI.r * 16, 4, 0, 0, Math.PI * 2);
+            ctx.ellipse(c.X(cx) + 8, FL + 2, G.r * 16, 4, 0, 0, Math.PI * 2);
             ctx.stroke();
           }
         },
@@ -586,6 +603,8 @@ export const act9: Act = {
     );
   },
 };
+}
+export const act9 = ghurniAct('bbi08-ghurni', 'bbi8gh');
 
 /** ending: a trough of pakhala water before the door; a sal-leaf plate floats in it, and turns over when it
  *  reaches the door's side, so step off on to the step before it gets there */

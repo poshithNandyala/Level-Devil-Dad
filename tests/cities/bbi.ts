@@ -792,6 +792,10 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'stay on your badi', cause: 'bbi-bhanwar', steps: (x) => [...hop(x + 1.4, 'up on the rim'), { hold: '', until: ground, max: 300 }, leap((w) => pl(w).bx[0] + 13, 'on to it', () => true, 5), { hold: '', until: done, max: 1500 }] },
     { what: 'hop for the far rim at the last moment', cause: 'bbi-pakhala', steps: (x) => [...hop(x + 1.4, 'up on the rim'), { hold: '', until: ground, max: 300 }, leap((w) => pl(w).bx[0] + 13, 'on to it', () => true, 5), stayOn((w) => pl(w).bx[0] + 13, (w) => pl(w).bx[0] + 13 > px(x + 9) - 10, 'to the hole', 1500), { hold: 'R', jump: 15, ticks: 15 }, { hold: 'R', until: done, max: 600 }] },
   ],
+  'bbi10-ghurni': [
+    { what: 'hop on at the slow edge, as before', cause: 'bbi-ghurni', steps: (x) => [{ hold: 'R', until: X(x + 2.6), max: 400 }, waitFor((w) => gr10(w).t0 >= 0 && gr10(w).u[0] < -0.97, 'its near edge'), { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: done, max: 600 }] },
+    { what: 'get on in the middle and wait for the stir to stop', cause: 'bbi-chamacha', steps: (x) => [...ghurni10Run(x).slice(0, 3), stayOn((w) => gr10(w).rigs[0].x + 13, done, 'and wait', 900)] },
+  ],
   'bbi10-palaa': [
     { what: 'let it run, and wait for it to come back, as before', cause: 'bbi-rachh', steps: (x) => [{ hold: 'R', until: X(x + 2.4), max: 400 }, { hold: '', until: done, max: 1200 }] },
     { what: 'jump out to where it came back last time', cause: 'bbi-ranga', steps: (x) => [{ hold: 'R', until: X(x + 2.4), max: 400 }, leap(() => px(x + 6.5), 'out over the pit'), { hold: '', until: done, max: 600 }] },
@@ -1044,6 +1048,21 @@ const palaaRun = (x: number): Step[] => [
   { hold: 'R', until: and(ground, X(x + 17.5)), max: 400, note: 'off on to the far bank' },
   { hold: 'R', until: X(x + 20.5), max: 300 },
 ];
+const gr10 = (w: World) => w.flags.bbi10gr as { t0: number; rigs: { x: number }[]; u: number[]; du: number[] };
+/** the finale's stir: hop as a badi swings in towards the middle of its swing, so it is slow when you land */
+const inward = (w: World) => { const g = gr10(w); return g.t0 >= 0 && ((g.du[0] > 0 && g.u[0] > -0.5 && g.u[0] < -0.3) || (g.du[0] < 0 && g.u[0] < 0.5 && g.u[0] > 0.3)); };
+const ghurni10Run = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 2.6), max: 400, note: 'to the rim' },
+  waitFor((w) => inward(w) && gr10(w).du[0] > 0, 'A swings in towards its middle'),
+  leap((w) => gr10(w).rigs[0].x + 13, 'on to A in the middle'),
+  { hold: '', ticks: 30 },
+  stayOn((w) => gr10(w).rigs[0].x + 13, inward, 'ride A until it swings in again', 600),
+  leap((w) => gr10(w).rigs[1].x + 13, 'across to B, in its middle too'),
+  { hold: '', ticks: 30 },
+  stayOn((w) => gr10(w).rigs[1].x + 13, inward, 'ride B until it swings in again', 600),
+  leap(() => px(x + 14.6), 'off to the far rim'),
+  { hold: 'R', until: X(x + 16.5), max: 300 },
+];
 const pl10 = (w: World) => w.flags.bbi10pl as { phase: string; x: number; box: { x: number } };
 /** the finale's shuttle: straight on to it, ride it across */
 const palaa10Run = (x: number): Step[] => [
@@ -1266,6 +1285,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi07-sajaghara': sa
   'bbi06-tantu': tantuRun,
   'bbi06-palaa': palaaRun,
   'bbi10-palaa': palaa10Run,
+  'bbi10-ghurni': ghurni10Run,
   'bbi08-phinga': phingaRun,
   'bbi08-ghurni': ghurniRun,
   'bbi07-ghungur': ghungurRun,
