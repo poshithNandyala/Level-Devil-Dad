@@ -464,7 +464,7 @@ export const julus: Act = {
   id: 'lko07-julus',
   w: 58,
   advice: 'A slow group of strollers going your way, all down the arcade, stepping over the open nalas. Walk behind them at their pace, pausing as they do. Rush up and bump them, or hop a nala straight on to their heels, and the last one steps back and tuts you into the nala you just crossed. Wait at each nala till they’re well clear of it.',
-  cps: [18, 30.5, 42],
+  cps: [18, 28, 42],
   paint: (g, c) => {
     for (const n of JULUS_NALAS) g.pit(c.x + n, c.x + n + 1);
   },

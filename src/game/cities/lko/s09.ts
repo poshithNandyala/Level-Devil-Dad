@@ -50,6 +50,8 @@ export class Flock {
   target: Roof | null = null;
   /** the roof they always come down to (the loft), whatever is ahead of you */
   always: Roof | null = null;
+  /** land on the near end of a wide roof (where you land from the roof before), not its middle */
+  near = false;
   z: Zone;
   constructor(
     w: World,
@@ -72,7 +74,7 @@ export class Flock {
     } else this.target = null;
     let tx: number, ty: number;
     if (this.target) {
-      tx = (this.target.x0 + this.target.x1) / 2;
+      tx = this.spot(this.target);
       ty = this.target.top - 8;
     } else {
       const a = w.tick * 0.03;
@@ -94,8 +96,11 @@ export class Flock {
     this.z.y = this.y - 8;
     this.z.on = !!this.target && d < 10;
   }
+  spot(r: Roof) {
+    return this.near ? Math.min(r.x0 + 32, (r.x0 + r.x1) / 2) : (r.x0 + r.x1) / 2;
+  }
   draw(ctx: Ctx, w: World) {
-    const landed = !!this.target && Math.hypot(this.x - (this.target.x0 + this.target.x1) / 2, this.y - (this.target.top - 8)) < 10;
+    const landed = !!this.target && Math.hypot(this.x - this.spot(this.target), this.y - (this.target.top - 8)) < 10;
     for (let i = 0; i < 9; i++) {
       const ox = ((i * 37) % 44) - 22,
         oy = ((i * 13) % 14) - 7;
@@ -180,6 +185,20 @@ export function roofs(w: World, rs: Roof[], laneFrom: number, laneTo: number) {
 }
 
 export const roofOf = (c0: number, c1: number, row: number): Roof => ({ x0: px(c0), x1: px(c1 + 1), top: px(row) });
+/** a row of roofs two tiles apart, from column `start`: [column, row, width]. The low roofs (row 13), where a
+ *  hop from a higher roof lands long, are seven wide, so wherever a late landing puts you there is room to
+ *  stand, run or hop before the edge; the others are four. */
+export const lay = (start: number, rows: number[]): [number, number, number][] => {
+  let a = start;
+  return rows.map((r) => {
+    const wd = r === 13 ? 7 : 4;
+    const out: [number, number, number] = [a, r, wd];
+    a += wd + 2;
+    return out;
+  });
+};
+/** the column two tiles past the last roof of a row */
+export const after = (L: [number, number, number][]) => L[L.length - 1][0] + L[L.length - 1][2] + 2;
 
 // ================================================================ the room
 function kabootarRoom(): LevelDef {
@@ -194,20 +213,21 @@ function kabootarRoom(): LevelDef {
     par: 20,
     map: Grid.ground(15)
       .pit(7, 31, 15)
-      .fill(8, 11, 13, 17, '#')
-      .fill(14, 17, 12, 17, '#')
-      .fill(20, 23, 13, 17, '#')
-      .fill(26, 31, 14, 17, '#')
+      .fill(8, 14, 13, 17, '#')
+      .fill(17, 20, 12, 17, '#')
+      .fill(23, 29, 13, 17, '#')
+      .fill(30, 31, 14, 17, '#')
       .put(1, 14, '@')
       .put(30, 13, 'E')
       .rows(),
     build(w: World) {
       door(w);
-      const rs = [roofOf(8, 11, 13), roofOf(14, 17, 12), roofOf(20, 23, 13), roofOf(26, 31, 14)];
+      const rs = [roofOf(8, 14, 13), roofOf(17, 20, 12), roofOf(23, 29, 13), roofOf(30, 31, 14)];
       roofs(w, rs, px(7), px(32));
-      const f = new Flyer(px(29) + 8, px(14), [['red', 0.6], ['white', 1.7], ['red', 2.4]], px(4));
+      const f = new Flyer(px(29) + 8, px(13), [['red', 0.6], ['white', 1.7], ['red', 2.4]], px(4));
       drawFlyer(w, f);
       const fl = new Flock(w, rs, f, { x: px(20), y: px(4) });
+      fl.near = true;
       w.flags.kabootar = { f, fl };
       sign(w, 1.6, 10.4, 3.6, 'CHOWK', 'shop', null, 'kabootarbazi');
       rival(w, 3, 15, 1, tara(7));
@@ -220,35 +240,28 @@ function kabootarRoom(): LevelDef {
 // ================================================================ the act: the flag in the wind
 /** The flyer is behind you now, and his flag is two-sided: red one face, white the other. The birds ahead
  *  go by the face that's turned to them, the far face. What you see is the near face: the opposite. */
-const HAWA: [number, number][] = [
-  [7, 13],
-  [13, 12],
-  [19, 13],
-  [25, 12],
-  [31, 13],
-  [37, 12],
-  [43, 13],
-  [49, 12],
-];
+export const HAWA = lay(7, [13, 12, 13, 12, 13, 12, 13, 12]);
+const HAWA_END = after(HAWA);
 export const hawa: Act = {
   id: 'lko09-hawa',
-  w: 58,
+  w: HAWA_END + 3,
   advice: 'Now the flyer is behind you, and his flag has two faces, red and white. The birds ahead go by the face turned towards them, the one you can’t see: the flag you see is the opposite of their order. Read the tip where the cloth curls over: that’s their colour. Cross while you see white.',
-  cps: [7.2, 13.2, 19.2, 25.2, 31.2, 37.2, 43.2, 49.2],
+  cps: HAWA.map(([a]) => a + 0.2),
   paint: (g, c) => {
     const x = c.x;
-    g.pit(x + 0, x + 57, 15);
+    g.pit(x + 0, x + HAWA_END + 2, 15);
     g.fill(x + 0, x + 5, 14, 17, '#');
-    HAWA.forEach(([a, r]) => g.fill(x + a, x + a + 3, r, 17, '#'));
-    g.fill(x + 55, x + 57, 14, 17, '#');
+    HAWA.forEach(([a, r, wd]) => g.fill(x + a, x + a + wd - 1, r, 17, '#'));
+    g.fill(x + HAWA_END, x + HAWA_END + 2, 14, 17, '#');
   },
   build: (w, c) => {
     const x = c.x;
-    const rs = [...HAWA.map(([a, r]) => roofOf(x + a, x + a + 3, r)), roofOf(x + 55, x + 57, 14)];
-    roofs(w, [roofOf(x, x + 5, 14), ...rs], c.X(0), c.X(58));
+    const rs = [...HAWA.map(([a, r, wd]) => roofOf(x + a, x + a + wd - 1, r)), roofOf(x + HAWA_END, x + HAWA_END + 2, 14)];
+    roofs(w, [roofOf(x, x + 5, 14), ...rs], c.X(0), c.X(HAWA_END + 3));
     const f = new Flyer(c.X(1) + 8, px(14), [['white', 1.6], ['red', 2.4]], c.X(2.5), true);
     drawFlyer(w, f);
-    const fl = new Flock(w, rs, f, { x: c.X(30), y: px(4) }, 'lko-hawa');
+    const fl = new Flock(w, rs, f, { x: c.X(HAWA_END / 2), y: px(4) }, 'lko-hawa');
+    fl.near = true;
     w.flags[c.f('k')] = { f, fl };
   },
 };
@@ -272,36 +285,32 @@ class Nearer extends Flyer {
     return this.near(w).order(w);
   }
 }
-const JHANDE: [number, number][] = [
-  [6, 13],
-  [12, 12],
-  [18, 13],
-  [24, 12],
-  [30, 13],
-];
+export const JHANDE = lay(6, [13, 12, 13, 12, 13]);
+const JHANDE_END = after(JHANDE);
 export const jhande: Act = {
   id: 'lko09-jhande',
-  w: 46,
+  w: JHANDE_END + 10,
   advice: 'Two flyers now, one behind you and one far ahead, and one flock. It obeys the flag nearer to you (watch where it circles): the one behind you for the first half of the way, the one ahead once you’re over the middle of the middle roof. Cross on the nearer flag’s red.',
-  cps: [6.2, 12.2, 18.2, 24.2, 30.2],
+  cps: JHANDE.map(([a]) => a + 0.2),
   paint: (g, c) => {
     const x = c.x;
-    g.pit(x, x + 45, 15);
+    g.pit(x, x + JHANDE_END + 9, 15);
     g.fill(x, x + 4, 14, 17, '#');
-    JHANDE.forEach(([a, r]) => g.fill(x + a, x + a + 3, r, 17, '#'));
-    g.fill(x + 36, x + 45, 14, 17, '#');
+    JHANDE.forEach(([a, r, wd]) => g.fill(x + a, x + a + wd - 1, r, 17, '#'));
+    g.fill(x + JHANDE_END, x + JHANDE_END + 9, 14, 17, '#');
   },
   build: (w, c) => {
     const x = c.x;
-    const rs = JHANDE.map(([a, r]) => roofOf(x + a, x + a + 3, r));
-    roofs(w, [roofOf(x, x + 4, 14), ...rs, roofOf(x + 36, x + 45, 14)], c.X(0), c.X(46));
+    const rs = JHANDE.map(([a, r, wd]) => roofOf(x + a, x + a + wd - 1, r));
+    roofs(w, [roofOf(x, x + 4, 14), ...rs, roofOf(x + JHANDE_END, x + JHANDE_END + 9, 14)], c.X(0), c.X(JHANDE_END + 10));
     const a = new Flyer(c.X(1) + 8, px(14), [['red', 1.8], ['white', 1.8]], c.X(1.5));
-    const b = new Flyer(c.X(37) + 8, px(14), [['white', 1.8], ['red', 1.8]], c.X(1.5));
+    const b = new Flyer(c.X(JHANDE_END + 1) + 8, px(14), [['white', 1.8], ['red', 1.8]], c.X(1.5));
     drawFlyer(w, a);
     drawFlyer(w, b);
     const f = new Nearer(a, b);
     const home = { x: a.x, y: px(4) };
     const fl = new Flock(w, rs, f, home, 'lko-jhanda-peeche');
+    fl.near = true;
     w.flags[c.f('k')] = { f, fl, a, b };
     w.onTick((w2) => {
       const n = f.near(w2);
@@ -531,33 +540,31 @@ export const seeti: Act = {
 /** This flyer's flock has tumblers in it: at the start of every red, a few birds drop at the roof ahead,
  *  rolling over backwards, and then recover and climb. A tumble is not a landing. Wait it out, as birds
  *  coming down taught you, and the red is gone before you cross; go through the tumble, early in the red. */
-const GIRAH: [number, number][] = [
-  [6, 13],
-  [12, 12],
-  [18, 13],
-];
+export const GIRAH = lay(6, [13, 12, 13]);
+const GIRAH_END = after(GIRAH);
 const TUMBLE = 1.15;
 export const girah: Act = {
   id: 'lko09-girah',
-  w: 32,
+  w: GIRAH_END + 8,
   cp0: false,
   advice: 'This flock has tumblers in it: at the start of every red a few birds drop at the roof ahead, rolling over backwards, then climb again. A tumble is not a landing. Cross early in the red, through the tumble: wait for it to clear and the red is gone.',
-  cps: [-2, 6.2, 12.2, 18.2, 24.4],
+  cps: [-2, ...GIRAH.map(([a]) => a + 0.2), GIRAH_END + 0.4],
   paint: (g, c) => {
     const x = c.x;
-    g.pit(x, x + 31, 15);
+    g.pit(x, x + GIRAH_END + 7, 15);
     g.fill(x, x + 4, 14, 17, '#');
-    GIRAH.forEach(([a, r]) => g.fill(x + a, x + a + 3, r, 17, '#'));
-    g.fill(x + 24, x + 31, 14, 17, '#');
+    GIRAH.forEach(([a, r, wd]) => g.fill(x + a, x + a + wd - 1, r, 17, '#'));
+    g.fill(x + GIRAH_END, x + GIRAH_END + 7, 14, 17, '#');
   },
   build: (w, c) => {
     const x = c.x;
-    const rs = GIRAH.map(([a, r]) => roofOf(x + a, x + a + 3, r));
-    const end = roofOf(x + 24, x + 31, 14);
-    roofs(w, [roofOf(x, x + 4, 14), ...rs, end], c.X(0), c.X(32));
+    const rs = GIRAH.map(([a, r, wd]) => roofOf(x + a, x + a + wd - 1, r));
+    const end = roofOf(x + GIRAH_END, x + GIRAH_END + 7, 14);
+    roofs(w, [roofOf(x, x + 4, 14), ...rs, end], c.X(0), c.X(GIRAH_END + 8));
     const f = new Flyer(c.X(1) + 8, px(14), [['red', 1.4], ['white', 1.8]], c.X(1.5));
     drawFlyer(w, f);
     const fl = new Flock(w, [...rs, end], f, { x: c.X(16), y: px(4) }, 'lko-girah');
+    fl.near = true;
     w.flags[c.f('k')] = { f, fl };
     // when you left the ground: in the red after the tumble had cleared (you waited it out), or in the white
     let left: 'tumble-late' | 'white' | 'ok' = 'ok';
@@ -584,7 +591,7 @@ export const girah: Act = {
         const t = (1.4 - o.left) / TUMBLE;
         const p = w2.player;
         const r = [...rs, end].find((q) => q.x0 > p.x + p.w - 2) ?? end;
-        const cx = (r.x0 + r.x1) / 2;
+        const cx = fl.spot(r);
         const dy = Math.sin(Math.PI * t) * (r.top - 30 - px(4));
         for (let i = 0; i < 3; i++) {
           const a = t * 14 + i;

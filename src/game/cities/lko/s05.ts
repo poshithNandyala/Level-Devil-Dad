@@ -281,7 +281,7 @@ export const bhara: Act = {
   build: (w, c) => {
     const x = c.x;
     tawa(w, x + 2, x + 9);
-    const R = { t0: -1, period: 230, up: 70, tip: 42 };
+    const R = { t0: -1, period: 222, up: 70, tip: 42 };
     w.flags[c.f('rack')] = R;
     const x0 = px(x + 1.5),
       x1 = px(x + 10.5);

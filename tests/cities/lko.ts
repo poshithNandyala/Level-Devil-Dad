@@ -5,6 +5,7 @@ import type { Door } from '../../src/game/entities/basics';
 import { Step, X, and, ground } from '../runner';
 import type { CityTests } from '../city-tests';
 import { LEVEL_BY_ID } from '../../src/game/levels';
+import { HAWA, JHANDE as JHANDE_L, GIRAH, after } from '../../src/game/cities/lko/s09';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -186,7 +187,7 @@ const redSeen = (key: string) => (w: World) => {
 };
 const room09: Step[] = [
   walkTo(6.1, 300),
-  hops([[8.6, redNow('kabootar')], 11.1, [14.1, redNow('kabootar')], 16.6, [20.1, redNow('kabootar')], 22.6, [26.1, redNow('kabootar')], 28], 'roof to roof, only early in the red'),
+  hops([[8.6, redNow('kabootar')], 14.1, [17.6, redNow('kabootar')], 20.1, [23.6, redNow('kabootar')], 28], 'roof to roof, only early in the red'),
   runTo(31.5, 300),
 ];
 
@@ -270,7 +271,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'LKO-06': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk across the stage' }], cause: 'lko-chakkar' },
   'LKO-07': { steps: [runTo(7, 200), hop(9, 11.3), { hold: 'R', until: done, max: 900, note: 'on along the arcade at a run' }], cause: 'lko-ganj' },
   'LKO-08': { steps: [runTo(5, 200), hop(7, 9, 'hop the little drain into the arch'), { hold: 'R', until: done, max: 600 }], cause: 'lko-bhool' },
-  'LKO-09': { steps: [walkTo(6.1, 300), hops([8.6, 11.1, 14.1, 16.6, 20.1, 22.6, 26.1, 28], 'roof to roof, never mind the flag'), until(done, 300)], cause: 'lko-kabootar' },
+  'LKO-09': { steps: [walkTo(6.1, 300), hops([8.6, 14.1, 17.6, 20.1, 23.6, 28], 'roof to roof, never mind the flag'), until(done, 300)], cause: 'lko-kabootar' },
   'LKO-10': { steps: [{ hold: 'R', until: done, max: 900, note: 'walk straight in' }], cause: 'lko-pehle' },
 };
 
@@ -643,16 +644,15 @@ const R_lko09_hawa = (id: string) => (x: number): Step[] => {
   const ok = redNow(`${id}:k`);
   return [
     walkTo(x + 4.9, 300),
-    hops([...[7, 13, 19, 25, 31, 37, 43, 49].flatMap((a) => [[x + a + 0.6, ok] as [number, (w: World) => boolean], x + a + 3.1]), [x + 55.6, ok], x + 57], 'cross while you see white: the birds see red'),
+    hops([...HAWA.flatMap(([a, , wd]) => [[x + a + 0.6, ok] as [number, (w: World) => boolean], x + a + wd - 0.9]), [x + after(HAWA) + 0.6, ok], x + after(HAWA) + 2], 'cross while you see white: the birds see red'),
   ];
 };
 actRoutes['lko09-hawa'] = (x) => [stroll(x + 3, 'up on to the roofs'), ...R_lko09_hawa('lko09-hawa')(x)];
-const JHANDE = [6, 12, 18, 24, 30];
 const R_lko09_jhande = (ok: (w: World) => boolean) => (x: number): Step[] => [
   walkTo(x + 3.4, 300),
-  hops([...JHANDE.flatMap((a) => [[x + a + 0.6, ok] as [number, (w: World) => boolean], x + a + 3.1]), [x + 36.6, ok], x + 38], 'cross on the red of the nearer flag'),
+  hops([...JHANDE_L.flatMap(([a, , wd]) => [[x + a + 0.6, ok] as [number, (w: World) => boolean], x + a + wd - 0.9]), [x + after(JHANDE_L) + 0.6, ok], x + after(JHANDE_L) + 2], 'cross on the red of the nearer flag'),
 ];
-actRoutes['lko09-jhande'] = (x) => [...R_lko09_jhande(redNow('lko09-jhande:k'))(x), runTo(x + 45, 300)];
+actRoutes['lko09-jhande'] = (x) => [...R_lko09_jhande(redNow('lko09-jhande:k'))(x), runTo(x + after(JHANDE_L) + 9, 300)];
 const redOf = (who: 'a' | 'b') => (w: World) => {
   const o = (w.flags['lko09-jhande:k']?.[who] as Fl | undefined)?.order(w);
   return !!o && o.c === 'red' && o.left > 1.0;
@@ -674,8 +674,8 @@ const tumbling = (w: World) => !!(w.flags['lko09-girah:tumbling'] as ((w: World)
 const girahGo = (w: World) => tumbling(w) && redNow('lko09-girah:k', 0.65)(w);
 actRoutes['lko09-girah'] = (x) => [
   walkTo(x + 3.4, 300),
-  hops([[x + 6.6, girahGo], x + 9.1, [x + 12.6, girahGo], x + 15.1, [x + 18.6, girahGo], x + 21.1, [x + 25, girahGo]], 'through the tumble, early in the red'),
-  runTo(x + 31, 300),
+  hops([...GIRAH.flatMap(([a, , wd]) => [[x + a + 0.6, girahGo] as [number, (w: World) => boolean], x + a + wd - 0.9]), [x + after(GIRAH) + 1, girahGo]], 'through the tumble, early in the red'),
+  runTo(x + after(GIRAH) + 7, 300),
 ];
 const GUMBAD = [5, 13, 21];
 /** stand where the dome is your size (its terrace 24 px up), then jump on to it */
@@ -923,7 +923,7 @@ fix['LKO-09'] = {
     ...through('LKO-09', room09, 1),
     stroll(actX('LKO-09', 1) + 3),
     walkTo(actX('LKO-09', 1) + 4.9, 300),
-    hops([7, 13, 19].flatMap((a) => [[actX('LKO-09', 1) + a + 0.6, redSeen('lko09-hawa:k')] as [number, (w: World) => boolean], actX('LKO-09', 1) + a + 3.1]), 'watch the flag, as learned: go on the red you see'),
+    hops(HAWA.slice(0, 3).flatMap(([a, , wd]) => [[actX('LKO-09', 1) + a + 0.6, redSeen('lko09-hawa:k')] as [number, (w: World) => boolean], actX('LKO-09', 1) + a + wd - 0.9]), 'watch the flag, as learned: go on the red you see'),
     until(done, 600),
   ],
   cause: 'lko-hawa',
