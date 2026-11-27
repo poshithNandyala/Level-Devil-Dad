@@ -27,6 +27,8 @@ export interface TroupeCfg {
   phase?: number;
   /** dancing on the floor (not down in a pit) */
   ground?: boolean;
+  /** the troupe follows a drummer on the far bank; the one by you plays this many seconds out of step */
+  decoy?: number;
 }
 
 export interface TroupeSt {
@@ -75,7 +77,7 @@ function dancer(ctx: CanvasRenderingContext2D, x: number, y: number, k: number, 
 
 /** a troupe in the pit at columns c0..c0+n-1, its drummer on the left bank */
 export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) {
-  const st: TroupeSt & { t: number } = { pose: null, into: 0, left: 0, stops: 0, t: -1 };
+  const st: TroupeSt & { t: number; decoyStopped?: boolean; decoyLeft?: number } = { pose: null, into: 0, left: 0, stops: 0, t: -1 };
   (w.flags[key] as unknown) = st;
   const x0 = px(cfg.c0);
   const W = px(cfg.n);
@@ -103,6 +105,11 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
         st.into = a.into;
         st.left = a.left;
         st.stops = a.stops;
+        if (cfg.decoy !== undefined) {
+          const d = t < 0 ? { pose: null, left: 9 } : troupeAt({ ...cfg, phase: (cfg.phase ?? 0) + cfg.decoy }, t);
+          st.decoyStopped = d.pose !== null;
+          st.decoyLeft = d.left;
+        }
         // the drum starts again: whoever is on the pose is thrown up off it
         if (was && was !== a.pose) {
           if (body.rides(w2)) {
@@ -140,12 +147,18 @@ export function troupe(w: World, cfg: TroupeCfg, t0: () => number, key: string) 
       paint: (ctx, _r, w2) => {
         const a = st;
         // the drummer with his mardala on the left bank: sticks up a moment before he starts again
-        const dx = x0 - 22;
-        const warn = a.pose !== null && a.left < 0.45;
-        folk(ctx, dx, FL, 24, '#FFFFFF', { skirt: '#E9E1CF', face: 1, arm: a.pose === null ? (Math.floor(w2.tick / 8) % 2 ? 0.2 : -0.3) : warn ? -1.2 : 0.6 });
-        box(ctx, dx + 2, FL - 14, 12, 7, '#8D5A2B');
-        box(ctx, dx + 1, FL - 14, 2, 7, '#5D3A1E');
-        box(ctx, dx + 13, FL - 14, 2, 7, '#5D3A1E');
+        const drummer = (dx: number, face: 1 | -1, playing: boolean, warn: boolean) => {
+          folk(ctx, dx, FL, 24, '#FFFFFF', { skirt: '#E9E1CF', face, arm: playing ? (Math.floor(w2.tick / 8) % 2 ? 0.2 : -0.3) : warn ? -1.2 : 0.6 });
+          box(ctx, dx + 2, FL - 14, 12, 7, '#8D5A2B');
+          box(ctx, dx + 1, FL - 14, 2, 7, '#5D3A1E');
+          box(ctx, dx + 13, FL - 14, 2, 7, '#5D3A1E');
+        };
+        if (cfg.decoy === undefined) drummer(x0 - 22, 1, a.pose === null, a.pose !== null && a.left < 0.45);
+        else {
+          // the troupe's own drummer is across the pit; the one by you plays out of step
+          drummer(x0 + W + 6, -1, a.pose === null, a.pose !== null && a.left < 0.45);
+          drummer(x0 - 22, 1, !st.decoyStopped, !!st.decoyStopped && (st.decoyLeft ?? 9) < 0.45);
+        }
         const n = Math.max(3, Math.round(cfg.n * 0.75));
         if (a.pose === null) {
           for (let i = 0; i < n; i++) {
@@ -563,6 +576,12 @@ export const act12: Act = {
     );
   },
 };
+
+/** act 13, the far drummer (pose-shapes family): a second drummer sits on your bank playing out of step; the
+ *  troupe follows its own drummer across the pit. A2: watch the far drummer, not the one by you. A3: his
+ *  sticks are the warning too: the near drummer's still sticks don't mean you have time. */
+export const T07F: TroupeCfg[] = [{ c0: 4, n: 7, drum: 1.6, hold: 1.7, poses: ['bridge'], form: 0.3, decoy: 1.65 }];
+export const act13 = troupeAct('bbi07-dui-baja', 15, T07F, 'bbi7db', 'Two drummers: one by you, one across the pit. The troupe follows the one across the pit: go when he stops, not when yours does. And watch his sticks for the restart, not your drummer’s.');
 
 /** ending: the last pose is a gate over the door; between poses the troupe whirls across the doorway */
 export const T07e: TroupeCfg = { c0: 0, n: 4, drum: 1.6, hold: 1.6, poses: ['gate'], form: 0.3, ground: true };
