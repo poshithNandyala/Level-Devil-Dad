@@ -9,6 +9,14 @@ own git worktree, and merged without conflicts.
 
 Ranchi (`src/game/cities/rnc/`, `tests/cities/rnc.ts`) is the worked example. Copy its shape.
 
+All 15 shipped cities are modules: the 14 older ones (TVM to RPR) were moved into `src/game/cities/<code>/`
+unchanged in infra round 4, so a pass over an existing city (encore stages, hardness, lines) edits that
+folder and `tests/cities/<code>.ts` only. Two things of theirs are still shared: their routes, NAIVE, FIX and
+MISTAKES plays in `tests/solutions.ts` / `tests/west.ts` / `tests/acts.ts` / `tests/endings.ts` (a city's own
+`tests/cities/<code>.ts` entry replaces the shared one for the same key, so write new and changed plays
+there), and the scene kinds in `render/scenes.ts`, the prop art in `render/art/props.ts` and the things two
+cities share in `render/art/things.ts`.
+
 ## The rule
 
 **A city worker never edits any file outside `src/game/cities/<code>/`, `tests/cities/<code>.ts`,
@@ -117,7 +125,8 @@ export const RNC: CityModule = {
 | `theme` | `Theme` | `THEMES[id]`; appended to `CITY_ORDER` | `rnc/theme.ts` |
 | `grade` | `Grade` | `GRADES[id]` | `rnc/look.ts` |
 | `tileCaps` | `GroundCaps` | the ground caps (`CAP[id]` in tiles.ts) | `rnc/look.ts` |
-| `backdrop` | `(ctx, th, x0, x1) => void` | the skyline behind every stage | `rnc/backdrop.ts`: `ranchi` |
+| `backdrop` | `(ctx, th, x0, x1, variant) => void` | the skyline behind every stage (`variant` is the stage's index) | `rnc/backdrop.ts`: `ranchi` |
+| `ambient?` | `(ctx, x0, x1, t, reduced) => void` | the animated layer over the skyline, every frame (rain, birds, kites) | not used by RNC; `tvm/ambient.ts` |
 | `sceneFeatures?` | `Record<name, (ctx, x0, x1, sky) => void>` | extra features for stages with `scene: { with: [name] }` | not used by RNC |
 | `things?` | `Record<kind, { size, draw }>` | thing sizes and drawing (hidden item, props) | `rnc/things.ts`: `dhuska` 12×10 |
 
@@ -173,7 +182,9 @@ automatically.
 stages exactly `XXX-01`..`XXX-10` with `index` 1..10; a NAIVE for every stage; a FIX for at least 5 of the 10;
 one hidden item per stage; a route for every act; a policy for every ending; a non-empty `fair` list that
 names every stage whose `shape` is `long`, `marathon` or `wtf`; at least 9 `intro` lines; the prefix rule.
-RNC is excused from some checks by an explicit allow-list with a TODO; never add a city to it.
+RNC and the 14 older cities are excused from some checks by an explicit allow-list with a TODO (8 stages,
+7 intros, no fair list, keys from before the prefix rule, and for some a NAIVE or FIX per stage); a city's
+pass removes its entry. Never add a new city to it.
 
 ## Running only your city's tests
 
@@ -205,10 +216,18 @@ Tag each long stage's shape: `longStage({ ..., shape: 'long' | 'marathon' | 'wtf
 - **Lives.** 7 lives; by default the 7th death starts the stage over. Pass `lives: 'act'` to `longStage` (or
   set it on a LevelDef) and the 7th death goes back to the start of the act Dad is in (the last act-start
   checkpoint he passed, `LevelDef.actStarts`), with a full set of lives. Use it on every marathon.
-- **Marathon:** at most 120 s once known. **Long:** 60-80 s. Both: a calm checkpoint at least every 25 s
-  of play (an act start gets one; add more with the act's `cps`).
-- **Fairness:** 90% average-timing success for the whole stage (as today) and **95% for every stretch
-  between two checkpoints**. Put both numbers in `docs/cities/<CODE>.md`.
+- **Length** (the scripted route's time, once known): stages 02-04 25-45 s; 05, 06, 08 and 09 at least
+  60 s; 07 (the marathon) at least 120 s; 10 (the finale) at least 90 s.
+- **Checkpoints:** a calm checkpoint every 25-30 s of play, and no stretch between two checkpoints over
+  25 s (an act start gets one; add more with the act's `cps`). Replay to any trap is at most 8 s from the
+  last checkpoint, at lag 0, 6 and 12 ticks. No checkpoint sits within 3.5 tiles past a trigger, and each
+  is reached only after the previous hazard has run out at lag 12. Every checkpoint survives standing idle,
+  running then idling, and a tap jump then idling. Use as many checkpoints as this needs: the shared
+  checkpoint tests have no count limit (a 180 s marathon at one per 8 s is 23).
+- **Every act:** its FIX death differs from its NAIVE death in cause and tick, and no window is the same
+  as one already passed once the first momentum beat is behind you.
+- **Fairness:** 90% average-timing success for the whole stage and **95% for every stretch between two
+  checkpoints** (`npm run fair -- <CODE>`). Put both numbers in `docs/cities/<CODE>.md`.
 
 ### Hint parts
 
@@ -221,7 +240,7 @@ Tag each long stage's shape: `longStage({ ..., shape: 'long' | 'marathon' | 'wtf
 Everything else already handles 10: stage codes (`normalizeCode` reads `pat10`, `PAT-10`, `pat 9`), the
 stage list and map cards (built from `levelsOf(city)`), stars (`3 × stages`), unlocking (the stage before by
 `index`), the next stage, the share card and the store (keyed by stage id). The 15 cities before the module
-system keep their 8 stages. `tests/ten-stages.test.ts` proves a 10-stage module registers and routes.
+system keep their 8 stages until their own pass. `tests/ten-stages.test.ts` proves a 10-stage module registers and routes.
 
 ### Stage meta: stay on your allocation
 
