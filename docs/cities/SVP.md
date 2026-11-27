@@ -8,7 +8,7 @@ Sound: one music loop (104 bpm), no new SFX names.
 | # | Id | Name | Family [betrayal] | Ending key | Shape |
 |---|---|---|---|---|---|
 | 01 | SVP-01 | Namaste SVP | lane-sheet-flow-push [sheet-flow] | svp-lane-sun (meta only) | tour |
-<!-- route times in seconds (bot): 01 30.1, 02 25.8, 03 26.1, 04 20.6, 05 54.1, 06 21.2, 07 38.4, 08 44.0, 09 28.8, 10 87.7 -->
+<!-- route times in seconds (bot), round 3: 01 30.1, 02 25.8, 03 29.1, 04 20.6, 05 41.5, 06 21.2, 07 44.5, 08 86.8, 09 35.3, 10 64.5 -->
 
 | 02 | SVP-02 | Aari | cut-floor-saw-carriage [cut-floor] | svp-timber-stack | short |
 | 03 | SVP-03 | Magarmachh | warning-board-arrow-turns [honest-moving-sign] | svp-board-bridge | short |
@@ -52,8 +52,14 @@ Each added act is a new rule in its own file, with its own cause line, a NAIVE a
 | 09 | `svp09-hauz` | `hauz.ts` | Drained pools (rising water): a pipe starts to run when you walk in. Get on the raft: it rises with the water and you step across at the top of the wall. The floor is drowning. |
 | 08 | `svp08-deewar` | `s08.ts` (`Block`) | Rain shadow: pick the shelter by its height, since the dry strip is as wide as the building is tall. |
 | 09 | `svp09-nali` | `nali.ts` (`Hose`) | Air hose: it lies over or under each coral arch, and under costs line. Stretch 2 has no spare. |
-| 10 | `svp10-rassi` | `s10.ts` | Callback to the mooring rope. |
 | 10 | `svp10-nali` | `s10.ts` | Callback to the air hose. |
+| 05 | `svp05-ooncha` | `s05.ts` (`EyeView`) | Eye height: the note was taken from taller eyes. Stand on the bench behind the footprints. The signboard is too high and shows the ledge far below. |
+| 07 | `svp07-bus` | `bus.ts` (`Bus`) | Bus stand: the bus rolls back before it goes, engine note rising. Ride its roof: the barrier lifts only for the bus. |
+| 08 | `svp08-chhajja` | `s08.ts` (`Slope`) | Lean-to roofs: dry under the high end whichever way the rain comes. |
+| 08 | `svp08-tin` | `s08.ts` | Covered market: the rain is heard on the side it comes from. |
+| 09 | `svp09-patta` | `nali.ts` (`Belt`) | Weight belt: stand still and float up straight from where you stood; the hull has one hatch. |
+| 03 | door | `s03.ts` | The board's own arrow and the door's logs (was: the board folds into a bridge). |
+| 10 | breaks | `s10.ts` | `svp10-nadi` (stale board, read the ripples), `svp10-jad` (grey roots hold, green go), `svp10-saman` (luggage lashed, tall stack), `svp10-ghat` (deer tied, the fare is the fritter). `svp05-rassi` and `svp10-rassi` are cut (rassi.ts stays, unused). |
 
 New cause keys: svp-rassi, svp-chuna, svp-lehar, svp-khula, svp-uthao, svp-tel, svp-hauz, svp-nali, plus second-trap keys svp-magar2, hiran2, kichad2, eent2, rassi2, chuna2, baarish2, nali2.
 
