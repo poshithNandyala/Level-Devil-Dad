@@ -925,7 +925,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'BBI-05': [{ what: 'climb on the cart and ride it', steps: [...room05(), ...act05a(32), { hold: 'R', until: X(58 + 6.9), max: 400 }, { hold: 'R', jump: 8, ticks: 8, note: 'up on the cart' }, { hold: '', until: done, max: 900 }], cause: 'bbi-gadi' }],
   'BBI-04': [{ what: 'stop and wait for the torch, then go', steps: [{ hold: 'R', until: X(6.4), max: 300 }, { hold: '', until: (w) => !r4on(w, 0) && (w.tick - t0of(w, 'bbi4r')) / 120 > 1.0, max: 600 }, { hold: 'R', until: done, max: 600 }], cause: 'bbi-jhala' }],
   'BBI-03': [{ what: 'wait on the third parasol’s cut-out', steps: [...room03().slice(0, 7), stayOn(cut3(2), done, 'wait for the next customer', 1500)], cause: 'bbi-peeled' }],
-  'BBI-01': [{ what: 'stop and wait for the gardener, as Tara says', steps: [...hop(8.6, 'the ditch'), { hold: 'R', until: X(21), max: 600 }, { hold: '', until: done, max: 900 }], cause: 'bbi-nala' }],
+  'BBI-01': [{ what: 'keep walking past him while he faces the road, as Tara says', steps: [...tourHead(), { hold: '', until: (w) => g1Road(w), max: 900, note: 'he turns to the road' }, { hold: 'R', until: done, max: 900 }], cause: 'bbi-nala' }],
 };
 let fm: { w: World | null; m: Mem } = { w: null, m: { hold: 0 } };
 const fixMem = (w: World) => {

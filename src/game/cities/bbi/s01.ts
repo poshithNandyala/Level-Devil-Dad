@@ -1,6 +1,7 @@
 // BBI-01 Namaskara Bhubaneswar: the welcome walk down a wide planned road. The median is a row of potted
-// plants, and the gardener waters them from a hose. When he turns to the road, his jet follows the dad who
-// waits, and the one tile it wets slides you into the open storm drain. Pass while he faces his pots. Further
+// plants, and the gardener waters them from a hose. When he turns to the road, his jet chases a dad who
+// walks, and the one tile it wets slides you into the open storm drain; a dad who stands still he leaves
+// alone (DECISIONS S10). Pass while he faces his pots, and freeze if he turns. Further
 // on, a second gardener has his back to you, but he left one wet tile at the lip of the next drain.
 import type { LevelDef, World } from '../../world';
 import { tour } from '../../levels/tour';
@@ -61,8 +62,9 @@ function extra(w: World) {
     pots(ctx, 17, 5);
     pots(ctx, 60, 4);
   });
-  // gardener 1: the jet's aim (world x of the wet tile's centre), following Dad while he faces the road
-  const st = { aim: px(G1.aim0) + 8, road: false };
+  // gardener 1: the jet's aim (world x of the wet tile's centre), chasing Dad while he faces the road and Dad
+  // walks; while Dad stands still the jet is held up off the road (`held`) and wets nothing
+  const st = { aim: px(G1.aim0) + 8, road: false, held: false };
   w.flags.bbi1 = st;
   w.add(
     new Rig(px(G1.col), FL - 30, 12, 30, {
@@ -72,13 +74,18 @@ function extra(w: World) {
         if (road && !st.road) st.aim = px(G1.aim0) + 8;
         st.road = road;
         const p = w2.player;
-        if (road && Math.abs(p.cx - px(G1.col)) < px(G1.reach) && p.cx < px(G1.drain[0])) {
+        const near = Math.abs(p.cx - px(G1.col)) < px(G1.reach) && p.cx < px(G1.drain[0]);
+        st.held = !(Math.abs(p.vx) > 20 || !p.onGround);
+        // it waits on the tile before the drain and only goes for a walker who comes within 5 tiles of it, so the
+        // slide always ends in the drain
+        if (road && near && !st.held && p.cx > st.aim - px(5)) {
+          // it is quicker than his walk
           const d = p.cx - st.aim;
-          st.aim += Math.sign(d) * Math.min(Math.abs(d), 90 / 120);
+          st.aim += Math.sign(d) * Math.min(Math.abs(d), 240 / 120);
         }
-        // the wet tile is the one under the jet: step on it while he aims and you slide
+        // the wet tile is the one under the jet: walk on to it while he aims and you slide
         const tile = Math.floor(st.aim / 16);
-        if (road && Math.floor(p.cx / 16) === tile && p.cx < px(G1.drain[0])) slide(w2);
+        if (road && !st.held && Math.floor(p.cx / 16) === tile && p.cx < px(G1.drain[0])) slide(w2);
         intoDrain(w2);
       },
       paint: (ctx, r, w2) => {
@@ -92,14 +99,15 @@ function extra(w: World) {
         ctx.moveTo(gx, FL - 16);
         ctx.quadraticCurveTo(gx - 20, FL - 2, px(17), FL - 2);
         ctx.stroke();
+        const wet = road && !st.held;
         const tx = road ? st.aim : px(G1.col) - 30;
         ctx.strokeStyle = 'rgba(160,215,240,0.9)';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(gx + (road ? 8 : -8), FL - 18);
-        ctx.quadraticCurveTo((gx + tx) / 2, FL - 44, tx, road ? FL - 1 : FL - 22);
+        ctx.quadraticCurveTo((gx + tx) / 2, FL - 44, tx, wet ? FL - 1 : FL - 22);
         ctx.stroke();
-        if (road) {
+        if (wet) {
           const t0 = Math.floor(st.aim / 16) * 16;
           box(ctx, t0, FL - 2, 16, 2, 'rgba(150,210,240,0.95)');
           box(ctx, t0 + 3, FL - 3, 10, 1, 'rgba(255,255,255,0.9)');
@@ -129,8 +137,8 @@ function extra(w: World) {
       },
     }),
   );
-  // Tara's lie at the first gardener: stop and watch him (the waiting dad is the one he follows)
-  onPass(w, px(17), (w2) => tara(w2, 'Ruha! | Stop!', 2));
+  // Tara's lie at the first gardener: keep going (the walking dad is the one he chases)
+  onPass(w, px(17), (w2) => tara(w2, 'Chala bajar jiba! | Let’s go to the market!', 2));
   onPass(w, px(35), (w2) => w2.guide('Bahut bhala! | Very good!', (w3) => w3.player.cx > px(33)));
 }
 
@@ -164,7 +172,7 @@ export const tourLevel = (): LevelDef =>
     paint: (g) => {
       g.pit(G1.drain[0], G1.drain[1]).pit(G2.drain[0], G2.drain[1]);
     },
-    hint: 'The gardener on the median turns his hose on the road, and his jet follows a dad who stands and waits: the tile it wets slides you straight into the open drain. Go while he faces his pots, and hop the drain. The second gardener has his back to you, but the tile at the lip of the next drain is still wet: jump from the tile before it. Then the steps, the posts, the parked cart, and the bus: wait for it at its stop, ride, step off.',
+    hint: 'The gardener on the median turns his hose on the road, and his jet chases a dad who walks: the tile it wets slides you straight into the open drain. Stand still and he leaves you alone. Go while he faces his pots, freeze if he turns, and hop the drain. The second gardener has his back to you, but the tile at the lip of the next drain is still wet: jump from the tile before it. Then the steps, the posts, the parked cart, and the bus: wait for it at its stop, ride, step off.',
     extra,
   });
 
