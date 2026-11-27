@@ -1,0 +1,490 @@
+// SVP-08 Do Monsoon: the island has two monsoons, and the second comes from the other side. The rain falls on the
+// street in hard sheets; only the lee end of an awning is dry, and the lee end is the end the wind blows towards.
+// First rain from the west: the right end of each awning. Then a lull, and in the lull the cloud bank and the slanting
+// rain lines show on the opposite horizon and every awning tilts to the new side: the rain from the east, and the left
+// end is dry. Whoever sheltered and stayed put is drenched. The act is a longer street, and the door has a gutter that
+// runs like a river for as long as it rains.
+import { Entity, type LevelDef, type World } from '../../world';
+import { door, rival, collectible } from '../../levels/kit';
+import type { Act } from '../../levels/acts';
+import type { Ending } from '../../levels/endkit';
+import { FLOOR, text } from '../../levels/endkit';
+import { Grid } from '../../levels/grid';
+import { lines as L } from './lines';
+import { Fx, Hurt, awning as drawAwning, px, TAU, type Ctx } from './kit';
+
+export type Wind = 1 | -1;
+const LEE = 38;
+/** the cycle: an opening lull, then rain from the west, a lull, rain from the east, a lull, and again */
+const FIRST_LULL = 80;
+const RAIN = 240;
+const LULL = 270;
+const KILL = 84;
+
+export class Awning {
+  tilt: number;
+  constructor(
+    readonly x0: number,
+    readonly x1: number,
+    readonly y = FLOOR - 44,
+  ) {
+    this.tilt = 1;
+  }
+  /** the dry ground under the awning for wind `d` (the lee end) */
+  lee(d: Wind): [number, number] {
+    return d > 0 ? [this.x1 - LEE, this.x1] : [this.x0, this.x0 + LEE];
+  }
+  /** a shelter that draws itself (a building) */
+  paint?: (ctx: Ctx, rain: boolean, d: Wind) => void;
+}
+
+/** a building in the street: the rain shadow it throws is as wide as it is tall, on its lee side */
+export class Block extends Awning {
+  constructor(
+    readonly bx: number,
+    readonly bw: number,
+    readonly tiles: number,
+  ) {
+    super(bx - 4, bx + bw + tiles * 14 + 4);
+    this.paint = (ctx, rain, d) => this.drawBlock(ctx, rain, d);
+  }
+  lee(d: Wind): [number, number] {
+    const strip = this.tiles * 14;
+    return d > 0 ? [this.bx + this.bw, this.bx + this.bw + strip] : [this.bx - strip, this.bx];
+  }
+  private drawBlock(ctx: Ctx, rain: boolean, d: Wind) {
+    const h = this.tiles * 16;
+    const y = FLOOR - h;
+    ctx.fillStyle = '#8C7B66';
+    ctx.fillRect(this.bx, y, this.bw, h);
+    ctx.fillStyle = '#6E5E4B';
+    ctx.fillRect(this.bx - 3, y - 4, this.bw + 6, 5);
+    ctx.fillStyle = 'rgba(30,24,18,0.45)';
+    for (let r = 0; r < this.tiles; r++) for (let c = 0; c < Math.floor(this.bw / 16); c++) ctx.fillRect(this.bx + 4 + c * 16, y + 6 + r * 16, 8, 9);
+    if (rain) {
+      // the shadow the rain leaves on its lee side, as long as the building is tall
+      const [z0, z1] = this.lee(d);
+      ctx.fillStyle = 'rgba(20,40,50,0.28)';
+      ctx.beginPath();
+      ctx.moveTo(d > 0 ? this.bx + this.bw : this.bx, y);
+      ctx.lineTo(d > 0 ? z1 : z0, FLOOR);
+      ctx.lineTo(d > 0 ? this.bx + this.bw : this.bx, FLOOR);
+      ctx.fill();
+    }
+  }
+}
+
+/** a lean-to roof over a stall: it sheds its water down its slope, so the dry ground is under the HIGH end whichever way the rain comes */
+export class Slope extends Awning {
+  /** which end is the low one (the water runs off that way): 1 = right */
+  constructor(
+    x0: number,
+    x1: number,
+    readonly lowDir: Wind,
+    readonly cause = 'svp-chhajja',
+  ) {
+    super(x0, x1);
+    this.paint = (ctx, rain) => this.drawSlope(ctx, rain);
+  }
+  lee(): [number, number] {
+    return this.lowDir > 0 ? [this.x0, this.x0 + 44] : [this.x1 - 44, this.x1];
+  }
+  private drawSlope(ctx: Ctx, rain: boolean) {
+    const hi = FLOOR - 62,
+      lo = FLOOR - 36;
+    const lx = this.lowDir > 0 ? this.x1 : this.x0;
+    const hx = this.lowDir > 0 ? this.x0 : this.x1;
+    // the stall behind
+    ctx.fillStyle = 'rgba(58,30,18,0.35)';
+    ctx.fillRect(this.x0 + 4, FLOOR - 34, this.x1 - this.x0 - 8, 34);
+    // posts: tall at the high end, short at the low end
+    ctx.fillStyle = '#4A3A2A';
+    ctx.fillRect(hx - 1, hi, 2, FLOOR - hi);
+    ctx.fillRect(lx - 1, lo, 2, FLOOR - lo);
+    // the tin sheet, high to low
+    ctx.fillStyle = '#7C8A92';
+    ctx.beginPath();
+    ctx.moveTo(hx - this.lowDir * 4, hi - 2);
+    ctx.lineTo(lx + this.lowDir * 6, lo - 2);
+    ctx.lineTo(lx + this.lowDir * 6, lo + 4);
+    ctx.lineTo(hx - this.lowDir * 4, hi + 4);
+    ctx.fill();
+    ctx.strokeStyle = '#5A6770';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let k = 1; k < 8; k++) {
+      const u = k / 8;
+      const sx = hx + (lx - hx) * u;
+      ctx.moveTo(sx, hi + (lo - hi) * u - 2);
+      ctx.lineTo(sx, hi + (lo - hi) * u + 3);
+    }
+    ctx.stroke();
+    if (rain) {
+      // the run-off: a sheet pouring off the low end
+      ctx.strokeStyle = 'rgba(170,215,235,0.9)';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      for (let k = 0; k < 5; k++) {
+        const ox = lx + this.lowDir * (6 + k * 3);
+        ctx.moveTo(ox, lo + 4);
+        ctx.lineTo(ox + this.lowDir * 1.5, FLOOR);
+      }
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(70,170,190,0.5)';
+      ctx.fillRect(lx + this.lowDir * 4 - 14, FLOOR - 3, 28, 3);
+    }
+  }
+}
+
+/** the weather over the whole stage: it starts when Dad first comes near the street */
+export class Weather extends Entity {
+  t = -1;
+  awnings: Awning[] = [];
+  /** covered stretches that are dry for any wind: [x0, x1] px */
+  porches: [number, number][] = [];
+  wet = 0;
+  /** where the rain is now, and which way it will blow next */
+  raining = false;
+  dir: Wind = 1;
+  next: Wind = 1;
+  left = 0;
+  private now = 0;
+  /** where the weather starts over from its first lull (each section of the street has its own), px */
+  readonly resets: number[] = [];
+  /** the cause of a death in the section a reset starts (default svp-baarish) */
+  readonly causes: Record<number, string> = {};
+  private cause = 'svp-baarish';
+  /** a longer first lull for the sections that start with a long walk to the shelter, by reset x */
+  readonly firsts: Record<number, number> = {};
+  private first = FIRST_LULL;
+  private fired = new Set<number>();
+  /** a covered market: the sky is not seen from in here, and the rain is heard on the tin before it comes: [x0, x1] px */
+  readonly covered: [number, number][] = [];
+  isCovered(cx: number) {
+    return this.covered.some(([a, b]) => cx >= a && cx <= b);
+  }
+  constructor(readonly startX: number) {
+    super();
+    this.layer = 6;
+  }
+  add(a: Awning) {
+    this.awnings.push(a);
+    return a;
+  }
+  /** phase from the clock */
+  private phaseAt(t: number): { rain: boolean; dir: Wind; next: Wind; left: number; age: number } {
+    const F = this.first;
+    if (t < F) return { rain: false, dir: 1, next: 1, left: F - t, age: t };
+    // a section has two rains, west and then east, and then the sky is clear until the next section starts it again
+    if (t >= F + RAIN + LULL + RAIN) return { rain: false, dir: -1, next: -1, left: 99999, age: t };
+    const k = t - F;
+    const period = RAIN + LULL;
+    const n = Math.floor(k / period);
+    const r = k % period;
+    const dir: Wind = n % 2 === 0 ? 1 : -1;
+    if (r < RAIN) return { rain: true, dir, next: dir, left: RAIN - r, age: r };
+    return { rain: false, dir, next: (-dir) as Wind, left: period - r, age: r - RAIN };
+  }
+  /** is this x (px) on dry ground right now? */
+  dryAt(cx: number, d: Wind) {
+    if (this.porches.some(([a, b]) => cx >= a && cx <= b)) return true;
+    return this.awnings.some((a) => {
+      const [z0, z1] = a.lee(d);
+      return cx >= z0 + 3 && cx <= z1 - 3;
+    });
+  }
+  /** seconds of clock until the rain next changes */
+  update(w: World) {
+    this.now = w.tick;
+    if (this.t < 0) {
+      if (w.player.cx >= this.startX) this.t = 0;
+      else return;
+    } else this.t++;
+    for (const r of this.resets)
+      if (w.player.cx >= r && !this.fired.has(r)) {
+        this.fired.add(r);
+        this.t = 0;
+        this.wet = 0;
+        this.cause = this.causes[r] ?? 'svp-baarish';
+        this.first = this.firsts[r] ?? FIRST_LULL;
+      }
+    const ph = this.phaseAt(this.t);
+    this.raining = ph.rain;
+    this.dir = ph.dir;
+    this.next = ph.next;
+    this.left = ph.left;
+    // the awnings swing to the new side during the lull
+    for (const a of this.awnings) {
+      const want = ph.rain ? ph.dir : ph.age > 40 ? ph.next : ph.dir;
+      a.tilt += (want - a.tilt) * 0.06;
+    }
+    if (ph.rain && !ph.age) w.sfx('rumble', w.player.cx, FLOOR - 50);
+    if (w.state !== 'play') return;
+    const p = w.player;
+    const exposed = ph.rain && !this.dryAt(p.cx, ph.dir) && p.y + p.h > FLOOR - 70;
+    this.wet = exposed ? this.wet + 1 : Math.max(0, this.wet - 3);
+    if (this.wet >= KILL) {
+      const sl = this.awnings.find((a) => a instanceof Slope && p.cx >= a.x0 - 10 && p.cx <= a.x1 + 10) as Slope | undefined;
+      w.die(sl ? sl.cause : this.cause);
+    }
+    // under the market's tin the next rain is heard on the side it comes from, a little before the awnings swing
+    if (!ph.rain && ph.age > 30 && ph.left < 9000 && this.isCovered(p.cx) && w.tick % 14 === 0) w.sfx('thud', p.cx + (ph.next > 0 ? -230 : 230), FLOOR - 60);
+  }
+  /** a running count for the board: ticks since the weather started */
+  draw(ctx: Ctx, w: World) {
+    // the awnings (tilted: the low end is the lee end)
+    for (const [a, b] of this.porches) {
+      ctx.fillStyle = '#4A3A2A';
+      for (let x = a + 4; x <= b - 2; x += 40) ctx.fillRect(x, FLOOR - 52, 3, 52);
+      ctx.fillStyle = '#7C8A92';
+      ctx.fillRect(a - 4, FLOOR - 58, b - a + 8, 6);
+      ctx.fillStyle = '#5A6770';
+      ctx.fillRect(a - 4, FLOOR - 53, b - a + 8, 2);
+      ctx.fillStyle = 'rgba(58,30,18,0.25)';
+      ctx.fillRect(a, FLOOR - 36, b - a, 36);
+    }
+    for (const a of this.awnings) {
+      if (a.paint) {
+        a.paint(ctx, this.raining, this.raining ? this.dir : this.next);
+        continue;
+      }
+      const lean = -a.tilt * 14;
+      drawAwning(ctx, a.x0, a.x1, a.y, '#1F7A8C', '#F4ECD6', lean);
+      // shop front behind: a shutter and a plank counter
+      ctx.fillStyle = 'rgba(58,30,18,0.35)';
+      ctx.fillRect(a.x0 + 4, FLOOR - 34, a.x1 - a.x0 - 8, 34);
+    }
+    if (this.t < 0) return;
+    const ph = this.phaseAt(this.t);
+    const c = w.player.cx;
+    const cov = this.isCovered(c);
+    // the lee patches on the ground: where the rain does not reach
+    if (ph.rain) {
+      for (const a of this.awnings) {
+        const [z0, z1] = a.lee(ph.dir);
+        ctx.fillStyle = 'rgba(30,60,70,0.16)';
+        ctx.fillRect(z0, FLOOR - 36, z1 - z0, 36);
+      }
+      // the sheets of rain, slanting with the wind, not falling where an awning keeps them off
+      ctx.strokeStyle = 'rgba(210,235,248,0.7)';
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      for (let x = c - 300; x < c + 300; x += 6) {
+        const k = (Math.floor(x) * 7919) % 53;
+        if (this.dryAt(x + 0, ph.dir) && k % 1 === 0) continue;
+        const y = 20 + ((this.now * 3.4 + k * 11) % (FLOOR - 24));
+        if (cov) continue;
+        ctx.moveTo(x + (k % 4), y);
+        ctx.lineTo(x + (k % 4) + ph.dir * 5, y + 9);
+      }
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(40,70,90,0.14)';
+      ctx.fillRect(c - 300, 0, 600, FLOOR);
+    } else if (cov) {
+      // under the tin: no sky, only the first drops drumming on the sheets at the side the rain comes from
+      if (ph.age > 30 && ph.left < 9000) {
+        const side = ph.next > 0 ? -1 : 1;
+        ctx.fillStyle = 'rgba(230,240,250,0.85)';
+        for (let i = 0; i < 6; i++) {
+          const bx = c + side * 200 + side * ((i * 13 + (this.now >> 2) * 3) % 50);
+          const by = FLOOR - 104 + ((i * 7 + this.now) % 6);
+          ctx.fillRect(bx, by, 2, 2);
+          ctx.fillRect(bx + 3 * side, by - 3, 1.5, 1.5);
+        }
+      }
+    } else {
+      // the lull: the cloud bank and its slanting lines show on the horizon the next rain comes from
+      const side = ph.next > 0 ? -1 : 1;
+      const bx = c + side * 230;
+      const a = ph.age > 40 || this.t < FIRST_LULL ? 1 : 0.4;
+      const g = ctx.createLinearGradient(bx - 90, 0, bx + 90, 0);
+      g.addColorStop(0, 'rgba(40,52,70,0)');
+      g.addColorStop(0.5, `rgba(40,52,70,${0.62 * a})`);
+      g.addColorStop(1, 'rgba(40,52,70,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(bx - 90, 24, 180, 130);
+      ctx.strokeStyle = `rgba(200,225,240,${0.65 * a})`;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      for (let i = 0; i < 9; i++) {
+        const sx = bx - 70 + i * 17;
+        ctx.moveTo(sx, 90);
+        ctx.lineTo(sx + ph.next * 12, 150);
+      }
+      ctx.stroke();
+    }
+  }
+}
+
+// ================================================================== the room
+function street(w: World, aw: [number, number][], startX: number) {
+  const wx = new Weather(startX);
+  w.add(wx);
+  for (const [a, b] of aw) wx.add(new Awning(px(a), px(b)));
+  w.flags.weather = wx;
+  return wx;
+}
+
+export function monsoonRoom(): LevelDef {
+  return {
+    id: 'SVP-08',
+    city: 'SVP',
+    index: 8,
+    name: 'Do Monsoon',
+    nameEn: 'Two monsoons',
+    tagline: 'The islands have two monsoons a year, and the second comes from the other side. The shopkeepers know which way to hang the awnings.',
+    hint: 'The rain comes in hard sheets, and out in the open it drenches you in a moment. Only the lee end of an awning is dry, the end the wind blows towards. The first rain is from the west, so the right end. Then there is a lull, and before the next rain the cloud bank and the slanting lines show on the other horizon and every awning tilts that way: the second rain is from the east, so the left end is dry. Cross to the next awning in the lull.',
+    par: 24,
+    map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').rows(),
+    build(w: World) {
+      door(w);
+      street(w, [[6, 11], [16, 21], [26, 31]], px(5));
+      rival(w, 3, 15, 1, { intro: L.intro[6], point: 1, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
+      collectible(w, 'svp-kela', 18.5, 10.4);
+    },
+  };
+}
+
+// ================================================================== the act: a longer street
+export const gali: Act = {
+  id: 'svp08-gali',
+  w: 56,
+  advice: 'A longer street with its awnings further apart. The same two rains, west and then east, with only the lulls to cross in: be at the dry end for the rain that is coming, not the rain that has been.',
+  cps: [31],
+  build: (w, c) => {
+    const x = c.x;
+    const wx = w.flags.weather as Weather;
+    wx.porches.push([px(x + 28), px(x + 34)]);
+    wx.resets.push(px(x + 4), px(x + 34.5));
+    wx.porches.push([px(x), px(x + 4)]);
+    w.add(new Fx(null, (ctx) => text(ctx, 'BAZAAR', px(x + 31), FLOOR - 62, 6.5, '#F4ECD6', 'rgba(0,0,0,0.5)'), 3));
+    for (const [a, b] of [[x + 9, x + 14], [x + 19, x + 24], [x + 38, x + 43], [x + 47, x + 52]]) wx.add(new Awning(px(a), px(b)));
+  },
+};
+
+// ================================================================== the act: the rain shadow of a building
+/** the shadow a building throws is as wide as it is tall: the short one has a hairline of dry ground, the tall one a room */
+export const deewar: Act = {
+  id: 'svp08-deewar',
+  w: 64,
+  advice: 'Old buildings along the road, short ones and tall ones. A building keeps the rain off a strip of road on its lee side, and the strip is as wide as the building is tall: a one-storey shop leaves a hairline, a tall house leaves room to stand. Shelter by the height of the wall, not by whether it is a wall.',
+  cps: [28.5],
+  build: (w, c) => {
+    const x = c.x;
+    const wx = w.flags.weather as Weather;
+    wx.porches.push([px(x), px(x + 4)], [px(x + 24), px(x + 33)]);
+    wx.resets.push(px(x + 4), px(x + 34.5));
+    wx.causes[px(x + 34.5)] = 'svp-baarish2';
+    wx.firsts[px(x + 4)] = 220;
+    wx.firsts[px(x + 34.5)] = 220;
+    // first street: a one-storey shop, then a four-storey house; second: a three-storey and a two-storey, close together
+    for (const [bx, bw, h] of [[x + 9, 2, 1], [x + 17, 3, 4], [x + 38, 3, 3], [x + 47, 3, 2]] as const) wx.add(new Block(px(bx), px(bw), h));
+  },
+};
+
+// ================================================================== the act: the lean-to roofs
+export const chhajja: Act = {
+  id: 'svp08-chhajja',
+  w: 56,
+  advice: 'Lean-to roofs over the stalls, each sloping one way: the tin is high at one end and low at the other. Rain runs off a slope on its low side, whichever way the rain comes. Look at the slope before you look at the sky: the dry place is under the high end.',
+  cps: [28.5],
+  build: (w, c) => {
+    const x = c.x;
+    const wx = w.flags.weather as Weather;
+    wx.porches.push([px(x), px(x + 4)], [px(x + 24), px(x + 33)]);
+    wx.resets.push(px(x + 4), px(x + 34.5));
+    wx.causes[px(x + 34.5)] = 'svp-chhajja2';
+    wx.firsts[px(x + 4)] = 220;
+    wx.firsts[px(x + 34.5)] = 220;
+    // the first stall is high on the left, the second is high on the right
+    wx.add(new Slope(px(x + 10), px(x + 16), 1));
+    wx.add(new Slope(px(x + 40), px(x + 46), -1, 'svp-chhajja2'));
+  },
+};
+
+// ================================================================== the act: the covered market, where the rain is heard
+export const tin: Act = {
+  id: 'svp08-tin',
+  w: 56,
+  advice: 'The covered market, under one long tin roof: you cannot see the sky from in here. The rain is heard before it comes, drumming on the sheets at the side it comes from. Listen for the side, and be at the other end of the stall when it arrives.',
+  cps: [28.5],
+  build: (w, c) => {
+    const x = c.x;
+    const wx = w.flags.weather as Weather;
+    wx.porches.push([px(x), px(x + 4)], [px(x + 24), px(x + 33)]);
+    wx.resets.push(px(x + 4), px(x + 34.5));
+    wx.causes[px(x + 34.5)] = 'svp-baarish3';
+    wx.firsts[px(x + 4)] = 220;
+    wx.firsts[px(x + 34.5)] = 220;
+    wx.covered.push([px(x + 4), px(x + 54)]);
+    for (const [a, b] of [[x + 9, x + 14], [x + 18, x + 23], [x + 38, x + 43], [x + 47, x + 52]]) wx.add(new Awning(px(a), px(b)));
+    w.add(
+      new Fx(null, (ctx) => {
+        // the long tin roof overhead, with its ribs and its rivets
+        const x0 = px(x + 4),
+          x1 = px(x + 54);
+        ctx.fillStyle = '#586670';
+        ctx.fillRect(x0, 14, x1 - x0, 20);
+        ctx.fillStyle = '#7C8A92';
+        for (let rx = x0 + 6; rx < x1; rx += 22) ctx.fillRect(rx, 14, 3, 20);
+        ctx.fillStyle = '#3A464E';
+        ctx.fillRect(x0, 34, x1 - x0, 3);
+        ctx.fillStyle = '#4A3A2A';
+        for (const px0 of [x0 + 2, x1 - 4]) ctx.fillRect(px0, 34, 3, FLOOR - 34);
+      }, 7),
+    );
+  },
+};
+
+// ================================================================== the door: the gutter that is a river
+export const gutterRiver: Ending = {
+  space: 16,
+  advice: 'The last stretch of road before the door is a gutter, and a gutter runs like a river for as long as it rains. Shelter at the last awning, wait for the lull, and cross it dry.',
+  paint: (g, D) => {
+    g.pit(D - 8, D - 4).fill(D - 8, D - 4, 17, 17, '#');
+  },
+  build(w, d) {
+    const D = Math.round(d.x / 16);
+    const wx = w.flags.weather as Weather;
+    wx.add(new Awning(px(D - 14), px(D - 9)));
+    // the checkpoint before the door is on a covered stoop, dry for any wind
+    wx.porches.push([px(D - 20), px(D - 13)]);
+    wx.resets.push(px(D - 13));
+    let flood = 0;
+    const x0 = px(D - 8),
+      x1 = px(D - 3);
+    const river = new Hurt(x0, FLOOR + 6, x1 - x0, 40, 'svp-nala', null);
+    river.on = false;
+    w.add(river);
+    w.flags.twist = 'gutter';
+    w.flags.gutter = { get flood() { return flood; } };
+    let lastRain = -999;
+    w.onTick((w2) => {
+      // it floods as soon as the rain starts and drains a moment after it stops
+      if (wx.raining) lastRain = w2.tick;
+      const target = w2.tick - lastRain < 30;
+      flood = Math.max(0, Math.min(1, flood + (target ? 0.02 : -0.06)));
+      river.on = flood > 0.35;
+    });
+    w.add(
+      new Fx(null, (ctx, w2) => {
+        const lvl = FLOOR + 30 - flood * 30;
+        const g = ctx.createLinearGradient(0, lvl, 0, FLOOR + 32);
+        g.addColorStop(0, 'rgba(120,150,120,0.92)');
+        g.addColorStop(1, 'rgba(70,90,70,0.96)');
+        ctx.fillStyle = g;
+        if (flood > 0) ctx.fillRect(x0, lvl, x1 - x0, FLOOR + 32 - lvl);
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.lineWidth = 0.8;
+        if (flood > 0.2) for (let x = x0 + ((w2.tick * 1.6) % 14); x < x1 - 6; x += 14) {
+          ctx.beginPath();
+          ctx.moveTo(x, lvl + 1);
+          ctx.lineTo(x + 6, lvl + 1);
+          ctx.stroke();
+        }
+        text(ctx, 'NALA', (x0 + x1) / 2, FLOOR - 10, 6.5, 'rgba(58,30,18,0.7)', '');
+        void TAU;
+      }, 5),
+    );
+  },
+};
