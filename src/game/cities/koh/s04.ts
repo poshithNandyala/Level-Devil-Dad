@@ -39,11 +39,28 @@ export function lilies(w: World, c0: number, n: number, key: string, o: { dir: 1
     return t >= st.at[i] && t < st.at[i] + st.open;
   };
   for (let i = 0; i < n; i++) {
+    const bud = st.buds.includes(i);
     const pad = w.add(
       new Rig(px(c0 + 2 * i) + 5, FL - 4, 22, 4, {
         solid: true,
         layer: 2,
         tick: (r, w2) => {
+          if (bud) {
+            // a bud looks like a stand and takes a step, then its stalk snaps
+            if (r.s.snapped) return;
+            if (w2.standing(r.solid!)) {
+              if (r.s.onT === undefined) {
+                r.s.onT = w2.tick;
+                w2.sfx('creak', r.x + 11, r.y);
+              } else if (w2.tick - r.s.onT > 18) {
+                r.s.snapped = true;
+                r.setSolid(false);
+                w2.sfx('snap', r.x + 11, r.y);
+                w2.die('koh-kali');
+              }
+            }
+            return;
+          }
           const op = isOpen(i, w2);
           r.s.open = op;
           r.setSolid(op);
@@ -56,7 +73,16 @@ export function lilies(w: World, c0: number, n: number, key: string, o: { dir: 1
           // the stalk, and the flower: a bud, or open petals that are a pad
           box(ctx, r.x + 10, r.y + 4, 2, FL + 12 - (r.y + 4), '#4F7F4A');
           if (st.buds.includes(i)) {
-            box(ctx, r.x + 8, r.y - 2, 6, 8, '#6B8E5A');
+            // a fat green bud, as wide as a pad's heart: it reads as a stand
+            if (r.s.snapped) {
+              box(ctx, r.x + 9, r.y + 2, 4, 6, '#6B8E5A');
+              return;
+            }
+            ctx.fillStyle = '#6B8E5A';
+            ctx.beginPath();
+            ctx.ellipse(r.x + 11, r.y + 1, 9, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            box(ctx, r.x + 9, r.y - 5, 4, 4, '#8DAE6A');
             return;
           }
           const k = r.s.open ? (r.s.k ?? 1) : 0;
@@ -73,7 +99,8 @@ export function lilies(w: World, c0: number, n: number, key: string, o: { dir: 1
         },
       }),
     );
-    pad.setSolid(false);
+    // a bud is solid until its stalk snaps; a flower is a stand only while open
+    pad.setSolid(bud);
     st.pads.push(pad);
   }
   w.flags[key] = st;

@@ -17,7 +17,7 @@ import { FL, bamboo, ditch, since, taraScript } from './common';
 import { lines as L, NPC } from './lines';
 import { roof } from './s06';
 import { DECK_W, DECK_Y } from './s07';
-import { ford, log } from './s05';
+import { log } from './s05';
 
 /** the lashed rod: a bamboo across the drain from column c0 to c1, tied at both ends; it is a bridge this time */
 function lashedRod(w: World, c0: number, c1: number) {
@@ -129,7 +129,7 @@ export function room(): LevelDef {
 export const actUltaGari: Act = {
   id: 'koh10-ulta-gari',
   w: 30,
-  advice: 'A cart waits as before, but this lane climbs: stand on the plank and it rolls backwards into the wall. The lane is paved here, not scree. Walk it.',
+  advice: 'A cart waits as before, but this lane climbs: stand on the plank and it rolls backwards into the wall. The lane is paved here, not scree: walk it. Higher up a second cart is chocked; when the chock gives it comes down the lane at you. Hop it. A cart coming at you is not a ride.',
   cps: [],
   build: (w, c) => {
     const x0 = px(c.x + 10);
@@ -196,6 +196,47 @@ export const actUltaGari: Act = {
         paint: () => {},
       }),
     );
+    // a second cart is chocked higher up the lane; once you are past the first, the chock gives and it comes DOWN the lane
+    // at you: a cart coming at you is a thing to hop, not a thing to board
+    const x2 = px(c.x + 24);
+    const loose = { going: false, t0: -1, done: false, x: x2 };
+    w.flags[c.f('loose')] = loose;
+    w.add(
+      new Rig(x2, DECK_Y - 6, DECK_W, 12, {
+        layer: 2,
+        cause: 'koh-bhagti-gari',
+        inset: 2,
+        live: () => loose.going && !loose.done,
+        tick: (r, w2) => {
+          const p = w2.player;
+          if (!loose.going && p.cx > px(c.x + 13.5)) {
+            loose.going = true;
+            loose.t0 = w2.tick;
+            w2.sfx('crack', x2, FL - 10);
+            w2.say('Gari! Gari! | The cart! The cart!', x2, FL - 40, 0.8, 'npc');
+          }
+          if (loose.going && !loose.done) {
+            r.x -= 190 / 120;
+            if (r.x <= deck.x + DECK_W + 2) {
+              loose.done = true;
+              w2.sfx('thud', r.x, FL - 6);
+            }
+          }
+          loose.x = r.x;
+        },
+        paint: (ctx, r) => {
+          ctx.fillStyle = '#2B1A12';
+          ctx.beginPath();
+          ctx.arc(r.x + 9, FL - 5, 5, 0, Math.PI * 2);
+          ctx.arc(r.x + DECK_W - 9, FL - 5, 5, 0, Math.PI * 2);
+          ctx.fill();
+          box(ctx, r.x, FL - 12, DECK_W, 5, '#A1887F');
+          box(ctx, r.x, FL - 20, 3, 10, '#6D4C41');
+          // the chock, until it gives
+          if (!loose.going) box(ctx, r.x - 5, FL - 6, 5, 6, '#5D4037');
+        },
+      }),
+    );
     w.add(
       new Paint((ctx) => {
         // the paved lane: flagstones
@@ -221,13 +262,14 @@ export const actBera: Act = {
     g.fill(c.x + 4, c.x + 24, 15, 17, '.');
   },
   build: (w, c) => {
-    ford(w, c.x + 4, c.x + 24);
+    // the ford's water sits a little lower here, so the raft (3 px under the log's deck) has room to sink before the water bites
+    ditch(w, px(c.x + 4), px(c.x + 25), 'koh-nala', FL + 10, ['rgba(120,150,150,0.9)', 'rgba(50,70,70,0.97)']);
     log(w, c.x + 4, c.x + 25, c.x + 29, c.f('log'), { P: 1.4, surge: 4, roll: 2.5, bank: 999 });
     // the raft: a float the log's first top reaches; it sinks 0.3 s after a man stands on it
     const rx = px(c.x + 13);
     const st = { onT: -1 };
     w.add(
-      new Rig(rx, FL, 40, 8, {
+      new Rig(rx, FL + 3, 40, 8, {
         solid: true,
         layer: 2,
         tick: (r, w2) => {
@@ -236,9 +278,13 @@ export const actBera: Act = {
             w2.sfx('splash', r.x + 20, FL);
           }
           if (st.onT >= 0) {
-            const k = Math.min(1, since(w2, st.onT) / 0.35);
-            const ny = FL + Math.round(k * 20);
+            const k = Math.min(1, since(w2, st.onT) / 0.5);
+            const ny = FL + 3 + Math.round(k * 20);
             if (ny !== r.y) r.moveTo(w2, r.x, ny);
+            // whoever is still on it when it is under: the raft took him down (its own death, not the ford's)
+            const p = w2.player;
+            const over = p.cx > r.x - 2 && p.cx < r.x + r.w + 2 && p.y + p.h >= r.y - 8;
+            if (k >= 0.15 && over) w2.die('koh-bera');
           }
         },
         paint: (ctx, r) => {

@@ -9,6 +9,7 @@ export const causeLines: Record<string, string[]> = {
   'koh-patak': ['Kewhi came down on the plank and it kicked you off.', 'He flies as far as you land from the post: land on the very tip, and he reaches the ledge.'],
   'koh-kanta': ['You ran into the thorn gate.', 'The gate is barred with thorns until Kewhi lifts the bar from the ledge. Throw him there first.'],
   'koh-daldal': ['You stepped on a lily that was not open: into the bog.', 'Only an open lily is a stand. Chase the wave on the near side; past the stream wait for the pad next to you, then run.'],
+  'koh-kali': ['The bud’s stalk snapped under you.', 'A bud is a flower that never opened: it takes one step and breaks. Jump it, from the open pad before it to the one after.'],
   'koh-thand': ['The icy stream numbed you.', 'Jump the stream from the last pad to the stone; a second in the water is the end.'],
   'koh-shahtir': ['The hut’s lintel knocked you off the log.', 'Step off at the top of the surge that touches the bank; whoever stays aboard is hauled on under the lintel.'],
   'koh-gira': ['You fell into the gully between the houses.', 'The roofs are the road: thatch to thatch, and jump the tin.'],
@@ -28,5 +29,7 @@ export const causeLines: Record<string, string[]> = {
   'koh-jhukav': ['The plank tipped under your walk.', 'The plank house is the opposite of the gate: walk a little, stand still until the creak stops, walk again.'],
   'koh-sadi': ['The rotten thatch gave under you.', 'This house is empty for the festival: its thatch is rotten and its tin is the floor. The dark windows say so.'],
   'koh-takkar': ['The cart rolled back into the wall with you on it.', 'This lane climbs: a boarded cart rolls backwards. The lane is paved here. Walk it.'],
+  'koh-bhagti-gari': ['The loose cart ran you down.', 'Its chock gave as you passed the first cart and it came down the lane. A cart coming at you is hopped, not boarded.'],
+  'koh-bera': ['The raft sank under you.', 'A raft tied in the ford is not the bank. Stay on the log for the next surge; there is no lintel here.'],
   'koh-dhol': ['The log rolled over you.', 'After a double shout the log climbs the bank. Step off at the first top and keep going; at the hut hop the drum as it rolls away.'],
 };

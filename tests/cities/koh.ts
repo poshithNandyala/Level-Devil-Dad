@@ -187,6 +187,20 @@ function chase(key: string): (w: World) => Out {
     return go(padOpen(st, next) ? 'R' : toward(w, st.pads[i].x + st.pads[i].w / 2, 3));
   };
 }
+/** chase the wave as far as the pad before the bud, then step on to the bud as if it were a stand */
+function budStand(key: string): (w: World) => Out {
+  return (w) => {
+    const st = w.flags[key] as Lilies;
+    const p = w.player;
+    const bud = st.buds[0];
+    const before = st.pads[bud - 1];
+    const onBefore = p.cx >= before.x - 4 && p.cx < before.x + before.w + 4;
+    if (!onBefore && p.cx < before.x) return chase(key)(w);
+    // a short hop from the pad's far edge on to the bud, then stand there
+    if (p.cx >= st.pads[bud].x - 2) return go('');
+    return p.cx >= before.x + 12 ? { move: 'R', jump: true } : go('R');
+  };
+}
 /** the far half: wait on the stone for the near pad, then run */
 function waitRun(key: string): (w: World) => Out {
   return (w) => {
@@ -490,7 +504,36 @@ const room10 = (): Step[] => [
   { hold: 'R', until: road(27.5), max: 600 },
   { hold: 'R', until: X(29), max: 400 },
 ];
-const act10a = (x: number): Step[] => [{ hold: 'R', until: X(x + 8.5), max: 600 }, { hold: 'R', jump: 28, ticks: 28, long: true, note: 'over the cart: walk the paved lane' }, { hold: 'R', until: and(ground, X(x + 14.2)), max: 400 }, { hold: 'R', until: X(x + 29.4), max: 900 }];
+type Loose = { going: boolean; done: boolean; x: number };
+/** walk the paved lane; when the loose cart comes down at you, hop it */
+function hopLoose(key: string): (w: World) => Out {
+  let W: World | null = null;
+  let left = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      left = 0;
+    }
+    const st = w.flags[key] as Loose;
+    const p = w.player;
+    if (left > 0) {
+      left--;
+      return { move: 'R', jump: true };
+    }
+    if (st.going && !st.done && p.onGround && st.x - p.cx < 46 && st.x + 48 > p.cx - 8) {
+      left = 14;
+      return { move: 'R', jump: true };
+    }
+    return go('R');
+  };
+}
+const act10a = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 8.5), max: 600 },
+  { hold: 'R', jump: 28, ticks: 28, long: true, note: 'over the cart: walk the paved lane' },
+  { hold: 'R', until: and(ground, X(x + 14.2)), max: 400 },
+  { policy: hopLoose('koh10-ulta-gari:loose'), until: (w) => (w.flags['koh10-ulta-gari:loose'] as Loose).done && w.player.onGround, max: 1200, note: 'hop the loose cart' },
+  { hold: 'R', until: X(x + 29.4), max: 900 },
+];
 /** stay aboard the log all the way: it has no lintel here */
 function stayAboard(key: string, bank: number): (w: World) => Out {
   return (w) => {
@@ -595,6 +638,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'KOH-04': [
     { what: 'run through the far half the moment you land on the stone', steps: [...room04().slice(0, 3), { hold: 'R', until: done, max: 1500 }], cause: 'koh-daldal' },
     inAct('KOH-04', 'koh04-kali', 'run on across the second meadow', () => runOn, 'koh-daldal'),
+    inAct('KOH-04', 'koh04-kali', 'take the bud for a stand', () => [{ policy: budStand('koh4c'), until: done, max: 3000 }], 'koh-kali'),
   ],
   'KOH-05': [
     { what: 'ride to the bank, let the log roll back, then walk off its front', steps: [{ hold: 'R', until: X(6.6), max: 600 }, { hold: '', until: (w) => (w.flags.koh5 as Log).cycle >= 1 && (w.flags.koh5 as Log).phase === -1, max: 2400 }, { hold: 'R', until: done, max: 900 }], cause: 'koh-nala' },
@@ -635,8 +679,9 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   ],
   'KOH-10': [
     inAct('KOH-10', 'koh10-ulta-gari', 'board the cart like Kath ka Gari', () => runOn, 'koh-takkar'),
-    inAct('KOH-10', 'koh10-bera', 'step off at the first touch, like Dhol Gach', (x) => [{ policy: rideLog('koh10-bera:log', x + 13), until: and(ground, offLog('koh10-bera:log'), (w) => w.player.cx > px(x + 13)), max: 3000 }, { hold: '', until: done, max: 1500 }], 'koh-nala'),
-    inAct('KOH-10', 'koh10-bera', 'run across the raft', (x) => [{ policy: rideLog('koh10-bera:log', x + 13), until: and(ground, offLog('koh10-bera:log'), (w) => w.player.cx > px(x + 13)), max: 3000 }, { hold: 'R', until: done, max: 1500 }], 'koh-nala'),
+    inAct('KOH-10', 'koh10-ulta-gari', 'hop the first cart, then stand to board the one coming down the lane', (x) => [...act10a(x).slice(0, 3), { hold: '', until: done, max: 1500, note: 'wait for it like a ride' }], 'koh-bhagti-gari'),
+    inAct('KOH-10', 'koh10-bera', 'step off at the first touch, like Dhol Gach', (x) => [{ policy: rideLog('koh10-bera:log', x + 13), until: and(ground, offLog('koh10-bera:log'), (w) => w.player.cx > px(x + 13)), max: 3000 }, { hold: '', until: done, max: 1500 }], 'koh-bera'),
+    inAct('KOH-10', 'koh10-bera', 'jump for the raft before the log touches it', (x) => [{ policy: rideLog('koh10-bera:log', x + 13), until: (w) => (w.flags['koh10-bera:log'] as Log).rig.x + 80 >= px(x + 13) - 76 && (w.flags['koh10-bera:log'] as Log).phase === 1, max: 3000 }, { hold: 'R', until: (w) => w.player.cx > (w.flags['koh10-bera:log'] as Log).rig.x + 70, max: 300, note: 'to the log’s front' }, { hold: 'R', jump: 8, ticks: 8, note: 'a hop for the raft, short' }, { hold: 'R', until: done, max: 1500 }], 'koh-nala'),
   ],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {

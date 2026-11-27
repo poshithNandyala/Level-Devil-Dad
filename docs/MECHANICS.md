@@ -184,18 +184,6 @@ ulta nishana tadit chehra kataar khoh dwar
 pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound pat-charkhi pat-ginti-pad
 (+ the old nine twists: spikes crush swap shy sink rise wall fake none)
 
-## KOH (Kohima, Nagaland): ideas used (module city, 10 stages, round 1 on `city/koh`)
-- **01 Bhal ase, Kohima** the tour; a bamboo handrail rod laid across the drain at the top of the lane is a roller: stand on it and it rolls you back and drops (jump the drain).
-- **02 Rassi Tan** the tug-of-war rope's mat is the bridge and drifts towards the winning team in heaves; stand behind the flag, step over when it lies on the far bank; act: a third team, the stronger side swaps at the middle; door: the hoisted winners' stand (`koh-manch`).
-- **03 Bans Jhula** your landing on the seesaw's near tip throws Kewhi to the ledge where he lifts the thorn gate; nearer the post he is thrown short and the plank kicks you off; act: Kewhi on the wrong end, a running jump on to the far tip; door: a loose plank (`koh-dhila-patta`).
-- **04 Dzükou** lilies open in a wave and only an open lily is a stand; the icy stream halves your speed and kills after a second; past it the wave reverses; act: buds that never open; door: the rim lily (`koh-rim-lily`).
-- **05 Dhol Gach** a crew hauls the log drum across the ford in surges with roll-backs; step off at the top of the surge that first touches the bank, or be hauled under the lintel; acts: two crews two logs with a double shout; quick and slow crews; door: the rocking drum (`koh-rocking-drum`).
-- **06 Chaal-Chaal** roofs are the road: thatch is silent, tin rings and the household bangs the hatch open under you; eaves over every tin roof; a chimney's puff lifts you into the eave; acts: chimneys everywhere; a lift that sets you down on tin (off it before the bang); door: the skylight glass (`koh-skylight`).
-- **07 Kath ka Gari (marathon)** a brakeless cart down scree lanes, steered by where you stand on the plank (back lifts the nose over a pothole, front drops it under a beam); wet patches mirror the lean; mist stretches announce the next obstacle by sound; a shed is a row of beams; nineteen rides between landings; door: the garage door opens to a nose-first bump (`koh-garage-nose`).
-- **08 Axone Handi (HWIK)** the carried axone pot: a jump knocks the lid off, standing still lids it; the dog and the crows keep off an open pot, the cat runs at one; acts: dog-cat-dog; the crows' wire over the cat's wall (stand still under each crow); door: the kitchen door opens for the smell (`koh-kitchen-door`).
-- **09 Kisama Din (tough)** five morungs whose floor rules invert: drum floor (walk, never jump), hearth (jump), gate that counts (keep moving), plank that tips under a steady walk (stop and go), and both at once; door: the painted front door, the real back door (`koh-pichla-dwar`).
-- **10 Subah Kisama (finale)** callbacks that break the rules: the lashed rod is the bridge, the empty house's tin is the floor and its thatch rotten, the uphill cart rolls back, the log's first touch is a sinking raft; door: the morung gate opens for a man who stands still (`koh-morung-gate`).
-
 ## PAT (Patna, Bihar): ideas used (module city, 10 stages)
 - **01 Prannam, Patna!** a tempo pulls in behind you at the bus stop and the waiting crowd surges along the road
   to it (climb on the kerb board, then run on before the tempo pulls out).

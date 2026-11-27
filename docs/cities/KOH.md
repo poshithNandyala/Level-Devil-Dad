@@ -23,8 +23,21 @@ length floors (a length pass is the next round); not yet through independent QA.
 | 09 | Kisama Din (tough) | five-houses-opposite-rules / rule-flip-per-room | five morungs, each floor rule the opposite of the last: 1 drum floor (a landing booms, a roof plank drops: walk, never jump), 2 hearth (jump it) | `koh09-teen`: 3 the gate counts from your first step (keep moving), 4 the plank tips under a steady walk (stop and go) · `koh09-paanch`: 5 drum floor up to a hearth: one long jump landing on neither | `koh-pichla-dwar`: the grand front door is painted on; the plain back door is real |
 | 10 | Subah Kisama (finale) | finale-run-to-hornbill-ground / hornbill-ground-run | callbacks that break the rules: the tour's rod is lashed and is the only bridge; the house is empty for the festival (dark windows), tin is the floor and the inner thatch is rotten | `koh10-ulta-gari`: the lane climbs, a boarded cart rolls back into the wall; walk the paved lane · `koh10-bera`: the log's first touch is a raft that sinks; stay aboard, no lintel | `koh-morung-gate`: opens for a man who stands still before it |
 
-Death causes (`causes.ts`, all `koh-`): nala, rod, khai, dubki, manch, khad, patak, kanta, daldal, thand, shahtir, dhol, gira, khatkhat,
-chhajja, garam, kanch, gaddha, balli, dhalan, kukur, kag, billi, takhta, aag, phatak, jhukav, sadi, takkar.
+Death causes (`causes.ts`, all `koh-`): nala, rod, khai, dubki, manch, khad, patak, kanta, daldal, kali, thand, shahtir, dhol, gira, khatkhat,
+chhajja, garam, kanch, gaddha, balli, dhalan, kukur, kag, billi, takhta, aag, phatak, jhukav, sadi, takkar, bera.
+
+## Ideas used (for the integrator's MECHANICS.md section at merge; this file is the source)
+
+- **01 Bhal ase, Kohima** the tour; a bamboo handrail rod laid across the drain at the top of the lane is a roller: stand on it and it rolls you back and drops (jump the drain).
+- **02 Rassi Tan** the tug-of-war rope's mat is the bridge and drifts towards the winning team in heaves; stand behind the flag, step over when it lies on the far bank; act: a third team, the stronger side swaps at the middle; door: the hoisted winners' stand (`koh-manch`).
+- **03 Bans Jhula** your landing on the seesaw's near tip throws Kewhi to the ledge where he lifts the thorn gate; nearer the post he is thrown short and the plank kicks you off; act: Kewhi on the wrong end, a running jump on to the far tip; door: a loose plank (`koh-dhila-patta`).
+- **04 Dzükou** lilies open in a wave and only an open lily is a stand; the icy stream halves your speed and kills after a second; past it the wave reverses; act: buds that never open and snap under a step; door: the rim lily (`koh-rim-lily`).
+- **05 Dhol Gach** a crew hauls the log drum across the ford in surges with roll-backs; step off at the top of the surge that first touches the bank, or be hauled under the lintel; acts: two crews two logs with a double shout; quick and slow crews; door: the rocking drum (`koh-rocking-drum`).
+- **06 Chaal-Chaal** roofs are the road: thatch is silent, tin rings and the household bangs the hatch open under you; eaves over every tin roof; a chimney's puff lifts you into the eave; acts: chimneys everywhere; a lift that sets you down on tin (off it before the bang); door: the skylight glass (`koh-skylight`).
+- **07 Kath ka Gari (marathon)** a brakeless cart down scree lanes, steered by where you stand on the plank (back lifts the nose over a pothole, front drops it under a beam); wet patches mirror the lean; mist stretches announce the next obstacle by sound; a shed is a row of beams; door: the garage door opens to a nose-first bump (`koh-garage-nose`).
+- **08 Axone Handi (HWIK)** the carried axone pot: a jump knocks the lid off, standing still lids it; the dog and the crows keep off an open pot, the cat runs at one; acts: dog-cat-dog; the crows' wire over the cat's wall (stand still under each crow); door: the kitchen door opens for the smell (`koh-kitchen-door`).
+- **09 Kisama Din (tough)** five morungs whose floor rules invert: drum floor (walk, never jump), hearth (jump), gate that counts (keep moving), plank that tips under a steady walk (stop and go), and both at once; door: the painted front door, the real back door (`koh-pichla-dwar`).
+- **10 Subah Kisama (finale)** callbacks that break the rules: the lashed rod is the bridge, the empty house's tin is the floor and its thatch rotten, the uphill cart rolls back (and a loose one comes down the lane), the log's first touch is a raft that sinks; door: the morung gate opens for a man who stands still (`koh-morung-gate`).
 
 ## Numbers (round 1, tip 7b73339)
 
