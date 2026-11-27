@@ -73,6 +73,7 @@ export const causeLines: Record<string, string[]> = {
   'bbi-bail': ['The cart’s tail swung into you, Dad: you were right behind it.', 'Touch the cart, step back at once, and follow well behind it to the gate.'],
 
   // law 9 (QA fix F1): each act's own lines, where a shared hazard's line would teach the wrong thing there
+  'bbi-kua-mama': ['Into the well, Dad: the bucket was not under you.', 'Start the grinder first so he goes to it, then step on to the bucket.'],
   'bbi-ranga-palaa': ['It jumped away as you came at it, Dad, and you ran into the dye.', 'Let it run; jump on where it is as it comes back over the pit.'],
   'bbi-rachh-palaa': ['You waited at the edge for the shuttle, Dad: as it got back, the beater beat the bank.', 'Jump on where it is, out over the pit, before it reaches the edge.'],
   'bbi-nacha-dui': ['You went when the drummer by you stopped, Dad: this troupe follows the one across the pit.', 'Watch the far drummer: go when he stops.'],
@@ -110,6 +111,7 @@ export const causeLines: Record<string, string[]> = {
 
 /** law 9 (QA fix F1): per act, which shared cause becomes the act's own (`ownCauses` in common.ts) */
 export const OWN_CAUSES: Record<string, Record<string, string>> = {
+  'bbi05-mama': { 'bbi-tenda': 'bbi-kua-mama' },
   'bbi06-palaa': { 'bbi-ranga': 'bbi-ranga-palaa', 'bbi-rachh': 'bbi-rachh-palaa' },
   'bbi07-dui-baja': { 'bbi-nacha': 'bbi-nacha-dui' },
   'bbi10-chheli': { 'bbi-sinha': 'bbi-sinha-10', 'bbi-chheli': 'bbi-chheli-10' },
