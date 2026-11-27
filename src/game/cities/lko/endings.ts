@@ -3,13 +3,7 @@ import type { World } from '../../world';
 import type { Ending } from '../../levels/endkit';
 import { lock, tara as taraNow } from '../../levels/endkit';
 import { balti } from './s03';
-import { kulhad } from './s04';
 import { sheermal } from './s05';
-import { sam } from './s06';
-import { darban } from './s07';
-import { doorway489 } from './s08';
-import { chhatri } from './s09';
-import { tehzeeb } from './s10';
 import { Art, FLOOR, Zone, gent, px } from './kit';
 
 export type LkoEndingKind = 'lko-kiwad' | 'lko-balti' | 'lko-kulhad' | 'lko-sheermal' | 'lko-sam' | 'lko-darban' | 'lko-489' | 'lko-chhatri' | 'lko-tehzeeb';
@@ -93,4 +87,19 @@ const kiwad: Ending = {
   },
 };
 
-export const endings: Record<LkoEndingKind, Ending> = { 'lko-kiwad': kiwad, 'lko-balti': balti, 'lko-kulhad': kulhad, 'lko-sheermal': sheermal, 'lko-sam': sam, 'lko-darban': darban, 'lko-489': doorway489, 'lko-chhatri': chhatri, 'lko-tehzeeb': tehzeeb };
+// ================================================================ plain doors
+/** A plain door: no idea, walk in. Fix round 6 (QA FAIL-2 C1): these six doors re-asked their own room, and no
+ *  break or new read for them passed the decision gate, so they are honest plain doors. The ids stay. */
+const plain = (advice: string): Ending => ({ space: 6, advice, build() {} });
+
+export const endings: Record<LkoEndingKind, Ending> = {
+  'lko-kiwad': kiwad,
+  'lko-balti': balti,
+  'lko-kulhad': plain('The halwai’s door, open: walk in.'),
+  'lko-sheermal': sheermal,
+  'lko-sam': plain('The dance is over and the door is open: walk in.'),
+  'lko-darban': plain('The café door, open for the evening: walk in.'),
+  'lko-489': plain('The way out of the maze, at last: walk in.'),
+  'lko-chhatri': plain('The door under the chhatri, open: walk in.'),
+  'lko-tehzeeb': plain('The haveli door, open: walk in.'),
+};

@@ -636,5 +636,5 @@ export const charkhi: Act = {
   },
 };
 
-export const s05 = { room: galoutiRoom, acts: [tawa2, lane, ulta, bhara, dum, ghee, charkhi] };
+export const s05 = { room: galoutiRoom, acts: [tawa2, lane, ulta, bhara, ghee, charkhi] };
 export const meta05 = { family: 'flatten-platforms-build-low-lane', betrayals: ['flatten-lane'], ending: 'lko-sheermal' } as StageMeta;

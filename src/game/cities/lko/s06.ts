@@ -544,5 +544,5 @@ export const guru = makeGuru(
   'GURU',
 );
 
-export const s06 = { room: kathakRoom, acts: [tatkar, tihai, guru, mehfil] };
+export const s06 = { room: kathakRoom, acts: [tatkar, guru, mehfil] };
 export const meta06 = { family: 'sound-draws-dancer-spin', betrayals: ['sound-draws'], ending: 'lko-sam' } as StageMeta;

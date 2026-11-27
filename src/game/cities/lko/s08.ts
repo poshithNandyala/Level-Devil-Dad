@@ -205,7 +205,7 @@ const toota: Act = {
   paint: (g, c) => {
     const x = c.x;
     g.pit(x + 9, x + 24, 15);
-    g.fill(x + 5, x + 26, 11, 11, '=');
+    g.fill(x + 5, x + 29, 11, 11, '=');
   },
   build: (w, c) => {
     const x = c.x;
@@ -781,5 +781,5 @@ export const darwaza = makeDarwaza(
   'DARWAZA',
 );
 
-export const s08 = { room: bhoolRoom, acts: [chaupar, upar, minar, toota, mehrab, utar, wapas, darwaza, sargoshi, roshandan] };
+export const s08 = { room: bhoolRoom, acts: [chaupar, upar, toota, utar, wapas, darwaza, sargoshi, roshandan] };
 export const meta08 = { family: 'entry-height-routes-level', betrayals: ['enter-height'], ending: 'lko-489' } as StageMeta;

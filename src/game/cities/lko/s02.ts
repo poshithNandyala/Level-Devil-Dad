@@ -449,5 +449,5 @@ export const aadaab: Act = {
   },
 };
 
-export const s02 = { room: pehleRoom, acts: [gali, takrar, aadaab] };
+export const s02 = { room: pehleRoom, acts: [gali, takrar] };
 export const meta02 = { family: 'politeness-bow-sets-order', betrayals: ['bow-order'], ending: 'lko-kiwad' } as StageMeta;

@@ -378,5 +378,5 @@ export const badal: Act = {
   },
 };
 
-export const s04 = { room: malaiRoom, acts: [gali, badal] };
+export const s04 = { room: malaiRoom, acts: [gali] };
 export const meta04 = { family: 'sun-direction-sinks-foam', betrayals: ['light-sinks'], ending: 'lko-kulhad' } as StageMeta;

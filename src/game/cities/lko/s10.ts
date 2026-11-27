@@ -464,5 +464,5 @@ const thahra = makeDarwaza(
     covered(w, c.x + 6, c.x + 16, d, 30);
   },
 );
-export const s10 = { room: tehzeebRoom, acts: [dhulai, darbar, tasveer, julusBells, jawab, raasta, daana, chirag, seedha, do_, thahra, galiyara] };
+export const s10 = { room: tehzeebRoom, acts: [darbar, tasveer, jawab, daana, seedha, thahra] };
 export const meta10 = { family: 'finale-bow-meets-bells', betrayals: ['bow-vs-bells'], ending: 'lko-tehzeeb' } as StageMeta;

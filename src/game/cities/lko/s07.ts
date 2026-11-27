@@ -690,5 +690,5 @@ export const dukaan: Act = {
   },
 };
 
-export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, photo, dukaan, chowk] };
+export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, photo, dukaan] };
 export const meta07 = { family: 'pace-sets-crowd-shape', betrayals: ['pace-crowd', 'ladder-block'], ending: 'lko-darban' } as StageMeta;
