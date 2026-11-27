@@ -622,8 +622,8 @@ export class Puddle extends Entity {
 
 /**
  * Connemara market: a slab of fish ice laid over the drain as a bridge. When Dad comes near it twitches
- * (16 px, toward the far side), and two beats later the porter drags it 3 tiles back the other way, out
- * from under whoever trusted the twitch. It doesn't carry you: it slides away under your feet.
+ * 16 px on (toward the far side), and two beats later the porter yanks it 3 tiles further on, the same way,
+ * out from under whoever stepped on after the twitch. It doesn't carry you: it slides away under your feet.
  */
 export class IceSlab extends Entity {
   solid: Solid;

@@ -96,16 +96,31 @@ export class Dhara extends Entity {
       const half = Dhara.PERIOD / 2;
       const k = (w.tick * DT) % half;
       const fall = k * 260;
-      if (fall < FLOOR - (this.beam + 4 + Dhara.LEN)) ctx.fillRect(px0 - 0.8, this.beam + 10 + Dhara.LEN + fall, 1.6, 3);
-      // the slick: a shine on the floor
-      const g = ctx.createLinearGradient(this.slick0, 0, this.slick1, 0);
-      g.addColorStop(0, 'rgba(230,180,60,0.15)');
-      g.addColorStop(0.5, 'rgba(240,195,70,0.85)');
-      g.addColorStop(1, 'rgba(230,180,60,0.15)');
+      if (fall < FLOOR - (this.beam + 4 + Dhara.LEN)) {
+        ctx.fillStyle = '#C8860F';
+        ctx.fillRect(px0 - 1.2, this.beam + 10 + Dhara.LEN + fall, 2.4, 4);
+      }
+      // the slick: a pool of dark amber oil standing proud of the grass, with a moving sheen (it must read as a
+      // hazard at phone size: nothing else in the hall is this colour)
+      const x0 = this.slick0,
+        ww = this.slick1 - this.slick0;
+      ctx.fillStyle = '#7A4A08';
+      ctx.beginPath();
+      ctx.ellipse(x0 + ww / 2, FLOOR - 1.5, ww / 2 + 1, 3.2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      const g = ctx.createLinearGradient(0, FLOOR - 5, 0, FLOOR + 1);
+      g.addColorStop(0, '#E0A21E');
+      g.addColorStop(1, '#9A5E0C');
       ctx.fillStyle = g;
-      ctx.fillRect(this.slick0, FLOOR - 1.5, this.slick1 - this.slick0, 2.5);
-      ctx.fillStyle = 'rgba(255,245,200,0.8)';
-      ctx.fillRect(this.slick0 + (this.slick1 - this.slick0) * 0.3, FLOOR - 1.5, 3, 0.8);
+      ctx.beginPath();
+      ctx.ellipse(x0 + ww / 2, FLOOR - 2, ww / 2, 2.6, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // the sheen slides along the pool
+      const sh = x0 + 2 + ((w.tick * 0.6) % Math.max(4, ww - 6));
+      ctx.fillStyle = 'rgba(255,248,215,0.95)';
+      ctx.fillRect(sh, FLOOR - 4, 4, 1.2);
+      ctx.fillStyle = 'rgba(255,248,215,0.5)';
+      ctx.fillRect(x0 + ww * 0.15, FLOOR - 2.5, 2, 0.8);
     }
   }
 }
@@ -115,8 +130,8 @@ export class Droni extends Entity {
   readonly x0: number;
   readonly x1: number;
   hazard: Hazard;
-  readonly look: 'oil' | 'drain';
-  constructor(tx0: number, tx1: number, cause: string, look: 'oil' | 'drain' = 'oil') {
+  readonly look: 'oil' | 'drain' | 'none';
+  constructor(tx0: number, tx1: number, cause: string, look: 'oil' | 'drain' | 'none' = 'oil') {
     super();
     this.look = look;
     this.layer = 2;
@@ -132,6 +147,7 @@ export class Droni extends Entity {
     };
   }
   draw(ctx: CanvasRenderingContext2D) {
+    if (this.look === 'none') return;
     // the trough's wooden sides and the oil in it (or the market drain's stone sides and its grey water)
     ctx.fillStyle = this.look === 'oil' ? '#6D4C41' : '#78909C';
     ctx.fillRect(this.x0, FLOOR, 2, 30);

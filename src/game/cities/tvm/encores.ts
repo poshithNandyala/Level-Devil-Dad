@@ -2,7 +2,7 @@
 import type { LevelDef, StageMeta, World } from '../../world';
 import type { Act } from '../../levels/acts';
 import { lines as L } from './lines';
-import { collectible, prop, px, rival, sign } from '../../levels/kit';
+import { collectible, group, prop, px, rival, sign } from '../../levels/kit';
 import { Grid } from '../../levels/grid';
 import { onPass } from '../../levels/trolls';
 import { tara as taraSays } from '../../levels/endkit';
@@ -39,8 +39,8 @@ export function kovalamRoom(): LevelDef {
           x1: 28,
           strip: 7,
           waves: [
-            { at: 8.5, moves: [{ to: 15, sec: 0.9 }], inAt: 2.3, inFor: 2.0 },
-            { moves: [{ to: 22, sec: 0.8 }], inAt: 2.2, inFor: 2.0 },
+            { at: 5.5, moves: [{ to: 15, sec: 0.9 }], inAt: 2.2, inFor: 1.2 },
+            { moves: [{ to: 22, sec: 0.8 }], inAt: 2.2, inFor: 1.2 },
           ],
         }),
       );
@@ -66,6 +66,7 @@ export function kovalamRoom(): LevelDef {
 export const vilakku: Act = {
   id: 'tvm09-vilakku',
   w: 40,
+  cps: [14],
   advice: 'At the lighthouse he carries the flags back behind you: turn round and follow him. Next time he runs them far ahead, past the rock pool: hop it and get between them.',
   paint: (g, c) => {
     const x = c.x;
@@ -93,6 +94,7 @@ export const vilakku: Act = {
 export const samudra: Act = {
   id: 'tvm09-samudra',
   w: 34,
+  cps: [10.4],
   advice: 'At Samudra beach he plants the flags ahead, thinks again and brings them back: stay with the flags till he stops, not where he first put them. Then he runs them a long way on: go at once.',
   paint: (g, c) => {
     const x = c.x;
@@ -107,8 +109,8 @@ export const samudra: Act = {
         x1: x + 31,
         strip: x + 7,
         waves: [
-          { at: x + 4.5, moves: [{ to: x + 15, sec: 0.8 }, { to: x + 8, sec: 0.8 }], inAt: 2.9, inFor: 2.0 },
-          { moves: [{ to: x + 24, sec: 1.3 }], inAt: 2.8, inFor: 2.0 },
+          { at: x + 4.5, moves: [{ to: x + 15, sec: 0.8 }, { to: x + 7, sec: 0.8 }], inAt: 2.7, inFor: 2.0 },
+          { at: x + 14.2, moves: [{ to: x + 24, sec: 1.1 }], inAt: 2.6, inFor: 2.0 },
         ],
       }),
     );
@@ -124,7 +126,6 @@ export const samudra: Act = {
 export const ashoka: Act = {
   id: 'tvm09-ashoka',
   w: 30,
-  cp0: false,
   advice: 'At Ashoka beach he whistles and paces, but plants the flags right back where they were: stay put. At the next whistle he does carry them on.',
   paint: (g, c) => {
     const x = c.x;
@@ -139,8 +140,8 @@ export const ashoka: Act = {
         x1: x + 27,
         strip: x + 5,
         waves: [
-          { at: x + 6.5, moves: [{ to: x + 9, sec: 0.5 }, { to: x + 5, sec: 0.5 }], inAt: 2.3, inFor: 2.0 },
-          { moves: [{ to: x + 18, sec: 1.1 }], inAt: 2.5, inFor: 2.0 },
+          { at: x + 5, moves: [{ to: x + 9, sec: 0.5 }, { to: x + 5, sec: 0.5 }], inAt: 2.0, inFor: 1.2 },
+          { moves: [{ to: x + 18, sec: 1.1 }], inAt: 2.5, inFor: 1.2 },
         ],
       }),
     );
@@ -155,7 +156,8 @@ export const ashoka: Act = {
 export const pozhikkara: Act = {
   id: 'tvm09-pozhikkara',
   w: 32,
-  advice: 'At Pozhikkara he runs the flags far on, past a rock pool: hop it and get between them. At the next whistle he carries them back over the pool: hop it again, the other way.',
+  cps: [23.4],
+  advice: 'At Pozhikkara he runs the flags far on, past a rock pool: hop it and get between them. Head on, and at the next whistle he carries them back over the pool: hop it again, the other way.',
   paint: (g, c) => {
     const x = c.x;
     g.fill(x, x + 2, 14, 14, '#').fill(x + 29, x + 31, 14, 14, '#').pit(x + 13, x + 14);
@@ -170,7 +172,7 @@ export const pozhikkara: Act = {
         strip: x + 6,
         waves: [
           { at: x + 6.5, moves: [{ to: x + 20, sec: 1.3 }], inAt: 2.7, inFor: 2.0 },
-          { moves: [{ to: x + 7, sec: 1.3 }], inAt: 2.8, inFor: 2.0 },
+          { at: x + 27, moves: [{ to: x + 7, sec: 1.3 }], inAt: 3.0, inFor: 2.0 },
         ],
       }),
     );
@@ -178,15 +180,17 @@ export const pozhikkara: Act = {
 };
 
 // ================================================================== TVM-10: Dhara
-/** TVM-10 act: Shankumugham shore, Kovalam's flags again, and a pot's oil inside the strip: oil can't be stood on,
- *  so stand on the dry edge of the strip, not in its middle */
+/** TVM-10 act: Shankumugham shore, Kovalam's flags again, and the way to them is the trap: between you and the new
+ *  strip lies the monsoon-soaked sand of the welcome tour's road (TVM-01). It looks like the rip, so you want to jump
+ *  it, and soaked ground holds a walker and breaks under a hop. Walk it. */
 export const theeram: Act = {
   id: 'tvm10-theeram',
   w: 36,
-  advice: 'On the shore the lifeguard moves the flags before each wave again, and a pot drips its oil into the strip: stand on the dry sand at its left edge, not on the oil in the middle (your feet go, and you slide out of the flags). When he brings them back, jump over the oil to that dry edge.',
+  cps: [23.6, 28.2],
+  advice: 'On the shore the lifeguard runs the flags far on, and between you and them lies dark, soaked sand. It is not the rip: soaked ground holds a walker and gives way under a hop. Walk across it to the flags, and back across it when he brings them back. The last time he plants them on the soaked sand itself: stand there, it holds you.',
   paint: (g, c) => {
     const x = c.x;
-    g.fill(x, x + 2, 14, 14, '#').fill(x + 33, x + 35, 14, 14, '#');
+    g.fill(x, x + 2, 14, 14, '#').fill(x + 33, x + 35, 14, 14, '#').fill(x + 11, x + 18, 15, 17, c.L[0]);
   },
   build: (w, c) => {
     const x = c.x;
@@ -197,14 +201,23 @@ export const theeram: Act = {
         x1: x + 33,
         strip: x + 6,
         waves: [
-          { at: x + 7, moves: [{ to: x + 14, sec: 0.9 }], inAt: 2.4, inFor: 2.6 },
-          { moves: [{ to: x + 26, sec: 1.2 }], inAt: 2.6, inFor: 2.6 },
-          { moves: [{ to: x + 14, sec: 1.2 }], inAt: 3.0, inFor: 2.6 },
-          { moves: [{ to: x + 27, sec: 1.2 }], inAt: 2.8, inFor: 2.6 },
+          { at: x + 7, moves: [{ to: x + 20, sec: 1.4 }], inAt: 3.0, inFor: 2.6 },
+          { at: x + 27.5, moves: [{ to: x + 6, sec: 1.6 }], inAt: 3.2, inFor: 2.6 },
+          { at: x + 31.8, moves: [{ to: x + 13, sec: 1.4 }], inAt: 3.0, inFor: 2.6 },
         ],
       }),
     );
-    w.add(new Dhara({ hookTx: x + 19, offTx: -2.7, slick: [x + 15, x + 17.8], ty: 8 }));
+    const soaked = group(w, c.L[0]);
+    soaked.paint = { fill: '#3E2A1C', trim: '#5B4630', line: 'rgba(24,58,70,0.55)' };
+    w.when(
+      (w2) => (w2.player.jumpTick === w2.tick || (w2.player.landTick === w2.tick && w2.tick > 1)) && w2.player.cx >= px(x + 10.4) && w2.player.cx < px(x + 18.8) && w2.player.y + w2.player.h <= px(15) + 1,
+      (w2) => {
+        w2.sfx('crack', px(x + 15), px(15));
+        soaked.fall(w2, { delay: 0.1, g: 2400 });
+      },
+    );
+    w.add(new Droni(x + 11, x + 19, 'tvm-soaked', 'none'));
+    w.flags.soaked = soaked;
   },
 };
 
@@ -231,10 +244,11 @@ export const chanda: Act = {
 export const kadappuram: Act = {
   id: 'tvm10-kadappuram',
   w: 36,
-  advice: 'On the beach the flags move before every wave, and this time a coconut palm leans over the new strip: whoever stands still under it gets a coconut. Stand in the flags, clear of the crown. Then he carries them back, then far on.',
+  cps: [17, 26.4, 33.5],
+  advice: 'On the beach the flags move before every wave, and this time a coconut palm leans over the new strip: whoever stands still under it gets a coconut. Stand in the flags, clear of the crown. Then he carries them back, then far on, then a little way back.',
   paint: (g, c) => {
     const x = c.x;
-    g.fill(x, x + 2, 14, 14, '#').fill(x + 33, x + 35, 14, 14, '#');
+    g.fill(x, x + 2, 14, 14, '#');
   },
   build: (w, c) => {
     const x = c.x;
@@ -245,16 +259,18 @@ export const kadappuram: Act = {
         x1: x + 33,
         strip: x + 4,
         waves: [
-          { at: x + 5, moves: [{ to: x + 12, sec: 0.9 }], inAt: 2.6, inFor: 2.8 },
-          { moves: [{ to: x + 5, sec: 1.0 }], inAt: 2.6, inFor: 2.8 },
-          { moves: [{ to: x + 24, sec: 1.4 }], inAt: 3.4, inFor: 2.8 },
+          { at: x + 6.5, moves: [{ to: x + 12, sec: 0.9 }], inAt: 2.2, inFor: 1.2 },
+          { moves: [{ to: x + 5, sec: 1.0 }], inAt: 2.0, inFor: 1.2 },
+          { at: x + 21, moves: [{ to: x + 24, sec: 0.6 }], inAt: 2.6, inFor: 2.6 },
+          { at: x + 30.2, moves: [{ to: x + 18, sec: 1.1 }], inAt: 2.8, inFor: 2.6 },
         ],
       }),
     );
     prop(w, 'palm', x + 15, 15, { h: 84, lean: -6 });
     const nut = coconut(w, px(x + 13.8), px(9));
     w.when(
-      (w2) => w2.player.onGround && Math.abs(w2.player.vx) < 30 && w2.player.cx > px(x + 13.5) && w2.player.cx < px(x + 16.4),
+      // (only while he has the flags under it: once that wave is out, the crown holds its last nut)
+      (w2) => s.i === 0 && s.state !== 'calm' && w2.player.onGround && Math.abs(w2.player.vx) < 30 && w2.player.cx > px(x + 13.5) && w2.player.cx < px(x + 16.4),
       (w2) => drop(w2, nut, { shake: 0.1, v0: 60, land: false }),
     );
     w.when(
@@ -268,7 +284,8 @@ export const kadappuram: Act = {
 export const thira: Act = {
   id: 'tvm10-thira',
   w: 34,
-  advice: 'He plants the flags under a stall tarp full of rain: step up to it, back off and let it empty, then get between the flags before the wave. Then he paces and puts them back where they were: stay. Then far on.',
+  cps: [14.6, 25.4],
+  advice: 'He plants the flags under a stall tarp full of rain: step up to it, back off and let it empty, then get between the flags before the wave. Then he carries them on, and back again.',
   paint: (g, c) => {
     const x = c.x;
     g.fill(x, x + 2, 14, 14, '#').fill(x + 31, x + 33, 14, 14, '#');
@@ -282,9 +299,9 @@ export const thira: Act = {
         x1: x + 31,
         strip: x + 4,
         waves: [
-          { at: x + 5, moves: [{ to: x + 12, sec: 0.9 }], inAt: 3.4, inFor: 2.8 },
-          { moves: [{ to: x + 16, sec: 0.6 }, { to: x + 12, sec: 0.6 }], inAt: 2.6, inFor: 2.8 },
-          { moves: [{ to: x + 23, sec: 1.2 }], inAt: 3.2, inFor: 2.8 },
+          { at: x + 7, moves: [{ to: x + 12, sec: 0.9 }], inAt: 3.2, inFor: 2.6 },
+          { at: x + 18.5, moves: [{ to: x + 22, sec: 0.8 }], inAt: 2.6, inFor: 2.6 },
+          { at: x + 29, moves: [{ to: x + 16, sec: 1.0 }], inAt: 2.8, inFor: 2.6 },
         ],
       }),
     );
@@ -367,7 +384,7 @@ export function dharaRoom(): LevelDef {
 export const kizhi: Act = {
   id: 'tvm10-kizhi',
   w: 34,
-  cps: [16.5],
+  cps: [14.6],
   advice: 'In the courtyard a tarp full of rain hangs over the oil: stop short of it and let it empty. Its rain washes the oil off the edge of the trough, so jump from there. Then hop over the oil by the palm: slide on it and you stop right under the coconuts.',
   paint: (g, c) => {
     g.pit(c.x + 11, c.x + 12);
