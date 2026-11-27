@@ -21,10 +21,16 @@ export class Kumir extends Entity {
     readonly hunt = 4.5,
     readonly count = 2.6,
     readonly near = 56,
+    /** CCU-10: tonight he counts backwards with his eyes open, and covers them only when he stops */
+    readonly backwards = false,
   ) {
     super();
     this.layer = -3;
     this.cx = (x0 + x1) / 2;
+  }
+  /** is he looking (and prowling): hunting, or tonight, counting with his eyes open */
+  get watching() {
+    return this.backwards ? this.state === 'count' : this.state === 'hunt';
   }
   /** Dad's feet are on the chalk water */
   onWater(w: World) {
@@ -36,20 +42,22 @@ export class Kumir extends Entity {
     const p = w.player;
     if (this.state === 'idle') {
       if (p.cx < this.x0 - this.near) return;
-      this.state = 'hunt';
+      this.state = this.backwards ? 'count' : 'hunt';
       this.t = 0;
-      w.say('Kumir! Kumir! | Crocodile! Crocodile!', this.cx, FLOOR - 40, 1.6, 'npc');
+      if (this.backwards) w.say('Tin… dui… ek… | Three… two… one…', this.cx, FLOOR - 40, this.count, 'npc');
+      else w.say('Kumir! Kumir! | Crocodile! Crocodile!', this.cx, FLOOR - 40, 1.6, 'npc');
     }
     this.t += DT;
     if (this.state === 'hunt' && this.t >= this.hunt) {
       this.state = 'count';
       this.t = 0;
-      w.say('Ek… dui… tin… | One… two… three…', this.cx, FLOOR - 40, this.count, 'npc');
+      if (this.backwards) w.say('Tin… dui… ek… | Three… two… one…', this.cx, FLOOR - 40, this.count, 'npc');
+      else w.say('Ek… dui… tin… | One… two… three…', this.cx, FLOOR - 40, this.count, 'npc');
     } else if (this.state === 'count' && this.t >= this.count) {
       this.state = 'hunt';
       this.t = 0;
     }
-    if (this.state === 'hunt') {
+    if (this.watching) {
       // he prowls the river towards Dad
       const want = Math.max(this.x0 + 10, Math.min(this.x1 - 10, p.cx));
       this.cx += Math.sign(want - this.cx) * Math.min(Math.abs(want - this.cx), 40 * DT);
@@ -81,7 +89,7 @@ export class Kumir extends Entity {
     ctx.strokeStyle = '#4E8F3A';
     ctx.lineWidth = 2.2;
     ctx.beginPath();
-    if (this.state === 'count') {
+    if (this.state !== 'idle' && !this.watching) {
       ctx.moveTo(k - 6, FLOOR - 14);
       ctx.lineTo(k - 2, FLOOR - 19);
       ctx.moveTo(k + 6, FLOOR - 14);

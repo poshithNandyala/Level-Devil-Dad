@@ -160,16 +160,18 @@ const points: Act = {
   id: 'ccu06-points',
   w: 48,
   cp0: false,
-  // on the island's ground, never on the tram's step
-  cps: [6.3],
-  advice: 'At the island stop, look at the pointsman: his lever is set for the other line, and this tram turns off there, step and all. Get off at the island and wait. The next tram comes along the straight line: hop on its step and stay on it through the second junction.',
+  // on the islands' ground, never on the tram's step
+  cps: [6.3, 40.4],
+  advice: 'At the island stop, look at the pointsman: his lever is set for the other line, and this tram turns off there, step and all. Get off at the island and wait. The next tram comes along the straight line: hop on its step and stay on it through the second junction. At the next island stop, step off and back on: he waits.',
   paint: (g, c) => {
-    g.pit(c.x, c.x + 3).pit(c.x + 10, c.x + 47);
+    g.pit(c.x, c.x + 3).pit(c.x + 10, c.x + 37).pit(c.x + 43, c.x + 47);
   },
   build: (w, c) => {
     const x = c.x;
     khod(w, x, x + 4);
-    khod(w, x + 10, x + 48);
+    khod(w, x + 10, x + 38);
+    khod(w, x + 43, x + 48);
+    sign(w, x + 40.2, 8.4, 3.6, 'TRAM STOP', 'green', null, 'island 2');
     w.add(new Junction(c.X(30)));
     w.add(new Points(c.X(16), true));
     sign(w, x + 6.2, 8.4, 3.6, 'TRAM STOP', 'green', null, 'island');
@@ -178,7 +180,7 @@ const points: Act = {
     w.when(
       (w2) => (a.state === 'turn' || a.state === 'gone') && w2.player.onGround && w2.player.cx > c.X(4) && w2.player.cx < c.X(10) && !a.riding(w2),
       (w2) => {
-        const b = w2.add(new Tram({ x: c.X(4) - 300, speed: 70, stops: [{ x: c.X(5) - 2, dwell: 0.8, ride: true }, ...(w2.flags.stops6 ?? [])], junctions: [c.X(30), ...(w2.flags.junctions6 ?? [])], end: w2.flags.terminus, label: '25' }));
+        const b = w2.add(new Tram({ x: c.X(4) - 300, speed: 70, stops: [{ x: c.X(5) - 2, dwell: 0.8, ride: true }, { x: c.X(39) - 2, dwell: 2.6, ride: true }, ...(w2.flags.stops6 ?? [])], junctions: [c.X(30), ...(w2.flags.junctions6 ?? [])], end: w2.flags.terminus, label: '25' }));
         w2.flags.tramB = b;
       },
     );
@@ -292,7 +294,6 @@ function relay(id: string, v: [number, number, number], tallFirst: boolean, advi
     },
   };
 }
-const ulto = relay('ccu07-ulto', [41, 59, 79], false, 'A long span, and the relay the other way up: a short porter from the pylon, a tall one overtaking (hop up when nothing is coming over), then a short one passing under (walk off the front on to him) before the second CHA board.', []);
 
 /** CCU-07 act (R2, the bore's front, its A3): the low causeway along the river. The front comes up the
  *  river behind you as you step on to it and floods all it has passed: the momentum beat. Keep moving,
@@ -359,6 +360,27 @@ const horn: Act = {
     const p2 = w.add(new Porter({ x: c.X(10), v: 50, h: TALL, go: walking(p1), off: c.X(36), kind: 'books' }));
     const h = w.add(new Horn([p1, p2], [c.X(11), c.X(22)]));
     w.flags.horn = { p1, p2, h };
+  },
+};
+
+/** CCU-07 act (allocation v3 F502, board-takes-one): a CHA board seats one porter. The short porter who
+ *  overtakes under you gets to the board first and sets down there; yours, arriving second, finds it taken
+ *  and walks on. So this once, don't switch before the board: stay where you are */
+const board: Act = {
+  id: 'ccu07-board',
+  w: 40,
+  cp0: false,
+  advice: 'One CHA board, and it seats one. A short porter overtakes under you on his way to it, and he gets there first: he sets down, and yours finds the board taken and walks on past it. So this time don’t switch: stay on your load.',
+  paint: (g, c) => {
+    g.fill(c.x, c.x + 3, 14, 14, '#').fill(c.x + 1, c.x + 3, 13, 13, '#');
+  },
+  build: (w, c) => {
+    w.add(new Girders(c.X(0), c.X(40)));
+    road(w, c.X(4), c.X(40));
+    const a = w.add(new Porter({ x: c.X(5), v: 45, h: TALL, rests: [[c.X(40.8), Infinity]], go: (w2, me) => w2.player.isRiding(me.load), kind: 'sack' }));
+    const b = w.add(new Porter({ x: c.X(-2), v: 66, h: SHORT, rests: [[c.X(26), 6]], go: walking(a), off: c.X(40), kind: 'books' }));
+    w.add(new ChaiBoard(c.X(26)));
+    w.flags.board = { a, b };
   },
 };
 
@@ -909,6 +931,25 @@ const pherot: Act = {
   },
 };
 
+/** CCU-10 act: kumir-danga again (CCU-01), and its rule broken. 01 taught: cross while he counts. Tonight he
+ *  counts backwards with his eyes open, and only covers them when he stops: cross when he STOPS counting */
+const kumir10: Act = {
+  id: 'ccu10-kumir',
+  w: 24,
+  // on the pandal's deck before the chalk, out of his reach
+  cp0: false,
+  cps: [-3],
+  advice: 'The kumir again, but tonight he counts backwards, “tin… dui… ek…”, with his eyes wide open. Only when he stops counting does he cover his eyes: that’s when you cross. And hop the drain on the far bank.',
+  paint: (g, c) => {
+    g.pit(c.x + 9, c.x + 10);
+  },
+  build: (w, c) => {
+    w.flags.kumir10 = w.add(new Kumir(c.X(4), c.X(8), 2.6, 4, 56, true));
+    pool(w, c.x + 9, c.x + 11, 16, { colors: NALA, cause: 'ccu-nala' });
+    sign(w, c.x + 0.4, 10.4, 3.2, 'KUMIR-DANGA', 'green', null, 'tonight');
+  },
+};
+
 /** CCU-10 act: the bore's front again (CCU-07's causeway), and its rule broken. 07 taught: keep running ahead
  *  of it. Here it comes back down the river at you, faster than anyone runs: get up on the refuge and let it
  *  go by under you */
@@ -1122,23 +1163,24 @@ const line: Act = {
   id: 'ccu09-line',
   cp0: false,
   cps: [-1.8],
-  w: 30,
+  // 09's labelled momentum beat: ten bamboos, two more beats of the queue than it needs to teach
+  w: 36,
   advice: 'Opening night, and the queue for the pandal: one person to a bamboo, and on each beat of the dhak they all step one bamboo on. Nobody climbs over the queue, and under it are the stakes. Move up into the bamboo they’ve just left, one beat at a time.',
   paint: (g, c) => {
     const x = c.x;
     g.fill(x + 1, x + 1, 13, 14, '#');
-    for (let k = 0; k < 8; k++) g.fill(x + 3 + 3 * k, x + 4 + 3 * k, 12, 12, '=');
-    g.fill(x + 26, x + 29, 12, 14, '#');
+    for (let k = 0; k < 10; k++) g.fill(x + 3 + 3 * k, x + 4 + 3 * k, 12, 12, '=');
+    g.fill(x + 32, x + 35, 12, 14, '#');
   },
   build: (w, c) => {
-    w.add(new Skeleton(c.X(1), c.X(26)));
-    w.add(new Stakes(c.X(2), c.X(26)));
-    const xs = Array.from({ length: 8 }, (_, k) => c.X(3 + 3 * k) + 8);
+    w.add(new Skeleton(c.X(1), c.X(32)));
+    w.add(new Stakes(c.X(2), c.X(32)));
+    const xs = Array.from({ length: 10 }, (_, k) => c.X(3 + 3 * k) + 8);
     const q = w.add(new Queue(xs, px(12), [1, 2, 3]));
     onPass(w, c.X(1), (w2) => {
       if (q.t0 < 0) q.t0 = w2.tick + 120;
     });
-    sign(w, c.x + 26.4, 8.4, 3.2, 'QUEUE', 'green', null, 'this way');
+    sign(w, c.x + 32.4, 8.4, 3.2, 'QUEUE', 'green', null, 'this way');
     w.flags.line = q;
   },
 };
@@ -1241,8 +1283,8 @@ export const levels = (): LevelDef[] => [
   longStage({ base: boiRoom(), par: 23, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
   longStage({ base: kumartuliRoom(), par: 31, acts: [lane, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
   longStage({ base: poleRoom(), par: 77, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
-  longStage({ base: howrahRoom(), par: 110, acts: [girder, dui, horn, pylon, jowar], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
+  longStage({ base: howrahRoom(), par: 110, acts: [girder, dui, horn, board, pylon, jowar], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 32, acts: [rok], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
   longStage({ base: pandalRoom(), par: 72, acts: [sinri, toran, chala, dhak, uthan, line], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
-  longStage({ base: finaleRoom(), par: 119, acts: [bus10, tram10, chhad, phire, pherot, kumor10, khola, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
+  longStage({ base: finaleRoom(), par: 119, acts: [bus10, tram10, chhad, phire, pherot, kumor10, khola, kumir10, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];
