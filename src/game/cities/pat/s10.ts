@@ -102,13 +102,13 @@ export const actSetu: Act = {
 /** Golghar's stairs again, on the way to the granary: the porters come down the stair you climb */
 export const actStair: Act = {
   id: 'pat10-sidhi',
-  w: 34,
+  w: 40,
   advice: 'Golghar’s stair once more: the porters come down it with their sacks, one from the top and one from the door on the landing. Wait at the foot until both have gone by, then go up in one go and down the far stair.',
   cps: [],
-  paint: (g, c) => stairPaint(g, c.x + 2),
+  paint: (g, c) => stairPaint(g, c.x + 8),
   build: (w, c) => {
-    stairBuild(w, c.x + 2, 'pat10g', false);
-    sign(w, c.x + 22, 6.4, 4.4, 'GOLGHAR', 'shop', null, 'the granary');
+    stairBuild(w, c.x + 8, 'pat10g', false);
+    sign(w, c.x + 28, 6.4, 4.4, 'GOLGHAR', 'shop', null, 'the granary');
   },
 };
 
@@ -182,7 +182,7 @@ export const actTempo: Act = {
   id: 'pat10-tempo',
   w: 86,
   advice: 'The shared tempo once more, and the sacks the porters load count as riders: one on the kerb side at the first halt, one on the road side at the second, which cancels it, and one comes off at the last. Stand opposite the heavier side before every hump and arch, and in the middle where it is level. A truck on the kerb side pulls the other way.',
-  cps: [12, 38, 59],
+  cps: [12, 29, 52],
   paint: () => {},
   build: (w, c) => {
     tempo(w, px(c.x + 4), { trigger: px(c.x + 2), rider: false });
