@@ -1,4 +1,4 @@
-// Shared pieces for the door endings (endings.ts and endings2.ts).
+// Shared pieces for the door endings (endings.ts and the city modules' endings.ts).
 import { Entity, type Hazard, type World } from '../world';
 import type { Door } from '../entities/basics';
 import type { Grid } from './grid';

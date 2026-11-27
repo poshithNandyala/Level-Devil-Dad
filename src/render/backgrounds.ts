@@ -3,13 +3,15 @@ import type { SceneDef } from '../game/world';
 import { drawScene, sceneSky } from './scenes';
 import { THEMES, Theme } from './theme';
 import { Ctx, circle, ellipse, hash, rr, withAlpha } from './art/common';
-import { amaravati, ambientSouth, chennai, kavaratti, puducherry, thiruvananthapuram } from './backdrops-south';
-import { ambientWest, daman, gandhinagar, bhopal, jaipur, raipur, panaji } from './backdrops-west';
 
-/** a city module's skyline, drawn in world units between x0 and x1 */
-export type Backdrop = (ctx: Ctx, th: Theme, x0: number, x1: number) => void;
+/** a city module's skyline, drawn in world units between x0 and x1; `variant` is the stage's index */
+export type Backdrop = (ctx: Ctx, th: Theme, x0: number, x1: number, variant: number) => void;
 /** city modules' backdrops (installed by src/game/cities/install.ts) */
 export const MODULE_BACKDROPS: Partial<Record<CityId, Backdrop>> = {};
+/** a city module's animated layer, drawn every frame over the cached backdrop */
+export type Ambient = (ctx: Ctx, x0: number, x1: number, t: number, reduced: boolean) => void;
+/** city modules' animated layers (installed by src/game/cities/install.ts) */
+export const MODULE_AMBIENT: Partial<Record<CityId, Ambient>> = {};
 
 /**
  * City backdrops, drawn in world units around the room. `x0..x1` is the
@@ -33,21 +35,7 @@ export function drawBackdrop(ctx: Ctx, city: CityId, x0: number, x1: number, y0:
     ctx.fillRect(x0, 170, x1 - x0, 120);
     return;
   }
-  if (city === 'HYD') hyderabad(ctx, th, x0, x1, variant);
-  else if (city === 'BLR') bengaluru(ctx, th, x0, x1, variant);
-  else if (city === 'BOM') mumbai(ctx, th, x0, x1, variant);
-  else if (city === 'TVM') thiruvananthapuram(ctx, th, x0, x1);
-  else if (city === 'KVT') kavaratti(ctx, th, x0, x1);
-  else if (city === 'CHN') chennai(ctx, th, x0, x1);
-  else if (city === 'PDY') puducherry(ctx, th, x0, x1);
-  else if (city === 'PNJ') panaji(ctx, th, x0, x1);
-  else if (city === 'DMN') daman(ctx, th, x0, x1);
-  else if (city === 'GNR') gandhinagar(ctx, th, x0, x1);
-  else if (city === 'JAI') jaipur(ctx, th, x0, x1);
-  else if (city === 'BPL') bhopal(ctx, th, x0, x1);
-  else if (city === 'RPR') raipur(ctx, th, x0, x1);
-  else if (MODULE_BACKDROPS[city]) MODULE_BACKDROPS[city]!(ctx, th, x0, x1);
-  else amaravati(ctx, th, x0, x1);
+  if (MODULE_BACKDROPS[city]) MODULE_BACKDROPS[city]!(ctx, th, x0, x1, variant);
   // haze near the ground line so the playfield pops
   const hz = ctx.createLinearGradient(0, 170, 0, 260);
   hz.addColorStop(0, withAlpha(th.sky[2], 0));
@@ -56,7 +44,7 @@ export function drawBackdrop(ctx: Ctx, city: CityId, x0: number, x1: number, y0:
   ctx.fillRect(x0, 170, x1 - x0, 120);
 }
 
-function sunGlow(ctx: Ctx, x: number, y: number, r: number, color: string) {
+export function sunGlow(ctx: Ctx, x: number, y: number, r: number, color: string) {
   const g = ctx.createRadialGradient(x, y, r * 0.6, x, y, r * 3);
   g.addColorStop(0, withAlpha(color, 0.55));
   g.addColorStop(1, withAlpha(color, 0));
@@ -65,7 +53,7 @@ function sunGlow(ctx: Ctx, x: number, y: number, r: number, color: string) {
   circle(ctx, x, y, r, color);
 }
 
-function hills(ctx: Ctx, x0: number, x1: number, base: number, amp: number, freq: number, seed: number, color: string) {
+export function hills(ctx: Ctx, x0: number, x1: number, base: number, amp: number, freq: number, seed: number, color: string) {
   ctx.fillStyle = color;
   ctx.beginPath();
   ctx.moveTo(x0, 300);
@@ -162,362 +150,8 @@ export function charminar(ctx: Ctx, cx: number, base: number, scale: number, col
   ctx.restore();
 }
 
-function hyderabad(ctx: Ctx, th: Theme, x0: number, x1: number, variant: number) {
-  sunGlow(ctx, 382, 88, 30, th.sun);
-  // Golconda hills with fort walls
-  hills(ctx, x0, x1, 200, 42, 0.012, 1.3, th.far);
-  ctx.fillStyle = th.far;
-  for (let x = Math.floor(x0 / 10) * 10; x < x1; x += 10) {
-    const y = 200 - 42 * (0.55 + 0.45 * Math.sin(x * 0.012 + 1.3) * Math.sin(x * 0.012 * 0.37 + 2.6));
-    if (hash(x, 3) > 0.45) ctx.fillRect(x, y - 4, 5, 4);
-  }
-  // old city skyline
-  ctx.fillStyle = th.mid;
-  for (let x = Math.floor(x0 / 34) * 34 - 34; x < x1 + 34; x += 34) {
-    const h = 28 + hash(x, 1) * 34;
-    const w = 24 + hash(x, 2) * 12;
-    ctx.fillRect(x, 230 - h, w, h + 20);
-    if (hash(x, 4) > 0.5) {
-      ctx.beginPath();
-      ctx.arc(x + w / 2, 230 - h, w * 0.32, Math.PI, 0);
-      ctx.fill();
-      ctx.fillRect(x + w / 2 - 0.6, 230 - h - w * 0.32 - 5, 1.2, 5);
-    } else if (hash(x, 5) > 0.5) {
-      ctx.fillRect(x + w - 4, 230 - h - 16, 4, 16);
-      ctx.beginPath();
-      ctx.arc(x + w - 2, 230 - h - 16, 3, Math.PI, 0);
-      ctx.fill();
-    }
-    // windows
-    ctx.fillStyle = withAlpha('#FFE3B0', 0.5);
-    for (let wy = 230 - h + 6; wy < 226; wy += 9)
-      for (let wx = x + 4; wx < x + w - 4; wx += 7) if (hash(wx, wy) > 0.55) ctx.fillRect(wx, wy, 2.4, 3.6);
-    ctx.fillStyle = th.mid;
-  }
-  // the Charminar, a little off-centre so the playfield stays readable
-  charminar(ctx, variant === 5 ? 256 : 300, 240, variant === 5 ? 1.25 : 1.0, th.near, '#F6CFA4');
-  // kites
-  const kites: [number, number, string][] = [
-    [110, 60, '#E63946'],
-    [450, 40, '#2A9D8F'],
-    [70, 110, '#F2C14E'],
-  ];
-  for (const [kx, ky, c] of kites) {
-    if (kx < x0 - 20 || kx > x1 + 20) continue;
-    ctx.fillStyle = c;
-    ctx.beginPath();
-    ctx.moveTo(kx, ky - 6);
-    ctx.lineTo(kx + 5, ky);
-    ctx.lineTo(kx, ky + 6);
-    ctx.lineTo(kx - 5, ky);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = withAlpha('#5A3A2A', 0.4);
-    ctx.lineWidth = 0.4;
-    ctx.beginPath();
-    ctx.moveTo(kx, ky + 6);
-    ctx.quadraticCurveTo(kx + 20, ky + 60, kx - 10, 240);
-    ctx.stroke();
-  }
-}
-
-// ------------------------------------------------------------------ Bengaluru
-function bengaluru(ctx: Ctx, th: Theme, x0: number, x1: number, _variant: number) {
-  sunGlow(ctx, 90, 70, 20, th.sun);
-  // soft clouds
-  ctx.fillStyle = 'rgba(255,255,255,0.55)';
-  for (const [cx, cy, s] of [
-    [160, 50, 1],
-    [400, 34, 1.3],
-    [-40, 80, 0.9],
-    [560, 70, 1],
-  ] as const) {
-    if (cx < x0 - 60 || cx > x1 + 60) continue;
-    ellipse(ctx, cx, cy, 22 * s, 7 * s, 'rgba(255,255,255,0.55)');
-    ellipse(ctx, cx + 12 * s, cy - 5 * s, 14 * s, 7 * s, 'rgba(255,255,255,0.55)');
-  }
-  // glass towers
-  for (let x = Math.floor(x0 / 46) * 46 - 46; x < x1 + 46; x += 46) {
-    const h = 70 + hash(x, 7) * 80;
-    const w = 26 + hash(x, 8) * 14;
-    const tx = x + hash(x, 9) * 10;
-    ctx.fillStyle = th.far;
-    ctx.fillRect(tx, 220 - h, w, h + 20);
-    ctx.fillStyle = 'rgba(255,255,255,0.22)';
-    for (let wy = 224 - h; wy < 220; wy += 6) ctx.fillRect(tx + 2, wy, w - 4, 1.2);
-    ctx.fillStyle = 'rgba(255,255,255,0.12)';
-    ctx.fillRect(tx, 220 - h, w * 0.3, h);
-    if (hash(x, 10) > 0.6) {
-      ctx.fillStyle = th.far;
-      ctx.fillRect(tx + w / 2 - 0.6, 220 - h - 12, 1.2, 12);
-    }
-  }
-  // Vidhana Soudha
-  const vx = 150,
-    vb = 228;
-  ctx.fillStyle = '#E3DCCB';
-  ctx.fillRect(vx - 70, vb - 34, 140, 40);
-  ctx.fillRect(vx - 26, vb - 52, 52, 20);
-  ctx.beginPath();
-  ctx.arc(vx, vb - 52, 18, Math.PI, 0);
-  ctx.fill();
-  ctx.fillRect(vx - 1, vb - 78, 2, 8);
-  for (const sx of [-58, 58]) {
-    ctx.beginPath();
-    ctx.arc(vx + sx, vb - 34, 8, Math.PI, 0);
-    ctx.fill();
-  }
-  ctx.fillStyle = 'rgba(120,110,95,0.35)';
-  for (let i = -64; i <= 64; i += 8) ctx.fillRect(vx + i, vb - 30, 2.4, 32);
-  // Namma Metro purple line on its viaduct, with a train gliding along
-  ctx.fillStyle = '#B9AFC9';
-  for (let x = Math.floor(x0 / 70) * 70; x < x1 + 70; x += 70) ctx.fillRect(x + 20, 172, 8, 60);
-  ctx.fillStyle = '#CFC6DD';
-  ctx.fillRect(x0 - 10, 164, x1 - x0 + 20, 9);
-  ctx.fillStyle = th.accent;
-  ctx.fillRect(x0 - 10, 168, x1 - x0 + 20, 2);
-  // trees
-  for (let x = Math.floor(x0 / 30) * 30 - 30; x < x1 + 30; x += 30) {
-    const purple = hash(x, 11) > 0.62;
-    const c = purple ? '#A58AD8' : '#5FAA6A';
-    const c2 = purple ? '#C1A9EA' : '#7DC283';
-    const ty = 236 - hash(x, 12) * 10;
-    ellipse(ctx, x, ty, 18, 12, c);
-    ellipse(ctx, x + 10, ty - 8, 12, 9, c2);
-    ellipse(ctx, x - 9, ty - 4, 10, 8, c2);
-  }
-}
-
-// --------------------------------------------------------------------- Mumbai
-function mumbai(ctx: Ctx, th: Theme, x0: number, x1: number, variant: number) {
-  sunGlow(ctx, 330, 196, 26, th.sun);
-  // sea
-  const sg = ctx.createLinearGradient(0, 200, 0, 260);
-  sg.addColorStop(0, '#3A3772');
-  sg.addColorStop(1, '#1B1A3D');
-  ctx.fillStyle = sg;
-  ctx.fillRect(x0 - 2, 200, x1 - x0 + 4, 100);
-  ctx.fillStyle = 'rgba(255,200,140,0.35)';
-  for (let i = 0; i < 8; i++) ctx.fillRect(330 - 18 + hash(i, 1) * 12, 204 + i * 5, 24 - i * 2, 1.2);
-  // far skyline with lit windows
-  for (let x = Math.floor(x0 / 22) * 22 - 22; x < x1 + 22; x += 22) {
-    if (x > 250 && x < 400) continue;
-    const h = 40 + hash(x, 21) * 90;
-    const w = 14 + hash(x, 22) * 8;
-    ctx.fillStyle = hash(x, 23) > 0.5 ? th.far : th.mid;
-    ctx.fillRect(x, 200 - h, w, h);
-    ctx.fillStyle = 'rgba(255,214,140,0.65)';
-    for (let wy = 204 - h; wy < 196; wy += 5) for (let wx = x + 2; wx < x + w - 2; wx += 4) if (hash(wx, wy, 3) > 0.62) ctx.fillRect(wx, wy, 1.6, 2);
-  }
-  // Bandra-Worli Sea Link
-  const px = 470;
-  if (px > x0 - 120 && px < x1 + 120) {
-    ctx.fillStyle = th.mid;
-    ctx.fillRect(px - 120, 186, 240, 3);
-    ctx.beginPath();
-    ctx.moveTo(px - 4, 186);
-    ctx.lineTo(px - 1.5, 120);
-    ctx.lineTo(px + 1.5, 120);
-    ctx.lineTo(px + 4, 186);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = withAlpha('#C9C2F0', 0.5);
-    ctx.lineWidth = 0.4;
-    for (let i = 1; i <= 9; i++) {
-      ctx.beginPath();
-      ctx.moveTo(px, 124 + i * 2);
-      ctx.lineTo(px - i * 12, 186);
-      ctx.moveTo(px, 124 + i * 2);
-      ctx.lineTo(px + i * 12, 186);
-      ctx.stroke();
-    }
-  }
-  // Gateway of India
-  const gx = variant === 5 ? 160 : 120;
-  ctx.fillStyle = th.near;
-  ctx.fillRect(gx - 30, 160, 60, 42);
-  ctx.fillRect(gx - 34, 156, 68, 6);
-  for (const tx of [-28, -8, 12]) ctx.fillRect(gx + tx, 146, 16, 12);
-  for (const tx of [-24, 16]) {
-    ctx.beginPath();
-    ctx.arc(gx + tx + 4, 146, 5, Math.PI, 0);
-    ctx.fill();
-  }
-  ctx.fillStyle = '#4C3F7E';
-  ctx.beginPath();
-  ctx.moveTo(gx - 9, 202);
-  ctx.lineTo(gx - 9, 178);
-  ctx.quadraticCurveTo(gx, 166, gx + 9, 178);
-  ctx.lineTo(gx + 9, 202);
-  ctx.closePath();
-  ctx.fill();
-  // Queen's Necklace along Marine Drive
-  ctx.fillStyle = th.accent;
-  for (let x = x0; x < x1; x += 5) {
-    const y = 214 + Math.sin((x - x0) * 0.008) * 8;
-    if (hash(Math.round(x), 41) > 0.15) {
-      ctx.globalAlpha = 0.85;
-      ctx.fillRect(x, y, 1.6, 1.6);
-    }
-  }
-  ctx.globalAlpha = 1;
-  // station roof girders across the top
-  ctx.fillStyle = 'rgba(20,18,40,0.55)';
-  ctx.fillRect(x0 - 2, 0, x1 - x0 + 4, 10);
-  ctx.strokeStyle = 'rgba(20,18,40,0.45)';
-  ctx.lineWidth = 1.2;
-  for (let x = Math.floor(x0 / 24) * 24; x < x1 + 24; x += 24) {
-    ctx.beginPath();
-    ctx.moveTo(x, 10);
-    ctx.lineTo(x + 12, 0);
-    ctx.lineTo(x + 24, 10);
-    ctx.stroke();
-  }
-  void rr;
-}
-
 /** Animated layer drawn every frame on top of the cached backdrop. */
 export function drawAmbient(ctx: Ctx, city: CityId, x0: number, x1: number, t: number, reduced: boolean) {
-  ambientSouth(ctx, city, x0, x1, t, reduced);
-  ambientWest(ctx, city, x0, x1, t, reduced);
-  if (!reduced) ambientVibe(ctx, city, x0, x1, t);
-  if (city === 'BLR') {
-    // metro train on the viaduct
-    const span = x1 - x0 + 200;
-    const mx = x0 - 100 + ((t * 40) % span);
-    ctx.fillStyle = '#8E6CCB';
-    rr(ctx, mx, 156, 64, 9, 2);
-    ctx.fill();
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    for (let i = 0; i < 6; i++) ctx.fillRect(mx + 4 + i * 10, 158, 6, 3);
-  } else if (city === 'HYD') {
-    // pigeons circling the Charminar
-    ctx.strokeStyle = 'rgba(80,50,40,0.55)';
-    ctx.lineWidth = 0.8;
-    for (let i = 0; i < 5; i++) {
-      const a = t * 0.6 + i * 1.25;
-      const bx = 300 + Math.cos(a) * (60 + i * 6),
-        by = 90 + Math.sin(a) * 18 + i * 4;
-      const flap = Math.sin(t * 10 + i) * 1.5;
-      ctx.beginPath();
-      ctx.moveTo(bx - 3, by - flap);
-      ctx.lineTo(bx, by);
-      ctx.lineTo(bx + 3, by - flap);
-      ctx.stroke();
-    }
-  } else if (city === 'BOM' && !reduced) {
-    // monsoon drizzle
-    ctx.strokeStyle = 'rgba(200,215,255,0.28)';
-    ctx.lineWidth = 0.6;
-    ctx.beginPath();
-    for (let i = 0; i < 70; i++) {
-      const rx = x0 + ((hash(i, 1) * (x1 - x0) + t * 30) % (x1 - x0));
-      const ry = (hash(i, 2) * 300 + t * 260) % 300;
-      ctx.moveTo(rx, ry);
-      ctx.lineTo(rx - 2, ry + 7);
-    }
-    ctx.stroke();
-  }
+  MODULE_AMBIENT[city]?.(ctx, x0, x1, t, reduced);
 }
 
-/** A little life in each city's air: petals, sparkles, kites, dust, crows, mist, lightning. */
-function ambientVibe(ctx: Ctx, city: CityId, x0: number, x1: number, t: number) {
-  const span = Math.max(1, x1 - x0);
-  const drift = (n: number, seed: number, fall: number, sway: number, f: (x: number, y: number, i: number) => void) => {
-    for (let i = 0; i < n; i++) {
-      const x = x0 + ((hash(i, seed) * span + t * (12 + hash(i, seed + 1) * 18)) % span);
-      const y = (hash(i, seed + 2) * 300 + t * fall * (0.6 + hash(i, seed + 3) * 0.8)) % 300;
-      f(x + Math.sin(t * 1.3 + i) * sway, y - 10, i);
-    }
-  };
-  if (city === 'PDY' || city === 'BLR') {
-    // bougainvillea (magenta) in the French Quarter, jacaranda (lavender) in the garden city
-    const cols = city === 'PDY' ? ['#E91E8C', '#FF5CA8', '#C2185B'] : ['#B39DDB', '#9575CD', '#CE93D8'];
-    drift(city === 'PDY' ? 22 : 26, city === 'PDY' ? 31 : 37, 22, 9, (x, y, i) => {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(t * (1 + (i % 3)) + i);
-      ctx.fillStyle = cols[i % 3];
-      ctx.globalAlpha = 0.85;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 2.4, 1.3, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    });
-  } else if (city === 'KVT') {
-    // the sun glinting on the lagoon
-    for (let i = 0; i < 26; i++) {
-      const k = (Math.sin(t * 2.2 + i * 1.7) + 1) / 2;
-      if (k < 0.75) continue;
-      const x = x0 + hash(i, 41) * span,
-        y = 176 + hash(i, 42) * 40;
-      ctx.strokeStyle = `rgba(255,255,255,${((k - 0.75) * 3.6).toFixed(2)})`;
-      ctx.lineWidth = 0.8;
-      ctx.beginPath();
-      ctx.moveTo(x - 3, y);
-      ctx.lineTo(x + 3, y);
-      ctx.moveTo(x, y - 2);
-      ctx.lineTo(x, y + 2);
-      ctx.stroke();
-    }
-  } else if (city === 'AMR') {
-    // warm dust hanging in the heat
-    drift(30, 51, 4, 14, (x, y) => {
-      ctx.fillStyle = 'rgba(255,214,150,0.55)';
-      ctx.fillRect(x, y, 1.4, 1.4);
-    });
-  } else if (city === 'HYD') {
-    // Sankranti kites high over the old city
-    const kc = ['#E53935', '#FDD835', '#1E88E5', '#43A047', '#F06292'];
-    for (let i = 0; i < 6; i++) {
-      const kx = x0 + ((hash(i, 61) * span + t * 9) % span),
-        ky = 34 + hash(i, 62) * 50 + Math.sin(t * 1.1 + i) * 6;
-      ctx.strokeStyle = 'rgba(255,230,210,0.35)';
-      ctx.lineWidth = 0.5;
-      ctx.beginPath();
-      ctx.moveTo(kx, ky + 5);
-      ctx.quadraticCurveTo(kx + 10, ky + 60, kx - 20, ky + 140);
-      ctx.stroke();
-      ctx.fillStyle = kc[i % kc.length];
-      ctx.beginPath();
-      ctx.moveTo(kx, ky - 5);
-      ctx.lineTo(kx + 4, ky);
-      ctx.lineTo(kx, ky + 5);
-      ctx.lineTo(kx - 4, ky);
-      ctx.closePath();
-      ctx.fill();
-    }
-  } else if (city === 'CHN') {
-    // crows crossing the hot sky
-    ctx.strokeStyle = 'rgba(40,30,30,0.6)';
-    ctx.lineWidth = 0.9;
-    for (let i = 0; i < 5; i++) {
-      const bx = x0 + ((hash(i, 71) * span + t * (26 + i * 3)) % span),
-        by = 40 + hash(i, 72) * 60 + Math.sin(t * 2 + i) * 4;
-      const flap = Math.sin(t * 9 + i) * 2;
-      ctx.beginPath();
-      ctx.moveTo(bx - 4, by - flap);
-      ctx.lineTo(bx, by);
-      ctx.lineTo(bx + 4, by - flap);
-      ctx.stroke();
-    }
-  } else if (city === 'TVM') {
-    // low monsoon mist drifting across the hills
-    for (let i = 0; i < 4; i++) {
-      const mx = x0 + ((hash(i, 81) * span + t * 6) % span),
-        my = 120 + i * 18;
-      const g = ctx.createRadialGradient(mx, my, 0, mx, my, 70);
-      g.addColorStop(0, 'rgba(235,245,240,0.22)');
-      g.addColorStop(1, 'rgba(235,245,240,0)');
-      ctx.fillStyle = g;
-      ctx.fillRect(mx - 70, my - 30, 140, 60);
-    }
-  } else if (city === 'BOM') {
-    // monsoon lightning, now and then
-    const k = t % 7.3;
-    if (k < 0.16 || (k > 0.24 && k < 0.3)) {
-      ctx.fillStyle = 'rgba(210,225,255,0.22)';
-      ctx.fillRect(x0, 0, span, 240);
-    }
-  }
-}

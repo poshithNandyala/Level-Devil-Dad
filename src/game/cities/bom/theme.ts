@@ -1,0 +1,25 @@
+import type { Theme } from '../../../render/theme';
+
+export const theme: Theme = {
+  city: 'BOM',
+  name: 'Mumbai',
+  local: 'मुंबई',
+  sky: ['#0C112E', '#212E5C', '#4D5D90'],
+  sun: '#E8F0FF',
+  far: '#28356A',
+  mid: '#1C2754',
+  near: '#121A3C',
+  accent: '#FFD166',
+  accent2: '#E63946',
+  tileBase: '#55536A',
+  tileTop: '#8A88A3',
+  tileEdge: '#3E3D52',
+  tileDark: '#2E2D3E',
+  topper: '#F2C14E',
+  pattern: 'concrete',
+  spike: '#F5F5FA',
+  spikeEdge: '#0F1016',
+  ink: '#0F1016',
+  rim: 'rgba(255,255,255,0.55)',
+  ui: '#FFD166',
+};

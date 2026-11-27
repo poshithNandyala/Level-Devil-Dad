@@ -11,12 +11,10 @@ export type BaseThingKind =
   // generic
   | 'crate'
   | 'gate'
-  | 'bollard'
   | 'slab'
   | 'boulder'
   | 'barricade'
   | 'shutter'
-  | 'awning'
   | 'pad'
   | 'beam'
   | 'board'
@@ -27,9 +25,6 @@ export type BaseThingKind =
   | 'puttu'
   | 'scooter'
   | 'dog'
-  | 'chaaya'
-  | 'leaf'
-  | 'umbrella'
   // Lakshadweep
   | 'odam'
   | 'crab'
@@ -40,62 +35,41 @@ export type BaseThingKind =
   | 'hermit'
   // Chennai
   | 'shareauto'
-  | 'lorry'
   | 'kudam'
   | 'kite'
   | 'tumbler'
   | 'pillar'
-  | 'mirage'
   // Puducherry
   | 'cyclist'
   | 'baguette'
-  | 'croissant'
   | 'flowers'
   | 'rock'
   | 'spout'
-  | 'lights'
   | 'cart'
-  | 'roadroller'
   | 'spikerow'
-  | 'net'
   | 'crow'
-  | 'parunthu'
   | 'jeep'
-  | 'snakeboat'
   | 'frond'
-  | 'tuna'
   | 'garland'
   | 'traincar'
-  | 'loco'
-  | 'surfboard'
   | 'lantern'
-  | 'rocket'
   | 'bulbs'
-  | 'coracle'
   | 'log'
-  | 'stalactite'
   | 'bat'
-  | 'cablecar'
-  | 'cannonball'
   | 'setwall'
   | 'spark'
   | 'plank'
-  | 'sub'
   // Amaravati
   | 'hook'
   | 'chilli'
-  | 'punugulu'
   | 'putti'
-  | 'sluice'
   | 'doll'
   | 'mirchi'
   | 'mixer'
   // Hyderabad
   | 'biscuit'
   | 'chaicup'
-  | 'deg'
   | 'divider'
-  | 'bangle'
   | 'clock'
   // Bengaluru / Mumbai
   | 'paver'
@@ -103,18 +77,12 @@ export type BaseThingKind =
   | 'kaapi'
   | 'cable'
   | 'vada'
-  | 'ball'
   // Goa
   | 'ferry'
-  | 'poi'
   | 'football'
   // Daman
-  | 'bombil'
   // Gandhinagar
-  | 'dhokla'
-  | 'ghevar'
-  | 'poha'
-  | 'chila';
+  ;
 /** every thing kind: the built-in ones plus each city module's own (declared in its things.ts, see docs/CITY-MODULE.md) */
 export type ThingKind = BaseThingKind | keyof ModuleThingKinds;
 
@@ -128,12 +96,10 @@ export const MODULE_THING_SIZE: Partial<Record<ThingKind, [number, number]>> = {
 const SIZE: Record<BaseThingKind, [number, number]> = {
   crate: [16, 16],
   gate: [16, 48],
-  bollard: [8, 16],
   slab: [48, 12],
   boulder: [32, 24],
   barricade: [32, 24],
   shutter: [32, 32],
-  awning: [32, 8],
   pad: [16, 8],
   beam: [48, 8],
   board: [48, 16],
@@ -143,9 +109,6 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   puttu: [16, 12],
   scooter: [24, 16],
   dog: [24, 12],
-  chaaya: [12, 12],
-  leaf: [32, 4],
-  umbrella: [16, 16],
   odam: [64, 16],
   crab: [16, 10],
   coral: [32, 8],
@@ -154,74 +117,46 @@ const SIZE: Record<BaseThingKind, [number, number]> = {
   jetty: [48, 8],
   hermit: [32, 14],
   shareauto: [64, 36],
-  lorry: [96, 44],
   kudam: [16, 16],
   kite: [20, 16],
   tumbler: [12, 12],
   pillar: [32, 96],
-  mirage: [16, 32],
   cyclist: [32, 30],
   baguette: [24, 6],
-  croissant: [12, 12],
   flowers: [32, 16],
   rock: [32, 16],
   spout: [16, 8],
   hook: [32, 12],
   chilli: [32, 12],
-  punugulu: [8, 8],
   putti: [32, 10],
-  sluice: [32, 16],
   doll: [16, 28],
   mirchi: [12, 12],
   mixer: [48, 40],
   biscuit: [32, 8],
   chaicup: [12, 12],
-  deg: [32, 24],
   divider: [16, 16],
-  bangle: [8, 8],
   clock: [32, 20],
   paver: [16, 6],
   blossom: [32, 6],
   kaapi: [12, 12],
   cable: [16, 24],
   vada: [12, 12],
-  lights: [32, 12],
   cart: [32, 24],
-  roadroller: [48, 32],
   spikerow: [16, 10],
-  net: [32, 6],
   crow: [14, 10],
-  parunthu: [22, 12],
   jeep: [40, 22],
-  snakeboat: [128, 10],
   frond: [24, 10],
-  tuna: [14, 8],
   garland: [32, 6],
   traincar: [48, 26],
-  loco: [56, 32],
-  surfboard: [32, 6],
   lantern: [12, 16],
-  rocket: [6, 14],
   bulbs: [32, 6],
-  coracle: [32, 12],
   log: [32, 10],
-  stalactite: [10, 22],
   bat: [14, 8],
-  cablecar: [26, 22],
-  cannonball: [12, 12],
   setwall: [16, 64],
   spark: [5, 5],
   plank: [16, 5],
-  sub: [112, 18],
-  ball: [8, 8],
   ferry: [48, 10],
-  poi: [12, 10],
   football: [10, 10],
-  bombil: [14, 8],
-  dhokla: [12, 10],
-  ghevar: [12, 10],
-  poha: [12, 10],
-  chila: [12, 10],
 };
 
 /** the built-in kinds' sizes (install checks a module's new kinds against these) */
@@ -241,7 +176,7 @@ export interface ThingDrawOpts {
   state?: string;
 }
 
-function wheel(ctx: Ctx, x: number, y: number, r: number, spin: number) {
+export function wheel(ctx: Ctx, x: number, y: number, r: number, spin: number) {
   circle(ctx, x, y, r, '#2B2B2E');
   circle(ctx, x, y, r * 0.45, '#9AA0A6');
   ctx.strokeStyle = '#2B2B2E';
@@ -252,7 +187,7 @@ function wheel(ctx: Ctx, x: number, y: number, r: number, spin: number) {
   ctx.stroke();
 }
 
-function steam(ctx: Ctx, x: number, y: number, t: number, n = 2, alpha = 0.55) {
+export function steam(ctx: Ctx, x: number, y: number, t: number, n = 2, alpha = 0.55) {
   ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
   ctx.lineWidth = 1;
   for (let i = 0; i < n; i++) {
@@ -300,12 +235,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
         ctx.lineTo(x + 5 + i * 5, y + h);
         ctx.fill();
       }
-      break;
-    }
-    case 'bollard': {
-      fillRR(ctx, x, y, w, h, 3, '#E9E2D2', '#3D3A36');
-      ctx.fillStyle = '#D23B2E';
-      ctx.fillRect(x + 1, y + 3, w - 2, 3);
       break;
     }
     case 'slab': {
@@ -367,18 +296,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
         ctx.stroke();
       }
       fillRR(ctx, x + w / 2 - 4, y + h - 4, 8, 3, 1, '#3B3E41');
-      break;
-    }
-    case 'awning': {
-      for (let i = 0; i < w; i += 8) {
-        ctx.fillStyle = (i / 8) % 2 ? '#F2F0E6' : o.tint ?? '#C8462E';
-        ctx.beginPath();
-        ctx.moveTo(x + i, y);
-        ctx.lineTo(x + i + 8, y);
-        ctx.lineTo(x + i + 8, y + h - 2);
-        ctx.quadraticCurveTo(x + i + 4, y + h + 2, x + i, y + h - 2);
-        ctx.fill();
-      }
       break;
     }
     case 'pad': {
@@ -503,44 +420,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.quadraticCurveTo(x - 1, y + h - (sleeping ? 6 : 10) + Math.sin(t * 0.3) * (sleeping ? 0 : 2), x + 1, y + h - 9);
       ctx.stroke();
       if (sleeping) text(ctx, 'z', x + 23, y + 1 + Math.sin(t * 0.05) * 1.5, 6, '#5D6D7E', { weight: 800 });
-      break;
-    }
-    case 'chaaya': {
-      // a glass of tea, the Kerala street-stall way
-      fillRR(ctx, x + 2, y + 1, 8, 11, 1.5, 'rgba(255,255,255,0.75)', '#8D6E63', 0.8);
-      fillRR(ctx, x + 2.5, y + 4, 7, 7.5, 1.2, '#C98B4F');
-      ctx.fillStyle = '#F3E2C7';
-      ctx.fillRect(x + 2.5, y + 4, 7, 1.5);
-      steam(ctx, x + 4, y, t, 2, 0.5);
-      break;
-    }
-    case 'leaf': {
-      ctx.fillStyle = '#4CAF50';
-      ctx.beginPath();
-      ctx.moveTo(x, y + h);
-      ctx.quadraticCurveTo(x + w / 2, y - 3, x + w, y + h);
-      ctx.fill();
-      ctx.strokeStyle = '#2E7D32';
-      ctx.beginPath();
-      ctx.moveTo(x + 2, y + h - 1);
-      ctx.lineTo(x + w - 2, y + h - 1);
-      ctx.stroke();
-      break;
-    }
-    case 'umbrella': {
-      ctx.fillStyle = o.tint ?? '#1D1D22';
-      ctx.beginPath();
-      ctx.moveTo(x, y + 7);
-      ctx.quadraticCurveTo(x + w / 2, y - 3, x + w, y + 7);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = '#1D1D22';
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(x + w / 2, y + 6);
-      ctx.lineTo(x + w / 2, y + h - 2);
-      ctx.quadraticCurveTo(x + w / 2 + 3, y + h, x + w / 2 + 3, y + h - 3);
-      ctx.stroke();
       break;
     }
     // ------------------------------------------------------------ Lakshadweep
@@ -684,27 +563,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       wheel(ctx, x + w - 16, y + h - 5, 5, o.anim * 0.25);
       break;
     }
-    case 'lorry': {
-      fillRR(ctx, x + 2, y + 8, w - 30, h - 16, 10, '#1F5FA8', '#123A66', 1);
-      ctx.fillStyle = '#2F7BD0';
-      ctx.fillRect(x + 6, y + 14, w - 38, 3);
-      fillRR(ctx, x + w - 28, y + 4, 26, h - 12, 3, '#F2F2F2', '#555', 1);
-      fillRR(ctx, x + w - 22, y + 8, 16, 10, 2, '#9FD0E6');
-      ctx.strokeStyle = '#123A66';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(x + 2, y + h - 12);
-      ctx.quadraticCurveTo(x - 6, y + h - 6, x - 2, y + h);
-      ctx.stroke();
-      wheel(ctx, x + 16, y + h - 6, 6, o.anim * 0.2);
-      wheel(ctx, x + 40, y + h - 6, 6, o.anim * 0.2);
-      wheel(ctx, x + w - 16, y + h - 6, 6, o.anim * 0.2);
-      if (o.look === 'leak') {
-        ctx.fillStyle = 'rgba(120,190,230,0.8)';
-        for (let i = 0; i < 4; i++) circle(ctx, x - 2 - ((t + i * 6) % 18), y + h - 2, 1.4, 'rgba(120,190,230,0.8)');
-      }
-      break;
-    }
     case 'kudam': {
       // plastic water pot, bright and round
       const c = o.tint ?? '#E53935';
@@ -758,13 +616,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.lineTo(x + w - 8, y + 14);
       ctx.lineTo(x + 8, y + 14);
       ctx.fill();
-      break;
-    }
-    case 'mirage': {
-      // the shimmering fake exit
-      ctx.globalAlpha = 0.45 + 0.25 * Math.sin(t * 0.15);
-      fillRR(ctx, x + 1, y + 1, w - 2, h - 1, 3, '#FFE082', '#FFB300', 1);
-      ctx.globalAlpha = 1;
       break;
     }
     // ------------------------------------------------------------ Puducherry
@@ -843,22 +694,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       }
       break;
     }
-    case 'croissant': {
-      ctx.fillStyle = '#E0A458';
-      ctx.beginPath();
-      ctx.arc(x + 6, y + 9, 6, Math.PI, 0);
-      ctx.quadraticCurveTo(x + 6, y + 6, x, y + 9);
-      ctx.fill();
-      ctx.strokeStyle = '#A86B2D';
-      ctx.lineWidth = 0.8;
-      for (let i = 0; i < 3; i++) {
-        ctx.beginPath();
-        ctx.moveTo(x + 3 + i * 3, y + 4);
-        ctx.lineTo(x + 3 + i * 3, y + 8);
-        ctx.stroke();
-      }
-      break;
-    }
     case 'flowers': {
       // bougainvillea spilling over a wall
       ctx.fillStyle = '#5E8B3E';
@@ -929,11 +764,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       }
       break;
     }
-    case 'punugulu': {
-      circle(ctx, x + w / 2, y + h / 2, w / 2, '#D4882B');
-      circle(ctx, x + w / 2 - 1.2, y + h / 2 - 1.2, 1.3, '#F2C46B');
-      break;
-    }
     case 'putti': {
       // round woven coracle (seen from the side)
       ctx.fillStyle = '#8D6E3F';
@@ -952,20 +782,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       }
       ctx.fillStyle = '#A1887F';
       ctx.fillRect(x, y, w, 2.5);
-      break;
-    }
-    case 'sluice': {
-      // a barrage gate leaf, yellow arch steel
-      fillRR(ctx, x, y, w, h, 1, '#F2C230', '#8A6D00', 1);
-      ctx.strokeStyle = '#B48E10';
-      for (let i = 4; i < h; i += 4) {
-        ctx.beginPath();
-        ctx.moveTo(x + 2, y + i);
-        ctx.lineTo(x + w - 2, y + i);
-        ctx.stroke();
-      }
-      ctx.fillStyle = '#C0392B';
-      ctx.fillRect(x, y, w, 2);
       break;
     }
     case 'doll': {
@@ -1038,33 +854,12 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       steam(ctx, x + 4, y + 3, t, 2, 0.5);
       break;
     }
-    case 'deg': {
-      // a sealed biryani deg; the dough seal pops the lid
-      const open = o.look === 'spent' || o.anim >= 1;
-      ellipse(ctx, x + w / 2, y + h - 9, w / 2, 9, '#B87333');
-      ellipse(ctx, x + w / 2, y + h - 7, w / 2 - 2, 6, '#9C5A26');
-      fillRR(ctx, x + 3, y + 4, w - 6, 5, 2, '#F4E3C1', '#C8A26A', 0.8);
-      if (!open) {
-        fillRR(ctx, x + 4, y + (o.anim > 0 ? 0 : 1), w - 8, 4, 2, '#A0522D', '#5D3317', 0.8);
-        circle(ctx, x + w / 2, y + 0.5, 2, '#5D3317');
-      }
-      steam(ctx, x + w / 2 - 4, y + 2, t, 3, open ? 0.8 : 0.35);
-      break;
-    }
     case 'divider': {
       fillRR(ctx, x, y + 2, w, h - 2, 1, '#F2F2F2', '#555');
       ctx.fillStyle = '#212121';
       for (let i = 0; i < w; i += 6) ctx.fillRect(x + i, y + 2, 3, h - 2);
       ctx.fillStyle = '#F9A825';
       ctx.fillRect(x, y, w, 2);
-      break;
-    }
-    case 'bangle': {
-      ctx.strokeStyle = ['#8E24AA', '#43A047', '#E53935', '#FDD835'][Math.floor(o.anim * 3 + 4) & 3];
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.ellipse(x + w / 2, y + h / 2, w / 2 - 1, h / 2 - 1, o.anim, 0, Math.PI * 2);
-      ctx.stroke();
       break;
     }
     case 'clock': {
@@ -1113,25 +908,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.stroke();
       break;
     }
-    case 'lights': {
-      // a string of festoon bulbs between lamp posts: pretty, and hot
-      ctx.strokeStyle = '#2B2B2E';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(x - 6, y);
-      ctx.quadraticCurveTo(x + w / 2, y + h, x + w + 6, y);
-      ctx.stroke();
-      const cols = ['#FFD54F', '#FF7043', '#81C784', '#4FC3F7', '#F06292'];
-      const on = o.look !== 'off';
-      for (let i = 0; i < 5; i++) {
-        const k = (i + 0.5) / 5;
-        const bx = x + w * k;
-        const by = y + 4 * k * (1 - k) * h + 3;
-        if (on) circle(ctx, bx, by, 4.2, 'rgba(255,236,170,0.28)');
-        circle(ctx, bx, by, 2.2, on ? cols[(i + Math.floor(t / 30)) % 5] : '#8D8D8D');
-      }
-      break;
-    }
     case 'cart': {
       // a tender-coconut push cart
       fillRR(ctx, x + 2, y + 7, w - 4, 9, 1.5, '#A0522D', '#5D2E0C');
@@ -1146,70 +922,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.stroke();
       wheel(ctx, x + 9, y + h - 5, 5, o.anim * 0.35);
       wheel(ctx, x + w - 9, y + h - 5, 5, o.anim * 0.35);
-      break;
-    }
-    case 'net': {
-      // a Chinese fishing net's basket: a square of mesh on a bamboo frame
-      ctx.strokeStyle = '#5D4037';
-      ctx.lineWidth = 1.6;
-      ctx.strokeRect(x + 0.8, y + 0.8, w - 1.6, h - 1.6);
-      ctx.strokeStyle = 'rgba(80,60,40,0.7)';
-      ctx.lineWidth = 0.6;
-      ctx.beginPath();
-      for (let i = 4; i < w; i += 4) {
-        ctx.moveTo(x + i, y);
-        ctx.lineTo(x + i - 2, y + h);
-      }
-      ctx.stroke();
-      ctx.strokeStyle = '#4A3A2A';
-      ctx.lineWidth = 0.8;
-      ctx.beginPath();
-      ctx.moveTo(x + 1, y);
-      ctx.lineTo(x + w / 2, y - 30);
-      ctx.lineTo(x + w - 1, y);
-      ctx.stroke();
-      break;
-    }
-    case 'parunthu': {
-      // a Brahminy kite gliding left: chestnut wings held out flat, white head and breast, a hooked
-      // yellow bill. It soars, it doesn't flap like a crow
-      const tilt = Math.sin(t * 0.08) * 0.8;
-      ctx.fillStyle = '#9A4A1C';
-      // wings, out flat with dark tips
-      ctx.beginPath();
-      ctx.moveTo(x + 6, y + 6);
-      ctx.lineTo(x + 10, y + 0.5 + tilt);
-      ctx.lineTo(x + 16, y + 0.5 + tilt);
-      ctx.lineTo(x + 14, y + 6);
-      ctx.fill();
-      ctx.fillStyle = '#3B1E0C';
-      ctx.fillRect(x + 10, y + 0.5 + tilt, 2.4, 1.4);
-      // tail fan
-      ctx.fillStyle = '#A85626';
-      ctx.beginPath();
-      ctx.moveTo(x + 15, y + 6);
-      ctx.lineTo(x + 21.5, y + 4.5);
-      ctx.lineTo(x + 21.5, y + 8.5);
-      ctx.fill();
-      // body
-      ctx.fillStyle = '#9A4A1C';
-      ctx.beginPath();
-      ctx.ellipse(x + 10.5, y + 7, 6.5, 2.9, 0, 0, Math.PI * 2);
-      ctx.fill();
-      // white head and breast
-      ctx.fillStyle = '#F4F1EA';
-      ctx.beginPath();
-      ctx.ellipse(x + 5.2, y + 7.2, 3.6, 2.6, 0, 0, Math.PI * 2);
-      ctx.fill();
-      circle(ctx, x + 3.2, y + 6, 2.4, '#FBF9F4');
-      // hooked bill and eye
-      ctx.fillStyle = '#E8B730';
-      ctx.beginPath();
-      ctx.moveTo(x + 1.2, y + 5.4);
-      ctx.lineTo(x - 0.8, y + 6.4);
-      ctx.lineTo(x + 1.2, y + 7);
-      ctx.fill();
-      circle(ctx, x + 2.6, y + 5.5, 0.6, '#2A1A0E');
       break;
     }
     case 'crow': {
@@ -1250,79 +962,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       wheel(ctx, x + w - 9, y + h - 4, 4.4, o.anim * 0.35);
       break;
     }
-    case 'snakeboat': {
-      // a chundan vallam: a long low black hull, the stern curling up high behind (it races to the
-      // right), gold trim, a red-and-gold umbrella, and a row of oarsmen pulling in time
-      const sw = Math.sin(t * 0.21);
-      // oars first, so the hull sits over them
-      ctx.lineWidth = 1;
-      for (let i = 18; i < w - 12; i += 6) {
-        const tipX = x + i - 6 + sw * 5;
-        ctx.strokeStyle = '#7A5A43';
-        ctx.beginPath();
-        ctx.moveTo(x + i, y + 3);
-        ctx.lineTo(tipX, y + h + 7);
-        ctx.stroke();
-        ctx.fillStyle = '#6A4A35';
-        ctx.fillRect(tipX - 1, y + h + 5, 2, 3);
-        if (sw > 0.75) {
-          ctx.fillStyle = 'rgba(235,248,250,0.7)';
-          ctx.fillRect(tipX - 2, y + h + 8, 4, 1);
-        }
-      }
-      // oarsmen: heads and white shirts, leaning with the stroke
-      for (let i = 18; i < w - 12; i += 6) {
-        const lean = sw * 0.9;
-        ctx.fillStyle = '#F4F1EA';
-        ctx.fillRect(x + i - 1 + lean * 0.5, y - 2.6, 3, 2.8);
-        circle(ctx, x + i + 0.5 + lean, y - 3.6, 1.5, '#2A1A12');
-        if ((i / 6) % 2 === 0) {
-          ctx.fillStyle = '#C62828';
-          ctx.fillRect(x + i - 0.6 + lean, y - 5.3, 2.4, 0.9);
-        }
-      }
-      // the hull, with its stern curling up at the back
-      ctx.fillStyle = '#1F1610';
-      ctx.beginPath();
-      ctx.moveTo(x + 24, y + h);
-      ctx.quadraticCurveTo(x + 3, y + h, x - 1, y - 6);
-      ctx.quadraticCurveTo(x - 3, y - 22, x + 5, y - 30);
-      ctx.lineTo(x + 8, y - 28);
-      ctx.quadraticCurveTo(x + 4, y - 18, x + 9, y - 4);
-      ctx.quadraticCurveTo(x + 13, y + 0.5, x + 24, y + 0.5);
-      ctx.lineTo(x + w - 8, y + 0.5);
-      ctx.quadraticCurveTo(x + w + 3, y + 0.5, x + w + 6, y + 2.5);
-      ctx.quadraticCurveTo(x + w - 2, y + h, x + w - 22, y + h);
-      ctx.closePath();
-      ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.14)';
-      ctx.fillRect(x + 14, y + 1.5, w - 26, 0.8);
-      ctx.fillStyle = '#D4AF37';
-      ctx.fillRect(x + 11, y + 4, w - 22, 1.2);
-      ctx.fillRect(x + 11, y + h - 2.5, w - 34, 0.8);
-      // brass finial and the team flag on the stern
-      circle(ctx, x + 6.5, y - 30, 1.8, '#E3BE52');
-      ctx.fillStyle = '#C62828';
-      ctx.beginPath();
-      ctx.moveTo(x + 6.5, y - 32);
-      ctx.lineTo(x + 15 + Math.sin(t * 0.3) * 1.2, y - 30.5);
-      ctx.lineTo(x + 6.5, y - 28);
-      ctx.fill();
-      // ornamental umbrellas (muthukuda) mid-boat
-      for (const u of [0.42, 0.7]) {
-        const ux = x + w * u;
-        ctx.fillStyle = '#5D4037';
-        ctx.fillRect(ux - 0.5, y - 15, 1, 15);
-        ctx.fillStyle = '#C62828';
-        ctx.beginPath();
-        ctx.arc(ux, y - 14, 5.5, Math.PI, 0);
-        ctx.fill();
-        ctx.fillStyle = '#E3BE52';
-        for (let k = -2; k <= 2; k++) ctx.fillRect(ux + k * 2.4 - 0.5, y - 14, 1, 2 + (k % 2 === 0 ? 1 : 0));
-        circle(ctx, ux, y - 20, 1.1, '#E3BE52');
-      }
-      break;
-    }
     case 'frond': {
       // a low coconut frond hanging over the water
       ctx.strokeStyle = '#2E7D32';
@@ -1339,21 +978,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
         ctx.lineTo(x + i - 2, y + h + 3);
         ctx.stroke();
       }
-      break;
-    }
-    case 'tuna': {
-      ctx.fillStyle = '#4F6D8A';
-      ctx.beginPath();
-      ctx.ellipse(x + 6, y + 4, 6, 3.4, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(x + 11, y + 4);
-      ctx.lineTo(x + 14, y);
-      ctx.lineTo(x + 14, y + 8);
-      ctx.fill();
-      ctx.fillStyle = '#CFD8DC';
-      ctx.fillRect(x + 2, y + 4.5, 8, 1.4);
-      circle(ctx, x + 2.5, y + 3, 0.8, '#FFFFFF');
       break;
     }
     case 'garland': {
@@ -1398,32 +1022,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       wheel(ctx, x + w - 9, y + h - 4, 4, o.anim * 0.3);
       break;
     }
-    case 'loco': {
-      // a small diesel engine, faces left, big lamp
-      fillRR(ctx, x + 2, y + 8, w - 4, h - 14, 2, '#1565C0', '#0D47A1');
-      fillRR(ctx, x + w - 22, y, 20, 12, 2, '#1565C0', '#0D47A1');
-      ctx.fillStyle = '#FFCA28';
-      ctx.fillRect(x + 2, y + 14, w - 4, 3);
-      ctx.fillStyle = '#B3E5FC';
-      ctx.fillRect(x + w - 18, y + 3, 12, 6);
-      circle(ctx, x + 4, y + 12, 2.2, '#FFF6C2');
-      const g = ctx.createRadialGradient(x + 4, y + 12, 1, x - 10, y + 14, 24);
-      g.addColorStop(0, 'rgba(255,246,194,0.6)');
-      g.addColorStop(1, 'rgba(255,246,194,0)');
-      ctx.fillStyle = g;
-      ctx.fillRect(x - 30, y - 6, 34, 36);
-      for (const wx of [10, 22, w - 22, w - 10]) wheel(ctx, x + wx, y + h - 5, 5, o.anim * 0.3);
-      break;
-    }
-    case 'surfboard': {
-      ctx.fillStyle = o.tint ?? '#FF7043';
-      ctx.beginPath();
-      ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(x + 4, y + h / 2 - 0.6, w - 8, 1.2);
-      break;
-    }
     case 'lantern': {
       // a paper sky lantern, glowing
       const g = ctx.createRadialGradient(x + 6, y + 8, 1, x + 6, y + 8, 14);
@@ -1438,17 +1036,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.fillRect(x + 4, y + h - 3, w - 8, 3);
       break;
     }
-    case 'rocket': {
-      fillRR(ctx, x, y + 3, w, h - 6, 1, '#E53935', '#7F1D1D');
-      ctx.fillStyle = '#FFD54F';
-      ctx.beginPath();
-      ctx.moveTo(x, y + 3);
-      ctx.lineTo(x + w / 2, y - 1);
-      ctx.lineTo(x + w, y + 3);
-      ctx.fill();
-      circle(ctx, x + w / 2, y + h - 1, 2 + Math.sin(t * 0.9), '#FFB300');
-      break;
-    }
     case 'bulbs': {
       // a row of palace bulbs: solid gold when lit, dark glass when off
       const on = o.look !== 'off';
@@ -1458,30 +1045,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       }
       fillRR(ctx, x, y + 2, w, 2, 1, on ? '#B8860B' : '#7A6A66');
       for (let i = 0; i < Math.floor(w / 4); i++) circle(ctx, x + 2 + i * 4, y + 3, 1.6, on && o.look !== 'warn' ? '#FFE7A0' : o.look === 'warn' ? '#C8A27A' : '#8C7C78');
-      break;
-    }
-    case 'coracle': {
-      // a round bamboo coracle, slowly turning
-      ctx.fillStyle = '#6D4C41';
-      ctx.beginPath();
-      ctx.ellipse(x + w / 2, y + 4, w / 2, 5, 0, 0, Math.PI);
-      ctx.fill();
-      ctx.strokeStyle = '#A1887F';
-      ctx.lineWidth = 0.8;
-      const turn = (o.anim * 0.05) % 1;
-      for (let i = 0; i < 6; i++) {
-        const k = ((i / 6 + turn) % 1) * Math.PI;
-        const xx = x + w / 2 - Math.cos(k) * (w / 2 - 2);
-        ctx.beginPath();
-        ctx.moveTo(xx, y + 3);
-        ctx.lineTo(xx, y + 8);
-        ctx.stroke();
-      }
-      ctx.strokeStyle = '#3E2723';
-      ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      ctx.ellipse(x + w / 2, y + 3, w / 2, 2.4, 0, 0, Math.PI * 2);
-      ctx.stroke();
       break;
     }
     case 'log': {
@@ -1495,23 +1058,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
         ctx.stroke();
       }
       circle(ctx, x + w - 3, y + h / 2, h / 2 - 1, '#BCAAA4', '#4E342E');
-      break;
-    }
-    case 'stalactite': {
-      ctx.fillStyle = '#7B6A5C';
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + w, y);
-      ctx.lineTo(x + w / 2, y + h);
-      ctx.closePath();
-      ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.18)';
-      ctx.beginPath();
-      ctx.moveTo(x + 2, y);
-      ctx.lineTo(x + 4, y);
-      ctx.lineTo(x + w / 2, y + h - 3);
-      ctx.closePath();
-      ctx.fill();
       break;
     }
     case 'bat': {
@@ -1529,36 +1075,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       circle(ctx, x + 7, y + 4, 2.2, '#2B2230');
       circle(ctx, x + 6.2, y + 3.6, 0.5, '#FF5252');
       circle(ctx, x + 7.8, y + 3.6, 0.5, '#FF5252');
-      break;
-    }
-    case 'cablecar': {
-      ctx.strokeStyle = '#3E3E42';
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(x + w / 2, y);
-      ctx.lineTo(x + w / 2, y - 8);
-      ctx.stroke();
-      fillRR(ctx, x, y, w, h, 4, '#E8572A', '#8C2F12');
-      ctx.fillStyle = '#B3E5FC';
-      ctx.fillRect(x + 3, y + 4, w - 6, 7);
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(x, y + h - 5, w, 1.5);
-      break;
-    }
-    case 'ball': {
-      // a cricket ball: red leather, a white seam
-      circle(ctx, x + w / 2, y + h / 2, w / 2, '#C62828', '#7F1010', 0.8);
-      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
-      ctx.lineWidth = 0.7;
-      ctx.beginPath();
-      ctx.arc(x + w / 2 + 3.5, y + h / 2, 3.6, Math.PI * 0.72, Math.PI * 1.28);
-      ctx.stroke();
-      circle(ctx, x + w / 2 - 1.5, y + h / 2 - 1.5, 1.1, 'rgba(255,255,255,0.45)');
-      break;
-    }
-    case 'cannonball': {
-      circle(ctx, x + w / 2, y + h / 2, w / 2, '#37474F', '#1C262B', 1);
-      circle(ctx, x + w / 2 - 2, y + h / 2 - 2, 1.6, 'rgba(255,255,255,0.35)');
       break;
     }
     case 'setwall': {
@@ -1587,35 +1103,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       ctx.fillRect(x + 11, y + 1, 1, h - 2);
       break;
     }
-    case 'sub': {
-      // INS Kursura: the submarine museum on Vizag's beach road
-      ctx.fillStyle = '#2F3B42';
-      ctx.beginPath();
-      ctx.moveTo(x + 8, y);
-      ctx.lineTo(x + w - 18, y);
-      ctx.quadraticCurveTo(x + w, y + 2, x + w, y + h / 2);
-      ctx.quadraticCurveTo(x + w, y + h, x + w - 18, y + h);
-      ctx.lineTo(x + 8, y + h);
-      ctx.quadraticCurveTo(x - 4, y + h / 2, x + 8, y);
-      ctx.fill();
-      ctx.fillStyle = '#B23A2E';
-      ctx.fillRect(x + 6, y + h - 5, w - 22, 3);
-      ctx.fillStyle = 'rgba(255,255,255,0.14)';
-      ctx.fillRect(x + 8, y + 2, w - 28, 2);
-      // the sail (conning tower) with the periscope
-      fillRR(ctx, x + 40, y - 12, 26, 12, 2, '#37474F', '#1C262B');
-      ctx.strokeStyle = '#1C262B';
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(x + 50, y - 12);
-      ctx.lineTo(x + 50, y - 20);
-      ctx.lineTo(x + 54, y - 20);
-      ctx.stroke();
-      ctx.fillStyle = '#ECEFF1';
-      ctx.font = '700 5px sans-serif';
-      ctx.fillText('S20', x + 45, y - 4);
-      break;
-    }
     case 'spark': {
       circle(ctx, x + 2.5, y + 2.5, 4, 'rgba(255,210,120,0.35)');
       circle(ctx, x + 2.5, y + 2.5, 1.8, ['#FFD54F', '#FF7043', '#81D4FA'][Math.floor(t / 4) % 3]);
@@ -1638,34 +1125,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       }
       break;
     }
-    case 'roadroller': {
-      // a yellow road roller with a big front drum (faces right)
-      fillRR(ctx, x + 6, y + 6, 26, 14, 2, '#F2B01E', '#7A5A0B');
-      fillRR(ctx, x + 10, y, 14, 7, 1, '#37474F');
-      ctx.fillStyle = '#B3E5FC';
-      ctx.fillRect(x + 12, y + 1.5, 10, 4);
-      fillRR(ctx, x + 2, y - 4, 26, 3, 1, '#E53935');
-      ctx.fillStyle = '#5D4037';
-      ctx.fillRect(x + 14, y - 1, 2, 4);
-      // front drum
-      circle(ctx, x + w - 10, y + h - 11, 11, '#5F6A6A', '#2C3333', 1.2);
-      ctx.strokeStyle = '#7F8C8D';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      const sp = o.anim * 0.25;
-      for (let i = 0; i < 3; i++) {
-        const a = sp + (i * Math.PI) / 3;
-        ctx.moveTo(x + w - 10 + Math.cos(a) * 9, y + h - 11 + Math.sin(a) * 9);
-        ctx.lineTo(x + w - 10 - Math.cos(a) * 9, y + h - 11 - Math.sin(a) * 9);
-      }
-      ctx.stroke();
-      fillRR(ctx, x + w - 22, y + 2, 4, 10, 1, '#7A5A0B');
-      wheel(ctx, x + 10, y + h - 7, 7, o.anim * 0.3);
-      // a little steam of heat
-      ctx.fillStyle = 'rgba(255,255,255,0.35)';
-      circle(ctx, x + 8, y - 8 - ((t * 0.3) % 6), 2.4, 'rgba(255,255,255,0.35)');
-      break;
-    }
     case 'ferry': {
       // a Mandovi car ferry: white deck, blue hull, yellow railing posts
       ctx.fillStyle = '#ECEFF1';
@@ -1685,20 +1144,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
       }
       break;
     }
-    case 'poi': {
-      // Goan poi: a puffy round bread, bran-dusted
-      ctx.fillStyle = '#C98A4B';
-      ctx.beginPath();
-      ctx.ellipse(x + w / 2, y + h * 0.58, w / 2, h * 0.42, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#E3B47A';
-      ctx.beginPath();
-      ctx.ellipse(x + w / 2 - 1, y + h * 0.45, w * 0.32, h * 0.22, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = 'rgba(90,50,20,0.55)';
-      for (let i = 0; i < 6; i++) ctx.fillRect(x + 2 + ((i * 7) % 9), y + 3 + ((i * 5) % 5), 0.8, 0.8);
-      break;
-    }
     case 'football': {
       circle(ctx, x + w / 2, y + h / 2, w / 2, '#FAFAFA', '#37474F', 0.8);
       const sp = (o.t / 10) % (Math.PI * 2);
@@ -1707,101 +1152,6 @@ export function drawThing(ctx: Ctx, kind: ThingKind, x: number, y: number, w: nu
         circle(ctx, x + w / 2 + Math.cos(a) * 2.6, y + h / 2 + Math.sin(a) * 2.6, 1.4, '#263238');
       }
       circle(ctx, x + w / 2, y + h / 2, 1.3, '#263238');
-      break;
-    }
-    case 'dhokla': {
-      // a square of khaman dhokla: spongy yellow, mustard seeds and a green chilli on top
-      ctx.fillStyle = '#F9D84A';
-      ctx.fillRect(x + 1, y + 2, w - 2, h - 3);
-      ctx.fillStyle = '#E8C02E';
-      ctx.fillRect(x + 1, y + h - 3, w - 2, 2);
-      ctx.fillStyle = 'rgba(255,255,255,0.35)';
-      for (let i = 0; i < 4; i++) ctx.fillRect(x + 2 + i * 2.5, y + 4 + (i % 2) * 2, 1, 1);
-      ctx.fillStyle = '#3E2723';
-      for (let i = 0; i < 5; i++) ctx.fillRect(x + 2 + ((i * 7) % 8), y + 2 + ((i * 3) % 3), 0.9, 0.9);
-      ctx.fillStyle = '#43A047';
-      ctx.fillRect(x + 5, y + 1, 5, 1.2);
-      break;
-    }
-    case 'chila': {
-      // a rice-flour chila folded on a sal leaf, with green chutney and a tomato one
-      const cx = x + w / 2,
-        cy = y + h / 2 + 1;
-      ctx.fillStyle = '#558B2F';
-      ctx.beginPath();
-      ctx.ellipse(cx, cy + 1.5, w / 2, h / 2 - 1.5, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#FFF3D6';
-      ctx.beginPath();
-      ctx.moveTo(cx - 5, cy + 2);
-      ctx.quadraticCurveTo(cx, cy - 6, cx + 5, cy + 2);
-      ctx.fill();
-      ctx.fillStyle = '#E8C98A';
-      for (let i = 0; i < 5; i++) ctx.fillRect(cx - 3 + ((i * 3) % 6), cy - 2 + ((i * 2) % 3), 1, 1);
-      ctx.fillStyle = '#7CB342';
-      ctx.fillRect(cx - 5.5, cy + 2, 2.4, 1.6);
-      ctx.fillStyle = '#E53935';
-      ctx.fillRect(cx + 3.2, cy + 2, 2.4, 1.6);
-      break;
-    }
-    case 'poha': {
-      // a leaf plate of poha: yellow flattened rice, sev on top, a jalebi on the side, a wedge of lime
-      const cx = x + w / 2,
-        cy = y + h / 2 + 1.5;
-      ctx.fillStyle = '#5E8C3A';
-      ctx.beginPath();
-      ctx.ellipse(cx, cy + 1, w / 2, h / 2 - 1.5, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#F4D03F';
-      ctx.beginPath();
-      ctx.ellipse(cx - 1, cy - 0.5, w / 2 - 2.5, h / 2 - 2.5, 0, Math.PI, 0);
-      ctx.fill();
-      ctx.fillStyle = '#E67E22';
-      for (let i = 0; i < 6; i++) ctx.fillRect(cx - 4 + ((i * 3) % 7), cy - 3 + ((i * 2) % 3), 1.6, 0.7);
-      ctx.strokeStyle = '#F39C12';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(cx + 3.5, cy + 0.5, 1.6, 0, Math.PI * 1.7);
-      ctx.stroke();
-      ctx.fillStyle = '#C0CA33';
-      ctx.fillRect(cx - 5, cy, 2, 1.2);
-      break;
-    }
-    case 'ghevar': {
-      // a disc of ghevar: a golden honeycomb, a layer of rabri, slivered pistachios and silver leaf
-      const cx = x + w / 2,
-        cy = y + h / 2 + 1;
-      ctx.fillStyle = '#D9A441';
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, w / 2 - 0.5, h / 2 - 1, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#A9741F';
-      for (let i = 0; i < 9; i++) ctx.fillRect(cx - 4 + ((i * 3) % 8), cy - 2 + ((i * 5) % 4), 1, 1);
-      ctx.fillStyle = '#FFF3D6';
-      ctx.beginPath();
-      ctx.ellipse(cx, cy - 1.5, w / 2 - 2.5, 1.6, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#7CB342';
-      ctx.fillRect(cx - 2, cy - 2.4, 1.6, 0.8);
-      ctx.fillRect(cx + 1.5, cy - 2, 1.6, 0.8);
-      ctx.fillStyle = '#ECEFF1';
-      ctx.fillRect(cx - 0.5, cy - 2.6, 1.4, 1);
-      break;
-    }
-    case 'bombil': {
-      // a dried Bombay duck: a long pale fish, a little curled
-      ctx.fillStyle = '#E8D9B8';
-      ctx.beginPath();
-      ctx.ellipse(x + w / 2, y + h / 2, w / 2 - 1, h / 2 - 1.5, -0.15, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#C8B68C';
-      ctx.beginPath();
-      ctx.moveTo(x + 1, y + h / 2);
-      ctx.lineTo(x - 2, y + 1);
-      ctx.lineTo(x - 2, y + h - 1);
-      ctx.fill();
-      ctx.fillStyle = '#5D4037';
-      ctx.fillRect(x + w - 4, y + 2.5, 1.2, 1.2);
       break;
     }
     case 'vada': {
