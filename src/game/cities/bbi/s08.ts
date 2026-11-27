@@ -274,6 +274,93 @@ export const act6: Act = {
   },
 };
 
+/** act 7, the plug (pakhala family, the drain turned stale): this bowl drains through a hole in its middle, and
+ *  the hole is only a badi wide. Your badi drifts for it from the near side, another from the far side, slower.
+ *  The far rim is too far from the hole to reach, so the bhanwar answer (hop at the last moment) falls short.
+ *  The answer feeds the drain: hop across to the other badi and let yours go down the hole; it plugs it, the
+ *  water stops, and the far rim is a hop away. */
+export const PLUG = { c0: 4, c1: 13, hole: 9, v1: 24, v2: 5, b1: 4.6, b2: 12.6 };
+export const act7: Act = {
+  id: 'bbi08-dati',
+  w: 20,
+  advice: 'The hole in this bowl is only a badi wide, and the far rim is too far from it to reach. Don’t ride your badi to the hole: hop across to the other one, let yours go down and plug the hole, and the water stops.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + PLUG.c0, c.x + PLUG.c1).fill(c.x + PLUG.c0 - 1, c.x + PLUG.c0 - 1, 13, 14, '#').fill(c.x + PLUG.c1 + 1, c.x + PLUG.c1 + 1, 13, 14, '#');
+  },
+  build: (w, c) => {
+    const x0 = c.X(PLUG.c0);
+    const x1 = c.X(PLUG.c1 + 1);
+    const hx = c.X(PLUG.hole) + 8;
+    const st = { t0: -1, plugged: false, why: 'bbi-pakhala', bx: [c.X(PLUG.b1) - BW / 2, c.X(PLUG.b2) - BW / 2], down: [false, false], badis: [] as Rig[] };
+    w.flags.bbi8pl = st;
+    w.add(
+      new Rig(x0, FL - 2, x1 - x0, 60, {
+        cause: 'bbi-pakhala',
+        inset: 0,
+        layer: 4,
+        tick: (r) => {
+          r.hazard!.cause = st.why;
+        },
+        paint: (ctx, _r, w2) => {
+          ctx.fillStyle = 'rgba(236,232,214,0.72)';
+          ctx.fillRect(x0, FL - 4, x1 - x0, 52);
+          box(ctx, x0, FL - 4, x1 - x0, 1, 'rgba(255,255,255,0.9)');
+          if (!st.plugged) {
+            ctx.strokeStyle = 'rgba(120,110,90,0.8)';
+            ctx.lineWidth = 1;
+            for (let k = 1; k <= 2; k++) {
+              ctx.beginPath();
+              ctx.ellipse(hx, FL - 2, 5 * k, 1.6 * k, 0, (w2.tick / 8 + k) % 6, ((w2.tick / 8 + k) % 6) + 4);
+              ctx.stroke();
+            }
+          }
+          box(ctx, x0 - 16, FL - 32, 16, 32, '#C9A13B');
+          box(ctx, x1, FL - 32, 16, 32, '#C9A13B');
+        },
+      }),
+    );
+    [0, 1].forEach((k) => {
+      const b = w.add(
+        new Rig(st.bx[k], FL - 8, BW, 8, {
+          solid: true,
+          layer: 5,
+          tick: (r, w2) => {
+            if (st.t0 < 0 && k === 0 && r.rides(w2)) st.t0 = w2.tick;
+            if (st.down[k]) {
+              r.setSolid(false);
+              return;
+            }
+            if (st.t0 >= 0 && !st.plugged) st.bx[k] += ((k === 0 ? 1 : -1) * (k === 0 ? PLUG.v1 : PLUG.v2)) / 120;
+            const atHole = k === 0 ? st.bx[k] + BW / 2 >= hx - 4 : st.bx[k] + BW / 2 <= hx + 4;
+            if (atHole && !st.plugged) {
+              if (r.rides(w2)) {
+                st.down[k] = true;
+                st.why = 'bbi-bhanwar';
+                r.setSolid(false);
+                return;
+              }
+              // an empty badi the size of the hole: it plugs it, and the water stops
+              st.plugged = true;
+              st.bx[k] = hx - BW / 2;
+            }
+            r.moveTo(w2, st.bx[k], st.plugged && atHole ? FL - 6 : FL - 8);
+          },
+          paint: (ctx, r) => {
+            if (!r.solid?.collidable) return;
+            ctx.fillStyle = '#9C5A1E';
+            ctx.beginPath();
+            ctx.ellipse(r.x + BW / 2, r.y + 4, BW / 2, 4.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            box(ctx, r.x + 4, r.y + 1, 2, 2, '#D08A3C');
+          },
+        }),
+      );
+      st.badis.push(b);
+    });
+  },
+};
+
 export const B08: BowlCfg = { c0: 7, c1: 24, badi: [9, 14, 20], pour1: [0.6, 3.0], pour2: [3.8, 6.0], v1: 30, v2: 40, v3: 45 };
 
 export function room(): LevelDef {
