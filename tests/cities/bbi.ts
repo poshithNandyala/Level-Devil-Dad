@@ -78,18 +78,13 @@ const room02 = (): Step[] => [
   { hold: 'R', until: X(31.5), max: 300 },
 ];
 const act02 = (x: number): Step[] => [...hop(x + 17.9, 'hop the still ball at the stopper'), { hold: 'R', until: X(x + 35), max: 600 }];
-const goalPolicy: Policy = (w, m) => {
-  const st = w.flags.bbi2e as { passed: boolean };
+const goalPolicy: Policy = (w) => {
+  const st = w.flags.bbi2e as { done: boolean };
   const p = w.player;
   const D = Math.round((w.entities.find((e: any) => e.constructor?.name === 'Door' && !e.fake) as any).x / 16);
-  const b0 = (D - 6) * 16;
-  if (st.passed) return go('R');
-  if (p.onGround && p.y + p.h <= 211) return go(p.cx < b0 + 10 ? 'R' : p.cx > b0 + 22 ? 'L' : '');
-  if (p.onGround && p.x + p.w >= b0 - 14 && p.cx < b0 + 16) {
-    m.hold = 12;
-    return { move: 'R', jump: true };
-  }
-  return go(p.cx < b0 + 16 ? 'R' : '');
+  const mid = (D - 6) * 16;
+  if (st.done) return go('R');
+  return go(p.cx < mid - 3 ? 'R' : p.cx > mid + 3 ? 'L' : '');
 };
 
 // ------------------------------------------------------------------ shared: leap to a spot
@@ -774,6 +769,15 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   S['BBI-01'] = [...pastG1(), ...tourTail()];
   S['BBI-02'] = room02();
   lengthen('BBI-02', 0, []);
+  {
+    // the door: walk on to it (the door-end roll), or wait back on the grass (the roll from behind)
+    const pre = S['BBI-02'].slice(0, -1);
+    const D = LEVELS.find((l) => l.id === 'BBI-02')!.doorX!;
+    (mistakes['BBI-02'] ??= []).push(
+      { what: 'door: walk on to the door', steps: [...pre, { hold: 'R', until: done, max: 900 }], cause: 'bbi-roll' },
+      { what: 'door: wait back on the grass for the rolls', steps: [...pre, { hold: 'R', until: X(D - 11), max: 300 }, { hold: '', until: done, max: 900 }], cause: 'bbi-roll-back' },
+    );
+  }
   S['BBI-03'] = room03();
   lengthen('BBI-03', 0, []);
   S['BBI-04'] = room04();

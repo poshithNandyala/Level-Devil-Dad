@@ -284,69 +284,73 @@ export const act2: Act = {
   },
 };
 
-/** ending: the groundsmen roll the turf up from the door end once you step on it; the roll comes back along the floor at you */
-export const ROLL = { at: 10, bench: 6, delay: 0.5, v: 150, end: 16, size: 22 };
+/** ending: match over, the groundsmen lift the astro-turf. Two rolls start at once, one from the door end and one
+ *  from behind you, and both roll towards the bare strip in the middle where the turf is already up. A roll only
+ *  takes turf: the nice blue turf is what gets rolled up, with you on it; the ugly bare strip is the safe ground. */
+export const ROLL = { at: 12, left: 14, strip: [7, 6] as [number, number], right: -1, delay: 0.3, v: 60, size: 22, clear: 0.6 };
 export const ending: Ending = {
   space: 15,
-  advice: 'Match over: the groundsmen roll the turf up from the door end, and the roll comes along the floor at you. Get up on the bench and let it pass under, or hop it. Then walk to the door.',
+  advice: 'Match over: the groundsmen are lifting the turf, from both ends at once. A roll only takes turf, so stand on the bare strip where it is already up, and wait for both rolls to stop.',
   build(w, d) {
     const D = Math.round(d.x / 16);
     w.flags.twist = 'bbi-turf-roll';
-    turf(w, D - 15, D + 3);
-    const st = { t0: -1, x: px(D - 1), passed: false };
+    const s0 = px(D - ROLL.strip[0]);
+    const s1 = px(D - ROLL.strip[1] + 1);
+    turf(w, D - ROLL.left, D - ROLL.strip[0] - 1);
+    turf(w, D - ROLL.strip[1] + 1, D + 1);
+    const st = { t0: -1, lx: px(D - ROLL.left), rx: px(D - ROLL.right) - ROLL.size, done: false, stopT: -1 };
     w.flags.bbi2e = st;
     onPass(w, px(D - ROLL.at), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
-    w.add(
-      new Rig(px(D - ROLL.bench), FL - 30, 32, 30, {
-        solid: true,
-        layer: 2,
-        paint: (ctx, r) => {
-          box(ctx, r.x, r.y, r.w, 5, '#2F6FB5');
-          box(ctx, r.x + 2, r.y + 5, 4, r.h - 5, '#1E2B3A');
-          box(ctx, r.x + r.w - 6, r.y + 5, 4, r.h - 5, '#1E2B3A');
-        },
-      }),
-    );
-    w.add(
-      new Rig(st.x, FL - ROLL.size, ROLL.size, ROLL.size, {
-        cause: 'bbi-roll',
-        inset: 2,
-        layer: 4,
-        live: () => st.t0 >= 0 && !st.passed,
-        tick: (r, w2) => {
-          if (st.t0 < 0 || st.passed) return;
-          if (since(w2, st.t0) >= ROLL.delay) st.x -= ROLL.v / 120;
-          if (st.x <= px(D - ROLL.end)) st.passed = true;
-          r.x = st.x;
-        },
-        paint: (ctx, r, w2) => {
-          if (st.t0 < 0 || st.passed) return;
-          // the rolled-up turf, and the bare floor it leaves behind
-          box(ctx, r.x + r.w, FL - 2, px(D - 1) - r.x - r.w, 2, '#8A7F6A');
-          ctx.fillStyle = '#2E8B57';
-          ctx.beginPath();
-          ctx.arc(r.x + r.w / 2, r.y + r.h / 2, r.w / 2, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = '#1F5E3B';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.arc(r.x + r.w / 2, r.y + r.h / 2, r.w / 4, (w2.tick / 10) % 6, ((w2.tick / 10) % 6) + 4);
-          ctx.stroke();
-        },
-      }),
-    );
+    // the bare strip: soil, with two lifted sods stacked at its edge
     w.add(
       new Rig(0, 0, 0, 0, {
-        layer: 3,
-        paint: (ctx, _r, w2) => {
-          const push = st.t0 >= 0 && !st.passed && since(w2, st.t0) >= ROLL.delay;
-          if (!push) {
-            folk(ctx, px(D) + 4, FL, 26, '#6B8E23', { skirt: '#F5F5F5', face: -1, arm: 0.4 });
-            folk(ctx, px(D) + 18, FL, 24, '#6B8E23', { skirt: '#F5F5F5', face: -1, arm: 0.6 });
-          }
+        layer: 1,
+        paint: (ctx) => {
+          box(ctx, s0, FL, s1 - s0, 3, '#8A5A3C');
+          box(ctx, s0 + 4, FL - 3, 10, 3, '#2F6FB5');
+          box(ctx, s0 + 4, FL - 6, 10, 3, '#2F6FB5');
         },
       }),
     );
+    const roll = (side: -1 | 1) =>
+      w.add(
+        new Rig(side < 0 ? st.lx : st.rx, FL - ROLL.size, ROLL.size, ROLL.size, {
+          cause: side < 0 ? 'bbi-roll-back' : 'bbi-roll',
+          inset: 2,
+          layer: 4,
+          live: () => st.t0 >= 0 && !st.done,
+          tick: (r, w2) => {
+            if (st.t0 < 0 || st.done) return;
+            if (since(w2, st.t0) >= ROLL.delay) {
+              if (side < 0) st.lx = Math.min(s0 - ROLL.size, st.lx + ROLL.v / 120);
+              else st.rx = Math.max(s1, st.rx - ROLL.v / 120);
+            }
+            if (st.lx >= s0 - ROLL.size && st.rx <= s1) {
+              if (st.stopT < 0) st.stopT = w2.tick;
+              if (since(w2, st.stopT) >= ROLL.clear) st.done = true;
+            }
+            r.x = side < 0 ? st.lx : st.rx;
+          },
+          paint: (ctx, r, w2) => {
+            if (st.t0 < 0 || st.done) return;
+            // the turf it has not reached yet, the bare floor behind it, and the roll itself
+            if (side < 0) box(ctx, px(D - ROLL.left), FL, r.x - px(D - ROLL.left), 3, '#8A5A3C');
+            else box(ctx, r.x + r.w, FL, px(D + 2) - r.x - r.w, 3, '#8A5A3C');
+            ctx.fillStyle = '#2F6FB5';
+            ctx.beginPath();
+            ctx.arc(r.x + r.w / 2, r.y + r.h / 2, r.w / 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#F5F5F5';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(r.x + r.w / 2, r.y + r.h / 2, r.w / 4, (w2.tick / 10) % 6, ((w2.tick / 10) % 6) + 4);
+            ctx.stroke();
+            folk(ctx, side < 0 ? r.x - 8 : r.x + r.w + 8, FL, 24, '#6B8E23', { skirt: '#F5F5F5', face: side < 0 ? 1 : -1, arm: 1.0 });
+          },
+        }),
+      );
+    roll(-1);
+    roll(1);
   },
 };
 
