@@ -3,23 +3,592 @@
 // replaces that stage's (or act's, or ending's) entry there, so a hardness-pass worker edits only this file
 // and the city's stage files. After a change on purpose: npm run refreeze -- CHN (docs/CITY-MODULE.md).
 import type { World } from '../../src/game/world';
-import type { Door } from '../../src/game/entities/basics';
-import type { Step } from '../runner';
+import { Door } from '../../src/game/entities/basics';
+import { Thing } from '../../src/game/entities/traps';
+import { type Step, X, and, done, ground, thingOf } from '../runner';
 import type { CityTests } from '../city-tests';
+import { ladleOf, murukkuOf, pressOf } from '../../src/game/cities/chn/murukku';
+import { escalatorOf, stepUnder } from '../../src/game/cities/chn/spencer';
+import { sundalOf } from '../../src/game/cities/chn/sundal';
 
-type Out = { move: 'L' | 'R' | ''; jump: boolean };
+type Move = 'L' | 'R' | '';
+type Out = { move: Move; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
 
-export const test: CityTests = {
-  /** replace a stage's route: S['CHN-03'] = [...]; lengthen('CHN-03', 0, []) */
-  solutions: (S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) => {
-    void S;
-    void lengthen;
+const px = (t: number) => t * 16;
+const go = (move: Move): Out => ({ move, jump: false });
+const toward = (w: World, x: number, slack = 2): Move => (w.player.cx < x - slack ? 'R' : w.player.cx > x + slack ? 'L' : '');
+const walk = (to: number, note?: string, max = 900): Step => ({ hold: 'R', until: and(ground, X(to)), max, note });
+/** run right to tile x `at` (Dad's left edge), then a hop of `ticks` and land */
+const hopAt = (at: number, ticks: number, note: string, long = false): Step[] => [
+  { hold: 'R', until: X(at), max: 900 },
+  { hold: 'R', jump: ticks, ticks, note, long },
+  { hold: 'R', until: ground, max: 300 },
+];
+const until = (pred: (w: World) => boolean, note: string, max = 900): Step => ({ hold: '', until: pred, max, note });
+const die: Step = { hold: 'R', until: done, max: 900 };
+const stay: Step = { hold: '', until: done, max: 900 };
+const fried = (name: string) => (w: World) => {
+  const m = murukkuOf(w, name);
+  return !!m && m.visible && m.fry === 'golden';
+};
+const quiet = (name: string) => (w: World) => {
+  const m = murukkuOf(w, name);
+  return !!m && m.visible && !m.bubbling;
+};
+const ladleHovers = (i: number) => (w: World) => ladleOf(w, i)?.state === 'hover';
+const pressGone = (i: number) => (w: World) => {
+  const p = pressOf(w, i);
+  return !!p && (p.state === 'back' || p.state === 'park');
+};
+
+// ------------------------------------------------------------------ CHN-09: Murukku Press
+/** the room: on to the golden spiral, wait for the pale one to fry, then straight on (the ladle takes the one you waited on) */
+const murukkuRoom = (): Step[] => [
+  ...hopAt(4.4, 12, 'on to the first golden spiral'),
+  until(fried('r2'), 'wait on it for the pale one to turn golden'),
+  ...hopAt(11.4, 12, 'on to it, the moment it turns'),
+  ...hopAt(18.4, 12, 'and the next'),
+  walk(31.5),
+];
+
+// ------------------------------------------------------------------ CHN-10: Spencer Escalators
+const esc = (name: string) => (w: World) => escalatorOf(w, name)!;
+/** stand on a step of escalator `name` */
+const riding = (name: string) => (w: World) => esc(name)(w).dadOn;
+/** up on to the kerb (the mount) before the escalator's foot at tile `foot` */
+const mount = (foot: number): Step[] => [...hopAt(foot - 5.4, 12, 'up on the kerb'), { hold: 'R', until: and(ground, X(foot - 2.6)), max: 300 }];
+/** back on to the kerb before tile `foot` (wherever the hop back put you: on it, or on the floor before it) */
+const remount = (foot: number): Step => ({
+  policy: (w) => ({ move: 'R', jump: w.player.onGround && w.player.y > px(13.5) && w.player.x > px(foot - 5.2) && w.player.x < px(foot - 3.1) }),
+  until: (w) => w.player.onGround && w.player.y < px(13.5) && w.player.x >= px(foot - 2.6),
+  max: 300,
+  note: 'back up on the kerb',
+});
+/** from the kerb, step on to the escalator (a step must be under the kerb's edge), stand still, ride till past x `offAt`, walk off */
+const ride = (name: string, foot: number, offAt: number, when: (w: World) => boolean = () => true, band?: [number, number]): Step[] => [
+  { hold: 'R', until: X(foot - 0.85), max: 300, note: 'to the edge of the kerb' },
+  until((w) => stepUnder(w, name, band) && when(w), `wait for a step under the kerb (${name})`, 1500),
+  { hold: 'R', until: riding(name), max: 60, note: `board the ${name} escalator` },
+  { hold: 'L', until: (w) => w.player.vx <= 0 || !w.player.onGround, max: 20, note: 'brake' },
+  { hold: '', until: X(offAt), max: 1500, note: 'ride it up' },
+  { hold: 'R', until: and(ground, X(offAt + 1.5)), max: 300, note: 'off at the top' },
+];
+/** the room: board, hop straight back on to the kerb (the shopper boards behind you), let her ride up alone, then ride */
+const spencerRoom = (): Step[] => [
+  ...mount(8),
+  { hold: 'R', until: riding('room'), max: 300, note: 'step on' },
+  { hold: 'L', until: (w) => w.player.x <= px(8.6), max: 60 },
+  { hold: 'L', jump: 30, ticks: 30, long: true, note: 'and hop straight back on to the kerb' },
+  { hold: 'L', until: (w) => w.player.onGround && !riding('room')(w), max: 120 },
+  { hold: '', until: (w) => Math.abs(w.player.vx) < 1, max: 60 },
+  until((w) => esc('room')(w).shoppers[0].off === 'gone', 'let her ride up alone', 900),
+  remount(8),
+  ...ride('room', 8, 17.2),
+  walk(31.5),
+];
+
+// ------------------------------------------------------------------ CHN-01: the tour, with the sundal cart
+/** the lid is shut, the vendor's hand is down, and the shut is young enough to cross on (not the short one: its
+ *  hand goes up at 0.1 s, so this is never true during it) */
+const sundalSafe = (w: World) => {
+  const c = sundalOf(w);
+  if (!c || c.lid !== 'shut' || c.hand(w)) return false;
+  const t = c.since(w);
+  return t >= 0.12 && t <= 0.5;
+};
+const sundalShut = (w: World) => sundalOf(w)?.lid === 'shut';
+/** the shared tour route up to the wall's approach, the sundal cart's own steps, then the rest */
+function tour01(S: Record<string, Step[]>) {
+  const R = S['CHN-01'];
+  const wall = R.findIndex((st) => st.note === 'a low wall');
+  if (wall < 1) throw new Error("CHN-01: no step 'a low wall'");
+  const before = R.slice(0, wall - 1);
+  // the pot's trigger moved 1.3 tiles nearer the pot: back off a little longer (40 ticks, was 30)
+  const after = R.slice(wall - 1).map((st) => (st.note === 'it bubbles: back off' ? { ...st, ticks: 40 } : st));
+  const upTo: Step = { hold: 'R', until: X(74.2), max: 900, note: 'up to the sundal cart: the vendor lifts the lid' };
+  S['CHN-01'] = [before, [upTo, until(sundalSafe, 'lid shut, hand down: go', 900)], after].flat();
+  // the obvious play: walk on like past the posts, into the steam he has just lifted the lid off
+  naive['CHN-01'] = { steps: [...before, die], cause: 'chn-sundal' };
+  // the obvious fix: go the moment it shuts (Tara's line): the shut after the lift is the short one
+  // (the lift after the short shut is its own cause, chn-sooda: NAIVE and FIX are two causes at two ticks)
+  fix['CHN-01'] = { steps: [...before, upTo, until(sundalShut, 'it shut: go', 900), die], cause: 'chn-sooda' };
+  mistakes['CHN-01'] = [
+    { what: 'wait for the hand to go up, then go (the lift follows the hand)', steps: [...before, upTo, until((w) => !!sundalOf(w)?.hand(w), 'hand up', 900), die], cause: 'chn-sooda' },
+    { what: 'hop the cart like the parked auto', steps: [...before, ...hopAt(74.6, 14, 'hop the cart'), die], cause: 'chn-sundal' },
+  ];
+  // the pot (the old FIX): stand where it bubbles
+  const bubble = S['CHN-01'].findIndex((st) => st.note === 'it bubbles: back off');
+  if (bubble > 0) mistakes['CHN-01'].push({ what: 'stand where the pot bubbles', steps: [...S['CHN-01'].slice(0, bubble), stay], cause: 'burnt' });
+}
+
+// ------------------------------------------------------------------ CHN-07: the dolls room, steered like a person does
+/** steer in the air toward the next doll's current middle (they sway), easing off so Dad arrives over it slowly;
+ *  the shipped route flew to fixed x's and missed a swaying doll when a press came a few ticks late */
+const dollSteer = (): Step => ({
+  policy: (w) => {
+    const p = w.player;
+    const dolls = [0, 1, 2, 3, 4].map((i) => thingOf(w, 'doll', i)).filter((d) => d && d.alive);
+    // the doll he is heading for: rising off a bounce, the first one whose near edge is ahead of his middle (not the
+    // one he just left); coming down, the one whose far edge is still ahead of him (it stays the target till he lands)
+    const next = p.vy < 0 ? dolls.find((d) => d.solid.x > p.cx) : dolls.find((d) => d.solid.x + d.solid.w - 6 > p.x);
+    if (!next) return { move: 'R', jump: false };
+    // the last doll steps 10 px aside as you come down ("keep holding right"): aim where it will be; on the
+    // middle doll land on its right part, so the long leap to the last one is as short as it can be
+    const aim = next.cx + (next === dolls[4] && next.x < px(24) + 2 ? 10 : 0);
+    // when do his feet come down on the dolls' top (y 212)? a bounce is not a held jump, so gravity is the full
+    // 1750 both ways (a 470 bounce flies about 0.6 s)
+    const feet = p.y + p.h;
+    let t: number;
+    if (p.vy < 0) {
+      const apex = feet - (p.vy * p.vy) / (2 * 1750);
+      t = -p.vy / 1750 + Math.sqrt(Math.max(0, 2 * (212 - apex)) / 1750);
+    } else t = (-p.vy + Math.sqrt(p.vy * p.vy + 2 * 1750 * Math.max(0, 212 - feet))) / 1750;
+    // where do his feet come down if he lets go now (air drag 900/s slows him)? keep right while that is short of
+    // the aim, brake while it is long, and never brake in the last 0.15 s (a late brake meets the doll's side)
+    const v = Math.abs(p.vx);
+    const stop = v / 900;
+    const coast = Math.sign(p.vx) * (stop < t ? (v * v) / 1800 : v * t - 450 * t * t);
+    // no braking at all: a dad who arrives at a doll slowly is below its top when he gets there and hits its side
+    // a let-go is on time but the next press comes late (up to 12 ticks of extra coasting at 900/s), so let go only
+    // when coasting from here would already carry him 8 px past the aim: on time that lands on the doll's far half,
+    // 12 ticks late on its near half
+    const landing = p.cx + coast;
+    return { move: landing < aim + 8 ? 'R' : '', jump: false };
   },
-  naive: {} as Record<string, { steps: Step[]; cause?: string }>,
-  fix: {} as Record<string, { steps: Step[]; cause?: string }>,
-  mistakes: {} as Record<string, { what: string; steps: Step[]; cause?: string }[]>,
-  actRoutes: {} as Record<string, (x: number) => Step[]>,
-  endingPolicies: {} as Record<string, Policy>,
-  fair: [],
+  until: (w) => w.player.onGround && w.player.x >= px(25.5),
+  max: 1500,
+  note: 'doll to doll: steer at the one swaying ahead',
+});
+const chn07Room = (): Step[] => [
+  { hold: 'R', until: X(4.7), max: 600 },
+  { hold: 'R', jump: 12, ticks: 12, note: 'on to the first doll' },
+  // the bounce is -470 up; a jump is -375, so a late jump still rising does not pass for the bounce
+  { hold: 'R', until: (w) => w.player.vy < -420, max: 200, note: 'boing' },
+  dollSteer(),
+];
+
+const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) => {
+  tour01(S);
+  // 02 (human timing, route only): the hop over pot three starts a tile earlier and is a little longer, so a jump up
+  // to 12 ticks late still leaves before pot three (a late one stepped on it and started the stampede); the wait for
+  // the spray is on pot five, not at the very end of the pots (a late landing ran off the end into the spray)
+  {
+    const R = S['CHN-02'];
+    const j = R.findIndex((st) => st.note === 'skip pot number three');
+    if (j < 3) throw new Error("CHN-02: no step 'skip pot number three'");
+    // two hops in a row (on to pots one-two, then over three) left no room for a late press: the second hop's take-off
+    // slid on to pot three. One long jump from the road before pot one clears pots one to three and lands on four
+    // to six whether it starts at 7.6 or 12 ticks later; the wait for the spray is on pot five
+    S['CHN-02'] = [
+      { hold: 'R', until: X(6.0), max: 600 },
+      { hold: 'R', jump: 12, ticks: 12, note: 'onto the first pots' },
+      { hold: 'R', until: and(ground, X(10.4)), max: 300 },
+      { hold: 'R', jump: 12, ticks: 12, note: 'skip pot number three' },
+      { hold: 'R', until: and(ground, X(14.4)), max: 300 },
+      ...R.slice(j + 2),
+    ];
+  }
+  // 03 (human timing, route only): hop on to the drum from the last stair (11.0), not from the subway floor: the
+  // shipped route dropped off the stair, landed against the drum's side with no run left, and the flood took it
+  {
+    const R = S['CHN-03'];
+    const k = R.findIndex((st) => st.note === 'onto the drum, now');
+    if (k < 1) throw new Error("CHN-03: no step 'onto the drum, now'");
+    R[k - 1] = { hold: 'R', until: and(ground, X(11.0)), max: 400, note: 'down the stairs' };
+    R[k] = { hold: 'R', jump: 12, ticks: 12, note: 'onto the drum, now' };
+    // keep running through the hop: the drum's top is 14 px up at 14-17
+    R[k + 1] = { hold: 'R', until: (w) => w.player.onGround && w.player.y < 220 && w.player.x >= px(13.5), max: 200 };
+  }
+  // 04 (human timing, route only): leave the pigeons' ledge from 16.2 (was 16.8): a hop 12 ticks late then still
+  // lands short of the kaapi streams at 22
+  {
+    const R = S['CHN-04'];
+    const k = R.findIndex((st) => st.note === 'do not stop here');
+    if (k < 0) throw new Error("CHN-04: no step 'do not stop here'");
+    R[k] = { hold: 'R', until: and(ground, X(16.2)), note: 'do not stop here' };
+  }
+  // 05 (human timing, route only): hop the kites a quarter second ahead instead of 0.13 s, in the room and on the last
+  // stretch both ways (the shared dodge was too late for a press 12 ticks behind)
+  {
+    const R = S['CHN-05'];
+    const a = R.findIndex((st) => st.note === 'hop the kites; the first EXIT is a mirage');
+    const b = R.findIndex((st) => st.note === 'past the shade of the tree... another mirage');
+    if (a < 0 || b < 0) throw new Error('CHN-05: route notes not found');
+    const dx = (w: World) => w.level.doorX! * 16;
+    S['CHN-05'] = [
+      runHopping(X(32), 0.25, 'hop the kites; the first EXIT is a mirage'),
+      ...R.slice(a + 1, b),
+      runHopping((w) => w.player.onGround && w.player.x >= dx(w) + 32, 0.25, 'past the shade of the tree... another mirage'),
+      runHopping(done, 0.25, 'the real door was in the shade behind you', 'L'),
+    ];
+  }
+  // 06 (human timing, route only): the shipped route's third hop usually flew clean over the third garland on to the
+  // road at 18, and then hopped again ("off the drain") from the road, which with a late press landed in the gap at 21.
+  // Now: hop off the drain only if still on a garland; on the road, stop and wait for the crowd where you are
+  {
+    const R = S['CHN-06'];
+    const k = R.findIndex((st) => st.note === 'off the drain');
+    if (k < 1) throw new Error("CHN-06: no step 'off the drain'");
+    let hold = 0;
+    const offDrain: Step = {
+      policy: (w) => {
+        const p = w.player;
+        if (hold > 0) {
+          hold--;
+          return { move: 'R', jump: true };
+        }
+        if (!p.onGround) return { move: 'R', jump: false };
+        if (p.x < px(16.4)) {
+          hold = 11;
+          return { move: 'R', jump: true };
+        }
+        return go(p.x > px(19.6) ? 'L' : '');
+      },
+      until: (w) => w.player.onGround && w.player.x >= px(17.0) && w.player.x <= px(19.8) && Math.abs(w.player.vx) < 30,
+      max: 400,
+      note: 'off the drain, on to the road before the gap',
+    };
+    S['CHN-06'] = [...R.slice(0, k), offDrain, ...R.slice(k + 2)];
+  }
+  // 08 (human timing, route only): the shared door policy walks AWAY from the ducked door by the sign of the distance,
+  // and a dad whose turn comes 12 ticks late has overrun the door by then, walks on into the end wall and waits there
+  // for a door that only rises once he is five tiles off. Here he always walks back the way he came
+  {
+    const R = S['CHN-08'];
+    const k = R.findIndex((st) => st.note === 'the door, and whatever it does');
+    if (k < 0) throw new Error("CHN-08: no door step");
+    R[k] = {
+      policy: (w) => {
+        const d = w.entities.find((e) => e instanceof Door && !(e as Door).fake) as Door | undefined;
+        if (!d) return go('R');
+        const tw = w.flags.twist as string | undefined;
+        const dist = d.x + 8 - w.player.cx;
+        // ducked: back off to the left till it comes up; up or armed: walk in
+        if (tw === 'sunk') return go('L');
+        if (tw === 'up') return go(dist > 2 ? 'R' : dist < -2 ? 'L' : 'R');
+        return go(dist > 0 ? 'R' : 'L');
+      },
+      until: done,
+      max: 1800,
+      note: 'the door ducks: back off left, then walk in',
+    };
+  }
+  // 07: the room's three room steps are replaced by the steered flight; everything after (the act, the door) stays
+  {
+    const R = S['CHN-07'];
+    const i = R.findIndex((st) => st.note === 'keep holding: the last doll steps aside');
+    if (i < 0) throw new Error("CHN-07: no step 'keep holding: the last doll steps aside'");
+    S['CHN-07'] = [...chn07Room(), ...R.slice(i + 1)];
+  }
+  S['CHN-09'] = murukkuRoom();
+  lengthen('CHN-09', 0, []);
+  S['CHN-10'] = spencerRoom();
+  lengthen('CHN-10', 0, []);
+  // every act of the finale: the obvious play (A1) and the obvious fix (A2), each dying to its own trap
+  {
+    const r = S['CHN-10'];
+    const at = (note: string) => {
+      const n = r.findIndex((st) => st.note === note);
+      if (n < 0) throw new Error(`CHN-10: no step '${note}'`);
+      return n;
+    };
+    const prefix = (note: string) => r.slice(0, at(note));
+    // act starts: the family at 32, the polished floor and the food court display at 62, the billing queue at 106
+    const F = 32,
+      K = 62,
+      B = 106;
+    mistakes['CHN-10'].push(
+      { what: 'family A1 (the room taught it): hop back off when they board', steps: [...prefix('board the moodal escalator'), { hold: 'R', until: riding('moodal'), max: 600 }, { hold: 'L', until: (w) => w.player.x <= px(F + 8.6), max: 60 }, { hold: 'L', jump: 30, ticks: 30, long: true }, { hold: 'L', until: (w) => w.player.onGround && !riding('moodal')(w), max: 120 }, { hold: '', until: done, max: 900 }], cause: 'chn-trolley' },
+      { what: 'family A2: ride, and jump off as the overload buzzer goes', steps: [...prefix('board the moodal escalator'), { hold: 'R', until: riding('moodal'), max: 600 }, { hold: 'L', until: (w) => w.player.vx <= 0 || !w.player.onGround, max: 20 }, until((w) => esc('moodal')(w).riders(w) >= 4, 'the family is aboard: the buzzer', 600), { hold: 'L', jump: 12, ticks: 12, note: 'jump off as it buzzes' }, { hold: '', until: done, max: 900 }], cause: 'chn-bhaaram' },
+      { what: 'polished floor A1 (the beach road taught it): hop the shimmer, walk the dark patch', steps: [...prefix('walk the shimmer'), ...hopAt(K + 2.4, 12, 'hop the shimmer'), die], cause: 'chn-kinaru' },
+      { what: 'display A2 (the kitchen taught it): the golden one is the strong one', steps: [...prefix('on to the display: the pale one'), { hold: 'R', until: done, max: 900, note: 'walk on to the golden one' }], cause: 'chn-plaster' },
+      // the billing queue: A1 as the beach taught, on to the second to skip the third; A2 stand on the loaded first and look
+      { what: 'billing A1 (the queue taught it): hop on to the second trolley to skip the third', steps: [...prefix('up to the rim: the locked one is the third'), ...hopAt(B + 7.4, 12, 'on to the second'), die], cause: 'chn-rolled' },
+      { what: 'billing A2: stand on the loaded first trolley and look', steps: [...prefix('up to the rim: the locked one is the third'), { hold: 'R', until: X(B + 7.0), max: 600 }, { hold: '', ticks: 40 }, { hold: 'R', jump: 10, ticks: 10, note: 'a short hop on to the first' }, { hold: '', until: done, max: 900 }], cause: 'chn-tipped' },
+    );
+  }
+  {
+    const r = S['CHN-09'];
+    const at = (note: string) => {
+      const n = r.findIndex((st) => st.note === note);
+      if (n < 0) throw new Error(`CHN-09: no step '${note}'`);
+      return n;
+    };
+    const prefix = (note: string) => r.slice(0, at(note));
+    // per act: NAIVE and FIX as scripted mistakes, each pair dying to a different cause at a different tick
+    const K = 32,
+      E = K + 30,
+      T = E + 30,
+      V = T + 30;
+    mistakes['CHN-09'].push(
+      { what: 'ladle A1: hop straight on to the dark spiral', steps: [...prefix('on to the first spiral (the ladle comes for the dark one)'), ...hopAt(K + 3.4, 12, 'on'), ...hopAt(K + 10.4, 12, 'and on to the dark one'), die], cause: 'chn-karandi' },
+      { what: 'ladle A2: wait on the first spiral for the dark one to go', steps: [...prefix('on to the first spiral (the ladle comes for the dark one)'), ...hopAt(K + 3.4, 12, 'on'), stay], cause: 'chn-sottu' },
+      { what: 'eye A1: run straight across the big spiral', steps: [...prefix('on to the near turn of the big spiral'), ...hopAt(E + 3.4, 12, 'on'), die], cause: 'chn-kannu' },
+      { what: 'eye A2: hop the eye at once, under the press', steps: [...prefix('on to the near turn of the big spiral'), ...hopAt(E + 3.4, 12, 'on'), ...hopAt(E + 10.4, 12, 'hop the eye'), die], cause: 'chn-achu' },
+      { what: 'thenkuzhal A1 (the room taught it): wait for it to go golden', steps: [...prefix('on to the dark spiral (the press lays a white one)'), ...hopAt(T + 3.4, 12, 'on'), stay], cause: 'chn-karandi' },
+      { what: 'thenkuzhal A2: it never turns, so step on at once', steps: [...prefix('on to the dark spiral (the press lays a white one)'), ...hopAt(T + 3.4, 12, 'on'), until((w) => !!murukkuOf(w, 't2')?.visible, 'the white one lands', 600), ...hopAt(T + 10.4, 12, 'on to it'), die], cause: 'chn-vellai' },
+      { what: 'row A1: hop on to the row as it is laid', steps: [...prefix('up to the edge: the row is laid'), ...hopAt(V + 3.4, 12, 'on to the pale row at once'), die], cause: 'chn-ennai' },
+      { what: 'row A2: wait for golden, step on, and stop for a look', steps: [...prefix('up to the edge: the row is laid'), { hold: 'R', until: X(V + 3.4), max: 600 }, until(fried('v0'), 'wait for the row to turn', 600), ...hopAt(V + 3.4, 12, 'on to the row'), stay], cause: 'chn-karandi' },
+      { what: 'door: stop in front of the pale curtain to let it fry', steps: [...r.slice(0, r.length - 1), { hold: 'R', until: (w) => w.player.x >= w.level.doorX! * 16 - px(5.3), max: 900 }, stay], cause: 'chn-adupu' },
+    );
+  }
+};
+
+const naive: Record<string, { steps: Step[]; cause?: string }> = {
+  // the obvious play: hop the golden one, hop the pale one that just landed (it floats, says Tara)
+  'CHN-09': { steps: [...hopAt(4.4, 12, 'on to the first golden spiral'), ...hopAt(11.4, 12, 'and on to the pale one'), die], cause: 'chn-ennai' },
+  // the obvious play: step on and ride
+  'CHN-10': { steps: [...mount(8), { hold: 'R', until: riding('room'), max: 300 }, { hold: 'L', until: (w) => w.player.vx <= 0, max: 20 }, stay], cause: 'chn-comb' },
+};
+
+const fix: Record<string, { steps: Step[]; cause?: string }> = {
+  // first death: the pale one folded. So: stay on the golden one and wait it out... it is the oldest, the ladle takes it
+  'CHN-09': { steps: [...hopAt(4.4, 12, 'on to the first golden spiral'), stay], cause: 'chn-karandi' },
+  // first death: it reversed and ran you into the comb. So: jump off when it reverses: into the fountain below
+  'CHN-10': {
+    steps: [
+      ...mount(8),
+      { hold: 'R', until: riding('room'), max: 300 },
+      { hold: 'L', until: (w) => w.player.vx <= 0, max: 20 },
+      { policy: (w) => ({ move: esc('room')(w).dir < 0 ? 'R' : '', jump: esc('room')(w).dir < 0 && w.player.onGround }), until: done, max: 900 },
+    ],
+    cause: 'chn-fountain',
+  },
+};
+
+const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'CHN-09': [{ what: 'run straight into the oil', steps: [die], cause: 'chn-karai' }],
+  'CHN-10': [{ what: 'leap from the kerb over the escalator', steps: [...mount(8), ...hopAt(6.4, 30, 'leap', true), die], cause: 'chn-fountain' }],
+};
+
+const groupOf = (w: World, letter: string) => w.entities.find((e: any) => e.letter === letter) as any;
+
+/** something flying or rolling at Dad at his height (from either side) will reach him within `lead` seconds (the
+ *  bouncer flies over his head and is not counted: "stay down for the bouncer") */
+const ballIn = (w: World, lead: number) => {
+  const p = w.player;
+  for (const e of w.entities as any[]) {
+    if (!e.alive || e.vx === undefined || e.x === undefined || !e.hazard?.active) continue;
+    const ew = e.w ?? 12,
+      eh = e.h ?? 12;
+    if (e.y + eh < p.y - 6 || e.y > p.y + p.h + 2) continue;
+    const ahead = e.x - (p.x + p.w),
+      behind = p.x - (e.x + ew);
+    if (e.vx < 0 && ahead > -4) {
+      const closing = -e.vx + Math.max(0, p.vx);
+      if (closing > 20 && ahead / closing <= lead) return true;
+    } else if (e.vx > 0 && behind > -4) {
+      const closing = e.vx + Math.max(0, -p.vx);
+      if (closing > 20 && behind / closing <= lead) return true;
+    }
+  }
+  return false;
+};
+/** walk `dir` and hop everything that will arrive within `lead` s (the shared dodge waits till 0.13 s, too late for a
+ *  press 12 ticks behind against balls at 200-320 px/s or kites at 210) */
+const runHopping = (until: (w: World) => boolean, lead: number, note: string, dir: 'L' | 'R' = 'R'): Step => {
+  let hold = 0;
+  return {
+    policy: (w) => {
+      if (hold > 0) {
+        hold--;
+        return { move: dir, jump: true };
+      }
+      if (w.player.onGround && ballIn(w, lead)) {
+        hold = 11;
+        return { move: dir, jump: true };
+      }
+      return { move: dir, jump: false };
+    },
+    until,
+    max: 1500,
+    note,
+  };
+};
+
+/** CHN-03's floaters (round 2, human timing): the shared hopper waits at an edge till the next thing is within 46 px
+ *  and steers on to it with a 3 px slack; a press 12 ticks behind made that a late take-off and a late correction.
+ *  This one takes off at 58 px and steers with a 6 px slack, so the corrections are fewer and earlier */
+const floatHopper = (kinds: string[], bankX: number, untilX: number) => {
+  let left = 0;
+  let target: { x: number; w: number; e: any } | null = null;
+  return (w: World): Out => {
+    const p = w.player;
+    const tx = () => (target!.e ? target!.e.solid.x : target!.x) + target!.w / 2;
+    const steer = (): Move => {
+      if (!target) return 'R';
+      const c = tx();
+      return p.cx < c - 6 ? 'R' : p.cx > c + 6 ? 'L' : '';
+    };
+    if (left > 0) {
+      left--;
+      return { move: steer(), jump: true };
+    }
+    if (p.x >= px(untilX)) return { move: 'R', jump: false };
+    if (!p.onGround) return { move: steer(), jump: false };
+    target = null;
+    const right = p.x + p.w;
+    const cands = (w.entities as any[])
+      .filter((e) => e instanceof Thing && kinds.includes(e.kind) && e.alive && e.solid.collidable && e.solid.y < 240)
+      .map((e) => ({ x: e.solid.x as number, w: e.solid.w as number, e }))
+      .concat([{ x: px(bankX), w: 32, e: null }])
+      .filter((c) => c.x > right - 2)
+      .sort((a, b) => a.x - b.x);
+    const d = (cands[0]?.x ?? Infinity) - right;
+    const gs: any = (p as any).groundSolid;
+    const edge = gs && gs !== true && gs.w !== undefined ? right + 3 >= gs.x + gs.w : !w.solidAt(right + 2, p.y + p.h + 1, 3, 3);
+    if (d <= 64 && d > 2 && edge) {
+      left = 18;
+      target = cands[0];
+      return { move: 'R', jump: true };
+    }
+    return { move: edge ? '' : 'R', jump: false };
+  };
+};
+
+const actRoutes: Record<string, (x: number, p: any) => Step[]> = {
+  'chn03-frogger': (x) => [{ policy: floatHopper(['board', 'crate', 'log', 'kudam'], x + 28, x + 28), until: and(ground, X(x + 30)), max: 3000, note: 'hop the floating things' }],
+  // CHN-04's act (round 2, human timing): the same run, hopping each ground ball 0.25 s ahead instead of 0.13
+  'chn04-cricket': (x) => [runHopping(X(x + 36), 0.25, 'hop the balls on the ground, stay down for the bouncer')],
+  // CHN-05's act (round 2): the second hole moved a tile on (15), so its take-off is at 14.2 (was 13.2)
+  'chn05-heat': (x) => [
+    runHopping(X(x + 4.2), 0.25, 'the last kite from the beach'),
+    { hold: 'R', jump: 12, ticks: 12, note: 'the first shimmer is a hole' },
+    { hold: 'R', until: and(ground, X(x + 14.2)), max: 400, note: 'walk across the black patch' },
+    { hold: 'R', jump: 12, ticks: 12, note: 'the shimmer after it' },
+    { hold: 'R', until: and(ground, X(x + 20.2)), max: 400 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'onto the big black patch' },
+    { hold: 'R', until: and(ground, X(x + 26.2)), max: 400 },
+    { hold: 'R', jump: 12, ticks: 12 },
+    { hold: 'R', until: and(ground, X(x + 34)), max: 400 },
+  ],
+  // CHN-07's act, re-timed for human play (round 2): the shipped route waited for the second stone wherever the long
+  // jump happened to land, which with a late jump was on the pit's edge; now Dad settles in the middle of the trigger
+  // band (cx 16.5..19.2), hops on to the (now 3-wide) fallen stone from 17.9, and leaves it with a long jump
+  'chn07-capstone': (x, p) => [
+    { hold: 'R', until: (w) => w.player.cx >= px(x + 10.2), max: 600, note: 'under the stone' },
+    { hold: 'L', ticks: 34, note: 'and straight back out' },
+    { hold: '', until: (w) => groupOf(w, p.letters[0]).state === 'landed', max: 400 },
+    { hold: 'R', until: X(x + 8.4), max: 200 },
+    { hold: 'R', jump: 14, ticks: 14, note: 'up on the stone' },
+    { hold: 'R', until: and(ground, X(x + 10.6)), max: 200 },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'and over the wall' },
+    { hold: 'R', until: and(ground, (w) => w.player.cx >= px(x + 16.9)), max: 400 },
+    {
+      policy: (w) => go(w.player.cx < px(x + 16.75) ? 'R' : w.player.cx > px(x + 19.4) ? 'L' : ''),
+      until: (w) => w.player.onGround && w.player.cx >= px(x + 16.75) && w.player.cx <= px(x + 19.4) && Math.abs(w.player.vx) < 10,
+      max: 300,
+      note: 'settle in the middle of the edge: it drops into the pit',
+    },
+    { hold: '', until: (w) => groupOf(w, p.letters[1]).state === 'landed', max: 400, note: 'wait at the edge: it drops into the pit' },
+    { hold: 'R', until: X(x + 18.9), max: 100 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'onto the fallen stone' },
+    { hold: 'R', until: and(ground, X(x + 22.2)), max: 200 },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'and off it over the spikes' },
+    { hold: 'R', until: and(ground, X(x + 32)), max: 400 },
+  ],
+  'chn09-karandi': (x) => [
+    ...hopAt(x + 3.4, 12, 'on to the first spiral (the ladle comes for the dark one)'),
+    until(ladleHovers(1), 'the ladle hovers over the dark one', 300),
+    { hold: 'L', until: (w) => w.player.x <= px(x + 6.6), max: 300, note: 'back to the near edge' },
+    { hold: 'L', jump: 12, ticks: 12, note: 'and back on to the bank' },
+    { hold: 'L', until: ground, max: 300 },
+    { hold: '', until: (w) => w.player.x <= px(x + 2.6) || w.player.vx === 0, max: 120 },
+    until(fried('k2'), 'wait for the fresh spiral in the gap to turn golden', 900),
+    ...hopAt(x + 3.4, 12, 'on again'),
+    ...hopAt(x + 10.4, 12, 'on to the fresh one'),
+    ...hopAt(x + 17.4, 12, 'and the last'),
+    walk(x + 29.5),
+  ],
+  'chn09-kannu': (x) => [
+    ...hopAt(x + 3.4, 12, 'on to the near turn of the big spiral'),
+    { hold: 'R', until: X(x + 8.8), max: 300, note: 'up to the eye' },
+    until(pressGone(2), 'let the press lift away', 600),
+    ...hopAt(x + 10.4, 12, 'hop the eye to the far turn'),
+    ...hopAt(x + 16.9, 12, 'and on'),
+    walk(x + 29.5),
+  ],
+  'chn09-thenkuzhal': (x) => [
+    ...hopAt(x + 3.4, 12, 'on to the dark spiral (the press lays a white one)'),
+    { hold: 'R', until: X(x + 8.8), max: 300 },
+    until(quiet('t2'), 'wait for the oil round the white one to go quiet', 900),
+    ...hopAt(x + 10.4, 12, 'on to the white one'),
+    ...hopAt(x + 17.4, 12, 'and on'),
+    walk(x + 29.5),
+  ],
+  'chn09-varisai': (x) => [
+    { hold: 'R', until: X(x + 3.3), max: 600, note: 'up to the edge: the row is laid' },
+    until(fried('v0'), 'wait for the row to turn golden', 600),
+    ...hopAt(x + 3.4, 12, 'on to the row'),
+    ...hopAt(x + 13.4, 12, 'run it and off the far end'),
+    walk(x + 29.5),
+  ],
+  'chn10-moodal': (x) => [...mount(x + 8), until((w) => stepUnder(w, 'moodal'), 'a step under the kerb', 600), { hold: 'R', until: riding('moodal'), max: 60, note: 'board the moodal escalator' }, { hold: 'L', until: (w) => w.player.vx <= 0 || !w.player.onGround, max: 20 }, { hold: '', until: X(x + 17.2), max: 1500, note: 'stay on: the family boards, it crawls on up' }, walk(x + 29.5, 'off at the top')],
+  'chn10-kaanal': (x) => [{ hold: 'R', until: X(x + 4.4), max: 600, note: 'walk the shimmer' }, { hold: 'R', jump: 12, ticks: 12, note: 'hop the dark well' }, { hold: 'R', until: ground, max: 300 }, ...hopAt(x + 11.4, 12, 'hop the next well'), ...hopAt(x + 17.4, 12, 'and the last'), walk(x + 29.5, 'on to the display: the pale one'), ...hopAt(x + 31.4, 12, 'over the golden plaster to the next pale one'), ...hopAt(x + 37.4, 12, 'over the last golden one to the floor'), walk(x + 43.5)],
+  // the billing queue: one long jump from the rim straight on to the locked third trolley (11-14), and one off it
+  'chn10-billing': (x) => [
+    { hold: 'R', until: X(x + 7.0), max: 600, note: 'up to the rim: the locked one is the third' },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'straight on to the locked trolley, over the two that would go' },
+    { hold: 'R', until: and(ground, X(x + 12.2)), max: 300 },
+    { hold: 'R', until: X(x + 14.0), max: 300 },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'and off its far end to the floor' },
+    walk(x + 25.5),
+  ],
+};
+
+const endingPolicies: Record<string, Policy> = {
+  // CHN-06's kolam (round 2, human timing): the shared policy took off 3 px before the kolam with a 20-tick jump, so a
+  // press a few ticks late stepped on it and Paati sent you back, forever. Take off a full tile and a half before it
+  // with a full jump: on time that flies into the door, 12 ticks late it still clears the kolam; a landing past the
+  // door walks back in (the kolam is behind you then)
+  'chn-rangoli'(w, m, d) {
+    const p = w.player;
+    const x0 = d.x - 60;
+    if (!p.onGround) return { move: 'R', jump: m.hold > 0 };
+    if (p.cx > d.x + 14) return go('L');
+    if (p.cx < x0 - 24) return go('R');
+    if (w.input.jump) return { move: 'R', jump: false };
+    m.hold = 29;
+    return { move: 'R', jump: true };
+  },
+  // CHN-03's bull (round 2, human timing): the shared policy leaps when the bull is 26 px off (0.11 s at 230 px/s),
+  // which a press 12 ticks behind turns into a goring. Leap at 56 px (0.24 s): a 24-tick jump stays up long enough
+  // for the bull and its width to pass under either way
+  'chn-bull'(w, m, d) {
+    const p = w.player;
+    const tw = w.flags.twist,
+      bx = w.flags.bullX as number,
+      bw = w.flags.bullW as number;
+    const leap = (): Out => {
+      if (w.input.jump) return { move: '', jump: false };
+      m.hold = 23;
+      return { move: '', jump: true };
+    };
+    if (tw === 'gone' || (tw === 'back' && bx + bw < p.x - 2)) return go(toward(w, d.x + 8));
+    if (!p.onGround) return go('');
+    if (tw === 'charge' && p.x - (bx + bw) < 60 && p.x - (bx + bw) > -4) return leap();
+    if (tw === 'back' && bx - (p.x + p.w) < 64 && bx - (p.x + p.w) > -4) return leap();
+    if (tw === 'pen' || tw === 'snort' || tw === 'charge') return go(p.x < d.x - px(5) ? 'R' : '');
+    if (tw === 'dazed') return go(bx - (p.x + p.w) < 48 ? 'L' : '');
+    return go('');
+  },
+  // walk straight through the pale curtain; never stop in front of it
+  'chn-fresh-curtain'(w, _m, d) {
+    return go(toward(w, d.x + 8, 1));
+  },
+  // a plain door (round 2): walk in
+  'chn-wet-floor-sign'(w, _m, d) {
+    return go(toward(w, d.x + 8, 1));
+  },
+};
+
+export const test: CityTests = {
+  solutions,
+  naive,
+  fix,
+  mistakes,
+  actRoutes,
+  endingPolicies,
+  fair: ['CHN-09', 'CHN-10'],
 };

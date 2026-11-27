@@ -11,22 +11,22 @@
    17.5,
    29.5,
    57.5,
-   74.5,
-   83.5
+   68.5,
+   79
   ],
   "route": {
    "state": "won",
-   "tick": 1737
+   "tick": 1904
   },
   "naive": {
    "state": "dead",
-   "tick": 1178,
-   "cause": "burnt"
+   "tick": 1012,
+   "cause": "chn-sundal"
   },
   "fix": {
    "state": "dead",
-   "tick": 1200,
-   "cause": "burnt"
+   "tick": 1075,
+   "cause": "chn-sooda"
   }
  },
  "CHN-02": {
@@ -47,12 +47,12 @@
   },
   "naive": {
    "state": "dead",
-   "tick": 135,
+   "tick": 149,
    "cause": "hit"
   },
   "fix": {
    "state": "dead",
-   "tick": 674,
+   "tick": 737,
    "cause": "hit"
   }
  },
@@ -70,11 +70,11 @@
   ],
   "route": {
    "state": "won",
-   "tick": 2106
+   "tick": 2202
   },
   "naive": {
    "state": "dead",
-   "tick": 158,
+   "tick": 188,
    "cause": "flood"
   }
  },
@@ -87,12 +87,12 @@
    ]
   ],
   "checkpoints": [
-   32.5,
+   28.5,
    67.5
   ],
   "route": {
    "state": "won",
-   "tick": 1354
+   "tick": 1430
   },
   "naive": {
    "state": "dead",
@@ -101,7 +101,7 @@
   },
   "fix": {
    "state": "dead",
-   "tick": 792,
+   "tick": 870,
    "cause": "hit"
   }
  },
@@ -114,7 +114,7 @@
    ]
   ],
   "checkpoints": [
-   32.5,
+   39.5,
    65.5
   ],
   "route": {
@@ -128,7 +128,7 @@
   },
   "fix": {
    "state": "dead",
-   "tick": 616,
+   "tick": 630,
    "cause": "fell"
   }
  },
@@ -146,7 +146,7 @@
   ],
   "route": {
    "state": "won",
-   "tick": 1312
+   "tick": 1429
   },
   "naive": {
    "state": "dead",
@@ -168,7 +168,7 @@
   ],
   "route": {
    "state": "won",
-   "tick": 1421
+   "tick": 1384
   },
   "naive": {
    "state": "dead",
@@ -177,7 +177,7 @@
   },
   "fix": {
    "state": "dead",
-   "tick": 881,
+   "tick": 865,
    "cause": "spikes"
   }
  },
@@ -201,6 +201,65 @@
    "state": "dead",
    "tick": 64,
    "cause": "splash"
+  }
+ },
+ "CHN-09": {
+  "par": 38,
+  "item": [
+   [
+    20.5,
+    10.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   62.5,
+   92.5,
+   122.5,
+   151.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 3376
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 211,
+   "cause": "chn-ennai"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 385,
+   "cause": "chn-karandi"
+  }
+ },
+ "CHN-10": {
+  "par": 31,
+  "item": [
+   [
+    13.5,
+    9.1
+   ]
+  ],
+  "checkpoints": [
+   32.5,
+   62.5,
+   106.5,
+   131.5
+  ],
+  "route": {
+   "state": "won",
+   "tick": 2743
+  },
+  "naive": {
+   "state": "dead",
+   "tick": 217,
+   "cause": "chn-comb"
+  },
+  "fix": {
+   "state": "dead",
+   "tick": 242,
+   "cause": "chn-fountain"
   }
  }
 }

@@ -14,6 +14,9 @@ import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
 import { exitTwist } from '../../levels/twists';
 import { PongalPot } from '../../entities/tamil';
+import { MURUKKU_META, kannu, karandi, murukkuRoom, thenkuzhal, varisai } from './murukku';
+import { SPENCER_META, billing, kaanal, moodal, spencerRoom } from './spencer';
+import { sundalBite } from './sundal';
 
 // Chennai: share autos, plastic water pots, a flooding subway, filter kaapi
 // poured in long arcs, and a sun that makes doors appear. Chennai Tamil + English.
@@ -72,15 +75,18 @@ const floodFrogger: Act = {
   build: (w, c) => {
     const { X } = c;
     pool(w, c.x + 4, c.x + 28, 15.05, { colors: ['rgba(120,150,120,0.86)', 'rgba(50,70,60,0.96)'], cause: 'flood' });
+    // round 2 (human timing): the board, crate and log are 8 px longer each (48/40/42, were 40/32/34) and the gap
+    // between things 26 px (was 30): a hop that lands 12 ticks late still lands on wood. The pot is still 16 px
+    // and still sinks.
     const kinds: [ThingKind, number, number][] = [
-      ['board', 40, 10],
-      ['crate', 32, 14],
-      ['log', 34, 10],
+      ['board', 48, 10],
+      ['crate', 40, 14],
+      ['log', 42, 10],
       ['kudam', 16, 16],
     ];
     const floats: { t: Thing; x: number; sinkAt: number }[] = [];
     let n = 0;
-    const GAP = 30;
+    const GAP = 26;
     const launch = (x: number) => {
       const [kind, ww, hh] = kinds[n++ % kinds.length];
       const t = new Thing(kind, x, 244 - hh, { w: ww, h: hh, layer: 4, oneWay: true });
@@ -125,22 +131,26 @@ const gullyCricket: Act = {
   id: 'chn04-cricket',
   w: 36,
   advice: 'Gully cricket: hop the balls along the ground, but stay down for the bouncer, it flies at head height.',
+  // the hidden checkpoint sits back in the room's tail: from the act's own first column a short run reaches the
+  // first bowl's trigger, and the ball takes a dad who stands there (the lag-captured sweep)
+  cp0: false,
+  cps: [-3.5],
   build: (w, c) => {
     const { X } = c;
     const bowl = (at: number, fn: (w2: World) => void) => onPass(w, X(at), fn);
     bowl(2, (w2) => {
       say(w2, 'Over start! | Over starts!', X(9), G - 4);
-      roller(w2, 'ball', X(31), px(G) - 8, -200, { cause: 'hit' });
+      roller(w2, 'chn-ball', X(31), px(G) - 8, -200, { cause: 'hit' });
     });
-    bowl(10, (w2) => roller(w2, 'ball', X(34), px(G) - 8, -240, { cause: 'hit' }));
+    bowl(10, (w2) => roller(w2, 'chn-ball', X(34), px(G) - 8, -240, { cause: 'hit' }));
     bowl(18.5, (w2) => {
       say(w2, 'Bouncer! | Bouncer!', X(26), G - 4, 1);
       w2.sfx('whistle', X(28), px(G));
-      shot(w2, 'ball', X(33), 205, -270, 0, 0, 'hit');
+      shot(w2, 'chn-ball', X(33), 205, -270, 0, 0, 'hit');
     });
     bowl(26, (w2) => {
       say(w2, 'Yorker! | Yorker!', X(32), G - 4, 1);
-      roller(w2, 'ball', X(36) + 40, px(G) - 8, -320, { cause: 'hit' });
+      roller(w2, 'chn-ball', X(36) + 40, px(G) - 8, -320, { cause: 'hit' });
     });
     for (const [t, l] of [
       [0.6, 'GULLY XI'],
@@ -159,13 +169,18 @@ const heatFloor: Act = {
   id: 'chn05-heat',
   w: 34,
   advice: 'In this heat the shimmering road is a hole, and the black patch is only shade: jump the shimmer, walk the shade.',
+  // round 2: the act's hidden checkpoint is on the road after the first hole (7.5), not at the act's first column,
+  // which the route crosses in the air hopping the last beach kite (the capture then landed over the first hole);
+  // and the second hole is a tile further on (15, was 14), so a hop from that checkpoint lands short of it
+  cp0: false,
+  cps: [7.5],
   paint: (g, c) => {
-    for (const t of [5, 14, 21, 27]) g.pit(c.x + t, c.x + t + 1);
+    for (const t of [5, 15, 21, 27]) g.pit(c.x + t, c.x + t + 1);
   },
   build: (w, c) => {
     const { X } = c;
     const th = { top: '#B4483F', body: '#7B2C2C' };
-    for (const t of [5, 14, 21, 27]) w.add(new Shimmer(X(t), px(G), px(2), th.top, th.body));
+    for (const t of [5, 15, 21, 27]) w.add(new Shimmer(X(t), px(G), px(2), th.top, th.body));
     w.add(new Decal(X(12), px(G), px(2), 10));
     w.add(new Decal(X(23), px(G), px(4), 10));
     onPass(w, X(9), (w2) => w2.guide('Kuzhi! Andha karuppu kuzhi-ya thaandu! | A hole! Jump that black hole!'));
@@ -219,20 +234,22 @@ const capstone: Act = {
   paint: (g, c) => {
     g.fill(c.x + 14, c.x + 15, 10, 14, '#');
     g.fill(c.x + 10, c.x + 11, 3, 4, c.L[0]);
-    g.fill(c.x + 19, c.x + 24, 15, 16, '.').fill(c.x + 19, c.x + 24, 16, 16, '^').fill(c.x + 19, c.x + 24, 17, 17, '#');
-    g.fill(c.x + 21, c.x + 22, 3, 4, c.L[1]);
+    // round 2 (human timing): the spike pit starts a tile later (20, was 19), so the ledge where you wait for the
+    // second stone is a tile longer, and that stone is three tiles wide (21-23, was 21-22): a hop on to it up to
+    // 12 ticks late still lands on stone. The same rule: wait at the edge, it drops, cross on it.
+    g.fill(c.x + 20, c.x + 24, 15, 16, '.').fill(c.x + 20, c.x + 24, 16, 16, '^').fill(c.x + 20, c.x + 24, 17, 17, '#');
+    g.fill(c.x + 21, c.x + 23, 3, 4, c.L[1]);
   },
   build: (w, c) => {
     const { X } = c;
     const a = group(w, c.L[0]);
     const b = group(w, c.L[1]);
-    for (const [s, t] of [
-      [a, 10],
-      [b, 21],
+    for (const [t, wide] of [
+      [10, 1.55],
+      [21, 2.55],
     ] as const) {
       panel(w, c.x + t + 0.35, 0, 0.12, 3, '#8D6E63', 'rgba(0,0,0,0)');
-      panel(w, c.x + t + 1.55, 0, 0.12, 3, '#8D6E63', 'rgba(0,0,0,0)');
-      void s;
+      panel(w, c.x + t + wide, 0, 0.12, 3, '#8D6E63', 'rgba(0,0,0,0)');
     }
     w.when(
       (w2) => w2.player.onGround && w2.player.cx >= X(9.6) && w2.player.cx <= X(12.4),
@@ -242,7 +259,7 @@ const capstone: Act = {
       },
     );
     w.when(
-      (w2) => w2.player.onGround && w2.player.cx >= X(16.5) && w2.player.cx < X(19.2),
+      (w2) => w2.player.onGround && w2.player.cx >= X(16.5) && w2.player.cx < X(20.2),
       (w2) => b.fall(w2, { delay: 0.45, land: true, g: 2200 }),
     );
     onPass(w, X(3), (w2) => w2.guide('Periya kovil kal! Keezha nillu, nizhal! | The big temple stone! Stand under it, there is shade!'));
@@ -307,10 +324,7 @@ export const levels = (): LevelDef[] => [
       "Madras-oda pudhu peyar Chennai! | Madras became Chennai in 1996.",
       "Seri machi, ippo dhaan real game! | Okay buddy, now the real game starts!",
     ],
-    shouts: [
-      [21, "Kaapi! Degree kaapi! | Coffee! Strong filter coffee!"],
-      [82, "Sundal! Sooda sundal! | Sundal! Hot sundal!"],
-    ],
+    shouts: [[21, "Kaapi! Degree kaapi! | Coffee! Strong filter coffee!"]],
     ride: "shareauto",
     item: "kaapi",
     signs: [[8, "CENTRAL", "station"], [55, "MARINA", "beach"], [102, "FORT ST. GEORGE", "1644"]],
@@ -319,13 +333,19 @@ export const levels = (): LevelDef[] => [
       ["stall", 20, { label: 'KAAPI' }],
       ["kudamrow", 34, {}],
       ["palm", 62, { h: 82, lean: 5 }],
-      ["stall", 82.5, { label: 'SUNDAL' }],
       ["lamp", 106, {}],
     ],
     things: [["lighthouse", 60]],
-    hint: 'Near the end, a Pongal pot boils over across the road. When it starts to bubble, back off a step or two: the spill runs further than where you stood, and the foam shoots up over the pot. When it stops steaming, walk on.',
+    hint: 'On the promenade a sundal cart steams over the path each time the vendor lifts the lid, on a steady beat. The beat lies once: as you come up he lifts it again right after shutting it. Watch his hand, not the lid: it goes to the handle before every lift; cross when the lid is shut and his hand is down. Near the end, a Pongal pot boils over across the road. When it starts to bubble, back off a step or two: the spill runs further than where you stood, and the foam shoots up over the pot. When it stops steaming, walk on.',
+    // hidden checkpoints: the sweep wants each one clear of anything a short run or a hop from it reaches (a hop
+    // captured mid-jump carries 6+ tiles), so the one after the posts sits between the last two posts (the vendor
+    // lifts the lid at 73, steam from 76) and the one after the wall is taken in the wall hop at 79 (the pot's
+    // trigger is 86.8)
+    cps: [17.5, 29.5, 57.5, 68.5, 79],
     extra: (w) => {
-      PongalPot.place(w, { tx: 88, groundTy: 15, triggerTx: 85.5, reach: 3.5 });
+      sundalBite(w, 76);
+      // trigger 86.8 and reach 2.6 (was 85.5 / 3.5): the spill still runs a tile past where you stood
+      PongalPot.place(w, { tx: 88, groundTy: 15, triggerTx: 86.8, reach: 2.6 });
       prop(w, 'palm', 91, 15, { h: 70, lean: -4 }, -8);
     },
   }),
@@ -343,7 +363,11 @@ export const levels = (): LevelDef[] => [
     build(w: World) {
       exitTwist(w, door(w), 'spikes');
       const tints = ['#E53935', '#1E88E5', '#43A047', '#FDD835', '#8E24AA', '#FB8C00'];
-      const pots = tints.map((tint, i) => thingOn(w, 'kudam', 9 + i, 15, { tint }));
+      // round 2 (human timing): the first two pots are the big ones (24 px, at 9 and 10.5), so the hop from the second
+      // over the third has a 48 px run-up instead of 32: a jump up to 12 ticks late still leaves before pot three.
+      // Pot three is still pot three (12), and the queue still ends in the wet (pots four to six at 13-15).
+      const at = [9, 10.5, 12, 13, 14, 15];
+      const pots = tints.map((tint, i) => thingOn(w, 'kudam', at[i], 15, i < 2 ? { tint, w: 24 } : { tint }));
       let tipped = false;
       w.when(
         (w2) => !tipped && w2.standing(pots[2].solid),
@@ -360,8 +384,10 @@ export const levels = (): LevelDef[] => [
           );
         },
       );
-      const lorry = thingOn(w, 'lorry', 21, 15, { h: 40 });
-      const spray = { period: 1.7, on: 0.9, phase: 0.4 };
+      const lorry = thingOn(w, 'chn-lorry', 21, 15, { h: 40 });
+      // round 2 (human timing): the spray pauses 1.3 s between bursts (was 0.8): the run from the pots to the lorry
+      // takes 0.85 s, and a start up to 12 ticks late still makes it. The burst itself is unchanged.
+      const spray = { period: 2.2, on: 0.9, phase: 0.4 };
       arc(w, px(21), 222, px(16), 236, 12, spray, 'rgba(120,190,230,0.95)', 'splash');
       lorry.look = 'leak';
       sign(w, 4, 10.6, 3.4, 'QUEUE HERE', 'shop', 'right', 'one pot per house');
@@ -370,7 +396,7 @@ export const levels = (): LevelDef[] => [
     },
   },
     par: 17,
-    twist: 'token',
+    twist: 'chn-token',
     acts: [queueTwo],
   }),
   longStage({
@@ -403,10 +429,13 @@ export const levels = (): LevelDef[] => [
       panel(w, 8, 10, 15, 0.5, '#4A5F68', 'rgba(0,0,0,0)', 64);
       const flood = w.add(new Water(17.5, { rate: 0, minTy: 5.44, colors: ['rgba(120,150,120,0.85)', 'rgba(50,70,60,0.95)'], cause: 'flood' }));
       const drum = w.add(new Floater(flood, 14, 14.125, 3, 'drum'));
+      // round 2 (human timing): the flood starts when you are on the subway floor itself (y > 212; was 200, the last
+      // stair), and rises at 120 px/s (was 150): the hop on to the drum has 0.33 s, not 0.2, so a press 12 ticks
+      // late still makes it. Everyone who dawdles on the floor still drowns.
       w.when(
-        (w2) => (w2.player.onGround && w2.player.y > 200) || w2.standing(drum.solid),
+        (w2) => (w2.player.onGround && w2.player.y > 212) || w2.standing(drum.solid),
         () => {
-          flood.rate = 150;
+          flood.rate = 120;
           w.say('Subway niranjiduchu! | The subway is flooding!', px(15), px(11), 1.4, 'npc');
           w.sfx('splash', px(15), px(15));
         },
@@ -422,7 +451,7 @@ export const levels = (): LevelDef[] => [
     joinW: 12,
     waterTo: 34,
     par: 15,
-    twist: 'bull',
+    twist: 'chn-bull',
     acts: [floodFrogger],
   }),
   longStage({
@@ -457,14 +486,16 @@ export const levels = (): LevelDef[] => [
         }
       });
       prop(w, 'teastall', 25, 15, { label: 'KAAPI' });
-      arc(w, px(22), 228, px(27), 228, 5, { period: 1.8, on: 0.9, phase: 0 }, '#6D4C41', 'burnt');
-      arc(w, px(22), 196, px(27), 196, 5, { period: 1.8, on: 0.9, phase: 0.9 }, '#6D4C41', 'burnt');
+      // round 2 (human timing): the two streams still take turns, 0.9 s each, but the cycle is 2.2 s (was 1.8), so
+      // the low one rests 1.3 s: a walk under the high one that starts up to 12 ticks late still gets across
+      arc(w, px(22), 228, px(27), 228, 5, { period: 2.2, on: 0.9, phase: 0 }, '#6D4C41', 'burnt');
+      arc(w, px(22), 196, px(27), 196, 5, { period: 2.2, on: 0.9, phase: 1.1 }, '#6D4C41', 'burnt');
       rival(w, 6, 15, 1, tara(3, 1));
       collectible(w, 'tumbler', 15, 10);
     },
   },
     par: 17,
-    twist: 'catch',
+    twist: 'chn-catch',
     acts: [gullyCricket],
   }),
   longStage({
@@ -485,8 +516,8 @@ export const levels = (): LevelDef[] => [
       prop(w, 'tree', 9, 15);
       prop(w, 'tree', dx, 15);
       // the first EXIT is a mirage; so is the one at the far end, just past the real (hidden) door
-      const mirage = thingOn(w, 'mirage', 28, 15, { solid: false, layer: -2 });
-      const mirage2 = thingOn(w, 'mirage', dx + 3, 15, { solid: false, layer: -2 });
+      const mirage = thingOn(w, 'chn-mirage', 28, 15, { solid: false, layer: -2 });
+      const mirage2 = thingOn(w, 'chn-mirage', dx + 3, 15, { solid: false, layer: -2 });
       let seen = false;
       w.when(
         (w2) => w2.player.x >= px(26.5),
@@ -515,7 +546,10 @@ export const levels = (): LevelDef[] => [
         if (w.state !== 'play') return;
         // only along the open beach: in the room, and on the last stretch to the door
         const px0 = w.player.x;
-        if (px0 < px(30) || px0 > px(dx - 8)) {
+        // (dx - 5, not dx - 8: the door's hidden checkpoint at dx - 9.5 must be calm for a short run from it; and
+        // never at a dad who has not left the spawn yet: round 2, the first kite used to arrive 2.8 s in on anyone
+        // still standing there)
+        if ((px0 < px(30) && px0 > px(5.5)) || px0 > px(dx - 5)) {
           if (seen) shot(w, 'kite', px0 - 300, 222, 210, 0, 0, 'hit');
           else shot(w, 'kite', Math.min(px0 + 330, w.W + 16), 222, -210, 0, 0, 'hit');
         }
@@ -586,7 +620,7 @@ export const levels = (): LevelDef[] => [
   },
     par: 15,
     acts: [ladi],
-    twist: 'rangoli',
+    twist: 'chn-rangoli',
   }),
   longStage({
     base: {
@@ -602,12 +636,14 @@ export const levels = (): LevelDef[] => [
     map: Grid.ground().pit(6, 25).put(2, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      const sway = [6, 8, 20, 6, 0];
+      // round 2 (human timing): the dolls are 32 px wide (were 20), the middle one sways 12 px (was 20, still the
+      // most) and the last one steps 10 px aside (was 14): the same decisions, with landings a late press still makes
+      const sway = [6, 8, 12, 6, 0];
       [8, 12, 16, 20, 24].forEach((tx, i) => {
-        const d = thing(w, 'doll', tx, 0, { dy: 212, w: 20, h: 28 });
+        const d = thing(w, 'doll', tx, 0, { dy: 212, w: 32, h: 28 });
         d.look = 'nod';
         d.spin = true;
-        const x0 = px(tx) - 2;
+        const x0 = px(tx) - 8;
         let squash = -1;
         let dodged = false;
         w.onTick((w2) => {
@@ -616,16 +652,20 @@ export const levels = (): LevelDef[] => [
           // the last doll shakes its head as you fly at it, and steps aside
           if (i === 4) {
             const p = w2.player;
-            if (!dodged && !p.onGround && p.x > px(19) && p.vy > 0) {
+            // round 2: it steps aside as you come down FROM THE FOURTH DOLL (x > 22, was 19: that fired a flight
+            // early and it had stepped back by the time you arrived) and stays aside long enough to land on
+            if (!dodged && !p.onGround && p.x > px(22) && p.vy > 0) {
               dodged = true;
               w2.say('Illa! | No!', x0 + 10, 180, 0.9, 'npc');
-              w2.after(1.1, () => (dodged = false));
+              w2.after(1.6, () => (dodged = false));
             }
-            x = x0 + (dodged ? 14 : 0);
+            x = x0 + (dodged ? 10 : 0);
           }
           d.place(w2, x, 212);
           if (squash < 0 && w2.standing(d.solid)) squash = w2.tick;
-          if (squash >= 0 && (w2.tick - squash) * DT > 0.06) {
+          // the bounce comes two ticks after the landing (was 0.06 s = 7 ticks, in which a dad at full speed ran
+          // off the far side of the doll before it threw him): land anywhere on a doll and it bounces you
+          if (squash >= 0 && w2.tick - squash >= 2) {
             squash = -1;
             const p = w2.player;
             if (w2.standing(d.solid)) {
@@ -643,7 +683,7 @@ export const levels = (): LevelDef[] => [
   },
     par: 17,
     acts: [capstone],
-    twist: 'tips',
+    twist: 'chn-tips',
   }),
   longStage({
     base: {
@@ -683,7 +723,9 @@ export const levels = (): LevelDef[] => [
       let train: ReturnType<typeof rider> | null = null;
       w.onTick((w2) => {
         if (!train && w2.player.x >= px(4)) {
-          train = rider(w2, 'loco', -px(5), 12, 120, 5);
+          // round 2 (human timing): the train starts four tiles further back (was -5), half a second more to let
+          // the first wave pass before it is on you; it still comes, and still waits for no one
+          train = rider(w2, 'chn-loco', -px(9), 12, 120, 5);
           w2.say('Poo! Poo! | Toot! Toot!', px(2), px(9), 1.2, 'npc');
           w2.sfx('honk', 0, px(11));
         }
@@ -697,4 +739,9 @@ export const levels = (): LevelDef[] => [
     twist: 'sink',
     acts: [trainRoof],
   }),
+  // ------------------------------------------------------------------ encores (slots 9 and 10 of the allocation)
+  // par = the bot's clear time x 1.35 (tests/par.test.ts): 28.1 s and 22.9 s after fix round 3 (ruchi, keezhe cut;
+  // pattarai folded into kaanal)
+  longStage({ base: murukkuRoom(), acts: [karandi, kannu, thenkuzhal, varisai], twist: 'chn-fresh-curtain', par: 38, shape: 'long', meta: MURUKKU_META }),
+  longStage({ base: spencerRoom(), acts: [moodal, kaanal, billing], lives: 'act', twist: 'chn-wet-floor-sign', par: 31, shape: 'long', meta: SPENCER_META }),
 ];
