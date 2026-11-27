@@ -83,7 +83,10 @@ function pitch(f: string, nVolleys: number, note: string, o: { fixed?: number; e
       const onStone = upOnOne(w);
       const roller = F(w, 'roller') as { cx: number; dir: number } | null | undefined;
       const coming = !!roller && !(roller.dir > 0 ? roller.cx > p.cx + 12 : roller.cx < p.cx - 12);
-      let target = stones[F(w, 'nearest') as number];
+      const near = F(w, 'nearest') as number;
+      // a dead end (the cochonnet is off the pitch): no stone is spared, so down into the gap beside your stone
+      const gap = near < 0;
+      let target = gap ? stones[nearestTo(stones, p.cx)] + (p.cx >= stones[nearestTo(stones, p.cx)] ? 32 : -32) : stones[near];
       if (o.fixed !== undefined) target = stones[o.fixed];
       if (o.eager !== undefined && F(w, 'volley') === nVolleys - 1) target = stones[o.eager];
       // a boule rolling at you: the nearest stone, now (the stone you are on, if you are on one)
@@ -95,7 +98,7 @@ function pitch(f: string, nVolleys: number, note: string, o: { fixed?: number; e
       }
       const dir = toward(w, target, 3);
       if (onStone && Math.abs(p.cx - target) <= 10) return go(toward(w, target, 2));
-      if (p.onGround && dir && blocked(w, dir)) {
+      if (p.onGround && dir && blocked(w, dir) && !(gap && o.fixed === undefined)) {
         jt = 8;
         jm = dir;
         return { move: dir, jump: true };
@@ -278,6 +281,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'pdy09-carreau': pitchAct('pdy09-carreau', 'the boule stops on the lying one: the cochonnet stays, so do you'),
   'pdy09-doublette': pitchAct('pdy09-doublette', 'on, then hard back past the start: judge after both'),
   'pdy09-tir': pitchAct('pdy09-tir', 'the hard shot knocks it three along'),
+  'pdy09-mene': pitchAct('pdy09-mene', 'a dead end: the cochonnet is off, get down on the gravel'),
   'pdy10-thenga': thengaAct,
   'pdy10-aaru': aaruAct,
 };
@@ -315,6 +319,7 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     'pdy09-carreau': 'the boule stops on the lying one',
     'pdy09-doublette': 'on, then hard back',
     'pdy09-tir': 'the hard shot',
+    'pdy09-mene': 'a dead end',
   };
   const before = (id: string) => r9.slice(0, actStart(id));
   mistakes['PDY-09'].push(
@@ -325,6 +330,9 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { what: 'doublette A2: two throwers at the cochonnet: get down and stand beside it', steps: [...before('pdy09-doublette'), pitch('pdy09-doublette', 2, 'beside', { beside: true })], cause: 'pdy-boule' },
     { what: 'tir A1: one stone on, as the point taught', steps: [...before('pdy09-tir'), pitch('pdy09-tir', 2, 'stay', { fixed: 1 })], cause: 'pdy-plomb' },
     { what: 'tir A2: the hard shot is coming: get down and stand beside the cochonnet', steps: [...before('pdy09-tir'), pitch('pdy09-tir', 2, 'beside', { beside: true })], cause: 'pdy-boule' },
+    { what: 'mene A1: stay on the stone that was nearest when the cochonnet left', steps: [...before('pdy09-mene'), pitch('pdy09-mene', 2, 'stay', { fixed: 1 })], cause: 'pdy-plomb' },
+    { what: 'mene A2: the hard shot again: get down beside the cochonnet', steps: [...before('pdy09-mene'), pitch('pdy09-mene', 2, 'beside', { beside: true })], cause: 'pdy-boule' },
+    { what: 'mene A3: run after the cochonnet to the far stone', steps: [...before('pdy09-mene'), pitch('pdy09-mene', 2, 'eager', { eager: 4 })], cause: 'pdy-boule' },
   );
   // the door: Tara says jump the wall, so walk on along the gravel to it
   const door9 = r9.findIndex((st) => st.note?.startsWith('the door'));

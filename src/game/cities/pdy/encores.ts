@@ -57,7 +57,10 @@ export function boulodrome(w: World, c: PitchCfg) {
   const { X, f } = c;
   const stoneCx = c.stones.map((t) => X(t + 1));
   const jack = w.add(new Thing('pdy-cochonnet', X(c.jack) - 3, FLOOR - 6, { solid: false, layer: -1 }));
+  /** the cochonnet has left the pitch: the end is void (a mène nulle), and no stone is spared */
+  const off = () => jack.cx > X(c.x1 - 0.5) || jack.cx < X(c.x0 + 0.5);
   const nearest = () => {
+    if (off()) return -1;
     let best = 0;
     for (let i = 1; i < stoneCx.length; i++) if (Math.abs(stoneCx[i] - jack.cx) < Math.abs(stoneCx[best] - jack.cx)) best = i;
     return best;
@@ -96,7 +99,8 @@ export function boulodrome(w: World, c: PitchCfg) {
   const roll = (w2: World, from: 'L' | 'R', knock: number, speed: number, shield: Thing | null, then: (w3: World) => void) => {
     const dir = from === 'L' ? 1 : -1;
     const start = from === 'L' ? X(c.x0) : X(c.x1 + 1) - 12;
-    const end = from === 'L' ? X(c.x1 + 1) : X(c.x0);
+    // a boule runs out a tile short of the far end (the pitch's last stone is behind it by then)
+    const end = from === 'L' ? X(c.x1) : X(c.x0 + 1);
     swing = 1;
     swingSide = from;
     w2.sfx('shove', start, FLOOR);
@@ -142,7 +146,7 @@ export function boulodrome(w: World, c: PitchCfg) {
     phase = 'lob';
     const spare = nearest();
     w2.flags[f('spared')] = spare;
-    npc(w2, 'Plombée! | High lob!', X((c.x0 + c.x1) / 2), px(G - 6), 1);
+    npc(w2, spare < 0 ? 'Mène nulle! Tous! | Dead end! All of them!' : 'Plombée! | High lob!', X((c.x0 + c.x1) / 2), px(G - 6), 1);
     w2.sfx('whistle', X(c.x0), FLOOR - 40);
     let left = 0;
     c.stones.forEach((t, i) => {
@@ -151,8 +155,8 @@ export function boulodrome(w: World, c: PitchCfg) {
       // (from the top of the frame: above it the world counts as solid and a boule would land at once)
       const b = w2.add(new Thing('pdy-boule', X(t + 1) - (c.pile ? 12 : 6), 2 + i * 5, { deadly: 'pdy-plomb', layer: 4, inset: 1, solid: !!c.pile, ...(c.pile ? { w: 24 } : {}) }));
       b.fall(w2, {
-        g: 900,
-        max: 520,
+        g: 1100,
+        max: 560,
         then: (w3) => {
           b.setDeadly(false);
           piles[i]++;
@@ -173,17 +177,17 @@ export function boulodrome(w: World, c: PitchCfg) {
     const shout = v.shout;
     npc(w2, shout, v.from === 'L' ? X(c.x0) : X(c.x1), px(G - 4.2), 1.1);
     const shield = v.shield !== undefined ? w2.add(new Thing('pdy-boule', X(v.shield) - 6, FLOOR - 12, { solid: false, layer: 2 })) : null;
-    w2.after(0.6, () =>
-      roll(w2, v.from, v.knock, v.speed ?? 170, shield, (w3) => {
+    w2.after(0.5, () =>
+      roll(w2, v.from, v.knock, v.speed ?? 205, shield, (w3) => {
         const next = () => {
           w3.flags[f('final')] = jack.cx;
-          w3.after(0.4, () => lob(w3));
+          w3.after(0.3, () => lob(w3));
         };
         if (v.second) {
           const other = v.from === 'L' ? 'R' : 'L';
           w3.after(v.second.delay, () => {
             npc(w3, 'Et moi! | My turn!', other === 'L' ? X(c.x0) : X(c.x1), px(G - 4.2), 0.9);
-            w3.after(0.5, () => roll(w3, other, v.second!.knock, 170, null, () => next()));
+            w3.after(0.5, () => roll(w3, other, v.second!.knock, 205, null, () => next()));
           });
         } else next();
       }),
@@ -195,7 +199,7 @@ export function boulodrome(w: World, c: PitchCfg) {
     // the next volley, once the lobs of the last are down and Dad is still on the pitch
     if (phase === 'done' && vi + 1 < c.volleys.length && w2.player.cx < X(c.x1 - 1)) {
       phase = 'idle';
-      w2.after(0.5, () => volley(w2, vi + 1));
+      w2.after(0.3, () => volley(w2, vi + 1));
     }
   });
   return { jack, stoneCx, nearest };
@@ -227,7 +231,7 @@ export function petanqueRoom(): LevelDef {
         x1: 28,
         stones,
         jack: 15.5,
-        trigger: 6.5,
+        trigger: 6,
         volleys: [{ from: 'L', knock: 1, shout: 'Tirez! | Shoot!' }],
         X: (t) => px(t),
         f: (k) => `pdy09:${k}`,
@@ -256,7 +260,7 @@ function pitchAct(id: string, name: string, advice: string, twist: Volley, o: { 
     },
     build: (w, c) => {
       const { X } = c;
-      boulodrome(w, { x0: 5, x1: 28, stones, jack: o.jack, trigger: 6.5, volleys: [{ from: 'L', knock: 1, shout: 'Tirez! | Shoot!' }, twist], X, f: c.f });
+      boulodrome(w, { x0: 5, x1: 28, stones, jack: o.jack, trigger: 6, volleys: [{ from: 'L', knock: 1, shout: 'Tirez! | Shoot!' }, twist], X, f: c.f });
       sign(w, c.x + 1.5, G - 4.4, 3.6, o.sign[0], 'wood', null, o.sign[1]);
       if (o.guide) onPass(w, X(3), (w2) => w2.guide(o.guide!));
       void name;
@@ -284,9 +288,17 @@ export const carreau = pitchAct(
 export const doublette = pitchAct(
   'pdy09-doublette',
   'Doublette',
-  'Two throwers, one at each end: the first knocks the cochonnet on, the second knocks it back hard, past where it started. Judge the nearest stone after both boules, not after the first.',
-  { from: 'L', knock: 1, second: { knock: 5, delay: 0.5 }, shout: 'Doublette! Tirez! | Doubles! Shoot!' },
+  'Two throwers, one at each end: the first knocks the cochonnet on, the second knocks it back. Judge the nearest stone after both boules, not after the first.',
+  { from: 'L', knock: 1, second: { knock: 3, delay: 0.5 }, shout: 'Doublette! Tirez! | Doubles! Shoot!' },
   { jack: 14.6, sign: ['DOUBLETTE', 'two throwers'] },
+);
+/** a mène nulle: the shot sends the cochonnet clean off the pitch, and a dead end spares no stone at all */
+export const meneNulle = pitchAct(
+  'pdy09-mene',
+  'Mène nulle',
+  'This shot sends the cochonnet clean off the far end. A cochonnet off the pitch is a dead end: no stone is nearest, and the lobs come down on every one. Get down off your stone on to the gravel, once the boule has run out.',
+  { from: 'L', knock: 13, speed: 260, shout: 'Tir! Tir! | Shoot hard!' },
+  { jack: 14.5, sign: ['MÈNE NULLE', 'the dead end'] },
 );
 /** a tir: the hard shot knocks the cochonnet three tiles, not one */
 export const tir = pitchAct(
