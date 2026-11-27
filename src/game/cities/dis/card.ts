@@ -44,7 +44,7 @@ export class TimeCard extends Entity {
     const h = this.opened ? 6 : 40;
     for (let k = 0; k < 3; k++) ctx.fillRect(this.gateX + k * 5, GROUND - h, 3, h);
     // the card in Dad's hand: the seconds still to spend
-    if (this.started >= 0) {
+    if (this.started >= 0 && w.player.cx < this.gateX + 48) {
       const s = Math.ceil(this.left(w) * DT);
       ctx.fillStyle = '#FDF0D5';
       ctx.fillRect(w.player.cx - 9, w.player.y - 16, 18, 10);
