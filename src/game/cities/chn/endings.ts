@@ -16,7 +16,7 @@ declare module '../../levels/endings' {
 
 export const endings: Record<ChnEndingKind, Ending> = {
   // ================================================================ Chennai
-  /** Token system: press the machine's button when NOW SERVING shows 7. Thala for a reason. */
+  /** Token system: press the machine's button when NOW SERVING shows 7. */
   'chn-token': {
     space: 10,
     advice: 'The door works on tokens: walk into the token machine’s button exactly when the board shows 7. Any other number and they send you to the back.',
@@ -66,7 +66,7 @@ export const endings: Record<ChnEndingKind, Ending> = {
           got = n;
           w2.sfx('beep', mx + 7, FLOOR - 16);
           if (n === 7) {
-            npc(w2, 'Token 7! Thala for a reason! | Token 7! Thala for a reason!', d.x + 8, d.y - 34, 1.6);
+            npc(w2, 'Token 7! Ulla vaanga! | Token 7! Come in!', d.x + 8, d.y - 34, 1.6);
             w2.emit('fx', mx + 7, FLOOR - 20, { kind: 'confetti' });
             L.unlock();
           } else {
