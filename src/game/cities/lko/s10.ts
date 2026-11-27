@@ -10,13 +10,13 @@ import { onPass } from '../../levels/trolls';
 import { Grid } from '../../levels/grid';
 import type { Act } from '../../levels/acts';
 import { Art, FLOOR, px, stillness, bowIcon, TAU } from './kit';
-import { archway, looseStone, pehleDoorway, tara } from './s02';
+import { archway, gentleman, looseStone, pehleDoorway, tara } from './s02';
 import { washLine } from './s03';
 import { Heap, karahi, shadows, type Light } from './s04';
 import { Dancer } from './s06';
 import { arch, well, hooks, chausar } from './s08';
 import { on } from './kit';
-import { julus } from './s07';
+import { julus, photoGroup, pace, type PhotoPlan } from './s07';
 
 /** ghungroo sewn under a chikan cover, columns [c0, c1]: a step is silent, but stand still on it (a bow)
  *  for a moment and the bells ring, and the dancer spins to the sound */
@@ -241,5 +241,50 @@ const julusBells: Act = {
     }
   },
 };
-export const s10 = { room: tehzeebRoom, acts: [dhulai, darbar, julusBells, galiyara] };
+/** The photograph again, but the street in front of the posing group is bells under chikan covers. Photo
+ *  taught: wait right by the group for the flash. Here that spot is a cover, and a wait there is a bow
+ *  that rings the bells: wait three steps back on the plain board, and run the covers and the group in one
+ *  go on the flash. */
+const TASVEER: PhotoPlan = { nala: 8, wall: 12, cam: 19, period: 470, flashes: [[230, 170]] };
+const tasveer: Act = {
+  id: 'lko10-tasveer',
+  w: 24,
+  advice: 'The photograph again, but the street in front of the posing group is bells under chikan covers: waiting by the group, as on the Ganj, is a bow on the bells. Wait back on the plain board before the drain, and on the flash hop it and run the covers and the group in one go.',
+  cps: [16.5],
+  paint: (g, c) => {
+    g.pit(c.x + TASVEER.nala, c.x + TASVEER.nala + 1);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const d = new Dancer(w, c.X(22) + 8, 210, 'lko-tehzeeb');
+    covered(w, x + 10, x + 11, d, 30);
+    photoGroup(w, c, TASVEER, 0, c.f('g'), pace(w));
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Intezaar kis baat ka? | Waiting for what?', 2.2));
+    sign(w, x + 0.4, 10.4, 3.4, 'TASVEER', 'shop', null, 'ghungroo');
+  },
+};
+/** The greeting again, but on the bell floor. Aadaab taught: stop where you are for one short bow. Here a
+ *  stop on the covers rings the bells: step back off them to the plain board to return his greeting. */
+const jawab: Act = {
+  id: 'lko10-jawab',
+  w: 16,
+  advice: 'The greeting again, but he greets you when you are on the covered bells, and a bow there rings them. Step back to the plain board behind you to return his greeting with one short bow, then walk on over the covers without stopping and hop his drain.',
+  cps: [-1.5],
+  cp0: false,
+  paint: (g, c) => {
+    g.pit(c.x + 10, c.x + 11);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const d = new Dancer(w, c.X(15) + 8, 210, 'lko-tehzeeb');
+    covered(w, x + 3, x + 9, d, 20);
+    const still = stillness(w);
+    bowIcon(w, still);
+    gentleman(w, c, 8, 2, still, c.f('g'));
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Zehmat na kijiye. | Please don’t trouble yourself.', 2.2));
+    sign(w, x + 0.2, 10.4, 3, 'JAWAB', 'shop', null, 'aadaab');
+  },
+};
+
+export const s10 = { room: tehzeebRoom, acts: [dhulai, darbar, tasveer, julusBells, jawab, galiyara] };
 export const meta10 = { family: 'finale-bow-meets-bells', betrayals: ['bow-vs-bells'], ending: 'lko-tehzeeb' } as StageMeta;

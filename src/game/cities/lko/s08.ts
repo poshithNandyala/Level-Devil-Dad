@@ -428,6 +428,7 @@ export const wapas: Act = {
     arch(w, c.X(2) + 8, FLOOR, { x: c.X(4) + 8, y: px(11) }, c.f('a1'));
     arch(w, c.X(11) + 8, px(11), { x: c.X(13) + 8, y: px(7) }, c.f('a2'), null, { x: c.X(17) + 8, y: FLOOR });
     hooks(w, x + 12, x + 16, px(6), 'lko-bhool', false);
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Har darwaza ek jaisa hai. | Every doorway is alike.', 2.2));
     sign(w, x + 0.2, 10.4, 3, 'WAPAS', 'shop', null, 'ulte paon');
   },
 };

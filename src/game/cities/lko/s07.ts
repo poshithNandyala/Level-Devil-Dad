@@ -7,7 +7,7 @@ import { lock, tara as taraNow } from '../../levels/endkit';
 import { collectible, door, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
 import { Grid } from '../../levels/grid';
-import type { Act } from '../../levels/acts';
+import type { Act, ActCtx } from '../../levels/acts';
 import { Art, Block, FLOOR, Zone, gent, on, px, type Ctx } from './kit';
 import { tara } from './s02';
 
@@ -502,14 +502,76 @@ export const julus: Act = {
 // four nalas, and the last one isn't where the rhythm says: it comes two steps early
 const JULUS_NALAS = [12, 24, 36, 46];
 
+export type PhotoPlan = { nala: number; wall: number; cam: number; period: number; flashes: [number, number][] };
+/** a posing group (4 tiles at act column P.wall) and its photographer: solid, and shoving you back into the
+ *  nala before it, except while his flash dazzles them */
+export function photoGroup(w: World, c: ActCtx, P: PhotoPlan, k: number, key: string, still: () => boolean) {
+  nala(w, c.x + P.nala, c.x + P.nala + 1, 'lko-nala');
+  const S = { t0: -1, blind: 0, test: false };
+  w.flags[key] = S;
+  const ph = (w2: World) => (S.t0 < 0 ? -1 : (w2.tick - S.t0) % P.period);
+  const wall = w.add(new Block(c.X(P.wall), FLOOR - 30, px(4), 30, () => {}, 0));
+  const cam = c.X(P.cam) + 8;
+  w.add(
+    new Art((ctx, w2) => {
+      const p = ph(w2);
+      const fl = P.flashes.find(([a, d]) => p >= a && p < a + d);
+      const up = p >= P.flashes[0][0] - 60;
+      for (let i = 0; i < 4; i++) {
+        gent(ctx, c.X(P.wall) + 8 + i * 16, FLOOR, 25, KURTA[(i + k + 1) % KURTA.length], { face: 1, arms: fl ? 1 : 0.3, topi: i % 2 ? '#F5F0E6' : undefined, dupatta: i === 1 ? '#C2485B' : undefined });
+      }
+      // the photographer under his black cloth, the box camera on its tripod
+      ctx.fillStyle = '#4E342E';
+      ctx.fillRect(cam - 10, FLOOR - 22, 2, 22);
+      ctx.fillRect(cam - 2, FLOOR - 22, 2, 22);
+      ctx.fillStyle = '#212121';
+      ctx.fillRect(cam - 14, FLOOR - (up ? 34 : 28), 14, 10);
+      ctx.fillStyle = '#1B1B1B';
+      ctx.fillRect(cam - 1, FLOOR - 32, 10, 18);
+      gent(ctx, cam + 6, FLOOR, 25, '#3E3A36', { face: -1, arms: up ? 1 : 0 });
+      if (fl) {
+        ctx.fillStyle = `rgba(255,255,240,${p - fl[0] < 8 ? 0.75 : 0.18})`;
+        ctx.fillRect(c.X(P.wall) - 40, FLOOR - 70, cam - c.X(P.wall) + 50, 70);
+      }
+    }, 3),
+  );
+  w.onTick((w2) => {
+    const pl = w2.player;
+    if (S.t0 < 0 && pl.cx > c.X(P.nala - 4)) S.t0 = w2.tick;
+    const p = ph(w2);
+    const fl = P.flashes.find(([a, d]) => p >= a && p < a + d);
+    S.blind = fl ? fl[0] + fl[1] - p : 0;
+    S.test = !!fl && fl[1] < 30;
+    const inside = pl.x + pl.w > wall.x && pl.x < wall.x + px(4);
+    // dazzled, they don't see you slip between them; they close up again behind you
+    if (fl) wall.set(false);
+    else if (!inside) wall.set(true);
+    // caught among them when they can see again: shoved back out, the way you came
+    const caught = !fl && inside && pl.y + pl.h > FLOOR - 30;
+    const touch = caught || (wall.on && pl.x + pl.w >= wall.x - 1 && pl.x < wall.x && pl.y + pl.h > FLOOR - 30);
+    if (touch && !pl.stun) {
+      w2.flags.shoveCause = S.test || (P.flashes.length > 1 && p >= P.flashes[0][0] && p < P.flashes[1][0]) ? 'lko-photo-test' : still() ? 'lko-photo' : 'lko-photo-jaldi';
+      if (caught) pl.x = wall.x - pl.w - 2;
+      pl.vx = -180;
+      pl.vy = -170;
+      pl.onGround = false;
+      pl.coyoteT = 0;
+      pl.launched = true;
+      pl.stun = 40;
+      w2.sfx('thud', wall.x, FLOOR - 10);
+    }
+  });
+  return S;
+}
+
 // ================================================================ act 5: photo, the group photograph
 /** Outside the old studio a photographer takes the evening crowd's picture. A posing group doesn't part
  *  for a stroller (they won't spoil the photo) and closes ranks on a rusher, as everywhere on the Ganj.
  *  But when his flash goes they are dazzled for a moment: that is the moment to run through them. The
  *  second photographer fires a short test flash first: wait for the real one. */
-const PHOTO = [
-  { nala: 6, wall: 12, cam: 19, period: 420, flashes: [[230, 130]] as [number, number][] },
-  { nala: 20, wall: 25, cam: 31, period: 460, flashes: [[200, 14], [262, 130]] as [number, number][] },
+const PHOTO: PhotoPlan[] = [
+  { nala: 6, wall: 12, cam: 19, period: 420, flashes: [[230, 130]] },
+  { nala: 20, wall: 25, cam: 31, period: 460, flashes: [[200, 14], [262, 130]] },
 ];
 export const photo: Act = {
   id: 'lko07-photo',
@@ -523,63 +585,8 @@ export const photo: Act = {
     const x = c.x;
     arcade(w, x, x + 33);
     const still = pace(w);
-    PHOTO.forEach((P, k) => {
-      nala(w, x + P.nala, x + P.nala + 1, 'lko-nala');
-      const S = { t0: -1, blind: 0, test: false };
-      w.flags[c.f('g' + k)] = S;
-      const ph = (w2: World) => (S.t0 < 0 ? -1 : (w2.tick - S.t0) % P.period);
-      const wall = w.add(new Block(c.X(P.wall), FLOOR - 30, px(4), 30, () => {}, 0));
-      const cam = c.X(P.cam) + 8;
-      w.add(
-        new Art((ctx, w2) => {
-          const p = ph(w2);
-          const fl = P.flashes.find(([a, d]) => p >= a && p < a + d);
-          const up = p >= P.flashes[0][0] - 60;
-          for (let i = 0; i < 4; i++) {
-            gent(ctx, c.X(P.wall) + 8 + i * 16, FLOOR, 25, KURTA[(i + k + 1) % KURTA.length], { face: 1, arms: fl ? 1 : 0.3, topi: i % 2 ? '#F5F0E6' : undefined, dupatta: i === 1 ? '#C2485B' : undefined });
-          }
-          // the photographer under his black cloth, the box camera on its tripod
-          ctx.fillStyle = '#4E342E';
-          ctx.fillRect(cam - 10, FLOOR - 22, 2, 22);
-          ctx.fillRect(cam - 2, FLOOR - 22, 2, 22);
-          ctx.fillStyle = '#212121';
-          ctx.fillRect(cam - 14, FLOOR - (up ? 34 : 28), 14, 10);
-          ctx.fillStyle = '#1B1B1B';
-          ctx.fillRect(cam - 1, FLOOR - 32, 10, 18);
-          gent(ctx, cam + 6, FLOOR, 25, '#3E3A36', { face: -1, arms: up ? 1 : 0 });
-          if (fl) {
-            ctx.fillStyle = `rgba(255,255,240,${p - fl[0] < 8 ? 0.75 : 0.18})`;
-            ctx.fillRect(c.X(P.wall) - 40, FLOOR - 70, cam - c.X(P.wall) + 50, 70);
-          }
-        }, 3),
-      );
-      w.onTick((w2) => {
-        const pl = w2.player;
-        if (S.t0 < 0 && pl.cx > c.X(P.nala - 4)) S.t0 = w2.tick;
-        const p = ph(w2);
-        const fl = P.flashes.find(([a, d]) => p >= a && p < a + d);
-        S.blind = fl ? fl[0] + fl[1] - p : 0;
-        S.test = !!fl && fl[1] < 30;
-        const inside = pl.x + pl.w > wall.x && pl.x < wall.x + px(4);
-        // dazzled, they don't see you slip between them; they close up again behind you
-        if (fl) wall.set(false);
-        else if (!inside) wall.set(true);
-        // caught among them when they can see again: shoved back out, the way you came
-        const caught = !fl && inside && pl.y + pl.h > FLOOR - 30;
-        const touch = caught || (wall.on && pl.x + pl.w >= wall.x - 1 && pl.x < wall.x && pl.y + pl.h > FLOOR - 30);
-        if (touch && !pl.stun) {
-          w2.flags.shoveCause = S.test || (k === 1 && p >= P.flashes[0][0] && p < P.flashes[1][0]) ? 'lko-photo-test' : still() ? 'lko-photo' : 'lko-photo-jaldi';
-          if (caught) pl.x = wall.x - pl.w - 2;
-          pl.vx = -180;
-          pl.vy = -170;
-          pl.onGround = false;
-          pl.coyoteT = 0;
-          pl.launched = true;
-          pl.stun = 40;
-          w2.sfx('thud', wall.x, FLOOR - 10);
-        }
-      });
-    });
+    PHOTO.forEach((P, k) => photoGroup(w, c, P, k, c.f('g' + k), still));
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Intezaar kis baat ka? | Waiting for what?', 2.2));
     sign(w, x + 0.4, 10.4, 3.4, 'PHOTO', 'shop', null, 'studio');
   },
 };

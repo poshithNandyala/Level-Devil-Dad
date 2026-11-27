@@ -4,7 +4,7 @@ import type { LevelDef, StageMeta, World } from '../../world';
 import { collectible, door, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
 import { Grid } from '../../levels/grid';
-import type { Act } from '../../levels/acts';
+import type { Act, ActCtx } from '../../levels/acts';
 import { lines as L } from './lines';
 import { tara as taraNow } from '../../levels/endkit';
 import { Art, Block, FLOOR, Zone, bowIcon, gent, on, px, stillness, type Ctx } from './kit';
@@ -371,6 +371,61 @@ function shove(w: World, p: World['player'], body: Block, G: Who, dx: number) {
   w.say('Nahin nahin, pehle aap! | No no, after you!', dx + 16, FLOOR - 34, 2, 'npc');
 }
 
+/** a gentleman at column n of the act greets you when you come within 4 tiles; return it with one short bow
+ *  (after his greeting is done), or he walks you on into the drain in front of his door */
+export function gentleman(w: World, c: ActCtx, n: number, i: number, still: () => number, key: string) {
+  const S = { s: 'wait', t: 0, push: 0 };
+  w.flags[key] = S;
+  const G: Who = { x: c.X(n) + 8, face: -1, bow: 0, cloth: SHERWANI[(i + 1) % SHERWANI.length], hop: 0, y: FLOOR - 10 };
+  w.add(
+    new Art((ctx) => {
+      // his chabutra, the raised stone seat by his door
+      ctx.fillStyle = '#C8B48E';
+      ctx.fillRect(c.X(n) - 6, FLOOR - 10, 28, 10);
+      drawWho(ctx, G);
+    }, 3),
+  );
+  w.add(
+    new Art((ctx) => {
+      // the open drain in front of his door
+      ctx.fillStyle = '#3B3A36';
+      ctx.fillRect(c.X(n + 2), FLOOR, px(2), 48);
+      ctx.fillStyle = '#5B6B4E';
+      ctx.fillRect(c.X(n + 2), FLOOR + 30, px(2), 18);
+    }, -4),
+  );
+  const pit = w.add(new Zone(c.X(n + 2) + 1, FLOOR + 16, px(2) - 2, 30, 'lko-aadaab'));
+  const shove = (w2: World, cause: string) => {
+    const p = w2.player;
+    pit.hazard.cause = cause;
+    S.s = 'done';
+    S.push = 45;
+    p.stun = 50;
+    G.bow = 0.3;
+  };
+  w.onTick((w2) => {
+    const p = w2.player;
+    const age = w2.tick - S.t;
+    // a firm, polite shove: he walks you on, over the edge
+    if (S.push > 0) (S.push--, (p.vx = 200));
+    if (S.s === 'wait' && p.cx > c.X(n - 4)) {
+      S.s = 'bowed';
+      S.t = w2.tick;
+      w2.say('Aadaab! | Respectful greetings!', c.X(n) + 8, FLOOR - 44, 1.6, 'npc');
+    } else if (S.s === 'bowed') {
+      G.bow = Math.min(1, age / 16);
+      // his greeting is a long, slow one: return it once he has finished, not while he is still bowing
+      if (age > 160 && still() > 30) S.s = 'ok';
+      else if (p.cx > c.X(n) - 4) shove(w2, 'lko-aadaab');
+    } else if (S.s === 'ok') {
+      G.bow = Math.max(0, G.bow - 0.04);
+      if (still() > 240) shove(w2, 'lko-aadaab-zyada');
+      else if (p.cx > c.X(n + 1)) S.s = 'done';
+    }
+  });
+  return S;
+}
+
 // ================================================================ act 3: aadaab, the greeting you return
 /** Along the lane the gentlemen on their chabutras greet you as you come up: "Aadaab". A greeting must be
  *  returned: stop for a short bow, then go on. Walk past without one and he steps out, offended, and
@@ -388,57 +443,8 @@ export const aadaab: Act = {
   build: (w, c) => {
     const still = stillness(w);
     bowIcon(w, still);
-    AADAAB.forEach((n, i) => {
-      const S = { s: 'wait', t: 0, push: 0 };
-      w.flags[c.f('g' + i)] = S;
-      const G: Who = { x: c.X(n) + 8, face: -1, bow: 0, cloth: SHERWANI[(i + 1) % SHERWANI.length], hop: 0, y: FLOOR - 10 };
-      w.add(
-        new Art((ctx) => {
-          // his chabutra, the raised stone seat by his door
-          ctx.fillStyle = '#C8B48E';
-          ctx.fillRect(c.X(n) - 6, FLOOR - 10, 28, 10);
-          drawWho(ctx, G);
-        }, 3),
-      );
-      w.add(
-        new Art((ctx) => {
-          // the open drain in front of his door
-          ctx.fillStyle = '#3B3A36';
-          ctx.fillRect(c.X(n + 2), FLOOR, px(2), 48);
-          ctx.fillStyle = '#5B6B4E';
-          ctx.fillRect(c.X(n + 2), FLOOR + 30, px(2), 18);
-        }, -4),
-      );
-      const pit = w.add(new Zone(c.X(n + 2) + 1, FLOOR + 16, px(2) - 2, 30, 'lko-aadaab'));
-      const shove = (w2: World, cause: string) => {
-        const p = w2.player;
-        pit.hazard.cause = cause;
-        S.s = 'done';
-        S.push = 45;
-        p.stun = 50;
-        G.bow = 0.3;
-      };
-      w.onTick((w2) => {
-        const p = w2.player;
-        const age = w2.tick - S.t;
-        // a firm, polite shove: he walks you on, over the edge
-        if (S.push > 0) (S.push--, (p.vx = 200));
-        if (S.s === 'wait' && p.cx > c.X(n - 4)) {
-          S.s = 'bowed';
-          S.t = w2.tick;
-          w2.say('Aadaab! | Respectful greetings!', c.X(n) + 8, FLOOR - 44, 1.6, 'npc');
-        } else if (S.s === 'bowed') {
-          G.bow = Math.min(1, age / 16);
-          // his greeting is a long, slow one: return it once he has finished, not while he is still bowing
-          if (age > 160 && still() > 30) S.s = 'ok';
-          else if (p.cx > c.X(n) - 4) shove(w2, 'lko-aadaab');
-        } else if (S.s === 'ok') {
-          G.bow = Math.max(0, G.bow - 0.04);
-          if (still() > 240) shove(w2, 'lko-aadaab-zyada');
-          else if (p.cx > c.X(n + 1)) S.s = 'done';
-        }
-      });
-    });
+    AADAAB.forEach((n, i) => gentleman(w, c, n, i, still, c.f('g' + i)));
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Tashreef laaiye, Dad! | Please do come, Dad!', 2.2));
     sign(w, c.x + 0.4, 10.4, 3.4, 'AADAAB', 'shop', null, 'chabutra');
   },
 };
