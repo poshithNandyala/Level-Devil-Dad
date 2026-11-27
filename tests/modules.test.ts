@@ -28,8 +28,6 @@ import { INFO } from './helpers';
 const OLD: Excuse[] = ['ten', 'intro', 'prefix', 'fair'];
 const EXEMPT: Record<string, Excuse[]> = {
   RNC: ['ten', 'tour-naive', 'fix', 'intro', 'prefix'],
-  KVT: [...OLD, 'naive', 'fix'],
-  CHN: OLD,
   PDY: OLD,
   BLR: [...OLD, 'fix'],
   AMR: OLD,

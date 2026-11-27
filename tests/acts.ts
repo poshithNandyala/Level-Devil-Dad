@@ -149,7 +149,7 @@ export const hopper = (kinds: string[], bankX: number, until: number) => {
       .concat([{ x: px(bankX), w: 32, e: null }])
       .filter((c) => c.x > right - 2)
       .sort((a, b) => a.x - b.x);
-    const d = cands[0].x - right;
+    const d = (cands[0]?.x ?? Infinity) - right;
     // the edge of whatever Dad stands on (one-way things don't show up in solidAt)
     const gs: any = (p as any).groundSolid;
     const edge = gs && gs !== true && gs.w !== undefined ? right + 3 >= gs.x + gs.w : !w.solidAt(right + 2, p.y + p.h + 1, 3, 3);

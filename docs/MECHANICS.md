@@ -184,6 +184,120 @@ ulta nishana tadit chehra kataar khoh dwar
 pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound pat-charkhi pat-ginti-pad
 (+ the old nine twists: spikes crush swap shy sink rise wall fake none)
 
+## CHN (Chennai, Tamil Nadu): ideas used (hardness pass, 10 stages)
+- **01 tour bite** the sundal cart on the promenade: the vendor lifts the pan's lid on a steady beat and its steam stands
+  over the path while it is up; as you come near the beat lies once (a short shut, then up again). The honest tell is his
+  hand on the handle before every lift (`SundalCart`, `chn-sundal`, `chn-sooda`).
+- **09 Murukku Press** a brass press on a rail lays spiral strands into a kadai of hot oil: pale dough folds under you,
+  fried golden holds, and the cook's ladle lifts the oldest out first, so the golden one you wait on is the one he takes.
+  Acts: the ladle takes the darkest and drips on the one before (`chn09-karandi`), a big spiral's open eye with the press
+  over its far turn (`chn09-kannu`), thenkuzhal fries white and never turns: read the oil going quiet (`chn09-thenkuzhal`),
+  a row laid together is one age, wait then run it against the ladle's order (`chn09-varisai`, the stage's labelled
+  momentum beat). Door `chn-fresh-curtain`: pale strands part for a walker; stop and the burner fries them into a wall.
+- **10 Spencer Escalators** the old mall's escalators run by load: one rider up, two down fast into the comb plate; give
+  the ride away (hop back to the kerb), then ride. Callbacks that break their rule: four aboard crawl up, so stay on
+  (`chn10-moodal`); indoors the shimmer is polish and the dark is the well, and on the food court display the pale spirals
+  are real and the golden ones plaster that gives at a touch (`chn10-kaanal`); the billing queue's third trolley is the
+  locked one (`chn10-billing`). Door `chn-wet-floor-sign` is plain.
+- **Cut, and why:** `chn09-ruchi` (keep going before the cook snaps the near end: KVT-08's keep moving, registry S9),
+  `chn10-keezhe` (ride the down escalator up with the kid: any escalator can be hopped up, the trick had no teeth); the
+  plaster display, once `chn10-pattarai` (stand a second and it crumbles: keep moving again), is now kaanal's second half
+  and gives at a touch.
+
+## DIS (Dispur, Assam): ideas used (module city, 10 stages)
+- **01 Nomoskar Guwahati** a tea boy walks the promenade at you with a tray of lal chah swinging out in front: touch him
+  or the tray and you are scalded, hop clean over him and the tray tips where you land; wait back while he pours.
+- **02 Char** sandbars placed by a numbered level post: a siren raises it a mark, new bars rise first (dashed outline),
+  a bar that stays narrows second (keeps its left end), bars that go sink last. Acts: the farmer's hut bar never moves
+  (`dis02-chapori`); the bhutbhuti ferry's horn sounds like the siren but the post does not move (`dis02-bhutbhuti`).
+- **03 Duta Paat, Ekta Kuhi** tea hedges taller than a jump step down only once picked; follow the plucker, whose
+  basket swings all round her while she picks. Act: a sprinkler wets the path and you slide (`dis03-bagan`).
+- **04 Talatal** the cellar stair falls step by step behind you as you go down; the step before the last rises back.
+  Act: three stairwells, the lit one flooded, of the dark two only the one the lantern's flame streams toward goes
+  through (`dis04-batah`). Door `dis-laru-plate`: hop the rolling laru.
+- **05 Gamosa** every host who touches you puts a gamosa on you; at three the cloth hides your feet and the pit under
+  it; give one away by walking into a host in a red sash. Acts: one giver right before a pit, hop him (`dis05-atithi`);
+  a bamboo laid over the nala shows only by its shadow (`dis05-sanko`); the Uruka feast's banana leaves are the floor
+  and tip under a jump (`dis05-feast`); the japi-maker's bamboo splits slide the way their arrow shows when you jump at
+  them (`dis05-kaath`); keep up with the carpenter planking the machan before the drum roll (`dis05-machan`).
+- **06 Majuli ka Paar** bamboo spurs on an eroding bank: the slab upstream of a spur goes early, silt builds a step
+  behind it. Acts: shelter from the ferry's wake in the spur's lee (`dis06-wake`); fish traps on pulleys, a ringing one
+  is about to be hoisted, a slack one tips (`dis06-traps`); the ghat man moves his landing flag as the river rises
+  (`dis06-flag`). Door `dis-tea-ladder`.
+- **07 Husori** (marathon) bamboo gates open only for the husori group with you inside its ring. Acts: pond planks rise
+  on the dhol's quickening beat (`dis07-dhol`, the momentum beat); jute twisted into rope, still by the post, whipped in
+  the middle (`dis07-rope`); the Goru Bihu bull charges along the lane, get out of it sideways (`dis07-goru`); tekeli
+  bhonga, get to the side the crowd is not shouting (`dis07-tekeli`); the Kaziranga gate's timed card and the hog deer
+  corridors (`dis07-card`); the pitha trail on the singers' cart that rolls off over the pond (`dis07-cart`); the host's
+  gamosa ritual holds the middle gate (`dis07-chowk`); wait for the next group's pepa behind you (`dis07-pepa`).
+- **08 Gorh** no floor under the elephant grass but the strip a rhino flattens when it charges at a jeep's dust. Acts:
+  it stops halfway and charges on at a nearer jeep (`dis08-jeep`); it charges the nearer jeep, not the louder
+  (`dis08-duijeep`); egrets on a hidden rhino's back rise when it charges (`dis08-bogoli`).
+- **09 Rang Ghar** the oiled boat roof pushes you down; ribs and grip pads; landing on oil drops a laru from the gutter.
+  Acts: the tug-of-war rope is floor only while taut and drifts toward the winner (`dis09-tug`); the steepest oil
+  (`dis09-chaal`); Joysagar's sluice bell, wait out the flood on the embankment (`dis09-sluice`); tunnel mouths come up a
+  step behind on the next pier (`dis09-tunnels`).
+- **10 Luit** (finale) a plain bank with the level post on the far bank; callbacks that break their rule: the tired
+  drummer slows (`dis10-dhol`), the tug teams changed ends (`dis10-tug`), the stair falls from the bottom up with a low
+  cellar vault at its foot (`dis10-talatal`). Door `dis-post-bank`: the plucker's bars rise ahead of her, go in front.
+- **Plain doors:** `dis-hut-shut`, `dis-muga-reel`, `dis-uruka-net`, `dis-watch-tower`, `dis-royal-seat` (each re-asked
+  an act or its room). **Cut, and why:** `dis08-bagori` (a rhino from behind, get up on the hay: `dis06-wake`'s and
+  `dis07-goru`'s decision), `dis07-bordoisila` and `dis10-bordoisila` (shelter-and-wait), `dis10-gamosa` (05's rule
+  again), and the earlier length-round cuts listed in `docs/cities/DIS.md`.
+
+## KVT (Kavaratti, Lakshadweep): ideas used (hardness pass, 10 stages)
+- **01 tour bite** the coral step out to the boat shrinks with the tide as you come down the beach (`CoralStep`).
+- **09 Kalpeni Kadalkara** storm rubble: every landing slides you a tile towards the lagoon (`RubbleBank`, with `dir`,
+  `ridge` and `carry`); climb by walking to each step's far end and tapping up; never a full leap under a beach-rock
+  lip; over the summit walk off, never hop down; the sea wall's heap you land deep on, its loose block you jump
+  whole; a ridge where only the middle holds; storm cuts you jump well past; the shingle that carries you under a
+  lip (`kvt09-ozhukku`). Door `kvt-buried-door`: three hops slide the heap off the door, a fourth tips you in.
+- **10 Neerali Kuzhi** an octopus drawn as a coral head of the same colour; its den, the dark shell-ringed hole, is
+  solid. Callbacks that break each KVT rule: the rotten plank is the way down (`kvt10-palaka`), land mid-step, the
+  far tile is the octopus (`kvt10-kallu`), run on from the nest behind (`kvt10-aama`), walk under the high tuna
+  (`kvt10-choora`), leap from the trunk (`kvt10-thengu`), wait for the moray's second strike (`kvt10-irandu`), jump
+  with the wind (`kvt10-kaattu`), ride the dolphin under the arch and step off coming down (`kvt10-kamaanam`), step on
+  after the lighthouse beam (`kvt10-nizhal`), stand still on heads that sink while you move (`kvt10-veliyettam`), the
+  reef that rises for a jumper (`kvt10-paaru`), chase the boat that is not coming back (`kvt10-thoni`), the tide steps
+  and the hole with eyes (`kvt10-irakkam`). Door `kvt-sand-arm`: the octopus's arm is the patch of sand that moves.
+- **Cut, and why:** `kvt10-kannadi` (glass that holds only a runner: KVT-08's keep moving), `kvt10-kotta` (stay in the
+  basket past a rotten landing: Gangtok's yak photo stops, earlier).
+
+## LKO (Lucknow, Uttar Pradesh): ideas used (module city, 10 stages)
+- **01 Aadaab Lucknow** Chowk's cloth bolts over a dug-up lane: land on one and it is sold, the shopkeeper's hook slides
+  it out sideways from under you; then a long bolt unrolls down across the road, run under before it lands.
+- **02 Pehle Aap** the first through the haveli doorway gets the loose threshold stone; stand still (a bow) and he
+  goes first; acts: the man behind who offers you the way (`lko02-gali`), the bowing stand-off (`lko02-takrar`); door:
+  the haveli door opens outwards over the two tiles in front of it (`lko-kiwad`).
+- **03 Chhapa** printed vine and jali wash off at the dhobi's whistles, the stitched flowers stay; acts: run the print
+  without stopping (`lko03-kunda`), the karigar's hoop carries you flower to flower (`lko03-adda`), the rangrez dips
+  the far half of the muslin (`lko03-rang`); door: the threshold is cloth over the vat (`lko-balti`).
+- **04 Makhan Malai** the malai tile facing the low sun sinks, the shaded one holds; the halwai's lid turns the light;
+  act: single cups shaded only by a kulhad stack's shortening shadow (`lko04-chowk`).
+- **05 Galouti** stand on a heap to squash it flat so your hop clears the seekh rack; flat burns through if you linger;
+  acts `lko05-tawa`, `-lane`, `-ulta`, `-bhara`, `-ghee` (set heaps your weight cannot flatten), `-charkhi` (the
+  turning spit); door: the sheermal slapped on the tandoor wall is a ledge until it bakes (`lko-sheermal`).
+- **06 Kathak** red ghungroo strips ring and the dancer spins to the sound; acts: the moving tatkar patch
+  (`lko06-tatkar`), every stamp swaps left and right (`lko06-guru`), she spins the stage end to end (`lko06-mehfil`).
+- **07 Hazratganj** rush and the strollers close ranks into the nala, pause and they part; acts: the shivering awning
+  (`lko07-shaam`), lamplighters' ladders (`lko07-batti`), walk behind the procession (`lko07-julus`), through the posing
+  group in the flash (`lko07-photo`), the window-shopper who steps back blind (`lko07-dukaan`).
+- **08 Bhool Bhulaiya** through an arch at a jump you come out a floor up, on foot you stay; acts `lko08-chausar`
+  (cowrie throw lights the squares), `-toota` (a crownless arch lifts no one), `-utar` (falling through takes you down),
+  `-wapas` (backwards at a jump takes you down), `-upar` (come down on to the arch tops), `-darwaza` (the arch has
+  moved), `-sargoshi` (the whispering gallery), `-roshandan` (down-lit patches are floor).
+- **09 Kabootarbazi** the flag: red the flock circles, white it lands on the roof ahead of you; acts `lko09-gumbad`
+  (white domes in a garden tank, the third is the reflection), `-hawa` (the flag's far face), `-jhande` (the nearer
+  flag), `-seeti` (the whistle duel), `-girah` (a tumble is not a landing).
+- **10 Lakhnavi Tehzeeb** bells sewn under chikan covers before the door: a bow rings them and the dancer spins to you;
+  callbacks that break their rule: `lko10-tasveer`, `lko10-daana` (grain beats the flag), `lko10-seedha` (a stamp
+  swaps nothing), `lko10-thahra` (the maze stays put).
+- **Plain doors (fix round 6):** `lko-kulhad`, `lko-sam`, `lko-darban`, `lko-489`, `lko-chhatri`, `lko-tehzeeb` (each
+  re-asked its own room); the ids stay and their ideas are free again.
+- **Cut, and why:** fix round 6 cut `lko02-aadaab`, `lko04-badal`, `lko05-dum`, `lko06-tihai`, `lko07-chauraha`,
+  `lko08-minar`, `lko08-mehrab`, `lko10-dhulai`, `-julus`, `-raasta`, `-chirag`, `-do`, `-galiyara`; fix round 7 cut
+  `lko10-darbar` (02's refusal again) and `lko10-jawab` (a greeting the city no longer teaches).
+
 ## PAT (Patna, Bihar): ideas used (module city, 10 stages)
 - **01 Prannam, Patna!** a tempo pulls in behind you at the bus stop and the waiting crowd surges along the road
   to it (climb on the kerb board, then run on before the tempo pulls out).

@@ -5,9 +5,10 @@ import { Thing } from '../../entities/traps';
 import { DT, secs } from '../../constants';
 import { px } from '../../levels/kit';
 import { rr } from '../../../render/art/common';
+import { Solid } from '../../body';
 import type { Ending } from '../../levels/endkit';
 
-export type ChnEndingKind = 'token' | 'bull' | 'catch' | 'rangoli' | 'tips';
+export type ChnEndingKind = 'chn-token' | 'chn-bull' | 'chn-catch' | 'chn-rangoli' | 'chn-tips' | 'chn-fresh-curtain' | 'chn-wet-floor-sign';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<ChnEndingKind, true> {}
@@ -15,8 +16,8 @@ declare module '../../levels/endings' {
 
 export const endings: Record<ChnEndingKind, Ending> = {
   // ================================================================ Chennai
-  /** Token system: press the machine's button when NOW SERVING shows 7. Thala for a reason. */
-  token: {
+  /** Token system: press the machine's button when NOW SERVING shows 7. */
+  'chn-token': {
     space: 10,
     advice: 'The door works on tokens: walk into the token machine’s button exactly when the board shows 7. Any other number and they send you to the back.',
     build(w, d) {
@@ -65,7 +66,7 @@ export const endings: Record<ChnEndingKind, Ending> = {
           got = n;
           w2.sfx('beep', mx + 7, FLOOR - 16);
           if (n === 7) {
-            npc(w2, 'Token 7! Thala for a reason! | Token 7! Thala for a reason!', d.x + 8, d.y - 34, 1.6);
+            npc(w2, 'Token 7! Ulla vaanga! | Token 7! Come in!', d.x + 8, d.y - 34, 1.6);
             w2.emit('fx', mx + 7, FLOOR - 20, { kind: 'confetti' });
             L.unlock();
           } else {
@@ -83,7 +84,7 @@ export const endings: Record<ChnEndingKind, Ending> = {
 
   /** Jallikattu: a brick wall stands before the door, too high to jump. The bull is behind you.
    *  Let it charge, leap it at the last moment, and it smashes the wall for you. */
-  bull: {
+  'chn-bull': {
     space: 14,
     advice: 'The wall is too high to climb, but the bull isn’t picky: let it charge at you, jump straight up as it arrives, and it smashes the wall. Then mind it on the way back.',
     build(w, d) {
@@ -204,7 +205,7 @@ export const endings: Record<ChnEndingKind, Ending> = {
   },
 
   /** Gully cricket: the batsman skies it. Catch it (be under it when it comes down) and he's out. */
-  catch: {
+  'chn-catch': {
     space: 12,
     advice: 'The batsman won’t leave the doorway till he’s out: run under the ball (watch its shadow) and catch it. Drop it and he hits another.',
     build(w, d) {
@@ -296,7 +297,7 @@ export const endings: Record<ChnEndingKind, Ending> = {
   },
 
   /** A fresh kolam in front of the door. Step on it and Paati sends you back: jump straight into the door. */
-  rangoli: {
+  'chn-rangoli': {
     advice: 'Never step on the kolam in front of the door: Paati sends you back. Jump from before it straight into the door.',
     build(w, d) {
       const x0 = d.x - 60,
@@ -326,8 +327,110 @@ export const endings: Record<ChnEndingKind, Ending> = {
     },
   },
 
+  /** CHN-09's door: pale strands hang in the doorway. Soft dough parts for you; stop in front of it to let it fry and the
+   *  burner under the doorway lights where you stand, and the fried curtain is a wall. Walk straight through while pale. */
+  'chn-fresh-curtain': {
+    space: 10,
+    advice: 'Pale strands hang in the doorway: soft dough, they part for you. Walk straight through. Stop in front of them and the cook lights the burner under your feet to fry them, and the fried curtain is a wall.',
+    build(w, d) {
+      const cx = d.x - px(3);
+      const wall = new Solid(cx - 4, FLOOR - 40, 10, 40);
+      wall.collidable = false;
+      w.solids.push(wall);
+      let state: 'pale' | 'lit' | 'fried' = 'pale';
+      let t0 = 0;
+      let stood = 0;
+      const flame = { x: cx - px(2.6), w: px(2.2) };
+      const burner = { active: false, cause: 'chn-adupu', hits: (x: number, y: number, ww: number, h: number) => burner.active && x < flame.x + flame.w && x + ww > flame.x && y + h > FLOOR - 12 };
+      w.hazards.push(burner);
+      w.flags.twist = 'pale';
+      w.add(
+        new Paint((ctx, w2) => {
+          // the rail and the strands
+          ctx.fillStyle = '#5D4037';
+          ctx.fillRect(cx - 12, FLOOR - 46, 24, 3);
+          for (let i = 0; i < 4; i++) {
+            const sx = cx - 6 + i * 4;
+            const sway = state === 'pale' ? Math.sin(w2.tick * 0.08 + i) * 1.5 : 0;
+            ctx.strokeStyle = state === 'fried' ? '#C8862A' : state === 'lit' ? '#E8C890' : '#F1DEB0';
+            ctx.lineWidth = 2.2;
+            ctx.beginPath();
+            ctx.moveTo(sx, FLOOR - 43);
+            for (let y = FLOOR - 43; y < FLOOR - 2; y += 5) ctx.lineTo(sx + Math.sin(y * 0.5 + i) * 2 + sway, y);
+            ctx.stroke();
+          }
+          if (state === 'lit') {
+            // the burner: blue then yellow flame under the doorway's threshold
+            for (let i = 0; i < 6; i++) {
+              const fx = flame.x + 3 + i * 5;
+              const fh = 6 + ((w2.tick * 2 + i * 7) % 8);
+              ctx.fillStyle = i % 2 ? '#FFB300' : '#42A5F5';
+              ctx.fillRect(fx, FLOOR - fh, 3, fh);
+            }
+          }
+          ctx.fillStyle = '#37474F';
+          ctx.fillRect(flame.x, FLOOR - 2, flame.w, 2);
+        }, 2),
+      );
+      w.onTick((w2) => {
+        const p = w2.player;
+        // whoever stops in front of the curtain lights the burner
+        const near = p.onGround && p.cx > flame.x - 2 && p.cx < cx - 2 && Math.abs(p.vx) < 30;
+        stood = near ? stood + 1 : 0;
+        if (state === 'pale' && stood >= 14) {
+          state = 'lit';
+          t0 = w2.tick;
+          burner.active = true;
+          w2.sfx('whistle', cx, FLOOR - 20);
+          npc(w2, 'Adhu fry aagattum! | Let it fry!', cx, FLOOR - 56, 1.2);
+        } else if (state === 'lit' && w2.tick - t0 > secs(0.9)) {
+          state = 'fried';
+          burner.active = false;
+          wall.collidable = true;
+          w2.sfx('snap', cx, FLOOR - 20);
+          w2.after(2.5, () => {
+            // the fried curtain goes to the rack and a fresh one is hung
+            wall.collidable = false;
+            state = 'pale';
+            stood = 0;
+            w2.sfx('slide', cx, FLOOR - 40);
+          });
+        }
+        w2.flags.twist = state;
+      });
+    },
+  },
+
+  /** CHN-10's door: a PLAIN door (round 2). The mopped-floor rule (slide, the door shut for wet feet, the sign on the
+   *  dry mat) was the same thought as TVM-10's shipped door `tvm-oily-feet-coir-mat` and was taken out; the two recasts
+   *  gated in EXTEND-2.md failed too (one re-asked kaanal's shine read, one was the wait-for-the-cycle class). The
+   *  WET FLOOR board and the mat stay as dressing: the floor is dry, the door opens, nothing here kills. Key kept. */
+  'chn-wet-floor-sign': {
+    space: 9,
+    advice: 'The glass door at the end of the floor. The WET FLOOR board is only a board today: walk in.',
+    build(w, d) {
+      const sx = d.x - px(4.5);
+      w.flags.twist = 'plain';
+      w.add(
+        new Paint((ctx) => {
+          // the sign: a yellow A-board beside the mat
+          ctx.fillStyle = '#FDD835';
+          ctx.beginPath();
+          ctx.moveTo(sx, FLOOR - 26);
+          ctx.lineTo(sx - 8, FLOOR);
+          ctx.lineTo(sx + 8, FLOOR);
+          ctx.fill();
+          text(ctx, 'WET', sx, FLOOR - 12, 5, '#212121', '');
+          text(ctx, 'FLOOR', sx, FLOOR - 5, 4, '#212121', '');
+          ctx.fillStyle = '#6D4C41';
+          ctx.fillRect(d.x - px(3), FLOOR - 2, px(2), 2);
+        }, 2),
+      );
+    },
+  },
+
   /** The door creaks... and topples flat towards you. Stop short, let it fall, walk in. */
-  tips: {
+  'chn-tips': {
     advice: 'When the door creaks, stop and back off: it falls flat towards you. Then walk in over it.',
     build(w, d) {
       let state: 'up' | 'creak' | 'falling' | 'down' = 'up',

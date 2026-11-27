@@ -1,7 +1,7 @@
 # Cities: what's done, what's next
 
 The journey runs south to north through every state and UT capital (36 chapters, `CHAPTERS` in
-`src/game/cities.ts`, pins in `src/map/india-data.ts`). **16 done (130 stages), 20 to go.**
+`src/game/cities.ts`, pins in `src/map/india-data.ts`). **17 done (142 stages), 19 to go.**
 The 15 cities done before the modules have 8 stages: 01 is a welcome tour, 02–08 are long stages (a room + an act + a door
 ending), harder each time; 08 is the finale and may call back to its own city's ideas (never another city's).
 **Every new city has 10 stages** (01 tour, 02–10 long stages, 10 the finale), built as a module:
@@ -22,7 +22,7 @@ How to use this file:
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | TVM | Thiruvananthapuram | Kerala | South | Malayalam + English | done |
 | 2 | KVT | Kavaratti (bonus) | Lakshadweep | South | Jeseri words + Malayalam + English | done |
-| 3 | CHN | Chennai | Tamil Nadu | South | Chennai Tamil + English | done |
+| 3 | CHN | Chennai | Tamil Nadu | South | Chennai Tamil + English | done (10 stages, v0.17.6) |
 | 4 | PDY | Puducherry | Puducherry | South | Tamil + English + a little French | done |
 | 5 | BLR | Bengaluru | Karnataka | South | Kannada + English | done |
 | 6 | AMR | Amaravati | Andhra Pradesh | South | Telugu (coastal Andhra) + English | done |
@@ -36,12 +36,12 @@ How to use this file:
 | 14 | RPR | Raipur | Chhattisgarh | Central | Chhattisgarhi + English | done |
 | 15 | RNC | Ranchi | Jharkhand | Central | Nagpuri (Sadri) + Hindi + English | done |
 | 16 | PAT | Patna | Bihar | Central | Magahi / Bhojpuri + Hindi + English | done (10 stages, v0.17.0) |
-| 17 | LKO | Lucknow | Uttar Pradesh | Central | Lakhnavi Hindustani (Urdu-rich) + Awadhi + English | to do |
+| 17 | LKO | Lucknow | Uttar Pradesh | Central | Lakhnavi Hindustani (Urdu-rich) + Awadhi + English | done (10 stages, v0.17.5) |
 | 18 | BBI | Bhubaneswar | Odisha | East | Odia + Hindi + English | built (city/bbi) |
 | 19 | CCU | Kolkata | West Bengal | East | Bengali + Hindi + English | to do |
-| 20 | SVP | Sri Vijaya Puram (bonus) | Andaman & Nicobar Islands | East | Andaman Hindi + Bengali/Tamil/Telugu + English | to do |
+| 20 | SVP | Sri Vijaya Puram (bonus) | Andaman & Nicobar Islands | East | Andaman Hindi + Bengali/Tamil/Telugu + English | done (10 stages, v0.17.3) |
 | 21 | GTK | Gangtok | Sikkim | East | Nepali + Hindi + English | to do |
-| 22 | DIS | Dispur (Guwahati) | Assam | Northeast | Assamese + Hindi + English | to do |
+| 22 | DIS | Dispur (Guwahati) | Assam | Northeast | Assamese + Hindi + English | done (10 stages, v0.17.7) |
 | 23 | SHL | Shillong | Meghalaya | Northeast | Khasi + English | to do |
 | 24 | ITA | Itanagar | Arunachal Pradesh | Northeast | Arunachali Hindi + Nyishi + English | to do |
 | 25 | KOH | Kohima | Nagaland | Northeast | Nagamese + English | to do |
@@ -93,30 +93,34 @@ song lyrics. Affectionate teasing locals would proudly share; never mean.
 
 | Stage | Name (meaning) | What it is | Act | Door ending |
 | --- | --- | --- | --- | --- |
-| KVT-01 | Swagatham, Billam (Welcome to Kavaratti) | Welcome tour past landmarks while the guide tells you real things about the city. Coral sand, a glass-clear lagoon and boats that run on a timetable. As you cross the jetty, a green turtle nest on the beach below hatches: never step on a baby, and they spread wider than any jump. Stop on the jetty till every one is in the water. | — | — |
-| KVT-02 | Odam Gone (The boat’s gone) | The boat waits for the tide, never for your jump. The last two planks by the boat go too, if you stand there waiting for it. | `kvt02-glass` | `loading` |
-| KVT-03 | Supari Light (Lighthouse on the island) | The lighthouse beam builds your bridge. For a moment. | `kvt03-faith` | `reflection` |
-| KVT-04 | Agatti Airstrip | One runway, one flight a day, and the whole island watching. *Scene: Agatti.* | `kvt04-tailwind` | `glider` |
-| KVT-05 | Minicoy Tuna | Pole-and-line tuna fishing: the fish come out of the sea and fly over your head. *Scene: Minicoy.* | `kvt05-lift` | `trapdoor` |
-| KVT-06 | Phar Mungal (Diving the reef) | India’s scuba school. The fish are friendly. The reef is not. *Scene: Kavaratti lagoon.* | `kvt06-air`, `kvt06-eels` | `safetystop` |
-| KVT-07 | Thengu Kayaru (Up the palm) | Coconut country: every islander can climb a palm. Can Dad? | `kvt07-crabs`, `kvt07-bend` | `pushoff` |
-| KVT-08 | Billam Ottam (Running on the lagoon) | Run fast enough and the lagoon holds you up. Stop, and it doesn’t. *Scene: Bangaram lagoon.* The sandbar is only there at low tide: stop on it and it goes under. | `kvt08-weed`, `kvt08-dolphins` | `footsteps` |
+| KVT-01 | Swagatham, Billam (Welcome to Kavaratti) | Welcome tour past landmarks while the guide tells you real things about the city. Coral sand, a glass-clear lagoon and boats that run on a timetable. As you cross the jetty, a green turtle nest on the beach below hatches: never step on a baby, and they spread wider than any jump. Stop on the jetty till every one is in the water. Then the coral step out to the boat: the tide is dropping, and it shrinks from three tiles to its one-tile top as you come down the beach; wait at the water's edge, then hop on to the top and off. | — | — |
+| KVT-02 | Odam Gone (The boat’s gone) | The boat waits for the tide, never for your jump. The last two planks by the boat go too, if you stand there waiting for it. | `kvt02-glass` | `kvt-loading` |
+| KVT-03 | Supari Light (Lighthouse on the island) | The lighthouse beam builds your bridge. For a moment. | `kvt03-faith` | `kvt-reflection` |
+| KVT-04 | Agatti Airstrip | One runway, one flight a day, and the whole island watching. *Scene: Agatti.* | `kvt04-tailwind` | `kvt-glider` |
+| KVT-05 | Minicoy Tuna | Pole-and-line tuna fishing: the fish come out of the sea and fly over your head. *Scene: Minicoy.* | `kvt05-lift` | `kvt-trapdoor` |
+| KVT-06 | Phar Mungal (Diving the reef) | India’s scuba school. The fish are friendly. The reef is not. *Scene: Kavaratti lagoon.* | `kvt06-air`, `kvt06-eels` | `kvt-safetystop` |
+| KVT-07 | Thengu Kayaru (Up the palm) | Coconut country: every islander can climb a palm. Can Dad? | `kvt07-crabs`, `kvt07-bend` | `kvt-pushoff` |
+| KVT-08 | Billam Ottam (Running on the lagoon) | Run fast enough and the lagoon holds you up. Stop, and it doesn’t. *Scene: Bangaram lagoon.* The sandbar is only there at low tide: stop on it and it goes under. | `kvt08-weed`, `kvt08-dolphins` | `kvt-footsteps` |
+| KVT-09 | Kalpeni Kadalkara (Kalpeni Storm Bank) | A cyclone threw a hill of coral rubble up on the shore, and it still moves: every landing on it slides you one tile towards the lagoon. Land near a step's lagoon edge and the slide takes you over it and the rubble you brought down carries you into the water: walk to the far end of each step, then a tap up. Under the jagged beach-rock lip a full leap hits it; near the top the steps narrow to two tiles; over the summit the lagoon is on the other side, so walk off each step (a hop down slides you off the far edge); then the sea wall (land deep on the heap in the first break, jump the loose block in the second whole) a shelf of shingle under a low lip that carries you under it if you let it slide you off (land short, never jump), and a ridge of three heaps, wide, narrow and wider, with water on both sides (land in the middle); the crest's two storm cuts want a long jump well past them. *Scene: Kalpeni.* | `kvt09-pavizham`, `kvt09-kodumudi`, `kvt09-kadalbhitti`, `kvt09-ozhukku`, `kvt09-varambu`, `kvt09-murivu` | `kvt-buried-door` |
+| KVT-10 | Neerali Kuzhi (Octopus Hole) | One coral head is an octopus, the colour of the coral; its den is the dark hole with shells round it, and solid. Jump the octopus, stand on the den. Then a bare dark hole that goes right through, and an octopus that crawls to another head and turns its colour as you come; then every KVT idea comes back and breaks the rule it taught: a rotten plank that is the way down (jump it and the far planks go), an octopus on the rubble's far tile, a turtle nest behind you, tuna high then low, a crab in the coconut crown, morays that strike twice, a headwind, a dolphin under a jagged arch, the lighthouse beam taking steps away, the incoming tide (heads that sink while you move on them, not when you stop), a reef that rises only for a jumper, a boat that is not coming back; last the tour's coral steps shrinking with the tide, and between them a hole with eyes in it (a moray). Closing stage. *Scene: Kavaratti lagoon.* | `kvt10-midden`, `kvt10-palaka`, `kvt10-kallu`, `kvt10-aama`, `kvt10-choora`, `kvt10-thengu`, `kvt10-irandu`, `kvt10-kaattu`, `kvt10-kamaanam`, `kvt10-nizhal`, `kvt10-veliyettam`, `kvt10-paaru`, `kvt10-kotta`, `kvt10-thoni`, `kvt10-irakkam` | `kvt-sand-arm` |
 
 ### CHN · Chennai, Tamil Nadu
 
-- Language: Chennai Tamil + English · Hello: "Vanakkam! | Hello!" · Hidden item: tumbler (filter kaapi)
-- Filter kaapi, share autos and a very long beach.
+- Language: Chennai Tamil + English · Hello: "Vanakkam! | Hello!" · Hidden item: tumbler (filter kaapi) · Seventh death: the kaapi tumbler is topped up the seventh time
+- Filter kaapi, share autos and a very long beach. Ten stages since the extend pass (`docs/cities/CHN.md`): the two encores are the murukku kitchen and the old mall's escalators.
 
 | Stage | Name (meaning) | What it is | Act | Door ending |
 | --- | --- | --- | --- | --- |
-| CHN-01 | Vanakkam Chennai (Welcome to Chennai) | Welcome tour past landmarks while the guide tells you real things about the city. Filter kaapi, share autos and a very, very long beach. Near the end a Pongal pot on the street boils over ("Pongalo Pongal!"): a spout of foam over it and a hot spill across the road that runs past where it started bubbling. Back off when it bubbles; walk on when it stops steaming. | — | — |
-| CHN-02 | Kudam Queue (Water-pot queue) | Everyone saved their place. Including the pots. | `chn02-queue2` | `token` |
-| CHN-03 | Subway Splash | One raindrop, and the subway is a swimming pool. | `chn03-frogger` | `bull` |
-| CHN-04 | Degree Kaapi (Proper filter coffee) | Never walk between an uncle and his morning kaapi. | `chn04-cricket` | `catch` |
+| CHN-01 | Vanakkam Chennai (Welcome to Chennai) | Welcome tour past landmarks while the guide tells you real things about the city. Filter kaapi, share autos and a very, very long beach. On the promenade a sundal cart steams over the path each time the vendor lifts the lid, on a steady beat; the beat lies once as you come up (he lifts it again right after shutting it): watch his hand, not the lid (`SundalCart`, archetype B5). Near the end a Pongal pot on the street boils over ("Pongalo Pongal!"): a spout of foam over it and a hot spill across the road that runs past where it started bubbling. Back off when it bubbles; walk on when it stops steaming. | — | — |
+| CHN-02 | Kudam Queue (Water-pot queue) | Everyone saved their place. Including the pots. | `chn02-queue2` | `chn-token` |
+| CHN-03 | Subway Splash | One raindrop, and the subway is a swimming pool. | `chn03-frogger` | `chn-bull` |
+| CHN-04 | Degree Kaapi (Proper filter coffee) | Never walk between an uncle and his morning kaapi. | `chn04-cricket` | `chn-catch` |
 | CHN-05 | Agni Mirage (Peak-summer mirage) | Is that the exit, or is the sun melting your eyes? | `chn05-heat` | room twist |
-| CHN-06 | Madurai Malli (Madurai jasmine) | The jasmine market in Madurai: flowers by the arm’s length, and a crowd that pushes. *Scene: Madurai.* | `chn06-ladi` | `rangoli` |
-| CHN-07 | Thanjavur Bommai (Thanjavur dolls) | Thanjavur’s head-shaking dolls never stop nodding. One of them says no. *Scene: Thanjavur.* | `chn07-capstone` | `tips` |
+| CHN-06 | Madurai Malli (Madurai jasmine) | The jasmine market in Madurai: flowers by the arm’s length, and a crowd that pushes. *Scene: Madurai.* | `chn06-ladi` | `chn-rangoli` |
+| CHN-07 | Thanjavur Bommai (Thanjavur dolls) | Thanjavur’s head-shaking dolls never stop nodding. One of them says no. *Scene: Thanjavur.* | `chn07-capstone` | `chn-tips` |
 | CHN-08 | Pamban Paalam (Pamban bridge) | The old sea bridge to Rameswaram. The train is behind you and the middle of the bridge lifts for ships. *Scene: Rameswaram.* | `chn08-trainroof` | `sink` |
+| CHN-09 | Murukku Press (The murukku press) | A snack kitchen: the brass press lays spiral strands into the hot oil, pale and soft, and they fry golden and hard. Pale dough folds under you; golden holds; but the golden one you would wait on is the oldest and the ladle takes it. The ladle lifts the darkest first and drips on the one before it; a big spiral has an eye and the press comes down over its far turn; thenkuzhal stays white (read the bubbles); a row laid together is one age (wait, then run it). | `chn09-karandi`, `chn09-kannu`, `chn09-thenkuzhal`, `chn09-varisai` | `chn-fresh-curtain` |
+| CHN-10 | Spencer Escalators (The mall escalators) | Chennai’s old mall. Its escalators run by load: one rider goes up, two go down, fast, into the comb plate. Give the ride away (hop back to the kerb), then ride. The finale breaks this city's own rules: four aboard crawl up (stay on when the family boards); indoors the shimmer is polish and the dark is the well, and on the food court display the pale spirals are real and the golden ones plaster; the billing queue's third trolley is the locked one (the beach taught you to skip the third). The door is plain. | `chn10-moodal`, `chn10-kaanal`, `chn10-billing` | `chn-wet-floor-sign` (plain) |
 
 ### PDY · Puducherry, Puducherry
 

@@ -591,3 +591,54 @@ Thiruvananthapuram's extend pass: stages 09 and 10 after the old finale (ids kep
 keys under the `tvm-` prefix, and every checkpoint moved where it passes the three-play respawn check (idle,
 run, tap jump at lag 0, 6 and 12). It passed independent QA at 2e7eba9 after five fix rounds
 (ldd-inbox/reports/cities/tvm/QA/). TVM is off the modules-test allow-list, so it now gets every strict check.
+
+## v0.17.4: Kavaratti, ten stages
+Kavaratti's hardness pass: a tour bite (the coral step out to the boat shrinks with the tide), two new stages
+(09 Kalpeni Kadalkara, storm rubble that slides you a tile towards the lagoon on every landing; 10 Neerali
+Kuzhi, an octopus the colour of the coral, whose finale acts each break a rule an earlier KVT stage taught),
+its keys under the `kvt-` prefix, a seventh-death line, and checkpoints that pass the three-play respawn check.
+It passed QA round 4 at b66b2bf. Fix round 4 cut `kvt10-kannadi` (KVT-08's "keep moving" again); QA round 4
+cut `kvt10-kotta` (stay in the basket past a rotten landing to the very end): that thought, "the ride is not
+over at the first place you could get off", is Gangtok's yak that stops for photos on thin ice, committed
+earlier, so Gangtok keeps it. KVT-10 is 86.7 s, honestly under the 90 s floor; KVT-09 is 42.6 s (ruled final).
+Fair at N=80: every stage 100 at 6 ticks and at least 96 at 12 (KVT-08 96); worst replay from a checkpoint to a
+death 7.18 s; 1920 respawn checks on KVT-10, no death for idle, a short run or a tap jump. KVT is off the
+modules-test allow-list. Design notes: `docs/cities/KVT.md`.
+
+## v0.17.5: Lucknow, ten stages
+Lucknow (LKO, Uttar Pradesh) is the second city built as a module: ten stages in `src/game/cities/lko/`, routes in
+`tests/cities/lko.ts`. 01 the tour (Chowk's cloth bolts sold out from under you, a bolt unrolling across the road),
+02 Pehle Aap (the bow sets who goes through first), 03 Chhapa (the print washes, the stitch stays), 04 Makhan Malai
+(the malai facing the low sun sinks), 05 Galouti (squash the heap flat to hop under the seekh), 06 Kathak (the
+ghungroo strips call the dancer), 07 Hazratganj (rush and the strollers close ranks), 08 Bhool Bhulaiya (how you
+enter an arch sets the floor you come out on), 09 Kabootarbazi (the flyer's flag steers the flock), 10 Lakhnavi
+Tehzeeb (bells under chikan covers: a bow rings them). It passed QA round 5 at 1f7ee36 after eight fix rounds
+(ldd-inbox/reports/cities/lko/). Fix round 6 made six doors plain (each re-asked its own room) and cut 13 acts;
+round 7 cut `lko10-darbar` and `lko10-jawab` and kept one trap in `lko07-shaam`; round 8 gave every place its own
+death cause so the line is true for the play that died. Lengths under the floors are honest and ruled final: 05
+42.9 s, 06 37.3 s, 07 49.9 s, 08 37.1 s, 09 61.0 s, 10 24.5 s. Fair at N=80: 100 at 6 and 12 ticks on all ten;
+worst replay from a checkpoint to a death 7.46 s. Design notes: `docs/cities/LKO.md`.
+
+## v0.17.6: Chennai, ten stages
+Chennai's hardness pass: a tour bite (the sundal cart's lid lies once about its beat; watch the vendor's hand), the
+eight shipped rooms made fair at both lags (round 2: widen the answer, never the trap), and two new stages: 09 Murukku
+Press (pale dough folds, golden holds, the ladle takes the oldest) and 10 Spencer Escalators (one rider up, two down into
+the comb), whose acts break this city's own rules. QA round 1 failed 8c554fb: `chn09-ruchi` and the old plaster display
+asked "keep moving" (KVT-08's), `chn10-keezhe` and `chn10-billing` were cleared by hopping, three finale acts had one
+death each, and the oil's one line ("the pale spiral folded") was false for most plays. Fix round 3 (7d22a66) cut ruchi
+and keezhe, folded the display into kaanal with plaster that gives at a touch, made free trolleys roll at a touch, gave
+the family act its own second death and every death a line true for the play. CHN-09 28.1 s and CHN-10 22.9 s are
+honestly under their floors. Fair at N=80: 100 at 6 and 12 ticks on 01, 09 and 10; worst replay 4.58 s. CHN is off the
+modules-test allow-list. Shared fixes in this merge: `tests/acts.ts` no longer throws on a stage with no next float, and
+the allocation's tour entry is `tour-chn-b5`. Design notes: `docs/cities/CHN.md`.
+
+## v0.17.7: Dispur, ten stages
+Dispur (DIS, Assam) is a module city: ten stages in `src/game/cities/dis/`, routes in `tests/cities/dis.ts`. 01 the
+tea boy's swinging tray on the Luit promenade, 02 Char (sandbars set by the level post), 03 the plucked tea hedge, 04
+Talatal's falling stair, 05 Gamosa (three gifts hide your feet), 06 Majuli's eroding bank, 07 Husori (the marathon:
+gates open only for the singers), 08 Gorh (the rhino's flattened strip is the only floor), 09 Rang Ghar's oiled roof,
+10 Luit (the finale's callbacks break their rules). It passed QA round 4 at 71ceb73 after three failed rounds. Fix
+round 4: four death lines no longer advise the act's other death, the gamosa pits tell a hop from a walk, and
+`dis08-bagori` is cut (its decision was the wake's and the bull's). Route times: 01 22.6, 02 21.9, 03 33.6, 04 11.2, 05
+32.0, 06 24.3, 07 88.3, 08 31.0, 09 34.6, 10 34.2 s; the ones under their floors are honest and ruled final. Fair at
+N=80: 100 at 6 and 12 ticks on all ten; worst replay 7.17 s (07). Design notes: `docs/cities/DIS.md`.
