@@ -180,27 +180,6 @@ export function tasveerRoom(): LevelDef {
   };
 }
 
-// ================================================================== the act
-export const dekho: Act = {
-  id: 'svp05-dekho',
-  w: 36,
-  advice: 'One more view, further on, and this time the bench is not where the picture was taken: it stands three tiles before the footprints. It is the footprints that count. Stand on them, and go while the ledge holds: it does not hold for ever.',
-  cps: [],
-  paint: (g, c) => {
-    g.pit(c.x + 10, c.x + 21);
-  },
-  build: (w, c) => {
-    const x = c.x;
-    const a = new Viewpoint(px(x + 4) + 8, [{ x: px(x + 10), w: px(12) }], 300, px(x + 1) + 8).install(w);
-    const [h] = gapC(w, 'svp-nazar', [px(x + 10), px(x + 22)]);
-    // fell off a ledge that held for a while and was let go of: the picture only lined up for a time
-    w.onTick(() => {
-      h.cause = a.everAligned ? 'svp-nazar3' : 'svp-nazar';
-    });
-    (w.flags.vps ??= []).push(a);
-  },
-};
-
 // ================================================================== the act: the eye height
 /** the picture on the note was taken from a taller person's eyes: the view lines up only at the right height, not the right place */
 export class EyeView extends Entity {

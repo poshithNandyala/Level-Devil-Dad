@@ -15,7 +15,6 @@ import { SawHall } from './s02';
 import { nala, buildNala } from './s03';
 import { Herd, ghatTied } from './s04';
 import { jadBreak } from './s09';
-import { lashedHall } from './s07';
 import { nali, buildNali } from './nali';
 import { FLOOR } from '../../levels/endkit';
 
@@ -60,7 +59,6 @@ export function dweepRoom(): LevelDef {
 /** the island's other places, as acts of the finale: the same ideas, one after another */
 export const nadi: Act = { ...nala, id: 'svp10-nadi', advice: 'The crocodile’s creek again, and the board has been left as it was: nobody has turned its arrow since the crocodile moved. Look at the water instead: the ripples are where the crocodile is. And a crocodile that lies still leaves no ripples, only its eyes.', build: (w, c) => buildNala(w, c.x, true) };
 export const jadFin: Act = jadBreak;
-export const samanFin: Act = lashedHall;
 
 export const naliFin: Act = {
   ...nali,

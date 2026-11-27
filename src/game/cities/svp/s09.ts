@@ -257,18 +257,16 @@ export function jadRoom(): LevelDef {
 // ================================================================== the act
 export const pul: Act = {
   id: 'svp09-pul',
-  w: 52,
-  advice: 'Not every root is alive. A dead root is grey and bare, with no leaves, and it crumbles like brick: only the green ones hold. Take the green ones, and skip the grey ones between them. The middle green one swings. A second creek has a grey step lower down, under the gap, and swings again.',
-  cps: [24.5],
+  w: 30,
+  advice: 'Not every root is alive. A dead root is grey and bare, with no leaves, and it crumbles like brick: only the green ones hold. Take the green ones, and skip the grey step between them. The middle green one swings.',
+  cps: [],
   paint: (g, c) => {
     g.pit(c.x + 6, c.x + 22);
-    g.pit(c.x + 31, c.x + 47);
   },
   build: (w, c) => {
     const x = c.x + 3;
     const first = cellar(w, x + 3, x + 19, 4, 30, 'svp-eent2');
-    cellar(w, x + 28, x + 44, 4, 30, 'svp-eent2');
-    // first creek of ruin: green, green (swinging), a grey step to tempt you, green
+    // one creek of ruin: green, green (swinging), a grey step to tempt you, green
     const y = FLOOR - 28;
     new Root(px(x + 4), y, 64).install(w);
     const sw = new Root(px(x + 10), y, 64, 12, 520, px(x + 5)).install(w);
@@ -278,12 +276,7 @@ export const pul: Act = {
     w.onTick(() => {
       first.hurt.cause = grey.t >= 0 ? 'svp-grey' : 'svp-eent2';
     });
-    // second: a swing, a grey step lower down under the gap (it will not hold you if you fall short), and the last green on to the road
-    new Root(px(x + 29), y, 64).install(w);
-    const sw2 = new Root(px(x + 35), y, 64, 12, 540, px(x + 27), 1.2).install(w);
-    new Crumbler(px(x + 39) + 8, y + 18, 16, 7, 'dead', 20).install(w);
-    new Root(px(x + 41), y, 48).install(w);
-    (w.flags.swingers ??= []).push(sw, sw2);
+    (w.flags.swingers ??= []).push(sw);
   },
 };
 
