@@ -17,6 +17,7 @@ export const causeLines: Record<string, string[]> = {
   'bbi-bhanwar': ['Down the drain with the badi, Dad.', 'The water takes every badi to the hole: hop up on to the far rim just before yours goes down.'],
   'bbi-pada': ['The tower fell on you, Dad! Its top lands right on the edge.', 'Wait back by the scuffs, not at the edge, and go the moment it lands.'],
   'bbi-tantu': ['You snapped a coloured thread, Dad: the whole motif came apart.', 'Snap the plain white thread over the bank, then walk the motif.'],
+  'bbi-ganthi': ['Tonight the plain thread was holding the motif together, Dad.', 'Here snap the first coloured thread as the motif lines up: only its own patch drops.'],
   'bbi-sutra': ['Through the undyed thread, Dad: there’s no patch on it.', 'Let the shuttle by, then hop the hole in the motif.'],
   'bbi-likhita': ['That leaf had writing on it, Dad: an old one, worn through.', 'In the old manuscript the written leaves are the rotten ones: step on the blank.'],
   'bbi-pathara': ['The sweep’s stone, Dad. Too wide to get under while it swings.', 'Stop it yourself: step on its foot plate when the stone is at its top.'],

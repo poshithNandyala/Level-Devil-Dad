@@ -408,30 +408,41 @@ export const act5: Act = {
 /** act 8, the server (ALLOCATION v3 F470, bad coins that accelerate): a server on the far bank tosses fried
  *  badi into the trough of pakhala, faster and further each time. The first lands soft and floats across; the
  *  second he throws too hard and it goes under; from the third on they land on the near bank. Go at once. */
-export const PHINGA = { c0: 4, c1: 13, serve: 16, at: [0.9, 2.2, 3.2, 4.0, 4.6, 5.1, 5.5, 5.9, 6.3], land: (k: number) => Math.max(1, 5.2 - 0.9 * k), v: 60, sink: 0.9 };
-export const act8: Act = {
-  id: 'bbi08-phinga',
+export const PHINGA = { c0: 4, c1: 13, serve: 16, v: 60, sink: 0.9 };
+/** each throw: when (s), where it lands (act column; below c0 it lands on your bank and hurts), and whether a badi
+ *  that lands in the water floats ('f') or goes under ('s') */
+const THROWS: Record<'fast' | 'slow', { at: number[]; land: number[]; kind: string }> = {
+  fast: { at: [0.9, 2.2, 3.2, 4.0, 4.6, 5.1, 5.5, 5.9, 6.3], land: [5.2, 4.3, 3.4, 2.5, 1.6, 1, 1, 1, 1], kind: 'fs' },
+  // the finale's turn (law 7): he starts hard and long and slows down; the fourth lands soft
+  slow: { at: [0.9, 1.6, 2.5, 3.6, 5.0], land: [2.8, 3.4, 4.6, 5.2, 5.2], kind: '..sff' },
+};
+export function phingaAct(id: string, key: string, slow = false): Act {
+  const TH = THROWS[slow ? 'slow' : 'fast'];
+  return {
+  id,
   w: 20,
-  advice: 'The server on the far bank tosses badi into the trough, faster and further each time: the first lands soft and floats across, the second goes under, and the rest land on your bank. Do not stand and watch: hop on the first as it lands and ride it over.',
+  advice: slow
+    ? 'This server starts hard: his first throws land on your bank and the first in the water goes under. He slows down as he goes. Wait back from the rim, then ride the first soft one.'
+    : 'The server on the far bank tosses badi into the trough, faster and further each time: the first lands soft and floats across, the second goes under, and the rest land on your bank. Do not stand and watch: hop on the first as it lands and ride it over.',
   cps: [],
   paint: (g, c) => {
     g.pit(c.x + PHINGA.c0, c.x + PHINGA.c1);
   },
   build: (w, c) => {
     const st = { t0: -1, rode: -1, floats: [] as Rig[] };
-    w.flags.bbi8ph = st;
+    (w.flags[key] as unknown) = st;
     onPass(w, c.X(1), (w2) => (st.t0 = w2.tick));
     const ch = channel(w, c.x + PHINGA.c0, c.x + PHINGA.c1, 'bbi-pakhala', 'water');
     // the death line names the badi that went under you
     ch.o.tick = (r) => {
-      r.hazard!.cause = st.rode > 0 ? 'bbi-buda' : 'bbi-pakhala';
+      r.hazard!.cause = st.rode >= 0 && TH.kind[st.rode] === 's' ? 'bbi-buda' : 'bbi-pakhala';
     };
     const T = (w2: World) => (st.t0 < 0 ? -1 : since(w2, st.t0));
     const sx = c.X(PHINGA.serve) + 4;
     const FLY = 0.55;
-    PHINGA.at.forEach((at, k) => {
-      const lx = c.X(PHINGA.land(k));
-      const inWater = PHINGA.land(k) >= PHINGA.c0;
+    TH.at.forEach((at, k) => {
+      const lx = c.X(TH.land[k]);
+      const inWater = TH.land[k] >= PHINGA.c0;
       // the badi in flight, and where it lands on the bank: hot, and it hurts
       w.add(
         new Rig(-999, -999, 14, 10, {
@@ -467,10 +478,10 @@ export const act8: Act = {
                 r.setSolid(false);
                 return;
               }
-              const gone = k > 0 && tk > PHINGA.sink;
+              const gone = TH.kind[k] === 's' && tk > PHINGA.sink;
               r.setSolid(!gone);
               const x = Math.min(c.X(PHINGA.c1 + 1) - 26, lx + Math.max(0, tk - 0.2) * PHINGA.v);
-              r.moveTo(w2, x, gone ? FL + 30 : FL - 4 + (k > 0 ? Math.min(6, tk * 6) : 0));
+              r.moveTo(w2, x, gone ? FL + 30 : FL - 4 + (TH.kind[k] === 's' ? Math.min(6, tk * 6) : 0));
               if (r.rides(w2) && st.rode < 0) st.rode = k;
             },
             paint: (ctx, r) => {
@@ -488,7 +499,7 @@ export const act8: Act = {
         layer: 2,
         paint: (ctx, _r, w2) => {
           const t = T(w2);
-          const throwing = PHINGA.at.some((a) => t >= a - 0.2 && t < a);
+          const throwing = TH.at.some((a) => t >= a - 0.2 && t < a);
           folk(ctx, c.X(PHINGA.serve) + 8, FL, 26, '#F28C28', { skirt: '#E9E1CF', face: -1, arm: throwing ? 1.0 : 0.2 });
           box(ctx, c.X(PHINGA.serve) + 14, FL - 10, 14, 10, '#9E9E9E');
         },
@@ -496,6 +507,8 @@ export const act8: Act = {
     );
   },
 };
+}
+export const act8 = phingaAct('bbi08-phinga', 'bbi8ph');
 
 /** act 9, the stir (ALLOCATION v3 F469): the uncle stirs the bowl and every badi goes round. Seen from the side,
  *  a badi on its circle is slow at the outer edge and fast through the middle: hop on and off only at the edge.

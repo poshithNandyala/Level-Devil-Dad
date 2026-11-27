@@ -35,6 +35,9 @@ export interface LoomCfg {
   /** a plain warp thread hangs from the frame over the near bank: jump up into any thread and it snaps, and the
    *  weaver stops throwing and beating to tie it. A snapped motif thread drops every patch */
   snap?: boolean;
+  /** the finale's turn (law 7): the plain thread holds the motif together, and a snapped motif thread drops only
+   *  its own patch */
+  snapRev?: boolean;
 }
 
 /** where in the loom's cycle the time t (s since it started) falls: the beat number and seconds into it */
@@ -97,7 +100,8 @@ export function loom(w: World, cfg: LoomCfg, t0: () => number, key: string) {
           layer: 3,
           tick: (r, w2) => {
             // a snapped motif thread pulls the whole motif apart: every patch drops
-            if (cfg.blank?.includes(k) || st.snapped >= 0) {
+            const drop = cfg.snapRev ? st.snapped === -2 || st.snapped === k : st.snapped >= 0;
+            if (cfg.blank?.includes(k) || drop) {
               r.setSolid(false);
               return;
             }
@@ -306,10 +310,13 @@ export const L06R: LoomCfg = { c0: 3, n: 8, speeds: [4, 2, 1, 3, 1, 4, 3, 2], be
  *  it. Snap the spare plain thread hanging over the bank, not a motif thread: that one pulls the motif apart, and
  *  the first one is the one you reach from the edge. */
 export const L06P: LoomCfg = { c0: 5, n: 9, speeds: [2, 3, 1, 4, 2, 1, 3, 4, 2], beat: 0.8, hold: 1.7, shuttle: [[0, 1], [0.45, -1]], reed: true, snap: true };
-export const act12: Act = {
-  id: 'bbi06-tantu',
+export function tantuAct(id: string, key: string, rev = false): Act {
+  return {
+  id,
   w: 18,
-  advice: 'This weaver throws the shuttle over and back and the beater follows it straight away: there is no time to walk the motif between them. Snap a thread and she stops both to tie it. Jump up into the plain white thread over the bank, not a coloured one over the pit: a snapped coloured thread pulls the whole motif apart. Then walk the motif.',
+  advice: rev
+    ? 'Tonight the plain thread over the bank holds the whole motif together: snap it and the motif comes apart. Snap the first coloured thread instead, as the motif lines up: only its own patch drops, and she stops to tie it.'
+    : 'This weaver throws the shuttle over and back and the beater follows it straight away: there is no time to walk the motif between them. Snap a thread and she stops both to tie it. Jump up into the plain white thread over the bank, not a coloured one over the pit: a snapped coloured thread pulls the whole motif apart. Then walk the motif.',
   cps: [],
   paint: (g, c) => {
     g.pit(c.x + L06P.c0, c.x + L06P.c0 + L06P.n - 1);
@@ -318,13 +325,15 @@ export const act12: Act = {
     const st = { t0: -1 };
     onPass(w, c.X(0.5), (w2) => (st.t0 = w2.tick));
     const ch = channel(w, c.x + L06P.c0, c.x + L06P.c0 + L06P.n - 1, 'bbi-ranga', 'water');
-    const lo = loom(w, { ...L06P, c0: c.x + L06P.c0 }, () => st.t0, 'bbi6p');
+    const lo = loom(w, { ...L06P, c0: c.x + L06P.c0, snapRev: rev }, () => st.t0, key);
     // the death line names the snapped thread when that is what you fell through
     ch.o.tick = (r) => {
-      r.hazard!.cause = lo.st.snapped >= 0 ? 'bbi-tantu' : 'bbi-ranga';
+      r.hazard!.cause = rev ? (lo.st.snapped === -2 ? 'bbi-ganthi' : 'bbi-ranga') : lo.st.snapped >= 0 ? 'bbi-tantu' : 'bbi-ranga';
     };
   },
 };
+}
+export const act12 = tantuAct('bbi06-tantu', 'bbi6p');
 export const act7 = loomAct('bbi06-rachh', 16, L06R, 'bbi6q', 'Here the beater sweeps the warp at the end of the motif beat. Let the shuttle by, then cross at once: be off the threads before the beater comes.');
 /** act 11, the undyed thread (loom family): one warp thread here was never tied and dyed, so it carries no
  *  patch: the motif lines up with a hole in it. A2: the shuttle still goes first. A3: and then the hole, which

@@ -795,15 +795,20 @@ export const ending: Ending = {
  *  Jump where the bells ring, walk where it is quiet. When the lamps come back the next piece starts and the
  *  whole troupe sweeps the floor. */
 export const GHUNGUR = { c0: 4, c1: 19, lit: [9.5, 14.5], dark: [7, 12, 17], darkFor: 5, sweep: 1.5, litFor: 3 };
-export const act19: Act = {
-  id: 'bbi07-ghungur',
+/** `tied` (the finale's turn, law 7): tonight the bells are tied to the drummer's frame, not to the boys' ankles:
+ *  they ring over the empty floor and the boys whirl in silence. Jump where it is quiet. */
+export function ghungurAct(id: string, key: string, tied = false): Act {
+  return {
+  id,
   w: 23,
-  advice: 'Between pieces the lamps go out and the boys whirl in new places in the dark. Don’t go by where you saw them: listen. Jump where the ankle bells ring, walk where it is quiet, and be off the floor before the lamps come back and the next piece sweeps it.',
+  advice: tied
+    ? 'Look where the bells hang tonight: on strings from the drummer’s frame, not on the boys. They ring over the empty floor, and the boys whirl in the quiet. Jump where it is quiet, walk under the bells.'
+    : 'Between pieces the lamps go out and the boys whirl in new places in the dark. Don’t go by where you saw them: listen. Jump where the ankle bells ring, walk where it is quiet, and be off the floor before the lamps come back and the next piece sweeps it.',
   cps: [],
   paint: () => {},
   build: (w, c) => {
     const st = { t0: -1, phase: 'lit' as 'lit' | 'dark' | 'sweep' };
-    w.flags.bbi7gh = st;
+    (w.flags[key] as unknown) = st;
     onPass(w, c.X(3), (w2) => (st.t0 = w2.tick));
     const G = GHUNGUR;
     const cyc = G.darkFor + G.sweep + G.litFor;
@@ -816,16 +821,20 @@ export const act19: Act = {
         },
       }),
     );
-    const spot = (col: number, when: 'lit' | 'dark') =>
+    const spot = (col: number, when: 'lit' | 'dark', bells = when === 'dark', live = true) =>
       w.add(
         new Rig(c.X(col), FL - 26, 16, 26, {
           cause: 'bbi-nacha',
           inset: 2,
           layer: 4,
-          live: () => st.phase === when,
+          live: () => live && st.phase === when,
           paint: (ctx, r, w2) => {
             if (st.phase !== when) return;
-            if (when === 'dark') {
+            if (bells && tied) {
+              // bells on a string from the frame, ringing over the empty floor
+              box(ctx, r.x + 7, FL - 96, 1, 50, '#C8B88A');
+              for (let i = 0; i < 3; i++) box(ctx, r.x + 5 + i * 2, FL - 46 - ((w2.tick >> 2) + i) % 3 * 2, 2, 2, '#FFE066');
+            } else if (bells) {
               // only the bells show in the dark: little flashes at the ankles, jumping with the beat
               for (let i = 0; i < 3; i++) box(ctx, r.x + 3 + i * 4, FL - 4 - ((w2.tick >> 2) + i) % 3 * 2, 2, 2, '#FFE066');
               box(ctx, r.x + 6, FL - 30 - ((w2.tick >> 3) % 2) * 2, 4, 3, '#FFE066');
@@ -834,7 +843,12 @@ export const act19: Act = {
         }),
       );
     for (const col of G.lit) spot(col, 'lit');
-    for (const col of G.dark) spot(col, 'dark');
+    if (!tied) for (const col of G.dark) spot(col, 'dark');
+    else {
+      // tied: the bells ring at the old places, harmless; the boys whirl, unheard, where it is quiet
+      for (const col of G.dark) spot(col, 'dark', true, false);
+      for (const col of G.lit) spot(col, 'dark', false);
+    }
     // the next piece: the whole troupe whirls across the floor
     w.add(
       new Rig(c.X(G.c0), FL - 26, px(G.c1 - G.c0 + 1), 26, {
@@ -863,6 +877,8 @@ export const act19: Act = {
     );
   },
 };
+}
+export const act19 = ghungurAct('bbi07-ghungur', 'bbi7gh');
 
 /** act 20, kachha (ALLOCATION v3 F495, 07's tell beat): two troupes. The first whirls with its pleats tucked up
  *  into the waist, and a troupe in kachha rolls the moment it lies down, with no shiver first; on the stop after,

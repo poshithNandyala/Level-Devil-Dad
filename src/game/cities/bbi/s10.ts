@@ -14,8 +14,9 @@ import { FL, channel, cyc, since, taraScript } from './common';
 import { keeperOn } from './s02';
 import { parasol } from './s03';
 import { chheliAct, patraAct, thakaAct } from './s05';
-import { loom, pattaAct, type LoomCfg } from './s06';
-import { bagudiAct, deepaAct, padaAct, stagePit, troupe, troupeAct, type TroupeCfg } from './s07';
+import { loom, pattaAct, tantuAct, type LoomCfg } from './s06';
+import { bagudiAct, deepaAct, ghungurAct, padaAct, stagePit, troupe, troupeAct, type TroupeCfg } from './s07';
+import { phingaAct } from './s08';
 import { chariot, risingSpokes, templeWall, type ChariotCfg } from './s09';
 
 export const C10: ChariotCfg = { c0: 18, len: 10, stopAt: 36, hub: 30, hubY: FL - 58, wait: 0.35, any: true, bare: true };
@@ -151,6 +152,12 @@ export const act10 = pattaAct('bbi10-patta', 'bbi10pc', true);
 /** act 11, the well sweep turned round (law 7): Raja taught you to stop it at its top and walk under; over this
  *  ditch, stop it low and walk across the stone */
 export const act11 = thakaAct('bbi10-thaka', 'bbi10th', true);
+/** law 7 on 07's ghungur: the bells hang from the drummer's frame tonight and ring over the empty floor */
+export const act12 = ghungurAct('bbi10-ghungur', 'bbi10gh', true);
+/** law 7 on 08's server: he starts hard and slows down; wait back for the soft one */
+export const act13 = phingaAct('bbi10-phinga', 'bbi10ph', true);
+/** law 7 on 06's plain thread: tonight it holds the motif; snap the first coloured thread */
+export const act14 = tantuAct('bbi10-tantu', 'bbi10tn', true);
 
 /** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */
 export const RIB = { period: 2.2, shut: 0.5, at: 9 };
