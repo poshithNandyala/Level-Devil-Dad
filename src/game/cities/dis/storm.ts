@@ -96,3 +96,51 @@ export const bordoisila: Act = {
     ).layer = -2;
   },
 };
+
+/** DIS-10 callback: Bordoisila again on the river bank, and this time the shelter is the trap: the old bhoral's stilts
+ *  give way in the wind. The wind blows toward the far bank: jump the channel on it, before the hail comes. */
+export const luitBordoisila: Act = {
+  id: 'dis10-bordoisila',
+  w: 30,
+  advice: 'Bordoisila once more, at the channel. This bhoral is old: its stilts give way in the wind. The wind blows toward the far bank: run and jump the channel on the gust, before the hail comes down.',
+  cps: [1.5, 26.5],
+  paint: (g, c) => {
+    g.pit(c.x + 12, c.x + 18);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    river(w, x + 12, x + 19, 'dis-bordoisila');
+    const s = w.add(new Bordoisila(px(x + 3), 220, 330, 170));
+    const g = w.add(new Gust(x + 9, 0, 12, 15, 260));
+    s.gusts.push(g);
+    s.hail.push(w.add(new Danger({ x: px(x), y: 0, w: px(20), h: GROUND }, 'dis-hail', false)));
+    (w.flags.storm ??= []).push(s);
+    // the old bhoral falls in the wind on whoever is under it
+    const fall = w.add(new Danger({ x: px(x + 5), y: GROUND - 30, w: px(4), h: 30 }, 'dis-bhoral', false));
+    w.onTick((w2) => {
+      fall.on = s.t(w2) >= s.warn + 40 && !s.done;
+    });
+    onPass(w, px(x + 2), (w2) => tara(w2, 'Roba! | Stop!', 2.4));
+    w.add(
+      new (class extends Entity {
+        draw(ctx: CanvasRenderingContext2D, w2: World) {
+          const down = fall.on || (s.t(w2) >= s.warn + 40);
+          ctx.fillStyle = '#7A5A22';
+          if (down) {
+            ctx.fillRect(px(x + 5), GROUND - 8, px(4), 8);
+            return;
+          }
+          for (const sx of [5.2, 6.4, 7.6, 8.7]) ctx.fillRect(px(x + sx), GROUND - 30, 2, 30);
+          ctx.fillStyle = '#8F7440';
+          ctx.fillRect(px(x + 4.8), GROUND - 46, px(4.4), 16);
+          ctx.fillStyle = '#B49A62';
+          ctx.beginPath();
+          ctx.moveTo(px(x + 4.3), GROUND - 44);
+          ctx.lineTo(px(x + 7), GROUND - 64);
+          ctx.lineTo(px(x + 9.7), GROUND - 44);
+          ctx.fill();
+        }
+      })(),
+    ).layer = -2;
+  },
+};
