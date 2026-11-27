@@ -188,6 +188,34 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
       ...R.slice(j + 2),
     ];
   }
+  // 06 (human timing, route only): the shipped route's third hop usually flew clean over the third garland on to the
+  // road at 18, and then hopped again ("off the drain") from the road, which with a late press landed in the gap at 21.
+  // Now: hop off the drain only if still on a garland; on the road, stop and wait for the crowd where you are
+  {
+    const R = S['CHN-06'];
+    const k = R.findIndex((st) => st.note === 'off the drain');
+    if (k < 1) throw new Error("CHN-06: no step 'off the drain'");
+    let hold = 0;
+    const offDrain: Step = {
+      policy: (w) => {
+        const p = w.player;
+        if (hold > 0) {
+          hold--;
+          return { move: 'R', jump: true };
+        }
+        if (!p.onGround) return { move: 'R', jump: false };
+        if (p.x < px(16.4)) {
+          hold = 11;
+          return { move: 'R', jump: true };
+        }
+        return go(p.x > px(19.6) ? 'L' : '');
+      },
+      until: (w) => w.player.onGround && w.player.x >= px(17.0) && w.player.x <= px(19.8) && Math.abs(w.player.vx) < 30,
+      max: 400,
+      note: 'off the drain, on to the road before the gap',
+    };
+    S['CHN-06'] = [...R.slice(0, k), offDrain, ...R.slice(k + 2)];
+  }
   // 07: the room's three room steps are replaced by the steered flight; everything after (the act, the door) stays
   {
     const R = S['CHN-07'];
@@ -354,6 +382,20 @@ const actRoutes: Record<string, (x: number, p: any) => Step[]> = {
 };
 
 const endingPolicies: Record<string, Policy> = {
+  // CHN-06's kolam (round 2, human timing): the shared policy took off 3 px before the kolam with a 20-tick jump, so a
+  // press a few ticks late stepped on it and Paati sent you back, forever. Take off a full tile and a half before it
+  // with a full jump: on time that flies into the door, 12 ticks late it still clears the kolam; a landing past the
+  // door walks back in (the kolam is behind you then)
+  'chn-rangoli'(w, m, d) {
+    const p = w.player;
+    const x0 = d.x - 60;
+    if (!p.onGround) return { move: 'R', jump: m.hold > 0 };
+    if (p.cx > d.x + 14) return go('L');
+    if (p.cx < x0 - 24) return go('R');
+    if (w.input.jump) return { move: 'R', jump: false };
+    m.hold = 29;
+    return { move: 'R', jump: true };
+  },
   // walk straight through the pale curtain; never stop in front of it
   'chn-fresh-curtain'(w, _m, d) {
     return go(toward(w, d.x + 8, 1));
