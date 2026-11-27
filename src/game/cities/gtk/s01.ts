@@ -14,7 +14,7 @@ export const STROKE = { reach: 32, sweep: 0.7, back: 2.4 };
 export const SWEEP_PERIOD = STROKE.sweep + STROKE.back;
 /** the two sweepers (tile columns of the man), the bench beside the first */
 export const SWEEPERS: { c: number; bench: 'free' | 'reserved' | null }[] = [
-  { c: 35, bench: 'free' },
+  { c: 36, bench: 'free' },
   { c: 56, bench: 'reserved' },
   { c: 86, bench: null },
   { c: 104, bench: null },
@@ -170,7 +170,7 @@ export function tourLevel(): LevelDef {
     name: 'Namaste Gangtok',
     nameEn: 'Hello, Gangtok',
     tagline: 'MG Marg is the evening living room of Gangtok, and it is swept all day long. Very thoroughly.',
-    hint: 'Up the stairs, over the stones, over the kerb posts, across on the ropeway shuttle, over the parked jeep. On MG Marg the sweepers stroke their brooms along the paving and sweep everything on the ground into the cart, you too: the broom only takes what’s on the ground. At the first one, hop up on the bench while he strokes. The second bench has a RESERVED card: its owner asks you off it, in front of the broom. There, and at the last two, wait outside the stroke and walk through right behind it while the broom is in the air.',
+    hint: 'Up the stairs, across on the little shuttle, over the kerb posts, across on the ropeway shuttle, over the parked jeep. On MG Marg the sweepers stroke their brooms along the paving and sweep everything on the ground into the cart, you too: the broom only takes what’s on the ground. At the first one, hop up on the bench while he strokes. The second bench has a RESERVED card: its owner asks you off it, in front of the broom. There, and at the last two, wait outside the stroke and walk through right behind it while the broom is in the air.',
     lines: [
       'Namaste! Kasto chha? Swagatam, Dad! | Hello! How are you? Welcome, Dad!',
       'Gangtok: every house on the ground floor! | Gangtok: every house on the ground floor!',
@@ -199,7 +199,7 @@ export function tourLevel(): LevelDef {
     ],
     things: [],
     par: 40,
-    cps: [30.5, 51.5, 83.5, 101.5],
+    cps: [32.5, 52.5, 83.5, 101.5],
     extra(w: World) {
       for (const [i, s] of SWEEPERS.entries()) {
         sweeper(w, s.c, 7, 'gtk1', i > 0);
