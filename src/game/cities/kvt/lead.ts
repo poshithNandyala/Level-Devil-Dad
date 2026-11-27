@@ -11,7 +11,7 @@ export const KVT_LEAD: Record<string, number> = {
   'kvt10-midden': 2,
   'kvt10-palaka': 2,
   'kvt10-kallu': 2,
-  'kvt10-thengu': 5,
+  'kvt10-thengu': 7,
   'kvt10-kamaanam': 2,
   'kvt10-nizhal': 2,
   'kvt10-veliyettam': 2,

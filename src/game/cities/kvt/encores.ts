@@ -331,7 +331,12 @@ function bankWidths(c: number, widths: number[], top: number): RubbleRect[] {
 // two wide steps, then two narrow ones: one ladder (wide, then narrow)
 const SUMMIT = [3, 3, 2, 2];
 /** the far side of the summit: four rubble steps going down to the right, three tiles each, from row 11 to row 14 */
-const DOWN = (x: number): RubbleRect[] => Array.from({ length: 4 }, (_, i) => ({ c0: x + 21 + i * 3, c1: x + 23 + i * 3, top: 11 + i }));
+// (three steps: 3 wide one row down, 4 wide two rows down, 2 wide one row down)
+const DOWN = (x: number): RubbleRect[] => [
+  { c0: x + 21, c1: x + 23, top: 11 },
+  { c0: x + 24, c1: x + 27, top: 13 },
+  { c0: x + 28, c1: x + 29, top: 14 },
+];
 /** KVT-09 act 3: the highest part of the bank, where the steps narrow to two tiles. The slide still takes a tile. */
 const summit: Act = {
   id: 'kvt09-kodumudi',
@@ -344,12 +349,12 @@ const summit: Act = {
     for (const r of bankWidths(x + 5, SUMMIT, 14)) g.fill(r.c0, r.c1, r.top, 17, '#');
     g.fill(x + 15, x + 20, 10, 17, '#');
     for (const r of DOWN(x)) g.fill(r.c0, r.c1, r.top, 17, '#');
-    g.pit(x + 33, x + 34);
+    g.pit(x + 30, x + 31);
   },
   build: (w, c) => {
     const { X } = c;
     pool(w, c.x + 3, c.x + 5, 15.3, { colors: LAGOON });
-    pool(w, c.x + 33, c.x + 35, 15.3, { colors: LAGOON });
+    pool(w, c.x + 30, c.x + 32, 15.3, { colors: LAGOON });
     w.add(new RubbleBank(bankWidths(c.x + 5, SUMMIT, 14)));
     w.add(new RubbleBank(DOWN(c.x), 1));
     onPass(w, X(19.5), (w2) => taraSays(w2, 'Chaadi irangu, Dad! Vegam! | Hop down, Dad! Quick!', 2.4));
@@ -361,6 +366,7 @@ const summit: Act = {
 /** KVT-09 act: the sea wall the islanders built along the bank, broken by the storm in two places. In the first
  *  break the rubble is a heap you land deep on, as on the bank; in the second it is a single block: land on it
  *  and the slide takes you straight off. Jump that break whole. */
+const SEAWALL_UP = [3, 2, 4, 3, 2, 4];
 const seaWall: Act = {
   id: 'kvt09-kadalbhitti',
   cps: [20.5],
@@ -368,7 +374,8 @@ const seaWall: Act = {
   advice: 'Up the rubble to the sea wall. The storm broke the wall twice: the first break is a heap of rubble, land deep on it; the second is one loose block, and the slide takes you straight off it, so jump that break in one.',
   paint: (g, c) => {
     const x = c.x;
-    bankUp(g, x + 2, 6, 3, 14);
+    // (six steps up of widths 3, 2, 4, 3, 2, 4: no window more than twice)
+    for (const r of bankWidths(x + 2, SEAWALL_UP, 14)) g.fill(r.c0, r.c1, r.top, 17, '#');
     // (six tiles of wall before the first break: the checkpoint on it is out of a tap-jump's reach of the water)
     g.fill(x + 20, x + 44, 8, 17, '#');
     g.pit(x + 26, x + 27, 8).fill(x + 28, x + 30, 9, 17, '#').fill(x + 28, x + 30, 8, 8, '.');
@@ -378,7 +385,7 @@ const seaWall: Act = {
   },
   build: (w, c) => {
     const { X } = c;
-    w.add(new RubbleBank([...bankUpRects(c.x + 2, 6, 3, 14), { c0: c.x + 28, c1: c.x + 30, top: 9 }, { c0: c.x + 36, c1: c.x + 36, top: 9 }]));
+    w.add(new RubbleBank([...bankWidths(c.x + 2, SEAWALL_UP, 14), { c0: c.x + 28, c1: c.x + 30, top: 9 }, { c0: c.x + 36, c1: c.x + 36, top: 9 }]));
     pool(w, c.x + 26, c.x + 28, 15.3, { colors: LAGOON });
     pool(w, c.x + 35, c.x + 36, 15.3, { colors: LAGOON });
     pool(w, c.x + 37, c.x + 38, 15.3, { colors: LAGOON });
@@ -762,7 +769,8 @@ export class SinkStep extends Entity {
     const s = this.solid;
     const sunk = !s.collidable;
     coralBlock(ctx, s.x, s.y + (sunk ? 14 : 0), s.w, sunk ? '#7FA8B0' : '#E9A898', sunk ? '#4F7F88' : '#C98B7B');
-    if (!sunk && this.on > this.limit - 54) {
+    // (the strip shows only while it is going under: on a 'move' head, once you have moved on it a while)
+    if (!sunk && this.on > (this.sinks === 'move' ? 12 : 30)) {
       ctx.fillStyle = 'rgba(200,240,255,0.7)';
       ctx.fillRect(s.x, s.y - 1 + (this.limit - this.on) / 20, s.w, 2);
     }
@@ -782,8 +790,8 @@ const risingTide: Act = {
   build: (w, c) => {
     const { X } = c;
     pool(w, c.x + 3, c.x + 19, 15.3, { colors: LAGOON });
-    // (three heads, four, three and four tiles, with gaps of one, one and two: not the same hop twice)
-    for (const [tx, wd] of [[4, 4], [9, 3], [13, 4]] as const) w.add(new SinkStep(c.x + tx, 14, wd, 'move'));
+    // (three heads, four, three and four tiles, with gaps of one, two and one: not the same hop twice)
+    for (const [tx, wd] of [[4, 4], [9, 3], [14, 4]] as const) w.add(new SinkStep(c.x + tx, 14, wd, 'move'));
     sign(w, c.x + 0.4, G - 4.4, 3.4, 'HIGH TIDE', 'wood', null, 'coming in');
     onPass(w, X(1), (w2) => taraSays(w2, 'Odu, Dad! Nilkkalle! | Run, Dad! Don’t stop!', 2.4));
   },
@@ -1001,9 +1009,9 @@ export class ShadowStep extends Entity {
     const s = this.solid;
     if (this.isLit(w)) {
       // the beam on it: bright, and see-through
-      ctx.fillStyle = 'rgba(255,250,200,0.35)';
+      ctx.fillStyle = 'rgba(255,244,170,0.55)';
       ctx.fillRect(s.x - 2, s.y - 40, s.w + 4, 40 + s.h);
-      ctx.strokeStyle = 'rgba(200,170,120,0.6)';
+      ctx.strokeStyle = 'rgba(150,110,60,0.9)';
       ctx.strokeRect(s.x + 0.5, s.y + 0.5, s.w - 1, s.h - 1);
       return;
     }

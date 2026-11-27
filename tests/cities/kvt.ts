@@ -343,8 +343,8 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     return [
       ...onto(2.3, 12, 20, 'on to each head and stand still: they go under while you move'),
       ...onto(7.3, 12, 20),
-      ...onto(11.3, 12, 20),
-      ...onto(16.3, 14, 30, 'and the shore'),
+      ...onto(11.3, 12, 28),
+      ...onto(17.3, 12, 22, 'and the shore'),
       { hold: 'R', until: X(x + 23), max: 300 },
     ];
   },
@@ -435,11 +435,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...stepUp(x + 14),
     { hold: 'R', until: X(x + 20.2), max: 300, note: 'along the top' },
     // down the far side: walk off each step (you land at its back, the slide puts you in the middle)
-    ...Array.from({ length: 4 }, (_, i): Step[] => [
-      { hold: 'R', until: (w) => w.player.x >= px(x + 21 + i * 3 - 0.2) || w.state !== 'play', max: 200, ...(i === 0 ? { note: 'walk off each step, never hop down' } : {}) },
-      { hold: '', until: (w) => (w.player.onGround && !w.flags.kvtSlide && w.player.x >= px(x + 21 + i * 3)) || w.state !== 'play', max: 200 },
-    ]).flat(),
-    { hold: 'R', until: X(x + 31.6), max: 200 },
+    ...[21, 24, 28].flatMap((c, i): Step[] => [
+      { hold: 'R', until: (w) => w.player.x >= px(x + c - 0.2) || w.state !== 'play', max: 200, ...(i === 0 ? { note: 'walk off each step, never hop down' } : {}) },
+      { hold: '', until: (w) => (w.player.onGround && !w.flags.kvtSlide && w.player.x >= px(x + c)) || w.state !== 'play', max: 200 },
+    ]),
+    { hold: 'R', until: X(x + 28.6), max: 200 },
     { hold: 'R', jump: 12, ticks: 12, note: 'over the water at the bottom' },
     { hold: 'R', until: and(ground, X(x + 37)), max: 300 },
   ],
@@ -450,10 +450,10 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: landed(), max: 200 },
     { hold: '', until: still, max: 200 },
     ...stepUp(x + 4),
-    ...stepUp(x + 7),
+    ...stepUp(x + 6),
     ...stepUp(x + 10),
     ...stepUp(x + 13),
-    ...stepUp(x + 16),
+    ...stepUp(x + 15),
     ...stepUp(x + 19, 'up on to the sea wall'),
     ...deepOn(x + 25.3, 30, 'the first break: land deep on the heap'),
     ...stepUp(x + 30, 'back up on to the wall'),
@@ -971,7 +971,7 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   mistakes['KVT-09'] = [
     { what: 'land deep on the first heap of the ridge, as on the bank', steps: [...upTo(S['KVT-09'], 'the middle of each heap: deep slides you off the far side'), { hold: '', until: still, max: 200 }, { hold: 'R', jump: 30, ticks: 44 }, { hold: '', until: ground, max: 200 }, dies], cause: 'splash' },
     { what: 'land on the one loose block in the second break, like the heap in the first', steps: [...upTo(S['KVT-09'], 'the second break: one loose block, jump it whole'), { hold: 'R', until: X(org('KVT-09', 'kvt09-kadalbhitti') + 34.3), max: 300 }, { hold: '', until: still, max: 60 }, { hold: 'R', jump: 8, ticks: 10 }, { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, dies], cause: 'splash' },
-    { what: 'hop down the far side of the summit, as Tara says', steps: [...upTo(S['KVT-09'], 'walk off each step, never hop down'), ...Array.from({ length: 4 }, (): Step[] => [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, { hold: '', until: (w) => !w.flags.kvtSlide || w.state !== 'play', max: 200 }]).flat(), dies], cause: 'splash' },
+    { what: 'hop down the far side of the summit, as Tara says', steps: [...upTo(S['KVT-09'], 'walk off each step, never hop down'), ...Array.from({ length: 3 }, (): Step[] => [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, { hold: '', until: (w) => !w.flags.kvtSlide || w.state !== 'play', max: 200 }]).flat(), dies], cause: 'splash' },
     { what: 'a little hop over the storm cut, as Tara says', steps: [...upTo(S['KVT-09'], 'well past the first cut').slice(0, -1), { hold: 'R', until: X(org('KVT-09', 'kvt09-murivu') + 5.2), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 400 }], cause: 'splash' },
   ];
   // hop straight up the steps from wherever you land
