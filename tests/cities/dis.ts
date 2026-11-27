@@ -13,7 +13,6 @@ import type { Bank } from '../../src/game/cities/dis/bank';
 import type { Gate, Husori } from '../../src/game/cities/dis/husori';
 import type { Charge } from '../../src/game/cities/dis/gorh';
 import type { DholPlanks } from '../../src/game/cities/dis/dhol';
-import type { Wake } from '../../src/game/cities/dis/umananda';
 
 type Out = { move: 'L' | 'R' | ''; jump: boolean };
 type Policy = (w: World, m: { hold: number; [k: string]: any }, d: Door) => Out;
@@ -351,13 +350,6 @@ const dholTempo = (x: number, every: number): NonNullable<Step['policy']> => {
     return { move: '', jump: false };
   };
 };
-/** Umananda: up on the ledge above the flood mark */
-const toLedge = (x: number): Step[] => [
-  { hold: 'R', until: X(x + 9.4), max: 900 },
-  { hold: 'R', jump: 12, ticks: 12, note: 'up on the ledge above the flood mark' },
-  { hold: 'R', until: (w) => w.player.onGround && w.player.y < 200, max: 200 },
-  { hold: 'R', until: X(x + 10.8), max: 100 },
-];
 type Play = (x: number) => Step[];
 const ACT_DEATHS: { act: string; stage: string; naive: [Play, string, string]; fix: [Play, string, string] }[] = [];
 const die = (x: number): Step[] => [{ hold: 'R', until: done, max: 6000 }];
@@ -397,7 +389,6 @@ const act = (a: string, stage: string, naive: [Play, string, string], fix: [Play
 act('dis06-chang', 'DIS-06', [changNaive, 'dis-bank', 'jumps at the stilt house'], [changFix(11), 'dis-bank', 'up the ladder, then walks off the house into the river']);
 act('dis07-dhol', 'DIS-07', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholHop(110), until: (w) => done(w) || w.player.cx > px(x + 36), max: 6000 }, { hold: '', until: done, max: 900 }], 'dis-pukhuri', 'keeps the first tempo after the dhol quickens']);
 act('dis10-dhol', 'DIS-10', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-pukhuri', 'runs and jumps across the planks'], [(x) => [{ policy: dholTempo(x, 84), until: done, max: 6000 }], 'dis-pukhuri', 'hops on the quick tempo from 07 after the drummer has slowed']);
-act('dis05-umananda', 'DIS-05', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-umananda', 'walks on across the flats'], [(x) => [...toLedge(x), { hold: 'R', jump: 12, ticks: 12, note: 'up to the top of the rock' }, { hold: 'R', until: done, max: 600 }], 'dis-langur', 'climbs to the top of the rock, the highest place']);
 act('dis08-jeep', 'DIS-08', [rhinoNaive, 'dis-beel', 'walks into the tall grass'], [rhinoFix, 'dis-gorh', 'waits at the edge of the grass, where the second jeep is']);
 act('dis08-bagori', 'DIS-08', [(x) => [{ hold: 'R', until: X(x + 2.4), max: 600 }, { hold: '', until: done, max: 2000 }], 'dis-gorh', 'stays on the bank: the rhino comes from behind'], [(x) => [{ hold: 'R', until: X(x + 1.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: '', until: (w) => charges(w).some((c) => c.d.c0 === x + 11 && c.phase === 'rest'), max: 2000 }, { hold: 'R', until: done, max: 2000 }], 'dis-gorh', 'off the hay as soon as the rhino stops halfway']);
 act('dis10-gamosa', 'DIS-10', [() => [{ hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'walks into every giver'], [(x) => [{ hold: 'R', until: X(x + 12.4), max: 600 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'a little hop over the third giver, into the fourth']);
@@ -725,11 +716,6 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'dis07-ghar': (x) => [{ policy: atTheGate(1), until: and(ground, X(x + 61)), max: 6000, note: 'gate by gate with the singers' }],
   'dis07-dhol': mark('dis07-dhol', (x) => [{ policy: dholHop(), until: and(ground, X(x + 36)), max: 6000, note: 'one plank on every beat of the dhol' }]),
   'dis10-dhol': mark('dis10-dhol', (x) => [{ policy: dholHop(), until: and(ground, X(x + 36)), max: 6000, note: 'one plank on every beat, slow or fast' }]),
-  'dis05-umananda': mark('dis05-umananda', (x) => [
-    ...toLedge(x),
-    { hold: '', until: (w) => (w.flags.wake as Wake[])[0].over, max: 1200, note: 'wait till the wake has gone back down' },
-    { hold: 'R', until: and(ground, X(x + 29)), max: 600 },
-  ]),
   'dis07-chowk': (x) => [{ policy: atTheGate(2), until: and(ground, X(x + 73)), max: 7000, note: 'three gates, the middle one after the gamosas' }],
   'dis06-majuli': (x) => [
     { hold: 'R', until: X(x + 2.7), max: 600, note: 'run to the edge' },
