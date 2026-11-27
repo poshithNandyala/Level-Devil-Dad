@@ -347,41 +347,6 @@ export const act3: Act = {
   },
 };
 
-export type RajaPiece = { k: 'mill' | 'stone' | 'cart' | 'pounder'; at: number };
-/** a village lane built from Raja's still machines: each `at` is the piece's first column in the act */
-export function rajaAct(id: string, w0: number, pieces: RajaPiece[], advice: string): Act {
-  return {
-    id,
-    w: w0,
-    advice,
-    cps: [],
-    paint: (g, c) => {
-      for (const p of pieces) {
-        if (p.k === 'mill') g.pit(c.x + p.at, c.x + p.at + 2);
-        if (p.k === 'pounder') g.pit(c.x + p.at, c.x + p.at + 1);
-        if (p.k === 'stone') g.fill(c.x + p.at + 2, c.x + p.at + 4, 13, 14, '#');
-      }
-    },
-    build: (w, c) => {
-      village(w, c.x, c.x + w0);
-      for (const p of pieces) {
-        if (p.k === 'mill') {
-          pitBlame(w, c.x + p.at, c.x + p.at + 2, 'bbi-dhan', 'water');
-          jaanta(w, c.x + p.at + 1);
-        } else if (p.k === 'pounder') {
-          pitBlame(w, c.x + p.at, c.x + p.at + 1, 'bbi-dhenki', 'spikes');
-          dhenki(w, c.x + p.at, c.x + p.at + 1);
-        } else if (p.k === 'stone') sila(w, c.x + p.at + 0.75);
-        else cart(w, c.x + p.at, c.x + p.at + 2);
-      }
-    },
-  };
-}
-export const RAJA4: RajaPiece[] = [{ k: 'stone', at: 3 }, { k: 'mill', at: 11 }, { k: 'cart', at: 18 }, { k: 'pounder', at: 25 }];
-export const act4 = rajaAct('bbi05-pokhari', 30, RAJA4, 'Past the pond: a grinding stone at a step, a hand mill in the channel, a cart and a pounder in its pit. Touch none of them: climb the step itself, jump the channel and the pit, hop the cart.');
-export const RAJA5: RajaPiece[] = [{ k: 'cart', at: 3 }, { k: 'pounder', at: 9 }, { k: 'mill', at: 14 }, { k: 'stone', at: 20 }, { k: 'cart', at: 27 }];
-export const act5 = rajaAct('bbi05-gaon', 34, RAJA5, 'The far end of the village, the same still machines in a new order. Touch nothing.');
-
 /**
  * The tenda: a well's water lift, a long pole on a post with the bucket at one end. Here the touch-nothing rule goes
  * stale: the wall beside the well is too high to jump, and the only way up is to start the lift yourself. Step on
@@ -456,7 +421,6 @@ export function tendaAct(id: string, wallRows: number, up: number, key: string, 
   };
 }
 export const act6 = tendaAct('bbi05-tenda', 5, 5.0, 'bbi5t', 'A wall too high to jump, and the well’s water lift beside it. This once, start a machine on purpose: step on the bucket, ride it up, and step off on to the wall before it swings back down into the well.');
-export const act7 = tendaAct('bbi05-kua', 6, 6.5, 'bbi5k', 'A higher wall and a slower lift: on to the bucket, up, and off at the top before it drops.');
 
 /** the mill on the bank: started on purpose, it flings you over a channel too wide to jump; stand on its far half */
 export function flingAct(id: string, key: string, advice: string): Act {
@@ -614,7 +578,6 @@ export function bailAct(id: string, len: number, v: number, key: string, advice?
 };
 }
 export const act9 = bailAct('bbi05-bail', 14, 38, 'bbi5b');
-export const act10 = bailAct('bbi05-gali', 20, 22, 'bbi5g', 'A longer lane and slower bullocks: touch the cart, step back, and follow well behind it all the way to the gate.');
 
 /** act 12, the goat: Raja is a holiday for people, not for goats. The village's goat wanders back and forth
  *  over the rice pounder, and every time it walks along the beam the pounder's head swings up over the pit.

@@ -225,43 +225,6 @@ export const act: Act = {
   },
 };
 
-/** act 2: the last loom: the shuttle comes back first, then goes across */
-export const L06B: LoomCfg = { c0: 3, n: 8, speeds: [4, 1, 3, 2, 1, 4, 2, 3], beat: 0.8, hold: 2.7, shuttle: [[0, -1], [0.6, 1]] };
-export const act2: Act = {
-  id: 'bbi06-buni',
-  w: 16,
-  advice: 'The last loom: on its motif beat the shuttle comes across and goes back. Wait for both, then cross.',
-  cps: [],
-  paint: (g, c) => {
-    g.pit(c.x + L06B.c0, c.x + L06B.c0 + L06B.n - 1);
-  },
-  build: (w, c) => {
-    const st = { t0: -1 };
-    w.flags.bbi6c = st;
-    onPass(w, c.X(0.5), (w2) => (st.t0 = w2.tick));
-    channel(w, c.x + L06B.c0, c.x + L06B.c0 + L06B.n - 1, 'bbi-ranga', 'water');
-    loom(w, { ...L06B, c0: c.x + L06B.c0 }, () => st.t0, 'bbi6d');
-  },
-};
-
-/** act 3: the widest loom, and its shuttle makes three passes on the motif beat */
-export const L06C: LoomCfg = { c0: 3, n: 10, speeds: [1, 4, 2, 3, 4, 1, 3, 2, 4, 1], beat: 0.8, hold: 3.4, shuttle: [[0, 1], [0.5, -1], [1.0, 1]] };
-export const act3: Act = {
-  id: 'bbi06-tani',
-  w: 18,
-  advice: 'The widest loom: on its motif beat the shuttle goes across, back and across again. Count three passes, then cross.',
-  cps: [],
-  paint: (g, c) => {
-    g.pit(c.x + L06C.c0, c.x + L06C.c0 + L06C.n - 1);
-  },
-  build: (w, c) => {
-    const st = { t0: -1 };
-    onPass(w, c.X(0.5), (w2) => (st.t0 = w2.tick));
-    channel(w, c.x + L06C.c0, c.x + L06C.c0 + L06C.n - 1, 'bbi-ranga', 'water');
-    loom(w, { ...L06C, c0: c.x + L06C.c0 }, () => st.t0, 'bbi6f');
-  },
-};
-
 /** a loom act: one loom over a pit at cfg.c0 (act columns) */
 export function loomAct(id: string, w0: number, cfg: LoomCfg, key: string, advice: string): Act {
   return {
@@ -280,10 +243,6 @@ export function loomAct(id: string, w0: number, cfg: LoomCfg, key: string, advic
     },
   };
 }
-export const L06D: LoomCfg = { c0: 3, n: 6, speeds: [2, 3, 1, 4, 3, 2], beat: 0.6, hold: 1.7, shuttle: [[0, -1]] };
-export const act4 = loomAct('bbi06-jala', 14, L06D, 'bbi6g', 'A small loom on a quick beat: the motif comes round faster, and the shuttle still crosses first.');
-export const L06E2: LoomCfg = { c0: 3, n: 9, speeds: [3, 2, 4, 1, 2, 3, 1, 4, 2], beat: 0.9, hold: 3.0, shuttle: [[0, 1], [0.45, 1]] };
-export const act5 = loomAct('bbi06-pata', 17, L06E2, 'bbi6h', 'A loom whose shuttle crosses twice the same way, one close behind the other. Let both by, then cross.');
 
 /** act 6, the staircase: these threads are dyed so the motif lines up as steps, up to the raised far bank */
 export const L06S: LoomCfg = { c0: 3, n: 7, speeds: [1, 2, 3, 4, 3, 2, 1], beat: 0.8, hold: 2.4, shuttle: [], rise: 9 };
@@ -308,29 +267,6 @@ export const act6 = sidhiAct('bbi06-sidhi', 'bbi6s');
 /** act 7, the beater: the motif holds, but at its end the beater sweeps the warp from the weaver's side */
 export const L06R: LoomCfg = { c0: 3, n: 8, speeds: [4, 2, 1, 3, 1, 4, 3, 2], beat: 0.8, hold: 2.2, shuttle: [[0, -1]], reed: true };
 export const act7 = loomAct('bbi06-rachh', 16, L06R, 'bbi6q', 'Here the beater sweeps the warp at the end of the motif beat. Let the shuttle by, then cross at once: be off the threads before the beater comes.');
-/** act 8, two looms on one beat, with a bank between them: the second's motif comes two beats after the first's */
-export const L06T: LoomCfg = { c0: 3, n: 6, speeds: [3, 1, 4, 2, 4, 1], beat: 0.8, hold: 1.8, shuttle: [[0, -1]] };
-export const L06U: LoomCfg = { c0: 12, n: 6, speeds: [2, 4, 3, 1, 3, 2], beat: 0.8, hold: 1.8, shuttle: [[0, 1]] };
-export const act8: Act = {
-  id: 'bbi06-dui',
-  w: 21,
-  advice: 'Two looms with a bank between them, the second a little behind the first. Cross the first on its motif, stand on the bank, and cross the second on its own.',
-  cps: [],
-  paint: (g, c) => {
-    g.pit(c.x + L06T.c0, c.x + L06T.c0 + L06T.n - 1).pit(c.x + L06U.c0, c.x + L06U.c0 + L06U.n - 1);
-  },
-  build: (w, c) => {
-    const st = { t0: -1 };
-    onPass(w, c.X(0.5), (w2) => (st.t0 = w2.tick));
-    const st2 = { t0: -1 };
-    onPass(w, c.X(9.5), (w2) => (st2.t0 = w2.tick));
-    channel(w, c.x + L06T.c0, c.x + L06T.c0 + L06T.n - 1, 'bbi-ranga', 'water');
-    channel(w, c.x + L06U.c0, c.x + L06U.c0 + L06U.n - 1, 'bbi-ranga', 'water');
-    loom(w, { ...L06T, c0: c.x + L06T.c0 }, () => st.t0, 'bbi6t');
-    loom(w, { ...L06U, c0: c.x + L06U.c0 }, () => st2.t0, 'bbi6u');
-  },
-};
-
 /** act 10, the wet sari: two dyers hold a fresh-dyed sari stretched over the wash vat, beside a high bank. It
  *  throws you up, higher on the second bounce, the only one that reaches the bank. A2: bounce in place first:
  *  steer on the first and you hit the bank's face. A3: after the second bounce they let go, laughing. */

@@ -319,56 +319,6 @@ export const act: Act = {
   },
 };
 
-/** act 2: the big family bowl: four badi, and the current runs harder */
-export const B08B: BowlCfg = { c0: 4, c1: 23, badi: [6, 11, 16, 20], pour1: [0.5, 2.6], pour2: [3.2, 5.6], v1: 40, v2: 45, v3: 35 };
-export const act2: Act = {
-  id: 'bbi08-thali',
-  w: 30,
-  advice: 'The big family bowl with four badi. Same rule, stronger current: on a badi before the pour, never the one by the right rim, ride it back and hop out.',
-  cps: [],
-  paint: (g, c) => {
-    g.pit(c.x + B08B.c0, c.x + B08B.c1).fill(c.x + B08B.c0 - 1, c.x + B08B.c0 - 1, 13, 14, '#').fill(c.x + B08B.c1 + 1, c.x + B08B.c1 + 1, 13, 14, '#');
-  },
-  build: (w, c) => {
-    const st = { t0: -1 };
-    w.flags.bbi8c = st;
-    onPass(w, c.X(B08B.c0) + 4, (w2) => (st.t0 = w2.tick));
-    bowl(w, { ...B08B, c0: c.x + B08B.c0, c1: c.x + B08B.c1, badi: B08B.badi.map((k) => c.x + k) }, () => st.t0, 'bbi8d');
-  },
-};
-
-export const B08C: BowlCfg = { c0: 4, c1: 19, badi: [6, 11, 15], pour1: [0.4, 2.2], pour2: [2.8, 4.6], v1: 50, v2: 50, v3: 55 };
-export const act3: Act = {
-  id: 'bbi08-handi',
-  w: 26,
-  advice: 'One more bowl, poured in a hurry: get on the middle badi quickly, before the grains float apart, and ride it back.',
-  cps: [],
-  paint: (g, c) => {
-    g.pit(c.x + B08C.c0, c.x + B08C.c1).fill(c.x + B08C.c0 - 1, c.x + B08C.c0 - 1, 13, 14, '#').fill(c.x + B08C.c1 + 1, c.x + B08C.c1 + 1, 13, 14, '#');
-  },
-  build: (w, c) => {
-    const st = { t0: -1 };
-    onPass(w, c.X(B08C.c0) + 4, (w2) => (st.t0 = w2.tick));
-    bowl(w, { ...B08C, c0: c.x + B08C.c0, c1: c.x + B08C.c1, badi: B08C.badi.map((k) => c.x + k) }, () => st.t0, 'bbi8f');
-  },
-};
-
-/** act 4: the cook pours the second jug over the middle badi this time: the one you learned to ride goes under */
-export const B08D: BowlCfg = { c0: 4, c1: 20, badi: [6, 11, 16], pour1: [0.5, 2.6], pour2: [3.2, 5.4], v1: 30, v2: 20, v3: 25, over: [1] };
-export const act4: Act = {
-  id: 'bbi08-majhi',
-  w: 27,
-  advice: 'Here the cook holds the second jug high over the middle badi: that is the one that goes under. Ride a badi at the side.',
-  cps: [],
-  paint: (g, c) => {
-    g.pit(c.x + B08D.c0, c.x + B08D.c1).fill(c.x + B08D.c0 - 1, c.x + B08D.c0 - 1, 13, 14, '#').fill(c.x + B08D.c1 + 1, c.x + B08D.c1 + 1, 13, 14, '#');
-  },
-  build: (w, c) => {
-    const st = { t0: -1 };
-    onPass(w, c.X(B08D.c0) + 4, (w2) => (st.t0 = w2.tick));
-    bowl(w, { ...B08D, c0: c.x + B08D.c0, c1: c.x + B08D.c1, badi: B08D.badi.map((k) => c.x + k) }, () => st.t0, 'bbi8g');
-  },
-};
 /** act 5: four badi and two jugs held over two of them */
 export const B08E: BowlCfg = { c0: 4, c1: 24, badi: [6, 11, 16, 20], pour1: [0.5, 2.8], pour2: [3.4, 6.0], v1: 30, v2: 15, v3: 25, over: [0, 2] };
 export const act5: Act = {

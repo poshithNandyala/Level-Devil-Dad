@@ -264,10 +264,8 @@ export function cornerAct(id: string, w0: number, CORNER: typeof CORNER0 & { dum
 };
 }
 export const act = cornerAct('bbi02-corner', 36, CORNER0, 'bbi2c', 'A penalty corner: the injector pushes the ball in, the stopper stops it dead, and then it is drag-flicked back the way you came, at chest height. Never wait on the goal side for the flick: cross the stopper’s spot, hopping the still ball, while it sits there.');
-export const CORNER2 = { period: 4.4, push: 0.9, stop: 2.0, inj: 25, stopAt: 14, goal: 2, pushV: 160, flickV: 320 };
 export const CORNER3 = { period: 4.0, push: 1.2, stop: 1.8, inj: 25, stopAt: 14, goal: 2, pushV: 160, flickV: 300, dummy: true };
 export const act4 = cornerAct('bbi02-chhal', 30, CORNER3, 'bbi2h', 'A dummy: on the first corner the stopper lets the ball run, and it rolls on along the turf at you. Hop it, then wait for the next corner, where he stops it, and go over the still ball.');
-export const act3 = cornerAct('bbi02-dobara', 30, CORNER2, 'bbi2d', 'A second corner, closer and quicker: the stopper is nearer, the flick is harder. Same answer: over the still ball while it sits, never wait on the goal side.');
 
 /** act 2: a second keeper by a second drain, the flicker further off: the same ride, longer */
 export const act2: Act = {
