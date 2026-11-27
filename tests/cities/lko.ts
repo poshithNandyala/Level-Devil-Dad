@@ -380,6 +380,16 @@ actRoutes['lko05-dum'] = (x) => {
   return [runTo(x + 0.5, 300), hops([x + 3, ...cols.map((c, i) => [x + c, kflat(k, i)] as [number, (w: World) => boolean])], 'wait for every squash, then hop'), runTo(x + 21, 300)];
 };
 const sizzling = (i: number) => (w: World) => !!(w.flags['lko05-ghee:heaps'] as { low: boolean }[] | undefined)?.[i]?.low;
+const spit = (lo: number, hi: number) => (w: World) => {
+  const f = w.flags['lko05-charkhi:state'] as ((w: World) => { flatFor: number }) | undefined;
+  const n = f ? f(w).flatFor : -1;
+  return n >= lo && n < hi;
+};
+actRoutes['lko05-charkhi'] = (x) => [
+  walkTo(x + 0.8, 300),
+  hops([[x + 4, spit(0, 22)], [x + 7, spit(0, 22)], [x + 10, spit(0, 22)], [x + 13, spit(0, 22)], [x + 16.6, spit(0, 22)]], 'heap to heap, the moment the skewers come up flat'),
+  runTo(x + 18, 300),
+];
 actRoutes['lko05-ghee'] = (x) => [
   runTo(x + 0.6, 300),
   hops([x + 3, [x + 6, sizzling(0)], [x + 9, sizzling(1)], [x + 12, sizzling(2)], [x + 15.6, sizzling(3)]], 'heap to heap, each time the ladle makes it sizzle'),
@@ -1128,6 +1138,11 @@ mistakes['LKO-07'].push(
 mistakes['LKO-06'].push(
   { what: 'the guru: pressing on the old way after her stamp, as on every stage so far', steps: [...through('LKO-06', room06, 2), { ...guruFwd(actX('LKO-06', 2), actX('LKO-06', 2) + 25.5, true), until: done }], cause: 'lko-ghungroo' },
   { what: 'the guru: stopping after each stamp to work out which way is which', steps: [...through('LKO-06', room06, 2), { ...guruFwd(actX('LKO-06', 2), actX('LKO-06', 2) + 25.5), until: (w) => ((w.flags['lko06-guru:g'] as { n: number } | undefined)?.n ?? 0) >= 1 }, until(done, 900)], cause: 'lko-chakkar' },
+);
+
+mistakes['LKO-05'].push(
+  { what: 'the turning skewers: waiting till they lie still before hopping, as with a still rack', steps: [...through('LKO-05', room05, 6), walkTo(actX('LKO-05', 6) + 0.8, 300), hops([[actX('LKO-05', 6) + 4, spit(48, 56)]]), until(done, 600)], cause: 'lko-seekh' },
+  { what: 'the turning skewers: staying on a heap till it all looks safe', steps: [...through('LKO-05', room05, 6), walkTo(actX('LKO-05', 6) + 0.8, 300), hops([[actX('LKO-05', 6) + 4, spit(0, 16)]]), until(done, 900)], cause: 'lko-tawa' },
 );
 
 export const test: CityTests = {

@@ -569,5 +569,72 @@ export const dum: Act = {
   },
 };
 
-export const s05 = { room: galoutiRoom, acts: [tawa2, lane, ulta, bhara, dum, ghee] };
+// ================================================================ act: charkhi, the turning skewers
+/** The skewers here hang on a spit that turns by itself in the fire's draught: tips down (low, no hop
+ *  under them), then a half turn up to lie flat, a short rest, and a half turn down again. Fresh from its
+ *  turn a flat skewer still rocks; a skewer that has been still a while is about to turn. Hop the moment
+ *  they come up flat, not once they look settled. The heaps are slow to squash, but a squashed one burns. */
+const CHARKHI = { down: 110, turn: 12, flat: 72, tip: 46, heaps: [4, 7, 10, 13] };
+export const charkhi: Act = {
+  id: 'lko05-charkhi',
+  w: 19,
+  cp0: false,
+  cps: [-2],
+  advice: 'These skewers hang on a spit that turns by itself: tips down and low (no hop under them), then a half turn up to lie flat, a short rest, and down again. A skewer fresh from its turn still rocks; one that has gone still is about to turn back. Hop the moment they come up flat, never once they look settled.',
+  build: (w, c) => {
+    const x = c.x;
+    tawa(w, x + 3, x + 14);
+    const cyc = CHARKHI.down + CHARKHI.turn * 2 + CHARKHI.flat;
+    const S = { t0: -1 };
+    w.flags[c.f('spit')] = S;
+    /** 0 = tips down, 1 = flat; and how long it has lain flat (-1 when not flat) */
+    const state = (w2: World) => {
+      if (S.t0 < 0) return { a: 0, flatFor: -1 };
+      const p = (w2.tick - S.t0) % cyc;
+      const d = CHARKHI.down,
+        t = CHARKHI.turn,
+        f = CHARKHI.flat;
+      if (p < d) return { a: 0, flatFor: -1 };
+      if (p < d + t) return { a: (p - d) / t, flatFor: -1 };
+      if (p < d + t + f) return { a: 1, flatFor: p - d - t };
+      return { a: 1 - (p - d - t - f) / t, flatFor: -1 };
+    };
+    w.flags[c.f('state')] = state;
+    w.flags[c.f('kebabs')] = CHARKHI.heaps.map((d) => w.add(new Galouti(px(x + d), false, 70, 180)));
+    const x0 = px(x + 3),
+      x1 = px(x + 15),
+      tip = FLOOR - CHARKHI.tip;
+    const z = w.add(new Zone(x0, tip - 22, x1 - x0, 22, 'lko-seekh'));
+    w.onTick((w2) => {
+      if (S.t0 < 0 && w2.player.cx > c.X(1)) S.t0 = w2.tick;
+      // tips down, or still turning: the skewers are in the way of any hop
+      z.on = state(w2).a < 0.95;
+    });
+    w.add(
+      new Art((ctx, w2) => {
+        const s = state(w2);
+        ctx.fillStyle = '#4E342E';
+        ctx.fillRect(x0 - 4, tip - 26, x1 - x0 + 8, 4);
+        ctx.fillRect(x0 - 6, tip - 26, 3, FLOOR - tip + 26);
+        ctx.fillRect(x1 + 3, tip - 26, 3, FLOOR - tip + 26);
+        // fresh from the turn a flat skewer still rocks; then it goes still
+        const rock = s.flatFor >= 0 && s.flatFor < 30 ? Math.sin(w2.tick * 0.9) * (1 - s.flatFor / 30) * 0.35 : 0;
+        const ang = (Math.PI / 2) * (1 - s.a) + rock;
+        for (let xx = x0 + 3; xx < x1 - 2; xx += 8) {
+          ctx.save();
+          ctx.translate(xx, tip - 24);
+          ctx.rotate(ang);
+          ctx.fillStyle = '#B0BEC5';
+          ctx.fillRect(0, -0.7, 22, 1.4);
+          ctx.fillStyle = '#8D4A2B';
+          ctx.fillRect(4, -2.2, 9, 4.4);
+          ctx.restore();
+        }
+      }, 2),
+    );
+    sign(w, x + 0.2, 10.4, 3.2, 'CHARKHI', 'shop', null, 'seekh');
+  },
+};
+
+export const s05 = { room: galoutiRoom, acts: [tawa2, lane, ulta, bhara, dum, ghee, charkhi] };
 export const meta05 = { family: 'flatten-platforms-build-low-lane', betrayals: ['flatten-lane'], ending: 'lko-sheermal' } as StageMeta;
