@@ -60,18 +60,19 @@ export class TreatCart extends Entity {
 /** DIS-07 act: the treat trail on the husori cart (F459). */
 export const husCart: Act = {
   id: 'dis07-cart',
-  w: 32,
+  w: 34,
   advice: 'The host has laid a trail of pithas along the singers’ bamboo cart. Step on it and it rolls off over the pond, into the stakes at the end of its track. Never stop on it: walk forward along it, and jump up on to the jetty as the cart runs under it. Run straight off its front and you are in the pond.',
   cps: [1.5],
   paint: (g, c) => {
     const x = c.x;
-    g.pit(x + 8, x + 27);
+    // fix round 1: the pond runs on under the whole jetty, so running off the stopped cart's front is no way across
+    g.pit(x + 8, x + 30);
     // the jetty over the end of the track
     g.fill(x + 16, x + 31, 13, 13, '#');
   },
   build: (w, c) => {
     const x = c.x;
-    river(w, x + 8, x + 28, 'dis-pukhuri');
+    river(w, x + 8, x + 31, 'dis-pukhuri');
     const k = w.add(new TreatCart(px(x + 8), px(8), px(x + 19)));
     (w.flags.cart ??= []).push(k);
     onPass(w, px(x + 2), (w2) => tara(w2, 'Pitha lua, Dad! Lahe lahe! | Take the pithas, Dad! Slowly!', 2.4));
