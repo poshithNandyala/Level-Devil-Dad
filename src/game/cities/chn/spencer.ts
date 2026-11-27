@@ -336,7 +336,7 @@ export function spencerRoom(): LevelDef {
     nameEn: 'The mall escalators',
     tagline: 'Chennai’s old mall. Its escalators run by load: one rider goes up, two go down, fast.',
     hint: 'An escalator with one rider runs up; the moment a second steps on it reverses and runs down, fast, into the comb plate at the foot. The shopper at the foot steps on a moment after it starts. So step on from the kerb, hop straight back off on to the kerb, let her ride up alone, and then ride it yourself.',
-    par: 95,
+    par: 36,
     map: Grid.ground(G).fill(5, 7, 14, 14, '#').pit(9, 17).fill(18, 23, 11, 17, '#').put(1, 14, '@').put(29, 14, 'E').rows(),
     build(w: World) {
       basin(w, 9, 18);

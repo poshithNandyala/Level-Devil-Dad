@@ -5,7 +5,6 @@ import { Thing } from '../../entities/traps';
 import { DT, secs } from '../../constants';
 import { px } from '../../levels/kit';
 import { rr } from '../../../render/art/common';
-import { Entity } from '../../world';
 import { Solid } from '../../body';
 import type { Ending } from '../../levels/endkit';
 
@@ -399,8 +398,6 @@ export const endings: Record<ChnEndingKind, Ending> = {
         }
         w2.flags.twist = state;
       });
-      void Entity;
-      void DT;
     },
   },
 

@@ -480,7 +480,7 @@ export function murukkuRoom(): LevelDef {
     nameEn: 'The murukku press',
     tagline: 'A snack kitchen: the press lays spirals into the hot oil, pale and soft, and they fry golden and hard.',
     hint: 'The press lays a pale spiral into the oil: pale dough is soft and folds under you, and once it fries golden it holds. But the golden one you wait on is the oldest, and the ladle comes for it: go the moment the pale one turns. Keep out from under the press head while it is down: a jump under it hits it.',
-    par: 65,
+    par: 43,
     map: Grid.ground(G).pit(5, 26).put(1, 14, '@').put(29, 14, 'E').rows(),
     build(w: World) {
       kadai(w, 5, 27);

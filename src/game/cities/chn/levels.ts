@@ -709,6 +709,7 @@ export const levels = (): LevelDef[] => [
     acts: [trainRoof],
   }),
   // ------------------------------------------------------------------ encores (slots 9 and 10 of the allocation)
-  longStage({ base: murukkuRoom(), acts: [karandi, kannu, thenkuzhal, varisai, ruchi], twist: 'chn-fresh-curtain', par: 70, shape: 'long', meta: MURUKKU_META }),
-  longStage({ base: spencerRoom(), acts: [moodal, kaanal, keezhe, pattarai], lives: 'act', twist: 'chn-wet-floor-sign', par: 100, shape: 'long', meta: SPENCER_META }),
+  // par = the bot's clear time x 1.35 (tests/par.test.ts): 31.6 s and 26.7 s at f0cde1e
+  longStage({ base: murukkuRoom(), acts: [karandi, kannu, thenkuzhal, varisai, ruchi], twist: 'chn-fresh-curtain', par: 43, shape: 'long', meta: MURUKKU_META }),
+  longStage({ base: spencerRoom(), acts: [moodal, kaanal, keezhe, pattarai], lives: 'act', twist: 'chn-wet-floor-sign', par: 36, shape: 'long', meta: SPENCER_META }),
 ];
