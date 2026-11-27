@@ -27,11 +27,10 @@ const ALLOWLISTED = new Set(
 );
 
 /**
- * New cities that get the idle-only check for now, each with the round that removes it.
- * PAT: fails the three plays at PAT-01 cp4, PAT-02 cp3, PAT-03 cp2, PAT-04 cp0, PAT-07 cp0/1/6/8/10/11/12/13/14
- * and PAT-10 cp6/cp9 (reports/integrate-cpsafe3.md); removed by the Patna checkpoint fix round.
+ * New cities that get the idle-only check for now, each with the round that removes it. Empty: Patna's
+ * checkpoint fix round (v0.17.2) took PAT off.
  */
-const CPSAFE3_PENDING = ['PAT'];
+const CPSAFE3_PENDING: string[] = [];
 
 const TICKS = 480; // 4 s
 const LAGS = [0, 6, 12];
