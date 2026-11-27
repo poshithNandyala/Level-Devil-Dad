@@ -307,7 +307,7 @@ class Patrol extends Entity {
     }
     const gx = this.gaps.find((g) => Math.abs(g - this.cx) < 10);
     const inWater = Math.abs(p.cx - this.cx) < 18 && p.y + p.h > FLOOR + 14;
-    this.hurt.cause = gx !== undefined && this.gaps.indexOf(gx) >= 2 ? this.cause2 : this.cause0;
+    this.hurt.cause = gx !== undefined && this.gaps.indexOf(gx) >= 1 ? this.cause2 : this.cause0;
     this.hurt.on = gx !== undefined || inWater;
     if (this.hurt.on) this.lunge = w.tick;
     this.hurt.x = inWater ? this.cx - 11 : (gx ?? this.cx) - 8;
@@ -328,10 +328,9 @@ class Patrol extends Entity {
 export function buildNala(w: World, x: number, stale: boolean) {
   const spans: [number, number][] = [
     [x + 3, x + 8],
-    [x + 9, x + 14],
-    [x + 15, x + 20],
-    [x + 21, x + 26],
-    [x + 27, x + 34],
+    [x + 9, x + 20],
+    [x + 21, x + 32],
+    [x + 33, x + 38],
   ];
   for (const [a, b] of spans) {
     w.add(
@@ -345,13 +344,13 @@ export function buildNala(w: World, x: number, stale: boolean) {
       }),
     );
   }
-  const gaps = [x + 8.5, x + 14.5, x + 20.5, x + 26.5].map(px);
-  const pat = new Patrol(px(x + 3), px(x + 34), gaps, gaps, px(x + 3) + 16, stale ? 'svp-magar3' : 'svp-magar2', stale ? 'svp-magar4' : 'svp-magar2');
+  const gaps = [x + 8.5, x + 20.5, x + 32.5].map(px);
+  const pat = new Patrol(px(x + 3), px(x + 38), gaps, gaps, px(x + 3) + 16, stale ? 'svp-magar3' : 'svp-magar2', stale ? 'svp-magar4' : 'svp-magar2');
   w.add(pat);
   w.add(pat.hurt);
   (w.flags.patrols ??= []).push(pat);
-  // the stale board points at the last gap and stays there: nobody turned it
-  const stuck = { x: gaps[3], y: FLOOR + 14 };
+  // the stale board points at the middle log and stays there: nobody turned it
+  const stuck = { x: px(x + 14.5), y: FLOOR - 2 };
   w.add(new Board(px(x + 0.6), px(10.6), () => (stale ? stuck : pat.aim())));
   w.add(
     new Fx(null, (ctx, w2) => {
@@ -359,7 +358,7 @@ export function buildNala(w: World, x: number, stale: boolean) {
       g.addColorStop(0, 'rgba(70,170,190,0.55)');
       g.addColorStop(1, 'rgba(18,90,110,0.8)');
       ctx.fillStyle = g;
-      ctx.fillRect(px(x + 3), FLOOR + 6, px(31), 26);
+      ctx.fillRect(px(x + 3), FLOOR + 6, px(35), 26);
       if (stale && pat.started) {
         // the ripples follow the crocodile: rings on the water over it
         ctx.strokeStyle = 'rgba(255,255,255,0.8)';
@@ -379,11 +378,11 @@ export function buildNala(w: World, x: number, stale: boolean) {
 
 export const nala: Act = {
   id: 'svp03-nala',
-  w: 36,
+  w: 40,
   advice: 'A longer creek, and this time the crocodile is already in the water, strolling to and fro under the logs. The board’s arrow shows where it is. It comes up through a gap to whoever is jumping it: cross a gap when the arrow is pointing at another one.',
-  cps: [9.1, 15.1, 21.1],
+  cps: [14.5, 26.5],
   paint: (g, c) => {
-    g.pit(c.x + 3, c.x + 33).fill(c.x + 3, c.x + 33, 17, 17, '#');
+    g.pit(c.x + 3, c.x + 37).fill(c.x + 3, c.x + 37, 17, 17, '#');
   },
   build: (w, c) => buildNala(w, c.x, false),
 };

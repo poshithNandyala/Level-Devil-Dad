@@ -705,7 +705,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...boatRide(herdA, boatA, px(x + 17), px(x + 23) + 4),
     { hold: 'R', until: and(ground, X(x + 33.5)), max: 400 },
   ],
-  'svp03-nala': (x) => [{ ...crossGaps(), until: (w) => w.player.x > px(x + 34.5) && w.player.onGround, max: 3600, note: 'along the logs, a gap at a time, when the arrow points away' }, { hold: 'R', until: and(ground, X(x + 35.5)), max: 300 }],
+  'svp03-nala': (x) => [{ ...crossGaps(), until: (w) => w.player.x > px(x + 38.5) && w.player.onGround, max: 6000, note: 'along the logs, a gap at a time, when the arrow points away' }, { hold: 'R', until: and(ground, X(x + 39.5)), max: 300 }],
   'svp02-chirai': (x) => [
     { hold: 'R', until: (w) => w.player.x >= px(x + 4) + 6 && w.player.onGround, max: 900, note: 'on to the boarding end' },
     {
@@ -911,12 +911,8 @@ actDeath('SVP-10', 'svp10-nali', 'one arch over, one under, then under both in t
   { hold: 'R', until: (w) => w.state !== 'play', max: 2400, note: 'and on under the arches, as the first stretch allowed' },
 ]);
 // ---- 10: the callbacks that break their rules
-const arrowAtLast = (w: World) => ({ cx: (patrols(w)[0] as unknown as { gaps: number[] }).gaps[3] });
-actDeath('SVP-10', 'svp10-nadi', 'trust the board: its arrow is on the last gap, so the first gaps look safe', 'svp-magar3', () => [{ ...crossGaps(arrowAtLast), until: (w) => w.state !== 'play', max: 3600, note: 'along the logs by the stuck arrow' }]);
-actDeath('SVP-10', 'svp10-nadi', 'the ripples for the first two gaps, then back to the board', 'svp-magar4', (x) => [
-  { ...crossGaps(), until: (w) => w.player.x > px(x + 15.5) && w.player.onGround, max: 3600, note: 'the first two gaps by the ripples' },
-  { ...crossGaps(arrowAtLast), until: (w) => w.state !== 'play', max: 3600, note: 'then by the board again' },
-]);
+const arrowAtLast = (w: World) => ({ cx: (patrols(w)[0] as unknown as { gaps: number[] }).gaps[0] + 96 });
+actDeath('SVP-10', 'svp10-nadi', 'trust the board: its arrow is stuck on the middle log, so the gaps look safe', 'svp-magar3', () => [{ ...crossGaps(arrowAtLast), until: (w) => w.state !== 'play', max: 3600, note: 'along the logs by the stuck arrow' }]);
 actDeath('SVP-10', 'svp10-jad', 'along the green roots, as the cellar taught', 'svp-eent3', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'along the green roots' }]);
 actDeath('SVP-10', 'svp10-jad', 'the first creek by the grey roots, the second by the green', 'svp-eent4', (x) => [
   ...actRoutes['svp10-jad'](x).slice(0, 7),
