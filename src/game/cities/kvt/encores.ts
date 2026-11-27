@@ -940,7 +940,75 @@ const archDolphin: Act = {
   },
 };
 
-export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, archDolphin, risingTide, tideHoles] };
+/** a coral step out in the lagoon that the lighthouse beam sweeps over: solid in the dark, gone while the beam is
+ *  on it (the light shows the water right through it) */
+export class ShadowStep extends Entity {
+  solid: Solid;
+  constructor(
+    tx: number,
+    readonly top: number,
+    readonly period: number,
+    readonly lit: number,
+    readonly phase: number,
+  ) {
+    super();
+    this.layer = 1;
+    this.solid = new Solid(px(tx), px(top), px(3), 10);
+  }
+  /** seconds into its cycle: 0..lit is the beam on it */
+  at(w: World) {
+    return ((((w.tick * DT - this.phase) % this.period) + this.period) % this.period);
+  }
+  isLit(w: World) {
+    return this.at(w) < this.lit;
+  }
+  update(w: World) {
+    const on = !this.isLit(w);
+    if (on !== this.solid.collidable) {
+      const p = w.player;
+      // (it only comes back where Dad isn't standing in its place)
+      if (on && this.solid.overlaps(p.x, p.y, p.w, p.h)) return;
+      this.solid.collidable = on;
+    }
+  }
+  draw(ctx: CanvasRenderingContext2D, w: World) {
+    const s = this.solid;
+    if (this.isLit(w)) {
+      // the beam on it: bright, and see-through
+      ctx.fillStyle = 'rgba(255,250,200,0.35)';
+      ctx.fillRect(s.x - 2, s.y - 40, s.w + 4, 40 + s.h);
+      ctx.strokeStyle = 'rgba(200,170,120,0.6)';
+      ctx.strokeRect(s.x + 0.5, s.y + 0.5, s.w - 1, s.h - 1);
+      return;
+    }
+    ctx.fillStyle = '#6E5A4A';
+    ctx.fillRect(s.x, s.y, s.w, s.h);
+    ctx.fillStyle = '#8D7462';
+    ctx.fillRect(s.x, s.y, s.w, 3);
+  }
+}
+
+/** KVT-10 act, KVT-03 turned over: on Supari Light the beam built your bridge. Out here the coral steps are
+ *  shadows: the beam passing over one shows the water right through it. Step on each one just after the light
+ *  has gone by, and follow behind the sweep. */
+const shadowSteps: Act = {
+  id: 'kvt10-nizhal',
+  w: 24,
+  advice: 'The lighthouse beam sweeps over these steps the other way about: a step is gone while the light is on it. Step on each just after the beam has passed, and follow behind it.',
+  paint: (g, c) => {
+    g.pit(c.x + 3, c.x + 19);
+  },
+  build: (w, c) => {
+    const { X } = c;
+    pool(w, c.x + 3, c.x + 20, 15.3, { colors: LAGOON });
+    const steps = [4, 8, 12, 16].map((t, i) => w.add(new ShadowStep(c.x + t, 14, 3.6, 0.8, i * 0.8)));
+    w.flags[c.f('steps')] = steps;
+    sign(w, c.x + 0.2, G - 4.4, 3.4, 'SUPARI', 'wood', 'right', 'the beam, again');
+    onPass(w, X(1), (w2) => taraSays(w2, 'Velicham ulla padiyil chaadu! | Jump on the lit step!', 2.4));
+  },
+};
+
+export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, archDolphin, shadowSteps, risingTide, tideHoles] };
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {

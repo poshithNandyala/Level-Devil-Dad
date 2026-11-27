@@ -7,7 +7,7 @@ import type { World } from '../../src/game/world';
 import type { Door } from '../../src/game/entities/basics';
 import { Step, X, and, done, ground, thingOf, gustNOn, gustNLeft } from '../runner';
 import type { CityTests } from '../city-tests';
-import type { Heap } from '../../src/game/cities/kvt/encores';
+import type { Heap, ShadowStep } from '../../src/game/cities/kvt/encores';
 import { Eel, Jelly, type Dolphin } from '../../src/game/cities/kvt/levels';
 import { DT } from '../../src/game/constants';
 
@@ -233,6 +233,29 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { policy: rideDolphin(`kvt10-kamaanam:dolphins`, 0, px(x + 17), 0.86, 0.03), until: (w) => w.player.onGround && w.player.x >= px(x + 17) && Math.abs(w.player.vx) < 1, max: 1500, note: 'ride it over the top, under the arch, and step off coming down' },
     { hold: 'R', until: X(x + 22), max: 200 },
   ],
+  'kvt10-nizhal': (x) => {
+    const st = (w: World, i: number) => (w.flags['kvt10-nizhal:steps'] as ShadowStep[])[i];
+    const passed = (i: number) => (w: World) => still(w) && !st(w, i).isLit(w) && st(w, i).at(w) >= 0.85 && st(w, i).at(w) < 1.95;
+    const onto = (i: number, from: number, r: number, note?: string): Step[] => [
+      { steer: (w: World) => (w.player.x < px(from) - 1 ? 'R' : w.player.x > px(from) + 1 ? 'L' : '') as Move, until: (w: World) => Math.abs(w.player.x - px(from)) <= 1, max: 120, ...(note ? { note } : {}) },
+      { hold: '', until: passed(i), max: 600 },
+      { hold: 'R', jump: 10, ticks: r },
+      { hold: '', until: ground, max: 200 },
+      { hold: '', ticks: 4 },
+    ];
+    return [
+      { hold: 'R', until: X(x + 2), max: 300 },
+      ...onto(0, x + 2.2, 26, 'on to each step just after the beam has gone over it'),
+      ...onto(1, x + 4.7, 40),
+      ...onto(2, x + 8.7, 40),
+      ...onto(3, x + 12.7, 40),
+      { steer: (w: World) => (w.player.x < px(x + 16.7) - 1 ? 'R' : w.player.x > px(x + 16.7) + 1 ? 'L' : '') as Move, until: (w: World) => Math.abs(w.player.x - px(x + 16.7)) <= 1, max: 120 },
+      { hold: '', until: still, max: 100 },
+      { hold: 'R', jump: 10, ticks: 40, note: 'and the shore' },
+      { hold: 'R', until: ground, max: 200 },
+      { hold: 'R', until: X(x + 24), max: 300 },
+    ];
+  },
   'kvt10-veliyettam': (x) => [...hop(x + 1.6, 12, 'from head to head, never stopping'), ...hop(x + 6.6, 12, 'the next head'), ...hop(x + 11.6, 12, 'the next'), ...hop(x + 16.6, 12, 'and the shore'), { hold: 'R', until: X(x + 24), max: 300 }],
   'kvt10-irakkam': (x) => {
     const tide = (i: number) => (w: World) => (w.flags['kvt10-irakkam:tide'] as boolean[])[i] && still(w);
@@ -850,7 +873,17 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { what: 'cross the moray hole once it has struck and slid back, as on the reef', steps: [...upTo(S['KVT-10'], 'bait the first moray, and wait for its second strike'), { hold: 'R', until: X(236 + 6.4), max: 300 }, { hold: '', until: (w) => w.entities.some((e) => e instanceof Eel && e.x === px(236 + 8) + 8 && e.strikes >= 1), max: 900 }, { hold: 'R', until: done, max: 300 }], cause: 'kvt-bitten' },
     { what: 'jump the inlet while the wind is calm, as at Agatti', steps: [...upTo(S['KVT-10'], 'to the edge: wait for the breeze'), { hold: 'R', until: X(262 + 3.7), max: 300 }, { hold: '', until: (w) => still(w) && !gustNOn(w, 0) && gustNLeft(w, 0) > 0.9, max: 900 }, { hold: 'R', jump: 30, ticks: 60 }, { hold: 'R', until: done, max: 300 }], cause: 'splash' },
     { what: 'jump off the dolphin at the top of its leap, as on the lagoon', steps: [...upTo(S['KVT-10'], 'ride it over the top, under the arch, and step off coming down'), { policy: rideDolphin(`kvt10-kamaanam:dolphins`, 0, px(298 + 17), 0.5, 0.06), until: done, max: 1500 }], cause: 'spikes' },
-    { what: 'stop on the first coral head in the incoming tide, as on the tour', steps: [...upTo(S['KVT-10'], 'from head to head, never stopping'), ...hop(320 + 1.6, 12, 'on to the first head', true), { hold: '', until: done, max: 400 }], cause: 'splash' },
+    {
+      what: 'jump on to the first step as the beam lights it, as on Supari Light',
+      steps: [
+        ...upTo(S['KVT-10'], 'on to each step just after the beam has gone over it'),
+        { hold: '', until: (w) => still(w) && (w.flags['kvt10-nizhal:steps'] as ShadowStep[])[0].at(w) > 2.65, max: 600 },
+        { hold: 'R', jump: 10, ticks: 26 },
+        { hold: '', until: done, max: 300 },
+      ],
+      cause: 'splash',
+    },
+    { what: 'stop on the first coral head in the incoming tide, as on the tour', steps: [...upTo(S['KVT-10'], 'from head to head, never stopping'), ...hop(344 + 1.6, 12, 'on to the first head', true), { hold: '', until: done, max: 400 }], cause: 'splash' },
     { what: 'run straight over the hole with eyes', steps: [...upTo(S['KVT-10'], 'the hole with eyes: let the moray lunge and go back in'), { hold: 'R', until: done, max: 300 }], cause: 'kvt-bitten' },
     { what: 'walk into the door', steps: [...upTo(S['KVT-10'], 'the door: kvt-sand-arm'), { hold: 'R', until: done, max: 900 }], cause: 'kvt-octopus' },
   ];
