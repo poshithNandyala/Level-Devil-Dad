@@ -6,6 +6,7 @@ import { onPass } from '../../levels/trolls';
 import { Grid } from '../../levels/grid';
 import type { Act } from '../../levels/acts';
 import { lines as L } from './lines';
+import { tara as taraNow } from '../../levels/endkit';
 import { Art, Block, FLOOR, Zone, bowIcon, gent, on, px, stillness, type Ctx } from './kit';
 
 export const tara = (n: number, beaten = 0) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[beaten % L.beaten.length] });
@@ -280,5 +281,95 @@ export const gali: Act = {
   },
 };
 
-export const s02 = { room: pehleRoom, acts: [gali] };
+// ================================================================ act 2: takrar, the stand-off
+/** One gentleman in a narrow doorway, and he bows back. Now it is a contest of manners: whoever stops
+ *  bowing first goes first, on to the loose stone. Bow once and move, as you learned, and he insists:
+ *  you first. Hold your bow until he gives up and goes first himself. */
+export const takrar: Act = {
+  id: 'lko02-takrar',
+  w: 24,
+  advice: 'One gentleman in a narrow doorway, and he bows back: whoever stops bowing first goes first, on to the loose stone. Bow once and move, as you learned, and he insists you go first. Stand still and keep bowing until he gives up and goes through himself, then hop the hole he leaves.',
+  cps: [1],
+  paint: (g, c) => {
+    g.pit(c.x + 13, c.x + 14);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const still = stillness(w);
+    bowIcon(w, still);
+    archway(w, x + 10, 2, 7, 3, '#E7D9C3');
+    const hole = looseStone(w, x + 13, 2, 'lko-takrar');
+    const dx = c.X(10);
+    const G: Who = { x: dx + 16, face: -1, bow: 0, cloth: SHERWANI[2], hop: 0, y: FLOOR };
+    const S = { s: 'wait', t: 0, push: 0, lied: false };
+    w.flags[c.f('g')] = S;
+    const body = w.add(new Block(dx, FLOOR - 28, 32, 28, () => {}, 0));
+    w.add(new Art((ctx) => drawWho(ctx, G), 3));
+    const set = (s: string, w2: World) => {
+      S.s = s;
+      S.t = w2.tick;
+    };
+    w.onTick((w2) => {
+      const p = w2.player;
+      const age = w2.tick - S.t;
+      if (S.s === 'wait') {
+        if (p.cx > dx - px(4)) set('bow', w2);
+      } else if (S.s === 'bow') {
+        G.bow = Math.min(1, age / 16);
+        const touching = p.x + p.w >= dx - 1 && p.cx < dx;
+        S.push = w2.input.right && touching ? S.push + 1 : 0;
+        if (still() > 30) set('standoff', w2);
+        else if (S.push > 30) {
+          hole.pit.hazard.cause = 'lko-pehle';
+          shove(w2, p, body, G, dx);
+          set('gone', w2);
+        }
+      } else if (S.s === 'standoff') {
+        G.bow = 1;
+        if (!S.lied && age > 70) {
+          S.lied = true;
+          taraNow(w2, 'Shukriya, aage chaliye. | Thank you, go ahead.', 2.2);
+        }
+        // you stopped bowing first: so you go first
+        if (still() === 0) {
+          shove(w2, p, body, G, dx);
+          set('gone', w2);
+        } else if (age > 700) {
+          // he gives up: 'Accha, pehle aap', and goes through himself
+          body.set(false);
+          w2.say('Pehle aap? Accha, pehle aap. | After you? Fine, after you.', dx + 16, FLOOR - 34, 2.4, 'npc');
+          set('first', w2);
+        }
+      } else if (S.s === 'first') {
+        G.face = 1;
+        G.bow = Math.max(0, G.bow - 0.05);
+        const sx = hole.x - 6,
+          ex = hole.x + hole.ww + 10;
+        if (G.x < sx) G.x += 1.1;
+        else if (!hole.st.down) hole.drop(w2);
+        else if (G.x < ex) {
+          G.x += 1.6;
+          G.y = FLOOR - Math.sin((Math.PI * (G.x - sx)) / (ex - sx)) * 22;
+        } else {
+          G.y = FLOOR;
+          set('done', w2);
+        }
+      } else if (S.s === 'done') {
+        if (G.x < c.X(23)) G.x += 0.8;
+      }
+    });
+    sign(w, x + 4.2, 10.4, 3.4, 'TAKRAR', 'shop', null, 'pehle aap');
+  },
+};
+/** a polite, firm shove through the doorway */
+function shove(w: World, p: World['player'], body: Block, G: Who, dx: number) {
+  body.set(false);
+  G.x = dx - 4;
+  G.bow = 0.3;
+  p.vx = 240;
+  p.stun = 50;
+  w.say('Nahin nahin, pehle aap! | No no, after you!', dx + 16, FLOOR - 34, 2, 'npc');
+}
+
+export const s02 = { room: pehleRoom, acts: [gali, takrar] };
 export const meta02 = { family: 'politeness-bow-sets-order', betrayals: ['bow-order'], ending: 'lko-kiwad' } as StageMeta;

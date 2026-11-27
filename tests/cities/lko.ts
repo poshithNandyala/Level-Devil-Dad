@@ -328,6 +328,12 @@ const R_lko05_tawa = (id: string) => (x: number): Step[] => {
   return [runTo(x + 0.5, 300), hops([x + 3, ...cols.map((c, i) => [x + c, kflat(k, i)] as [number, (w: World) => boolean])], 'thin ones at once, thick ones once squashed'), runTo(x + 23.5, 300)];
 };
 actRoutes['lko05-tawa'] = R_lko05_tawa('lko05-tawa');
+actRoutes['lko02-takrar'] = (x) => [
+  runTo(x + 6.4, 300, 'up to the doorway: he bows'),
+  until((w) => w.flags['lko02-takrar:g']?.s === 'done', 1200, 'keep bowing till he gives up and goes first'),
+  hop(x + 13, x + 15.5, 'over the hole he left'),
+  runTo(x + 23, 300),
+];
 const hoopK = (w: World) => (w.flags['lko03-adda:hoop'] as { k: number }).k;
 actRoutes['lko03-adda'] = (x) => [
   walkTo(x + 4.5, 400, 'into the hoop'),
@@ -685,7 +691,9 @@ const endingPolicies: Record<string, Policy> = {
   },
   'lko-balti'(w, m, d) {
     const D = Math.round(d.x / 16);
-    if (!m.h) m.h = hops([D - 7.4, D - 4, D - 1, D + 0.5], 'flower, flower, door, before his bucket').policy!;
+    if (!m.h) m.h = hops([D - 7.4, D - 4, D - 1], 'flower, flower, door, before his bucket').policy!;
+    const p = w.player;
+    if (p.onGround && p.cx > px(D - 1) + 2) return go(toward(w, d.x + 8, 1));
     return m.h(w);
   },
   'lko-kiwad'(w, _m, d) {
@@ -698,6 +706,10 @@ function actRoutes0(id: string, x: number) {
   return actRoutes[id](x);
 }
 
+mistakes['LKO-02'].push(
+  { what: 'at the stand-off, walking into him', steps: [...through('LKO-02', room02, 1), { hold: 'R', until: done, max: 900 }], cause: 'lko-pehle' },
+  { what: 'at the stand-off, bowing once and going, as learned', steps: [...through('LKO-02', room02, 1), runTo(actX('LKO-02', 1) + 6.4, 300), { hold: '', ticks: 80 }, { hold: 'R', until: done, max: 600 }], cause: 'lko-takrar' },
+);
 mistakes['LKO-03'] = [
   { what: 'stopping on the jali in the middle of the second vat', steps: [...room03, runTo(actX('LKO-03') + 1.5), runTo(actX('LKO-03') + 18.2), until(done, 400)], cause: 'lko-jali' },
   { what: 'walking straight on to the door over the cloth', steps: [...through('LKO-03', room03, 2), runTo(doorX('LKO-03') - 9), { hold: 'R', until: done, max: 900 }], cause: 'lko-chhapa' },

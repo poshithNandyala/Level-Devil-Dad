@@ -349,7 +349,7 @@ export const badal: Act = {
     BADAL.forEach((d) => new Heap(w, Math.round(c.X(d)), px(13), () => (inShade(c.X(d) + 8) ? null : 'R'), 1));
     w.onTick((w2) => {
       if (!B.go && w2.player.cx > c.X(1.5)) B.go = true;
-      if (B.go && B.x < c.X(40)) B.x += 0.36;
+      if (B.go && B.x < c.X(40)) B.x += 0.3;
       // ahead of the shadow, or left behind by it: two ways to sink, two lessons
       kz.hazard.cause = w2.player.cx > B.x ? 'lko-badal' : 'lko-badal-peeche';
     });
