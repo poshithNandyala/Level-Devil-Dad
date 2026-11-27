@@ -24,6 +24,7 @@ export const causeLines: Record<string, string[]> = {
   'dis-stakes': ['Khuti! The hosts dropped the guard stakes in front of the gate as the singers arrived.', 'Wait for the coming group back from the gate, not right under it, and go through inside its ring.'],
   'dis-pat': ['Pat! The twisters whipped the rope, and the middle threw you into the channel.', 'The rope is still next to the post and whipped in the middle. Wait by the post, and cross the middle right after a stroke.'],
   'dis-paakoni': ['Paakoni! The twisters stepped back and took their end of the rope with you on it.', 'The far end moves with the twisters. Step off it on to the bank; never wait there.'],
+  'dis-herd': ['Thela! You stopped on the cart and it carried you into the stakes.', 'Never stop on the rolling cart. Walk forward along it and jump up on to the jetty as it runs under it.'],
   'dis-luit': ['Luit! The sandbar was not there, or it went out from under you.', 'Read the level post. When the siren goes the next bar comes up first, the bar you stand on goes last, and a bar that narrows keeps its left end. The hut never moves.'],
   'dis-basket': ['Tokari! The plucker’s basket swung into you.', 'Stay a few steps behind her and follow. Never hop over her, and when the path is wet wait before it: you can’t stop on it.'],
   'dis-tawa': ['Zui! You fell on the hot pan.', 'Hop only when the next crepe is poured and shiny.'],

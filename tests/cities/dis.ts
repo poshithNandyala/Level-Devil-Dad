@@ -452,6 +452,7 @@ act('dis10-talatal', 'DIS-10', [(x) => [...hopsUp(x + 2, 6), { hold: 'R', until:
 act('dis07-card', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-gate', 'runs to the exit gate: it is shut before the card’s time'], [(x) => [{ hold: 'R', until: X(x + 25), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'dawdles on the road short of the gate: a corridor']);
 ACT_MORE.push(['dis07-card', 'DIS-07', (x) => [{ hold: 'R', until: X(x + 32), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'waits at the gate for the card: the deer cross there']);
 act('dis07-rope', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-pat', 'walks straight across: the middle is whipped under him'], [(x) => [{ hold: 'R', until: X(x + 7), max: 600 }, { hold: '', until: afterWhip, max: 600 }, { hold: 'R', until: X(x + 19.5), max: 300 }, { hold: '', until: done, max: 600 }], 'dis-paakoni', 'crosses the middle between strokes, then waits at the twisters’ end as at an anchor: they step back with it']);
+act('dis07-cart', 'DIS-07', [(x) => [{ hold: 'R', until: X(x + 8.6), max: 600 }, { hold: '', until: done, max: 600 }], 'dis-herd', 'stops on the cart to take a pitha: carried into the stakes'], [() => [{ hold: 'R', until: done, max: 600 }], 'dis-pukhuri', 'runs straight along the cart without stopping: off its front into the pond']);
 act('dis07-pepa', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-gate', 'runs after the group that is leaving: the gate has shut behind it'], [(x) => [{ hold: 'R', until: X(x + 7.6), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-stakes', 'waits right under the gate for the coming group: the stakes come down as it arrives']);
 act('dis07-tekeli', 'DIS-07', [(x) => [{ hold: 'R', until: X(x + 9), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-lathi', 'stands still in the open by him: they shout his side'], [(x) => [{ hold: 'R', until: X(x + 6.2), max: 600 }, { hold: '', until: (w) => { const [i, k] = tekeli(w).at(w); return i === 0 && k >= 20; }, max: 300 }, { hold: 'R', until: done, max: 600 }], 'dis-lathi-ghur', 'runs through past him on the shout: across into the shouted side as he swings']);
 act('dis09-sluice', 'DIS-09', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-sluice', 'runs straight down the channel: the bell, and the flood'], [(x) => [{ hold: 'R', until: X(x + 4.6), max: 600 }, { hold: '', until: drained, max: 900 }, { hold: 'R', until: X(x + 10.1), max: 300 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: and(ground, X(x + 12)), max: 200 }, { hold: '', until: done, max: 1500 }], 'dis-roof', 'gets up on the embankment and stays there, safe from every flood: the oil slides him back in']);
@@ -856,6 +857,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: X(x + 7), max: 600, note: 'on to the rope by the post, where it is still' },
     { hold: '', until: afterWhip, max: 600, note: 'wait for a stroke to pass' },
     { hold: 'R', until: and(ground, X(x + 27)), max: 400, note: 'over the middle and off the twisters’ end at once' },
+  ]),
+  'dis07-cart': mark('dis07-cart', (x) => [
+    { hold: 'R', until: X(x + 10.4), max: 600, note: 'on to the cart, walking forward along the pithas' },
+    { hold: 'R', jump: 14, ticks: 14, note: 'up on to the jetty as the cart runs under it' },
+    { hold: 'R', until: and(ground, X(x + 31)), max: 400 },
   ]),
   'dis07-pepa': mark('dis07-pepa', (x) => [{ policy: atTheGate(2), until: and(ground, X(x + 20)), max: 3000, note: 'back from the gate till the pepa arrives, then through in its ring' }]),
   'dis07-tekeli': mark('dis07-tekeli', (x) => [
