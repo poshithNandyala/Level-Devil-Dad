@@ -8,6 +8,7 @@ import { LEVELS } from '../../src/game/levels';
 import type { Rope } from '../../src/game/cities/svp/rassi';
 import type { Formation } from '../../src/game/cities/svp/choona';
 import type { Barge, Swell } from '../../src/game/cities/svp/lehar';
+import type { Stall } from '../../src/game/cities/svp/kadhai';
 import type { SawHall } from '../../src/game/cities/svp/s02';
 import type { Creek } from '../../src/game/cities/svp/s03';
 import type { Herd, LateBoat } from '../../src/game/cities/svp/s04';
@@ -440,6 +441,18 @@ const caveBeat = (i: number, hopTx: number, jump: number, waitTx: number, drainT
 // ------------------------------------------------------------------ SVP-06 act 2: the swell
 const swell = (k: number) => (w: World) => (w.flags.swells as Swell[])[k];
 const bargeOf = (w: World) => (w.flags.barges as Barge[])[0];
+
+// ------------------------------------------------------------------ SVP-08 act 2: the fish-fry stalls
+const stall = (i: number) => (w: World) => (w.flags.stalls as Stall[])[i];
+/** over one counter: climb on in the rest before the left half spits, stand on the right half, change to the left in the rest, and off at the end */
+const stallCross = (i: number, s: number): Step[] => [
+  { policy: (w) => go(toward(w, px(s) - 22, 3)), until: (w) => { const p = stall(i)(w).phase; return p.name === 'restR' && p.left >= 80 && Math.abs(w.player.cx - (px(s) - 22)) < 8; }, max: 4000, note: 'back from the counter, waiting for a rest' },
+  { hold: 'R', jump: 20, ticks: 20, note: 'up on the counter' },
+  { hold: 'R', until: (w) => w.player.cx >= px(s) + 72, max: 300, note: 'over to the right half: the left is about to spit' },
+  { hold: '', until: (w) => stall(i)(w).phase.name === 'restL', max: 900, note: 'on the right half while the left spits' },
+  { policy: (w) => go(toward(w, px(s) + 24, 3)), until: (w) => stall(i)(w).phase.name === 'restR', max: 900, note: 'over to the left half: the right is next' },
+  { hold: 'R', until: and(ground, X(s + 8)), max: 600, note: 'off the end of the counter' },
+];
 /** along one row of floats: stand on the one you are on, and hop to the next when it is within a jump of you */
 function floatsStep(k: number, lastTx: number, note: string): Step {
   let W: World | null = null;
@@ -486,6 +499,7 @@ function floatsStep(k: number, lastTx: number, note: string): Step {
   };
 }
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp08-bazaar': (x) => [...stallCross(0, x + 4), ...stallCross(1, x + 24), ...stallCross(2, x + 44), { hold: 'R', until: and(ground, X(x + 62)), max: 600 }],
   'svp06-lehar': (x) => [
     { hold: 'R', until: X(x + 3.2), max: 600 },
     floatsStep(0, x + 28, 'across the row of floats, a beat at a time'),
@@ -645,6 +659,11 @@ const endingPolicies: Record<string, Policy> = {
 };
 
 // ------------------------------------------------------------------ the plays that must die in an added act
+actDeath('SVP-08', 'svp08-bazaar', 'run over the stalls', 'svp-tel', () => [hopUntil((w) => w.state !== 'play', 'hop the counters')]);
+actDeath('SVP-08', 'svp08-bazaar', 'climb on in the rest and stay on the right half', 'svp-tel', (x) => [
+  ...stallCross(0, x + 4).slice(0, 3),
+  { hold: '', until: (w) => w.state !== 'play', max: 1500, note: 'and stay put on the right half' },
+]);
 actDeath('SVP-06', 'svp06-lehar', 'run and hop the floats without watching', 'svp-lehar', () => [hopUntil((w) => w.state !== 'play', 'hop on')]);
 actDeath('SVP-06', 'svp06-lehar', 'across the floats properly, then jump from the island for the far shore', 'svp-lehar', (x) => [
   ...actRoutes['svp06-lehar'](x).slice(0, 3),
