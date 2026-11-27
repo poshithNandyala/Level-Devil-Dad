@@ -41,6 +41,8 @@ export interface TroupeCfg {
   /** on these stops (by index in `poses`) a drum roll at `at` s into the pose turns the bridge over towards the
    *  drummer for `dur` s: whoever is not walking with the turn is rolled under */
   roll?: { stops: number[]; at: number; dur: number };
+  /** a hold per stop (by index in `poses`) instead of the one `hold` */
+  holds?: number[];
 }
 
 export interface TroupeSt {
@@ -54,6 +56,21 @@ export interface TroupeSt {
 
 /** where the troupe is at t seconds */
 export function troupeAt(cfg: TroupeCfg, t: number): TroupeSt {
+  if (cfg.holds) {
+    // a different hold on each stop: walk the cycle stop by stop
+    const n = cfg.poses.length;
+    const cyc = cfg.holds.reduce((a, h) => a + cfg.drum + h, 0);
+    const tt = t + (cfg.phase ?? 0);
+    const c = Math.floor(tt / cyc);
+    let r = tt - c * cyc;
+    for (let i = 0; i < n; i++) {
+      const h = cfg.holds[i];
+      if (r < cfg.drum) return { pose: null, into: r, left: cfg.drum - r, stops: c * n + i };
+      r -= cfg.drum;
+      if (r < h) return { pose: cfg.poses[i], into: r, left: h - r, stops: c * n + i + 1 };
+      r -= h;
+    }
+  }
   const per = cfg.drum + cfg.hold;
   const tt = t + (cfg.phase ?? 0);
   const k = Math.floor(tt / per);
@@ -643,6 +660,50 @@ export const act15: Act = {
  *  stand or walk on and you are rolled under. The next stop has no roll: cross on that one. */
 export const T07R: TroupeCfg[] = [{ c0: 4, n: 11, drum: 1.4, hold: 2.0, poses: ['bridge', 'bridge'], form: 0.25, roll: { stops: [0], at: 0.6, dur: 0.5 } }];
 export const act16 = troupeAct('bbi07-gadiba', 19, T07R, 'bbi7gd', 'On a drum roll (the bridge shivers first) this line of boys turns over towards the drummer on your bank. If it shivers under you, turn round and walk his way: you ride the turn back to the bank. The next stop has no roll: cross on that one.');
+
+/** act 17, hulahuli (IDEAS-3 B6, pose-shapes family): the women on the far bank cheer some poses (hands up, the
+ *  long falling cheer) and meet others with silence. A cheered bridge holds as long as the cheer; a silent one
+ *  is too short to cross. And as a cheer ends the far-end boy rises to bow to it, so go at the cheered stop at
+ *  once, never dawdle. */
+export const HULA = { c0: 4, n: 8, drum: 1.3, holds: [0.8, 0.8, 2.0], bow: 1.4 };
+export const act17: Act = {
+  id: 'bbi07-hulahuli',
+  w: 16,
+  advice: 'The women on the far bank cheer some poses and stay silent for others. A silent bridge is too short to cross; a cheered one holds as long as the cheer. Go at once on a cheered stop: as the cheer ends the boy at the far end rises to bow.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + HULA.c0, c.x + HULA.c0 + HULA.n - 1);
+  },
+  build: (w, c) => {
+    const st = { t0: -1 };
+    onPass(w, c.X(HULA.c0 - 2.5), (w2) => (st.t0 = w2.tick));
+    stagePit(w, c.x + HULA.c0, c.x + HULA.c0 + HULA.n - 1);
+    const cfg: TroupeCfg = { c0: c.x + HULA.c0, n: HULA.n, drum: HULA.drum, hold: 1, holds: HULA.holds, poses: ['bridge', 'bridge', 'bridge'], form: 0.25 };
+    const { st: ts } = troupe(w, cfg, () => st.t0, 'bbi7hh');
+    const cheered = () => ts.pose === 'bridge' && HULA.holds[((ts.stops - 1) % 3 + 3) % 3] > 1;
+    // the far-end boy bows to the end of the cheer: whoever is still at that end is kicked off
+    w.add(
+      new Rig(c.X(HULA.c0 + HULA.n - 1), FL - 24, 16, 24, {
+        cause: 'bbi-kick',
+        inset: 2,
+        layer: 4,
+        live: () => cheered() && ts.into > HULA.bow,
+        paint: (ctx, r) => {
+          if (cheered() && ts.into > HULA.bow) folk(ctx, r.x + 8, FL, 22, '#F4A261', { skirt: '#E63946', face: -1, arm: 1.0 });
+        },
+      }),
+    );
+    // the women on the far bank: hands up while they cheer
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: -1,
+        paint: (ctx) => {
+          for (let i = 0; i < 3; i++) folk(ctx, c.X(HULA.c0 + HULA.n + 1) + i * 12, FL, 22, '#C68642', { skirt: ['#E63946', '#2A9D8F', '#F4D35E'][i], face: -1, arm: cheered() ? -1.3 : 0.4 });
+        },
+      }),
+    );
+  },
+};
 
 /** ending: the last pose is a gate over the door; between poses the troupe whirls across the doorway */
 export const T07e: TroupeCfg = { c0: 0, n: 4, drum: 1.6, hold: 1.6, poses: ['gate'], form: 0.3, ground: true };
