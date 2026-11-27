@@ -16,13 +16,13 @@ import { s10, meta10 } from './s10';
 
 export const levels = (): LevelDef[] => [
   s01(),
-  longStage({ base: s02.room(), acts: s02.acts, twist: 'lko-kiwad', par: 28, shape: 'short', meta: meta02 }),
-  longStage({ base: s03.room(), acts: s03.acts, twist: 'lko-balti', par: 26, shape: 'short', meta: meta03 }),
-  longStage({ base: s04.room(), acts: s04.acts, twist: 'lko-kulhad', par: 33, shape: 'short', meta: meta04 }),
-  longStage({ base: s05.room(), acts: s05.acts, twist: 'lko-sheermal', par: 49, shape: 'long', lives: 'act', meta: meta05 }),
-  longStage({ base: s06.room(), acts: s06.acts, twist: 'lko-sam', par: 43, shape: 'long', lives: 'act', meta: meta06 }),
-  longStage({ base: s07.room(), acts: s07.acts, twist: 'lko-darban', par: 90, shape: 'marathon', lives: 'act', meta: meta07 }),
-  longStage({ base: s08.room(), acts: s08.acts, twist: 'lko-489', par: 31, shape: 'wtf', lives: 'act', meta: meta08 }),
+  longStage({ base: s02.room(), acts: s02.acts, twist: 'lko-kiwad', par: 33, shape: 'short', meta: meta02 }),
+  longStage({ base: s03.room(), acts: s03.acts, twist: 'lko-balti', par: 33, shape: 'short', meta: meta03 }),
+  longStage({ base: s04.room(), acts: s04.acts, twist: 'lko-kulhad', par: 34, shape: 'short', meta: meta04 }),
+  longStage({ base: s05.room(), acts: s05.acts, twist: 'lko-sheermal', par: 46, shape: 'long', lives: 'act', meta: meta05 }),
+  longStage({ base: s06.room(), acts: s06.acts, twist: 'lko-sam', par: 42, shape: 'long', lives: 'act', meta: meta06 }),
+  longStage({ base: s07.room(), acts: s07.acts, twist: 'lko-darban', par: 66, shape: 'marathon', lives: 'act', meta: meta07 }),
+  longStage({ base: s08.room(), acts: s08.acts, twist: 'lko-489', par: 35, shape: 'wtf', lives: 'act', meta: meta08 }),
   longStage({ base: s09.room(), acts: s09.acts, twist: 'lko-chhatri', par: 61, shape: 'long', lives: 'act', cps: [8.2, 20.3], meta: meta09 }),
-  longStage({ base: s10.room(), acts: s10.acts, twist: 'lko-tehzeeb', par: 69, shape: 'long', lives: 'act', meta: meta10 }),
+  longStage({ base: s10.room(), acts: s10.acts, twist: 'lko-tehzeeb', par: 60, shape: 'long', lives: 'act', meta: meta10 }),
 ];
