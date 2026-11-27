@@ -123,8 +123,8 @@ export function room(): LevelDef {
 export const act: Act = {
   id: 'shl05-ar',
   w: 34,
+  cps: [16],
   advice: 'Two more sisters. The first keeps the same time as the one before. The second never goes dry: full, thinning, the mark, and full again. Thinning is not the mark: wait for the sheet to start at the white line, then cross.',
-  cps: [14],
   paint: () => {},
   build: (w, c) => {
     const falls = w.flags.shl5 as Fall[];
@@ -143,8 +143,9 @@ export const actBasin: Act = {
   paint: () => {},
   build: (w, c) => {
     const falls = w.flags.shl5 as Fall[];
-    const a = fall(w, falls, c.x + 6, { strong: 1.6, fade: 0.8, mark: 1.6, dry: 0.3, phase: 0.4 });
-    const b = fall(w, falls, c.x + 14, { strong: 1.4, fade: 0.9, mark: 1.5, dry: 0.3, phase: 2.0 });
+    // the two sisters keep the same time, a little apart: both sit on their marks together for 1.3 s of every 4.6
+    const a = fall(w, falls, c.x + 6, { strong: 1.6, fade: 0.8, mark: 1.9, dry: 0.3, phase: 0.4 });
+    const b = fall(w, falls, c.x + 14, { strong: 1.6, fade: 0.8, mark: 1.9, dry: 0.3, phase: 1.0 });
     const flooded = (w2: World) => ['strong', 'fade'].includes(a.at(w2).k) || ['strong', 'fade'].includes(b.at(w2).k);
     w.flags.shl5p = { x0: px(c.x + 9), x1: px(c.x + 14), flooded };
     w.add(

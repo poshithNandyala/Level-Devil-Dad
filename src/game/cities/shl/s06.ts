@@ -13,7 +13,7 @@ import { Rig, box, perTick } from './entities';
 import { taraScript, FL } from './common';
 import { lines as L } from './lines';
 
-export const GROW = { secs: 5.0, speed: 0 };
+export const GROW = { secs: 3.5, speed: 0 };
 
 export interface RootSet {
   /** index of the guide chosen (-1 none) */
@@ -149,7 +149,7 @@ export function room(): LevelDef {
       const when = (i: number) => () => (set.chosen === i ? set.t0 : -1);
       set.roots.push(root(w, px(13), FL, px(12), GROW.secs, when(0)));
       set.roots.push(root(w, px(13), FL, px(12), GROW.secs, when(1), { stopAt: 0.55 }));
-      set.roots.push(root(w, px(6), FL - 32, px(22), GROW.secs + 1, when(2)));
+      set.roots.push(root(w, px(6), FL - 32, px(22), GROW.secs + 0.5, when(2)));
       guide(w, set, 0, 8.5, 'short');
       guide(w, set, 1, 10.4, 'mid');
       // the long guide hangs over the rock: reachable only from up there
@@ -217,7 +217,7 @@ export const act: Act = {
         },
       }),
     );
-    root(w, px(c.x + 6), FL, px(14), 5.0, () => st.t0);
+    root(w, px(c.x + 6), FL, px(14), 3.5, () => st.t0);
     sign(w, c.x + 1, 10.4, 3, 'ALIVE', 'shop', null, 'it grows while you stand');
   },
 };
@@ -283,7 +283,7 @@ export const ending: Ending = {
     w.flags.shl6e = set;
     w.flags.twist = 'rootdoor';
     gorge(w, D - 10, D - 2);
-    set.roots.push(root(w, px(D - 10), FL, px(9), 4.5, () => (set.chosen === 0 ? set.t0 : -1)));
+    set.roots.push(root(w, px(D - 10), FL, px(9), 3.0, () => (set.chosen === 0 ? set.t0 : -1)));
     guide(w, set, 0, D - 12, 'door');
   },
 };

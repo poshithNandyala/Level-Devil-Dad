@@ -251,7 +251,7 @@ const room06 = (): Step[] => [
 ];
 const act06 = (x: number): Step[] => [
   { hold: 'R', until: X(x + 3.8), max: 600, note: 'on to the old root’s tip' },
-  { hold: '', until: and(ground, (w) => (w.flags.shl6a as { t0: number }).t0 >= 0 && rootFull('shl6', 0, 0)(w) && w.tick - (w.flags.shl6a as { t0: number }).t0 >= 5.1 * 120), max: 1500, note: 'stand: it sprouts the next span' },
+  { hold: '', until: and(ground, (w) => (w.flags.shl6a as { t0: number }).t0 >= 0 && rootFull('shl6', 0, 0)(w) && w.tick - (w.flags.shl6a as { t0: number }).t0 >= 3.6 * 120), max: 1500, note: 'stand: it sprouts the next span' },
   { hold: 'R', until: and(ground, X(x + 21)), max: 900 },
   { hold: 'R', until: X(x + 28), max: 400 },
 ];
@@ -360,7 +360,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     ], 'shl-um'),
     inAct('SHL-05', 'shl05-pung', 'cross the basin when the nearer sister is on her mark, never mind the far one', (x) => [
       { hold: 'R', until: X(x + 3), max: 600 },
-      { hold: '', until: (w) => { const f = (w.flags.shl5 as Fall[]).find((q) => q.c0 === x + 6)!.at(w); const g = (w.flags.shl5 as Fall[]).find((q) => q.c0 === x + 14)!.at(w); return f.k === 'mark' && f.left > 1.0 && g.k !== 'mark'; }, max: 3000 },
+      { hold: '', until: (w) => { const f = (w.flags.shl5 as Fall[]).find((q) => q.c0 === x + 6)!.at(w); const g = (w.flags.shl5 as Fall[]).find((q) => q.c0 === x + 14)!.at(w); return f.k === 'mark' && g.k !== 'mark'; }, max: 3000 },
       { hold: 'R', until: done, max: 900 },
     ], 'shl-pung'),
   ],
