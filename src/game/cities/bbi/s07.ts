@@ -488,6 +488,82 @@ export const act11: Act = {
   },
 };
 
+/** act 12, the falling tower (pose-shapes family): this troupe never lies down as a bridge. Their tower stands
+ *  at the far end of the pit and, on the drum's stop, falls over towards you: the tower IS the bridge, and its
+ *  top lands on the edge you were taught to wait at. A2: wait back from the edge. A3: not too far back: it
+ *  stands up again quickly, and from further back you're still on it. */
+export const PADA = { c0: 7, n: 7, drum: 1.4, stand: 0.8, fall: 0.35, lie: 1.45, rise: 0.3, reach: 1.5 };
+export const act12: Act = {
+  id: 'bbi07-pada',
+  w: 18,
+  advice: 'This troupe never lies down: their tower stands at the far end and falls over towards you as the bridge, and its top lands right where you’d wait at the edge. Wait a little way back, by the scuffs, and go the moment it lands: it stands up again soon.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + PADA.c0, c.x + PADA.c0 + PADA.n - 1);
+  },
+  build: (w, c) => {
+    const st = { t0: -1, phase: 'drum' as 'drum' | 'stand' | 'fall' | 'lie' | 'rise', into: 0 };
+    w.flags.bbi7pd = st;
+    onPass(w, c.X(0.5), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
+    stagePit(w, c.x + PADA.c0, c.x + PADA.c0 + PADA.n - 1);
+    const per = PADA.drum + PADA.stand + PADA.fall + PADA.lie + PADA.rise;
+    const near = c.X(PADA.c0 - PADA.reach);
+    const far = c.X(PADA.c0 + PADA.n) + 8;
+    const bridge = w.add(new Rig(near, FL, far - near, 6, { solid: true, layer: 3 }));
+    bridge.setSolid(false);
+    w.add(
+      new Rig(near, FL - 30, c.X(PADA.c0) - near, 30, {
+        cause: 'bbi-pada',
+        inset: 2,
+        layer: 4,
+        live: () => st.phase === 'fall' && st.into > PADA.fall * 0.5,
+        tick: (_r, w2) => {
+          if (st.t0 < 0) return;
+          let t = since(w2, st.t0) % per;
+          const was = st.phase;
+          const seq: [typeof st.phase, number][] = [['drum', PADA.drum], ['stand', PADA.stand], ['fall', PADA.fall], ['lie', PADA.lie], ['rise', PADA.rise]];
+          for (const [ph, d] of seq) {
+            if (t < d) { st.phase = ph; st.into = t; break; }
+            t -= d;
+          }
+          if (was === 'lie' && st.phase !== 'lie' && bridge.rides(w2)) {
+            const p = w2.player;
+            p.vy = -240;
+            p.vx = -50;
+            p.onGround = false;
+            p.coyoteT = 0;
+            p.launched = true;
+            p.stun = 48;
+            w2.flags.bbiThrown = 1;
+          }
+          bridge.setSolid(st.phase === 'lie');
+        },
+        paint: (ctx) => {
+          // scuffs on the bank where the top lands
+          box(ctx, near, FL - 1, c.X(PADA.c0) - near, 1, '#6E4A2E');
+          const H = far - near;
+          const dancersAt = (ang: number) => {
+            // the tower pivots on its base at the far end: ang 0 upright, PI/2 lying towards you
+            for (let i = 0; i < 7; i++) {
+              const d = (i + 0.5) * (H / 7);
+              const x = far - 8 - Math.sin(ang) * d;
+              const y = FL - Math.cos(ang) * d;
+              box(ctx, x - 5, y - 5, 10, 10, SKIRT[i % SKIRT.length]);
+              box(ctx, x - 2, y - 8, 4, 3, '#B07A4E');
+            }
+          };
+          if (st.t0 < 0 || st.phase === 'drum') {
+            for (let i = 0; i < 4; i++) box(ctx, far - 30 + i * 9 + Math.sin(st.into * 6 + i) * 4, FL + 2, 7, 12, SKIRT[i % SKIRT.length]);
+          } else if (st.phase === 'stand') dancersAt(0);
+          else if (st.phase === 'fall') dancersAt((Math.PI / 2) * Math.min(1, st.into / PADA.fall));
+          else if (st.phase === 'lie') dancersAt(Math.PI / 2);
+          else dancersAt((Math.PI / 2) * (1 - st.into / PADA.rise));
+        },
+      }),
+    );
+  },
+};
+
 /** ending: the last pose is a gate over the door; between poses the troupe whirls across the doorway */
 export const T07e: TroupeCfg = { c0: 0, n: 4, drum: 1.6, hold: 1.6, poses: ['gate'], form: 0.3, ground: true };
 export const ending: Ending = {
