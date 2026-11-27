@@ -90,13 +90,13 @@ export const act1: Act = {
 /** act 2: a quiet loom (the weaver is away, no shuttle: the plain beat), then the troupe turned round (law 7):
  *  this drummer plays while they hold the pose and stops while they whirl, so going at the drum's stop, as the
  *  Raja night taught, is going into the whirl. */
-export const L10: LoomCfg = { c0: 3, n: 7, speeds: [3, 1, 4, 2, 4, 1, 3], beat: 0.85, hold: 2.0, shuttle: [] };
+export const L10: LoomCfg = { c0: 3, n: 6, speeds: [3, 1, 4, 2, 4, 1], beat: 0.85, hold: 2.0, shuttle: [] };
 export const T10: TroupeCfg = { c0: 14, n: 9, drum: 1.4, hold: 1.5, poses: ['wheel', 'tower', 'bridge'], form: 0.3, rev: true };
 export const act2: Act = {
   id: 'bbi10-tana',
   w: 28,
   advice: 'The weaver is away: no shuttle today, cross on the motif. Then this drummer plays while his troupe holds the pose: go when the bridge forms, never at his stop.',
-  cps: [],
+  cps: [9.4],
   paint: (g, c) => {
     g.pit(c.x + L10.c0, c.x + L10.c0 + L10.n - 1).pit(c.x + T10.c0, c.x + T10.c0 + T10.n - 1);
   },

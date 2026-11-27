@@ -275,7 +275,7 @@ export const act2: Act = {
   id: 'bbi07-bandha',
   w: 34,
   advice: 'A long pit: its bridge only just lasts the walk, so be at the edge when the drum stops and go straight over. Then a high bank: only the wheel pose is tall enough. Jump on to its top when it forms and up to the bank before the drum.',
-  cps: [],
+  cps: [14.3],
   paint: (g, c) => {
     g.pit(c.x + T07b1.c0, c.x + T07b1.c0 + T07b1.n - 1).pit(c.x + T07b2.c0, c.x + T07b2.c0 + T07b2.n - 1);
     g.fill(c.x + T07b2.c0 + T07b2.n, c.x + 33, 11, 14, '#');
