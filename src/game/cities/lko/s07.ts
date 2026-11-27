@@ -591,6 +591,63 @@ export const photo: Act = {
   },
 };
 
+// ================================================================ act: chhidkav, the evening sprinkle
+/** At dusk the shop boys fling a bucket of water along the pavement to settle the dust, from their door
+ *  towards the next arcade pillar, and the pillar stops it. Shelter on the pillar's far side from the boy:
+ *  at the first two shops he stands past the pillar, at the third he stands before it. */
+const CHHIDKAV = [
+  { p: 8, boy: 11 },
+  { p: 18, boy: 21 },
+  { p: 28, boy: 25 },
+];
+const SPRINKLE = { period: 420, from: 290 };
+export const chhidkav: Act = {
+  id: 'lko07-chhidkav',
+  w: 36,
+  cps: [13.5, 22, 31.5],
+  advice: 'At dusk the shop boys fling a bucket of water along the pavement, from their door towards the next pillar, and the pillar stops it. Wait on the pillar’s far side from the boy, and cross the wet stretch just after a throw. The third boy stands before his pillar, not after it.',
+  paint: (g, c) => {
+    for (const s of CHHIDKAV) g.fill(c.x + s.p, c.x + s.p, 13, 14, '#');
+  },
+  build: (w, c) => {
+    const x = c.x;
+    arcade(w, x, x + 35);
+    CHHIDKAV.forEach((s, i) => {
+      const S = { t0: -1 };
+      const ph = (w2: World) => (S.t0 < 0 ? -1 : (w2.tick - S.t0) % SPRINKLE.period);
+      w.flags[c.f('s' + i)] = ph;
+      const right = s.boy > s.p;
+      const a = right ? c.X(s.p + 1) : c.X(s.boy + 1),
+        b = right ? c.X(s.boy) : c.X(s.p);
+      const z = w.add(new Zone(a, FLOOR - 30, b - a, 30, right ? 'lko-chhidkav' : 'lko-chhidkav-ulta'));
+      z.on = false;
+      w.add(
+        new Art((ctx, w2) => {
+          const p = ph(w2);
+          const lift = p >= SPRINKLE.from - 40 && p < SPRINKLE.from;
+          gent(ctx, c.X(s.boy) + 8, FLOOR, 22, KURTA[(i + 3) % KURTA.length], { face: right ? -1 : 1, arms: lift || z.on ? 1 : 0.2 });
+          // his bucket, and the sheet of water while it flies
+          ctx.fillStyle = '#90A4AE';
+          ctx.fillRect(c.X(s.boy) + (right ? -2 : 12), FLOOR - (lift ? 22 : 8), 7, 7);
+          if (z.on) {
+            ctx.fillStyle = 'rgba(144,202,249,0.55)';
+            ctx.fillRect(a, FLOOR - 26, b - a, 22);
+          }
+          // a wet sheen on the stones where the water falls
+          ctx.fillStyle = 'rgba(90,120,150,0.25)';
+          ctx.fillRect(a, FLOOR - 2, b - a, 2);
+        }, 3),
+      );
+      w.onTick((w2) => {
+        if (S.t0 < 0 && w2.player.cx > c.X(Math.min(s.p, s.boy) - 6)) S.t0 = w2.tick;
+        z.on = ph(w2) >= SPRINKLE.from;
+      });
+    });
+    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Zehmat na kijiye. | Please don’t trouble yourself.', 2.2));
+    sign(w, x + 0.4, 10.4, 3.4, 'CHHIDKAV', 'shop', null, 'ganj');
+  },
+};
+
 // ================================================================ act 6: kohra, the fog
 /** A winter fog rolls up the Ganj from behind, slower than a stroll. Inside it the nalas can't be seen.
  *  Gentlemen on their chabutras greet you as you pass ("Aadaab"): stop to return it, as 02 taught, and
@@ -666,5 +723,5 @@ export const kohra: Act = {
   },
 };
 
-export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, photo, kohra, chowk] };
+export const s07 = { room: ganjRoom, acts: [shaam, batti, julus, chhidkav, photo, kohra, chowk] };
 export const meta07 = { family: 'pace-sets-crowd-shape', betrayals: ['pace-crowd', 'ladder-block'], ending: 'lko-darban' } as StageMeta;

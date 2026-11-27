@@ -50,6 +50,8 @@ export const causeLines: Record<string, string[]> = {
   'lko-kohra': ['You stopped to return a greeting, and the fog caught you: the next nala was hidden in it.', 'In the fog, greetings wait: stroll on past them.'],
   'lko-seeti': ['Your own flyer whistled: the flock came down on the near roof, whatever the flag said.', 'Watch who lifts his whistle; wait on the tank roof, where neither calls them.'],
   'lko-seeti-jawab': ['The rival whistled back: the flock came down on the far roof as you crossed it.', 'Wait on the tank roof till the rival has called them, then go.'],
+  'lko-chhidkav': ['A bucket of water full on, and you slipped: the boy throws from his door to the pillar.', 'Wait on the far side of the pillar from the boy, and cross just after a throw.'],
+  'lko-chhidkav-ulta': ['The third boy stands before his pillar: you were sheltering on the wet side.', 'Read where the boy stands: shelter on the pillar’s other side from him.'],
   'lko-hawa': ['The birds read the other face of the flag: you saw red, they saw white.', 'Here, go while YOU see white: the curl at the flag’s tip shows their colour.'],
   'lko-gumbad': ['The dome was a different size from where you jumped: too high, or shrunk into the pool.', 'Stand on the red paving line in front of it, and jump from there.'],
   'lko-mehfil': ['She spins the whole stage end to end, and you were on her floor.', 'Wait on a takht till she has spun past beneath you, going away, then cross to the next.'],
