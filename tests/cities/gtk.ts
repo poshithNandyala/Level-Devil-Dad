@@ -285,6 +285,12 @@ const act07n = (x: number): Step[] => [
   { hold: '', until: (w) => paani(w).over, max: 600, note: 'till it stops' },
   { policy: gapJumper(), until: X(x + 29.5), max: 900, note: 'on, over the gap where the stall was' },
 ];
+const storm = (w: World) => { const st = w.flags.gtk7b2 as { t0: number }; return st.t0 < 0 ? -1 : (w.tick - st.t0) / 120; };
+const act07o = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 4), max: 600, note: 'into the shelter' },
+  { hold: '', until: (w) => storm(w) >= 4.8, max: 900, note: 'count each flash: the third runs long' },
+  { policy: gapJumper(), until: X(x + 21.5), max: 900, note: 'cross the ridge, jump where the rope stops' },
+];
 const act03 = (x: number): Step[] => [{ policy: bagHop('gtk3a'), until: and(ground, X(x + 26)), max: 2400, note: 'cloth to cloth, ahead of the inspector' }, { hold: 'R', until: X(x + 30), max: 300 }];
 /** the jhola stall: jump up for the bag on the hook, then in */
 const jholaPolicy: Policy = (w, _m, d) => {
@@ -1041,6 +1047,8 @@ function actDeaths() {
   actDeath('GTK-07', room07(), 'gtk07-ghanti', 'stand and wait for the bells to come to you', (x) => [{ hold: 'R', until: X(x + 3), max: 600 }, { hold: '', until: done, max: 1800 }], 'gtk-khachar');
   actDeath('GTK-07', room07(), 'gtk07-paani', 'run for the tea-stall awning', (x) => [{ hold: 'R', until: X(x + 3.5), max: 600 }, { hold: '', until: (w) => paani(w).raining, max: 600 }, { hold: 'R', until: done, max: 600 }], 'gtk-khaai');
   actDeath('GTK-07', room07(), 'gtk07-paani', 'stand still in the open till it passes', (x) => [{ hold: 'R', until: X(x + 3.5), max: 600 }, { hold: '', until: done, max: 900 }], 'gtk-chiplo');
+  actDeath('GTK-07', room07(), 'gtk07-bijuli', 'it has just struck: go now', (x) => [{ hold: 'R', until: X(x + 4), max: 600 }, { hold: '', until: (w) => storm(w) >= 0.75, max: 600 }, { policy: gapJumper(), until: done, max: 900 }], 'gtk-bijuli');
+  actDeath('GTK-07', room07(), 'gtk07-bijuli', 'shelter till the storm has passed', (x) => [{ hold: 'R', until: X(x + 4), max: 600 }, { hold: '', until: done, max: 1200 }], 'gtk-badal');
   actDeath('GTK-03', r3, 'gtk03-kalam', 'wait till he’s done, then go', () => [{ policy: bagHop('gtk3k', { every: true, gate: kalamGate(1, 'wrote') }), until: done, max: 3000 }], 'gtk-jhora');
   actDeath('GTK-03', r3, 'gtk03-kalam', 'on to the bag in front of him, and wait there for him to finish', () => [{ policy: bagHop('gtk3k', { every: true, gate: kalamGate(2, 'wrote') }), until: done, max: 3000 }], 'gtk-polythene');
   actDeath('GTK-03', r3, 'gtk03-ulto', 'on to every bag', () => [{ policy: bagHop('gtk3b', { every: true, dwell: 0.3 }), until: done, max: 3000 }], 'gtk-polythene');
@@ -1162,6 +1170,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'gtk03-kalam': act03e,
   'gtk07-ghanti': act07m,
   'gtk07-paani': act07n,
+  'gtk07-bijuli': act07o,
   'gtk03-jaldi': (x: number): Step[] => [{ policy: bagHop('gtk3c'), until: and(ground, X(x + 26)), max: 2400, note: 'no stopping, ahead of him' }, { hold: 'R', until: X(x + 30), max: 300 }],
   'gtk04-ghar': act04,
   'gtk04-upar': act04b,

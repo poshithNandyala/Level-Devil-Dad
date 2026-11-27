@@ -442,6 +442,86 @@ export const act14: Act = {
   },
 };
 
+/** F488 count-flash-to-thunder: a storm over the open ridge. Count from the flash to the thunder: while it is
+ *  short the storm is overhead and the next bolt hits the ridge; when a count runs long, cross. Wait for the
+ *  storm to pass altogether and the cloud comes down on the shelter, which stands on the kerb's edge */
+export const BIJULI = { flashes: [[0.3, 0.4], [1.4, 0.6], [3.8, 3.0]] as [number, number][], strike: 1.5, cloud: 6.2, ridge: [8, 15] as [number, number], gap: [11, 12] as [number, number] };
+export const act15: Act = {
+  id: 'gtk07-bijuli',
+  w: 22,
+  advice: 'A storm over the open ridge. From the shelter, count from each flash to its thunder: while the count is short the storm is overhead, and the next bolt hits the ridge. When a count runs long, cross, and jump where the rope stops. Don’t wait for it all to pass: the cloud comes down after it, and the shelter stands on the kerb.',
+  paint: (g, c) => {
+    g.pit(c.x + BIJULI.gap[0], c.x + BIJULI.gap[1]);
+  },
+  build: (w, c) => {
+    const st = { t0: -1, flash: -99, struck: -99, cloud: false };
+    w.flags.gtk7b2 = st;
+    onPass(w, c.X(3), (w2) => {
+      if (st.t0 < 0) st.t0 = w2.tick;
+    });
+    const R0 = c.X(BIJULI.ridge[0]),
+      R1 = c.X(BIJULI.ridge[1] + 1);
+    drops(w, [[c.x + BIJULI.gap[0], c.x + BIJULI.gap[1]]], 'gtk-badal');
+    rope(w, c.x + 6, c.x + 21, [[c.x + BIJULI.gap[0], c.x + BIJULI.gap[1]]]);
+    const cl: Cloud = { t0: -1, thick: 999, clear: 0, roll: 200 };
+    fog(w, c.x + 1, c.x + 21, cl);
+    w.add(
+      new Rig(c.X(0), 0, px(22), FL, {
+        layer: 4,
+        tick: (_r, w2) => {
+          if (st.t0 < 0) return;
+          const u = (w2.tick - st.t0) / 120;
+          const p = w2.player;
+          for (const [f, n] of BIJULI.flashes) {
+            const k = w2.tick - st.t0;
+            if (k === Math.round(f * 120)) {
+              st.flash = w2.tick;
+              npc(w2, 'Flash! | Flash!', c.X(11), px(5), 0.5);
+            }
+            if (k === Math.round((f + n) * 120)) {
+              npc(w2, 'Rumble... | Rumble...', c.X(11), px(5), 0.8);
+              // a short count: the storm is overhead and the bolt comes down on the ridge
+              if (n < BIJULI.strike) {
+                st.struck = w2.tick;
+                if (p.x + p.w > R0 && p.x < R1 && w2.state === 'play') w2.die('gtk-bijuli');
+              }
+            }
+          }
+          if (u >= BIJULI.cloud && cl.t0 < 0) cl.t0 = w2.tick;
+          // the cloud on the kerb: the shelter's edge of road goes with it
+          if (u >= BIJULI.cloud + 0.1 && !st.cloud) {
+            st.cloud = true;
+            if (p.x < c.X(7) && p.onGround && w2.state === 'play') w2.die('gtk-badal');
+          }
+        },
+        paint: (ctx, r, w2) => {
+          if (w2.tick - st.flash < 8) {
+            ctx.fillStyle = 'rgba(255,255,255,0.55)';
+            ctx.fillRect(r.x, r.y, r.w, r.h);
+          }
+          if (w2.tick - st.struck < 10) {
+            ctx.strokeStyle = '#FFF6C8';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(c.X(12), 0);
+            ctx.lineTo(c.X(10.5), FL - 120);
+            ctx.lineTo(c.X(12.5), FL - 60);
+            ctx.lineTo(c.X(11), FL);
+            ctx.stroke();
+          }
+        },
+      }),
+    );
+    // the shelter: a tin roof on posts at the very edge of the road
+    decor(w, 1, (ctx) => {
+      box(ctx, c.X(1), FL - 40, px(6), 4, '#8C8C84');
+      box(ctx, c.X(1), FL - 36, 3, 36, '#5E5A50');
+      box(ctx, c.X(7) - 3, FL - 36, 3, 36, '#5E5A50');
+    });
+    sign(w, c.x + 8, 8.6, 3.6, 'RIDGE ROAD', 'green', null, 'open');
+  },
+};
+
 /** door: up the hillside in thick cloud; the rope's posts climb with the hidden steps, the only guide to them */
 export const ending: Ending = {
   space: 12,
