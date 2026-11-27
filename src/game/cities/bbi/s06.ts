@@ -30,6 +30,8 @@ export interface LoomCfg {
   rise?: number;
   /** the beater sweeps the warp at the end of the motif beat: be off the threads before it */
   reed?: boolean;
+  /** threads (by index) left undyed: no patch at all, a hole in the motif */
+  blank?: number[];
 }
 
 /** where in the loom's cycle the time t (s since it started) falls: the beat number and seconds into it */
@@ -89,6 +91,10 @@ export function loom(w: World, cfg: LoomCfg, t0: () => number, key: string) {
           solid: true,
           layer: 3,
           tick: (r, w2) => {
+            if (cfg.blank?.includes(k)) {
+              r.setSolid(false);
+              return;
+            }
             if (st.b < 0) {
               r.setSolid(level(s, 0) !== 4);
               return;
@@ -382,6 +388,30 @@ export const act10: Act = {
       }),
     );
     sign(w, c.x + 18, 15 - SARI.top - 4.6, 3.2, 'SAMBALPURI', 'shop', null, 'D');
+  },
+};
+
+/** act 11, the undyed thread (loom family): one warp thread here was never tied and dyed, so it carries no
+ *  patch: the motif lines up with a hole in it. A2: the shuttle still goes first. A3: and then the hole, which
+ *  only shows once the bridge is there: hop it. */
+export const L06Z: LoomCfg = { c0: 3, n: 9, speeds: [3, 1, 4, 2, 1, 3, 2, 4, 1], beat: 0.8, hold: 2.8, shuttle: [[0, -1]], blank: [4, 5] };
+export const act11: Act = {
+  id: 'bbi06-sutra',
+  w: 17,
+  advice: 'Two threads on this loom were never dyed: when the motif lines up there’s a hole in it, two threads wide. Let the shuttle go by first, as ever, then walk out and hop the hole.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + L06Z.c0, c.x + L06Z.c0 + L06Z.n - 1);
+  },
+  build: (w, c) => {
+    const st = { t0: -1 };
+    w.flags.bbi6ut = st;
+    onPass(w, c.X(0.5), (w2) => (st.t0 = w2.tick));
+    const h = c.x + L06Z.c0 + L06Z.blank![0];
+    channel(w, c.x + L06Z.c0, h - 1, 'bbi-ranga', 'water');
+    channel(w, h, h + 1, 'bbi-sutra', 'water');
+    channel(w, h + 2, c.x + L06Z.c0 + L06Z.n - 1, 'bbi-ranga', 'water');
+    loom(w, { ...L06Z, c0: c.x + L06Z.c0 }, () => st.t0, 'bbi6z');
   },
 };
 
