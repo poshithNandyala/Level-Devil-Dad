@@ -185,12 +185,12 @@ export const pozhikkara: Act = {
  *  it, and soaked ground holds a walker and breaks under a hop. Walk it. */
 export const theeram: Act = {
   id: 'tvm10-theeram',
-  w: 36,
-  cps: [23.6, 28.6],
+  w: 38,
+  cps: [23.6, 30.4],
   advice: 'On the shore the lifeguard runs the flags far on, and between you and them lies dark, soaked sand. It is not the rip: soaked ground holds a walker and gives way under a hop. Walk across it to the flags, and back across it when he brings them back. The last time he plants them on the soaked sand itself: stand there, it holds you.',
   paint: (g, c) => {
     const x = c.x;
-    g.fill(x, x + 2, 14, 14, '#').fill(x + 33, x + 35, 14, 14, '#').fill(x + 11, x + 18, 15, 17, c.L[0]);
+    g.fill(x, x + 2, 14, 14, '#').fill(x + 35, x + 37, 14, 14, '#').fill(x + 11, x + 18, 15, 17, c.L[0]);
   },
   build: (w, c) => {
     const x = c.x;
@@ -198,12 +198,12 @@ export const theeram: Act = {
       new Surf({
         name: 'theeram',
         x0: x + 3,
-        x1: x + 33,
+        x1: x + 35,
         strip: x + 6,
         waves: [
           { at: x + 7, moves: [{ to: x + 20, sec: 1.4 }], inAt: 3.0, inFor: 2.6 },
           { at: x + 27.5, moves: [{ to: x + 6, sec: 1.6 }], inAt: 3.2, inFor: 2.6 },
-          { at: x + 32.2, moves: [{ to: x + 13, sec: 1.4 }], inAt: 3.0, inFor: 2.6 },
+          { at: x + 34.2, moves: [{ to: x + 13, sec: 1.4 }], inAt: 3.2, inFor: 2.6 },
         ],
       }),
     );
@@ -225,7 +225,7 @@ export const theeram: Act = {
 export const chanda: Act = {
   id: 'tvm10-chanda',
   w: 30,
-  cps: [3.5],
+  cps: [3.0],
   advice: 'At Chalai market the fish ice over the drain moves twice again: wait for the yank, then a long jump on to it. Past it there is oil and a kindi: jump both from the ice.',
   paint: (g, c) => {
     const x = c.x;

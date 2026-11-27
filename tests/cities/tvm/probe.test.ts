@@ -219,3 +219,27 @@ it.runIf(!!process.env.LDD_TVMPROBE)('probe6', () => {
   console.log(out.join('\n'));
 }, 1800000);
 
+// probe7 (static): for every checkpoint, the distance to the next wave / tarp / ice / rocket trigger ahead of it
+it.runIf(!!process.env.LDD_TVMPROBE)('probe7', () => {
+  const out: string[] = [];
+  for (const id of (process.env.LDD_IDS ?? 'TVM-09,TVM-10').split(',')) {
+    const def = LEVELS.find((l) => l.id === id)!;
+    const w = new World(def, INFO);
+    def.build?.(w);
+    const trig: [number, string][] = [];
+    for (const e of w.entities as any[]) {
+      if (e.waves) for (const [i, v] of e.waves.entries()) if (v.at !== undefined) trig.push([v.at * 16, `${e.name} wave ${i}`]);
+      if (e.trigger !== undefined && e.dropX0 !== undefined) trig.push([e.trigger, 'tarp']);
+      if (e.trigger !== undefined && e.x0 !== undefined && e.solid && !e.dropX0) trig.push([e.trigger, 'ice']);
+    }
+    const near: string[] = [];
+    for (const c of w.checkpoints) {
+      const ahead = trig.filter(([t]) => t >= c).sort((a, b) => a[0] - b[0])[0];
+      const behind = trig.filter(([t]) => t < c && c - t < 3.5 * 16);
+      if (ahead && ahead[0] - c < 3.5 * 16) near.push(`cp x${(c / 16).toFixed(1)}: ${((ahead[0] - c) / 16).toFixed(1)} tiles before ${ahead[1]}`);
+      for (const [t, n] of behind) near.push(`cp x${(c / 16).toFixed(1)}: ${((c - t) / 16).toFixed(1)} tiles past ${n}`);
+    }
+    out.push(`${id}: ${w.checkpoints.length} checkpoints, ${trig.length} triggers; closer than 3.5 tiles: ${near.length ? near.join('; ') : 'none'}`);
+  }
+  console.log(out.join('\n'));
+});
