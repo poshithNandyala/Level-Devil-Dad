@@ -400,6 +400,15 @@ export const aadaab: Act = {
           drawWho(ctx, G);
         }, 3),
       );
+      w.add(
+        new Art((ctx) => {
+          // the open drain in front of his door
+          ctx.fillStyle = '#3B3A36';
+          ctx.fillRect(c.X(n + 2), FLOOR, px(2), 48);
+          ctx.fillStyle = '#5B6B4E';
+          ctx.fillRect(c.X(n + 2), FLOOR + 30, px(2), 18);
+        }, -4),
+      );
       const pit = w.add(new Zone(c.X(n + 2) + 1, FLOOR + 16, px(2) - 2, 30, 'lko-aadaab'));
       const shove = (w2: World, cause: string) => {
         const p = w2.player;
