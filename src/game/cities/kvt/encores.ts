@@ -53,6 +53,8 @@ export class RubbleBank extends Entity {
     readonly rects: RubbleRect[],
     /** which way the lagoon is: -1 left (climbing a face), 1 right (coming down the other side) */
     readonly dir: -1 | 1 = -1,
+    /** loose shingle on a shelf: a slide that takes you off the edge keeps carrying you until you land */
+    readonly carry = false,
   ) {
     super();
     this.layer = 3;
@@ -62,8 +64,17 @@ export class RubbleBank extends Entity {
     const feet = Math.round(p.y + p.h);
     return this.rects.find((r) => feet === px(r.top) && p.x + p.w > px(r.c0) && p.x < px(r.c1 + 1));
   }
+  /** carried off the edge by the shingle: moving that way until you land */
+  private flying = 0;
   update(w: World) {
     const p = w.player;
+    if (this.flying) {
+      if (p.onGround || w.state !== 'play') this.flying = 0;
+      else {
+        p.moveX(w, 3 * this.flying);
+        p.vx = 0;
+      }
+    }
     if (this.slide > 0) {
       this.slide--;
       p.moveX(w, (this.avalanche ? 3 : 2) * (this.ridgeDir || this.dir));
@@ -72,6 +83,7 @@ export class RubbleBank extends Entity {
       if (this.slide % 3 === 0) this.dust.push({ x: p.cx, y: p.y + p.h, t: w.tick });
       // carried over the edge of the step: the rubble you brought down comes with you, all the way down
       if (this.slide === 0 && !p.onGround) this.avalanche = true;
+      if (this.slide === 0 && !p.onGround && this.carry) this.flying = this.ridgeDir || this.dir;
       if (this.slide === 0 && this.avalanche && p.onGround && this.on(w)) this.slide = 6;
     } else if (w.state === 'play' && p.onGround && !this.was && this.on(w)) {
       const r = this.on(w)!;
@@ -424,7 +436,40 @@ const ridge: Act = {
   },
 };
 
-export const kvt09 = { room: stormBankRoom, acts: [overhang, summit, seaWall, ridge, breaches].map(lead) };
+/** KVT-09 act (F496, the slide is the ride): a shelf of loose shingle under a low lip of beach rock, the next
+ *  ledge too far for a tap and the lip too low to leap under. Land short and let the shingle carry you: each
+ *  landing slides you a tile towards the edge, and the slide that takes you off it carries you on under the lip,
+ *  low and level, to the ledge's foot. Then a heap up on a rock pillar with a lip over the far gap: land on the
+ *  side of the heap you want to go, and it slides you off that side and carries you over. */
+const shingle: Act = {
+  id: 'kvt09-ozhukku',
+  w: 34,
+  advice: 'A shelf of loose shingle under a low lip of beach rock: a jump for the far ledge hits the lip, and walking off drops you in. Land short and let the shingle carry you: every landing slides you on, and the slide that takes you off the edge carries you under the lip. On the pillar after it, land on the side of the heap you want to go.',
+  paint: (g, c) => {
+    const x = c.x;
+    g.fill(x + 3, x + 4, 14, 17, '#');
+    g.fill(x + 5, x + 8, 12, 17, '#');
+    g.pit(x + 9, x + 12);
+    // the lip over the gap: an overhang of beach rock down from the cliff, jagged underneath, just over a standing dad's head
+    g.fill(x + 9, x + 13, 0, 9, '#').fill(x + 9, x + 13, 10, 10, 'v');
+    g.pit(x + 19, x + 19);
+    g.fill(x + 20, x + 22, 13, 17, '#');
+    g.pit(x + 23, x + 25);
+    g.fill(x + 24, x + 27, 0, 9, '#').fill(x + 24, x + 27, 10, 10, 'v');
+  },
+  build: (w, c) => {
+    const { X } = c;
+    pool(w, c.x + 9, c.x + 13, 15.3, { colors: LAGOON });
+    pool(w, c.x + 19, c.x + 20, 15.3, { colors: LAGOON });
+    pool(w, c.x + 23, c.x + 26, 15.3, { colors: LAGOON });
+    w.add(new RubbleBank([{ c0: c.x + 5, c1: c.x + 8, top: 12 }], 1, true));
+    w.add(new RubbleBank([{ c0: c.x + 20, c1: c.x + 22, top: 13, ridge: true }], 1, true));
+    sign(w, c.x + 0.4, G - 4.4, 3.4, 'OZHUKKU', 'warn', null, 'loose shingle');
+    onPass(w, X(3), (w2) => taraSays(w2, 'Aa paarayilekku chaadu! | Jump for that ledge!', 2.4));
+  },
+};
+
+export const kvt09 = { room: stormBankRoom, acts: [overhang, summit, seaWall, shingle, ridge, breaches].map(lead) };
 
 // ================================================================== KVT-10: the octopus
 const CORAL: Record<string, [string, string]> = {
@@ -1047,6 +1092,7 @@ const shadowSteps: Act = {
  *  planks at the end still go if you stand on them.) */
 const leavingBoat: Act = {
   id: 'kvt10-thoni',
+  cps: [26.5],
   w: 30,
   advice: 'This boat pulls out as you come and it is not coming back: run down the jetty and jump aboard while it is still close, ride it over, and step off at the far side.',
   paint: (g, c) => {

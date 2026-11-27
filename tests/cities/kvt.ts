@@ -487,6 +487,47 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ];
   },
 
+  'kvt09-ozhukku': (x) => {
+    /** on the ground and not moved for 6 ticks (the slide done) */
+    const settled = () => {
+      let w0: World | null = null,
+        lx = -1,
+        n = 0;
+      return (w: World) => {
+        if (w !== w0) [w0, lx, n] = [w, -1, 0];
+        n = w.player.onGround && w.player.x === lx ? n + 1 : 0;
+        lx = w.player.x;
+        return n >= 6;
+      };
+    };
+    return [
+      { hold: 'R', until: X(x + 2.3), max: 300, note: 'up on to the shingle, landing short' },
+      { hold: '', until: still, max: 60 },
+      { hold: 'R', jump: 12, ticks: 12 },
+      { hold: '', until: landed(), max: 200 },
+      { hold: '', until: still, max: 200 },
+      { hold: 'R', jump: 14, ticks: 22 },
+      { hold: '', until: landed(), max: 200 },
+      // hop on the spot: each landing slides you a tile on, and the last one carries you off under the lip
+      ...Array.from({ length: 4 }, (_, i): Step[] => [
+        { hold: '', until: settled(), max: 200, ...(i === 0 ? { note: 'hop on the spot: each landing slides you on' } : {}) },
+        { hold: '', jump: 6, ticks: 6 },
+        { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 },
+      ]).flat(),
+      { hold: '', until: (w) => w.player.onGround && w.player.x > px(x + 12), max: 200, note: 'carried under the lip to the ledge' },
+      { hold: 'R', until: X(x + 17.8), max: 200, note: 'land on the far side of the heap: it carries you over' },
+      { hold: 'R', jump: 30, ticks: 50, long: true },
+      { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 },
+      // the heap slides you to its far edge; a hop on the spot, and the next slide carries you off under the lip
+      ...Array.from({ length: 2 }, (): Step[] => [
+        { hold: '', until: ((f) => (w: World) => f(w) || w.player.x > px(x + 23))(settled()), max: 200 },
+        { hold: '', jump: 6, ticks: 6 },
+        { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 },
+      ]).flat(),
+      { hold: '', until: (w) => (w.player.onGround && w.player.x > px(x + 26)) || w.state !== 'play', max: 300 },
+      { hold: 'R', until: X(x + 33), max: 300 },
+    ];
+  },
   'kvt09-murivu': (x) => [
     { hold: 'R', until: X(x - 0.2), max: 200 },
     { hold: 'R', jump: 16, ticks: 16, long: true, note: 'up on to the breached crest' },
@@ -972,6 +1013,9 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
     { what: 'land deep on the first heap of the ridge, as on the bank', steps: [...upTo(S['KVT-09'], 'the middle of each heap: deep slides you off the far side'), { hold: '', until: still, max: 200 }, { hold: 'R', jump: 30, ticks: 44 }, { hold: '', until: ground, max: 200 }, dies], cause: 'splash' },
     { what: 'land on the one loose block in the second break, like the heap in the first', steps: [...upTo(S['KVT-09'], 'the second break: one loose block, jump it whole'), { hold: 'R', until: X(org('KVT-09', 'kvt09-kadalbhitti') + 34.3), max: 300 }, { hold: '', until: still, max: 60 }, { hold: 'R', jump: 8, ticks: 10 }, { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, dies], cause: 'splash' },
     { what: 'hop down the far side of the summit, as Tara says', steps: [...upTo(S['KVT-09'], 'walk off each step, never hop down'), ...Array.from({ length: 3 }, (): Step[] => [{ hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, { hold: '', until: (w) => !w.flags.kvtSlide || w.state !== 'play', max: 200 }]).flat(), dies], cause: 'splash' },
+    { what: 'jump for the far ledge from the shingle, as Tara says', steps: [...upTo(S['KVT-09'], 'hop on the spot: each landing slides you on'), { hold: '', until: still, max: 200 }, { hold: 'R', until: X(org('KVT-09', 'kvt09-ozhukku') + 8.2), max: 100 }, { hold: 'R', jump: 14, ticks: 30 }, { hold: 'R', until: done, max: 300 }], cause: 'spikes' },
+    { what: 'walk off the end of the shingle so it never slides, as down the summit', steps: [...upTo(S['KVT-09'], 'hop on the spot: each landing slides you on'), { hold: '', until: still, max: 200 }, { hold: 'R', until: done, max: 300 }], cause: 'splash' },
+    { what: 'land in the middle of the heap on the pillar, as on the ridge, and walk on', steps: [...upTo(S['KVT-09'], 'land on the far side of the heap: it carries you over'), { hold: 'R', until: X(org('KVT-09', 'kvt09-ozhukku') + 17.2), max: 200 }, { hold: 'R', jump: 30, ticks: 40 }, { hold: '', until: (w) => w.player.onGround || w.state !== 'play', max: 200 }, { hold: '', ticks: 30 }, { hold: 'R', until: done, max: 300 }], cause: 'splash' },
     { what: 'a little hop over the storm cut, as Tara says', steps: [...upTo(S['KVT-09'], 'well past the first cut').slice(0, -1), { hold: 'R', until: X(org('KVT-09', 'kvt09-murivu') + 5.2), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 400 }], cause: 'splash' },
   ];
   // hop straight up the steps from wherever you land
