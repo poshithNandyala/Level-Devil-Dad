@@ -17,6 +17,7 @@ import { Herd, ghat } from './s04';
 import { pul } from './s09';
 import { doosra } from './s07';
 import { rassi } from './rassi';
+import { nali } from './nali';
 import { FLOOR } from '../../levels/endkit';
 
 // ================================================================== the room: the mill, with the deer's food
@@ -54,6 +55,8 @@ export const jadFin: Act = { ...pul, id: 'svp10-jad', advice: 'The ruined cellar
 export const samanFin: Act = { ...doosra, id: 'svp10-saman', advice: 'The luggage hall: the luggage is the floor until the real call, the crowd comes from the quay end, and the trench is the place to be.' };
 
 export const rassiFin: Act = { ...rassi, id: 'svp10-rassi', advice: 'The quay, with the boats tied up on the far banks: the rope answers to hops by its bollard, and every hop brings the boat in a little. When it is alongside, step on.' };
+
+export const naliFin: Act = { ...nali, id: 'svp10-nali', advice: 'The reef at the island’s edge: the hose lies where you went. Over an arch costs nothing, under one bends it and uses line: one arch under is all the first pontoon can spare, and the second has no spare at all.' };
 
 export const ghatFin: Act = { ...ghat, id: 'svp10-ghat', advice: 'The last landing: the stall is by the edge, the herd follows the food, and the boat is late. Put the food down where you are and wait for the boat.' };
 

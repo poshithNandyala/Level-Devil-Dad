@@ -529,7 +529,22 @@ function floatsStep(k: number, lastTx: number, note: string): Step {
     note,
   };
 }
+// ------------------------------------------------------------------ SVP-09 act 2: the hose
+/** over a coral arch whose slab starts at column `tx`: hop on from before it, walk across, drop off the far side */
+const overArch = (tx: number): Step[] => [
+  { hold: 'R', until: X(tx - 3.5), max: 900, note: 'up to the arch' },
+  { hold: 'R', jump: 20, ticks: 20, long: true, note: 'up on the arch: the hose lies over its top' },
+  { hold: 'R', until: and(ground, X(tx + 5.6)), max: 600, note: 'across and down the far side' },
+];
 const actRoutes: Record<string, (x: number) => Step[]> = {
+  'svp09-nali': (x) => [
+    ...overArch(x + 8),
+    { hold: 'R', until: and(ground, X(x + 26)), max: 900, note: 'under the second arch: one bend is all the hose can spare' },
+    { hold: 'R', until: and(ground, X(x + 34.5)), max: 600, note: 'to the second pontoon’s stretch' },
+    ...overArch(x + 40),
+    ...overArch(x + 51),
+    { hold: 'R', until: and(ground, X(x + 62.5)), max: 600 },
+  ],
   'svp07-uthao': (x) => [
     ...liftRide(0, x + 8),
     ...liftRide(1, x + 18),
@@ -554,6 +569,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'svp05-choona': (x) => [...caveBeat(0, x + 10.6, 12, x + 14.2, x + 16.8, x + 32), ...caveBeat(1, x + 39.4, 20, x + 45.2, x + 46.8, x + 61)],
   'svp05-rassi': (x) => [...ropeCross(0, x + 4, x + 29), ...ropeCross(1, x + 27, x + 57)],
   'svp10-rassi': (x) => actRoutes['svp05-rassi'](x),
+  'svp10-nali': (x) => actRoutes['svp09-nali'](x),
   'svp07-teesra': (x) => [
     hopUntil(and(ground, X(x + 12.5)), 'across the luggage, no stopping'),
     { hold: 'R', until: inTrench, max: 600, note: 'into the trench' },
@@ -813,6 +829,16 @@ actDeath('SVP-09', 'svp09-hauz', 'run across the dry pool to the wall', 'svp-hau
 actDeath('SVP-09', 'svp09-hauz', 'wait for the water on the floor beside the raft', 'svp-hauz', (x) => [
   { hold: 'R', until: X(x + 6.5), max: 600 },
   { hold: '', until: (w) => w.state !== 'play', max: 2500, note: 'wait on the floor by the raft' },
+]);
+actDeath('SVP-09', 'svp09-nali', 'walk under both arches, the easy way', 'svp-nali', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 1500, note: 'along the sand, under the arches' }]);
+actDeath('SVP-09', 'svp09-nali', 'one arch over, one under, then under both in the next stretch', 'svp-nali2', (x) => [
+  ...overArch(x + 8),
+  { hold: 'R', until: (w) => w.state !== 'play', max: 2400, note: 'and on under the arches, as the first stretch allowed' },
+]);
+actDeath('SVP-10', 'svp10-nali', 'walk under both arches, the easy way', 'svp-nali', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 1500, note: 'along the sand, under the arches' }]);
+actDeath('SVP-10', 'svp10-nali', 'one arch over, one under, then under both in the next stretch', 'svp-nali2', (x) => [
+  ...overArch(x + 8),
+  { hold: 'R', until: (w) => w.state !== 'play', max: 2400, note: 'and on under the arches, as the first stretch allowed' },
 ]);
 actDeath('SVP-08', 'svp08-deewar', 'shelter against the first building you come to, the short shop', 'svp-baarish', () => [
   { policy: (w) => go(toward(w, (wx(w).awnings[7] as unknown as { bx: number; bw: number }).bx + 40, 2)), until: (w) => w.state !== 'play', max: 3000, note: 'in the shadow of the short shop' },
