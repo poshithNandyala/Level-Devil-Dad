@@ -1078,7 +1078,7 @@ mistakes['LKO-08'].push(
 );
 
 mistakes['LKO-10'].push(
-  { what: 'the photograph again: waiting right by the group, as on the Ganj', steps: [...through('LKO-10', room10, 1), walkTo(actX('LKO-10', 1) + 6.6, 300), hop(actX('LKO-10', 1) + 8, actX('LKO-10', 1) + 10.5), walkTo(actX('LKO-10', 1) + 10.7, 300), until(done, 900)], cause: 'lko-tehzeeb' },
+  { what: 'the photograph again: waiting right by the group, as on the Ganj', steps: [...through('LKO-10', room10, 1), walkTo(actX('LKO-10', 1) + 6.6, 300), hop(actX('LKO-10', 1) + 7.4, actX('LKO-10', 1) + 9.8), walkTo(actX('LKO-10', 1) + 10.2, 300), until(done, 900)], cause: 'lko-tehzeeb' },
   { what: 'the photograph again: rushing them', steps: [...through('LKO-10', room10, 1), walkTo(actX('LKO-10', 1) + 6.6, 300), hop(actX('LKO-10', 1) + 8, actX('LKO-10', 1) + 10.5), { hold: 'R', until: done, max: 600 }], cause: 'lko-photo-jaldi' },
   { what: 'the greeting again: bowing back right where he greets you, as learned', steps: [...through('LKO-10', room10, 2), walkTo(actX('LKO-10', 2) + 5, 300), until(done, 600)], cause: 'lko-tehzeeb' },
   { what: 'the greeting again: walking on past it, over the covers', steps: [...through('LKO-10', room10, 2), { hold: 'R', until: done, max: 600 }], cause: 'lko-aadaab' },
