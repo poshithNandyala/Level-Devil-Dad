@@ -338,3 +338,52 @@ it.runIf(!!process.env.LDD_CAPIDS)('probe9', () => {
   }
   console.log(out.join('\n'));
 }, 1800000);
+// probe10 (QA's probe15 sweep, every checkpoint): the route at lag 0..12 (every tick) x spawn idle 0..345 step
+// LDD_IDLESTEP ticks (default 15); each checkpoint captured where that run takes it (first tick on ground with
+// cx >= the checkpoint), then idle 4 s / run 0.3 s / tap jump. LDD_VCP=12,14 tests virtual checkpoint x instead.
+//   LDD_SWEEP=TVM-03 LDD_TVMPROBE=1 npx vitest run tests/cities/tvm/probe.test.ts -t probe10 --silent=false
+it.runIf(!!process.env.LDD_SWEEP)('probe10', () => {
+  const out: string[] = [];
+  const I = { left: false, right: false, jump: false, jumpPressed: false };
+  const Rr = { ...I, right: true };
+  const plays: [string, (i: number) => any][] = [['idle', () => I], ['run0.3', (i) => (i < 36 ? Rr : I)], ['tap', (i) => (i < 40 ? { ...Rr, jump: i < 12, jumpPressed: i === 0 } : I)]];
+  const istep = +(process.env.LDD_IDLESTEP ?? 15);
+  for (const id of process.env.LDD_SWEEP!.split(',')) {
+    const def = LEVELS.find((l) => l.id === id)!;
+    const probe = new World(def, INFO);
+    def.build?.(probe);
+    const cps: number[] = process.env.LDD_VCP ? process.env.LDD_VCP.split(',').map((v) => +v * 16) : probe.checkpoints;
+    let caps = 0;
+    const bad: string[] = [];
+    for (let lag = 0; lag <= 12; lag++)
+      for (let idle = 0; idle < 360; idle += istep) {
+        const r = lagged(id, SOLUTIONS[id], lag, idle) as any;
+        const rec: number[] = r.rec;
+        const w = new World(def, INFO);
+        def.build?.(w);
+        const at = cps.map(() => -1);
+        for (let i = 0; i < rec.length && w.state === 'play'; i++) {
+          w.step(decodeInput(rec[i]));
+          if (!w.player.onGround) continue;
+          cps.forEach((c, k) => {
+            if (at[k] < 0 && w.player.cx >= c) at[k] = i + 1;
+          });
+        }
+        at.forEach((t, k) => {
+          if (t < 0) return;
+          caps++;
+          for (const [pn, f] of plays) {
+            const q = replay(def, INFO, rec.slice(0, t));
+            q.player.vx = 0;
+            for (let i = 0; i < 480 && q.state === 'play'; i++) q.step(f(i));
+            if (q.state === 'dead') bad.push(`x${(cps[k] / 16).toFixed(1)} lag ${lag} idle ${idle} ${pn}: ${q.deathCause} +${((q.tick - t) / 120).toFixed(2)}s`);
+          }
+        });
+      }
+    out.push(`${id}: ${cps.length} checkpoints (${cps.map((c) => (c / 16).toFixed(1)).join(', ')}), ${caps} captures x 3 plays, ${bad.length} deaths`);
+    const byCp = new Map<string, number>();
+    for (const b of bad) byCp.set(b.split(' ')[0], (byCp.get(b.split(' ')[0]) ?? 0) + 1);
+    for (const [c, n] of byCp) out.push(`  ${c}: ${n} deaths, e.g. ${bad.find((b) => b.startsWith(c + ' '))}`);
+  }
+  console.log(out.join('\n'));
+}, 3600000);

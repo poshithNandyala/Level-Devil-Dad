@@ -310,7 +310,7 @@ export const levels = (): LevelDef[] => [
       return g.put(2, 14, '@').put(77, 14, 'E').rows();
     })(),
     build(w: World) {
-      for (const tx of [38]) checkpoint(w, tx);
+      for (const tx of [12]) checkpoint(w, tx);
       exitTwist(w, door(w), 'swap', { to: 69 });
       water(w, 16.5, { rate: 0, minTy: 16.5, colors: ['#8C6A44', '#4E3620'], cause: 'burnt', behind: true });
       prop(w, 'teastall', 4, 15, { label: 'CHAAYA' });
