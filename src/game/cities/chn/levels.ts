@@ -15,7 +15,7 @@ import { Grid } from '../../levels/grid';
 import { exitTwist } from '../../levels/twists';
 import { PongalPot } from '../../entities/tamil';
 import { MURUKKU_META, kannu, karandi, murukkuRoom, ruchi, thenkuzhal, varisai } from './murukku';
-import { SPENCER_META, kaanal, keezhe, moodal, pattarai, spencerRoom } from './spencer';
+import { SPENCER_META, billing, kaanal, keezhe, moodal, pattarai, spencerRoom } from './spencer';
 import { sundalBite } from './sundal';
 
 // Chennai: share autos, plastic water pots, a flooding subway, filter kaapi
@@ -742,5 +742,5 @@ export const levels = (): LevelDef[] => [
   // ------------------------------------------------------------------ encores (slots 9 and 10 of the allocation)
   // par = the bot's clear time x 1.35 (tests/par.test.ts): 31.6 s and 26.7 s at f0cde1e
   longStage({ base: murukkuRoom(), acts: [karandi, kannu, thenkuzhal, varisai, ruchi], twist: 'chn-fresh-curtain', par: 43, shape: 'long', meta: MURUKKU_META }),
-  longStage({ base: spencerRoom(), acts: [moodal, kaanal, keezhe, pattarai], lives: 'act', twist: 'chn-wet-floor-sign', par: 36, shape: 'long', meta: SPENCER_META }),
+  longStage({ base: spencerRoom(), acts: [moodal, kaanal, billing, keezhe, pattarai], lives: 'act', twist: 'chn-wet-floor-sign', par: 40, shape: 'long', meta: SPENCER_META }),
 ];

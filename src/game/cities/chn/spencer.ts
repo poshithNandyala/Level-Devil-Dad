@@ -10,7 +10,7 @@ import { Decal, G, Shimmer, pool } from '../../levels/acts';
 import { collectible, px, rival, sign, thingOn } from '../../levels/kit';
 import { Grid } from '../../levels/grid';
 import { onPass } from '../../levels/trolls';
-import { person, tara as taraSays } from '../../levels/endkit';
+import { Paint, person, tara as taraSays } from '../../levels/endkit';
 import { lines as L } from './lines';
 import { Murukku } from './murukku';
 
@@ -472,6 +472,59 @@ export const kaanal: Act = {
     sign(w, x + 0.5, 10.4, 3.4, 'FLOOR 2', 'metro', null, 'polished today');
     onPass(w, px(x + 2), (w2) => w2.guide('Floor polish pannirukkaanga. | They have polished the floor.'));
     onPass(w, px(x + 4.5), (w2) => taraSays(w2, 'Veyil kaanal! Thaandu! | Heat shimmer! Jump it!', 1.4));
+  },
+};
+
+/** the billing queue (CHN-02 the other way round, round 2): trolleys parked along the fountain's rim hold places like
+ *  the pots did; the beach taught you to skip the third one, but here the third is the only one with its wheels
+ *  locked (the red lever). The loaded first one tips under you; the others roll off the rim into the fountain. */
+export const billing: Act = {
+  id: 'chn10-billing',
+  w: 26,
+  advice: 'The billing queue: trolleys parked along the fountain rim. The one with the red lever is locked and holds; the loaded one at the front tips the moment you stand on it, and the rest roll off the rim. Jump straight on to the locked one, the third, the one the beach taught you to skip.',
+  paint: (g, c) => {
+    g.pit(c.x + 8, c.x + 17);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    const water = pool(w, x + 8, x + 18, G + 1 / 16, { colors: FOUNTAIN, cause: 'chn-rolled' });
+    // five trolleys: 0 loaded (tips), 1, 3 and 4 free (roll), 2 locked (three tiles wide: the big billing trolley)
+    const spots = [8.5, 10, 12, 15, 16];
+    const trolleys = spots.map((t, i) => thingOn(w, 'crate', x + t, G, { w: i === 2 ? 48 : 16, h: 14, tint: i === 2 ? '#C62828' : i === 0 ? '#5D4037' : '#78909C' }));
+    const gone = new Set<number>();
+    const stoodAt = spots.map(() => -1);
+    w.onTick((w2) => {
+      trolleys.forEach((t, i) => {
+        if (i === 2 || gone.has(i) || !t.alive) return;
+        if (stoodAt[i] < 0 && w2.standing(t.solid)) {
+          stoodAt[i] = w2.tick;
+          w2.sfx('creak', t.cx, t.y);
+          if (i === 0) w2.say('Ayyo, load! | Oh no, it is loaded!', t.cx, t.y - 14, 1.0, 'npc');
+          else w2.say('Chakkaram! | The wheels!', t.cx, t.y - 14, 0.9, 'npc');
+        }
+        if (stoodAt[i] >= 0 && w2.tick - stoodAt[i] >= (i === 0 ? 20 : 5)) {
+          gone.add(i);
+          t.alive = false;
+          t.hide();
+          w2.emit('fx', t.cx, t.y + 7, { kind: 'poof', w: 24, h: 10 });
+          // the loaded one tips you in (its own death); the free ones roll from under you (theirs)
+          water.hazard.cause = i === 0 ? 'chn-tipped' : 'chn-rolled';
+          w2.sfx(i === 0 ? 'thud' : 'slide', t.cx, t.y);
+        }
+      });
+    });
+    // the lock lever on the third
+    w.add(
+      new Paint((ctx) => {
+        const t = trolleys[2];
+        ctx.fillStyle = '#E53935';
+        ctx.fillRect(t.x + 4, t.y + 9, 3, 6);
+        ctx.fillRect(t.x + 2, t.y + 8, 7, 2);
+      }, 3),
+    );
+    sign(w, x + 1, 10.4, 3.4, 'BILLING', 'shop', null, 'queue here');
+    onPass(w, px(x + 2), (w2) => w2.guide('Lock pottadhu paaru. | See which one is locked.'));
+    onPass(w, px(x + 3.5), (w2) => taraSays(w2, 'Moonaavadhu-la nikkaadhe, Dad! | Don’t stand on the third, Dad!', 1.4));
   },
 };
 

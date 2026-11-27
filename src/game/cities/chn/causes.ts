@@ -12,6 +12,8 @@ export const causeLines: Record<string, string[]> = {
   'chn-fountain': ['Off the escalator, into the atrium fountain.', 'There is nothing beside the steps but water: stay on them.'],
   'chn-trolley': ['Their trolley came down the runaway belt into you.', 'Stay on when the family boards: four aboard stop the run-back.'],
   'chn-kinaru': ['Through the dark patch: an open well down to the fountain.', 'Indoors the shimmer is floor polish and holds; the dark is the hole.'],
+  'chn-rolled': ['The trolley rolled off the rim from under you, into the fountain.', 'Only the one with the red lever is locked: the third.'],
+  'chn-tipped': ['The loaded trolley at the front tipped you into the fountain.', 'A loaded trolley is no place to stand and look: the locked one is.'],
   'chn-plaster': ['The golden display murukku was painted plaster: it crumbled.', 'In the food court the pale spirals are the real ones.'],
   // CHN-01 the sundal cart
   'chn-sundal': ['Into the steam off the sundal pan: the lid was up.', 'Cross only while the lid is shut and his hand is down.'],

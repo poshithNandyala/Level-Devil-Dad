@@ -606,7 +606,9 @@ export const thenkuzhal: Act = {
   },
 };
 
-/** A5: a whole row laid at once is all the same age, so the ladle starts at your end: wait for golden, then run it. */
+/** A5: a whole row laid at once is all the same age, so the ladle starts at your end: wait for golden, then run it.
+ *  This is CHN-09's one labelled MOMENTUM beat (round 2): its first half is the room's colour wait again, on purpose,
+ *  and its own work is the second half, the run against the ladle's order. */
 export const varisai: Act = {
   id: 'chn09-varisai',
   w: 30,

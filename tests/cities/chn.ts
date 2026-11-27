@@ -298,7 +298,10 @@ const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
       { what: 'family A1 (the room taught it): hop back off when they board', steps: [...prefix('board the moodal escalator'), { hold: 'R', until: riding('moodal'), max: 600 }, { hold: 'L', until: (w) => w.player.x <= px(32 + 8.6), max: 60 }, { hold: 'L', jump: 30, ticks: 30, long: true }, { hold: 'L', until: (w) => w.player.onGround && !riding('moodal')(w), max: 120 }, { hold: '', until: done, max: 900 }], cause: 'chn-trolley' },
       { what: 'polished floor A1 (the beach road taught it): hop the shimmer, walk the dark patch', steps: [...prefix('walk the shimmer'), ...hopAt(32 + 30 + 2.4, 12, 'hop the shimmer'), die], cause: 'chn-kinaru' },
       { what: 'down escalator A1: step on while it is empty', steps: [...prefix('wait for a step under the kerb (keezhe)'), until((w) => esc('keezhe')(w).shoppers[0].p < 0 && stepUnder(w, 'keezhe'), 'wait for the kid to step off', 1200), { hold: 'R', until: riding('keezhe'), max: 60 }, { hold: 'L', until: (w) => w.player.vx <= 0, max: 20 }, stay], cause: 'chn-comb' },
-      { what: 'display A1 (the kitchen taught it): stand on the golden one', steps: [...prefix('across the plaster one without stopping'), { hold: 'R', until: (w) => w.player.onGround && w.player.x >= px(32 + 30 + 26 + 30 + 14), max: 600 }, stay], cause: 'chn-plaster' },
+      { what: 'display A1 (the kitchen taught it): stand on the golden one', steps: [...prefix('across the plaster one without stopping'), { hold: 'R', until: (w) => w.player.onGround && w.player.x >= px(32 + 30 + 26 + 26 + 30 + 14), max: 600 }, stay], cause: 'chn-plaster' },
+      // the billing queue (act at 88): A1 as the beach taught, on to the second to skip the third; A2 stand on the loaded first and look
+      { what: 'billing A1 (the queue taught it): hop on to the second trolley to skip the third', steps: [...prefix('up to the rim: the locked one is the third'), ...hopAt(88 + 7.4, 12, 'on to the second'), die], cause: 'chn-rolled' },
+      { what: 'billing A2: stand on the loaded first trolley and look', steps: [...prefix('up to the rim: the locked one is the third'), ...hopAt(88 + 5.8, 12, 'on to the first'), stay], cause: 'chn-tipped' },
     );
   }
   {
@@ -535,6 +538,15 @@ const actRoutes: Record<string, (x: number, p: any) => Step[]> = {
     walk(x + 29.5),
   ],
   'chn10-pattarai': (x) => [...hopAt(x + 3.4, 12, 'on to the pale one'), ...hopAt(x + 10.4, 12, 'across the plaster one without stopping'), ...hopAt(x + 17.4, 12, 'on to the far pale one'), walk(x + 29.5)],
+  // the billing queue: one long jump from the rim straight on to the locked third trolley (11-14), and one off it
+  'chn10-billing': (x) => [
+    { hold: 'R', until: X(x + 7.0), max: 600, note: 'up to the rim: the locked one is the third' },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'straight on to the locked trolley, over the two that would go' },
+    { hold: 'R', until: and(ground, X(x + 12.2)), max: 300 },
+    { hold: 'R', until: X(x + 14.0), max: 300 },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'and off its far end to the floor' },
+    walk(x + 25.5),
+  ],
 };
 
 const endingPolicies: Record<string, Policy> = {
