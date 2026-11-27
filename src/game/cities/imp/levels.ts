@@ -22,7 +22,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: room05(), acts: [act05, act05b], par: 85, shape: 'long', lives: 'act', meta: meta05 }),
   longStage({ base: room06(), acts: [act06, act06b], par: 85, shape: 'long', lives: 'act', meta: meta06 }),
   longStage({ base: room07(), acts: acts07, par: 170, shape: 'marathon', lives: 'act', meta: meta07 }),
-  longStage({ base: room08(), acts: [act08], twist: 'imp-ima-hatch', par: 60, shape: 'wtf', meta: meta08 }),
+  longStage({ base: room08(), acts: [act08], par: 60, shape: 'wtf', meta: meta08 }),
   longStage({ base: room09(), acts: acts09, par: 100, shape: 'long', lives: 'act', meta: meta09 }),
   longStage({ base: room10(), acts: acts10, par: 130, shape: 'long', lives: 'act', meta: meta10 }),
 ];

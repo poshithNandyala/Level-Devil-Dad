@@ -25,6 +25,8 @@ export interface MatSpec {
   /** reeds drawn on it */
   reeds?: boolean;
   hut?: boolean;
+  /** the mat starts under the pier: sunk and not solid until its left edge passes this column */
+  under?: number;
 }
 export interface DockState {
   t0: number;
@@ -49,6 +51,10 @@ export function dock(w: World, key: string, specs: MatSpec[], trigger: number) {
         solid: true,
         tick: (rr, w2) => {
           if (st.t0 < 0 || rr.s.v === 0) return;
+          if (m.under !== undefined && rr.solid!.collidable === false && rr.x + rr.w >= px(m.under)) {
+            rr.setSolid(true);
+            rr.moveTo(w2, rr.x, FL - 6);
+          }
           const nx = rr.x + perTick(rr.s.v);
           // touching the body: snap to it, stop, and the body lurches the way this mat was going
           if (rr.s.v > 0 && nx + rr.w >= st.body[0]) {
@@ -88,6 +94,10 @@ export function dock(w: World, key: string, specs: MatSpec[], trigger: number) {
     );
     r.s.v = m.v;
     r.s.i = i;
+    if (m.under !== undefined) {
+      r.setSolid(false);
+      r.moveTo(w, r.x, FL + 8);
+    }
     st.mats.push(r);
   });
   // the lurch: the far end of the body pitches whoever stands there for a moment after a click
@@ -118,7 +128,7 @@ export function dock(w: World, key: string, specs: MatSpec[], trigger: number) {
  * ahead comes second (slow, far). The eye goes to the big one. */
 export const ROOM_MATS: MatSpec[] = [
   { c: 7, w: 6, v: 0, hut: true },
-  { c: 1, w: 3, v: 30 },
+  { c: 1, w: 3, v: 30, under: 5 },
   { c: 16, w: 5, v: -16, reeds: true },
 ];
 
@@ -165,9 +175,9 @@ export const act: Act = {
         { c: c.x + 14, w: 6, v: 0, hut: true },
         { c: c.x + 24, w: 5, v: -14, reeds: true },
         { c: c.x + 4, w: 4, v: 60 },
-        { c: c.x - 2, w: 3, v: 22 },
+        { c: c.x - 2, w: 3, v: 22, under: c.x + 3 },
       ],
-      c.x + 14.2,
+      c.x + 3.5,
     );
     sign(w, c.x + 1.5, 10.4, 3.4, 'PHUMSHANG', 'shop', null, 'the hut on the mat');
     onPass(w, c.X(3), (w2) => w2.say(NPC.excuse, c.X(17), FL - 60, 2.2, 'npc'));
@@ -181,10 +191,10 @@ export const act2: Act = {
   advice: 'Two mats come from the front one after the other, then one from behind. At each click the far end is the one to be away from: after two clicks from the front the far end is the back, so for the third click walk forward to the back seam... which is now where you began. Read each wake before you move.',
   cps: [34],
   paint: (g, c) => {
-    g.fill(c.x + 3, c.x + 30, 15, 17, '.');
+    g.fill(c.x + 3, c.x + 25, 15, 17, '.');
   },
   build: (w, c) => {
-    lake(w, c.x + 3, c.x + 31);
+    lake(w, c.x + 3, c.x + 26);
     dock(
       w,
       'imp5c',
@@ -192,9 +202,9 @@ export const act2: Act = {
         { c: c.x + 10, w: 5, v: 0, hut: true },
         { c: c.x + 20, w: 4, v: -40 },
         { c: c.x + 26, w: 4, v: -12, reeds: true },
-        { c: c.x + 4, w: 3, v: 10 },
+        { c: c.x + 5, w: 3, v: 6 },
       ],
-      c.x + 10.2,
+      c.x + 3.5,
     );
     sign(w, c.x + 43, 10.4, 3.4, 'SENDRA', 'green', null, 'the island');
   },

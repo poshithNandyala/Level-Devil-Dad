@@ -12,7 +12,7 @@ import { Rig, box } from './entities';
 import { FL, lake, since, taraScript } from './common';
 import { lines as L } from './lines';
 
-export const LEAF = { w: 5, tilt: 0.25, speed: 120, beadIn: 0.8 };
+export const LEAF = { w: 6, tilt: 0.6, speed: 120, beadIn: 0.5 };
 
 export interface LeafState {
   /** rest side of the beads: -1 left rim, 1 right rim, 0 both rims */
@@ -41,10 +41,9 @@ export function leaf(w: World, key: string, c0: number, side: LeafState['side'],
       tick: (r, w2) => {
         const p = w2.player;
         const on = w2.standing(r.solid!);
-        if (on && st.t0 < 0) {
-          st.t0 = w2.tick;
-          st.tip = Math.sign(p.x + p.w / 2 - cx) || 1;
-        }
+        if (on && st.t0 < 0) st.t0 = w2.tick;
+        // the leaf settles toward Dad's side over the tilt time: where he is when it has tipped is what counts
+        if (on && st.t0 >= 0 && since(w2, st.t0) <= LEAF.tilt) st.tip = Math.sign(p.x + p.w / 2 - cx) || 1;
         if (!on && st.t0 >= 0 && st.beads.every((b) => b.gone || Math.abs(b.x) > rim + 40)) {
           // nobody on it and the beads are off: the leaf settles and new dew gathers at the rest rim
           st.t0 = -1;
@@ -139,7 +138,7 @@ function leaves(w: World, key: string, c0: number, sides: LeafState['side'][], g
 /** the columns a row of leaves spans */
 export const leafSpan = (n: number, gap = 2, widths?: number[]) => (widths ? widths.reduce((a, b) => a + b, 0) : n * LEAF.w) + (n - 1) * gap;
 /** the act's leaves: the both-rim leaf is narrow (3 tiles) with one-tile gaps round it, so it is jumped from the leaf before */
-export const ACT_W = [5, 5, 3, 5, 5];
+export const ACT_W = [6, 6, 2, 6, 6];
 
 export function room(): LevelDef {
   return {
@@ -151,11 +150,11 @@ export function room(): LevelDef {
     tagline: 'Lotus leaves on Loktak, each with a pool of dew at one rim.',
     hint: 'A leaf tips toward whoever lands on it, and the dew rolls downhill. Land on the half the dew is on, inside the beads: the leaf tips their way and the dew rolls off the rim away from you. Land on the empty half and the dew rolls across the leaf into you; land at the rim beyond the dew and it rolls over you.',
     par: 32,
-    map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').fill(5, 5 + leafSpan(3) + 1, 15, 17, '.').rows(),
+    map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').fill(5, 5 + leafSpan(3, 1) + 1, 15, 17, '.').rows(),
     build(w: World) {
       door(w);
-      lake(w, 5, 5 + leafSpan(3) + 2);
-      leaves(w, 'imp4', 6, [1, -1, 1]);
+      lake(w, 5, 5 + leafSpan(3, 1) + 2);
+      leaves(w, 'imp4', 6, [1, -1, 1], 1);
       onPass(w, px(3), (w2) => tara(w2, L.intro[2], 2.2));
       sign(w, 2.2, 10.4, 3.4, 'THAMBAL', 'green', null, 'lotus');
       rival(w, 29, 15, -1, taraScript(4));
@@ -176,7 +175,7 @@ export const act: Act = {
   },
   build: (w, c) => {
     lake(w, c.x + 3, c.x + 3 + leafSpan(5, 1, ACT_W) + 2);
-    leaves(w, 'imp4b', c.x + 4, [-1, 1, 0, -1, 1], 1, ACT_W);
+    leaves(w, 'imp4b', c.x + 4, [-1, 1, 0, 1, -1], 1, ACT_W);
     sign(w, c.x + 1.5, 10.4, 3.4, 'KEIBUL', 'green', null, 'lamjao');
   },
 };
