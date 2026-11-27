@@ -5,6 +5,7 @@ import type { Door } from '../../src/game/entities/basics';
 import { Step, X, and, ground, done } from '../runner';
 import type { CityTests } from '../city-tests';
 import { LEVEL_BY_ID } from '../../src/game/levels';
+import { extent } from '../../src/game/cities/pat/s03';
 
 type Move = 'L' | 'R' | '';
 type Out = { move: Move; jump: boolean };
@@ -82,6 +83,19 @@ function pastMarker(w: World): Out {
   if (p.cx > st.x - 90 && !(t >= 1.5 && into >= 0.6 && into <= 1.2)) return go('');
   return go('R');
 }
+/** behind each litti until its strike has gone, then past it (only the first `n` of them) */
+const pastMarkers = (key: string, n = 9): ((w: World) => Out) => (w) => {
+  const st = w.flags[key] as { t0: number; xs: number[]; offs: number[] };
+  const p = w.player;
+  const i = st.xs.findIndex((x, k) => k < n && (x === 0 || p.cx <= x + 30));
+  if (i < 0 || st.t0 < 0 || st.xs[i] === 0) return go('R');
+  const x = st.xs[i];
+  const t = (w.tick - st.t0) / 120 + st.offs[i];
+  const into = t % 2.6;
+  if (p.cx > x - 40) return go('R');
+  if (p.cx > x - 90 && !(t >= 1.5 && into >= 0.6 && into <= 1.2)) return go('');
+  return go('R');
+};
 const act02 = (x: number): Step[] => [{ policy: pastMarker, until: and(ground, X(x + 33)), max: 3000, note: 'behind the litti, then past it' }, { hold: 'R', until: X(x + 35.4), max: 400 }];
 /** both pestles of the door: cross one just after it lifts, wait in the gap */
 function pestles(w: World): Out {
@@ -176,11 +190,14 @@ const room06 = (): Step[] => [
   { hold: 'R', until: X(29), max: 600, note: 'plate 4: walk' },
 ];
 const act06 = (x: number): Step[] => [
-  { hold: 'R', until: X(x + 19.0), max: 900 },
-  { hold: 'R', jump: 12, ticks: 12, note: 'seam 3 has no plate' },
+  { hold: 'R', until: X(x + 12.0), max: 900 },
+  { hold: 'R', jump: 12, ticks: 12, note: 'plate 2 is a tarp (two sacks)' },
   { hold: 'R', until: ground, max: 200 },
-  { hold: 'R', until: X(x + 33.0), max: 900 },
-  { hold: 'R', jump: 12, ticks: 12, note: 'seam 5 has none either' },
+  { hold: 'R', until: X(x + 26.0), max: 900 },
+  { hold: 'R', jump: 12, ticks: 12, note: 'so is 4' },
+  { hold: 'R', until: ground, max: 200 },
+  { hold: 'R', until: X(x + 39.0), max: 900 },
+  { hold: 'R', jump: 12, ticks: 12, note: 'and 6' },
   { hold: 'R', until: ground, max: 200 },
   { hold: 'R', until: X(x + 43.4), max: 600 },
 ];
@@ -194,7 +211,7 @@ const tollPolicy: Policy = (w) => {
 // ------------------------------------------------------------------ PAT-07
 type T7 = { cx: number; base: number; P: number; rig: { x: number; y: number }; stopAt: number; beats: { stops: { t?: number }[] } };
 /** board the tempo, keep it level (stand opposite the heavier side), step off at the stand, cross the lane when the third is out */
-function rideBalanced(withTruck: boolean, wide: boolean): (w: World) => Out {
+function rideBalanced(withTruck: boolean, wide: boolean, force?: number): (w: World) => Out {
   let W: World | null = null;
   let jt = 0;
   return (w) => {
@@ -219,7 +236,7 @@ function rideBalanced(withTruck: boolean, wide: boolean): (w: World) => Out {
     const g = wide ? undefined : (w.flags.pat7g as { lane0: number; P: number } | undefined);
     if (riding && st.cx >= st.stopAt - 1) return go('R');
     if (riding) {
-      const base = withTruck ? st.base : st.P;
+      const base = force ?? (withTruck ? st.base : st.P);
       const off = base > 0 ? -34 : base < 0 ? 34 : 0;
       return go(toward(w, st.cx + off, 4));
     }
@@ -433,6 +450,25 @@ const act03 = (x: number): Step[] => [
   { hold: 'R', until: ground, max: 200 },
   { hold: 'R', until: X(x + 33.4), max: 600 },
 ];
+/** a row of hoardings: wait on the plain first one until the last bell has rung, then cross, jumping the gaps that are left */
+function laneWalk(key: string): (w: World) => Out {
+  let hopper: ((w: World) => Out) | null = null;
+  let W: World | null = null;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      hopper = hopOver((w2) => {
+        const r = w2.flags[key] as { bells: number[]; specs: { c0: number; w0: number; swaps: any[] }[] };
+        const fin = r.specs.map((sp) => extent(sp, r.bells, 99));
+        return fin.map((e, i) => e.x + e.w).filter((end, i) => i === fin.length - 1 || fin[i + 1].x - end > 8);
+      }, 4);
+    }
+    const r = w.flags[key] as { t0: number; bells: number[]; specs: { c0: number }[] };
+    const t = r.t0 < 0 ? -1 : (w.tick - r.t0) / 120;
+    if (w.player.cx > r.specs[0].c0 * 16 + 40 && t < r.bells[r.bells.length - 1] + 0.6) return go('');
+    return hopper!(w);
+  };
+}
 const BELLC = { T: 3.4, A: 0.7, L: 160, piv: 240 - 183, phase: [0, 1.7] };
 /** the bell rope: cross under a bell only while it is out at the far end of its swing */
 function bellsPolicy(w: World): Out {
@@ -458,36 +494,36 @@ function bellsPolicy(w: World): Out {
 
 // ------------------------------------------------------------------ length pass: gates
 /** walk right; wait at the edge of the next gate (a section, a seam) while `closed(w, ahead)` says it is, or soon will be, shut */
-function gateWalk(gates: (w: World) => { x: number; closed: (ahead: number) => boolean }[], started: (w: World) => boolean): (w: World) => Out {
+function gateWalk(gates: (w: World) => { x: number; closed: (ahead: number) => boolean }[], started: (w: World) => boolean, aheads = [0, 0.25, 0.5, 0.75, 1.0]): (w: World) => Out {
   return (w) => {
     const p = w.player;
     if (!started(w)) return go('R');
     const g = gates(w).filter((q) => q.x + 1 > p.x + p.w - 4).sort((a, b) => a.x - b.x)[0];
     if (!g) return go('R');
     if (p.x + p.w >= g.x - 22 && p.x < g.x + 4) {
-      for (const ahead of [0, 0.25, 0.5, 0.75, 1.0]) if (g.closed(ahead)) return go('');
+      for (const ahead of aheads) if (g.closed(ahead)) return go('');
     }
     return go('R');
   };
 }
 /** the sack deck: wait at the end of the section before a loaded one */
-const sackWalk = (key: string) =>
+const sackWalk = (key: string, byHang = false) =>
   gateWalk(
     (w) => {
       const pt = w.flags[key] as { secs: { x: number }[] };
-      const st = w.flags[key + 't'] as { t0: number; plan: { k: number; at: number; dur: number }[] };
+      const st = w.flags[key + 't'] as { t0: number; plan: { k: number; at: number; dur: number; from?: number }[] };
       return pt.secs.map((s, i) => ({
         x: s.x,
         closed: (ahead: number) => {
           const t = (w.tick / 120) - st.t0 / 120 + ahead;
-          return st.plan.some((q) => q.k === i && t >= q.at - 0.1 && t < q.at + q.dur + 0.1);
+          return st.plan.some((q) => (byHang ? (q.from ?? q.k) : q.k) === i && t >= q.at - 0.1 && t < q.at + q.dur + 0.1);
         },
       }));
     },
     (w) => w.flags[key + 't'].t0 >= 0,
   );
 /** the lifting plates: wait on the deck while the seam's plate is out or about to be */
-const liftWalk = (key: string) =>
+const liftWalk = (key: string, blind = false) =>
   gateWalk(
     (w) => {
       const st = w.flags[key] as { t0: number; cols: number[]; lifts: { k: number; at: number; dur: number }[] };
@@ -495,11 +531,12 @@ const liftWalk = (key: string) =>
         x: c * 16,
         closed: (ahead: number) => {
           const t = (w.tick - st.t0) / 120 + ahead;
-          return st.lifts.some((q) => q.k === k && t >= q.at - 1.1 && t < q.at + q.dur + 0.2);
+          return st.lifts.some((q) => q.k === k && t >= q.at - (blind ? 0 : 1.1) && t < q.at + q.dur + (blind ? 0 : 0.2));
         },
       }));
     },
     (w) => w.flags[key].t0 >= 0,
+    blind ? [0] : undefined,
   );
 
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
@@ -539,21 +576,24 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'PAT-03': { steps: [...room03().slice(0, 2), { hold: '', until: done, max: 900, note: 'stay on the one that grew' }], cause: 'pat-jam' },
-  'PAT-10': { steps: [{ hold: 'R', until: X(3.3), max: 600 }, { hold: 'R', jump: 12, ticks: 12, note: 'a hop on to the first plate, to be safe' }, { hold: 'R', until: done, max: 600 }], cause: 'pat-taala' },
+  'PAT-10': { steps: [...room10(), { hold: 'R', until: done, max: 2400, note: 'the room’s count, on into the pontoon' }], cause: 'pat-ganga' },
   'PAT-09': { steps: [...room09().slice(0, 1), { hold: 'R', until: X(39.5), max: 400, note: 'the first gondola that comes' }, { hold: 'R', jump: 14, ticks: 14 }, { hold: '', until: done, max: 600 }], cause: 'pat-jhoola' },
   'PAT-08': { steps: [...hop(5.5, 'skip the first hatch'), { hold: 'R', until: done, max: 900 }], cause: 'pat-kua' },
   'PAT-07': { steps: [{ policy: rideBalanced(false, false), until: done, max: 4500, note: 'stand on the road side whatever happens' }], cause: 'pat-dhakka' },
-  'PAT-06': { steps: [{ hold: 'R', until: X(4.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12, note: 'jump every seam, to be safe' }, { hold: 'R', until: done, max: 600 }], cause: 'pat-taala' },
+  'PAT-06': { steps: [...room06(), { hold: 'R', until: done, max: 2400, note: 'the room’s count (three) on to a truck with two sacks' }], cause: 'pat-ginti' },
   'PAT-05': { steps: [{ hold: 'R', until: X(7.2), max: 600 }, { hold: '', until: (w) => w.flags.pat5.carts[0].s.cx > 236 && w.flags.pat5.carts[0].s.dir > 0, max: 900, note: 'let the cart go by down the deck' }, { hold: 'R', until: X(9.5), max: 300, note: 'step on to the high section behind it' }, { hold: '', until: done, max: 1800, note: 'and wait there' }], cause: 'pat-pipa' },
   'PAT-04': { steps: [{ hold: '', until: (w) => w.flags.pat4.t0 >= 0 && t4(w) >= 3.7, max: 800 }, ...climb4().slice(1)], cause: 'pat-bojh' },
   'PAT-02': { steps: [...room02().slice(0, 4), { hold: '', until: done, max: 1500 }], cause: 'pat-chimta' },
   'PAT-01': { steps: [...upTo(24), { hold: '', until: done, max: 1500 }], cause: 'pat-tempo' },
 };
 // ------------------------------------------------------------------ length pass: a NAIVE and a FIX for every added act
-const ROOMS: Record<string, () => Step[]> = { 'PAT-05': room05, 'PAT-06': room06, 'PAT-07': room07, 'PAT-09': room09, 'PAT-10': room10 };
+const ROOMS: Record<string, () => Step[]> = { 'PAT-03': room03, 'PAT-02': room02, 'PAT-04': room04, 'PAT-05': room05, 'PAT-06': room06, 'PAT-07': room07, 'PAT-09': room09, 'PAT-10': room10 };
 const ACT_ORDER: Record<string, string[]> = {
+  'PAT-03': ['pat03-batch', 'pat03-patti'],
+  'PAT-02': ['pat02-chokha', 'pat02-bhatti'],
+  'PAT-04': ['pat04-sidhi', 'pat04-anaaj'],
   'PAT-05': ['pat05-ghat', 'pat05-sangam', 'pat05-bori'],
-  'PAT-06': ['pat06-sau', 'pat06-nau', 'pat06-gaadi', 'pat06-kumhrar'],
+  'PAT-06': ['pat06-sau', 'pat06-nau', 'pat06-gaadi'],
   'PAT-07': ['pat07-sadak', 'pat07-pul', 'pat07-haat', 'pat07-mandi', 'pat07-adda'],
   'PAT-09': ['pat09-jhoola', 'pat09-ghoda', 'pat09-wapsi'],
   'PAT-10': ['pat10-pipa', 'pat10-sau', 'pat10-bori', 'pat10-sidhi', 'pat10-gaadi', 'pat10-anaaj'],
@@ -569,54 +609,40 @@ const inAct = (id: string, act: string, what: string, steps: (x: number) => Step
   cause,
 });
 const runOn: Step[] = [{ hold: 'R', until: done, max: 5000 }];
-/** stop 30 px before each gap, then jump (what you do on rough stone) */
-function stopGo(xs: (w: World) => number[]): (w: World) => Out {
-  let W: World | null = null;
-  let st = 0;
-  let until = 0;
-  let jt = 0;
-  return (w) => {
-    if (W !== w) {
-      W = w;
-      st = 0;
-      until = 0;
-      jt = 0;
-    }
-    const p = w.player;
-    if (jt > 0) {
-      jt--;
-      return { move: 'R', jump: true };
-    }
-    const o = xs(w).filter((x) => p.x < x).sort((a, b) => a - b)[0];
-    if (o === undefined || !p.onGround) return go(st === 1 ? '' : 'R');
-    if (st === 0 && p.x + p.w >= o - 34) {
-      st = 1;
-      until = w.tick + 40;
-    }
-    if (st === 1) {
-      if (w.tick < until) return go('');
-      st = 2;
-      jt = 12;
-      return { move: 'R', jump: true };
-    }
-    if (st === 2 && p.x + p.w < o - 40) st = 0;
-    return go('R');
-  };
-}
+const stair2 = (x: number, wait: number): Step[] => [
+  { hold: 'R', until: X(x + 3.2), max: 600, note: 'to the foot of the second flight' },
+  { hold: '', until: (w) => w.flags.pat4b.t0 >= 0 && (w.tick - w.flags.pat4b.t0) / 120 >= wait, max: 2400, note: 'all the porters have been and gone' },
+  ...hop(x + 3.7, 'the first step'),
+  ...hop(x + 5.7, 'the second step'),
+  ...hop(x + 7.7, 'the third step'),
+  ...hop(x + 9.7, 'the fourth step'),
+  { hold: 'R', until: and(ground, X(x + 29)), max: 900, note: 'over the landing and down the far stair' },
+  { hold: 'R', until: X(x + 33.4), max: 300 },
+];
 const ACT_MISTAKES: Record<string, ReturnType<typeof inAct>[]> = {
+  'PAT-03': [
+    inAct('PAT-03', 'pat03-patti', 'stop on the left part of the third hoarding', (x) => [{ hold: 'R', until: X(x + 13.5), max: 900 }, { hold: '', until: done, max: 1500 }], 'pat-jam'),
+    inAct('PAT-03', 'pat03-patti', 'wait at the right end of the second hoarding before the bell', (x) => [{ hold: 'R', until: X(x + 11.9), max: 900 }, { hold: '', until: done, max: 1500 }], 'pat-patti'),
+  ],
+  'PAT-02': [
+    inAct('PAT-02', 'pat02-bhatti', 'stand in the first litti’s path', (x) => [{ hold: 'R', until: X(x + 10.0), max: 600 }, { hold: '', until: done, max: 900 }], 'pat-angara'),
+    inAct('PAT-02', 'pat02-bhatti', 'get past the first litti, then run on past the second', () => [{ policy: pastMarkers('pat2b', 1), until: done, max: 5000 }], 'pat-doosra'),
+  ],
+  'PAT-04': [
+    inAct('PAT-04', 'pat04-sidhi', 'climb behind the first porter', (x) => [{ hold: 'R', until: X(x + 2), max: 300 }, ...Array.from({ length: 30 }, (): Step => ({ hold: 'R', jump: 20, ticks: 26 }))], 'pat-bojh'),
+    inAct('PAT-04', 'pat04-sidhi', 'wait for two porters, as on the first flight, then climb', (x) => stair2(x, 6.0), 'pat-sidhi'),
+  ],
   'PAT-05': [
     inAct('PAT-05', 'pat05-bori', 'run on across the loading deck', () => runOn),
-    inAct('PAT-05', 'pat05-bori', 'wait on the section the porter’s sack is swinging over', (x) => [{ hold: 'R', until: X(x + 17.2), max: 1500 }, { hold: '', until: done, max: 1500 }]),
+    inAct('PAT-05', 'pat05-bori', 'wait before the section the second sack hangs over (it slides back)', () => [{ policy: sackWalk('pat5s', true), until: done, max: 6000 }], 'pat-bori'),
   ],
   'PAT-06': [
     inAct('PAT-06', 'pat06-gaadi', 'run on over the lifting plates', () => runOn),
-    inAct('PAT-06', 'pat06-gaadi', 'wait on the first plate', (x) => [{ hold: 'R', until: X(x + 6.4), max: 600 }, { hold: '', until: done, max: 1500 }]),
-    inAct('PAT-06', 'pat06-kumhrar', 'walk the stumps without jumping', () => runOn),
-    inAct('PAT-06', 'pat06-kumhrar', 'stop at the edge of each stump and jump from standing', (x) => [{ policy: stopGo(() => Array.from({ length: 11 }, (_, i) => (x + 8 + i * 6) * 16)), until: done, max: 4000 }], 'pat-jod'),
+    inAct('PAT-06', 'pat06-gaadi', 'cross the moment the plate is back, ignoring that it shakes (the second truck)', () => [{ policy: liftWalk('pat6c', true), until: done, max: 9000 }], 'pat-gaadi'),
   ],
   'PAT-07': [
-    inAct('PAT-07', 'pat07-pul', 'stand still in the middle', () => [{ hold: '', until: done, max: 5000 }]),
-    inAct('PAT-07', 'pat07-pul', 'balance for the riders on the kerb side only', () => [{ policy: rideBalanced(false, false), until: done, max: 6000 }]),
+    inAct('PAT-07', 'pat07-pul', 'stand still in the middle', () => [{ hold: '', until: done, max: 5000 }], 'pat-dhakka'),
+    inAct('PAT-07', 'pat07-pul', 'stay on the kerb side for ever (the rider got off)', () => [{ policy: rideBalanced(false, false, -1), until: done, max: 6000 }], 'pat-torana'),
     inAct('PAT-07', 'pat07-haat', 'stand still in the middle', () => [{ hold: '', until: done, max: 5000 }]),
     inAct('PAT-07', 'pat07-haat', 'balance for the riders on the kerb side only', () => [{ policy: rideBalanced(false, false), until: done, max: 6000 }]),
     inAct('PAT-07', 'pat07-mandi', 'stand still in the middle', () => [{ hold: '', until: done, max: 5000 }]),
@@ -628,34 +654,38 @@ const ACT_MISTAKES: Record<string, ReturnType<typeof inAct>[]> = {
   ],
   'PAT-10': [
     inAct('PAT-10', 'pat10-bori', 'run on across the loading deck', () => runOn),
-    inAct('PAT-10', 'pat10-bori', 'wait on the third section: it is the one loaded first', (x) => [{ hold: 'R', until: X(x + 10.8), max: 1500 }, { hold: '', until: done, max: 1500 }]),
+    inAct('PAT-10', 'pat10-bori', 'wait before the section the second sack hangs over (it slides back)', () => [{ policy: sackWalk('pat10s', true), until: done, max: 6000 }], 'pat-bori'),
     inAct('PAT-10', 'pat10-gaadi', 'run on over the lifting plates', () => runOn),
-    inAct('PAT-10', 'pat10-gaadi', 'wait on an even plate once it is back', (x) => [{ policy: liftWalk('pat10c'), until: X(x + 12.2), max: 3000 }, { hold: '', until: done, max: 5000 }]),
+    inAct('PAT-10', 'pat10-gaadi', 'cross the moment the plate is back, ignoring that it shakes (the second truck)', () => [{ policy: liftWalk('pat10c', true), until: done, max: 9000 }], 'pat-gaadi'),
   ],
 };
 
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'PAT-03': ACT_MISTAKES['PAT-03'],
+  'PAT-04': ACT_MISTAKES['PAT-04'],
   'PAT-10': ACT_MISTAKES['PAT-10'],
   'PAT-09': ACT_MISTAKES['PAT-09'],
   'PAT-06': ACT_MISTAKES['PAT-06'],
   'PAT-05': ACT_MISTAKES['PAT-05'],
-  'PAT-02': [{ what: 'run on into the second bed, where the litti is', steps: [...room02(), { hold: 'R', until: X(34.3), max: 400 }, { hold: '', ticks: 235 }, { hold: 'R', until: done, max: 2400 }], cause: 'pat-angara' }],
+  'PAT-02': [...ACT_MISTAKES['PAT-02'], { what: 'run on into the second bed, where the litti is', steps: [...room02(), { hold: 'R', until: X(34.3), max: 400 }, { hold: '', ticks: 235 }, { hold: 'R', until: done, max: 2400 }], cause: 'pat-angara' }],
   'PAT-07': [...ACT_MISTAKES['PAT-07'], { what: 'walk straight through the lane at the stand', steps: [{ policy: rideBalanced(true, false), until: (w) => !!w.flags.pat7g && w.player.onGround && w.player.y > 220 && w.player.cx > w.flags.pat7g.lane0 - 50, max: 16000 }, { hold: '', until: (w) => w.flags.pat7g.third.s.k > 0.7, max: 1200 }, { hold: 'R', until: done, max: 600 }], cause: 'pat-bhid' }],
   'PAT-08': [{ what: 'the hatch with 1 brick', steps: [...hop(5.5, ''), ...hop(10.5, ''), { hold: 'R', until: done, max: 900 }], cause: 'pat-kua' }],
   'PAT-01': [{ what: 'run on at the hoarding', steps: [...upTo(32), { hold: 'R', until: done, max: 900 }], cause: 'pat-hoarding' }],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'pat02-chokha': act02,
+  'pat02-bhatti': (x) => [{ policy: pastMarkers('pat2b'), until: and(ground, X(x + 48)), max: 5000, note: 'behind each litti, then past it' }, { hold: 'R', until: X(x + 49.4), max: 400 }],
   'pat03-batch': act03,
   'pat04-anaaj': act04,
+  'pat04-sidhi': (x) => stair2(x, 9.0),
+  'pat03-patti': (x) => [{ policy: laneWalk('pat3b'), until: and(ground, X(x + 27.5)), max: 5000, note: 'wait for the last bell, then cross' }, { hold: 'R', until: X(x + 35.4), max: 400 }],
   'pat05-ghat': act05,
-  'pat05-bori': (x) => [{ policy: sackWalk('pat5s'), until: and(ground, X(x + 64.6)), max: 5000, note: 'wait at the end of the section before each loaded one' }, { hold: 'R', until: X(x + 73.4), max: 400 }],
-  'pat06-gaadi': (x) => [{ policy: liftWalk('pat6c'), until: and(ground, X(x + 117.4)), max: 9000, note: 'cross a seam only while its plate is in and still' }],
-  'pat06-kumhrar': (x) => [{ policy: hopOver(() => Array.from({ length: 11 }, (_, i) => (x + 8 + i * 6) * 16), 6), until: and(ground, X(x + 79.4)), max: 2500, note: 'run on and jump every gap, polished or not' }],
+  'pat05-bori': (x) => [{ policy: sackWalk('pat5s'), until: and(ground, X(x + 54.6)), max: 5000, note: 'wait at the end of the section before the one the sack lands on' }, { hold: 'R', until: X(x + 61.4), max: 400 }],
+  'pat06-gaadi': (x) => [{ policy: liftWalk('pat6c'), until: and(ground, X(x + 65.4)), max: 9000, note: 'cross a seam only while its plate is in and still' }],
   'pat05-sangam': (x) => [{ policy: deckPolicy('pat5b', 3), until: and(ground, X(x + 34.2)), max: 4000, note: 'across the longest deck' }, { hold: 'R', until: X(x + 45.4), max: 400 }],
   'pat06-nau': (x) => [{ policy: hopOver(() => [18, 36].map((c) => (x + c) * 16), 6), until: and(ground, X(x + 57.4)), max: 2000, note: 'walk the plates, jump the gaps at 3 and 6' }],
-  'pat10-bori': (x) => [{ policy: sackWalk('pat10s'), until: and(ground, X(x + 80.4)), max: 8000, note: 'wait before each loaded section' }, { hold: 'R', until: X(x + 91.4), max: 600 }],
-  'pat10-gaadi': (x) => [{ policy: liftWalk('pat10c'), until: and(ground, X(x + 111.4)), max: 9000, note: 'wait for each even plate to be back in' }],
+  'pat10-bori': (x) => [{ policy: sackWalk('pat10s'), until: and(ground, X(x + 55.6)), max: 8000, note: 'wait before each loaded section' }, { hold: 'R', until: X(x + 61.4), max: 600 }],
+  'pat10-gaadi': (x) => [{ policy: liftWalk('pat10c'), until: and(ground, X(x + 69.4)), max: 9000, note: 'wait for each lifted plate to be back in and still' }],
   'pat10-sidhi': (x) => [
     { hold: 'R', until: X(x + 3.2), max: 600, note: 'to the foot of the stair' },
     { hold: '', until: (w) => w.flags.pat10g.t0 >= 0 && (w.tick - w.flags.pat10g.t0) / 120 >= 6.0, max: 1500, note: 'both porters have been and gone' },

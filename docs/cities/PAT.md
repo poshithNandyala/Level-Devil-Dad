@@ -14,11 +14,11 @@ matches its slot and declares its door ending.
 | 03 | Ashok Rajpath | hoarding-swap-at-class-bell / B8, banner-swap-width | hoardings are platforms; at the bell each is swapped for a banner whose width shows in the roll above it (grows from the left, or is pulled taut to the right) | `pat03-batch`: three bells, five hoardings | `pat-ghanti`: two iron bells swinging low |
 | 04 | Golghar | one-way-stairs-rising-grain / one-way-porters | porters come down the stair you climb, a second steps out of a landing door | `pat04-anaaj`: grain rises in the dome | `pat-bhitar`: the door leaf swings out into you |
 | 05 | Pipa Pul | float-sinks-under-load / load-sinks | pontoon sections sink under the handcart rolling on them; jump the cart's section | `pat05-ghat`, `pat05-sangam`: longer decks | `pat-nawka`: the last float drifts off with the door |
-| 06 | Setu ka Jod | setu-joint-missing-plate / missing-plate | numbered plates over the seams, one missing; a plate flips if landed on from a jump | `pat06-sau`, `pat06-nau`: more seams, every third plate gone | `pat-toll`: sensor strip slams a boom barrier |
+| 06 | Setu ka Jod | setu-joint-missing-plate / missing-plate | numbered plates over every seam; those numbered by a multiple of the sacks on the truck are tarps over the gap | `pat06-sau` (two sacks: every second plate), `pat06-nau` (three again), `pat06-gaadi` (trucks lift plates, a second truck behind the first) | `pat-toll`: sensor strip slams a boom barrier |
 | 07 | Tempo (marathon) | vehicle-leans-to-rider-side / lean-balance, parked-gap-closes | the deck leans to the heavier side; scrape an arch or hump while leaning and you die | `pat07-sadak` (truck, humps, a halt, an arch), `pat07-adda` (kerb-side truck, the stand and the lane a third tempo backs into) | `pat-hauled-basket`: the rope slips if you linger |
 | 08 | Nalanda (how would I know) | count-bricks-routes-cells / count-routing | each hatch takes you to the cell with the same number of bricks; the others hold a well | `pat08-chowk`, `pat08-vihara` | `pat-mound`: decoy hatches, the door with zero bricks |
 | 09 | Sonepur Mela (tough) | moving-gap-behind-rider / moving-gap, gondola-swing | the crowd parts only behind a horse rider | `pat09-jhoola`, `pat09-ghoda`: the giant wheel (a gondola with a fairgoer swings you off) and a quicker horse | `pat-charkhi`: four-armed turnstile |
-| 10 | Setu se Golghar (finale) | finale-setu-plate-count / plate-count-under-cart | the sacks on a handcart are the rule: every n-th plate gone on the bridge | `pat10-pipa` (every n-th pontoon section awash), `pat10-sau` (the Setu with five sacks), `pat10-sidhi` (Golghar's stair), `pat10-anaaj` (the yard) | `pat-ginti-pad`: step only on the pad with the cart's number |
+| 10 | Setu se Golghar (finale) | finale-setu-plate-count / plate-count-under-cart | the sacks on a handcart are the rule: every n-th plate gone on the bridge | `pat10-pipa` (every n-th pontoon section awash), `pat10-sau` (the Setu with five sacks), `pat10-bori` (porters load sections, a sack slides), `pat10-sidhi` (Golghar's stair), `pat10-gaadi` (trucks lift plates), `pat10-anaaj` (the yard) | `pat-ginti-pad`: step only on the pad with the cart's number |
 
 ## Fairness (human-timing model, 80 runs per lag)
 
@@ -29,14 +29,15 @@ Every stage clears 100% at average lag (0-12 ticks) and every stretch between ch
 
 Spoken lines are only the ones `docs/cities/PAT.md` of the city bible marks VERIFIED (a small set, reused where it fits):
 `Aain naa, Dad! Ka haal ba?`, `Litti garam ba, maze se khaa!`, `Safar badhiya rahe, Dad!`, `Do litti, ek chokha!`,
-`Eeh ketna ha?`, `Madad kara!`, `Rook!`, `Tani dubaara kaha.`, `Chalo, aage!`, `Badhiya!`, `Ulta-pulta ho gaya!`,
+`Eeh ketna ha?`, `Madad kara!`, `Ruko!`, `Tani dubaara kaha.`, `Chalo, aage!`, `Badhiya!`, `Ulta-pulta ho gaya!`,
 `Naikhe samajh mein aavat?`, `Humke naikhe maaloom, Dad!`, `Setu one, Dad zero!`, `Neend aa rahi hai?`,
 `Sab badhiya ba...`. One deviation: `seven` is `Saat baar! Wapas shuru!` (the bible's text for that line is garbled).
-Tara tells the truth once: `Rook!` at the foot of Golghar's stair (waiting is right there). Everything else she says
+Tara tells the truth once: `Ruko!` at the foot of Golghar's stair (waiting is right there). Everything else she says
 is `Chalo, aage!`, which is a lie at every trap.
 
-## Length pass (acts added to 05, 06, 07, 09, 10)
+## Length pass and fix round 1 (acts added to 02-07, 09, 10)
 
-Clear times of the scripted route, before -> after: 05 37 -> 64 s, 06 23 -> 64 s, 07 50 -> 131 s, 09 41 -> 72 s,
-10 30 -> 92 s. Added acts: `pat05-bori`; `pat06-gaadi`, `pat06-kumhrar`; `pat07-pul`, `pat07-haat`, `pat07-mandi`;
-`pat09-wapsi`; `pat10-bori`, `pat10-gaadi`. Details and what stays short: `reports/cities/pat/LENGTH.md`.
+Clear times of the scripted route: 01 15 s (the shared 120-column tour, see FIX-1.md), 02 26 s, 03 27 s, 04 38 s,
+05 53 s, 06 37 s, 07 131 s, 09 74 s, 10 62 s. Added acts: `pat02-bhatti`, `pat03-patti`, `pat04-sidhi` (ladders, one new
+rule each); `pat05-bori`; `pat06-gaadi`; `pat07-pul`, `-haat`, `-mandi`; `pat09-wapsi`; `pat10-bori`, `pat10-gaadi`.
+`pat06-kumhrar` was cut (its idea repeated DMN-03's slippery floor). Details: `reports/cities/pat/LENGTH.md`, `FIX-1.md`.

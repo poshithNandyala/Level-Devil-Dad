@@ -30,59 +30,63 @@ export function under(w: World, c0: number, c1: number, cause: string) {
   );
 }
 
-/** a numbered expansion plate over the seam at columns [c, c + 1]: it holds a walker and drops under a landing */
+/** a numbered expansion plate over the seam at columns [c, c + 1]: solid steel, bolted down */
 function plate(w: World, c: number, n: number, key: string) {
   const r = w.add(
     new Rig(px(c), FL, 32, 8, {
       solid: true,
       layer: 2,
-      near: 900,
-      cause: 'pat-taala',
-      inset: -2,
-      live: (s, w2) => s.s.drop !== undefined && w2.tick - s.s.drop < 40,
-      tick: (s, w2) => {
-        const p = w2.player;
-        const on = w2.standing(s.solid!);
-        // landing on a plate from a jump springs it: it flips up under you
-        if (on && !s.s.was && s.s.air) {
-          s.s.drop = w2.tick;
-          w2.sfx('snap', s.x + 16, FL);
-        }
-        s.s.was = on;
-        s.s.air = !p.onGround;
-      },
-      paint: (ctx, s, w2) => {
-        const up = s.s.drop !== undefined && w2.tick - s.s.drop < 40;
-        const y = s.y - (up ? 5 : 0);
-        box(ctx, s.x, y, s.w, 8, up ? '#D7262E' : '#8A8F96');
-        box(ctx, s.x, y, s.w, 2, '#B8BDC4');
-        box(ctx, s.x + 2, y + 3, 3, 3, '#555');
-        box(ctx, s.x + s.w - 5, y + 3, 3, 3, '#555');
-        // its number, scratched in
-        ctx.fillStyle = '#2A2A2E';
-        ctx.font = '700 8px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(String(n), s.x + 16, y + 7);
-      },
+      paint: (_ctx, s, _w2) => void s,
     }),
   );
+  void n;
   (w.flags[key] ??= []).push(r);
   return r;
 }
 
-/** the seams of a bridge: [column, number, present] */
+/** the seams of a bridge: [column, number, present]. Every seam looks plated; a missing plate is a tarp laid flat over
+ *  the gap, with the same number painted on it but no bolts. The sacks on the truck at the foot say which numbers. */
 export function seams(w: World, list: [number, number, boolean][], key: string) {
-  for (const [c, n, present] of list) {
-    if (present) plate(w, c, n, key);
+  for (const [c, , present] of list) {
+    if (present) plate(w, c, 0, key);
   }
   w.add(
     new Paint((ctx) => {
-      // the girder walls either side of each seam, so the gap reads as a joint
-      for (const [c] of list) {
+      for (const [c, n, present] of list) {
+        // the girder walls either side of each seam, so the joint reads
         box(ctx, px(c) - 2, FL, 2, 14, '#3F3B30');
         box(ctx, px(c) + 32, FL, 2, 14, '#3F3B30');
+        box(ctx, px(c), FL, 32, 8, present ? '#8A8F96' : '#858A8E');
+        box(ctx, px(c), FL, 32, 2, present ? '#B8BDC4' : '#AEB3B9');
+        if (present) {
+          box(ctx, px(c) + 2, FL + 3, 3, 3, '#555');
+          box(ctx, px(c) + 27, FL + 3, 3, 3, '#555');
+        }
+        ctx.fillStyle = '#2A2A2E';
+        ctx.font = '700 8px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(n), px(c) + 16, FL + 7);
       }
-    }, 1),
+    }, 2),
+  );
+}
+
+/** a parked truck with n sacks on it: the count is the rule of the stretch */
+export function cart(w: World, x: number, n: number) {
+  w.add(
+    new Paint((ctx) => {
+      box(ctx, x, FL - 14, 30, 8, '#6B3F1C');
+      ctx.fillStyle = '#1D1A1A';
+      ctx.beginPath();
+      ctx.arc(x + 7, FL - 4, 4, 0, Math.PI * 2);
+      ctx.arc(x + 23, FL - 4, 4, 0, Math.PI * 2);
+      ctx.fill();
+      box(ctx, x - 8, FL - 18, 10, 2, '#8A5A2B');
+      for (let i = 0; i < n; i++) {
+        box(ctx, x + 2 + (i % 3) * 9, FL - 24 - Math.floor(i / 3) * 8, 8, 9, '#C9A56B');
+        box(ctx, x + 2 + (i % 3) * 9, FL - 24 - Math.floor(i / 3) * 8, 8, 2, '#E3C58A');
+      }
+    }, 2),
   );
 }
 
@@ -99,8 +103,8 @@ export function room(): LevelDef {
     index: 6,
     name: 'Setu ka Jod',
     nameEn: 'The Setu’s joint',
-    tagline: 'Forty-five spans, forty-four joints, and a plate over each. Count them.',
-    hint: 'Each seam between two spans has a numbered steel plate over it, and one of them is missing: the seam with a black gap is a pit. Walk over the plates: a plate flips up if you land on it from a jump. Jump only the one seam that has no plate, from the deck, and land on the deck.',
+    tagline: 'Forty-five spans, forty-four joints, and a plate over each. Count the sacks.',
+    hint: 'Each seam between two spans looks plated, with a number on it. The truck at the start carries three sacks: every plate whose number is a multiple of three is only a tarp laid over the gap (it has no bolts). Walk the plates, and jump the tarp from the deck to the deck.',
     par: 22,
     map: (() => {
       const g = Grid.ground(15).put(1, 14, '@').put(30, 14, 'E');
@@ -110,7 +114,8 @@ export function room(): LevelDef {
     build(w: World) {
       door(w);
       seams(w, S, 'pat6');
-      for (const [c, , present] of S) under(w, c, c + 1, present ? 'pat-taala' : 'pat-jod');
+      for (const [c] of S) under(w, c, c + 1, 'pat-jod');
+      cart(w, px(2), 3);
       w.add(
         new Rig(px(3), 0, 1, 1, {
           paint: () => {},
@@ -129,23 +134,17 @@ export function room(): LevelDef {
 export const act: Act = {
   id: 'pat06-sau',
   w: 44,
-  advice: 'The next run of spans is longer, with six seams and two plates gone. Read the numbers: each missing plate is a jump from the deck to the deck, and every plate you do cross is a plain walk.',
-  cps: [16, 30],
+  advice: 'The next truck carries two sacks, not three: every second plate is the tarp now, the two, the four and the six. Read the sacks again, walk the others, and jump the tarps from the deck to the deck.',
+  cps: [20, 33.5],
   paint: (g, c) => {
     for (const x of [6, 13, 20, 27, 34, 40]) g.fill(c.x + x, c.x + x + 1, 15, 17, '.');
   },
   build: (w, c) => {
-    const list: [number, number, boolean][] = [
-      [c.x + 6, 1, true],
-      [c.x + 13, 2, true],
-      [c.x + 20, 3, false],
-      [c.x + 27, 4, true],
-      [c.x + 34, 5, false],
-      [c.x + 40, 6, true],
-    ];
+    const list: [number, number, boolean][] = [6, 13, 20, 27, 34, 40].map((x, i) => [c.x + x, i + 1, (i + 1) % 2 !== 0]);
     seams(w, list, 'pat6a');
-    for (const [col, , present] of list) under(w, col, col + 1, present ? 'pat-taala' : 'pat-jod');
-    sign(w, c.x + 2, 10.4, 3, 'SPAN 7', 'shop', null, 'joint ahead');
+    for (const [col] of list) under(w, col, col + 1, 'pat-ginti');
+    cart(w, px(c.x + 1), 2);
+    sign(w, c.x + 2, 10.4, 3, 'SPAN 7', 'shop', null, 'load: 2 sacks');
   },
 };
 
@@ -153,7 +152,7 @@ export const act: Act = {
 export const act2: Act = {
   id: 'pat06-nau',
   w: 58,
-  advice: 'The far end of the bridge is eight spans long, and the plate numbers run from one to eight. Every third plate is gone: the three and the six. Walk the others, and jump the missing ones from the deck.',
+  advice: 'The far end of the bridge is eight spans long, and the truck carries three sacks again: the three and the six are tarps. Walk the others, and jump those two from the deck.',
   cps: [14, 36],
   paint: (g, c) => {
     for (const x of [6, 12, 18, 24, 30, 36, 42, 48]) g.fill(c.x + x, c.x + x + 1, 15, 17, '.');
@@ -161,8 +160,9 @@ export const act2: Act = {
   build: (w, c) => {
     const list: [number, number, boolean][] = [6, 12, 18, 24, 30, 36, 42, 48].map((x, i) => [c.x + x, i + 1, (i + 1) % 3 !== 0]);
     seams(w, list, 'pat6b');
-    for (const [col, , present] of list) under(w, col, col + 1, present ? 'pat-taala' : 'pat-jod');
-    sign(w, c.x + 2, 10.4, 3, 'SPAN 9', 'shop', null, 'joint ahead');
+    for (const [col] of list) under(w, col, col + 1, 'pat-jod');
+    cart(w, px(c.x + 1), 3);
+    sign(w, c.x + 2, 10.4, 3, 'SPAN 9', 'shop', null, 'load: 3 sacks');
   },
 };
 
@@ -219,7 +219,7 @@ export function liftSeams(w: World, c0: number, cols: number[], key: string, num
     r.s.k = k;
     (w.flags[key + 'p'] ??= []).push(r);
   });
-  w.add(
+  const pit = w.add(
     new Rig(px(c0), 256, px(cols[cols.length - 1] + 2 - c0), 30, {
       layer: 4,
       cause: 'pat-jod',
@@ -230,6 +230,11 @@ export function liftSeams(w: World, c0: number, cols: number[], key: string, num
       },
     }),
   );
+  // a seam a second truck follows is its own death: the plate was back for a breath and went again
+  w.onTick((w2) => {
+    const k = cols.findIndex((c) => Math.abs(w2.player.cx - px(c) - 16) < 40);
+    pit.hazard!.cause = k >= 0 && byK[k].length > 1 ? 'pat-gaadi' : 'pat-jod';
+  });
   // a truck crossing over the lifted seam: drawn in passing
   w.add(
     new Paint((ctx, w2) => {
@@ -248,74 +253,25 @@ export function liftSeams(w: World, c0: number, cols: number[], key: string, num
   return st;
 }
 
-/** a long run of spans where a truck lifts each plate out of its seat in turn */
+/** a bridge in traffic: a truck lifts a plate out of its seat (it shakes a second before), and at the second
+ *  window a second truck follows the first, so the plate is back for only a breath before it goes again */
 export const actGaadi: Act = {
   id: 'pat06-gaadi',
-  w: 118,
-  advice: 'The traffic is heavy on this stretch: a truck lifts each plate out of its seat for a couple of seconds, in turn, with the plate shaking a second before. Wait on the deck, never on a plate, and cross a seam only while its plate is in and not shaking.',
-  cps: [52.5, 88.5],
+  w: 66,
+  advice: 'Traffic: a truck lifts a plate out of its seat for a couple of seconds, and the plate shakes a second before. Wait on the deck, never on a plate. Where a second truck follows the first, the plate is back for a breath and still shaking: cross only when it is in and still.',
+  cps: [20, 47],
   paint: (g, c) => {
-    for (let i = 0; i < 18; i++) g.fill(c.x + 6 + i * 6, c.x + 7 + i * 6, 15, 17, '.');
+    for (let i = 0; i < 6; i++) g.fill(c.x + 6 + i * 9, c.x + 7 + i * 9, 15, 17, '.');
   },
   build: (w, c) => {
-    const cols = Array.from({ length: 18 }, (_, i) => c.x + 6 + i * 6);
-    const lifts: Lift[] = [];
-    // seams open in a ripple: 2.2 s each, 1.6 s apart, repeating every 9 s
-    for (let i = 0; i < 18; i++) for (let rep = 0; rep < 3; rep++) lifts.push({ k: i, at: 0.4 + i * 1.6 + rep * 29, dur: 2.2 });
-    liftSeams(w, c.x, cols, 'pat6c', Array.from({ length: 18 }, (_, i) => i + 1), lifts, px(c.x + 2));
+    const cols = Array.from({ length: 6 }, (_, i) => c.x + 6 + i * 9);
+    const lifts: Lift[] = [
+      { k: 1, at: 1.0, dur: 2.2 },
+      { k: 4, at: 5.5, dur: 2.2 },
+      { k: 4, at: 8.0, dur: 2.2 },
+    ];
+    liftSeams(w, c.x, cols, 'pat6c', [1, 2, 3, 4, 5, 6], lifts, px(c.x + 2));
     sign(w, c.x + 2, 10.4, 3.2, 'TRAFFIC', 'shop', null, 'plates lifting');
-  },
-};
-
-/** Kumhrar's polished pillar stumps (Mauryan polished sandstone, 80-pillar hall, Kumhrar, Patna): rough ones hold a
- *  walker, polished ones are slick. Source: https://en.wikipedia.org/wiki/Kumhrar */
-export const actKumhrar: Act = {
-  id: 'pat06-kumhrar',
-  w: 80,
-  advice: 'Kumhrar’s pillar hall: a row of stone stumps over the pit. The rough, grey ones are fine to stand on. The ones polished to a shine are slick: you slide right across them, so run on and jump from the far edge, and never stop on one.',
-  cps: [],
-  paint: (g, c) => {
-    g.fill(c.x + 4, c.x + 73, 15, 17, '.');
-  },
-  build: (w, c) => {
-    // 12 stumps, each 3 tiles wide with a 2 tile gap; stumps 3, 6, 9 and 11 are polished
-    const polished = new Set([2, 5, 8, 10]);
-    const stumps: Rig[] = [];
-    for (let i = 0; i < 12; i++) {
-      const x = px(c.x + 4 + i * 6);
-      const slick = polished.has(i);
-      const r = w.add(
-        new Rig(x, FL, 64, 48, {
-          solid: true,
-          layer: 2,
-          paint: (ctx, st) => {
-            box(ctx, st.x, st.y, st.w, 48, slick ? '#C9B79A' : '#7A6E5E');
-            box(ctx, st.x, st.y, st.w, 3, slick ? '#F4EAD2' : '#9A8E7C');
-            if (slick) {
-              box(ctx, st.x + 6, st.y + 1, 14, 1, '#FFFFFF');
-              box(ctx, st.x + 36, st.y + 6, 12, 1, '#FFFFFF');
-              box(ctx, st.x + 10, st.y + 20, 8, 1, '#FFFFFF');
-            } else for (let k = 0; k < 7; k++) box(ctx, st.x + 4 + k * 9, st.y + 4 + (k % 2) * 8, 4, 2, '#5C5246');
-          },
-        }),
-      );
-      r.solid!.slippery = slick;
-      r.s.slick = slick;
-      stumps.push(r);
-    }
-    w.flags.pat6k = { stumps };
-    w.add(
-      new Rig(px(c.x + 4), 256, px(70), 30, {
-        layer: 4,
-        cause: 'pat-jod',
-        inset: 0,
-        paint: (ctx, r) => {
-          ctx.fillStyle = 'rgba(70,56,36,0.92)';
-          ctx.fillRect(r.x, r.y, r.w, 30);
-        },
-      }),
-    );
-    sign(w, c.x + 1, 10.4, 3.2, 'KUMHRAR', 'shop', null, '80 pillars');
   },
 };
 

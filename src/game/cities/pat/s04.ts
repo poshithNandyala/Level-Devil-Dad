@@ -39,18 +39,19 @@ export function stairPaint(g: Grid, o: number) {
 }
 
 /** the porters of the stair at column `o`: A comes down from the landing, B steps out of the landing door */
-export function stairBuild(w: World, o: number, key: string, truth: boolean) {
+export function stairBuild(w: World, o: number, key: string, truth: boolean, third?: { period: number; emerge: number }) {
+  const period = third?.period ?? STAIR.period;
   const st = { t0: -1 };
   w.flags[key] = st;
   onPass(w, px(o + 1), (w2) => {
     st.t0 = w2.tick;
-    if (truth) tara(w2, L.intro[2 + 2], 2.4); // 'Rook! | Stop!': the one time in the city Tara tells the truth
+    if (truth) tara(w2, L.intro[2 + 2], 2.4); // 'Ruko! | Stop!': the one time in the city Tara tells the truth
   });
-  const mk = (emerge: number, fromCol: number) =>
+  const mk = (emerge: number, fromCol: number, cause = 'pat-bojh') =>
     w.add(
       new Rig(px(o + fromCol), 0, 16, 44, {
         layer: 3,
-        cause: 'pat-bojh',
+        cause,
         inset: 2,
         live: (r) => !!r.on,
         tick: (r, w2) => {
@@ -59,7 +60,7 @@ export function stairBuild(w: World, o: number, key: string, truth: boolean) {
             return;
           }
           const t = since(w2, st.t0) - emerge;
-          const k = ((t % STAIR.period) + STAIR.period) % STAIR.period;
+          const k = ((t % period) + period) % period;
           const walk = ((fromCol - 2) * 16) / 56;
           r.on = t >= 0 && k < walk;
           if (r.on) {
@@ -71,7 +72,7 @@ export function stairBuild(w: World, o: number, key: string, truth: boolean) {
         paint: (ctx, r, w2) => porter(ctx, r.x + 8, r.y, w2.tick),
       }),
     );
-  w.flags[key + 'p'] = { a: mk(STAIR.topEmerge, 11), b: mk(STAIR.midEmerge, STAIR.midCol) };
+  w.flags[key + 'p'] = { a: mk(STAIR.topEmerge, 11), b: mk(STAIR.midEmerge, STAIR.midCol), ...(third ? { c: mk(third.emerge, 11, 'pat-sidhi') } : {}) };
   w.add(
     new Paint((ctx) => {
       box(ctx, px(o + STAIR.midCol) - 4, FL - 48 - 26, 14, 26, '#2B1A10');
@@ -151,6 +152,19 @@ export const act: Act = {
       }),
     );
     sign(w, c.x + 20, 5.4, 4, 'KHIDKI', 'shop', null, 'window');
+  },
+};
+
+/** the second flight: the same stair, but a third porter follows the other two, a long breath behind them */
+export const actSidhi: Act = {
+  id: 'pat04-sidhi',
+  w: 34,
+  advice: 'The second flight is busier: three porters come down it, not two. The first and the second are as before, and a third follows a long breath behind them. Wait at the foot until all three have been and gone, then go up in one go.',
+  cps: [],
+  paint: (g, c) => stairPaint(g, c.x + 2),
+  build: (w, c) => {
+    stairBuild(w, c.x + 2, 'pat4b', false, { period: 14, emerge: 6.2 });
+    sign(w, c.x + 22, 6.4, 4.4, 'DOOSRI SIDHI', 'shop', null, 'the other stair');
   },
 };
 

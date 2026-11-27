@@ -296,15 +296,15 @@ export const act2: Act = {
 export const actWapsi: Act = {
   id: 'pat09-wapsi',
   w: 74,
-  advice: 'The last crowd is the thickest, and the horse does not go straight: he goes on a little way, stops, and turns back, and then turns again and goes through. Stay right behind him, and walk backwards with him when he comes back: the crowd closes where he has been.',
-  cps: [],
+  advice: 'The last crowd is the thickest, and the horse does not go straight: he goes on a little way, stops for a moment, and turns back, and then turns again and goes through. Stay right behind him, and walk backwards with him when he comes back: the crowd closes where he has been.',
+  cps: [39],
   build: (w, c) => {
     const x0 = px(c.x + 10),
       x1 = px(c.x + 62),
       S = x1 - x0,
       v = 56;
     const f = (0.6 * S) / v,
-      t1 = f + 1.0,
+      t1 = f + 2.4,
       bk = (0.4 * S) / v,
       t2 = t1 + bk,
       t3 = t2 + 0.8;

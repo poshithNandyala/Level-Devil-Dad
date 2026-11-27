@@ -11,30 +11,11 @@ import { collectible, door, px, rival, sign } from '../../levels/kit';
 import { Rig, box } from './entities';
 import { taraScript } from './common';
 import { pontoon, sackDeck } from './s05';
-import { seams, under, liftSeams, type Lift } from './s06';
+import { seams, under, liftSeams, cart, type Lift } from './s06';
 import { stairBuild, stairPaint } from './s04';
 import { lines as L } from './lines';
 
 const FL = 240;
-
-/** a handcart with n sacks, parked: the count is the rule of the part */
-function cart(w: World, x: number, n: number) {
-  w.add(
-    new Paint((ctx) => {
-      box(ctx, x, FL - 14, 30, 8, '#6B3F1C');
-      ctx.fillStyle = '#1D1A1A';
-      ctx.beginPath();
-      ctx.arc(x + 7, FL - 4, 4, 0, Math.PI * 2);
-      ctx.arc(x + 23, FL - 4, 4, 0, Math.PI * 2);
-      ctx.fill();
-      box(ctx, x - 8, FL - 18, 10, 2, '#8A5A2B');
-      for (let i = 0; i < n; i++) {
-        box(ctx, x + 2 + (i % 3) * 9, FL - 24 - Math.floor(i / 3) * 8, 8, 9, '#C9A56B');
-        box(ctx, x + 2 + (i % 3) * 9, FL - 24 - Math.floor(i / 3) * 8, 8, 2, '#E3C58A');
-      }
-    }, 2),
-  );
-}
 
 export function room(): LevelDef {
   const N = 3;
@@ -46,7 +27,7 @@ export function room(): LevelDef {
     name: 'Setu se Golghar',
     nameEn: 'From the bridge to the granary',
     tagline: 'Everything Patna taught you, with a handcart to read.',
-    hint: 'Read the sacks on the handcart at the start of each part. On the bridge, every plate whose number is a multiple of that count is missing: jump those seams, walk the others (a plate flips if you land on it from a jump). On the pontoon, every section numbered that way is awash: jump over it. At the granary door, step only on the pad with the same number as the sacks on its cart.',
+    hint: 'Read the sacks on the handcart at the start of each part. On the bridge, every plate whose number is a multiple of that count is missing: the plate is only a tarp over the gap: jump those seams from the deck, walk the others. On the pontoon, every section numbered that way is awash: jump over it. At the granary door, step only on the pad with the same number as the sacks on its cart.',
     par: 90,
     map: (() => {
       const g = Grid.ground(15).put(1, 14, '@').put(30, 14, 'E');
@@ -59,7 +40,7 @@ export function room(): LevelDef {
       cart(w, px(2), N);
       const list: [number, number, boolean][] = cols.map((c, i) => [c, i + 1, (i + 1) % N !== 0]);
       seams(w, list, 'pat10');
-      for (const [c, , present] of list) under(w, c, c + 1, present ? 'pat-taala' : 'pat-jod');
+      for (const [c] of list) under(w, c, c + 1, 'pat-jod');
       w.add(
         new Rig(px(3), 0, 1, 1, {
           paint: () => {},
@@ -98,7 +79,7 @@ export const act1: Act = {
 export const actSetu: Act = {
   id: 'pat10-sau',
   w: 62,
-  advice: 'Back on the bridge, and the cart at the foot of it carries five sacks: every fifth plate is gone, the five and the ten. Walk the plates, jump the gaps.',
+  advice: 'Back on the bridge, and the cart at the foot of it carries five sacks: every fifth plate is a tarp, the five and the ten. Walk the plates, jump the tarps.',
   cps: [],
   paint: (g, c) => {
     for (let i = 0; i < 10; i++) g.fill(c.x + 6 + i * 5, c.x + 7 + i * 5, 15, 17, '.');
@@ -107,7 +88,7 @@ export const actSetu: Act = {
     const list: [number, number, boolean][] = [];
     for (let i = 0; i < 10; i++) list.push([c.x + 6 + i * 5, i + 1, (i + 1) % 5 !== 0]);
     seams(w, list, 'pat10b');
-    for (const [col, , present] of list) under(w, col, col + 1, present ? 'pat-taala' : 'pat-jod');
+    for (const [col] of list) under(w, col, col + 1, 'pat-ginti');
     cart(w, px(c.x + 1), 5);
     sign(w, c.x + 1.2, 10.4, 3, 'SETU', 'shop', null, 'load: 5 sacks');
   },
@@ -126,37 +107,42 @@ export const actStair: Act = {
   },
 };
 
-/** the pontoon with the porters at work: the cart's three sacks say every third section gets loaded, one after another */
+/** the pontoon with the porters at work: the cart's three sacks say every third section gets loaded; the second sack slides */
 export const actBori: Act = {
   id: 'pat10-bori',
-  w: 92,
-  advice: 'The cart at the foot of the pontoon carries three sacks: every third section is about to be loaded by the porters, one after another, each staying awash while its sack lies there. Wait at the end of the section before a loaded one, and never on the loaded one.',
-  cps: [44],
+  w: 62,
+  advice: 'The cart at the foot of the pontoon carries three sacks: the third and the sixth section are about to be loaded, each staying awash while its sack lies there. Wait at the end of the section before the third. The sixth sack hangs over the seventh and slides back on to the sixth along its rope: keep off the section where the rope ends.',
+  cps: [27],
   paint: (g, c) => {
-    g.fill(c.x + 5, c.x + 5 + 75 - 1, 15, 17, '.');
+    g.fill(c.x + 5, c.x + 5 + 50 - 1, 15, 17, '.');
   },
   build: (w, c) => {
-    const plan = [2, 5, 8, 11, 14, 17, 20, 23, 26].map((k, i) => ({ k, at: 1.0 + i * 3.8, dur: 4.2 }));
-    sackDeck(w, c.x + 5, 30, 'pat10s', plan);
+    sackDeck(w, c.x + 5, 20, 'pat10s', [
+      { k: 2, at: 1.2, dur: 4.0 },
+      { k: 5, from: 6, at: 7.0, dur: 4.0 },
+    ]);
     cart(w, px(c.x + 1), 3);
     sign(w, c.x + 1.2, 10.4, 3, 'PIPA PUL', 'shop', null, 'load: 3 sacks');
   },
 };
 
-/** the Setu in traffic: the cart's two sacks say every second plate is the one the trucks lift */
+/** the Setu in traffic: the cart's two sacks say plates two and four are the ones the trucks lift; the second has a second truck behind it */
 export const actGaadi: Act = {
   id: 'pat10-gaadi',
-  w: 112,
-  advice: 'The cart at the foot of this stretch carries two sacks: every second plate is the one a truck lifts out of its seat, in turn, for three seconds, shaking a second before. Wait on the deck before a numbered even seam until its plate is back in and still, and cross the odd ones at once.',
-  cps: [40.5, 76.5],
+  w: 70,
+  advice: 'The cart at the foot of this stretch carries two sacks: the plates numbered two and four are the ones a truck lifts out of its seat, shaking a second before. Wait on the deck. Where a second truck follows the first, the plate is back for a breath and still shaking: cross only when it is in and still.',
+  cps: [34],
   paint: (g, c) => {
-    for (let i = 0; i < 16; i++) g.fill(c.x + 6 + i * 6, c.x + 7 + i * 6, 15, 17, '.');
+    for (let i = 0; i < 6; i++) g.fill(c.x + 6 + i * 9, c.x + 7 + i * 9, 15, 17, '.');
   },
   build: (w, c) => {
-    const cols = Array.from({ length: 16 }, (_, i) => c.x + 6 + i * 6);
-    const lifts: Lift[] = [];
-    for (let i = 1; i < 16; i += 2) for (let rep = 0; rep < 4; rep++) lifts.push({ k: i, at: 0.8 + ((i - 1) / 2) * 2.3 + rep * 19, dur: 3.0 });
-    liftSeams(w, c.x, cols, 'pat10c', Array.from({ length: 16 }, (_, i) => i + 1), lifts, px(c.x + 2));
+    const cols = Array.from({ length: 6 }, (_, i) => c.x + 6 + i * 9);
+    const lifts: Lift[] = [
+      { k: 1, at: 1.0, dur: 3.0 },
+      { k: 3, at: 6.0, dur: 2.4 },
+      { k: 3, at: 8.7, dur: 2.4 },
+    ];
+    liftSeams(w, c.x, cols, 'pat10c', [1, 2, 3, 4, 5, 6], lifts, px(c.x + 2));
     cart(w, px(c.x + 1), 2);
     sign(w, c.x + 1.2, 10.4, 3, 'SETU', 'shop', null, 'load: 2 sacks');
   },

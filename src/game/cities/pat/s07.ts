@@ -232,7 +232,7 @@ export const actHaat: Act = {
   id: 'pat07-haat',
   w: 92,
   advice: 'The haat: a rider on the kerb side, then one on the road side: they cancel, so stand in the middle for the hump. When the kerb rider gets off, the road side is heavy: kerb side for the arch. Then a kerb-side truck evens it up again, with a hump in it, and the last rider gets off.',
-  cps: [40],
+  cps: [26, 40, 63],
   build: (w, c) => road(w, c, { stops: [[8, 1], [20, 1, 'L'], [46, -1], [84, -1, 'L']], trucks: [[64, 80, 'R']], scrapes: [[34, 'hump'], [56, 'arch'], [72, 'hump']] }, [[4, 'HAAT', 'weekly market']]),
 };
 
@@ -241,7 +241,7 @@ export const actMandi: Act = {
   id: 'pat07-mandi',
   w: 92,
   advice: 'The mandi: a rider gets on, a road-side truck comes alongside and evens it, a hump in the middle of it. A second rider gets on at the halt: a heavy kerb side with the truck still pulling the other way, so the road side for the next hump. Then no halts at all: an arch, a hump and an arch, one after another.',
-  cps: [62],
+  cps: [14, 62],
   build: (w, c) => road(w, c, { stops: [[8, 1], [40, 1], [56, -1], [82, -1]], trucks: [[20, 34], [44, 60]], scrapes: [[27, 'hump'], [52, 'hump'], [72, 'arch'], [78, 'hump'], [86, 'arch']] }, [[4, 'MANDI', 'grain market']]),
 };
 

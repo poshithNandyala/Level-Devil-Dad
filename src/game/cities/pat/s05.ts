@@ -197,16 +197,18 @@ export interface Drop {
   k: number;
   at: number;
   dur: number;
+  /** the section the sack hangs over first; if it is not `k` the sack slides along its rope to `k` just before it lands */
+  from?: number;
 }
 
 /** a deck where porters drop sacks on sections: a sack hangs above a section for a second, drops, and the section
  *  stays awash while it lies there. The plan is the same every time. */
-export function sackDeck(w: World, c0: number, n: number, key: string, plan: Drop[]) {
+export function sackDeck(w: World, c0: number, n: number, key: string, plan: Drop[], lead = 200) {
   const pt = pontoon(w, c0, n, [], key);
   const st = { t0: -1, plan };
   w.flags[key + 't'] = st;
   w.when(
-    (w2) => w2.player.cx >= px(c0) - 40,
+    (w2) => w2.player.cx >= px(c0) - lead,
     (w2) => {
       st.t0 = w2.tick;
     },
@@ -216,6 +218,13 @@ export function sackDeck(w: World, c0: number, n: number, key: string, plan: Dro
     pt.secs.forEach((sec, i) => {
       sec.s.awash = plan.some((q) => q.k === i && t >= q.at && t < q.at + q.dur);
     });
+    // a sack that slid lands on whoever stands on its section
+    const p = w2.player;
+    for (const q of plan) {
+      if (q.from === undefined || q.from === q.k || t < q.at || t >= q.at + 0.1) continue;
+      const sx = pt.secs[q.k].x;
+      if (p.cx >= sx && p.cx < sx + SEC && p.y + p.h < FL + 12) w2.die('pat-bori');
+    }
   });
   w.add(
     new Paint((ctx, w2) => {
@@ -223,8 +232,12 @@ export function sackDeck(w: World, c0: number, n: number, key: string, plan: Dro
       for (const q of plan) {
         const sx = px(c0) + q.k * SEC + SEC / 2;
         if (t >= q.at - 1.2 && t < q.at) {
-          // the porter's sack swinging on its rope above the section
-          const sw = Math.sin(w2.tick / 5) * 2;
+          // the porter's sack swinging on its rope above the section (or sliding along it to the section it will land on)
+          const f = q.from ?? q.k;
+          const slide = f === q.k ? 1 : Math.max(0, Math.min(1, (t - (q.at - 0.7)) / 0.6));
+          const hx = px(c0) + (f + (q.k - f) * slide) * SEC + SEC / 2;
+          const sw = Math.sin(w2.tick / 5) * 2 + (hx - sx);
+          if (f !== q.k) box(ctx, Math.min(sx, px(c0) + f * SEC + SEC / 2) - 10, FL - 79, Math.abs(sx - (px(c0) + f * SEC + SEC / 2)) + 20, 1, '#8A6A3A');
           box(ctx, sx - 8 + sw, FL - 62, 16, 14, '#C9A56B');
           box(ctx, sx - 8 + sw, FL - 62, 16, 3, '#E3C58A');
           box(ctx, sx + sw, FL - 78, 1, 16, '#8A6A3A');
@@ -237,17 +250,20 @@ export function sackDeck(w: World, c0: number, n: number, key: string, plan: Dro
   return pt;
 }
 
-/** the porters' deck: sacks land on sections one after another, so the deck is only crossable in the gaps */
+/** the porters' deck: a sack lands on a section and the section is awash while it lies there; the second sack slides along its rope first */
 export const actBori: Act = {
   id: 'pat05-bori',
-  w: 74,
-  advice: 'Porters are loading the pontoon: a sack hangs over a section for a second and then lands, and while it lies there the section is awash. Wait at the end of the section before one until the sack has gone, and never wait on the section that is about to be loaded.',
-  cps: [37.5],
+  w: 62,
+  advice: 'Porters are loading the pontoon: a sack hangs over a section for a second and then lands, and while it lies there the section is awash. Wait at the end of the section before it. The second sack hangs over one section and slides back along its rope on to the one before: the section where it lands is the one to keep off, not the one it hangs over.',
+  cps: [19, 37],
   paint: (g, c) => {
-    g.fill(c.x + 4, c.x + 4 + 60 - 1, 15, 17, '.');
+    g.fill(c.x + 4, c.x + 4 + 50 - 1, 15, 17, '.');
   },
   build: (w, c) => {
-    sackDeck(w, c.x + 4, 24, 'pat5s', [5, 8, 11, 14, 17, 20].map((k, i) => ({ k, at: 1.2 + i * 3.7, dur: 4.3 })));
+    sackDeck(w, c.x + 4, 20, 'pat5s', [
+      { k: 4, at: 2.0, dur: 4.0 },
+      { k: 8, from: 9, at: 8.0, dur: 4.0 },
+    ]);
     sign(w, c.x + 1, 10.4, 3, 'LOADING', 'shop', null, 'sacks going on');
   },
 };

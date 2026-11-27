@@ -14,7 +14,7 @@ export const lines: CityLines = {
     'Eeh ketna ha? | How much is this?',
     'Chalo, aage! | Let’s go on!',
     'Safar badhiya rahe, Dad! | Have a good journey, Dad!',
-    'Rook! | Stop!',
+    'Ruko! | Stop!',
     'Do litti, ek chokha! | Two litti, one chokha!',
     'Madad kara! | Help!',
     'Tani dubaara kaha. | Say that again.',
@@ -28,7 +28,7 @@ export const lines: CityLines = {
   flip: 'Ulta-pulta ho gaya! | It’s all topsy-turvy!',
   cleared: 'Patna cleared. Sab badhiya ba! | Patna cleared. All good!',
   brag: 'Badhiya! | Great!',
-  idle: ['Neend aa rahi hai? | Feeling sleepy?', 'Aain naa, Dad! Ka haal ba? | Welcome, Dad! How’s it going?', 'Rook! | Stop!'],
+  idle: ['Neend aa rahi hai? | Feeling sleepy?', 'Aain naa, Dad! Ka haal ba? | Welcome, Dad! How’s it going?', 'Ruko! | Stop!'],
   seven: 'Saat baar! Wapas shuru! | Seven times! Back to the start.',
   lastLife: 'Madad kara! | Help!',
 };

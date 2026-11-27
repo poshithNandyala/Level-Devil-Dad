@@ -196,8 +196,8 @@ pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound p
   dome; door leaf swings out across the road (`pat-bhitar`).
 - **05 Pipa Pul** pontoon sections sink under the handcart rolling on them; jump the cart's section; door: the last
   float drifts off with the door on it (`pat-nawka`).
-- **06 Setu ka Jod** numbered expansion plates over the seams, one missing; a plate flips up if landed on from a
-  jump; door: toll sensor strip slams a boom barrier (`pat-toll`).
+- **06 Setu ka Jod** every seam looks plated and numbered, but the plates whose number is a multiple of the sacks on the
+  parked truck are tarps laid over the gap: count the sacks, jump the tarps; door: toll sensor strip slams a boom barrier (`pat-toll`).
 - **07 Tempo** the deck leans to the heavier side (riders on the kerb side, a truck on either side); scrape an arch or a
   hump while leaning and you die; act: a third tempo backs into the lane between two parked ones; door: the
   hauled basket whose rope slips (`pat-hauled-basket`).
@@ -207,9 +207,10 @@ pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound p
   door: a four-armed turnstile (`pat-charkhi`).
 - **10 Setu se Golghar** the sacks on a parked handcart are the rule for the part: every n-th plate gone on the
   bridge, every n-th pontoon section awash, the pad numbered n opens the granary door (`pat-ginti-pad`).
-- **Length pass (PAT):** 05 porters load sacks on pontoon sections in turn (`pat05-bori`); 06 trucks lift plates out of
-  their seats in turn (`pat06-gaadi`) and Kumhrar's polished stone stumps are slick (`pat06-kumhrar`, source:
-  Wikipedia "Kumhrar", the 80-pillar hall of polished sandstone); 07 riders on the road side, riders on both sides, a
-  halt right before a hump, three scrapes in a row (`pat07-pul`, `-haat`, `-mandi`); 09 the horse turns back
-  (`pat09-wapsi`); 10 the cart's sack count sets which sections the porters load and which plates the trucks lift
-  (`pat10-bori`, `pat10-gaadi`).
+- **Length pass and fix round (PAT):** 02 a second bed with two litti, each with its own strike (`pat02-bhatti`); 03 a
+  banner can narrow from its right end (`pat03-patti`); 04 a second flight with three porters (`pat04-sidhi`); 05
+  porters load sacks on pontoon sections, and the second sack slides along its rope before it lands (`pat05-bori`); 06
+  the count changes from truck to truck (3, 2, 3 sacks) and trucks lift plates, the second window with a second truck
+  behind the first (`pat06-gaadi`); 07 riders on the road side, riders on both sides, a halt right before a hump, three
+  scrapes in a row (`pat07-pul`, `-haat`, `-mandi`); 09 the horse turns back (`pat09-wapsi`); 10 the cart's sack count
+  sets which pontoon sections the porters load and which plates the trucks lift (`pat10-bori`, `pat10-gaadi`).

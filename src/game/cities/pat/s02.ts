@@ -131,6 +131,43 @@ export function room(): LevelDef {
   };
 }
 
+/** a bed where the poker follows rolling litti: each marker is {start column, phase (s), cause}. State is on w.flags[key]. */
+function markerBed(w: World, c: { x: number; X: (t: number) => number }, key: string, marks: { start: number; off: number; cause: string }[], len = 34) {
+  ashBed(w, c.x + 1, c.x + len);
+  const st: { t0: number; x: number; xs: number[]; offs: number[] } = { t0: -1, x: 0, xs: marks.map(() => 0), offs: marks.map((m) => m.off) };
+  w.flags[key] = st;
+  onPass(w, c.X(2), (w2) => {
+    st.t0 = w2.tick;
+  });
+  const P = 2.6;
+  marks.forEach((m, i) => {
+    // the marker starts at its column and rolls right at 30 px/s between strikes; the poker comes down on it every 2.6 s
+    w.add(
+      new Rig(c.X(m.start), 0, px(3), FL, {
+        layer: 3,
+        cause: m.cause,
+        inset: 3,
+        live: (_r, w2) => st.t0 >= 0 && (since(w2, st.t0) + m.off) % P < STRIKE_ON && since(w2, st.t0) + m.off >= 1.5,
+        tick: (rr, w2) => {
+          if (st.t0 < 0) return;
+          const t = since(w2, st.t0) + m.off;
+          const k = Math.floor(t / P);
+          const into = t - k * P;
+          const moved = (k + Math.min(1, Math.max(0, (into - STRIKE_ON) / (P - STRIKE_ON)))) * 30 * (P - STRIKE_ON);
+          rr.x = c.X(m.start) - px(1.5) + moved;
+          st.xs[i] = rr.x + rr.w / 2;
+          if (i === 0) st.x = st.xs[0];
+        },
+        paint: (ctx, rr, w2) => {
+          const t = st.t0 < 0 ? -9 : since(w2, st.t0) + m.off;
+          const into = t % P;
+          ember(ctx, rr.x + rr.w / 2, t >= 1 && into > P - 0.5 ? 1 : 0, t >= 1.5 && into < STRIKE_ON ? 1 : 0);
+        },
+      }),
+    );
+  });
+}
+
 /** act: the cook rolls a cooked litti along the bed; the poker follows the marker, so walk behind it and go on */
 export const act: Act = {
   id: 'pat02-chokha',
@@ -139,42 +176,21 @@ export const act: Act = {
   cps: [3],
   paint: () => {},
   build: (w, c) => {
-    ashBed(w, c.x + 1, c.x + 34);
-    const st: { t0: number; x: number } = { t0: -1, x: 0 };
-    w.flags.pat2a = st;
-    onPass(w, c.X(2), (w2) => {
-      st.t0 = w2.tick;
-    });
-    const mk = (i: number) => {
-      // the marker: starts at column 7 and rolls right at 30 px/s; the poker comes down on it every 2.6 s
-      const P = 2.6;
-      const r = w.add(
-        new Rig(c.X(7), 0, px(3), FL, {
-          layer: 3,
-          cause: 'pat-angara',
-          inset: 3,
-          live: (_r, w2) => st.t0 >= 0 && ((since(w2, st.t0) + i * 0) % P) < STRIKE_ON && since(w2, st.t0) >= 1.5,
-          tick: (rr, w2) => {
-            if (st.t0 < 0) return;
-            const t = since(w2, st.t0);
-            // the marker rolls right 30 px/s, but only between strikes (it stops while the poker is in)
-            const k = Math.floor(t / P);
-            const into = t - k * P;
-            const moved = (k + Math.min(1, Math.max(0, (into - STRIKE_ON) / (P - STRIKE_ON)))) * 30 * (P - STRIKE_ON);
-            rr.x = c.X(7) - px(1.5) + moved;
-            st.x = rr.x + rr.w / 2;
-          },
-          paint: (ctx, rr, w2) => {
-            const t = st.t0 < 0 ? -9 : since(w2, st.t0);
-            const into = t % P;
-            ember(ctx, rr.x + rr.w / 2, t >= 1 && into > P - 0.5 ? 1 : 0, t >= 1.5 && into < STRIKE_ON ? 1 : 0);
-          },
-        }),
-      );
-      return r;
-    };
-    mk(0);
+    markerBed(w, c, 'pat2a', [{ start: 7, off: 0, cause: 'pat-angara' }]);
     sign(w, c.x + 31, 10.4, 3, 'CHOKHA', 'shop', null, 'a bowl of it');
+  },
+};
+
+/** the ladder: two litti on one bed, each with its own strike; getting past the first does not get you past the second */
+export const actBhatti: Act = {
+  id: 'pat02-bhatti',
+  w: 50,
+  advice: 'The big bhatti: the cook has rolled two litti along the bed, and the poker follows each one in turn. Get behind the first until its strike has gone and run past it, then do the same behind the second, which strikes at a different moment.',
+  cps: [18],
+  paint: () => {},
+  build: (w, c) => {
+    markerBed(w, c, 'pat2b', [{ start: 7, off: 0, cause: 'pat-angara' }, { start: 25, off: 1.3, cause: 'pat-doosra' }], 40);
+    sign(w, c.x + 46, 10.4, 3, 'BHATTI', 'shop', null, 'two litti, one poker');
   },
 };
 

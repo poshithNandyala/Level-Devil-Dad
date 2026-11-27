@@ -94,8 +94,8 @@ export function row(w: World, specs: Hoard[], bells: number[], trigger: number, 
           for (let k = 0; k < Math.floor(hh.w / 20); k++) box(ctx, hh.x + 4 + k * 20, FL + 8, 12, 2, '#3A1E10');
           // the next batch's banner, rolled up on a pole above it: as wide as it will be
           if (e.next) {
-            box(ctx, e.nx, FL - 40, e.nw, 6, '#F2D7A6');
-            box(ctx, e.nx, FL - 40, e.nw, 2, '#C9A56B');
+            box(ctx, e.nx, FL - 40, e.nw, 6, BANNERS[(i + 1) % BANNERS.length]);
+            box(ctx, e.nx, FL - 40, e.nw, 2, '#fff');
             box(ctx, e.nx - 2, FL - 41, 3, 8, '#6B3F1C');
             box(ctx, e.nx + e.nw - 1, FL - 41, 3, 8, '#6B3F1C');
             box(ctx, e.nx + 3, FL - 34, 1, 34, '#8A6A3A');
@@ -111,8 +111,8 @@ export function row(w: World, specs: Hoard[], bells: number[], trigger: number, 
 }
 
 /** the jammed road under the hoardings: cars nose to tail, deadly to fall into */
-function jam(w: World, c0: number, c1: number) {
-  w.add(
+function jam(w: World, c0: number, c1: number, specs?: Hoard[]) {
+  const pit = w.add(
     new Rig(px(c0), 256, px(c1 - c0 + 1), 34, {
       layer: 4,
       cause: 'pat-jam',
@@ -129,6 +129,13 @@ function jam(w: World, c0: number, c1: number) {
       },
     }),
   );
+  // a hoarding that narrows from its right end (the left end is anchored) is its own death
+  if (specs)
+    w.onTick((w2) => {
+      const cx = w2.player.cx;
+      const sp = specs.find((q) => cx >= q.c0 * 16 - 16 && cx < (q.c0 + q.w0) * 16 + 16);
+      pit.hazard!.cause = sp?.swaps.some((q) => q.anchor === 'L' && q.w < sp.w0) ? 'pat-patti' : 'pat-jam';
+    });
 }
 
 export const ROOM_SPECS: Hoard[] = [
@@ -180,6 +187,29 @@ export const act: Act = {
     row(w, S, [1.0, 3.2, 5.6], px(c.x + 2), 'pat3a');
     jam(w, c.x + 4, c.x + 27);
     sign(w, c.x + 1, 10.4, 3, 'BATCH 2', 'shop', null, 'bell at ten');
+  },
+};
+
+/** the ladder: a banner can narrow from its right end too (the left end stays put), which catches whoever waits at the right end */
+export const actLane2: Act = {
+  id: 'pat03-patti',
+  w: 36,
+  advice: 'A third lane. The roll above each hoarding shows exactly where the new banner will hang, and this time some banners narrow from the right: the left end stays and the right end goes. Do not wait at the right end of one that is about to narrow, and wait for the last bell before you cross.',
+  cps: [],
+  paint: (g, c) => {
+    g.fill(c.x + 4, c.x + 26, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const S: Hoard[] = [
+      { c0: c.x + 4, w0: 4, swaps: [] },
+      { c0: c.x + 8, w0: 5, swaps: [{ bell: 0, w: 4, anchor: 'L' }] },
+      { c0: c.x + 13, w0: 3, swaps: [{ bell: 0, w: 5, anchor: 'L' }, { bell: 2, w: 3, anchor: 'R' }] },
+      { c0: c.x + 18, w0: 4, swaps: [{ bell: 1, w: 3, anchor: 'L' }] },
+      { c0: c.x + 22, w0: 4, swaps: [{ bell: 2, w: 3, anchor: 'L' }] },
+    ];
+    row(w, S, [1.8, 4.6, 7.4], px(c.x + 2), 'pat3b');
+    jam(w, c.x + 4, c.x + 26, S);
+    sign(w, c.x + 1, 10.4, 3, 'BATCH 3', 'shop', null, 'bell at noon');
   },
 };
 
