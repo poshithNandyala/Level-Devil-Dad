@@ -271,8 +271,7 @@ export const endings: Record<DisEndingKind, Ending> = {
       pb.setup(w);
       levelPost(w, { level: 2, e: -1 } as never, D - 1.8, 3);
       w.flags.twist = 'post';
-      checkpoint(w, D - 36); // on the bank where you wait for the plucker
-      checkpoint(w, D - 18); // halfway along her path: the bars behind her stay up for seconds
+      checkpoint(w, D - 38); // on the bank where you wait for the plucker, 5 tiles back from the water
     },
   },
   // ================================================================ DIS-09: the royal seat

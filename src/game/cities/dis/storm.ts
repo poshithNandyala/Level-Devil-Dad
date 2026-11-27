@@ -59,7 +59,7 @@ export const bordoisila: Act = {
   id: 'dis07-bordoisila',
   w: 26,
   advice: 'Bordoisila, the April storm, blows in: first the wind, toward the pond, then the hail. Get under the bhoral, the granary on stilts, before it comes, and stay there till it has passed. Holding on in the open won’t save you from the hail.',
-  cps: [1.5, 9, 23.5],
+  cps: [1.5, 23.5],
   paint: (g, c) => {
     g.pit(c.x + 17, c.x + 19);
   },

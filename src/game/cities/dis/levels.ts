@@ -313,7 +313,7 @@ const atithi: Act = {
   id: 'dis05-atithi',
   w: 58,
   advice: 'Three hosts, a platform with a red sash, and a pit: the same again. Then one more giver right before a pit: don’t let him touch you, hop over him. The last pit is easy again. You only need one gamosa left for the door, so don’t give them all away.',
-  cps: [15.5, 33.5],
+  cps: [14.5, 33.5],
   paint: (g, c) => {
     const x = c.x;
     g.fill(x + 11, x + 14, 13, 13, '=');
@@ -427,7 +427,7 @@ const chowk: Act = {
   id: 'dis07-chowk',
   w: 74,
   advice: 'Three more gates. At the middle one the host gives the singers gamosas first, and the gate stays shut until he is done: stay in the ring till it opens, and don’t go through before it does. Leave early and the group leaves you behind the stakes.',
-  cps: [14.5, 18.5, 36.5, 42.5, 58.5, 66.5],
+  cps: [14.5, 16.5, 36.5, 40.5, 58.5, 64.5], // 4.5 tiles back from each gate's stakes
   build: (w, c) => {
     const x = c.x;
     husori(w, x + 4, x, [{ x: x + 22, ritual: 0, stay: 140 }, { x: x + 46, ritual: 120, stay: 240 }, { x: x + 70, ritual: 0, stay: 140 }], 56);
@@ -624,15 +624,25 @@ const hutDoor = (w: World, d: Door, field: SandField) => {
 };
 void hutDoor;
 
+/** the act with `s` more columns of bank in front of it, so the checkpoints at its start sit >= 4.5 tiles before its
+ *  trap (a respawned Dad who runs or hops a step must not land in it). Checkpoints past column 2 move with the act. */
+const runUp = (a: Act, s: number): Act => ({
+  ...a,
+  w: a.w + s,
+  cps: (a.cps ?? []).map((c) => (c > 2 ? c + s : c)),
+  paint: a.paint && ((g, c) => a.paint!(g, { ...c, x: c.x + s })),
+  build: a.build && ((w, c) => a.build!(w, { ...c, x: c.x + s })),
+});
+
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), shape: 'tour', meta: { family: 'carrier-spills-on-contact', betrayals: ['carrier-spill'], ending: 'dis-tea-tray' } },
   longStage({ base: charRoom(), acts: [chapori], twist: 'dis-hut-shut', par: 36, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
   longStage({ base: teaRoom(), acts: [bagan], cps: [14.5], twist: 'dis-muga-reel', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-muga-reel' } }),
-  longStage({ base: pithaRoom(), acts: [bhogali], twist: 'dis-laru-plate', par: 34, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
+  longStage({ base: pithaRoom(), acts: [runUp(bhogali, 3)], twist: 'dis-laru-plate', par: 34, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
   longStage({ base: gamosaRoom(), acts: [atithi], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
   longStage({ base: majuliRoom(), acts: [majChang, chapori6], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
-  longStage({ base: husoriRoom(), acts: [bordoisila, husDhol, chowk], cps: [18.5], twist: 'dis-uruka-net', par: 90, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
-  longStage({ base: gorhRoom(), acts: [gorhJeep, gorhBagori], twist: 'dis-watch-tower', par: 74, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
+  longStage({ base: husoriRoom(), acts: [bordoisila, runUp(husDhol, 3), chowk], cps: [16], twist: 'dis-uruka-net', par: 90, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
+  longStage({ base: gorhRoom(), acts: [gorhJeep, runUp(gorhBagori, 3)], twist: 'dis-watch-tower', par: 74, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
   longStage({ base: rangGharRoom(), acts: [rangTug, kaidhara], twist: 'dis-royal-seat', par: 36, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
-  longStage({ base: luitRoom(), acts: [luitDhol, luitBordoisila, luitTug, luitGamosa], twist: 'dis-post-bank', par: 63, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
+  longStage({ base: luitRoom(), acts: [runUp(luitDhol, 3), runUp(luitBordoisila, 3), luitTug, luitGamosa], twist: 'dis-post-bank', par: 63, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
 ];

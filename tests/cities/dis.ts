@@ -436,7 +436,7 @@ function actDeaths(S: Record<string, Step[]>) {
     const i = route.findIndex((s) => s.note === `act:${d.act}` || (s as { actMark?: string }).actMark === d.act);
     if (i < 0) throw new Error(`no act marker for ${d.act}`);
     const def = LEVELS.find((l) => l.id === d.stage)!;
-    const x = def.parts!.find((p) => p.kind === d.act)!.x0;
+    const x = def.parts!.find((p) => p.kind === d.act)!.x0 + (RUNUP[d.act] ?? 0);
     const pre = route.slice(0, i);
     (mistakes[d.stage] ??= []).push({ what: `${d.act}: ${d.naive[2]}`, steps: [...pre, ...d.naive[0](x)], cause: d.naive[1] });
     if (!d.fix) continue;
@@ -798,6 +798,12 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   ],
 };
 // acts without a mark step: tag their first step (no extra tick), so their scripted deaths can start where they start
+/** acts given a run-up in levels.ts (`runUp`): their content starts this many columns later */
+const RUNUP: Record<string, number> = { 'dis04-bhogali': 3, 'dis07-dhol': 3, 'dis08-bagori': 3, 'dis10-dhol': 3, 'dis10-bordoisila': 3 };
+for (const [id, f0] of Object.entries(actRoutes)) {
+  const k = RUNUP[id] ?? 0;
+  if (k) actRoutes[id] = (x) => f0(x + k);
+}
 for (const [id, f] of Object.entries(actRoutes)) actRoutes[id] = (x) => { const st = f(x); if (st[0] && st[0].note !== `act:${id}`) (st[0] as { actMark?: string }).actMark = id; return st; };
 
 /** a policy for each door ending, by kind ('dis-...'). */
