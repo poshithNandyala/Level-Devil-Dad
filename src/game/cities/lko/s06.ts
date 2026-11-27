@@ -209,7 +209,7 @@ export const tatkar: Act = {
   id: 'lko06-tatkar',
   w: 34,
   advice: 'Now she dances tatkar to and fro along the stage, and the boards just in front of her feet ring with her steps. Go where she isn’t tapping: wait for her patch to come towards you, hop clean over it, and keep off the red strips.',
-  cps: [26.5],
+  cps: [21, 26.5],
   build: (w, c) => {
     const x = c.x;
     boards(w, x, x + 33);
@@ -307,7 +307,7 @@ export const mehfil: Act = {
   id: 'lko06-mehfil',
   w: 48,
   advice: 'The full performance: she spins the length of the stage and back, end to end, and the floor is hers. Wait up on a takht till she has spun past beneath you, going away, then cross to the next takht, over the red strip. Ring a strip and she turns straight back towards you.',
-  cps: [1],
+  cps: [1, 14.6, 22.6, 30.6],
   paint: (g, c) => {
     for (const t of MEHFIL) g.fill(c.x + t, c.x + t + 1, 13, 13, '=');
   },

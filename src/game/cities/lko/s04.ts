@@ -336,7 +336,7 @@ export const badal: Act = {
   id: 'lko04-badal',
   w: 32,
   advice: 'A winter cloud drifts over the sun and its shadow slides along the lane. These single cups have no shady side: inside the cloud’s shadow every cup holds, outside it every cup is in the sun and sinks under you. Wait for the shadow to reach you, then go cup to cup with it, never ahead of it, never left behind.',
-  cps: [1.5],
+  cps: [1.5, 9.5, 19.5],
   paint: (g, c) => {
     g.pit(c.x + 3, c.x + 28);
   },

@@ -289,7 +289,7 @@ export const takrar: Act = {
   id: 'lko02-takrar',
   w: 24,
   advice: 'One gentleman in a narrow doorway, and he bows back: whoever stops bowing first goes first, on to the loose stone. Bow once and move, as you learned, and he insists you go first. Stand still and keep bowing until he gives up and goes through himself, then hop the hole he leaves.',
-  cps: [1],
+  cps: [1, 16],
   paint: (g, c) => {
     g.pit(c.x + 13, c.x + 14);
   },

@@ -447,7 +447,7 @@ export const julus: Act = {
   id: 'lko07-julus',
   w: 58,
   advice: 'A slow group of strollers going your way, all down the arcade, stepping over the open nalas. Walk behind them at their pace, pausing as they do. Rush up and bump them, or hop a nala straight on to their heels, and the last one steps back and tuts you into the nala you just crossed. Wait at each nala till they’re well clear of it.',
-  cps: [30.5],
+  cps: [18, 30.5, 42],
   paint: (g, c) => {
     for (const n of JULUS_NALAS) g.pit(c.x + n, c.x + n + 1);
   },
@@ -510,7 +510,7 @@ export const saamne: Act = {
   id: 'lko07-saamne',
   w: 52,
   advice: 'Now the strollers come the other way, a banner on a pole held high over them, and they don’t part: they walk you back into the nala behind you. Hopping over them puts you in the banner. After each nala, step up into the alcove in the arcade wall and let them pass under you. The last alcove’s sill is cracked: the last group comes on straight after the one before, so wait in the second alcove till both have passed.',
-  cps: [17.5],
+  cps: [17.5, 26.2, 34],
   paint: (g, c) => {
     SAAMNE.forEach((a, k) => {
       g.pit(c.x + a - 6, c.x + a - 5);

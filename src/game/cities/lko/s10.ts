@@ -208,7 +208,7 @@ const darbar: Act = {
   id: 'lko10-darbar',
   w: 40,
   advice: 'The pachisi court again, and the courtier is a Lakhnavi too: when he bows you on to the square between you and him ("pehle aap"), it is lit and empty, and it is the loose stone. Wait on yours for the next throw.',
-  cps: [1.5],
+  cps: [1.5, 11.9, 17.9, 23.9],
   paint: (g, c) => {
     g.pit(c.x + 4, c.x + 34, 15);
   },
@@ -225,6 +225,7 @@ const JULUS10 = [12, 24, 36, 46];
 const julusBells: Act = {
   ...julus,
   id: 'lko10-julus',
+  cps: [22.5, 44.5],
   advice: 'The slow procession again, but between the nalas the floor is bells under chikan covers. Behind them on the covers pause only for a blink (a pause long enough to be a bow rings the bells and the dancer spins to you); do your waiting on the plain boards in front of each nala.',
   build: (w, c) => {
     julus.build!(w, c);
