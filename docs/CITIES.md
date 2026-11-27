@@ -104,19 +104,21 @@ song lyrics. Affectionate teasing locals would proudly share; never mean.
 
 ### CHN · Chennai, Tamil Nadu
 
-- Language: Chennai Tamil + English · Hello: "Vanakkam! | Hello!" · Hidden item: tumbler (filter kaapi)
-- Filter kaapi, share autos and a very long beach.
+- Language: Chennai Tamil + English · Hello: "Vanakkam! | Hello!" · Hidden item: tumbler (filter kaapi) · Seventh death: the kaapi tumbler is topped up the seventh time
+- Filter kaapi, share autos and a very long beach. Ten stages since the extend pass (`docs/cities/CHN.md`): the two encores are the murukku kitchen and the old mall's escalators.
 
 | Stage | Name (meaning) | What it is | Act | Door ending |
 | --- | --- | --- | --- | --- |
-| CHN-01 | Vanakkam Chennai (Welcome to Chennai) | Welcome tour past landmarks while the guide tells you real things about the city. Filter kaapi, share autos and a very, very long beach. Near the end a Pongal pot on the street boils over ("Pongalo Pongal!"): a spout of foam over it and a hot spill across the road that runs past where it started bubbling. Back off when it bubbles; walk on when it stops steaming. | — | — |
-| CHN-02 | Kudam Queue (Water-pot queue) | Everyone saved their place. Including the pots. | `chn02-queue2` | `token` |
-| CHN-03 | Subway Splash | One raindrop, and the subway is a swimming pool. | `chn03-frogger` | `bull` |
-| CHN-04 | Degree Kaapi (Proper filter coffee) | Never walk between an uncle and his morning kaapi. | `chn04-cricket` | `catch` |
+| CHN-01 | Vanakkam Chennai (Welcome to Chennai) | Welcome tour past landmarks while the guide tells you real things about the city. Filter kaapi, share autos and a very, very long beach. On the promenade a sundal cart steams over the path each time the vendor lifts the lid, on a steady beat; the beat lies once as you come up (he lifts it again right after shutting it): watch his hand, not the lid (`SundalCart`, archetype B5). Near the end a Pongal pot on the street boils over ("Pongalo Pongal!"): a spout of foam over it and a hot spill across the road that runs past where it started bubbling. Back off when it bubbles; walk on when it stops steaming. | — | — |
+| CHN-02 | Kudam Queue (Water-pot queue) | Everyone saved their place. Including the pots. | `chn02-queue2` | `chn-token` |
+| CHN-03 | Subway Splash | One raindrop, and the subway is a swimming pool. | `chn03-frogger` | `chn-bull` |
+| CHN-04 | Degree Kaapi (Proper filter coffee) | Never walk between an uncle and his morning kaapi. | `chn04-cricket` | `chn-catch` |
 | CHN-05 | Agni Mirage (Peak-summer mirage) | Is that the exit, or is the sun melting your eyes? | `chn05-heat` | room twist |
-| CHN-06 | Madurai Malli (Madurai jasmine) | The jasmine market in Madurai: flowers by the arm’s length, and a crowd that pushes. *Scene: Madurai.* | `chn06-ladi` | `rangoli` |
-| CHN-07 | Thanjavur Bommai (Thanjavur dolls) | Thanjavur’s head-shaking dolls never stop nodding. One of them says no. *Scene: Thanjavur.* | `chn07-capstone` | `tips` |
+| CHN-06 | Madurai Malli (Madurai jasmine) | The jasmine market in Madurai: flowers by the arm’s length, and a crowd that pushes. *Scene: Madurai.* | `chn06-ladi` | `chn-rangoli` |
+| CHN-07 | Thanjavur Bommai (Thanjavur dolls) | Thanjavur’s head-shaking dolls never stop nodding. One of them says no. *Scene: Thanjavur.* | `chn07-capstone` | `chn-tips` |
 | CHN-08 | Pamban Paalam (Pamban bridge) | The old sea bridge to Rameswaram. The train is behind you and the middle of the bridge lifts for ships. *Scene: Rameswaram.* | `chn08-trainroof` | `sink` |
+| CHN-09 | Murukku Press (The murukku press) | A snack kitchen: the brass press lays spiral strands into the hot oil, pale and soft, and they fry golden and hard. Pale dough folds under you; golden holds; but the golden one you would wait on is the oldest and the ladle takes it. The ladle lifts the darkest first and drips on the one before it; a big spiral has an eye and the press comes down over its far turn; thenkuzhal stays white (read the bubbles); a row laid together is one age (wait, then run it); the cook tastes the near end of a finished one. | `chn09-karandi`, `chn09-kannu`, `chn09-thenkuzhal`, `chn09-varisai`, `chn09-ruchi` | `chn-fresh-curtain` |
+| CHN-10 | Spencer Escalators (The mall escalators) | Chennai’s old mall. Its escalators run by load: one rider goes up, two go down, fast, into the comb plate. Give the ride away (hop back to the kerb), then ride. The finale breaks this city's own rules: four aboard crawl up (stay on when the family boards); indoors the shimmer is polish and the dark is the well; the billing queue's third trolley is the locked one (the beach taught you to skip the third); a down escalator runs up with the kid aboard; the golden display murukku are plaster. The door is plain. | `chn10-moodal`, `chn10-kaanal`, `chn10-billing`, `chn10-keezhe`, `chn10-pattarai` | `chn-wet-floor-sign` (plain) |
 
 ### PDY · Puducherry, Puducherry
 
