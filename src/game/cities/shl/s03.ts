@@ -31,7 +31,7 @@ export function swayState(w: World, key: string): SwayState {
 }
 
 /** a span of deck between two towers (tiles c0..c1 inclusive) over the river, hung from cables */
-export function span(w: World, st: SwayState, c0: number, c1: number, cause = 'shl-sway') {
+export function span(w: World, st: SwayState, c0: number, c1: number, cause = 'shl-sway', wet = false) {
   const deck = w.add(
     new Rig(px(c0), FL, px(c1 - c0 + 1), 16, {
       solid: true,
@@ -40,7 +40,17 @@ export function span(w: World, st: SwayState, c0: number, c1: number, cause = 's
         const p = w2.player;
         const here = r.solid && w2.standing(r.solid);
         if (here) {
+          // wet planks: when you stop you slide on for a moment, and the slide swings the deck like a step
+          if (wet) {
+            if (Math.abs(p.vx) > 60) r.s.slide = 30;
+            else if (r.s.slide > 0) {
+              r.s.slide--;
+              p.x += perTick(70);
+            }
+          }
+          const sliding = wet && r.s.slide > 0 && Math.abs(p.vx) <= 60;
           if (Math.abs(p.vx) > 60) st.e += SWAY.gain;
+          else if (sliding) st.e += SWAY.gain * 3;
           else st.e = Math.max(0, st.e - SWAY.calm);
           if (st.e >= SWAY.creakAt && !st.creaked) {
             st.creaked = true;
@@ -70,8 +80,12 @@ export function span(w: World, st: SwayState, c0: number, c1: number, cause = 's
           ctx.stroke();
         }
         // the wooden deck, planks
-        box(ctx, r.x, FL + dy, r.w, 6, '#6B4F2E');
-        for (let x = r.x; x < r.x + r.w; x += 8) box(ctx, x, FL + dy, 1, 6, '#4A3620');
+        box(ctx, r.x, FL + dy, r.w, 6, wet ? '#3F3324' : '#6B4F2E');
+        for (let x = r.x; x < r.x + r.w; x += 8) box(ctx, x, FL + dy, 1, 6, wet ? '#2A2218' : '#4A3620');
+        if (wet) {
+          ctx.fillStyle = 'rgba(190,224,240,0.8)';
+          for (let x = r.x + 5; x < r.x + r.w; x += 13) ctx.fillRect(x, FL + dy + 6 + ((w2.tick * 2 + x) % 20), 1, 4);
+        }
         box(ctx, r.x, FL + dy - 2, r.w, 2, st.e >= SWAY.creakAt && here ? '#D7262E' : '#8A6A3E');
       },
     }),
@@ -159,14 +173,14 @@ export function room(): LevelDef {
     tagline: 'The 1932 span over the Umngot. It moves when you do.',
     hint: 'The deck swings to your own step: run along it and the swing builds until it throws you off. Walk it in short bursts, a few steps and a stop, a few steps and a stop, and it stays flat. The red line on the deck shows the swing building.',
     par: 22,
-    map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').fill(8, 23, 15, 17, '.').rows(),
+    map: Grid.ground(15).put(1, 14, '@').put(30, 14, 'E').fill(8, 24, 15, 17, '.').rows(),
     build(w: World) {
       door(w);
       const st = swayState(w, 'shl3');
-      river(w, 8, 23);
+      river(w, 8, 24);
       tower(w, 6);
-      tower(w, 24);
-      span(w, st, 8, 23);
+      tower(w, 25);
+      span(w, st, 8, 24);
       onPass(w, px(4), (w2) => tara(w2, L.intro[1], 2.2));
       sign(w, 3, 10.2, 3, 'DAWKI', 'shop', null, 'Umngot bridge, 1932');
       rival(w, 29, 15, -1, taraScript(3));
@@ -178,24 +192,43 @@ export function room(): LevelDef {
 /** act: two more spans; a boat passes under the second and its wake adds a swing: let it pass from the tower */
 export const act: Act = {
   id: 'shl03-wake',
-  w: 40,
+  w: 44,
   advice: 'Two more spans. Boats go under the second one, and a boat’s wake adds a swing of its own to whoever is on the deck. Cross the first span in bursts, stand on the tower while the boat passes, then cross the second in bursts before the next.',
-  cps: [2, 20],
+  cps: [2, 22],
   paint: (g, c) => {
-    g.fill(c.x + 4, c.x + 16, 15, 17, '.');
-    g.fill(c.x + 21, c.x + 35, 15, 17, '.');
+    g.fill(c.x + 4, c.x + 18, 15, 17, '.');
+    g.fill(c.x + 23, c.x + 39, 15, 17, '.');
   },
   build: (w, c) => {
     const st = w.flags.shl3 as SwayState;
-    river(w, c.x + 4, c.x + 16);
-    river(w, c.x + 21, c.x + 35);
+    river(w, c.x + 4, c.x + 18);
+    river(w, c.x + 23, c.x + 39);
     tower(w, c.x + 2);
-    tower(w, c.x + 18);
-    tower(w, c.x + 36);
-    span(w, st, c.x + 4, c.x + 16);
-    span(w, st, c.x + 21, c.x + 35);
-    wake(w, st, c.x + 21, c.x + 35, 6.0, 0.5);
-    sign(w, c.x + 18.5, 10.4, 3, 'BOATS', 'shop', null, 'afloat in air');
+    tower(w, c.x + 20);
+    tower(w, c.x + 40);
+    span(w, st, c.x + 4, c.x + 18);
+    span(w, st, c.x + 23, c.x + 39);
+    wake(w, st, c.x + 23, c.x + 39, 6.5, 0.5);
+    sign(w, c.x + 20.5, 10.4, 3, 'BOATS', 'shop', null, 'afloat in air');
+  },
+};
+
+/** act 2: a span whose planks are wet: after every stop you slide on a moment, and the slide swings the deck too */
+export const actWet: Act = {
+  id: 'shl03-wet',
+  w: 30,
+  advice: 'The last span’s planks are wet. When you stop you slide on for a moment, and the slide swings the deck like a step does: stop earlier than you think, and stand longer, before each burst.',
+  cps: [1],
+  paint: (g, c) => {
+    g.fill(c.x + 4, c.x + 25, 15, 17, '.');
+  },
+  build: (w, c) => {
+    const st = w.flags.shl3 as SwayState;
+    river(w, c.x + 4, c.x + 25);
+    tower(w, c.x + 2);
+    tower(w, c.x + 26);
+    span(w, st, c.x + 4, c.x + 25, 'shl-slip', true);
+    sign(w, c.x + 1, 10.4, 3, 'WET', 'shop', null, 'planks after rain');
   },
 };
 

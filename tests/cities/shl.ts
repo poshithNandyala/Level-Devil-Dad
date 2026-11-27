@@ -51,11 +51,16 @@ const tourRoute = (): Step[] => [
 ];
 
 // ------------------------------------------------------------------ SHL-02
-type Cloud = { banks: { x: (w: World) => number; w: number; end: number }[]; beams: [number, number][]; lit: (w: World, i: number) => boolean; gap: [number, number] };
+type Cloud = { banks: { x: (w: World) => number; w: number; end: number }[]; beams: [number, number][]; lit: (w: World, i: number) => boolean; gap: [number, number]; sun?: { period: number; inFor: number; phase: number } };
+const sunLeft = (w: World, c: Cloud) => {
+  if (!c.sun) return 99;
+  const k = (((w.tick / 120 + c.sun.phase) % c.sun.period) + c.sun.period) % c.sun.period;
+  return k >= c.sun.inFor ? c.sun.period - k : 0;
+};
 /** a beam is good to land on if its thick middle is under it now and stays for `hold` more tiles of drift */
 function beamReady(w: World, c: Cloud, i: number, hold: number): boolean {
   const b = c.beams[i];
-  return c.banks.some((bk) => bk.x(w) + bk.end + hold <= b[0] && bk.x(w) + bk.w - bk.end >= b[1] + 1);
+  return sunLeft(w, c) > 1.4 && c.banks.some((bk) => bk.x(w) + bk.end + hold <= b[0] && bk.x(w) + bk.w - bk.end >= b[1] + 1);
 }
 /** cross a cloud gap: wait on each floor until the next beam is lit and will stay so, then run to the edge and jump */
 function cloudWalk(key: string, far: number): (w: World) => Out {
@@ -70,7 +75,9 @@ function cloudWalk(key: string, far: number): (w: World) => Out {
       jt--;
       return { move: 'R', jump: true };
     }
-    const c = w.flags[key] as Cloud;
+    const noSun = key.endsWith('-nosun');
+    const raw = w.flags[noSun ? key.slice(0, -6) : key] as Cloud;
+    const c: Cloud = noSun ? { ...raw, sun: undefined } : raw;
     const p = w.player;
     const cx = p.cx / 16;
     if (!p.onGround) return go('R');
@@ -79,7 +86,9 @@ function cloudWalk(key: string, far: number): (w: World) => Out {
     const next = onBeam < 0 ? (cx < c.gap[0] ? 0 : -1) : onBeam + 1;
     if (next < 0) return go('R');
     const edge = onBeam < 0 ? c.gap[0] : c.beams[onBeam][1] + 1;
-    const ready = next >= c.beams.length ? true : beamReady(w, c, next, 1.6);
+    // under a sun that goes in, the whole crossing is decided on the bank: every beam covered for long enough, sun out for long enough
+    const whole = onBeam < 0 && c.sun ? sunLeft(w, c) > 3.6 && c.beams.every((_b, i) => beamReady(w, c, i, 2.0)) : true;
+    const ready = whole && (next >= c.beams.length ? true : beamReady(w, c, next, 1.6));
     const target = next >= c.beams.length ? far : c.beams[next][0];
     if (!ready) {
       // hold back from the edge, far enough for a run-up (back up if the window closed on you at the edge)
@@ -109,15 +118,16 @@ const dishPolicy: Policy = (w) => {
 /** walk a swaying deck in bursts: go while the swing is low, stand while it is high */
 function burstWalk(key: string, beforeWake?: (w: World) => boolean): (w: World) => Out {
   return (w) => {
-    const st = w.flags[key] as SwayState;
+    const st = w.flags[key.endsWith('-wet') ? key.slice(0, -4) : key] as SwayState;
     const p = w.player;
     const on = st.on(w);
     if (!on) {
       if (beforeWake && beforeWake(w)) return go('');
       return go('R');
     }
-    if (st.e > 0.42) return go('');
-    if (st.e > 0.12 && Math.abs(p.vx) < 5) return go('');
+    const wet = key.endsWith('-wet');
+    if (st.e > (wet ? 0.26 : 0.42)) return go('');
+    if (st.e > (wet ? 0.04 : 0.12) && Math.abs(p.vx) < 5) return go('');
     return go('R');
   };
 }
@@ -132,11 +142,11 @@ const waitBoat = (key: string, spanX0: (w: World) => number) => (w: World) => {
   const hit = wk.period / 2;
   return !(t >= hit + 0.05 && t < hit + 1.6);
 };
-const room03 = (): Step[] => [{ policy: burstWalk('shl3'), until: and(ground, X(25)), max: 3000, note: 'across the first span in bursts' }, { hold: 'R', until: X(29), max: 300 }];
+const room03 = (): Step[] => [{ policy: burstWalk('shl3'), until: and(ground, X(26)), max: 3000, note: 'across the first span in bursts' }, { hold: 'R', until: X(29), max: 300 }];
 const act03 = (x: number): Step[] => [
-  { policy: burstWalk('shl3'), until: and(ground, X(x + 17.5)), max: 3000, note: 'span two in bursts' },
-  { policy: burstWalk('shl3', waitBoat('shl3', () => (x + 21) * 16)), until: and(ground, X(x + 36.5)), max: 5000, note: 'wait on the tower for the boat, then span three in bursts' },
-  { hold: 'R', until: X(x + 38), max: 300 },
+  { policy: burstWalk('shl3'), until: and(ground, X(x + 19.5)), max: 3000, note: 'span two in bursts' },
+  { policy: burstWalk('shl3', waitBoat('shl3', () => (x + 23) * 16)), until: and(ground, X(x + 40.5)), max: 5000, note: 'wait on the tower for the boat, then span three in bursts' },
+  { hold: 'R', until: X(x + 42), max: 300 },
 ];
 /** the toll bar: the last span in bursts; stop short of the bar until the swing is gone */
 const tollbarPolicy: Policy = (w) => {
@@ -204,13 +214,13 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-01': { steps: [...upTo(21), { hold: 'R', until: X(64), max: 600 }, { hold: '', until: done, max: 1500, note: 'stand outside the cloud and wait' }], cause: 'shl-lyoh' },
   'SHL-02': { steps: [{ hold: 'R', until: X(8.6), max: 600 }, { hold: 'R', jump: 12, ticks: 12, note: 'hop over the thin end on to the lit beam' }, { hold: 'R', until: done, max: 2400, note: 'and run on along the cloud' }], cause: 'shl-dum' },
   'SHL-03': {
-    steps: [{ policy: burstWalk('shl3'), until: and(ground, X(25)), max: 3000 }, { hold: 'R', until: X(29), max: 300 }, { policy: burstWalk('shl3'), until: done, max: 9000, note: 'bursts all the way, boat or no boat' }],
+    steps: [{ policy: burstWalk('shl3'), until: and(ground, X(26)), max: 3000 }, { hold: 'R', until: X(29), max: 300 }, { policy: burstWalk('shl3'), until: done, max: 9000, note: 'bursts all the way, boat or no boat' }],
     cause: 'shl-wake',
   },
   'SHL-04': { steps: [...atHook(5, 'take the knup'), { hold: 'R', until: done, max: 2400, note: 'and keep it on' }], cause: 'shl-dieng' },
 };
 const ROOMS: Record<string, () => Step[]> = { 'SHL-02': room02, 'SHL-03': room03, 'SHL-04': room04 };
-const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi'], 'SHL-03': ['shl03-wake'], 'SHL-04': ['shl04-iew'] };
+const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'] };
 const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
 const prefix = (id: string, act: string): Step[] => [...ROOMS[id](), ...ACT_ORDER[id].slice(0, ACT_ORDER[id].indexOf(act)).flatMap((a) => actRoutes[a](actX0(id, a)))];
 /** the stage up to the act (route), then `steps` played from the act's first column; built when the test runs */
@@ -230,23 +240,30 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
       { hold: 'R', jump: 12, ticks: 12 },
       { hold: 'R', until: done, max: 600 },
     ], 'shl-edge'),
+    inAct('SHL-02', 'shl02-lyoh', 'cross as before, bank only, never mind the sun', (x) => [{ policy: cloudWalk('shl2b-nosun', x + 22), until: done, max: 5000 }], 'shl-dum'),
   ],
   'SHL-03': [
     inAct('SHL-03', 'shl03-wake', 'stand still on the boats’ span while the boat comes', (x) => [
-      { policy: burstWalk('shl3'), until: and(ground, X(x + 17.5)), max: 3000 },
-      { policy: burstWalk('shl3'), until: and(ground, X(x + 27)), max: 3000 },
+      { policy: burstWalk('shl3'), until: and(ground, X(x + 19.5)), max: 3000 },
+      { policy: burstWalk('shl3'), until: and(ground, X(x + 30)), max: 3000 },
       { hold: '', until: done, max: 1500 },
     ], 'shl-wake'),
+    inAct('SHL-03', 'shl03-wet', 'the same bursts as on the dry spans', () => [{ policy: burstWalk('shl3'), until: done, max: 4000 }], 'shl-slip'),
   ],
   'SHL-04': [
     inAct('SHL-04', 'shl04-iew', 'hang the knup up at the hook before the tall arch, as before the branch', (x) => [...atHook(x + 10.5, 'the lure'), { hold: 'R', until: done, max: 1500 }], 'shl-slap'),
     { what: 'take the knup and never hang it up', steps: [...atHook(5, ''), { hold: 'R', until: done, max: 2400 }], cause: 'shl-dieng' },
+    inAct('SHL-04', 'shl04-khynnah', 'keep the small knup on into the heavy rain', (x) => [...atHook(x + 5, 'swap to the small knup'), { hold: 'R', until: done, max: 1500 }], 'shl-slap'),
+    inAct('SHL-04', 'shl04-khynnah', 'keep the big knup through the school lane', () => [{ hold: 'R', until: done, max: 1500 }], 'shl-lintel'),
   ],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'shl02-sngi': act02,
+  'shl02-lyoh': (x) => [{ policy: cloudWalk('shl2b', x + 22), until: and(ground, X(x + 22.5)), max: 5000, note: 'beam to beam with the sun out and time in hand' }, { hold: 'R', until: X(x + 28), max: 400 }],
   'shl03-wake': act03,
+  'shl03-wet': (x) => [{ policy: burstWalk('shl3-wet'), until: and(ground, X(x + 26.5)), max: 4000, note: 'the wet span: stop early, stand long' }, { hold: 'R', until: X(x + 28), max: 300 }],
   'shl04-iew': act04,
+  'shl04-khynnah': (x) => [...atHook(x + 5, 'swap to the small knup'), ...atHook(x + 18.5, 'swap back to a big one before the rain'), { hold: 'R', until: X(x + 30), max: 900 }],
 };
 const endingPolicies: Record<string, Policy> = {
   'shl-dish': dishPolicy,

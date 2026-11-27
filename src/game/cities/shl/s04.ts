@@ -14,51 +14,61 @@ import { lines as L, npc } from './lines';
 
 export interface KnupState {
   on: boolean;
+  /** the knup worn: the big one covers heavy rain; the small one fits under a low arch but not heavy rain */
+  size: 'big' | 'small';
   hooks: { x: number; inside: boolean }[];
 }
 /** the knup's extra size over Dad: px each side, px above his head */
-export const KNUP = { side: 7, up: 14 };
+export const KNUP = { side: 7, up: 14, sideSmall: 4, upSmall: 4 };
 
 export function knupState(w: World, key: string): KnupState {
-  const st: KnupState = { on: false, hooks: [] };
+  const st: KnupState = { on: false, size: 'big', hooks: [] };
   w.flags[key] = st;
   // Dad wears it: drawn over him
   w.add(
     new Paint((ctx, w2) => {
       if (!st.on) return;
       const p = w2.player;
-      knupArt(ctx, p.cx, p.y - KNUP.up - 2, 2 * KNUP.side + 12, 30);
+      if (st.size === 'big') knupArt(ctx, p.cx, p.y - KNUP.up - 2, 2 * KNUP.side + 12, 30);
+      else knupArt(ctx, p.cx, p.y - KNUP.upSmall - 2, 2 * KNUP.sideSmall + 12, 22);
     }, 6),
   );
   return st;
 }
 
 /** a hook on a post at column c: jump at it (head height and above) to put the knup on or hang it up */
-export function hook(w: World, st: KnupState, c: number, withKnup = false) {
+export function hook(w: World, st: KnupState, c: number, size: 'big' | 'small' = 'big') {
   const h = { x: px(c), inside: false };
   st.hooks.push(h);
   const r = w.add(
-    new Rig(px(c) - 2, FL - 54, 20, 16, {
+    new Rig(px(c) - 2, FL - 56, 24, 20, {
       layer: 3,
       tick: (rr, w2) => {
         const p = w2.player;
         const over = p.x < rr.x + rr.w && p.x + p.w > rr.x && p.y < rr.y + rr.h && p.y + p.h > rr.y;
         if (over && !h.inside) {
-          st.on = !st.on;
+          // wearing the same size: hang it up; wearing the other: swap; bare: take this one
+          if (st.on && st.size === size) st.on = false;
+          else {
+            st.on = true;
+            st.size = size;
+          }
           w2.sfx(st.on ? 'click' : 'thud', rr.x, rr.y);
         }
         h.inside = over;
       },
       paint: (ctx, rr) => {
-        box(ctx, rr.x + 8, FL - 60, 3, 60, '#6B4F2E');
-        box(ctx, rr.x + 2, FL - 60, 16, 3, '#6B4F2E');
-        box(ctx, rr.x + 16, FL - 58, 2, 6, '#3E4D47');
-        // a knup hangs here when Dad is not wearing one (whichever hook he used last is only a hook)
-        if (!st.on) knupArt(ctx, rr.x + 10, FL - 56, 22, 26);
+        box(ctx, rr.x + 10, FL - 60, 3, 60, '#6B4F2E');
+        box(ctx, rr.x + 2, FL - 60, 20, 3, '#6B4F2E');
+        box(ctx, rr.x + 18, FL - 58, 2, 6, '#3E4D47');
+        // this hook's knup hangs here unless Dad is wearing it
+        if (!(st.on && st.size === size)) {
+          if (size === 'big') knupArt(ctx, rr.x + 12, FL - 56, 22, 26);
+          else knupArt(ctx, rr.x + 12, FL - 52, 14, 18);
+        }
       },
     }),
   );
-  void withKnup;
   return r;
 }
 
@@ -69,7 +79,7 @@ export function rain(w: World, st: KnupState, c0: number, c1: number) {
       layer: 4,
       cause: 'shl-slap',
       inset: 3,
-      live: () => !st.on,
+      live: () => !st.on || st.size === 'small',
       paint: (ctx, r, w2) => {
         ctx.fillStyle = 'rgba(150,170,180,0.45)';
         ctx.fillRect(r.x - 6, 20, r.w + 12, 18);
@@ -108,7 +118,7 @@ export function lowBar(w: World, st: KnupState, c: number, clear: number, cause:
       layer: 3,
       cause,
       inset: 0,
-      live: () => st.on,
+      live: () => st.on && st.size === 'big',
       paint: (ctx) => art(ctx, px(c)),
     }),
   );
@@ -136,7 +146,7 @@ export function room(): LevelDef {
     build(w: World) {
       door(w);
       const st = knupState(w, 'shl4');
-      hook(w, st, 5, true);
+      hook(w, st, 5);
       rain(w, st, 8, 13);
       hook(w, st, 15);
       lowBar(w, st, 18, 24, 'shl-dieng', branchArt);
@@ -182,6 +192,28 @@ export const act: Act = {
     hook(w, st, c.x + 26.5);
     drips(w, st, c.x + 29, c.x + 31);
     sign(w, c.x + 1, 10.4, 3, 'ÏEWDUH', 'shop', null, 'the big market');
+  },
+};
+
+/** act 2: a child's knup hangs by the school lane: small enough for the low arch, too small for the heavy rain */
+export const actSmall: Act = {
+  id: 'shl04-khynnah',
+  w: 32,
+  advice: 'A small knup hangs by the school lane: jump at it wearing the big one and you swap. The small one passes under the low arch and keeps the awning’s drips off, but it is too small for heavy rain: swap back to a big one at the hook before the rain.',
+  cps: [1],
+  paint: () => {},
+  build: (w, c) => {
+    const st = w.flags.shl4 as KnupState;
+    hook(w, st, c.x + 5, 'small');
+    lowBar(w, st, c.x + 9, 24, 'shl-lintel', (ctx, x) => {
+      box(ctx, x - 4, FL - 30, 4, 30, '#5C6F66');
+      box(ctx, x + 10, FL - 30, 4, 30, '#5C6F66');
+      box(ctx, x - 6, FL - 36, 22, 8, '#5C6F66');
+    });
+    drips(w, st, c.x + 12, c.x + 15);
+    hook(w, st, c.x + 18.5, 'big');
+    rain(w, st, c.x + 21, c.x + 27);
+    sign(w, c.x + 2, 10.4, 3, 'SCHOOL', 'shop', null, 'small knups');
   },
 };
 

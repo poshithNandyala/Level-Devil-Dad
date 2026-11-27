@@ -24,14 +24,24 @@ export interface Bank {
  * A gap with sunbeams over it and cloud banks sliding across. A beam's columns are solid while a bank's thick
  * middle covers them all. State for the tests on w.flags[key]: { banks, beams, lit(i) }.
  */
-export function cloudGap(w: World, key: string, gap: [number, number], beams: [number, number][], o: { w: number; end: number; speed: number; span: number; phase: number; n: number }) {
+export interface Sun {
+  period: number;
+  /** seconds per period the high cloud covers the sun (no beam lights anything) */
+  inFor: number;
+  phase: number;
+}
+export const sunOut = (w: World, sun: Sun) => cyc(w, sun.period, sun.phase) >= sun.inFor;
+/** seconds the sun stays out from now (0 if it is in) */
+export const sunLeft = (w: World, sun: Sun) => (sunOut(w, sun) ? sun.period - cyc(w, sun.period, sun.phase) : 0);
+
+export function cloudGap(w: World, key: string, gap: [number, number], beams: [number, number][], o: { w: number; end: number; speed: number; span: number; phase: number; n: number; sun?: Sun }) {
   const banks: Bank[] = [];
   for (let k = 0; k < o.n; k++) {
     const off = (o.span / o.n) * k;
     banks.push({ x: (w2) => ((((w2.tick / 120) * o.speed + o.phase + off) % o.span) + o.span) % o.span + gap[0] - o.w - 2, w: o.w, end: o.end });
   }
-  const covered = (w2: World, b: [number, number]) => banks.some((bk) => bk.x(w2) + bk.end <= b[0] && bk.x(w2) + bk.w - bk.end >= b[1] + 1);
-  const st = { banks, beams, lit: (w2: World, i: number) => covered(w2, beams[i]), gap };
+  const covered = (w2: World, b: [number, number]) => (!o.sun || sunOut(w2, o.sun)) && banks.some((bk) => bk.x(w2) + bk.end <= b[0] && bk.x(w2) + bk.w - bk.end >= b[1] + 1);
+  const st = { banks, beams, lit: (w2: World, i: number) => covered(w2, beams[i]), gap, sun: o.sun };
   w.flags[key] = st;
   // the beam floors
   beams.forEach((b) => {
@@ -73,8 +83,20 @@ export function cloudGap(w: World, key: string, gap: [number, number], beams: [n
   w.add(
     new Paint((ctx, w2) => {
       box(ctx, px(gap[0]), FL + 10, px(gap[1] - gap[0] + 1), 60, 'rgba(20,34,30,0.85)');
+      const out = !o.sun || sunOut(w2, o.sun);
+      if (o.sun) {
+        // the sun over the gap, and the high cloud that crosses it
+        const sx = px((gap[0] + gap[1]) / 2);
+        ctx.fillStyle = '#FFF6C8';
+        ctx.beginPath();
+        ctx.arc(sx, 26, 12, 0, Math.PI * 2);
+        ctx.fill();
+        const k = cyc(w2, o.sun.period, o.sun.phase) / o.sun.period;
+        const hx = sx - 150 + 300 * k;
+        cloudArt(ctx, hx - 44, hx + 44, 10, 30, 0.55);
+      }
       for (const b of beams) {
-        ctx.fillStyle = 'rgba(255,246,200,0.22)';
+        ctx.fillStyle = out ? 'rgba(255,246,200,0.22)' : 'rgba(255,246,200,0.04)';
         ctx.beginPath();
         ctx.moveTo(px(b[0]) - 14, 0);
         ctx.lineTo(px(b[1] + 1) + 14, 0);
@@ -150,6 +172,20 @@ export const act: Act = {
   build: (w, c) => {
     cloudGap(w, 'shl2a', [c.x + 6, c.x + 24], [[c.x + 9, c.x + 11], [c.x + 14, c.x + 16], [c.x + 19, c.x + 21]], { w: 14, end: 2, speed: 1.875, span: 40, phase: 10, n: 2 });
     sign(w, c.x + 2, 10.4, 3, 'SUN', 'shop', null, 'through the pines');
+  },
+};
+
+/** act 2: the same floor, but a high cloud crosses the sun: while it does, no beam lights anything and nothing holds */
+export const actSun: Act = {
+  id: 'shl02-lyoh',
+  w: 30,
+  advice: 'Back at the view point, and a high cloud crosses the sun every few seconds. While the sun is covered, no beam lights anything and nothing holds, whatever the bank below is doing. Cross beam to beam only with the sun out and time in hand; wait on the bank while it is in.',
+  paint: (g, c) => {
+    g.fill(c.x + 6, c.x + 21, 15, 17, '.');
+  },
+  build: (w, c) => {
+    cloudGap(w, 'shl2b', [c.x + 6, c.x + 21], [[c.x + 9, c.x + 11], [c.x + 15, c.x + 17]], { w: 20, end: 2, speed: 2.5, span: 44, phase: 14, n: 2, sun: { period: 12, inFor: 2.0, phase: 3 } });
+    sign(w, c.x + 2, 10.4, 3, 'SUN', 'shop', null, 'behind a high cloud');
   },
 };
 

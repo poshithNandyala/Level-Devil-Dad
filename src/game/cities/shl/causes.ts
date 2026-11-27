@@ -8,6 +8,7 @@ export const causeLines: Record<string, string[]> = {
   'shl-dish': ['The radar beam swept you.', 'The dish turns on a beat. Wait just outside the last four tiles until a sweep has gone, then walk in.'],
   'shl-sway': ['The deck swung you off into the Umngot.', 'The swing is your own running. Walk the deck in short bursts: a few steps, a stop, a few steps.'],
   'shl-wake': ['The boat’s wake added a swing, and the deck threw you.', 'When a boat is coming under the span, stand on the tower, not on the deck. Cross after its wake.'],
+  'shl-slip': ['You slid on the wet planks, and the slide swung the deck until it threw you.', 'On wet planks a stop is not a stop at once: you slide on. Stop earlier, stand longer, then the next burst.'],
   'shl-wah': ['Into the river.', 'Stay on the deck and the towers; the river is deep.'],
   'shl-bar': ['The toll bar came down on you: the deck was still swinging.', 'Stop short of the bar until the red line on the deck is gone, then walk through.'],
   'shl-dieng': ['The branch caught your knup.', 'The knup stands high and wide over your head. Jump at the hook before the branch to hang it up, and take it again after.'],
