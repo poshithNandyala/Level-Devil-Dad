@@ -13,7 +13,7 @@ import { Rig, box, folk } from './entities';
 import { FL, channel, cyc, since, taraScript } from './common';
 import { keeperOn } from './s02';
 import { parasol } from './s03';
-import { patraAct } from './s05';
+import { chheliAct, patraAct } from './s05';
 import { loom, type LoomCfg } from './s06';
 import { bagudiAct, deepaAct, padaAct, stagePit, troupe, troupeAct, type TroupeCfg } from './s07';
 import { chariot, risingSpokes, templeWall, type ChariotCfg } from './s09';
@@ -139,6 +139,10 @@ export const act7 = bagudiAct('bbi10-bagudi', 'bbi10bg', true);
 /** act 8, the rising spokes turned round (law 7): Konark taught you to wait on each spoke for the next one. These
  *  rise only while nobody stands on a spoke, so stepping on stops the stair: wait on the bank for all of it */
 export const act8 = risingSpokes('bbi10-udaya', 1, 'bbi10u', true);
+
+/** act 9, the goat turned round (law 7): Raja taught you to jump once the goat was back on your side; this one
+ *  charges the straw when it comes back, so jump while it is away */
+export const act9 = chheliAct('bbi10-chheli', 'bbi10ch', true);
 
 /** ending: the inauguration ribbon across the stadium gate, and the big ceremonial scissors that snip at it */
 export const RIB = { period: 2.2, shut: 0.5, at: 9 };

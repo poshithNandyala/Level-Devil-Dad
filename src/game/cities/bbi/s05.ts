@@ -587,20 +587,28 @@ export const act9 = bailAct('bbi05-bail', 14, 38, 'bbi5b');
  *  A2: jump from the straw only when the head is down. A3: and only once the goat is on your side: on the far
  *  bank it butts you back into the pit. */
 export const GOAT = { bales: [5, 7] as [number, number], pit: [9, 10] as [number, number], g0: 5, g1: 15, start: 8, v: 40, beam: [8, 12] as [number, number] };
-export const act12: Act = {
-  id: 'bbi05-chheli',
+/** `charge` (the finale's turn, law 7): this goat grazes quietly on the far bank and charges the straw when it is
+ *  on your side, so jump while it is away, never when it comes back */
+export function chheliAct(id: string, key: string, charge = false): Act {
+  return {
+  id,
   w: 26,
-  advice: 'Raja is a holiday for people, not for the goat. Each time it walks along the rice pounder, the pounder’s head swings up over the pit. Wait on the straw until the goat has crossed back to your side, then jump.',
+  advice: charge
+    ? 'This goat grazes quietly on the far bank, and when it comes back to your side it charges the straw. Jump while it is away and off the pounder’s beam, never when it comes back.'
+    : 'Raja is a holiday for people, not for the goat. Each time it walks along the rice pounder, the pounder’s head swings up over the pit. Wait on the straw until the goat has crossed back to your side, then jump.',
   cps: [],
   paint: (g, c) => {
     g.fill(c.x + GOAT.bales[0], c.x + GOAT.bales[1], 13, 14, '#');
     g.pit(c.x + GOAT.pit[0], c.x + GOAT.pit[1]);
   },
   build: (w, c) => {
-    village(w, c.x, c.x + 26);
-    channel(w, c.x + GOAT.pit[0], c.x + GOAT.pit[1], 'bbi-dhenki', 'spikes');
-    const st = { t0: -1, x: c.X(GOAT.start), dir: 1, up: false };
-    w.flags.bbi5ch = st;
+    if (!charge) village(w, c.x, c.x + 26);
+    const pit = channel(w, c.x + GOAT.pit[0], c.x + GOAT.pit[1], 'bbi-dhenki', 'spikes');
+    const st = { t0: -1, x: c.X(GOAT.start), dir: 1, up: false, charged: false };
+    w.flags[key] = st;
+    pit.o.tick = (r) => {
+      r.hazard!.cause = st.charged ? 'bbi-sinha' : 'bbi-dhenki';
+    };
     onPass(w, c.X(0.5), (w2) => { if (st.t0 < 0) st.t0 = w2.tick; });
     const onBeam = () => st.x + 9 > c.X(GOAT.beam[0]) && st.x + 9 < c.X(GOAT.beam[1]);
     // the goat: walks the lane both ways, over the pounder's beam; butts anyone it meets
@@ -609,13 +617,24 @@ export const act12: Act = {
         cause: 'bbi-sinha',
         inset: 2,
         layer: 4,
-        tick: (r) => {
+        live: () => !charge,
+        tick: (r, w2) => {
           if (st.t0 < 0) return;
           st.x += (st.dir * GOAT.v) / 120;
           if (st.x >= c.X(GOAT.g1)) st.dir = -1;
           if (st.x <= c.X(GOAT.g0)) st.dir = 1;
           st.up = onBeam();
           r.x = st.x;
+          // the charge: back on your side, it rams the straw and whoever stands on it goes over into the pit
+          const p = w2.player;
+          if (charge && !st.charged && st.dir < 0 && st.x + 9 < c.X(GOAT.bales[1] + 1) && p.onGround && p.x > c.X(GOAT.bales[0]) - 4 && p.x < c.X(GOAT.bales[1] + 1) && p.y + p.h <= FL - 30) {
+            st.charged = true;
+            p.vx = 150;
+            p.vy = -80;
+            p.onGround = false;
+            p.launched = true;
+            p.stun = 60;
+          }
           r.y = st.up ? FL - 22 : FL - 16;
         },
         paint: (ctx, r) => {
@@ -661,6 +680,8 @@ export const act12: Act = {
     );
   },
 };
+}
+export const act12 = chheliAct('bbi05-chheli', 'bbi5ch');
 
 /** act 11, Talapatra (BBI reserve, stylus-cut-lines-soot): palm leaves laid over a ditch, all alike. A scribe
  *  walks them rubbing soot into his stylus lines, and only behind him does the writing show. The written leaves
