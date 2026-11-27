@@ -158,7 +158,7 @@ export class Ghat extends Entity {
   }
   update(w: World) {
     const p = w.player;
-    if (p.y + p.h > FLOOR + 10 && p.x + p.w > this.x0 && p.x < this.x1) w.die(w.flags.cracked ? 'ccu-phata' : w.flags.carried ? 'ccu-murti' : w.flags.straw ? 'ccu-khor' : 'ccu-ganga');
+    if (p.y + p.h > FLOOR + 10 && p.x + p.w > this.x0 && p.x < this.x1) w.die(w.flags.cracked ? 'ccu-phata' : w.flags.carried ? 'ccu-murti' : 'ccu-ganga');
   }
   draw(ctx: CanvasRenderingContext2D, w: World) {
     const g = ctx.createLinearGradient(0, FLOOR + 6, 0, FLOOR + 48);
@@ -249,98 +249,3 @@ export class BigFigure extends Entity {
   }
 }
 
-/** CCU-05: a straw skeleton, the shape of a figure with no clay on it yet: air. The potter lays the clay on
- *  in front of you, figure by figure; once it's clay it holds */
-export class Straw extends Entity {
-  solid: Solid;
-  clay = false;
-  constructor(
-    readonly x: number,
-    readonly h: number,
-  ) {
-    super();
-    this.layer = 1;
-    this.solid = new Solid(x, FLOOR - h * TILE, 2 * TILE, h * TILE + 48);
-    this.solid.velX = 0;
-    this.solid.collidable = false;
-  }
-  /** scraped back to straw (the finale: the clay is taken off for the next year's figures) */
-  scrape(w: World) {
-    if (!this.clay) return;
-    this.clay = false;
-    this.solid.collidable = false;
-    w.sfx('slide', this.x + 16, this.solid.y);
-  }
-  daub(w: World) {
-    if (this.clay) return;
-    this.clay = true;
-    this.solid.collidable = true;
-    w.sfx('thud', this.x + 16, this.solid.y);
-  }
-  update(w: World) {
-    const p = w.player;
-    if (!this.clay && p.x + p.w > this.x && p.x < this.x + 32 && p.y + p.h > this.solid.y) w.flags.straw = 1;
-  }
-  draw(ctx: CanvasRenderingContext2D) {
-    const y = this.solid.y;
-    const hh = FLOOR - y;
-    if (this.clay) {
-      ctx.fillStyle = '#7D7266';
-      ctx.fillRect(this.x + 3, y, 26, hh);
-      ctx.fillStyle = '#6A6055';
-      ctx.fillRect(this.x + 3, y, 26, 3);
-      return;
-    }
-    ctx.fillStyle = '#D9B45A';
-    for (let k = 0; k < 6; k++) ctx.fillRect(this.x + 4 + k * 4, y + (k % 2) * 3, 1, hh);
-    ctx.fillRect(this.x + 3, y + 4, 26, 1);
-    ctx.fillRect(this.x + 3, y + hh / 2, 26, 1);
-  }
-}
-
-/** the potter, working along the straw figures in order: one more is clay every `every` s */
-export class Potter extends Entity {
-  t0 = -1;
-  done = 0;
-  constructor(
-    readonly straws: Straw[],
-    readonly first: number,
-    readonly every: number,
-  ) {
-    super();
-    this.layer = 2;
-  }
-  update(w: World) {
-    if (this.t0 < 0 || this.done >= this.straws.length) return;
-    const t = (w.tick - this.t0) / 120;
-    if (t >= this.first + this.done * this.every) this.straws[this.done++].daub(w);
-  }
-  draw(ctx: CanvasRenderingContext2D, w: World) {
-    const s = this.straws[Math.min(this.done, this.straws.length - 1)];
-    const busy = this.t0 >= 0 && this.done < this.straws.length;
-    person(ctx, s.x + 34, s.solid.y - 20, 20, '#6D4C41', '#8C7A6B', { arms: busy && w.tick % 40 < 20 ? 6 : 2 });
-  }
-}
-
-/** CCU-10: the potter scraping the clay off again, one figure after another from the near end, quicker than
- *  anyone waits: keep ahead of him */
-export class Scraper extends Entity {
-  t0 = -1;
-  done = 0;
-  constructor(
-    readonly figs: Straw[],
-    readonly first: number,
-    readonly every: number,
-  ) {
-    super();
-    this.layer = 2;
-  }
-  update(w: World) {
-    if (this.t0 < 0 || this.done >= this.figs.length) return;
-    if ((w.tick - this.t0) / 120 >= this.first + this.done * this.every) this.figs[this.done++].scrape(w);
-  }
-  draw(ctx: CanvasRenderingContext2D, w: World) {
-    const f = this.figs[Math.min(this.done, this.figs.length - 1)];
-    person(ctx, f.x - 6, f.solid.y - 20, 20, '#6D4C41', '#8C7A6B', { arms: this.t0 >= 0 && w.tick % 30 < 15 ? 6 : 2 });
-  }
-}
