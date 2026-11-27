@@ -19,4 +19,6 @@ export const causeLines: Record<string, string[]> = {
   'ita-mori': ['The sluice took you: the pour, or the gate coming down.', 'Pull the lever and let the water pour through. The gate stays up a second and a half after the pour stops: go through then.'],
   'ita-dhuan': ['The exhaust coughed black smoke over you.', 'The driver tries the engine while the truck is moving: the cab shakes (or the engine turns over) a second before. Be off the truck then: rest only where it has settled past a chock.'],
   'ita-truck': ['You let go between chocks and the truck rolled back over you.', 'Let go only when the wheel has just dropped over a chock: the truck settles a step ahead of you and rolls back no further than that stone.'],
+  'ita-nadi': ['The poles spread under you and the one you stood on rolled you into the Siang.', 'Look at the lashings: a pole with a rope band round it is tied to its neighbours and holds. A plain pole is loose. Hop from band to band.'],
+  'ita-rassi': ['That band was frayed: it snapped and the rope whipped you.', 'A frayed band (loose ends, twitching) is not a step. Hop over that pole to the next sound band.'],
 };

@@ -422,6 +422,59 @@ function releaseAtTell(key: string): (w: World) => Out {
   };
 }
 
+// ------------------------------------------------------------------ ITA-08
+type RaftSt = { c0: number; poles: ('plain' | 'band' | 'frayed')[]; rigs: { x: number }[] };
+/** hop from banded pole to banded pole (and to the far bank): jump as soon as you stand with the next band ahead */
+function raftHop(keys: string[], bankX: number, frayedIsFine = false): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const p = w.player;
+    if (!p.onGround) return go('R');
+    const bands: number[] = [];
+    for (const k of keys) {
+      const st = w.flags[k] as RaftSt;
+      st.poles.forEach((kind, i) => {
+        if (kind === 'band' || (frayedIsFine && kind === 'frayed')) bands.push(px(st.c0 + 2 * i));
+      });
+    }
+    bands.push(bankX);
+    const next = bands.filter((x) => x > p.x + p.w - 6).sort((a, b) => a - b)[0];
+    if (next === undefined) return go('R');
+    const gap = next - (p.x + p.w);
+    const edge = !w.solidAt(p.x + p.w + 3, p.y + p.h + 1, 1, 1);
+    const under = w.solidAt(p.x + p.w - 1, p.y + p.h + 1, 1, 1);
+    const adjacent = !!under && under !== true && under.x + under.w >= next - 1;
+    if (adjacent) return go('R');
+    if ((gap <= 34 && gap >= -2) || (edge && gap <= 56)) {
+      jt = gap > 34 ? 16 : 12;
+      return { move: 'R', jump: true };
+    }
+    return go('R');
+  };
+}
+const room08 = (): Step[] => [{ policy: raftHop(['ita8a', 'ita8b'], px(27)), until: and(ground, X(27.5)), max: 2000, note: 'band to band across both rafts' }, { hold: 'R', until: X(29), max: 400 }];
+const act08 = (x: number): Step[] => [{ policy: raftHop(['ita8c', 'ita8d'], px(x + 41)), until: and(ground, X(x + 41.5)), max: 3000, note: 'band to band, over the frayed ones' }, { hold: 'R', until: X(x + 46.4), max: 400 }];
+/** the ghat: one running jump over the whole frayed raft */
+const ghatPolicy: Policy = (w, m) => {
+  const g = w.flags.ita8g as { x0: number; x1: number };
+  const p = w.player;
+  if (m.hold > 0) return { move: 'R', jump: true };
+  if (p.onGround && p.x + p.w >= g.x0 - 6 && p.x < g.x0) {
+    m.hold = 22;
+    return { move: 'R', jump: true };
+  }
+  return go('R');
+};
+
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-01': { steps: [...courseRoute(), ...hop(62.4, 'hop the fort wall like the others'), { hold: 'R', until: done, max: 900 }], cause: 'ita-ita' },
@@ -431,6 +484,7 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-05': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-khai' },
   'ITA-06': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-doob' },
   'ITA-07': { steps: [{ hold: 'R', until: done, max: 2400, note: 'push without stopping' }], cause: 'ita-dhuan' },
+  'ITA-08': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-nadi' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-01': { steps: [...upTo(24), { hold: 'R', until: X(77.0), max: 600 }, { hold: 'R', jump: 16, ticks: 16, note: 'skip the first brick, as on the first wall' }, { hold: 'R', until: done, max: 900 }], cause: 'ita-pop' },
@@ -459,6 +513,13 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
     cause: 'ita-bahaav',
   },
   'ITA-07': { steps: [{ policy: releaseAtTell('ita7'), until: done, max: 3000, note: 'let go when the cab shakes, wherever the truck is' }], cause: 'ita-truck' },
+  'ITA-08': {
+    get steps(): Step[] {
+      const x = actX0('ITA-08', 'ita08-dhaara');
+      return [...room08(), { policy: raftHop(['ita8c', 'ita8d'], px(x + 41), true), until: done, max: 3000, note: 'band to band, the frayed one too' }];
+    },
+    cause: 'ita-rassi',
+  },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
   'ITA-03': [{ what: 'wait on the young one’s back for the next to dip', steps: [{ policy: herdWalk('ita3'), until: (w) => w.player.x >= px(15), max: 3000 }, { hold: '', until: done, max: 1500 }], cause: 'ita-seeng' }],
@@ -504,6 +565,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'ita06-nahar': act06,
   'ita07-chadhai': act07,
   'ita07-barf': act07b,
+  'ita08-dhaara': act08,
 };
 const endingPolicies: Record<string, Policy> = {
   'ita-phatak': gatePolicy,
@@ -512,6 +574,7 @@ const endingPolicies: Record<string, Policy> = {
   'ita-khokhla': hollowPolicy,
   'ita-mori': sluicePolicy,
   'ita-tailgate': tailgatePolicy,
+  'ita-ghat': ghatPolicy,
 };
 
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
@@ -528,6 +591,8 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   lengthen('ITA-06', 0, []);
   S['ITA-07'] = room07();
   lengthen('ITA-07', 0, []);
+  S['ITA-08'] = room08();
+  lengthen('ITA-08', 0, []);
 }
 
 export const test: CityTests = {
@@ -537,5 +602,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['ITA-02', 'ITA-03', 'ITA-04', 'ITA-05', 'ITA-06', 'ITA-07'],
+  fair: ['ITA-02', 'ITA-03', 'ITA-04', 'ITA-05', 'ITA-06', 'ITA-07', 'ITA-08'],
 };

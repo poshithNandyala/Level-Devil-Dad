@@ -6,8 +6,9 @@ import { ending as e04 } from './s04';
 import { ending as e05 } from './s05';
 import { ending as e06 } from './s06';
 import { ending as e07 } from './s07';
+import { ending as e08 } from './s08';
 
-export type ItaEndingKind = 'ita-phatak' | 'ita-baada' | 'ita-peti' | 'ita-khokhla' | 'ita-mori' | 'ita-tailgate';
+export type ItaEndingKind = 'ita-phatak' | 'ita-baada' | 'ita-peti' | 'ita-khokhla' | 'ita-mori' | 'ita-tailgate' | 'ita-ghat';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<ItaEndingKind, true> {}
@@ -20,4 +21,5 @@ export const endings: Record<ItaEndingKind, Ending> = {
   'ita-khokhla': e05,
   'ita-mori': e06,
   'ita-tailgate': e07,
+  'ita-ghat': e08,
 };
