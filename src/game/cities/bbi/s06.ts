@@ -302,6 +302,7 @@ export function sidhiAct(id: string, key: string): Act {
   },
 };
 }
+// 06's one labelled momentum beat: hop up the steps on the beat, no stopping (it has no second play by design)
 export const act6 = sidhiAct('bbi06-sidhi', 'bbi6s');
 /** act 7, the beater: the motif holds, but at its end the beater sweeps the warp from the weaver's side */
 export const L06R: LoomCfg = { c0: 3, n: 8, speeds: [4, 2, 1, 3, 1, 4, 3, 2], beat: 0.8, hold: 2.2, shuttle: [[0, -1]], reed: true };

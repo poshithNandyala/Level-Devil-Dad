@@ -538,7 +538,8 @@ export const act9: Act = {
           layer: 3,
           tick: (r, w2) => {
             const t = st.t0 < 0 ? 0 : since(w2, st.t0);
-            const th = Math.PI + om * t;
+            // A comes to its near edge 0.4 s after you pass the trigger, just as you reach the rim
+            const th = Math.PI + om * (t - 0.4);
             st.th[i] = th;
             const x = c.X(cx) + 8 + sign * GHURNI.r * 16 * Math.cos(th) - 13;
             const v = Math.abs(GHURNI.r * 16 * om * Math.sin(th));
