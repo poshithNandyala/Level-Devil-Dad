@@ -132,7 +132,7 @@ const duiLine: Act = {
   w: 26,
   // on the island's middle, clear of the other line's tram; the door's is at its far end
   cp0: false,
-  cps: [22],
+  cps: [24.5],
   advice: 'One more junction: stay on the step. At the island stop a tram on the other line comes past, right by the step: get off on to the island, let it go by, and hop back on before yours leaves.',
   paint: (g, c) => {
     g.pit(c.x, c.x + 19);
@@ -292,7 +292,7 @@ function relay(id: string, v: [number, number, number], tallFirst: boolean, advi
     },
   };
 }
-const ulto = relay('ccu07-ulto', [41, 59, 79], false, 'A long span, and the relay the other way up: a short porter from the pylon, a tall one overtaking (hop up when nothing is coming over), then a short one passing under (walk off the front on to him) before the second CHA board.', [0.4]);
+const ulto = relay('ccu07-ulto', [41, 59, 79], false, 'A long span, and the relay the other way up: a short porter from the pylon, a tall one overtaking (hop up when nothing is coming over), then a short one passing under (walk off the front on to him) before the second CHA board.', []);
 
 /** CCU-07 act (R2, the bore's front, its A3): the low causeway along the river. The front comes up the
  *  river behind you as you step on to it and floods all it has passed: the momentum beat. Keep moving,
@@ -353,7 +353,7 @@ const pylon: Act = {
     w.add(new Girders(c.X(0), c.X(40)));
     road(w, c.X(8), c.X(40));
     const p5 = w.add(new Porter({ x: c.X(8.8), v: 45, h: SHORT, rests: [[c.X(15), 3]], go: (w2, me) => w2.player.isRiding(me.load) }));
-    w.add(new Porter({ x: c.X(-6), v: 55, h: TALL, kind: 'books', go: (w2) => w2.player.onGround && w2.player.cx > c.X(2) && w2.player.cx < c.X(8), off: Infinity }));
+    w.add(new Porter({ x: c.X(-6), v: 55, h: TALL, kind: 'books', rests: [[c.X(40.8), Infinity]], go: (w2) => w2.player.onGround && w2.player.cx > c.X(2) && w2.player.cx < c.X(8), off: Infinity }));
     w.add(new ChaiBoard(c.X(15)));
     w.add(new ChaiBoard(c.X(3), true));
   },
@@ -529,7 +529,7 @@ function pandalRoom(): LevelDef {
 const sinri: Act = {
   id: 'ccu09-sinri',
   cp0: false,
-  cps: [-5.5],
+  cps: [-7.5],
   w: 30,
   advice: 'The panels they’ve already tied make a staircase: climb it, cloth top to cloth top. At the top a new panel goes up across the next bamboo: a full jump on to it, and walk straight off the far side before they tie the next one above, into the roof frame.',
   paint: (g, c) => {
@@ -771,7 +771,7 @@ const uthon: Act = {
 const ghat: Act = {
   id: 'ccu05-ghat',
   cp0: false,
-  cps: [-4.6],
+  cps: [-4.5],
   w: 26,
   advice: 'Here they finish one after another, from the near end, and carry each one out as you go: keep moving, never wait, and still walk off (never jump) on to the pale dry ones.',
   paint: (g, c) => {
@@ -1010,7 +1010,7 @@ const lane: Act = {
   id: 'ccu05-lane',
   w: 34,
   cp0: false,
-  cps: [-3.5],
+  cps: [-5],
   advice: 'The long lane down to the river: every kind of figure, mixed. Read each one before you land: below the waist, stay; above it, go on at once; pale and dry, walk down on to it, never jump.',
   paint: (g, c) => {
     g.pit(c.x, c.x + 29);
@@ -1218,10 +1218,10 @@ export const levels = (): LevelDef[] => [
   longStage({ base: aasteRoom(), par: 23, acts: [], twist: 'ccu-stop', shape: 'short', meta: meta('exit-moving-vehicle-on-shout', ['exit-facing-forward'], 'ccu-bus-crawls-for-whoever-waits') }),
   longStage({ base: muriRoom(), par: 38, acts: [dui3], twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
   longStage({ base: boiRoom(), par: 23, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
-  longStage({ base: kumartuliRoom(), par: 31, acts: [uthon, lane, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
+  longStage({ base: kumartuliRoom(), par: 31, acts: [lane, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
   longStage({ base: poleRoom(), par: 77, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
-  longStage({ base: howrahRoom(), par: 110, acts: [girder, dui, ulto, jowar, pylon, baan], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
-  longStage({ base: addaRoom(), par: 32, acts: [rok, tokta], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
-  longStage({ base: pandalRoom(), par: 72, acts: [sinri, toran, chala, dhak, uthan, uthan2, line], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
+  longStage({ base: howrahRoom(), par: 110, acts: [girder, dui, ulto, pylon, jowar], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
+  longStage({ base: addaRoom(), par: 32, acts: [rok], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
+  longStage({ base: pandalRoom(), par: 72, acts: [sinri, toran, chala, dhak, uthan, line], twist: 'ccu-dwar-kapor', shape: 'long', meta: meta('cloth-panel-covers-foothold', ['build-order-wall'], 'ccu-last-panel-tied-over-the-door') }),
   longStage({ base: finaleRoom(), par: 119, acts: [bus10, tram10, chhad, phire, pherot, kumor10, khola, setu10a], twist: 'ccu-stup', shape: 'long', lives: 'act', meta: meta('finale-book-bundle-loads', ['customers-ask-mid-crossing'], 'ccu-door-on-a-pile-being-bought-down') }),
 ];

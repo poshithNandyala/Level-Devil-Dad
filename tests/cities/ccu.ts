@@ -521,7 +521,7 @@ const jowarRoute = (x: number, bad?: 'stop' | 'long'): Step[] => {
 
 // ------------------------------------------------------------------ CCU-07 the bore
 /** CCU-07's shelter beat at the second pylon (the act's own route), for the scripts after it */
-const PYL = (x: number): Step[] => [walk(x + 3.9), ...hopTo(px(x + 6.4), 10, 'up the pylon step'), hopUp((w) => ahead(w, 55, 54), 'wait for the tall porter, and up on his load'), { hold: '', until: X(x + 40.6), max: 1800, note: 'ride him on' }];
+const PYL = (x: number): Step[] => [walk(x + 3.9), ...hopTo(px(x + 6.4), 10, 'up the pylon step'), hopUp((w) => ahead(w, 55, 54), 'wait for the tall porter, and up on his load'), { hold: '', until: X(x + 39.4), max: 1800, note: 'ride him on to the causeway' }];
 const baanRoute = (x: number): Step[] => [
   walk(x + 6.4, 'down the ghat steps, quickly'),
   { hold: 'R', until: (w) => w.player.onGround && w.player.isRiding((w.flags.baan as Bore).launch) && w.player.x > px(x + 8), max: 300, note: 'on to the moored launch' },
@@ -683,7 +683,8 @@ const naive: Record<string, { steps: Step[]; cause?: string }> = {
 /** the obvious correction after the first death, which dies too */
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'CCU-01': { steps: [...tourRun('onto').slice(0, -2), { hold: 'R', jump: 34, ticks: 34, long: true, note: 'stay on the thela this time, then a long jump off the deck over the chalk river by the door' }, { hold: 'R', until: done, max: 600 }], cause: 'ccu-kumir' },
-  'CCU-08': { steps: [...addaRoute(), { policy: hopWater(), until: and(ground, X(32 + 38)), max: 1800 }, walk(76 - 1.8), steerHop(px(76.8), 12, 'up'), walk(76 + 12.2), { hold: 'R', jump: 30, ticks: 30, long: true, note: 'never stop on the rok: jump the broken bit' }, { hold: 'R', until: done, max: 300 }], cause: 'ccu-khod' },
+  // shortcut: with tokta cut (DECISIONS W3) the stage's only traps are the adda's hold and the maid's water, so its FIX dies of the water too, later
+  'CCU-08': { steps: [...addaRoute(), walk(32 + 24.5), { hold: '', until: done, max: 1500, note: 'never stop beside the old men, as learnt; then wait at the second adda for the water to stop' }], cause: 'ccu-dhowa' },
   'CCU-04': { steps: [walk(4.6), ...hopTo(px(8), 12, 'up on the first stack'), { hold: '', ticks: 10 }, { hold: 'R', jump: 34, ticks: 34, long: true, note: 'never land on a pointed stack: one long jump over them' }, { hold: 'R', until: done, max: 300 }], cause: 'ccu-kada' },
   'CCU-05': { steps: kumartuliRoute(false, 600), cause: 'ccu-murti' },
   'CCU-03': { steps: [{ ...crossTin('tin', px(27), { stay: true }), until: done }], cause: 'ccu-lonka' },
@@ -711,21 +712,14 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     { what: 'waiting by the second adda for the water to stop', steps: [...addaRoute(), walk(32 + 24.5), { hold: '', until: done, max: 1500 }], cause: 'ccu-dhowa' },
   ],
   'CCU-05': [
-    {
-      what: 'walking off the high dry figure on to the one two steps lower',
-      steps: [...kumartuliRoute(), walk(32), steerHop(px(33.8), 12, 'up'), steerHop(px(35.8), 10, 'up'), steerHop(px(37.8), 10, 'up'), walkOnto(39, 'down one'), { hold: 'R', until: done, max: 300, note: 'and walk off again, two down' }],
-      cause: 'ccu-phata',
-    },
   ],
 
   'CCU-07': [
     { what: 'staying on the first porter of the upside-down span', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false).slice(0, 2), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
     { what: 'staying on the tall porter of the upside-down span', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false).slice(0, 3), { hold: '', until: done, max: 2400 }], cause: 'ccu-cha' },
-    { what: 'stopping at the first drain on the causeway', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...jowarRoute(184, 'stop')], cause: 'ccu-baan' },
-    { what: 'a long jump at the first drain on the causeway', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...jowarRoute(184, 'long')], cause: 'ccu-nala' },
-    { what: 'waiting on the ghat steps for the launch to come up to you', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...jowarRoute(184), ...PYL(224), walk(264 + 4.5), { hold: '', until: done, max: 2400, note: 'wait on the steps' }], cause: 'ccu-baan' },
-    { what: 'a full jump from the launch at the jetty, without the tide', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...jowarRoute(184), ...PYL(224), ...baanRoute(264).slice(0, 2), steerHop(px(264 + 15), 34, 'a full jump at the jetty', true), { hold: 'R', until: done, max: 400 }], cause: 'ccu-ghat' },
-    { what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...jowarRoute(184), walk(224 + 3.9), ...hopTo(px(230.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
+    { what: 'stopping at the first drain on the causeway', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...PYL(184), ...jowarRoute(224, 'stop')], cause: 'ccu-baan' },
+    { what: 'a long jump at the first drain on the causeway', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), ...PYL(184), ...jowarRoute(224, 'long')], cause: 'ccu-nala' },
+    { what: 'taking the porter who leaves the second pylon at once', steps: [...howrahRoom(), ...girderRoute(32), ...duiRoute(80), ...relayRoute(124, [41, 59, 79], false), walk(184 + 3.9), ...hopTo(px(190.4), 10, 'up the pylon step'), { hold: 'R', until: (w) => !!riding(w), max: 200, note: 'and on to the waiting porter' }, { hold: '', until: done, max: 1800 }], cause: 'ccu-cha' }],
   'CCU-02': [
     {
       what: 'stepping off backwards on the crawl',
@@ -740,11 +734,9 @@ const tramA = (w: World) => w.flags.tramA as Tram;
 const tramB = (w: World) => w.flags.tramB as Tram | undefined;
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'ccu09-uthan': (x) => liftRoute('ccu09-uthan', x),
-  'ccu09-uthan2': (x) => liftRoute('ccu09-uthan2', x),
   'ccu10-setu': (x) => relayRoute(x, [45, 63, 83], true),
   'ccu07-ulto': (x) => relayRoute(x, [41, 59, 79], false),
   'ccu07-jowar': (x) => jowarRoute(x),
-  'ccu07-baan': baanRoute,
   'ccu09-toran': (x) => [
     steerHop(px(x + 3), 12, 'on to the bamboo: two panels go up'),
     steerHop(px(x + 7), 34, 'a full jump on to the first', true),
@@ -805,13 +797,6 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     walk(x + 29.4),
   ],
   'ccu07-dui': (x) => duiRoute(x),
-  'ccu08-tokta': (x) => [
-    walk(x - 1.8),
-    steerHop(px(x + 0.8), 12, 'up on the broken rok'),
-    walk(x + 8.6),
-    { hold: '', until: (w) => w.flags.tokta.a.releasedAt > 0 && w.flags.plank === 1, max: 2400, note: 'stand still in the adda: the tea seller comes, on his plank' },
-    { hold: 'R', until: and(ground, X(x + 33.5)), max: 600, note: 'across the plank behind him' },
-  ],
   'ccu05-uthon': (x) => [
     steerHop(px(x + 1.8), 12, 'up on the first'),
     steerHop(px(x + 3.8), 10, 'up a step'),
@@ -911,11 +896,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 // CCU-09's lift acts: the obvious plays there
 {
   const toLift = (): Step[] => [...pandalRoute(), ...actRoutes['ccu09-sinri'](32), ...actRoutes['ccu09-toran'](62), ...actRoutes['ccu09-chala'](88), ...dhakRoute(128)];
-  const toLine = (): Step[] => [...toLift(), ...liftRoute('ccu09-uthan', 152), ...liftRoute('ccu09-uthan2', 182)];
+  const toLine = (): Step[] => [...toLift(), ...liftRoute('ccu09-uthan', 152)];
   mistakes['CCU-09'].push(
     { what: 'waiting under the canopy for the beat to pass', steps: [...toLift().slice(0, -dhakRoute(128).length), ...dhakRoute(128, 'walk')], cause: 'crushed' },
-    { what: 'climbing on to the queue', steps: [...toLine(), ...lineRoute(212, 'heads')], cause: 'ccu-line' },
-    { what: 'going under the queue', steps: [...toLine(), ...lineRoute(212, 'under')], cause: 'ccu-bansh' },
+    { what: 'climbing on to the queue', steps: [...toLine(), ...lineRoute(182, 'heads')], cause: 'ccu-line' },
+    { what: 'going under the queue', steps: [...toLine(), ...lineRoute(182, 'under')], cause: 'ccu-bansh' },
     { what: 'jumping for the high bamboo before the lift', steps: [...toLift(), ...liftRoute('ccu09-uthan', 152, 'early')], cause: 'ccu-bansh' },
     { what: 'resting on the lifted panel under the roof frame', steps: [...toLift(), ...liftRoute('ccu09-uthan', 152, 'stay')], cause: 'crushed' },
   );
@@ -927,11 +912,11 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 {
   const ROOM: Record<string, () => Step[]> = { 'CCU-05': () => kumartuliRoute(), 'CCU-06': () => S06(), 'CCU-07': () => howrahRoom(), 'CCU-08': () => addaRoute(), 'CCU-09': () => pandalRoute(), 'CCU-10': () => finaleRoom() };
   const AT: Record<string, [string, number][]> = {
-    'CCU-05': [['ccu05-uthon', 32], ['ccu05-lane', 58], ['ccu05-ghat', 92]],
+    'CCU-05': [['ccu05-lane', 32], ['ccu05-ghat', 66]],
     'CCU-06': [['ccu06-points', 32], ['ccu06-duiline', 80]],
-    'CCU-07': [['ccu07-girder', 32], ['ccu07-dui', 80], ['ccu07-ulto', 124], ['ccu07-jowar', 184], ['ccu07-pylon', 224], ['ccu07-baan', 264]],
-    'CCU-08': [['ccu08-rok', 32], ['ccu08-tokta', 76]],
-    'CCU-09': [['ccu09-sinri', 32], ['ccu09-toran', 62], ['ccu09-chala', 88], ['ccu09-dhak', 128], ['ccu09-uthan', 152], ['ccu09-uthan2', 182], ['ccu09-line', 212]],
+    'CCU-07': [['ccu07-girder', 32], ['ccu07-dui', 80], ['ccu07-ulto', 124], ['ccu07-pylon', 184], ['ccu07-jowar', 224]],
+    'CCU-08': [['ccu08-rok', 32]],
+    'CCU-09': [['ccu09-sinri', 32], ['ccu09-toran', 62], ['ccu09-chala', 88], ['ccu09-dhak', 128], ['ccu09-uthan', 152], ['ccu09-line', 182]],
     'CCU-10': [['ccu10-bus', 32], ['ccu10-tram', 72], ['ccu10-chhad', 116], ['ccu10-phire', 142], ['ccu10-pherot', 172], ['ccu10-kumor', 196], ['ccu10-khola', 220], ['ccu10-setu', 252]],
   };
   const MOVE: Record<string, Step[]> = {
@@ -945,8 +930,6 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     const steps = [...ROOM[stage](), ...list.slice(0, i).flatMap(([a, x]) => actRoutes[a](x)), ...actRoutes[id](list[i][1]).slice(0, k), ...MOVE[move]];
     (mistakes[stage] ??= []).push({ what, steps, cause });
   };
-  act('CCU-05', 'ccu05-uthon', 1, 'jump', 'a jump down from the first figure on to the dry one below', 'ccu-phata');
-  act('CCU-05', 'ccu05-uthon', 3, 'stay', 'resting on the half-painted figure at the top of the yard', 'ccu-murti');
   act('CCU-05', 'ccu05-lane', 1, 'jump', 'a jump down from the first figure in the lane', 'ccu-phata');
   act('CCU-05', 'ccu05-lane', 1, 'stay', 'resting on the first figure in the lane', 'ccu-murti');
   act('CCU-05', 'ccu05-ghat', 1, 'stay', 'waiting on the first figure while they finish in order', 'ccu-murti');
@@ -959,7 +942,6 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   act('CCU-07', 'ccu07-ulto', 2, 'stay', 'staying on the short porter of the long span', 'ccu-cha');
   act('CCU-07', 'ccu07-ulto', 0, 'jump', 'a long jump off the pylon on to the long span', 'ccu-gaari');
   act('CCU-07', 'ccu07-pylon', 1, 'jump', 'jumping off the second pylon rather than wait', 'ccu-gaari');
-  act('CCU-08', 'ccu08-tokta', 1, 'jump', 'a long jump at the broken rok instead of sitting', 'ccu-khod');
   act('CCU-09', 'ccu09-sinri', 0, 'jump', 'a long jump at the cloth staircase', 'ccu-bansh');
   act('CCU-09', 'ccu09-toran', 0, 'jump', 'a long jump at the gate arch’s bamboo', 'ccu-bansh');
   act('CCU-09', 'ccu09-chala', 0, 'jump', 'a long jump at the long bamboo', 'ccu-bansh');
