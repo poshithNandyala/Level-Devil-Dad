@@ -226,20 +226,22 @@ const capstone: Act = {
   paint: (g, c) => {
     g.fill(c.x + 14, c.x + 15, 10, 14, '#');
     g.fill(c.x + 10, c.x + 11, 3, 4, c.L[0]);
-    g.fill(c.x + 19, c.x + 24, 15, 16, '.').fill(c.x + 19, c.x + 24, 16, 16, '^').fill(c.x + 19, c.x + 24, 17, 17, '#');
-    g.fill(c.x + 21, c.x + 22, 3, 4, c.L[1]);
+    // round 2 (human timing): the spike pit starts a tile later (20, was 19), so the ledge where you wait for the
+    // second stone is a tile longer, and that stone is three tiles wide (21-23, was 21-22): a hop on to it up to
+    // 12 ticks late still lands on stone. The same rule: wait at the edge, it drops, cross on it.
+    g.fill(c.x + 20, c.x + 24, 15, 16, '.').fill(c.x + 20, c.x + 24, 16, 16, '^').fill(c.x + 20, c.x + 24, 17, 17, '#');
+    g.fill(c.x + 21, c.x + 23, 3, 4, c.L[1]);
   },
   build: (w, c) => {
     const { X } = c;
     const a = group(w, c.L[0]);
     const b = group(w, c.L[1]);
-    for (const [s, t] of [
-      [a, 10],
-      [b, 21],
+    for (const [t, wide] of [
+      [10, 1.55],
+      [21, 2.55],
     ] as const) {
       panel(w, c.x + t + 0.35, 0, 0.12, 3, '#8D6E63', 'rgba(0,0,0,0)');
-      panel(w, c.x + t + 1.55, 0, 0.12, 3, '#8D6E63', 'rgba(0,0,0,0)');
-      void s;
+      panel(w, c.x + t + wide, 0, 0.12, 3, '#8D6E63', 'rgba(0,0,0,0)');
     }
     w.when(
       (w2) => w2.player.onGround && w2.player.cx >= X(9.6) && w2.player.cx <= X(12.4),
@@ -249,7 +251,7 @@ const capstone: Act = {
       },
     );
     w.when(
-      (w2) => w2.player.onGround && w2.player.cx >= X(16.5) && w2.player.cx < X(19.2),
+      (w2) => w2.player.onGround && w2.player.cx >= X(16.5) && w2.player.cx < X(20.2),
       (w2) => b.fall(w2, { delay: 0.45, land: true, g: 2200 }),
     );
     onPass(w, X(3), (w2) => w2.guide('Periya kovil kal! Keezha nillu, nizhal! | The big temple stone! Stand under it, there is shade!'));
@@ -613,12 +615,14 @@ export const levels = (): LevelDef[] => [
     map: Grid.ground().pit(6, 25).put(2, 14, '@').put(30, 14, 'E').rows(),
     build(w: World) {
       door(w);
-      const sway = [6, 8, 20, 6, 0];
+      // round 2 (human timing): the dolls are 32 px wide (were 20), the middle one sways 12 px (was 20, still the
+      // most) and the last one steps 10 px aside (was 14): the same decisions, with landings a late press still makes
+      const sway = [6, 8, 12, 6, 0];
       [8, 12, 16, 20, 24].forEach((tx, i) => {
-        const d = thing(w, 'doll', tx, 0, { dy: 212, w: 20, h: 28 });
+        const d = thing(w, 'doll', tx, 0, { dy: 212, w: 32, h: 28 });
         d.look = 'nod';
         d.spin = true;
-        const x0 = px(tx) - 2;
+        const x0 = px(tx) - 8;
         let squash = -1;
         let dodged = false;
         w.onTick((w2) => {
@@ -627,16 +631,20 @@ export const levels = (): LevelDef[] => [
           // the last doll shakes its head as you fly at it, and steps aside
           if (i === 4) {
             const p = w2.player;
-            if (!dodged && !p.onGround && p.x > px(19) && p.vy > 0) {
+            // round 2: it steps aside as you come down FROM THE FOURTH DOLL (x > 22, was 19: that fired a flight
+            // early and it had stepped back by the time you arrived) and stays aside long enough to land on
+            if (!dodged && !p.onGround && p.x > px(22) && p.vy > 0) {
               dodged = true;
               w2.say('Illa! | No!', x0 + 10, 180, 0.9, 'npc');
-              w2.after(1.1, () => (dodged = false));
+              w2.after(1.6, () => (dodged = false));
             }
-            x = x0 + (dodged ? 14 : 0);
+            x = x0 + (dodged ? 10 : 0);
           }
           d.place(w2, x, 212);
           if (squash < 0 && w2.standing(d.solid)) squash = w2.tick;
-          if (squash >= 0 && (w2.tick - squash) * DT > 0.06) {
+          // the bounce comes two ticks after the landing (was 0.06 s = 7 ticks, in which a dad at full speed ran
+          // off the far side of the doll before it threw him): land anywhere on a doll and it bounces you
+          if (squash >= 0 && w2.tick - squash >= 2) {
             squash = -1;
             const p = w2.player;
             if (w2.standing(d.solid)) {

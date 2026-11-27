@@ -4,7 +4,7 @@
 // and the city's stage files. After a change on purpose: npm run refreeze -- CHN (docs/CITY-MODULE.md).
 import type { World } from '../../src/game/world';
 import type { Door } from '../../src/game/entities/basics';
-import { type Step, X, and, done, ground } from '../runner';
+import { type Step, X, and, done, ground, thingOf } from '../runner';
 import type { CityTests } from '../city-tests';
 import { ladleOf, murukkuOf, pressOf } from '../../src/game/cities/chn/murukku';
 import { escalatorOf, stepUnder } from '../../src/game/cities/chn/spencer';
@@ -121,8 +121,61 @@ function tour01(S: Record<string, Step[]>) {
   if (bubble > 0) mistakes['CHN-01'].push({ what: 'stand where the pot bubbles', steps: [...S['CHN-01'].slice(0, bubble), stay], cause: 'burnt' });
 }
 
+// ------------------------------------------------------------------ CHN-07: the dolls room, steered like a person does
+/** steer in the air toward the next doll's current middle (they sway), easing off so Dad arrives over it slowly;
+ *  the shipped route flew to fixed x's and missed a swaying doll when a press came a few ticks late */
+const dollSteer = (): Step => ({
+  policy: (w) => {
+    const p = w.player;
+    const dolls = [0, 1, 2, 3, 4].map((i) => thingOf(w, 'doll', i)).filter((d) => d && d.alive);
+    // the doll he is heading for: rising off a bounce, the first one whose near edge is ahead of his middle (not the
+    // one he just left); coming down, the one whose far edge is still ahead of him (it stays the target till he lands)
+    const next = p.vy < 0 ? dolls.find((d) => d.solid.x > p.cx) : dolls.find((d) => d.solid.x + d.solid.w - 6 > p.x);
+    if (!next) return { move: 'R', jump: false };
+    // the last doll steps 10 px aside as you come down ("keep holding right"): aim where it will be; on the
+    // middle doll land on its right part, so the long leap to the last one is as short as it can be
+    const aim = next.cx + (next === dolls[4] && next.x < px(24) + 2 ? 10 : 0);
+    // when do his feet come down on the dolls' top (y 212)? a bounce is not a held jump, so gravity is the full
+    // 1750 both ways (a 470 bounce flies about 0.6 s)
+    const feet = p.y + p.h;
+    let t: number;
+    if (p.vy < 0) {
+      const apex = feet - (p.vy * p.vy) / (2 * 1750);
+      t = -p.vy / 1750 + Math.sqrt(Math.max(0, 2 * (212 - apex)) / 1750);
+    } else t = (-p.vy + Math.sqrt(p.vy * p.vy + 2 * 1750 * Math.max(0, 212 - feet))) / 1750;
+    // where do his feet come down if he lets go now (air drag 900/s slows him)? keep right while that is short of
+    // the aim, brake while it is long, and never brake in the last 0.15 s (a late brake meets the doll's side)
+    const v = Math.abs(p.vx);
+    const stop = v / 900;
+    const coast = Math.sign(p.vx) * (stop < t ? (v * v) / 1800 : v * t - 450 * t * t);
+    // no braking at all: a dad who arrives at a doll slowly is below its top when he gets there and hits its side
+    // a let-go is on time but the next press comes late (up to 12 ticks of extra coasting at 900/s), so let go only
+    // when coasting from here would already carry him 8 px past the aim: on time that lands on the doll's far half,
+    // 12 ticks late on its near half
+    const landing = p.cx + coast;
+    return { move: landing < aim + 8 ? 'R' : '', jump: false };
+  },
+  until: (w) => w.player.onGround && w.player.x >= px(25.5),
+  max: 1500,
+  note: 'doll to doll: steer at the one swaying ahead',
+});
+const chn07Room = (): Step[] => [
+  { hold: 'R', until: X(4.7), max: 600 },
+  { hold: 'R', jump: 12, ticks: 12, note: 'on to the first doll' },
+  // the bounce is -470 up; a jump is -375, so a late jump still rising does not pass for the bounce
+  { hold: 'R', until: (w) => w.player.vy < -420, max: 200, note: 'boing' },
+  dollSteer(),
+];
+
 const solutions = (S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) => {
   tour01(S);
+  // 07: the room's three room steps are replaced by the steered flight; everything after (the act, the door) stays
+  {
+    const R = S['CHN-07'];
+    const i = R.findIndex((st) => st.note === 'keep holding: the last doll steps aside');
+    if (i < 0) throw new Error("CHN-07: no step 'keep holding: the last doll steps aside'");
+    S['CHN-07'] = [...chn07Room(), ...R.slice(i + 1)];
+  }
   S['CHN-09'] = murukkuRoom();
   lengthen('CHN-09', 0, []);
   S['CHN-10'] = spencerRoom();
@@ -200,7 +253,34 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   'CHN-10': [{ what: 'leap from the kerb over the escalator', steps: [...mount(8), ...hopAt(6.4, 30, 'leap', true), die], cause: 'chn-fountain' }],
 };
 
-const actRoutes: Record<string, (x: number) => Step[]> = {
+const groupOf = (w: World, letter: string) => w.entities.find((e: any) => e.letter === letter) as any;
+
+const actRoutes: Record<string, (x: number, p: any) => Step[]> = {
+  // CHN-07's act, re-timed for human play (round 2): the shipped route waited for the second stone wherever the long
+  // jump happened to land, which with a late jump was on the pit's edge; now Dad settles in the middle of the trigger
+  // band (cx 16.5..19.2), hops on to the (now 3-wide) fallen stone from 17.9, and leaves it with a long jump
+  'chn07-capstone': (x, p) => [
+    { hold: 'R', until: (w) => w.player.cx >= px(x + 10.2), max: 600, note: 'under the stone' },
+    { hold: 'L', ticks: 34, note: 'and straight back out' },
+    { hold: '', until: (w) => groupOf(w, p.letters[0]).state === 'landed', max: 400 },
+    { hold: 'R', until: X(x + 8.4), max: 200 },
+    { hold: 'R', jump: 14, ticks: 14, note: 'up on the stone' },
+    { hold: 'R', until: and(ground, X(x + 10.6)), max: 200 },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'and over the wall' },
+    { hold: 'R', until: and(ground, (w) => w.player.cx >= px(x + 16.9)), max: 400 },
+    {
+      policy: (w) => go(w.player.cx < px(x + 16.75) ? 'R' : w.player.cx > px(x + 19.4) ? 'L' : ''),
+      until: (w) => w.player.onGround && w.player.cx >= px(x + 16.75) && w.player.cx <= px(x + 19.4) && Math.abs(w.player.vx) < 10,
+      max: 300,
+      note: 'settle in the middle of the edge: it drops into the pit',
+    },
+    { hold: '', until: (w) => groupOf(w, p.letters[1]).state === 'landed', max: 400, note: 'wait at the edge: it drops into the pit' },
+    { hold: 'R', until: X(x + 18.9), max: 100 },
+    { hold: 'R', jump: 12, ticks: 12, note: 'onto the fallen stone' },
+    { hold: 'R', until: and(ground, X(x + 22.2)), max: 200 },
+    { hold: 'R', jump: 30, ticks: 30, long: true, note: 'and off it over the spikes' },
+    { hold: 'R', until: and(ground, X(x + 32)), max: 400 },
+  ],
   'chn09-karandi': (x) => [
     ...hopAt(x + 3.4, 12, 'on to the first spiral (the ladle comes for the dark one)'),
     until(ladleHovers(1), 'the ladle hovers over the dark one', 300),
