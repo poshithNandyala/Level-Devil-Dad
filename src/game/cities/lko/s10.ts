@@ -9,14 +9,14 @@ import { collectible, door, rival, sign } from '../../levels/kit';
 import { onPass } from '../../levels/trolls';
 import { Grid } from '../../levels/grid';
 import type { Act } from '../../levels/acts';
-import { Art, FLOOR, px, stillness, bowIcon, TAU } from './kit';
+import { Art, FLOOR, gent, px, stillness, bowIcon, TAU } from './kit';
 import { archway, gentleman, looseStone, pehleDoorway, tara } from './s02';
 import { washLine } from './s03';
 import { Heap, karahi, shadows, type Light } from './s04';
 import { Dancer } from './s06';
 import { arch, well, hooks, chausar } from './s08';
 import { on } from './kit';
-import { julus, photoGroup, pace, type PhotoPlan } from './s07';
+import { julus, nala, photoGroup, pace, strollers, type PhotoPlan } from './s07';
 
 /** ghungroo sewn under a chikan cover, columns [c0, c1]: a step is silent, but stand still on it (a bow)
  *  for a moment and the bells ring, and the dancer spins to the sound */
@@ -286,5 +286,53 @@ const jawab: Act = {
   },
 };
 
-export const s10 = { room: tehzeebRoom, acts: [dhulai, darbar, tasveer, julusBells, jawab, galiyara] };
+/** The Ganj's strollers again: pause and they part, as on the Ganj. But they are Lakhnavi gentlemen, and a
+ *  gap made by politeness is a doorway: the nearest one bows you through first, and the stone in the gap is
+ *  the loose one. 07 taught: go through the gap. Here: bow back, let him go first, take the gap second. */
+const raasta: Act = {
+  id: 'lko10-raasta',
+  w: 22,
+  cp0: false,
+  cps: [-2],
+  advice: 'The strollers again: pause and they part. But a gap made by politeness is a doorway, and the gentleman in it bows you through first, on to the loose stone. Bow back (stand still) and let him go first, then hop the hole he leaves.',
+  paint: (g, c) => {
+    g.pit(c.x + 4, c.x + 5);
+    g.pit(c.x + 14, c.x + 15);
+  },
+  build: (w, c) => {
+    const x = c.x;
+    nala(w, x + 4, x + 5, 'lko-nala');
+    const crowd = strollers(w, x + 10, c.f('crowd'), 'lko-ganj', -210);
+    const hole = looseStone(w, x + 14, 2, 'lko-pehle');
+    const still = stillness(w);
+    bowIcon(w, still);
+    const G = { x: c.X(13) + 8, s: 'wait', y: FLOOR };
+    w.flags[c.f('g')] = G;
+    w.add(
+      new Art((ctx) => {
+        if (G.s === 'wait' || G.s === 'gone') return;
+        gent(ctx, G.x, G.y, 26, '#7A4E6E', { face: G.s === 'bow' ? -1 : 1, bow: G.s === 'bow' ? 1 : 0, topi: '#F5F0E6' });
+      }, 3),
+    );
+    w.onTick((w2) => {
+      const p = w2.player;
+      if (G.s === 'wait' && crowd.s === 'parted') {
+        G.s = 'bow';
+        w2.say('Pehle aap, janab! | After you, sir!', G.x, FLOOR - 36, 2, 'npc');
+      } else if (G.s === 'bow' && still() > 50 && p.cx < c.X(13)) G.s = 'first';
+      else if (G.s === 'first') {
+        const sx = c.X(14) - 6,
+          ex = c.X(16) + 10;
+        if (!hole.st.down && G.x >= sx) hole.drop(w2);
+        if (G.x < ex) {
+          G.x += 1.4;
+          G.y = hole.st.down && G.x > sx ? FLOOR - Math.sin((Math.PI * (G.x - sx)) / (ex - sx)) * 22 : FLOOR;
+        } else G.s = 'gone';
+      }
+    });
+    sign(w, x + 0.4, 10.4, 3.4, 'RAASTA', 'shop', null, 'pehle aap');
+  },
+};
+
+export const s10 = { room: tehzeebRoom, acts: [dhulai, darbar, tasveer, julusBells, jawab, raasta, galiyara] };
 export const meta10 = { family: 'finale-bow-meets-bells', betrayals: ['bow-vs-bells'], ending: 'lko-tehzeeb' } as StageMeta;
