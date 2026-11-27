@@ -372,18 +372,34 @@ const skylightPolicy: Policy = (w, m, d) => {
 // ------------------------------------------------------------------ KOH-07
 const DECK_W = 48;
 /** ride the cart: board it, then stand at the back for a hole and at the front for a beam (mirrored while the controls are flipped) */
-function ridePolicy(key: string, stance: 'read' | 'front' | 'back' = 'read'): (w: World) => Out {
+/**
+ * `ignoreMirror`: a rider who leans as if the wet patch were dry (does not undo the flip); `asHoles`: a rider who takes
+ * every dip and double hole for a plain hole (back) and every high beam for a plain beam (front): the 07-trained reads
+ */
+function ridePolicy(key: string, stance: 'read' | 'front' | 'back' = 'read', ignoreMirror = false, asHoles = false): (w: World) => Out {
   return (w) => {
     const st = w.flags[key] as Cart;
     const r = st.deck;
     const p = w.player;
     if (st.stopped) return go('R');
     if (!w.standing(r.solid!)) return go('R');
-    const next = st.obs.find((o) => !o.done && o.k !== 'slick');
-    const want = stance === 'front' ? 1 : stance === 'back' ? -1 : next ? (next.k === 'hole' ? -1 : 1) : 0;
+    const ahead = st.obs.filter((o) => !o.done && o.k !== 'slick');
+    const next = ahead[0];
+    const after = ahead[1];
+    let want = 0;
+    if (stance === 'front') want = 1;
+    else if (stance === 'back') want = -1;
+    else if (next) {
+      // a dip under a beam: level takes both; a double hole wants the front
+      if (asHoles) want = next.k === 'hole' || next.k === 'mild' || next.k === 'twin' ? -1 : 1;
+      else if (next.k === 'mild') want = 0;
+      else if (next.k === 'hole') want = -1;
+      else want = 1;
+      void after;
+    }
     const target = want < 0 ? r.x + 12 : want > 0 ? r.x + DECK_W - 14 : r.x + DECK_W / 2;
     let m: Move = toward(w, target, 2);
-    if (w.flipped) m = m === 'L' ? 'R' : m === 'R' ? 'L' : '';
+    if (w.flipped && !ignoreMirror) m = m === 'L' ? 'R' : m === 'R' ? 'L' : '';
     return go(m);
   };
 }
@@ -393,10 +409,37 @@ const rideSteps = (key: string, end: number): Step[] => [
   { hold: 'R', jump: 9, ticks: 9, note: 'hop the front board' },
   { hold: 'R', until: and(ground, X(end)), max: 600, note: 'off at the landing' },
 ];
+/** the brakeless ride: ride as usual, and at the flag (the deck past its would-be stop) jump off forward */
+function jumpOffAtFlag(key: string): (w: World) => Out {
+  let W: World | null = null;
+  let left = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      left = 0;
+    }
+    const st = w.flags[key] as Cart;
+    const p = w.player;
+    if (left > 0) {
+      left--;
+      return { move: 'R', jump: true };
+    }
+    if (!w.standing(st.deck.solid!)) return go('R');
+    if (st.deck.x >= st.stopX - 30 && p.onGround) {
+      left = 14;
+      return { move: 'R', jump: true };
+    }
+    return ridePolicy(key)(w);
+  };
+}
+const noBaleSteps = (key: string, end: number): Step[] => [
+  { policy: jumpOffAtFlag(key), until: and(ground, (w) => w.player.x > (w.flags[key] as Cart).stopX + DECK_W + 30), max: 3000, note: 'ride, then jump off at the flag' },
+  { hold: 'R', until: and(ground, X(end)), max: 600, note: 'to the landing’s end' },
+];
 /** hop over the waiting cart and walk the lane */
 const walkLane = (x: number): Step[] => [{ hold: 'R', until: X(x + 4.7), max: 600 }, { hold: 'R', jump: 24, ticks: 24, long: true, note: 'over the cart' }, { hold: 'R', until: done, max: 1500 }];
 const room07 = (): Step[] => rideSteps('koh7', 27.5);
-const act07 = (a: { id: string; w: number }) => (x: number): Step[] => rideSteps(`${a.id}:cart`, x + a.w - 2.4);
+const act07 = (a: { id: string; w: number }) => (x: number): Step[] => (a.id === 'koh07-bina-gatha' ? noBaleSteps(`${a.id}:cart`, x + a.w - 2.4) : rideSteps(`${a.id}:cart`, x + a.w - 2.4));
 const garagePolicy: Policy = (w, m) => {
   const st = w.flags.koh7e as Cart;
   const g = w.flags.koh7g as { open: boolean };
@@ -662,13 +705,22 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   ],
   'KOH-07': [
     { what: 'ride at the back all the way', steps: [{ policy: ridePolicy('koh7', 'back'), until: done, max: 3000 }], cause: 'koh-balli' },
-    ...acts07.flatMap((a) => {
-      return [
-        inAct('KOH-07', a.id, `${a.id}: board and stay at the front`, () => [{ policy: ridePolicy(`${a.id}:cart`, 'front'), until: done, max: 3000 }], 'koh-gaddha'),
-        inAct('KOH-07', a.id, `${a.id}: board and stay at the back`, () => [{ policy: ridePolicy(`${a.id}:cart`, 'back'), until: done, max: 3000 }], 'koh-balli'),
-        inAct('KOH-07', a.id, `${a.id}: hop the cart and walk the lane`, (x) => walkLane(x), 'koh-dhalan'),
-      ];
-    }),
+    // per ride: the front all the way, the back all the way, and the 07-trained reads that each new place betrays
+    inAct('KOH-07', 'koh07-mod', 'mod: board and stay at the front', () => [{ policy: ridePolicy('koh07-mod:cart', 'front'), until: done, max: 3000 }], 'koh-gaddha'),
+    inAct('KOH-07', 'koh07-mod', 'mod: board and stay at the back', () => [{ policy: ridePolicy('koh07-mod:cart', 'back'), until: done, max: 3000 }], 'koh-balli'),
+    inAct('KOH-07', 'koh07-mod', 'mod: hop the cart and walk the lane', (x) => walkLane(x), 'koh-dhalan'),
+    inAct('KOH-07', 'koh07-chikna', 'chikna: read the obstacles and lean as if the patch were dry', () => [{ policy: ridePolicy('koh07-chikna:cart', 'read', true), until: done, max: 3000 }], 'koh-chikna'),
+    inAct('KOH-07', 'koh07-chikna', 'chikna: board and stay at the front', () => [{ policy: ridePolicy('koh07-chikna:cart', 'front'), until: done, max: 3000 }], 'koh-gaddha'),
+    inAct('KOH-07', 'koh07-kohra', 'kohra: stay at the back in the mist', () => [{ policy: ridePolicy('koh07-kohra:cart', 'back'), until: done, max: 3000 }], 'koh-kohra'),
+    inAct('KOH-07', 'koh07-kohra', 'kohra: hop the cart and walk the lane', (x) => walkLane(x), 'koh-dhalan'),
+    inAct('KOH-07', 'koh07-chhaon', 'chhaon: go back after the first rafter as after a lane beam', () => [{ policy: ridePolicy('koh07-chhaon:cart', 'back'), until: done, max: 3000 }], 'koh-chhaon'),
+    inAct('KOH-07', 'koh07-chhaon', 'chhaon: stay at the front past the shed', () => [{ policy: ridePolicy('koh07-chhaon:cart', 'front'), until: done, max: 3000 }], 'koh-gaddha'),
+    inAct('KOH-07', 'koh07-beech', 'beech: back for the dip as for a hole', () => [{ policy: ridePolicy('koh07-beech:cart', 'read', false, true), until: done, max: 3000 }], 'koh-beech'),
+    inAct('KOH-07', 'koh07-beech', 'beech: board and stay at the front', () => [{ policy: ridePolicy('koh07-beech:cart', 'front'), until: done, max: 3000 }], 'koh-gaddha'),
+    inAct('KOH-07', 'koh07-dohri', 'dohri: back for the double hole as for a hole', () => [{ policy: ridePolicy('koh07-dohri:cart', 'read', false, true), until: done, max: 3000 }], 'koh-dohri'),
+    inAct('KOH-07', 'koh07-dohri', 'dohri: board and stay at the front', () => [{ policy: ridePolicy('koh07-dohri:cart', 'front'), until: done, max: 3000 }], 'koh-gaddha'),
+    inAct('KOH-07', 'koh07-bina-gatha', 'bina gatha: ride it to the stop, as always', () => [{ policy: ridePolicy('koh07-bina-gatha:cart'), until: done, max: 3000 }], 'koh-bina-gatha'),
+    inAct('KOH-07', 'koh07-bina-gatha', 'bina gatha: board and stay at the back', () => [{ policy: ridePolicy('koh07-bina-gatha:cart', 'back'), until: done, max: 3000 }], 'koh-balli'),
   ],
   'KOH-08': [
     { what: 'hop the dog, stand still, then walk under the crows lidded', steps: [...hopLid(9.2), ...lidAt(13), { hold: 'R', until: done, max: 2000 }], cause: 'koh-kag' },

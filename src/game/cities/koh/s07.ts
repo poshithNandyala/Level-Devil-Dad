@@ -14,7 +14,13 @@ import { Rig, box, folk } from './entities';
 import { FL, since, taraScript } from './common';
 import { lines as L, NPC } from './lines';
 
-export type ObKind = 'hole' | 'beam' | 'slick';
+/**
+ * hole: nose up (back) skims it · beam: nose down (front) ducks it · slick: the lean is mirrored for a second ·
+ * mild: a shallow dip right under a high beam: the nose-down cart drops into the dip, the nose-up cart hits the beam,
+ * the LEVEL cart (stand in the middle) takes both · twin: two holes a tile apart: the BACK wheel drops into the second
+ * if the nose is up, so the front
+ */
+export type ObKind = 'hole' | 'beam' | 'slick' | 'mild' | 'twin';
 export interface Ob {
   /** world px of the obstacle */
   x: number;
@@ -38,6 +44,10 @@ export interface Cart {
   mist: boolean;
   /** a shed roof from x0 to x1: under it the beams are the shed's rafters, lower than a lane beam */
   shed?: [number, number];
+  /** no straw bale at this landing: the cart does not stop; you jump off at the flag, or it runs into the stall beyond */
+  noBale: boolean;
+  /** px of the stall the brakeless cart runs into */
+  stallX: number;
 }
 
 export const DECK_W = 48;
@@ -48,13 +58,36 @@ export const DECK_Y = FL;
  * a cart waiting at column c0 that rolls right once Dad stands on it, speeding up from v0 to v1 px/s by the bale at
  * column cBale (it brakes into it). `obs`: [tiles from c0, kind].
  */
-export function cart(w: World, c0: number, cBale: number, key: string, o: { v0: number; v1: number; obs: [number, ObKind][]; mist?: boolean; shed?: [number, number] }): Cart {
+export function cart(w: World, c0: number, cBale: number, key: string, o: { v0: number; v1: number; obs: [number, ObKind][]; mist?: boolean; shed?: [number, number]; noBale?: boolean }): Cart {
   const x0 = px(c0);
   const stopX = px(cBale) - DECK_W - 24;
   const dist = Math.max(1, stopX - x0);
   // v1^2 = v0^2 + 2 a dist
   const a = (o.v1 * o.v1 - o.v0 * o.v0) / (2 * dist);
-  const st: Cart = { deck: null as any, v: 0, v0: o.v0, a, t0: -1, stopX, obs: o.obs.map(([t, k]) => ({ x: px(c0 + t), k, done: false })), stopped: false, nose: 0, mist: !!o.mist, shed: o.shed ? [px(o.shed[0]), px(o.shed[1])] : undefined };
+  const st: Cart = {
+    deck: null as any,
+    v: 0,
+    v0: o.v0,
+    a,
+    t0: -1,
+    stopX,
+    obs: o.obs.map(([t, k]) => ({ x: px(c0 + t), k, done: false })),
+    stopped: false,
+    nose: 0,
+    mist: !!o.mist,
+    shed: o.shed ? [px(o.shed[0]), px(o.shed[1])] : undefined,
+    noBale: !!o.noBale,
+    stallX: px(cBale) + 40,
+  };
+  /** the death for an obstacle taken in the wrong place: the place names it */
+  const causeFor = (ob: Ob, w2: World): string => {
+    if (w2.flipped) return 'koh-chikna';
+    if (st.mist) return 'koh-kohra';
+    if (ob.k === 'mild') return 'koh-beech';
+    if (ob.k === 'twin') return 'koh-dohri';
+    if (ob.k === 'beam' && st.shed && ob.x > st.shed[0] && ob.x < st.shed[1]) return 'koh-chhaon';
+    return ob.k === 'hole' ? 'koh-gaddha' : 'koh-balli';
+  };
   const deck = w.add(
     new Rig(x0, DECK_Y, DECK_W, 6, {
       solid: true,
@@ -74,11 +107,18 @@ export function cart(w: World, c0: number, cBale: number, key: string, o: { v0: 
         st.nose = riding ? (rel > 5 ? 1 : rel < -5 ? -1 : 0) : 0;
         r.s.nose = st.nose;
         if (!st.stopped) {
-          if (r.x < st.stopX) st.v = Math.min(st.v + st.a / 120, 400);
+          if (r.x < st.stopX || st.noBale) st.v = Math.min(st.v + st.a / 120, 400);
           else st.v = Math.max(0, st.v - 700 / 120);
           if (st.v === 0 && r.x >= st.stopX) {
             st.stopped = true;
             w2.sfx('thud', r.x + DECK_W, r.y);
+          }
+          // no bale: the cart runs on into the stall at the landing's end, with whoever is still aboard
+          if (st.noBale && r.x + DECK_W >= st.stallX) {
+            st.stopped = true;
+            st.v = 0;
+            w2.sfx('crack', st.stallX, FL - 10);
+            if (riding) w2.die('koh-bina-gatha');
           }
         }
         const nx = r.x + st.v / 120;
@@ -87,20 +127,18 @@ export function cart(w: World, c0: number, cBale: number, key: string, o: { v0: 
           if (ob.done || front < ob.x) continue;
           ob.done = true;
           if (!riding) continue;
+          const bad = ob.k === 'hole' ? st.nose !== -1 : ob.k === 'beam' ? st.nose !== 1 : ob.k === 'mild' ? st.nose !== 0 : ob.k === 'twin' ? st.nose !== 1 : false;
           if (ob.k === 'slick') {
             w2.flipControls(1.3);
             w2.sfx('slide', ob.x, FL);
-          } else if (ob.k === 'hole' && st.nose !== -1) {
-            w2.sfx('crack', ob.x, FL);
-            w2.die('koh-gaddha');
-          } else if (ob.k === 'beam' && st.nose !== 1) {
-            w2.sfx('bonk', ob.x, FL - 30);
-            w2.die('koh-balli');
+          } else if (bad) {
+            w2.sfx(ob.k === 'beam' || (ob.k === 'mild' && st.nose === -1) ? 'bonk' : 'crack', ob.x, FL - 10);
+            w2.die(causeFor(ob, w2));
           }
           // the mist stretch: the next obstacle is announced by sound as this one is passed
           if (st.mist) {
             const next = st.obs.find((q) => !q.done);
-            if (next) w2.sfx(next.k === 'hole' ? 'splash' : next.k === 'beam' ? 'creak' : 'slide', next.x, FL - 20);
+            if (next) w2.sfx(next.k === 'hole' || next.k === 'twin' ? 'splash' : next.k === 'beam' ? 'creak' : next.k === 'slick' ? 'slide' : 'thud', next.x, FL - 20);
           }
         }
         r.solid!.velX = st.v;
@@ -153,6 +191,17 @@ export function cart(w: World, c0: number, cBale: number, key: string, o: { v0: 
         if (ob.k === 'hole') {
           box(ctx, ob.x - 2, FL - 1, 14, 6, '#1E130C');
           box(ctx, ob.x, FL - 2, 10, 1, '#5A3A28');
+        } else if (ob.k === 'mild') {
+          // a shallow dip (a thin dark line, no depth) right under a high beam
+          box(ctx, ob.x - 2, FL - 1, 14, 2, '#3E2A1C');
+          box(ctx, ob.x - 2, FL - 52, 6, 7, '#C9B870');
+          box(ctx, ob.x - 2, FL - 52, 6, 2, '#E6D898');
+          box(ctx, ob.x - 60, FL - 70, 2, 70, '#5D4037');
+          box(ctx, ob.x + 4, FL - 70, 2, 70, '#5D4037');
+          box(ctx, ob.x - 60, FL - 52, 66, 2, '#C9B870');
+        } else if (ob.k === 'twin') {
+          box(ctx, ob.x - 2, FL - 1, 10, 6, '#1E130C');
+          box(ctx, ob.x + 14, FL - 1, 10, 6, '#1E130C');
         } else if (ob.k === 'beam') {
           box(ctx, ob.x - 2, FL - 36, 6, 7, '#C9B870');
           box(ctx, ob.x - 2, FL - 36, 6, 2, '#E6D898');
@@ -164,6 +213,13 @@ export function cart(w: World, c0: number, cBale: number, key: string, o: { v0: 
         }
       }
       ctx.globalAlpha = 1;
+      if (st.noBale) {
+        // no bale: a flag marks the landing, and the stall the cart will run into stands beyond it
+        box(ctx, stopX + DECK_W + 20, FL - 40, 2, 40, '#5D4037');
+        box(ctx, stopX + DECK_W + 22, FL - 40, 10, 6, '#C0392B');
+        box(ctx, st.stallX, FL - 30, 30, 30, '#8C5A3C');
+        box(ctx, st.stallX - 4, FL - 34, 38, 5, '#C0392B');
+      }
       if (st.shed) {
         box(ctx, st.shed[0], FL - 76, st.shed[1] - st.shed[0], 8, '#5D4037');
         for (let x = st.shed[0]; x < st.shed[1]; x += 48) box(ctx, x, FL - 68, 3, 68, '#5D4037');
@@ -172,10 +228,12 @@ export function cart(w: World, c0: number, cBale: number, key: string, o: { v0: 
         ctx.fillStyle = 'rgba(214,226,232,0.45)';
         ctx.fillRect(x0 + DECK_W + 40, FL - 90, stopX - x0, 92);
       }
-      // the straw bale
-      box(ctx, px(cBale) - 16, FL - 18, 18, 18, '#D4B55A');
-      box(ctx, px(cBale) - 16, FL - 12, 18, 1, '#8A7232');
-      box(ctx, px(cBale) - 16, FL - 6, 18, 1, '#8A7232');
+      // the straw bale (none on the brakeless landing)
+      if (!st.noBale) {
+        box(ctx, px(cBale) - 16, FL - 18, 18, 18, '#D4B55A');
+        box(ctx, px(cBale) - 16, FL - 12, 18, 1, '#8A7232');
+        box(ctx, px(cBale) - 16, FL - 6, 18, 1, '#8A7232');
+      }
       void w2;
     }, -1),
   );
@@ -241,7 +299,7 @@ export function room(): LevelDef {
 }
 
 /** one ride: the cart waits 6 tiles in, the bale is 8 tiles before the act's end */
-function ride(id: string, name: string, advice: string, wd: number, o: { v0: number; v1: number; obs: [number, ObKind][]; mist?: boolean; shed?: [number, number]; line?: string }): Act {
+function ride(id: string, name: string, advice: string, wd: number, o: { v0: number; v1: number; obs: [number, ObKind][]; mist?: boolean; shed?: [number, number]; line?: string; noBale?: boolean }): Act {
   return {
     id,
     w: wd,
@@ -249,7 +307,7 @@ function ride(id: string, name: string, advice: string, wd: number, o: { v0: num
     cps: [],
     build: (w, c) => {
       landing(w, c.x + 1, o.line);
-      cart(w, c.x + 6, c.x + wd - 7, c.f('cart'), { v0: o.v0, v1: o.v1, obs: o.obs, mist: o.mist, shed: o.shed ? [c.x + o.shed[0], c.x + o.shed[1]] : undefined });
+      cart(w, c.x + 6, c.x + wd - 7, c.f('cart'), { v0: o.v0, v1: o.v1, obs: o.obs, mist: o.mist, shed: o.shed ? [c.x + o.shed[0], c.x + o.shed[1]] : undefined, noBale: o.noBale });
       sign(w, c.x + 2, 10.4, 3, name, 'shop', null, '');
     },
   };
@@ -258,23 +316,15 @@ function ride(id: string, name: string, advice: string, wd: number, o: { v0: num
 const A = 'The next lane: ';
 export const acts: Act[] = [
   ride('koh07-mod', 'MOD', A + 'a hole, then a beam, then a hole. Back, front, back, each before the cart gets there.', 50, { v0: 100, v1: 140, obs: [[8, 'hole'], [16, 'beam'], [25, 'hole'], [33, 'beam']] }),
-  ride('koh07-tez', 'TEZ', A + 'quicker, and the beams come in pairs: stay at the front through both, then back for the hole at the end.', 54, { v0: 110, v1: 170, obs: [[8, 'beam'], [14, 'beam'], [24, 'hole'], [31, 'beam'], [38, 'hole']] }),
-  ride('koh07-chikna', 'CHIKNA', A + 'the shiny patch is wet: the cart spins on it and for a second your lean is mirrored. Lean the wrong way on purpose until it rights itself.', 54, { v0: 100, v1: 150, obs: [[9, 'hole'], [15, 'slick'], [22, 'beam'], [30, 'hole'], [38, 'beam']] }),
+  // round 2: the rides that only changed speed, sequence or scenery (tez, dhalan, dui-chikna, bazaar, kohra-dui, khonoma,
+  // jotsoma, tez-dui, kohra-teen, bazaar-dui, dhalan-dui, mod-teen, chikna-teen, aakhri) were cut: `mod` is the one
+  // momentum beat; every ride below asks something the one before did not
+  ride('koh07-chikna', 'CHIKNA', A + 'the shiny patch is wet: the cart spins on it and for a second your lean is mirrored, and the next obstacle comes inside that second. Lean the wrong way on purpose until it rights itself.', 54, { v0: 100, v1: 150, obs: [[9, 'hole'], [15, 'slick'], [18, 'beam'], [27, 'slick'], [30, 'hole'], [38, 'beam']] }),
   ride('koh07-kohra', 'KOHRA', A + 'mist. You cannot see the lane, but each obstacle you pass sounds the next: a splash is a hole ahead, a creak is a beam.', 56, { v0: 100, v1: 150, obs: [[8, 'beam'], [16, 'hole'], [24, 'beam'], [32, 'hole'], [40, 'hole']], mist: true, line: NPC.cold }),
-  ride('koh07-dhalan', 'DHALAN', A + 'the steepest: the cart is quickest here, so take your place the moment you are past the one before.', 58, { v0: 120, v1: 200, obs: [[8, 'hole'], [15, 'beam'], [22, 'hole'], [29, 'beam'], [36, 'hole'], [43, 'beam']] }),
-  ride('koh07-dui-chikna', 'DUI CHIKNA', A + 'two wet patches. After the first your lean is mirrored; after the second it is mirrored again, back to normal.', 58, { v0: 100, v1: 160, obs: [[8, 'beam'], [14, 'slick'], [21, 'hole'], [27, 'slick'], [34, 'beam'], [42, 'hole']] }),
-  ride('koh07-bazaar', 'BAZAAR', A + 'past the bazaar the beams are awnings, low and close together. Front, front, then a hole, then front again.', 56, { v0: 110, v1: 170, obs: [[8, 'beam'], [13, 'beam'], [20, 'hole'], [26, 'beam'], [31, 'beam'], [40, 'hole']] }),
-  ride('koh07-kohra-dui', 'KOHRA DUI', A + 'mist again, and a wet patch in it: listen for the slide.', 58, { v0: 100, v1: 150, obs: [[8, 'hole'], [15, 'beam'], [22, 'slick'], [29, 'hole'], [36, 'beam'], [43, 'hole']], mist: true }),
   ride('koh07-chhaon', 'CHHAON', A + 'a long shed over the lane (the shelter beat): its rafters are beams, one after another, so stay at the front the whole way under it, and go back only for the hole where it ends.', 58, { v0: 100, v1: 150, obs: [[8, 'beam'], [12, 'beam'], [16, 'beam'], [20, 'beam'], [24, 'beam'], [31, 'hole'], [40, 'beam']], shed: [7, 26] }),
-  ride('koh07-khonoma', 'KHONOMA', A + 'towards Khonoma: holes in a row, then one beam between them. Back, back, front, back.', 54, { v0: 100, v1: 150, obs: [[8, 'hole'], [14, 'hole'], [21, 'beam'], [28, 'hole'], [36, 'hole']] }),
-  ride('koh07-jotsoma', 'JOTSOMA', A + 'the Jotsoma turn: a wet patch right after a beam, so the hole after it wants the mirrored lean.', 56, { v0: 110, v1: 160, obs: [[8, 'beam'], [12, 'slick'], [19, 'hole'], [27, 'beam'], [35, 'hole'], [42, 'beam']] }),
-  ride('koh07-tez-dui', 'TEZ DUI', A + 'quicker again, and the gaps between the obstacles are short: commit early.', 56, { v0: 120, v1: 190, obs: [[8, 'hole'], [13, 'beam'], [18, 'hole'], [23, 'beam'], [29, 'hole'], [35, 'beam'], [42, 'hole']] }),
-  ride('koh07-kohra-teen', 'KOHRA TEEN', A + 'the thickest mist: nothing to see at all. The sound after each obstacle names the next.', 58, { v0: 100, v1: 150, obs: [[8, 'hole'], [15, 'hole'], [22, 'beam'], [29, 'hole'], [36, 'beam'], [43, 'beam']], mist: true }),
-  ride('koh07-bazaar-dui', 'BAZAAR DUI', A + 'the lower bazaar: awnings and potholes alternate, and a wet patch in the middle.', 58, { v0: 110, v1: 170, obs: [[8, 'beam'], [14, 'hole'], [20, 'beam'], [25, 'slick'], [31, 'hole'], [37, 'beam'], [44, 'hole']] }),
-  ride('koh07-dhalan-dui', 'DHALAN DUI', A + 'the second steep lane: the quickest yet. Two beams, two holes, a beam.', 60, { v0: 130, v1: 210, obs: [[8, 'beam'], [14, 'beam'], [21, 'hole'], [27, 'hole'], [34, 'beam'], [42, 'hole']] }),
-  ride('koh07-mod-teen', 'MOD TEEN', A + 'three bends: beam, hole, beam, hole, each a little closer than the last.', 56, { v0: 110, v1: 170, obs: [[8, 'beam'], [16, 'hole'], [23, 'beam'], [29, 'hole'], [34, 'beam'], [42, 'hole']] }),
-  ride('koh07-chikna-teen', 'CHIKNA TEEN', A + 'three wet patches in one lane: mirrored, back, mirrored again. Count them.', 60, { v0: 100, v1: 160, obs: [[8, 'hole'], [12, 'slick'], [18, 'beam'], [23, 'slick'], [29, 'hole'], [34, 'slick'], [40, 'beam'], [47, 'hole']] }),
-  ride('koh07-aakhri', 'AAKHRI', A + 'the last lane down to the garage: everything at once, and quick.', 60, { v0: 120, v1: 210, obs: [[8, 'beam'], [14, 'hole'], [20, 'beam'], [26, 'slick'], [32, 'hole'], [38, 'beam'], [45, 'hole']] }),
+  ride('koh07-beech', 'BEECH', A + 'a shallow dip right under a high beam: the nose down drops into the dip, the nose up hits the beam. Neither lean: stand in the MIDDLE of the plank and the level cart takes both.', 56, { v0: 100, v1: 150, obs: [[8, 'hole'], [16, 'mild'], [24, 'beam'], [32, 'mild'], [40, 'hole']] }),
+  ride('koh07-dohri', 'DOHRI', A + 'two holes a tile apart. The nose-up cart skims the first and drops its BACK wheel into the second: for a double hole, the front.', 56, { v0: 100, v1: 150, obs: [[8, 'hole'], [16, 'twin'], [26, 'beam'], [34, 'twin'], [42, 'hole']] }),
+  ride('koh07-bina-gatha', 'BINA GATHA', A + 'no straw bale at this landing: the cart does not stop, and beyond the flag it runs into the stall. You are the brake: jump off at the flag.', 58, { v0: 100, v1: 150, obs: [[8, 'beam'], [16, 'hole'], [24, 'beam'], [32, 'hole']], noBale: true }),
 ];
 
 export const ending: Ending = {
