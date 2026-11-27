@@ -471,13 +471,10 @@ act('dis04-batah', 'DIS-04', [() => [{ hold: 'R', until: done, max: 900 }], 'dis
 act('dis05-machan', 'DIS-05', [(x) => [{ policy: (w) => ({ move: floorAhead(w, 3) ? 'R' : '', jump: false }), until: and(ground, X(x + 16)), max: 1500 }, { hold: '', until: done, max: 900 }], 'dis-machan', 'waits on the last plank for one more: the drum rolls'], [() => [{ hold: 'R', until: done, max: 900 }], 'dis-luit', 'runs on ahead of the carpenter: the far end is not built']);
 act('dis06-wake', 'DIS-06', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-dhal', 'runs to outrun the wake'], [(x) => [{ hold: 'R', until: X(x + 6.3), max: 600 }, { hold: '', until: (w) => wakes(w)[0].running && w.player.cx - wakes(w)[0].x < 50, max: 600 }, { hold: '', jump: 14, ticks: 14, note: 'hops the wave' }, { hold: '', until: done, max: 600 }], 'dis-bank', 'waits for the wake on the undercut bank and hops it: the landing breaks the slab off']);
 act('dis06-traps', 'DIS-06', [(x) => [...onTrap(x, 0), { hold: '', until: done, max: 900 }], 'dis-dirru', 'stands on the first trap as on a floor: it rings and is hoisted'], [(x) => [...onTrap(x, 0), { hold: '', until: (w) => traps(w)[0].state(w) === 'ring', max: 900 }, ...onTrap(x, 1), { hold: '', until: done, max: 600 }], 'dis-tip', 'hops on at the ring to the next trap: it is still slack and tips']);
-act('dis07-bordoisila', 'DIS-07', [(x) => [{ hold: 'R', until: X(x + 8.6), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-hail', 'shelters under the granary’s roof: the hail drives in on the wind'], [(x) => [{ hold: 'R', until: X(x + 14), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-bordoisila', 'runs on past the granary to get away from it: the wind takes him into the pond']);
 act('dis10-tug', 'DIS-10', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir < 0 && p.t < 6; }, max: 2400 }, { hold: 'R', until: done, max: 900 }], 'dis-rope', 'goes on the red flag, as in 09: red is the near team now']);
-act('dis10-bordoisila', 'DIS-10', [(x) => [...hopR(x + 11.3, 'jumps the channel before the wind', 14), { hold: 'R', until: done, max: 600 }], 'dis-bordoisila', 'jumps the channel before the wind comes'], [(x) => [{ hold: 'R', until: X(x + 6.2), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-bhoral', 'shelters under the bhoral, as in 07']);
 act('dis08-jeep', 'DIS-08', [rhinoNaive, 'dis-beel', 'walks into the tall grass'], [rhinoFix, 'dis-gorh', 'waits at the edge of the grass, where the second jeep is']);
 act('dis08-duijeep', 'DIS-08', [(x) => [{ hold: 'R', until: X(x + 5.1), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-gorh', 'waits at the grass edge for the loud jeep’s charge: the rhino comes for the near one, at him'], [(x) => [{ hold: 'R', until: X(x + 5.8), max: 600 }, { hold: 'R', until: done, max: 900 }], 'dis-beel', 'walks into the grass toward the loud jeep’s line before any charge']);
 act('dis08-bagori', 'DIS-08', [(x) => [{ hold: 'R', until: X(x + 2.4), max: 600 }, { hold: '', until: done, max: 2000 }], 'dis-gorh', 'stays on the bank: the rhino comes from behind'], [(x) => [{ hold: 'R', until: X(x + 1.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: '', until: (w) => charges(w).some((c) => c.d.c0 === x + 11 && c.phase === 'rest'), max: 2000 }, { hold: 'R', until: done, max: 2000 }], 'dis-beel', 'off the hay as soon as the rhino stops halfway']);
-act('dis10-gamosa', 'DIS-10', [() => [{ hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'walks into every giver'], [(x) => [{ hold: 'R', until: X(x + 12.4), max: 600 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: ground, max: 200 }, { hold: '', ticks: 40, note: 'the fourth host puts his gamosa on him' }, { hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'a little hop over the third giver lands in the fourth one’s arms: three gamosas, blind at the pit']);
 /** after the routes exist: each act's deaths start from the stage route up to the act's own start */
 /** an ending's own policy as a step policy (for plays that follow it part of the way) */
 const viaEnding = (kind: string) => {
@@ -731,10 +728,9 @@ export const ONE_PLAY: Record<string, string> = {
   'dis07-chowk': 'the chowk gates have one trap, the stakes: early, late and out of the ring all meet them',
   'dis09-chaal': 'the roof has one trap, the ball down the oil: every stop off a grip pad meets it',
   'dis10-talatal': 'the falling stair has one trap, the vault under it: any stop on a step meets the fall',
-  'dis10-gamosa': 'the callback has one trap, the blinding gamosa at the pit: walking into the givers and taking the fourth one both blind you',
 };
 /** acts whose obvious fix is the stage's FIX play (a different trap from the stage's NAIVE) */
-const STAGE_FIX: Record<string, true> = { 'dis07-bordoisila': true, 'dis10-tug': true };
+const STAGE_FIX: Record<string, true> = { 'dis07-dhol': true, 'dis10-tug': true };
 for (const id of ['DIS-02', 'DIS-03']) {
   (mistakes[id] ??= []).push({ what: `second scripted death, same trap (one play: ${ONE_PLAY[id]})`, ...fix[id] });
   delete fix[id];
@@ -965,22 +961,10 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir > 0 && p.t < 6; }, max: 2400, note: 'wait for the far team’s red flag' },
     { hold: 'R', until: and(ground, X(x + 32)), max: 600, note: 'across on the rope at once' },
   ]),
-  'dis07-bordoisila': mark('dis07-bordoisila', (x) => [
-    { hold: 'R', until: X(x + 11.6), max: 600, note: 'into the bhoral’s lee, away from the wind' },
-    { hold: '', until: (w) => (w.flags.storm as Bordoisila[])[0].over, max: 900, note: 'till Bordoisila has passed' },
-    ...hopR(x + 16.3, 'over the pond', 14),
-    { hold: 'R', until: and(ground, X(x + 24)), max: 600 },
-  ]),
   'dis10-tug': mark('dis10-tug', (x) => [
     { hold: 'R', until: X(x + 10.9), max: 600, note: 'to the edge of the ditch' },
     { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir > 0 && p.t < 6; }, max: 2400, note: 'wait for the far team (green caps now) to be winning' },
     { hold: 'R', until: and(ground, X(x + 32)), max: 600, note: 'across on the rope at once' },
-  ]),
-  'dis10-bordoisila': mark('dis10-bordoisila', (x) => [
-    { hold: 'R', until: X(x + 9.5), max: 600, note: 'past the old bhoral to the channel' },
-    { hold: '', until: (w) => (w.flags.storm as Bordoisila[]).some((s) => s.gusts[0].on && w.player.cx < px(x + 20)), max: 900, note: 'wait for the wind' },
-    ...hopR(x + 11.3, 'and jump the channel on it', 14),
-    { hold: 'R', until: and(ground, X(x + 28)), max: 600 },
   ]),
   'dis07-chowk': (x) => [{ policy: atTheGate(1), until: and(ground, X(x + 73)), max: 7000, note: 'three gates, the middle one after the gamosas' }],
   'dis05-atithi': (x) => [
@@ -1021,7 +1005,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 };
 // acts without a mark step: tag their first step (no extra tick), so their scripted deaths can start where they start
 /** acts given a run-up in levels.ts (`runUp`): their content starts this many columns later */
-const RUNUP: Record<string, number> = { 'dis07-bordoisila': 3, 'dis04-bhogali': 3, 'dis07-dhol': 3, 'dis08-bagori': 3, 'dis10-dhol': 3, 'dis10-bordoisila': 3 };
+const RUNUP: Record<string, number> = { 'dis04-bhogali': 3, 'dis07-dhol': 3, 'dis08-bagori': 3, 'dis10-dhol': 3 };
 for (const [id, f0] of Object.entries(actRoutes)) {
   const k = RUNUP[id] ?? 0;
   if (k) actRoutes[id] = (x) => f0(x + k);
