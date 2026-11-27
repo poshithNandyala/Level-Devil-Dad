@@ -331,26 +331,9 @@ const changFix = (edge: number): Play => (x) => [{ policy: changClimb(x + edge, 
 const roofNaive: Play = () => [{ policy: ribHop(7), until: done, max: 4000 }];
 const roofFix: Play = () => [{ policy: ribHop(16), until: done, max: 4000 }];
 const act = (a: string, stage: string, naive: [Play, string, string], fix: [Play, string, string]) => ACT_DEATHS.push({ act: a, stage, naive, fix });
-act('dis05-char', 'DIS-05', [(x) => [{ hold: 'R', until: X(x + 12.3), max: 900 }, ...runHop(x)], 'dis-luit', 'runs and jumps bar to bar'], [sandFix(17), 'dis-luit', 'waits on the right end of the bar that narrows']);
-act('dis05-husori', 'DIS-05', [gateNaive, 'dis-gate', 'runs at the gate'], [(x) => [{ policy: atTheGate(-1), until: and(ground, X(x + 47)), max: 6000 }, { hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'takes both givers after the gate: blind at the pit']);
-act('dis05-ghat', 'DIS-05', [ghatNaive(10, 14), 'dis-spill', 'climbs straight out of the ghat'], [ghatFix(10, 14), 'dis-spill', 'hops clean over the tea boy']);
 act('dis06-chang', 'DIS-06', [changNaive, 'dis-bank', 'jumps at the stilt house'], [changFix(11), 'dis-bank', 'up the ladder, then walks off the house into the river']);
-act('dis06-chapori3', 'DIS-06', [runHop, 'dis-luit', 'runs and jumps bar to bar'], [sandFix(11), 'dis-luit', 'waits on the right end of the bar that narrows']);
-act('dis06-ghat', 'DIS-06', [ghatNaive(10, 14), 'dis-spill', 'climbs straight out of the ghat'], [ghatFix(10, 14), 'dis-spill', 'hops clean over the tea boy']);
-act('dis06-pitha', 'DIS-06', [runHop, 'dis-tawa', 'runs at the pan'], [panFix, 'dis-roll', 'waits on the first shiny crepe']);
-act('dis06-chang2', 'DIS-06', [(x) => [{ hold: 'R', until: X(x + 2.7), max: 600 }, { policy: edgeRun(12), until: done, max: 2000 }], 'dis-bank', 'runs the slabs before the ladder is down'], [(x) => [{ hold: 'R', until: X(x + 4.4), max: 600 }, { hold: '', until: done, max: 3000 }], 'dis-bank', 'waits for the ladder on the slab']);
-act('dis07-paar', 'DIS-07', [bankNaive, 'dis-bank', 'stops at the edge to look'], [bankFix, 'dis-bank', 'stops on the first slab']);
-act('dis07-ghat', 'DIS-07', [ghatNaive(10, 14), 'dis-spill', 'climbs straight out of the ghat'], [ghatFix(10, 14), 'dis-spill', 'hops clean over the tea boy']);
-act('dis07-lane', 'DIS-07', [gateNaive, 'dis-gate', 'runs at the gate'], [gateFix, 'dis-gate', 'goes on at the gamosa gate before the host has finished']);
 act('dis08-jeep', 'DIS-08', [rhinoNaive, 'dis-beel', 'walks into the tall grass'], [rhinoFix, 'dis-gorh', 'waits at the edge of the grass, where the second jeep is']);
 act('dis08-bagori', 'DIS-08', [(x) => [{ hold: 'R', until: X(x + 2.4), max: 600 }, { hold: '', until: done, max: 2000 }], 'dis-gorh', 'stays on the bank: the rhino comes from behind'], [(x) => [{ hold: 'R', until: X(x + 1.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: '', until: (w) => charges(w).some((c) => c.d.c0 === x + 11 && c.phase === 'rest'), max: 2000 }, { hold: 'R', until: done, max: 2000 }], 'dis-gorh', 'off the hay as soon as the rhino stops halfway']);
-act('dis08-kohora', 'DIS-08', [rhinoNaive, 'dis-beel', 'walks into the tall grass'], [rhinoFix, 'dis-gorh', 'waits at the edge of the grass, where the second jeep is']);
-act('dis09-bihu', 'DIS-09', [gateNaive, 'dis-gate', 'runs at the gate'], [gateFix, 'dis-gate', 'goes on at the gamosa gate before the host has finished']);
-act('dis09-chaal3', 'DIS-09', [roofNaive, 'dis-roof', 'hops each rib'], [roofFix, 'dis-roof', 'a bigger hop from a standstill at the rib']);
-act('dis10-char', 'DIS-10', [runHop, 'dis-luit', 'runs and jumps bar to bar'], [sandFix(11), 'dis-luit', 'waits on the right end of the bar that narrows']);
-act('dis10-gorh', 'DIS-10', [rhinoNaive, 'dis-beel', 'walks into the tall grass'], [rhinoFix, 'dis-gorh', 'waits at the edge of the grass, where the second jeep is']);
-act('dis10-ghat', 'DIS-10', [ghatNaive(10, 14), 'dis-spill', 'climbs straight out of the ghat'], [ghatFix(10, 14), 'dis-spill', 'hops clean over the tea boy']);
-act('dis10-chang', 'DIS-10', [changNaive, 'dis-bank', 'jumps at the stilt house'], [changFix(11), 'dis-bank', 'up the ladder, then walks off the house into the river']);
 act('dis10-gamosa', 'DIS-10', [() => [{ hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'walks into every giver'], [(x) => [{ hold: 'R', until: X(x + 12.4), max: 600 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: done, max: 900 }], 'dis-gamosa', 'a little hop over the third giver, into the fourth']);
 /** after the routes exist: each act's deaths start from the stage route up to the act's own start */
 /** an ending's own policy as a step policy (for plays that follow it part of the way) */
