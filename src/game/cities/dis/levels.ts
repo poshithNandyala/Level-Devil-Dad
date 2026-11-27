@@ -3,7 +3,6 @@
 // Majuli's retreating bank, the husori carollers, the rhino, the Rang Ghar pavilion and the Luit itself.
 import { type LevelDef, type World } from '../../world';
 import { bordoisila, luitBordoisila } from './storm';
-import { taat } from './loom';
 import { rangTug, luitTug } from './tug';
 import { husDhol, luitDhol } from './dhol';
 import { lines as L } from './lines';
@@ -803,7 +802,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: charRoom(), acts: [chapori, dhar], twist: 'dis-hut-shut', par: 36, shape: 'short', meta: { family: 'sandbars-relocate-by-level-post', betrayals: ['level-post-relocate'], ending: 'dis-hut-shut' } }),
   longStage({ base: teaRoom(), acts: [bagan], cps: [14.5], twist: 'dis-muga-reel', par: 58, shape: 'short', meta: { family: 'plucked-row-steps-down', betrayals: ['crop-floor-lowers'], ending: 'dis-muga-reel' } }),
   longStage({ base: pithaRoom(), acts: [tawa, bhogali], twist: 'dis-laru-plate', par: 34, shape: 'short', meta: { family: 'set-crepe-rolls-you-up', betrayals: ['roll-by-shine'], ending: 'dis-laru-plate' } }),
-  longStage({ base: gamosaRoom(), acts: [biya, taat, atithi], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
+  longStage({ base: gamosaRoom(), acts: [biya, atithi], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
   longStage({ base: majuliRoom(), acts: [majuli, majChang, chapori6], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
   longStage({ base: husoriRoom(), acts: [ghar, bordoisila, husDhol, chowk], cps: [18.5], twist: 'dis-uruka-net', par: 90, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
   longStage({ base: gorhRoom(), acts: [kaziranga, gorhJeep, gorhBagori], twist: 'dis-watch-tower', par: 74, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
