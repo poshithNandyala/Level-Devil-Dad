@@ -41,11 +41,12 @@ Notes for the integrator (MECHANICS.md, WAVE1.md, CITIES.md). Branch `city/kvt`.
   `kvt10-kaattu` tailwind then headwind, jump in the calm; `kvt10-kamaanam` the dolphin under a jagged arch,
   ride over and step off coming down; `kvt10-nizhal` the lighthouse beam takes steps away, step on after it
   passes; `kvt10-veliyettam` the incoming tide, KVT-08's rule reversed: three heads that go under while you move on them and hold while you stand (`SinkStep` 'move'); `kvt10-paaru` the reef rises only
-  for a jumper; `kvt10-kotta` the basket that does not stop at the bottom; `kvt10-kannadi` cracked glass holds
-  only at a run; `kvt10-thoni` the boat that is not coming back.
+  for a jumper; `kvt10-kotta` KVT-05's basket reversed: stay in to the very end, it runs on along its cable to the
+  boats, and the landing it passes on the way down is rotten over the reef; `kvt10-thoni` the boat that is not
+  coming back. (Fix round 4 cut `kvt10-kannadi`, the cracked glass: it re-asked KVT-08's "keep moving".)
 - Acts: `kvt09-pavizham kvt09-kodumudi kvt09-kadalbhitti kvt09-ozhukku kvt09-varambu kvt09-murivu`
   `kvt10-midden kvt10-palaka kvt10-kallu kvt10-aama kvt10-choora kvt10-thengu kvt10-irandu kvt10-kaattu`
-  `kvt10-kamaanam kvt10-nizhal kvt10-veliyettam kvt10-paaru kvt10-kotta kvt10-kannadi kvt10-thoni kvt10-irakkam`.
+  `kvt10-kamaanam kvt10-nizhal kvt10-veliyettam kvt10-paaru kvt10-kotta kvt10-thoni kvt10-irakkam`.
 - Door endings: `kvt-buried-door kvt-sand-arm`.
 - Checkpoints: `kvt/lead.ts` puts plain ground in front of acts whose water started a tile or three in (`lead`), or
   moves an act's checkpoint back on to the ground before it (`back`, KVT-04/07/08), so every checkpoint survives
