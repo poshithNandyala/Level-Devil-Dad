@@ -184,7 +184,7 @@ export const actSun: Act = {
     g.fill(c.x + 6, c.x + 20, 15, 17, '.');
   },
   build: (w, c) => {
-    cloudGap(w, 'shl2b', [c.x + 6, c.x + 20], [[c.x + 9, c.x + 11], [c.x + 15, c.x + 17]], { w: 20, end: 2, speed: 2.5, span: 44, phase: 14, n: 2, sun: { period: 12, inFor: 2.0, phase: 3 } });
+    cloudGap(w, 'shl2b', [c.x + 6, c.x + 20], [[c.x + 9, c.x + 11], [c.x + 15, c.x + 17]], { w: 20, end: 2, speed: 2.5, span: 44, phase: 14, n: 2, sun: { period: 12, inFor: 2.0, phase: 5 } });
     sign(w, c.x + 2, 10.4, 3, 'SUN', 'shop', null, 'behind a high cloud');
   },
 };
