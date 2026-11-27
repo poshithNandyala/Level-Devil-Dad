@@ -352,7 +352,7 @@ const pylon: Act = {
   id: 'ccu07-pylon',
   w: 40,
   // fix 4: a mid-span pylon step, where the tall porter's span ends and the next one picks you up
-  cps: [19.2],
+  cps: [18.4],
   advice: 'The second pylon, and a porter about to leave from it: don’t take him, his chai stop is just ahead. Wait on the step for the tall porter coming up behind, and get on his load as he goes by. He takes you as far as the next pylon; the next tall porter takes you on from there.',
   paint: (g, c) => {
     g.fill(c.x, c.x + 7, 14, 14, '#').fill(c.x + 5, c.x + 7, 13, 13, '#').fill(c.x + 17, c.x + 24, 14, 14, '#').fill(c.x + 18, c.x + 24, 13, 13, '#');
