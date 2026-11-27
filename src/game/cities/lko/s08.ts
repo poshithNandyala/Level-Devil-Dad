@@ -162,36 +162,6 @@ function bhoolRoom(): LevelDef {
 }
 
 // ================================================================ the act: the low vault
-/** One arch with a low vault over its upper floor (old lamp hooks in the ceiling): go through that one on
- *  foot. Then the floor ends at the well again: through the next one at a jump, up on to the gallery. */
-const mehrab: Act = {
-  id: 'lko08-mehrab',
-  w: 30,
-  advice: 'Past the next arch the upper floor is a low vault full of old lamp hooks: walk through that arch, over the drain, don’t hop. The one after has the well beyond it: through that one at a jump, up on to the gallery, and along.',
-  cps: [9.5],
-  paint: (g, c) => {
-    const x = c.x;
-    g.pit(x + 3, x + 3, 15).fill(x + 3, x + 3, 16, 17, '#');
-    g.fill(x + 5, x + 10, 11, 11, '#');
-    g.pit(x + 15, x + 29, 15);
-    g.fill(x + 15, x + 29, 11, 11, '=');
-  },
-  build: (w, c) => {
-    const x = c.x;
-    mazeWall(w, x, x + 29, [11, 15]);
-    arch(w, c.X(4) + 8, FLOOR, { x: c.X(6) + 8, y: px(11) }, c.f('a1'));
-    hooks(w, x + 5, x + 10, px(9) + 12, 'lko-mehrab', false);
-    arch(w, c.X(14) + 8, FLOOR, { x: c.X(16) + 8, y: px(11) }, c.f('a2'));
-    well(w, x + 15, x + 29);
-    w.add(
-      new Art((ctx) => {
-        // the low vault's ceiling over the upper floor
-        ctx.fillStyle = '#A8916B';
-        ctx.fillRect(c.X(5), px(9), px(6), 12);
-      }, 1),
-    );
-  },
-};
 
 // ================================================================ act: toota, the broken arch
 /** An arch must be whole to lift you. The arch at the end of this floor has lost its crown: it is only a
@@ -246,33 +216,6 @@ const toota: Act = {
 };
 
 // ================================================================ the door: the 489th doorway
-/** The gallery runs on over the well to one last arch at its end, and the door is down below it, beyond the
- *  well. Walk through the last arch and off the end of the gallery, and you drop to the door. Hop through
- *  it (there's a crack in the gallery floor just before it) and you're on the roof, among the finials. */
-export const doorway489: Ending = {
-  space: 12,
-  advice: 'The last arch is at the end of the gallery, over the well, and the door is below it on the far side. Walk through it, over the crack, and simply step off the end: you drop to the door. Hop through it and you’re up on the roof.',
-  paint: (g, D) => {
-    g.pit(D - 12, D - 2, 15);
-    g.fill(D - 12, D - 3, 11, 11, '#');
-    g.put(D - 6, 11, '.');
-    g.fill(D - 9, D + 3, 6, 6, '#');
-  },
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    w.flags.twist = 'gallery';
-    well(w, D - 12, D - 2);
-    arch(w, px(D - 5) + 8, px(11), { x: px(D - 4) + 8, y: px(6) }, 'arch489');
-    hooks(w, D - 3, D + 2, px(6), 'lko-bhool');
-    w.when(
-      (w2) => w2.player.cx > px(D - 10),
-      (w2) => taraNow(w2, 'Har darwaza ek jaisa hai. | Every doorway is alike.', 2.2),
-    );
-    w.onTick((w2) => {
-      if (w2.flags.arch489) w2.flags.twist = 'roof';
-    });
-  },
-};
 
 
 // ================================================================ act 2: the chausar court (the Pachisi reserve)
@@ -393,38 +336,6 @@ export const chaupar: Act = {
 };
 
 // ================================================================ act: the minaret of arches
-/** Three arches stacked one above the other, a floor apart, over the well. Each jump through one takes you
- *  one floor up. The second floor stops short over the well; the top one (the roof) is full of old hooks.
- *  The way on is the third floor: jump, jump, then walk. */
-export const minar: Act = {
-  id: 'lko08-minar',
-  w: 26,
-  advice: 'A minaret of arches, one above the other. Each jump through one takes you one floor up: the second floor stops short over the well, and the roof is full of old hooks. You want the third floor: jump through the first two, walk through the third, and step off its end.',
-  paint: (g, c) => {
-    const x = c.x;
-    g.pit(x + 5, x + 21, 15);
-    g.fill(x + 5, x + 12, 11, 11, '#');
-    g.fill(x + 11, x + 21, 7, 7, '#');
-    g.fill(x + 17, x + 20, 3, 3, '#');
-  },
-  build: (w, c) => {
-    const x = c.x;
-    mazeWall(w, x + 5, x + 21, [3, 7, 11]);
-    well(w, x + 5, x + 21);
-    arch(w, c.X(3) + 8, FLOOR, { x: c.X(6) + 8, y: px(11) }, c.f('a1'));
-    arch(w, c.X(9) + 8, px(11), { x: c.X(12) + 8, y: px(7) }, c.f('a2'));
-    arch(w, c.X(16) + 8, px(7), { x: c.X(18) + 8, y: px(3) }, c.f('a3'));
-    hooks(w, x + 17, x + 20, px(2), 'lko-bhool', false);
-    w.add(
-      new Art((ctx) => {
-        // the minaret's lime-plaster shaft behind the arches
-        ctx.fillStyle = 'rgba(233,220,196,0.35)';
-        ctx.fillRect(c.X(2), px(1), px(19), FLOOR - px(1));
-      }, -5),
-    );
-    sign(w, x + 0.2, 10.4, 3.2, 'MINAR', 'shop', null, 'teen manzil');
-  },
-};
 
 // ================================================================ act: the down-arch
 /** On the gallery, one arch is cusped the other way (it hangs down). Jump through it up close, rising, as

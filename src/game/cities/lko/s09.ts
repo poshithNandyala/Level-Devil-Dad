@@ -339,55 +339,6 @@ export const jhande: Act = {
 };
 
 // ================================================================ the door: the loft
-/** The door is the pigeon loft's. While the flock is home it's shut (full of birds); on red they burst out
- *  through it to circle; on white they all come home through it, and through whoever is in the doorway. */
-export const chhatri: Ending = {
-  space: 12,
-  advice: 'The door is the pigeon loft’s. On white the flock comes home, in through the door; on red they burst out and the door stands open. Wait back on the roof, and go in early in the red, before the next white brings them home.',
-  paint: (g, D) => {
-    g.pit(D - 12, D + 4, 15);
-    g.fill(D - 12, D - 7, 14, 17, '#');
-    g.fill(D - 4, D + 4, 14, 17, '#');
-    g.put(D, 13, 'E');
-  },
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    const L = lock(w, d, 'Intezaar kis baat ka? | Waiting for what?');
-    roofs(w, [roofOf(D - 12, D - 7, 14), roofOf(D - 4, D + 4, 14)], px(D - 12), px(D + 5));
-    const f = new Flyer(px(D + 3) + 8, px(14), [['white', 1.4], ['red', 2.6]], px(D - 11));
-    drawFlyer(w, f);
-    const loft: Roof = { x0: d.x - 8, x1: d.x + 24, top: px(14) };
-    const fl = new Flock(w, [loft], f, { x: px(D - 2), y: px(5) });
-    // the flock always comes home to the loft (whatever is ahead of you)
-    fl.always = loft;
-    w.flags.chhatri = { f, fl };
-    w.flags.twist = 'home';
-    w.onTick((w2) => {
-      const o = f.order(w2).c;
-      if (f.t0 >= 0) w2.flags.twist = o;
-      if (o === 'red' && f.t0 >= 0) L.unlock();
-    });
-    w.add(
-      new Art((ctx) => {
-        // the loft: a wooden cage-house on the roof with the door in it
-        ctx.fillStyle = '#8D6E63';
-        ctx.fillRect(d.x - 14, px(14) - 50, 44, 50);
-        ctx.fillStyle = '#6D4C41';
-        for (let x = d.x - 12; x < d.x + 30; x += 6) ctx.fillRect(x, px(14) - 48, 1.5, 46);
-        ctx.fillStyle = '#5D4037';
-        ctx.beginPath();
-        ctx.moveTo(d.x - 18, px(14) - 50);
-        ctx.lineTo(d.x + 8, px(14) - 66);
-        ctx.lineTo(d.x + 34, px(14) - 50);
-        ctx.fill();
-      }, -3),
-    );
-    w.when(
-      (w2) => w2.player.cx > px(D - 11),
-      (w2) => taraNow(w2, 'Pehle aap? Accha, pehle aap. | After you? Fine, after you.', 2.2),
-    );
-  },
-};
 
 // ================================================================ act 2: the white domes (a Chota Imambara-style garden tank)
 /** From the rooftops a row of white domed kiosks stands in the long garden pool. A dome seems bigger the

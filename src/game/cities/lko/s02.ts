@@ -431,23 +431,6 @@ export function gentleman(w: World, c: ActCtx, n: number, i: number, still: () =
  *  returned: stop for a short bow, then go on. Walk past without one and he steps out, offended, and
  *  shoves you on into the nala; bow on and on, as in the stand-off, and he insists: you first, into it. */
 const AADAAB = [6, 16];
-export const aadaab: Act = {
-  id: 'lko02-aadaab',
-  cp0: false,
-  cps: [-2],
-  w: 24,
-  advice: 'Along the lane the gentlemen on their chabutras greet you as you come up: “Aadaab”. Return it with a short bow: stop a moment, then go on and hop the nala. Walk past without bowing and he shoves you in; bow on and on, as at the stand-off, and he insists you go first, into it.',
-  paint: (g, c) => {
-    for (const n of AADAAB) g.pit(c.x + n + 2, c.x + n + 3);
-  },
-  build: (w, c) => {
-    const still = stillness(w);
-    bowIcon(w, still);
-    AADAAB.forEach((n, i) => gentleman(w, c, n, i, still, c.f('g' + i)));
-    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Tashreef laaiye, Dad! | Please do come, Dad!', 2.2));
-    sign(w, c.x + 0.4, 10.4, 3.4, 'AADAAB', 'shop', null, 'chabutra');
-  },
-};
 
 export const s02 = { room: pehleRoom, acts: [gali, takrar] };
 export const meta02 = { family: 'politeness-bow-sets-order', betrayals: ['bow-order'], ending: 'lko-kiwad' } as StageMeta;

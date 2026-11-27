@@ -544,30 +544,6 @@ export class DoubleGalouti extends Galouti {
   }
 }
 const DUM = [3, 6, 9, 12, 15];
-export const dum: Act = {
-  id: 'lko05-dum',
-  w: 22,
-  advice: 'At the end of the stall the heaps are piled two high. One squash only takes the top kebab off, and a hop off a full heap still finds the skewers: wait for the second squash, then hop at once. The last heap is piled three high: count the squashes.',
-  cp0: false,
-  cps: [-2],
-  build: (w, c) => {
-    const x = c.x;
-    tawa(w, x + 2, x + 17);
-    const rack = seekhRack(w, x + 2, x + 17, 70);
-    const ks: Galouti[] = DUM.map((d, i) => w.add(i === 0 ? new Galouti(px(x + d)) : new DoubleGalouti(px(x + d), i === DUM.length - 1 ? 2 : 1)));
-    w.flags[c.f('kebabs')] = ks;
-    // a hop off a piled heap that was squashed but not flat has its own line: one squash isn't enough here,
-    // and on the last heap two aren't either
-    let last: Galouti | null = null;
-    w.onTick((w2) => {
-      const k = ks.find((g) => on(w2, g.solid));
-      if (k) last = k;
-      const d = last instanceof DoubleGalouti ? last : null;
-      rack.hazard.cause = d && d.stage > 0 && !d.flat ? (d.extra > 1 && d.stage >= d.extra ? 'lko-dum-teen' : 'lko-dum') : 'lko-seekh';
-    });
-    sign(w, x + 0.2, 10.4, 3.2, 'DUM', 'shop', null, 'galouti');
-  },
-};
 
 // ================================================================ act: charkhi, the turning skewers
 /** The skewers here hang on a spit that turns by itself in the fire's draught: tips down (low, no hop

@@ -13,7 +13,7 @@ import { Art, FLOOR, gent, px, stillness, bowIcon, TAU } from './kit';
 import { archway, gentleman, looseStone, pehleDoorway, tara } from './s02';
 import { washLine } from './s03';
 import { Heap, karahi, shadows, type Light } from './s04';
-import { Dancer, makeGuru, makeTihai } from './s06';
+import { Dancer, makeGuru } from './s06';
 import { Flock, Flyer, drawFlyer, roofOf, roofs, type Roof } from './s09';
 import { arch, well, hooks, chausar, makeDarwaza } from './s08';
 import { on } from './kit';
@@ -92,93 +92,10 @@ function tehzeebRoom(): LevelDef {
 }
 
 // ================================================================ act 1: the wash, and the malai in the morning sun
-const dhulai: Act = {
-  id: 'lko10-dhulai',
-  w: 36,
-  advice: 'The wash line again: on to the first white flower and wait out both whistles (the print goes first, then the jali), then flower to flower. Then the malai heaps in the low sun from the right: the left tile of each is in its own shadow.',
-  cps: [18.5],
-  paint: (g, c) => {
-    g.pit(c.x + 3, c.x + 16);
-    g.pit(c.x + 22, c.x + 31);
-  },
-  build: (w, c) => {
-    const x = c.x;
-    const L = washLine(w, x + 3, 'sjpspjsppsjpss', c.f('wash'), { dhobiAt: x + 18 });
-    let start = -1;
-    w.onTick((w2) => {
-      if (start < 0 && L.cloth.some((cl) => on(w2, cl.solid))) start = w2.tick;
-      if (start < 0) return;
-      const t = w2.tick - start;
-      if (t === 40) w2.flags[c.f('wash') + ':blow'] = w2.tick;
-      if (t === 66) L.dh.wash(w2, ['p'], 'lko-chhapa');
-      if (t === 200) w2.flags[c.f('wash') + ':blow'] = w2.tick;
-      if (t === 220) L.dh.wash(w2, ['j'], 'lko-jali');
-    });
-    karahi(w, x + 22, x + 31);
-    const light = () => 'R' as Light;
-    const heaps = [x + 23, x + 26, x + 29].map((cc, k) => new Heap(w, px(cc), k % 2 ? px(14) : px(13), light));
-    shadows(w, heaps);
-    w.flags[c.f('heaps')] = heaps;
-  },
-};
 
 // ================================================================ act 2: the arches, with the bells
-const galiyara: Act = {
-  id: 'lko10-galiyara',
-  w: 34,
-  advice: 'The maze again: walk over the drain through the first arch (a hop takes you up into the hooks), and jump through the second, over the well, up to the gallery. Then along the gallery to the far end.',
-  cps: [1.5],
-  paint: (g, c) => {
-    const x = c.x;
-    g.pit(x + 4, x + 4, 15).fill(x + 4, x + 4, 16, 17, '#');
-    g.fill(x + 7, x + 12, 9, 9, '#');
-    g.pit(x + 15, x + 33, 15);
-    g.fill(x + 15, x + 33, 12, 12, '#');
-  },
-  build: (w, c) => {
-    const x = c.x;
-    arch(w, c.X(5) + 8, FLOOR, { x: c.X(7) + 8, y: px(9) }, c.f('a1'));
-    hooks(w, x + 8, x + 11, px(9));
-    arch(w, c.X(14) + 8, FLOOR, { x: c.X(16) + 8, y: px(12) }, c.f('a2'));
-    well(w, x + 15, x + 33);
-  },
-};
 
 // ================================================================ the door: tehzeeb
-/** The last door bows back. Stand still before it (a bow) and it opens; but the threshold right in front of
- *  it is bells under a cover, and a bow there brings the dancer. Bow from the plain board, two steps back,
- *  then walk in. */
-export const tehzeeb: Ending = {
-  space: 12,
-  advice: 'The last door opens to a bow: stand still before it and it opens. But the threshold right in front of it is bells under a chikan cover, and a bow there brings the dancer spinning. Bow from the plain board two steps back, then walk in.',
-  build(w, d) {
-    const D = Math.round(d.x / 16);
-    const L = lock(w, d, 'Aadaab! | Respectful greetings!');
-    const still = stillness(w);
-    bowIcon(w, still);
-    const dn = new Dancer(w, px(D + 3) + 8);
-    covered(w, D - 3, D - 1, dn);
-    w.flags.twist = 'shut';
-    w.add(
-      new Art((ctx) => {
-        ctx.fillStyle = '#8D5A3B';
-        ctx.fillRect(px(D - 6), FLOOR - 2, px(3), 2);
-      }, -1),
-    );
-    w.onTick((w2) => {
-      const p = w2.player;
-      if (w2.flags.twist === 'shut' && p.cx > px(D - 6) && p.cx < px(D - 3) && still() > 40) {
-        w2.flags.twist = 'open';
-        L.unlock();
-        w2.say('Aadaab! | Respectful greetings!', d.x + 8, d.y - 8, 2, 'npc');
-      }
-    });
-    w.when(
-      (w2) => w2.player.cx > px(D - 10),
-      (w2) => taraNow(w2, 'Pehle aap, phir aap, phir aap! | After you, after you, after you!', 2.4),
-    );
-  },
-};
 
 // ================================================================ the callbacks, each one broken once
 /** The court again, but the courtier is a Lakhnavi too: when he stands two squares ahead he bows you on to
@@ -200,14 +117,6 @@ const darbar: Act = {
     chausar(w, x + 26, 4, c.f('court2'), 200, { bow: true, well: wz2, off: 2 });
     sign(w, x + 0.4, 10.4, 3.4, 'DARBAR', 'shop', null, 'pehle aap');
   },
-};
-/** The slow procession again, as in 07: a plain callback (DECISIONS W2: the covered-bells break is kept for
- *  jawab and tasveer only). */
-const julusBells: Act = {
-  ...julus,
-  id: 'lko10-julus',
-  cps: [19.5, 31.5, 41.5],
-  advice: 'The slow procession again, going your way: walk behind them at their pace, and wait at each nala until they are over it.',
 };
 /** The photograph again, but the street in front of the posing group is bells under chikan covers. Photo
  *  taught: wait right by the group for the flash. Here that spot is a cover, and a wait there is a bow
@@ -254,54 +163,6 @@ const jawab: Act = {
   },
 };
 
-/** The Ganj's strollers again: pause and they part, as on the Ganj. But they are Lakhnavi gentlemen, and a
- *  gap made by politeness is a doorway: the nearest one bows you through first, and the stone in the gap is
- *  the loose one. 07 taught: go through the gap. Here: bow back, let him go first, take the gap second. */
-const raasta: Act = {
-  id: 'lko10-raasta',
-  w: 26,
-  cp0: false,
-  cps: [-2],
-  advice: 'The strollers again: pause and they part. But a gap made by politeness is a doorway, and the gentleman in it bows you through first, on to the loose stone. Bow back (stand still) and let him go first, then hop the hole he leaves.',
-  paint: (g, c) => {
-    g.pit(c.x + 4, c.x + 5);
-    g.pit(c.x + 18, c.x + 19);
-  },
-  build: (w, c) => {
-    const x = c.x;
-    nala(w, x + 4, x + 5, 'lko-nala');
-    const crowd = strollers(w, x + 13, c.f('crowd'), 'lko-ganj', -210);
-    const hole = looseStone(w, x + 18, 2, 'lko-pehle');
-    const still = stillness(w);
-    bowIcon(w, still);
-    const G = { x: c.X(17) + 8, s: 'wait', y: FLOOR };
-    w.flags[c.f('g')] = G;
-    w.add(
-      new Art((ctx) => {
-        if (G.s === 'wait' || G.s === 'gone') return;
-        gent(ctx, G.x, G.y, 26, '#7A4E6E', { face: G.s === 'bow' ? -1 : 1, bow: G.s === 'bow' ? 1 : 0, topi: '#F5F0E6' });
-      }, 3),
-    );
-    w.onTick((w2) => {
-      const p = w2.player;
-      if (G.s === 'wait' && crowd.s === 'parted') {
-        G.s = 'bow';
-        w2.say('Pehle aap, janab! | After you, sir!', G.x, FLOOR - 36, 2, 'npc');
-      } else if (G.s === 'bow' && still() > 50 && p.cx < c.X(17)) G.s = 'first';
-      else if (G.s === 'first') {
-        const sx = c.X(18) - 6,
-          ex = c.X(20) + 10;
-        if (!hole.st.down && G.x >= sx) hole.drop(w2);
-        if (G.x < ex) {
-          G.x += 1.4;
-          G.y = hole.st.down && G.x > sx ? FLOOR - Math.sin((Math.PI * (G.x - sx)) / (ex - sx)) * 22 : FLOOR;
-        } else G.s = 'gone';
-      }
-    });
-    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Pehle aap? Accha, pehle aap. | After you? Fine, after you.', 2.2));
-    sign(w, x + 0.4, 10.4, 3.4, 'RAASTA', 'shop', null, 'pehle aap');
-  },
-};
 
 /** The rooftops again, but the flyer's boy has scattered grain on the wide roof. 09 taught: cross on red.
  *  Grain beats the flag: the flock comes down to feed on it whatever the flag says, feeds, lifts, and comes
@@ -373,66 +234,6 @@ const daana: Act = {
   },
 };
 
-/** The malai heaps again, at night. 04 taught: the light comes from one side, stand in the heap's shadow.
- *  Here the only light is the lamplighter's lantern, and he walks the far rim of the karahi towards you: as
- *  he passes each heap its shady side changes. Read where he is against each heap, not where he was. */
-const CHIRAG = { from: 20, to: 0.5, v: 0.7 };
-const chirag: Act = {
-  id: 'lko10-chirag',
-  w: 24,
-  cps: [21.6],
-  advice: 'The malai heaps again, but at night the only light is the lamplighter’s lantern, and he is walking towards you along the far rim. As he passes each heap its shady side changes: the side away from his lantern holds. Go before he reaches a heap and keep the left tiles, or wait for him to pass and take the right ones.',
-  paint: (g, c) => {
-    g.pit(c.x + 5, c.x + 20);
-  },
-  build: (w, c) => {
-    const x = c.x;
-    const L = { x: c.X(CHIRAG.from) + 8, go: false };
-    w.flags[c.f('ll')] = L;
-    const kz = karahi(w, x + 5, x + 20);
-    const heaps = [6, 9, 12, 15, 18].map((d, k) => {
-      const mid = c.X(d) + 16;
-      return new Heap(w, c.X(d), k % 2 ? px(14) : px(13), (): Light => (L.x > mid ? 'R' : 'L'));
-    });
-    shadows(w, heaps);
-    let cur: { h: Heap; i: number; lit: boolean } | null = null;
-    w.onTick((w2) => {
-      if (!L.go && w2.player.cx > c.X(4)) L.go = true;
-      if (L.go && L.x > c.X(CHIRAG.to) + 8) L.x -= CHIRAG.v;
-      const p = w2.player;
-      if (p.onGround) {
-        for (const h of heaps)
-          for (const i of [0, 1])
-            if (h.t[i].on && on(w2, h.t[i].solid) && (cur?.h !== h || cur.i !== i)) cur = { h, i, lit: h.litIndex(w2) === i };
-      }
-      // you stood on a lit side, or a shady side that the lantern came round to: two different mistakes
-      kz.hazard.cause = cur && !cur.lit ? 'lko-chirag' : 'lko-malai';
-    });
-    w.add(
-      new Art((ctx, w2) => {
-        // the lamplighter on the far rim, his lantern on a pole; the lamp post he is walking to
-        ctx.fillStyle = '#2E2A26';
-        ctx.fillRect(c.X(CHIRAG.to) + 6, FLOOR - 70, 3, 70);
-        const done = L.x <= c.X(CHIRAG.to) + 8;
-        ctx.fillStyle = done ? '#FFD54F' : '#6B6357';
-        ctx.fillRect(c.X(CHIRAG.to) + 4, FLOOR - 80, 7, 10);
-        gent(ctx, L.x, FLOOR, 24, '#6D5A48', { face: -1, arms: 0.6, skin: '#9C6B48' });
-        ctx.fillStyle = '#4E3B2C';
-        ctx.fillRect(L.x - 7, FLOOR - 46, 1.5, 30);
-        const ly = FLOOR - 48 + Math.sin(w2.tick * 0.12) * 1.2;
-        const g = ctx.createRadialGradient(L.x - 6, ly, 2, L.x - 6, ly, 46);
-        g.addColorStop(0, 'rgba(255,213,79,0.55)');
-        g.addColorStop(1, 'rgba(255,213,79,0)');
-        ctx.fillStyle = g;
-        ctx.fillRect(L.x - 52, ly - 46, 92, 92);
-        ctx.fillStyle = '#FFD54F';
-        ctx.fillRect(L.x - 9, ly - 3, 6, 7);
-      }, -2),
-    );
-    w.when((w2) => w2.player.cx > c.X(1), (w2) => taraNow(w2, 'Roshni chal rahi hai! | The light is moving!', 2.2));
-    sign(w, x + 0.2, 10.4, 3, 'CHIRAG', 'shop', null, 'raat');
-  },
-};
 
 /** The guru again, and her stamps again, but tonight she dances for the guests, not for a student: nobody
  *  is mirroring anybody, and a stamp swaps nothing. 06 taught: at a stamp, press the other way. */
@@ -441,16 +242,6 @@ const seedha = makeGuru(
   false,
   'The guru again, stamping as before, but tonight she dances for the guests and nobody mirrors her: a stamp swaps nothing. Keep pressing the way you were going, hop the red strips, and never stop on her floor.',
   'SEEDHA',
-);
-/** The tihai again, but tonight the tabla player cuts it short for the nawab: two phrases, and sam on the
- *  second. 06 taught: count three. And the plain boards are chikan covers here: a pause on one is a bow. */
-const do_ = makeTihai(
-  'lko10-do',
-  2,
-  true,
-  'lko-tihai-do',
-  'The tihai again, but tonight he cuts it short: sam comes on the second lamp, not the third. Be on a board when the second lights. The boards are chikan covers over bells now: keep your feet moving on them, a pause is a bow.',
-  'DO HI',
 );
 /** The hall door again, but tonight the maze stays put: the arch you saw is the arch. And the floor you
  *  come out on is bells under chikan covers, so 08's calm look round on arrival is a bow. Run on. */
