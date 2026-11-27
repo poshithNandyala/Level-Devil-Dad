@@ -744,7 +744,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir > 0 && p.t < 6; }, max: 2400, note: 'wait for the far team’s red flag' },
     { hold: 'R', until: and(ground, X(x + 32)), max: 600, note: 'across on the rope at once' },
   ]),
-  'dis05-taat': mark('dis05-taat', (x) => [{ policy: weave(), until: and(ground, X(x + 28)), max: 3000, note: 'on the cloth by its edge, a hop over the shuttle each pass' }]),
+  'dis05-taat': mark('dis05-taat', (x) => [{ policy: weave(), until: and(ground, X(x + 24)), max: 3000, note: 'on the cloth by its edge, a hop over the shuttle each pass' }]),
   'dis07-bordoisila': mark('dis07-bordoisila', (x) => [
     { hold: 'R', until: X(x + 8.6), max: 600, note: 'under the bhoral before the storm' },
     { hold: '', until: (w) => (w.flags.storm as Bordoisila[])[0].over, max: 900, note: 'till Bordoisila has passed' },

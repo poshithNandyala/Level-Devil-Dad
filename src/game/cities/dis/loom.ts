@@ -92,19 +92,19 @@ export class Loom extends Entity {
 /** DIS-05 act: the loom. Its lie: the floor is the cloth, so stand on it; the truth: hop the shuttle on every pass. */
 export const taat: Act = {
   id: 'dis05-taat',
-  w: 30,
+  w: 26,
   advice: 'The host is weaving your gamosa on her loom across the ditch: the cloth is the floor, and it grows a little with each pass of the shuttle. Stand on the cloth by its edge, and hop the shuttle every time it flies along at your ankles.',
-  cps: [1.5, 27.5],
+  cps: [1.5, 23.5],
   paint: (g, c) => {
-    g.pit(c.x + 10, c.x + 23);
+    g.pit(c.x + 10, c.x + 19);
   },
   build: (w, c) => {
     const x = c.x;
-    const l = w.add(new Loom(px(x + 10), px(x + 24), px(x + 3)));
+    const l = w.add(new Loom(px(x + 10), px(x + 20), px(x + 3)));
     w.add(l.shuttle);
     w.solids.push(l.cloth);
     (w.flags.loom ??= []).push(l);
     onPass(w, px(x + 2), (w2) => tara(w2, 'Olop! | A little!', 2.4));
-    w.add(new Danger({ x: px(x + 10), y: GROUND + 12, w: px(14), h: 40 }, 'dis-taat'));
+    w.add(new Danger({ x: px(x + 10), y: GROUND + 12, w: px(10), h: 40 }, 'dis-taat'));
   },
 };
