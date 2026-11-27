@@ -15,7 +15,7 @@ import { Collectible } from '../src/game/entities/traps';
 import { CITY_TESTS_BY_ID } from './city-tests';
 import { NAIVE, FIX } from './solutions';
 import { ACT_ROUTES } from './acts';
-import { ENDING_POLICIES } from './endings';
+import { policyFor } from './endings';
 import { INFO } from './helpers';
 
 /**
@@ -88,7 +88,7 @@ describe('city modules', () => {
         if (!exempt(m, 'prefix')) expect(acts.filter((a) => !a.startsWith(code))).toEqual([]);
       });
       it('has a policy for every ending, and every stage twist is one of them or a known ending', () => {
-        expect(Object.keys(m.endings).filter((k) => !ENDING_POLICIES[k])).toEqual([]);
+        expect(Object.keys(m.endings).filter((k) => !policyFor(k))).toEqual([]);
       });
       it('names every long, marathon and wtf stage in its fair list', () => {
         if (exempt(m, 'fair')) return;
