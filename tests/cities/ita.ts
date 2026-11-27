@@ -109,29 +109,163 @@ const gatePolicy: Policy = (w, m) => {
   return go(p.x < px(st.c1 - 3) ? 'R' : '');
 };
 
+// ------------------------------------------------------------------ ITA-03
+type HerdSt = { t0: number; spec: { c: number; dip: number; graze: number; up: number; young?: boolean }[]; rigs: { x: number; w: number; solid: any; s: { ph?: string; left?: number } }[] };
+/** across the herd: step on to a back only while it grazes with time to spare; wait on the bank or the back before */
+function herdWalk(key: string, need = 0.9): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const st = w.flags[key] as HerdSt;
+    const p = w.player;
+    if (!p.onGround) return go('R');
+    const next = st.rigs.find((r) => r.x > p.x + p.w - 4);
+    if (!next) return go('R');
+    const ready = st.t0 >= 0 && next.s.ph === 'down' && (next.s.left ?? 0) >= need;
+    const edge = p.x + p.w >= next.x - 34;
+    if (!edge) return go('R');
+    if (!ready) return go('');
+    if (p.onGround) {
+      jt = 12;
+      return { move: 'R', jump: true };
+    }
+    return go('R');
+  };
+}
+const room03 = (): Step[] => [{ policy: herdWalk('ita3'), until: and(ground, X(23.5)), max: 3000, note: 'across the backs on the lead’s dip; wait behind the young one' }, { hold: 'R', until: X(29), max: 400 }];
+const act03 = (x: number): Step[] => [{ policy: herdWalk('ita3a'), until: and(ground, X(x + 29.5)), max: 4000, note: 'the big herd: wait behind each young one' }, { hold: 'R', until: X(x + 35.4), max: 400 }];
+/** the pen gate: wait before the lead until it has just dipped, hop over its back and through while the bar is up */
+const penPolicy: Policy = (w, m) => {
+  const st = w.flags.ita3e as HerdSt;
+  const r = st.rigs[0];
+  const p = w.player;
+  if (m.hold > 0) return { move: 'R', jump: true };
+  if (p.x > r.x + r.w + 4) return go('R');
+  if (p.x + p.w < r.x - 18) return go('R');
+  const ok = r.s.ph === 'down' && (r.s.left ?? 0) > 1.6;
+  if (!ok) return go('');
+  if (p.onGround && p.x + p.w >= r.x - 18 && p.x < r.x) {
+    m.hold = 13;
+    return { move: 'R', jump: true };
+  }
+  return go('R');
+};
+
+// ------------------------------------------------------------------ ITA-04
+type GroveSt = { trees: { shakes: number; notches: number; dropped: boolean }[]; baskets: { c: number; cap: number; n: number }[]; oranges: { alive: boolean; on: boolean }[]; gy: number };
+/** shake the tree n times from column `at` (its uphill side): a tap jump under the branch, a breath between */
+const shake = (at: number, n: number): Step[] => [
+  { hold: 'R', until: X(at), max: 900, note: 'to the uphill side of the trunk' },
+  ...Array.from({ length: n }, (): Step[] => [{ hold: '', jump: 10, ticks: 10, note: 'jump under the branch' }, { hold: '', ticks: 80 }]).flat(),
+];
+const full = (key: string) => (w: World) => {
+  const st = w.flags[key] as GroveSt;
+  return st.baskets.every((b) => b.n >= b.cap) && st.oranges.every((o) => !o.alive);
+};
+/** up the stair of baskets: hop when the next basket's top is above your feet */
+function stairClimb(key: string, extra: { x: number; top: number }[] = []): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  let cool = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+      cool = 0;
+    }
+    if (jt > 0) {
+      jt--;
+      return { move: 'R', jump: true };
+    }
+    const st = w.flags[key] as GroveSt;
+    const p = w.player;
+    const steps = [...st.baskets.map((b) => ({ x: px(b.c), top: st.gy - b.n * 16 })), ...extra];
+    const nx = steps.find((b) => b.x > p.x + p.w - 6);
+    if (nx && p.onGround && w.tick > cool && p.x + p.w >= nx.x - 18 && p.x < nx.x && p.y + p.h > nx.top + 2) {
+      jt = 12;
+      cool = w.tick + 30;
+      return { move: 'R', jump: true };
+    }
+    return go('R');
+  };
+}
+const room04 = (): Step[] => [
+  ...shake(5.2, 3),
+  { hold: '', until: full('ita4'), max: 1200, note: 'the oranges have rolled into the baskets' },
+  { policy: stairClimb('ita4'), until: and(ground, X(20)), max: 1500, note: 'up the basket stair on to the terrace' },
+  { hold: 'R', until: X(29), max: 600 },
+];
+const act04 = (x: number): Step[] => [
+  ...shake(x + 2.3, 2),
+  ...shake(x + 9.3, 2),
+  { hold: '', until: full('ita4a'), max: 1200, note: 'eight oranges in four baskets' },
+  { policy: stairClimb('ita4a', [{ x: px(x + 25), top: 128 }]), until: and(ground, X(x + 26)), max: 1500, note: 'up the stair on to the upper terrace' },
+  { hold: 'R', until: and(ground, X(x + 33), (w) => w.player.y > 160), max: 900, note: 'off its far end' },
+  { hold: 'R', until: X(x + 39.4), max: 600 },
+];
+/** the packing shed: wait at the edge of the step until a crate has just landed, then cross behind the shadow */
+const shedPolicy: Policy = (w) => {
+  const st = w.flags.ita4e as { P: number; x0: number; x1: number; spotX: (k: number) => number };
+  const p = w.player;
+  const t = w.tick / 120;
+  const k = Math.floor(t / st.P);
+  const f = (t - k * st.P) / st.P;
+  if (p.x > st.x1 + 20) return go('R');
+  if (p.x + p.w < st.x0 - 26) return go('R');
+  // the next landing spot and when: cross when the crate has just landed (start of a cycle) and the next spot is behind us or far enough ahead
+  const nextSpot = st.spotX(k);
+  const crossing = (st.x1 + 20 - p.x) / 140;
+  const timeLeft = st.P * (1 - f) - 0.35;
+  if (timeLeft > crossing + 0.15) return go('R');
+  if (nextSpot + 14 < p.x) return go('R');
+  return go('');
+};
+
 const upTo = (n: number) => tourRoute().slice(0, n);
 const naive: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-01': { steps: [...courseRoute(), ...hop(62.4, 'hop the fort wall like the others'), { hold: 'R', until: done, max: 900 }], cause: 'ita-ita' },
   'ITA-02': { steps: [...hopGaps([12, 18]), { hold: 'R', until: done, max: 2400 }], cause: 'ita-bhaar' },
+  'ITA-03': { steps: [{ hold: 'R', until: done, max: 1200 }], cause: 'ita-keechad' },
+  'ITA-04': { steps: [{ hold: 'R', until: X(9.4), max: 600 }, { hold: 'R', jump: 12, ticks: 12, note: 'jump for the oranges in the tree' }, { hold: '', until: done, max: 600 }], cause: 'ita-santra' },
 };
 const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'ITA-01': { steps: [...upTo(24), { hold: 'R', until: X(77.0), max: 600 }, { hold: 'R', jump: 16, ticks: 16, note: 'skip the first brick, as on the first wall' }, { hold: 'R', until: done, max: 900 }], cause: 'ita-pop' },
   'ITA-02': { steps: [{ hold: 'R', until: (w) => w.player.x >= px(12) && w.player.y > FL - 8, max: 900, note: 'step aside into the first bay' }, { hold: '', until: done, max: 2400, note: 'and wait there' }], cause: 'ita-bans' },
+  'ITA-03': { steps: [{ policy: herdWalk('ita3', 0.05), until: done, max: 3000, note: 'wait for the lead’s dip, then hop on in rhythm' }], cause: 'ita-seeng' },
+  'ITA-04': { steps: [...shake(5.2, 4), { hold: '', until: done, max: 600 }], cause: 'ita-tokri' },
 };
 const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]> = {
+  'ITA-03': [{ what: 'wait on the young one’s back for the next to dip', steps: [{ policy: herdWalk('ita3'), until: (w) => w.player.x >= px(15), max: 3000 }, { hold: '', until: done, max: 1500 }], cause: 'ita-seeng' }],
+  'ITA-04': [{ what: 'shake from the downhill side of the trunk', steps: [...shake(8.6, 1), { hold: '', until: done, max: 600 }], cause: 'ita-santra' }],
   'ITA-02': [{ what: 'wait in the deep bay for the first porter only, then run on', steps: [...hopGaps([12]), { hold: 'R', until: (w) => w.player.x >= px(18) && w.player.y > FL - 8, max: 900 }, { hold: '', until: (w) => (w.flags.ita2 as DeckSt).porters[0].x < px(18) - 34, max: 1500 }, { hold: 'R', jump: 16, ticks: 16 }, { hold: 'R', until: done, max: 1500 }], cause: 'ita-bhaar' }],
 };
 const actRoutes: Record<string, (x: number) => Step[]> = {
   'ita02-dusra': act02,
+  'ita03-jhund': act03,
+  'ita04-upar': act04,
 };
 const endingPolicies: Record<string, Policy> = {
   'ita-phatak': gatePolicy,
+  'ita-baada': penPolicy,
+  'ita-peti': shedPolicy,
 };
 
 function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: number, extra: Step[]) => void) {
   S['ITA-01'] = tourRoute();
   S['ITA-02'] = room02();
   lengthen('ITA-02', 0, []);
+  S['ITA-03'] = room03();
+  lengthen('ITA-03', 0, []);
+  S['ITA-04'] = room04();
+  lengthen('ITA-04', 0, []);
 }
 
 void LEVEL_BY_ID;
@@ -142,5 +276,5 @@ export const test: CityTests = {
   mistakes,
   actRoutes,
   endingPolicies,
-  fair: ['ITA-02'],
+  fair: ['ITA-02', 'ITA-03', 'ITA-04'],
 };

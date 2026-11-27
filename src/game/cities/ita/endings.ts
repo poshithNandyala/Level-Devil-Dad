@@ -1,8 +1,10 @@
 // Itanagar's door endings, one per stage 02-10, each its own idea. Kinds start with 'ita-'.
 import type { Ending } from '../../levels/endkit';
 import { ending as e02 } from './s02';
+import { ending as e03 } from './s03';
+import { ending as e04 } from './s04';
 
-export type ItaEndingKind = 'ita-phatak';
+export type ItaEndingKind = 'ita-phatak' | 'ita-baada' | 'ita-peti';
 
 declare module '../../levels/endings' {
   interface ModuleEndingKinds extends Record<ItaEndingKind, true> {}
@@ -10,4 +12,6 @@ declare module '../../levels/endings' {
 
 export const endings: Record<ItaEndingKind, Ending> = {
   'ita-phatak': e02,
+  'ita-baada': e03,
+  'ita-peti': e04,
 };

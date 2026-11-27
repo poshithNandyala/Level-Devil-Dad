@@ -8,6 +8,8 @@ import { longStage } from '../../levels/chunks';
 import { Grid } from '../../levels/grid';
 import { tourLevel, meta01 } from './s01';
 import { room as room02, act as act02, meta02 } from './s02';
+import { room as room03, act as act03, meta03 } from './s03';
+import { room as room04, act as act04, meta04 } from './s04';
 
 const tara = (n: number) => ({ intro: L.intro[n % L.intro.length], point: 1 as const, introAt: 0.5, taunts: L.taunt, beaten: L.beaten[0] });
 
@@ -33,8 +35,8 @@ function todoRoom(n: number): LevelDef {
 export const levels = (): LevelDef[] => [
   { ...tourLevel(), meta: meta01 },
   longStage({ base: room02(), acts: [act02], twist: 'ita-phatak', par: 40, shape: 'long', meta: meta02 }),
-  longStage({ base: todoRoom(3), par: 30, shape: 'long' }), // ITA-03 TODO
-  longStage({ base: todoRoom(4), par: 30, shape: 'long' }), // ITA-04 TODO
+  longStage({ base: room03(), acts: [act03], twist: 'ita-baada', par: 45, shape: 'long', meta: meta03 }),
+  longStage({ base: room04(), acts: [act04], twist: 'ita-peti', par: 50, shape: 'long', meta: meta04 }),
   longStage({ base: todoRoom(5), par: 30, shape: 'long' }), // ITA-05 TODO
   longStage({ base: todoRoom(6), par: 30, shape: 'long' }), // ITA-06 TODO
   longStage({ base: todoRoom(7), par: 30, shape: 'long' }), // ITA-07 TODO
