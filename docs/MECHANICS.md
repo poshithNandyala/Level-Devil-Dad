@@ -202,6 +202,41 @@ pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound p
 - **Cut, and why:** `kvt10-kannadi` (glass that holds only a runner: KVT-08's keep moving), `kvt10-kotta` (stay in the
   basket past a rotten landing: Gangtok's yak photo stops, earlier).
 
+## LKO (Lucknow, Uttar Pradesh): ideas used (module city, 10 stages)
+- **01 Aadaab Lucknow** Chowk's cloth bolts over a dug-up lane: land on one and it is sold, the shopkeeper's hook slides
+  it out sideways from under you; then a long bolt unrolls down across the road, run under before it lands.
+- **02 Pehle Aap** the first through the haveli doorway gets the loose threshold stone; stand still (a bow) and he
+  goes first; acts: the man behind who offers you the way (`lko02-gali`), the bowing stand-off (`lko02-takrar`); door:
+  the haveli door opens outwards over the two tiles in front of it (`lko-kiwad`).
+- **03 Chhapa** printed vine and jali wash off at the dhobi's whistles, the stitched flowers stay; acts: run the print
+  without stopping (`lko03-kunda`), the karigar's hoop carries you flower to flower (`lko03-adda`), the rangrez dips
+  the far half of the muslin (`lko03-rang`); door: the threshold is cloth over the vat (`lko-balti`).
+- **04 Makhan Malai** the malai tile facing the low sun sinks, the shaded one holds; the halwai's lid turns the light;
+  act: single cups shaded only by a kulhad stack's shortening shadow (`lko04-chowk`).
+- **05 Galouti** stand on a heap to squash it flat so your hop clears the seekh rack; flat burns through if you linger;
+  acts `lko05-tawa`, `-lane`, `-ulta`, `-bhara`, `-ghee` (set heaps your weight cannot flatten), `-charkhi` (the
+  turning spit); door: the sheermal slapped on the tandoor wall is a ledge until it bakes (`lko-sheermal`).
+- **06 Kathak** red ghungroo strips ring and the dancer spins to the sound; acts: the moving tatkar patch
+  (`lko06-tatkar`), every stamp swaps left and right (`lko06-guru`), she spins the stage end to end (`lko06-mehfil`).
+- **07 Hazratganj** rush and the strollers close ranks into the nala, pause and they part; acts: the shivering awning
+  (`lko07-shaam`), lamplighters' ladders (`lko07-batti`), walk behind the procession (`lko07-julus`), through the posing
+  group in the flash (`lko07-photo`), the window-shopper who steps back blind (`lko07-dukaan`).
+- **08 Bhool Bhulaiya** through an arch at a jump you come out a floor up, on foot you stay; acts `lko08-chausar`
+  (cowrie throw lights the squares), `-toota` (a crownless arch lifts no one), `-utar` (falling through takes you down),
+  `-wapas` (backwards at a jump takes you down), `-upar` (come down on to the arch tops), `-darwaza` (the arch has
+  moved), `-sargoshi` (the whispering gallery), `-roshandan` (down-lit patches are floor).
+- **09 Kabootarbazi** the flag: red the flock circles, white it lands on the roof ahead of you; acts `lko09-gumbad`
+  (white domes in a garden tank, the third is the reflection), `-hawa` (the flag's far face), `-jhande` (the nearer
+  flag), `-seeti` (the whistle duel), `-girah` (a tumble is not a landing).
+- **10 Lakhnavi Tehzeeb** bells sewn under chikan covers before the door: a bow rings them and the dancer spins to you;
+  callbacks that break their rule: `lko10-tasveer`, `lko10-daana` (grain beats the flag), `lko10-seedha` (a stamp
+  swaps nothing), `lko10-thahra` (the maze stays put).
+- **Plain doors (fix round 6):** `lko-kulhad`, `lko-sam`, `lko-darban`, `lko-489`, `lko-chhatri`, `lko-tehzeeb` (each
+  re-asked its own room); the ids stay and their ideas are free again.
+- **Cut, and why:** fix round 6 cut `lko02-aadaab`, `lko04-badal`, `lko05-dum`, `lko06-tihai`, `lko07-chauraha`,
+  `lko08-minar`, `lko08-mehrab`, `lko10-dhulai`, `-julus`, `-raasta`, `-chirag`, `-do`, `-galiyara`; fix round 7 cut
+  `lko10-darbar` (02's refusal again) and `lko10-jawab` (a greeting the city no longer teaches).
+
 ## PAT (Patna, Bihar): ideas used (module city, 10 stages)
 - **01 Prannam, Patna!** a tempo pulls in behind you at the bus stop and the waiting crowd surges along the road
   to it (climb on the kerb board, then run on before the tempo pulls out).
