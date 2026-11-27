@@ -72,6 +72,9 @@ export const act1: Act = {
     pt.secs.forEach((s, i) => {
       if ((i + 1) % NP === 0) s.s.awash = true;
     });
+    // carrying the room's count on to this cart's pontoon is its own death
+    pt.water!.hazard!.cause = 'pat-bhaar';
+    pt.secs.forEach((q) => (q.hazard!.cause = 'pat-bhaar'));
     cart(w, px(c.x + 1), NP);
     sign(w, c.x + 1.2, 10.4, 3, 'PIPA PUL', 'shop', null, 'load: 4 sacks');
   },

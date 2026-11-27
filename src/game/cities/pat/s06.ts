@@ -71,23 +71,27 @@ export function seams(w: World, list: [number, number, boolean][], key: string) 
   );
 }
 
+/** a lorry body with n sacks on its bed (the stretch's count) */
+function lorry(ctx: CanvasRenderingContext2D, x: number, n: number) {
+  box(ctx, x - 6, FL - 18, 52, 5, '#6B3F1C');
+  box(ctx, x + 36, FL - 34, 14, 22, '#3B6EA5');
+  box(ctx, x + 40, FL - 31, 8, 7, '#BFE3F2');
+  box(ctx, x - 6, FL - 14, 58, 4, '#222');
+  ctx.fillStyle = '#1D1A1A';
+  for (const wx of [4, 20, 42]) {
+    ctx.beginPath();
+    ctx.arc(x + wx, FL - 6, 5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  for (let i = 0; i < n; i++) {
+    box(ctx, x + (i % 4) * 9, FL - 28 - Math.floor(i / 4) * 9, 8, 10, '#C9A56B');
+    box(ctx, x + (i % 4) * 9, FL - 28 - Math.floor(i / 4) * 9, 8, 2, '#E3C58A');
+  }
+}
+
 /** a parked truck with n sacks on it: the count is the rule of the stretch */
 export function cart(w: World, x: number, n: number) {
-  w.add(
-    new Paint((ctx) => {
-      box(ctx, x, FL - 14, 30, 8, '#6B3F1C');
-      ctx.fillStyle = '#1D1A1A';
-      ctx.beginPath();
-      ctx.arc(x + 7, FL - 4, 4, 0, Math.PI * 2);
-      ctx.arc(x + 23, FL - 4, 4, 0, Math.PI * 2);
-      ctx.fill();
-      box(ctx, x - 8, FL - 18, 10, 2, '#8A5A2B');
-      for (let i = 0; i < n; i++) {
-        box(ctx, x + 2 + (i % 3) * 9, FL - 24 - Math.floor(i / 3) * 8, 8, 9, '#C9A56B');
-        box(ctx, x + 2 + (i % 3) * 9, FL - 24 - Math.floor(i / 3) * 8, 8, 2, '#E3C58A');
-      }
-    }, 2),
-  );
+  w.add(new Paint((ctx) => lorry(ctx, x, n), 2));
 }
 
 export function room(): LevelDef {
@@ -274,23 +278,14 @@ export function truckLoad(w: World, x: number, key: string, start: number, chang
   w.add(
     new Paint((ctx, w2) => {
       const t = st.t0 < 0 ? -9 : since(w2, st.t0);
-      box(ctx, x, FL - 14, 30, 8, '#6B3F1C');
-      ctx.fillStyle = '#1D1A1A';
-      ctx.beginPath();
-      ctx.arc(x + 7, FL - 4, 4, 0, Math.PI * 2);
-      ctx.arc(x + 23, FL - 4, 4, 0, Math.PI * 2);
-      ctx.fill();
-      for (let i = 0; i < st.n; i++) {
-        box(ctx, x + 2 + (i % 3) * 9, FL - 24 - Math.floor(i / 3) * 8, 8, 9, '#C9A56B');
-        box(ctx, x + 2 + (i % 3) * 9, FL - 24 - Math.floor(i / 3) * 8, 8, 2, '#E3C58A');
-      }
+      lorry(ctx, x, st.n);
       // the porter walking a sack off the truck (or on to it) in the second before the count changes
       let prev = start;
       for (const c of changes) {
         if (t >= c.at - 1.2 && t < c.at) {
           const k = (t - (c.at - 1.2)) / 1.2;
           const off = c.n < prev;
-          const px0 = x + 40 + (off ? k : 1 - k) * 36;
+          const px0 = x + 62 + (off ? k : 1 - k) * 36;
           folk(ctx, px0, FL - 28, 28, '#2F6BB0', { sack: '#C9A56B' });
         }
         prev = c.n;

@@ -214,7 +214,6 @@ pat-musal pat-ghanti pat-bhitar pat-nawka pat-toll pat-hauled-basket pat-mound p
   behind the first (`pat06-gaadi`); 07 riders on the road side, riders on both sides, a halt right before a hump, three
   scrapes in a row (`pat07-pul`, `-haat`, `-mandi`); 09 the horse turns back (`pat09-wapsi`); 10 the cart's sack count
   sets which pontoon sections the porters load and which plates the trucks lift (`pat10-bori`, `pat10-gaadi`).
-- **Fix round 2 (PAT):** 05 floats with no drums go under at once, cracked ones a second after you stop (`pat05-khokhla`);
-  06 the truck at the foot is unloaded while you read it and a second truck half-way is loaded, so the count that
+- **Fix round 2 (PAT):** 05 a laden porter walks the one-lane deck towards you and sinks the three floats he is on, so you step up on the lay-by and let him and the porter behind him pass (`pat05-kuli`); 06 the truck at the foot is unloaded while you read it and a second truck half-way is loaded, so the count that
   counts is the one left when the porter has finished (`pat06-ginti`); 10 callbacks: the coaching hoardings with the
   cart's three sacks naming the narrowing bell (`pat10-roll`) and the shared tempo with sacks as riders (`pat10-tempo`).
