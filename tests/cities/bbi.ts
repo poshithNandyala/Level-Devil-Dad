@@ -733,6 +733,10 @@ const DEATHS: Record<string, Death[]> = {
   'bbi05-bail': [{ what: 'push on past the cart', cause: 'bbi-bail', steps: () => [{ hold: 'R', until: done, max: 900 }] }],
   'bbi06-tana': [walkOn('bbi-ranga'), lFix('bbi6b')],
   'bbi06-rachh': [walkOn('bbi-ranga'), lFix('bbi6q')],
+  'bbi06-tantu': [
+    { what: 'snap the nearest thread, from the edge', cause: 'bbi-sutra', steps: (x) => [{ hold: 'R', until: X(x + 3.6), max: 400 }, waitFor((w) => lm(w, 'bbi6p').bridge, 'the motif'), { hold: 'R', jump: 12, ticks: 12, note: 'up into the first thread' }, { hold: 'R', until: done, max: 600 }] },
+    { what: 'leave the loom alone and time the shuttle', cause: 'bbi-rachh', steps: (x) => [{ hold: 'R', until: X(x + 3.6), max: 400 }, waitFor((w) => lm(w, 'bbi6p').bridge && lm(w, 'bbi6p').into > 0.9, 'both passes of the shuttle by'), { hold: 'R', until: done, max: 600 }] },
+  ],
   'bbi06-sutra': [
     { what: 'let the shuttle by, then walk across', cause: 'bbi-sutra', steps: (x) => [{ hold: 'R', until: X(x + 2.1), max: 300 }, waitFor((w) => lm(w, 'bbi6z').bridge && lm(w, 'bbi6z').into > 0.6, 'the shuttle by'), { hold: 'R', until: done, max: 600 }] },
     { what: 'go at once and hop the hole', cause: 'bbi-shuttle', steps: (x) => [{ hold: 'R', until: X(x + 2.1), max: 300 }, waitFor((w) => lm(w, 'bbi6z').bridge && lm(w, 'bbi6z').into > 0.12, 'the motif'), { hold: 'R', until: X(x + 5.6), max: 300 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: done, max: 600 }] },
@@ -991,6 +995,16 @@ const padaRun = (x: number): Step[] => [
   { hold: 'R', until: X(x + 17.5), max: 400 },
 ];
 /** the undyed thread: the shuttle by, then out on the motif and over the hole */
+/** the plain thread: jump up into it on the bank, then walk the motif as soon as it lines up */
+const tantuRun = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 2.6), max: 400, note: 'under the plain thread' },
+  { hold: '', until: (w) => Math.abs(w.player.vx) < 5, max: 120 },
+  { hold: '', jump: 12, ticks: 40, note: 'up into it: it snaps' },
+  { hold: 'R', until: X(x + 3.6), max: 300, note: 'to the edge' },
+  waitFor((w) => lm(w, 'bbi6p').bridge && lm(w, 'bbi6p').into > 0.08, 'the motif: no shuttle, no beater'),
+  { hold: 'R', until: and(ground, X(x + 14.4)), max: 400, note: 'across' },
+  { hold: 'R', until: X(x + 17.5), max: 300 },
+];
 const sutraRun = (x: number): Step[] => [
   { hold: 'R', until: X(x + 2.1), max: 300 },
   waitFor((w) => lm(w, 'bbi6z').bridge && lm(w, 'bbi6z').into > 0.6, 'the motif beat, the shuttle by'),
@@ -1120,6 +1134,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi07-sajaghara': sa
   'bbi07-dweepa': (x) => [...crossTroupe('bbi7i0', x, 4, 6, 'bridge'), ...crossTroupe('bbi7i1', x, 12, 7, 'bridge'), { hold: 'R', until: X(x + 21.5), max: 300 }],
   'bbi06-sidhi': sidhiRun('bbi6s'),
   'bbi06-rachh': loomRun('bbi6q', 8, 0.5),
+  'bbi06-tantu': tantuRun,
   'bbi09-ulta': chAct('bbi9u', 9, 8),
   'bbi09-udaya': (x) => {
     const out: Step[] = [{ hold: 'R', until: X(x + 1.4), max: 300 }];

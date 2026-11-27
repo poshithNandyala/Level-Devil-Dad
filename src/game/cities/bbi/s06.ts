@@ -32,6 +32,9 @@ export interface LoomCfg {
   reed?: boolean;
   /** threads (by index) left undyed: no patch at all, a hole in the motif */
   blank?: number[];
+  /** a plain warp thread hangs from the frame over the near bank: jump up into any thread and it snaps, and the
+   *  weaver stops throwing and beating to tie it. A snapped motif thread drops every patch */
+  snap?: boolean;
 }
 
 /** where in the loom's cycle the time t (s since it started) falls: the beat number and seconds into it */
@@ -49,8 +52,10 @@ const lvlY = (l: number) => FL - 20 * l;
 
 /** the loom over a dye pit: threads, patches, the beater, the shuttle and the weaver */
 export function loom(w: World, cfg: LoomCfg, t0: () => number, key: string) {
-  const st = { b: -1, j: -1, bridge: false, shuttleX: -999, into: 0, left: 0 };
+  // snapped: -1 none, -2 the plain thread, else the motif thread's index
+  const st = { b: -1, j: -1, bridge: false, shuttleX: -999, into: 0, left: 0, snapped: -1 };
   (w.flags[key] as unknown) = st;
+  const plainX = px(cfg.c0) - 30;
   const T = (w2: World) => (t0() < 0 ? -1 : since(w2, t0()));
   w.add(
     new Rig(0, 0, 0, 0, {
@@ -91,7 +96,8 @@ export function loom(w: World, cfg: LoomCfg, t0: () => number, key: string) {
           solid: true,
           layer: 3,
           tick: (r, w2) => {
-            if (cfg.blank?.includes(k)) {
+            // a snapped motif thread pulls the whole motif apart: every patch drops
+            if (cfg.blank?.includes(k) || st.snapped >= 0) {
               r.setSolid(false);
               return;
             }
@@ -125,7 +131,7 @@ export function loom(w: World, cfg: LoomCfg, t0: () => number, key: string) {
       layer: 4,
       tick: (r, w2) => {
         r.x = -999;
-        if (!st.bridge) return;
+        if (!st.bridge || st.snapped !== -1) return;
         for (const [at, dir] of cfg.shuttle) {
           const dt = st.into - at;
           const span = px(cfg.n) - 14;
@@ -160,7 +166,7 @@ export function loom(w: World, cfg: LoomCfg, t0: () => number, key: string) {
         layer: 4,
         tick: (r) => {
           r.x = -999;
-          if (!st.bridge) return;
+          if (!st.bridge || st.snapped !== -1) return;
           const k = (st.into - (cfg.hold - 0.7)) / 0.6;
           if (k >= 0 && k <= 1) r.x = px(cfg.c0) - 8 + (px(cfg.n) + 16) * k;
         },
@@ -172,6 +178,35 @@ export function loom(w: World, cfg: LoomCfg, t0: () => number, key: string) {
           }
           box(ctx, r.x, r.y, r.w, r.h, '#A0703C');
           box(ctx, r.x + 1, r.y, 2, r.h, '#C8955A');
+        },
+      }),
+    );
+  if (cfg.snap)
+    w.add(
+      new Rig(0, 0, 0, 0, {
+        layer: 4,
+        tick: (_r, w2) => {
+          const p = w2.player;
+          // only a jump up into a thread snaps it: the head must be above the bank's head height, rising
+          if (st.snapped !== -1 || !(p.vy < 0) || p.y > FL - 44) return;
+          if (Math.abs(p.cx - (plainX + 1)) < 6) st.snapped = -2;
+          else
+            for (let k = 0; k < cfg.n; k++)
+              if (Math.abs(p.cx - (px(cfg.c0 + k) + 8)) < 6) {
+                st.snapped = k;
+                break;
+              }
+        },
+        paint: (ctx) => {
+          // the frame reaches out over the bank, and the spare plain thread hangs from it
+          box(ctx, plainX - 4, FL - 112, px(cfg.c0) - plainX, 5, '#6E4A2E');
+          if (st.snapped === -2) {
+            box(ctx, plainX, FL - 107, 2, 30, '#FFFFFF');
+            box(ctx, plainX + 3, FL - 40, 2, 10, '#FFFFFF');
+          } else box(ctx, plainX, FL - 107, 2, 77, '#FFFFFF');
+          if (st.snapped >= 0) box(ctx, px(cfg.c0 + st.snapped) + 5, FL - 110, 6, 10, '#1B1B3A');
+          // the weaver stops to tie it: a knot sign over her
+          if (st.snapped !== -1) box(ctx, px(cfg.c0) - 22, FL - 52, 8, 8, '#F4D35E');
         },
       }),
     );
@@ -266,6 +301,30 @@ export function sidhiAct(id: string, key: string): Act {
 export const act6 = sidhiAct('bbi06-sidhi', 'bbi6s');
 /** act 7, the beater: the motif holds, but at its end the beater sweeps the warp from the weaver's side */
 export const L06R: LoomCfg = { c0: 3, n: 8, speeds: [4, 2, 1, 3, 1, 4, 3, 2], beat: 0.8, hold: 2.2, shuttle: [[0, -1]], reed: true };
+/** act 12, the plain thread (ALLOCATION v3 F465, loom family): here the shuttle goes over and back and the beater
+ *  follows it at once, so no one can walk the motif between them. Snap a thread and the weaver stops both to tie
+ *  it. Snap the spare plain thread hanging over the bank, not a motif thread: that one pulls the motif apart, and
+ *  the first one is the one you reach from the edge. */
+export const L06P: LoomCfg = { c0: 5, n: 9, speeds: [2, 3, 1, 4, 2, 1, 3, 4, 2], beat: 0.8, hold: 1.7, shuttle: [[0, 1], [0.45, -1]], reed: true, snap: true };
+export const act12: Act = {
+  id: 'bbi06-tantu',
+  w: 18,
+  advice: 'This weaver throws the shuttle over and back and the beater follows it straight away: there is no time to walk the motif between them. Snap a thread and she stops both to tie it. Jump up into the plain white thread over the bank, not a coloured one over the pit: a snapped coloured thread pulls the whole motif apart. Then walk the motif.',
+  cps: [],
+  paint: (g, c) => {
+    g.pit(c.x + L06P.c0, c.x + L06P.c0 + L06P.n - 1);
+  },
+  build: (w, c) => {
+    const st = { t0: -1 };
+    onPass(w, c.X(0.5), (w2) => (st.t0 = w2.tick));
+    const ch = channel(w, c.x + L06P.c0, c.x + L06P.c0 + L06P.n - 1, 'bbi-ranga', 'water');
+    const lo = loom(w, { ...L06P, c0: c.x + L06P.c0 }, () => st.t0, 'bbi6p');
+    // the death line names the snapped thread when that is what you fell through
+    ch.o.tick = (r) => {
+      r.hazard!.cause = lo.st.snapped >= 0 ? 'bbi-sutra' : 'bbi-ranga';
+    };
+  },
+};
 export const act7 = loomAct('bbi06-rachh', 16, L06R, 'bbi6q', 'Here the beater sweeps the warp at the end of the motif beat. Let the shuttle by, then cross at once: be off the threads before the beater comes.');
 /** act 11, the undyed thread (loom family): one warp thread here was never tied and dyed, so it carries no
  *  patch: the motif lines up with a hole in it. A2: the shuttle still goes first. A3: and then the hole, which
