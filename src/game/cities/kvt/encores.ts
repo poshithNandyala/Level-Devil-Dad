@@ -11,7 +11,7 @@ import { Solid } from '../../body';
 import { FLOOR, Paint, npc, tara as taraSays } from '../../levels/endkit';
 import type { Ending } from '../../levels/endkit';
 import { CoralStep } from './tide';
-import { Eel } from './levels';
+import { Eel, PalmCrab, palm } from './levels';
 import { Thing } from '../../entities/traps';
 import { Nest } from './entities';
 
@@ -889,7 +889,26 @@ const breeze: Act = {
   },
 };
 
-export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, twiceEels, breeze, risingTide, tideHoles] };
+/** KVT-10 act, KVT-07 turned over: up the palms the crowns were safe and the trunks were the crabs'. On this palm
+ *  the coconut crab lives in the crown. Climb only part way up and leap from the trunk to the next palm. */
+const crownCrab: Act = {
+  id: 'kvt10-thengu',
+  w: 30,
+  advice: 'This palm’s coconut crab lives up in its crown: don’t climb on to it. Climb part way and leap from the trunk to the next palm; that one’s crown is clear.',
+  paint: (g, c) => {
+    g.pit(c.x + 2, c.x + 14);
+  },
+  build: (w, c) => {
+    pool(w, c.x + 2, c.x + 15, 15.3, { colors: LAGOON });
+    const a = palm(w, c.x + 4, px(16), 130, { crownW: 30 });
+    palm(w, c.x + 8, px(16), 130, { crownW: 30 });
+    w.add(new PalmCrab(a, 0.93, 1, 12, 0.97, 1));
+    sign(w, c.x + 0.2, G - 4.4, 3.4, 'CRAB', 'wood', null, 'in the crown');
+    onPass(w, c.X(1), (w2) => taraSays(w2, 'Mukalil vare kayari nilkku! | Climb right up and stand on top!', 2.4));
+  },
+};
+
+export const kvt10 = { room: octopusRoom, acts: [midden, plank, rubbleOctopus, turtlesBehind, highTuna, crownCrab, twiceEels, breeze, risingTide, tideHoles] };
 
 /** KVT-10's door: the octopus lies across the threshold, the colour of the sand. Its arm is the patch of sand that moves. */
 const sandArm: Ending = {
