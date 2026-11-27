@@ -152,6 +152,22 @@ This section supersedes the tables above where they differ.
 The SandField has a timed mode (`go(w, silent)`) for 02's horn act; nothing else uses it. The chaser in `kaath.ts` and the
 ghat man in `flag.ts` are DIS entities (givers that move).
 
+## Fix round 4 (QA round 3 at 383f6c2, B1-B3)
+
+- **B1, lines that advised the act's other death:** `dis-doba-ulta` (10 talatal) now says race down and run out at
+  the foot, never hopping (a hop is `dis-talatal-ulta`); `dis-bhutbhuti` (02) says walk back along your bar and hop
+  only at the real siren (standing at the far end is `dis-char-sink`); `dis-dirru` (06 traps) says leave a ringing trap
+  only for one that is silent **and has settled** (a slack one tips, `dis-tip`); `dis-beel` (08 jeep, duijeep, room)
+  says stand well back on the bank till the rhino has been (waiting at the grass edge is `dis-gorh`).
+- **B2, a line for a play that did not walk:** the gamosa pits (`pitDanger`) split as 04's fallen well does: walked in is
+  `dis-gamosa-gat`, came down in it from a hop is `dis-gamosa-hop`; blind under three gamosas stays `dis-gamosa`.
+- **B3, `dis08-bagori` cut:** with its second play "don't run on ahead, get up on the hay" it asked `dis06-wake`'s and
+  `dis07-goru`'s decision (something charges along your path: get off its line and let it pass), and no recast passed
+  the gate. Its cause `dis-bagori-beel` is gone. DIS-08 is 31.0 s now (par 42), honestly under its floor.
+- Checks after the round (lag 0/6/12): the six-play probe reads every line true for its play; every scripted play dies
+  with its labelled cause; DIS-05 and DIS-08 sweep 0 fails at lag 0/6/11/12 x idle 0/37/120/251, worst replay 6.41 s;
+  fair N=80 DIS-08 100/100; walk-4.5 on DIS-08 dies only past +4.5 (overshoot +4.7/+4.8, as before).
+
 ## Fairness (`LDD_N=80 npm run fair -- DIS`)
 
 Fix round 1 (`LDD_N=80`, lag 6 / 12 / 18 ticks; every stretch and door is 100% at 0-12 ticks):

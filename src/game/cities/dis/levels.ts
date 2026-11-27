@@ -34,7 +34,7 @@ import { Pan } from './pitha';
 import { husori } from './husori';
 import { charge } from './gorh';
 import { Eave, roof, type RoofSection } from './rangghar';
-import { majChar3, majGhat, majPitha, gorhKohora, luitGhat, gamChar, gamGhat, gamHusori, gorhBagori, gorhDuiJeep, gorhJeep, husGhat, husLane, husPaar, luitChang, luitChar, luitGamosa, luitGorh, majChang, majChang2, majChar, rangBihu, rangWide, teaBoy } from './acts2';
+import { majChar3, majGhat, majPitha, gorhKohora, luitGhat, gamChar, gamGhat, gamHusori, gorhDuiJeep, gorhJeep, husGhat, husLane, husPaar, luitChang, luitChar, luitGamosa, luitGorh, majChang, majChang2, majChar, rangBihu, rangWide, teaBoy } from './acts2';
 import { Bank, type BankDef } from './bank';
 import { Cloth, Host, gam, machan, pitDanger } from './gamosa';
 import { Hedge, Plucker, Sprinkler } from './pluck';
@@ -727,7 +727,7 @@ export const levels = (): LevelDef[] => [
   longStage({ base: gamosaRoom(), acts: [atithi, gamSanko, gamFeast, gamKaath, own(gamMachan, { 'dis-luit': 'dis-machan-luit' })], twist: 'dis-gamosa-latch', par: 37, shape: 'wtf', meta: { family: 'gamosas-hide-feet-camera', betrayals: ['overloaded-blind'], ending: 'dis-gamosa-latch' } }),
   longStage({ base: majuliRoom(), acts: [own(majuliWake, { 'dis-bank': 'dis-wake-bank' }), majuliTraps, majuliFlag], twist: 'dis-tea-ladder', par: 34, shape: 'long', meta: { family: 'bank-retreats-in-slabs', betrayals: ['retreating-bank'], ending: 'dis-tea-ladder' } }),
   longStage({ base: husoriRoom(), acts: [runUp(husDhol, 3), husRope, husGoru, husTekeli, own(husCard, { 'dis-gate': 'dis-card-gate' }), own(husCart, { 'dis-pukhuri': 'dis-cart-pukhuri' }), chowk, own(husPepa, { 'dis-gate': 'dis-pepa-gate' })], cps: [16], twist: 'dis-uruka-net', par: 90, lives: 'act', shape: 'marathon', meta: { family: 'join-moving-group-to-pass-gate', betrayals: ['join-group'], ending: 'dis-uruka-net' } }),
-  longStage({ base: gorhRoom(), acts: [gorhJeep, gorhDuiJeep, gorhBogoli, own(runUp(gorhBagori, 3), { 'dis-beel': 'dis-bagori-beel' })], twist: 'dis-watch-tower', par: 74, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
+  longStage({ base: gorhRoom(), acts: [gorhJeep, gorhDuiJeep, gorhBogoli], twist: 'dis-watch-tower', par: 42, shape: 'wtf', meta: { family: 'follow-flattened-strip', betrayals: ['follow-flattened'], ending: 'dis-watch-tower' } }),
   longStage({ base: rangGharRoom(), acts: [rangTug, kaidhara, own(rangSluice, { 'dis-roof': 'dis-sluice-tel' }), rangTunnels], twist: 'dis-royal-seat', par: 36, shape: 'long', meta: { family: 'roof-curve-slides-stop-at-ribs', betrayals: ['slope-ribs'], ending: 'dis-royal-seat' } }),
   longStage({ base: luitRoom(), acts: [own(runUp(luitDhol, 3), { 'dis-pukhuri': 'dis-pukhuri-lahe', 'dis-dhol-sink': 'dis-dhol-lahe' }), own(luitTug, { 'dis-khaal': 'dis-khaal-ulta', 'dis-rope': 'dis-rope-ulta' }), own(luitTalatal, { 'dis-doba': 'dis-doba-ulta', 'dis-talatal': 'dis-talatal-ulta' })], twist: 'dis-post-bank', par: 63, lives: 'act', shape: 'marathon', meta: { family: 'finale-level-post-far-bank', betrayals: ['level-post-far-bank'], ending: 'dis-post-bank' } }),
 ];

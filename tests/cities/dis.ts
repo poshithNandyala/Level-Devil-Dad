@@ -490,7 +490,6 @@ act('dis06-traps', 'DIS-06', [(x) => [...onTrap(x, 0), { hold: '', until: done, 
 act('dis10-tug', 'DIS-10', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal-ulta', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir < 0 && p.t < 6; }, max: 2400 }, { hold: 'R', until: done, max: 900 }], 'dis-rope-ulta', 'goes on the red flag, as in 09: red is the near team now']);
 act('dis08-jeep', 'DIS-08', [rhinoNaive, 'dis-beel', 'walks into the tall grass'], [rhinoFix, 'dis-gorh', 'waits at the edge of the grass, where the second jeep is']);
 act('dis08-duijeep', 'DIS-08', [(x) => [{ hold: 'R', until: X(x + 5.1), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-gorh', 'waits at the grass edge for the loud jeep’s charge: the rhino comes for the near one, at him'], [(x) => [{ hold: 'R', until: X(x + 5.8), max: 600 }, { hold: 'R', until: done, max: 900 }], 'dis-beel', 'walks into the grass toward the loud jeep’s line before any charge']);
-act('dis08-bagori', 'DIS-08', [(x) => [{ hold: 'R', until: X(x + 2.4), max: 600 }, { hold: '', until: done, max: 2000 }], 'dis-gorh', 'stays on the bank: the rhino comes from behind'], [() => [{ hold: 'R', until: done, max: 2000 }], 'dis-bagori-beel', 'hears it coming from behind and runs on ahead of it, past the hay: into the grass it has not flattened']);
 /** after the routes exist: each act's deaths start from the stage route up to the act's own start */
 /** an ending's own policy as a step policy (for plays that follow it part of the way) */
 const viaEnding = (kind: string) => {
@@ -800,13 +799,6 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: '', until: (w) => charges(w).filter((c) => c.d.c0 === x + 6).every((c) => c.phase === 'gone'), max: 1500, note: 'the rhino charges the near jeep, rests, goes' },
     { policy: rhinoWalk(), until: and(ground, X(x + 25)), max: 1500 },
   ]),
-  'dis08-bagori': mark('dis08-bagori', (x) => [
-    { hold: 'R', until: X(x + 1.4), max: 600 },
-    { hold: 'R', jump: 12, ticks: 12, note: 'up on the haystack' },
-    { hold: '', until: and(ground, (w) => w.player.y < 200), max: 200 },
-    { hold: '', until: (w) => charges(w).filter((c) => c.d.c0 >= x + 11 && c.d.c0 <= x + 25).every((c) => c.phase === 'gone'), max: 3000, note: 'both charges go past' },
-    { policy: rhinoWalk(), until: and(ground, X(x + 43)), max: 2000 },
-  ]),
   'dis09-bihu': mark('dis09-bihu', (x) => [{ policy: atTheGate(-1), until: and(ground, X(x + 79)), max: 9000, note: 'with the singers through three gates' }]),
   'dis09-chaal3': mark('dis09-chaal3', (x) => [
     { hold: 'R', until: X(x + 5.2), max: 1200, note: 'across the first oil to the pad' },
@@ -1006,7 +998,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
 };
 // acts without a mark step: tag their first step (no extra tick), so their scripted deaths can start where they start
 /** acts given a run-up in levels.ts (`runUp`): their content starts this many columns later */
-const RUNUP: Record<string, number> = { 'dis04-bhogali': 3, 'dis07-dhol': 3, 'dis08-bagori': 3, 'dis10-dhol': 3 };
+const RUNUP: Record<string, number> = { 'dis04-bhogali': 3, 'dis07-dhol': 3, 'dis10-dhol': 3 };
 for (const [id, f0] of Object.entries(actRoutes)) {
   const k = RUNUP[id] ?? 0;
   if (k) actRoutes[id] = (x) => f0(x + k);

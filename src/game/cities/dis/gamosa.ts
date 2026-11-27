@@ -113,8 +113,15 @@ export class Cloth extends Entity {
 /** a pit with a deadly floor: the cause tells you what you did */
 export function pitDanger(w: World, c0: number, c1: number) {
   const d = w.add(new Danger({ x: px(c0), y: GROUND + 8, w: px(c1 - c0 + 1), h: 80 }, 'dis-gamosa')) as Danger;
-  // fix round 2 (QA B1): blind under three gamosas, or walking into a pit you could see
-  w.onTick((w2) => (d.hazard.cause = gam(w2).n >= BLIND_AT ? 'dis-gamosa' : 'dis-gamosa-gat'));
+  // fix round 2 (QA B1): blind under three gamosas, or walking into a pit you could see; fix round 4 (QA B2): and a hop
+  // that came down in it is its own line, as at 04's fallen well
+  let hopping = false;
+  w.onTick((w2) => {
+    const p = w2.player;
+    if (p.onGround) hopping = false;
+    else if (p.vy < 0) hopping = true;
+    d.hazard.cause = gam(w2).n >= BLIND_AT ? 'dis-gamosa' : hopping ? 'dis-gamosa-hop' : 'dis-gamosa-gat';
+  });
   return d;
 }
 

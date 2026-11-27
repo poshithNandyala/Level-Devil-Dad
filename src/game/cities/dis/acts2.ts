@@ -321,44 +321,6 @@ export const gorhDuiJeep: Act = {
   },
 };
 
-/** DIS-08 act: the jeep moves, from behind. The first charge comes from behind you on to a strip ahead; the haystack again. */
-export const gorhBagori: Act = {
-  id: 'dis08-bagori',
-  w: 44,
-  advice: 'The jeep is at the far end and the rhino starts behind you on the bank: up on the haystack platform. It stops halfway across, and then a jeep near the far end revs: it charges on. Off the hay only when it has gone the whole way.',
-  cps: [1.5, 18, 31], // on the flattened strips, once both charges have gone by
-  paint: (g, c) => {
-    const x = c.x;
-    g.fill(x + 3, x + 6, 13, 13, '=');
-    g.pit(x + 11, x + 38);
-  },
-  build: (w, c) => {
-    const x = c.x;
-    // fix round 2 (QA B3): the halfway rest is back to 40 ticks; bagori's second play is about its own read (it comes
-    // from behind: up on the hay, not on ahead into the grass), not jeep's "it only stopped halfway"
-    const a = charge(w, { trig: px(x + 2), c0: x + 11, c1: x + 24, start: x - 4, plume: x + 24, delay: 170, rest: 40 });
-    const b = charge(w, { trig: Infinity, c0: x + 25, c1: x + 38, start: x + 24, plume: x + 39, delay: 70, rest: 90 });
-    w.onTick(() => {
-      if (a.phase === 'gone' && b.phase === 'wait') {
-        b.phase = 'noise';
-        b.t = 0;
-      }
-    });
-    w.add(
-      new Decor((ctx) => {
-        const x0 = px(x + 3);
-        ctx.fillStyle = '#8D6B2E';
-        ctx.fillRect(x0 + 2, px(13) + 3, 3, 29);
-        ctx.fillRect(x0 + 58, px(13) + 3, 3, 29);
-        ctx.fillStyle = '#D9B95A';
-        ctx.fillRect(x0 + 6, px(13) + 6, 52, 26);
-        ctx.fillStyle = '#B8A04A';
-        ctx.fillRect(x0 - 2, px(13), 68, 4);
-      }, -1),
-    );
-  },
-};
-
 // ================================================================== DIS-09 (Rang Ghar): two more acts
 /** DIS-09 act: Rongali Bihu in the Rang Ghar ground: the husori group and three gates before the roof. */
 export const rangBihu: Act = {
