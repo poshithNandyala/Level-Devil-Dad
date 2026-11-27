@@ -42,7 +42,7 @@ How to use this file:
 | 20 | SVP | Sri Vijaya Puram (bonus) | Andaman & Nicobar Islands | East | Andaman Hindi + Bengali/Tamil/Telugu + English | done (10 stages, v0.17.3) |
 | 21 | GTK | Gangtok | Sikkim | East | Nepali + Hindi + English | built on city/gtk (10 stages, docs/cities/GTK.md) |
 | 22 | DIS | Dispur (Guwahati) | Assam | Northeast | Assamese + Hindi + English | built on city/dis (10 stages), waiting for QA; notes in docs/cities/DIS.md |
-| 23 | SHL | Shillong | Meghalaya | Northeast | Khasi + English | to do |
+| 23 | SHL | Shillong | Meghalaya | Northeast | Khasi + English | built (module, 10 stages on `city/shl`, awaiting QA; 04/05/06/07/08/09/10 under their length floors) |
 | 24 | ITA | Itanagar | Arunachal Pradesh | Northeast | Arunachali Hindi + Nyishi + English | to do |
 | 25 | KOH | Kohima | Nagaland | Northeast | Nagamese + English | to do |
 | 26 | IMP | Imphal | Manipur | Northeast | Meitei (Manipuri) + Hindi + English | to do |
