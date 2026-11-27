@@ -316,6 +316,110 @@ function galleryRun(x: number): (w: World) => Out {
     return go('');
   };
 }
+/** the pool: run to the pool's stalactite before the roof comes down, stand there through the shut, go on at the break */
+function poolWalk(x: number): (w: World) => Out {
+  return (w) => {
+    const list = (w.flags.shl7 as Stal[]).filter((st) => st.c >= x + 8 && st.c <= x + 30).sort((a, b) => a.c - b.c);
+    const p = w.player;
+    const poolX = px(list[3].c) + 8;
+    const first = list[0];
+    const past = p.cx > px(list[6].c) + 16;
+    if (past) return go('R');
+    // before the pool: go only if the roof is high enough to reach the pool (4 stalactites, ~1.3 s)
+    if (p.cx < poolX - 6) {
+      if (p.x + p.w < px(first.c) - 24) return go('R');
+      const ok = first.s.shutAt < 0 && first.gap >= FIT + 3 * first.s.step + 4;
+      return go(ok ? 'R' : '');
+    }
+    if (p.cx < poolX + 4) {
+      // in the pool: wait for the others to shut and break
+      const other = list[4];
+      const ok = other.s.shutAt < 0 && other.gap >= other.s.g0 - 1;
+      return go(ok ? 'R' : '');
+    }
+    return go('R');
+  };
+}
+/** the knock: run under the first, bump it (jump), wait under it until the second has just broken, then go */
+function knockWalk(x: number): (w: World) => Out {
+  let W: World | null = null;
+  let phase = 0;
+  let jt = 0;
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      phase = 0;
+      jt = 0;
+    }
+    const list = (w.flags.shl7 as Stal[]).filter((st) => st.c >= x + 11 && st.c <= x + 15).sort((a, b) => a.c - b.c);
+    const [a, b] = list;
+    const p = w.player;
+    if (jt > 0) {
+      jt--;
+      return { move: '', jump: true };
+    }
+    if (phase === 0) {
+      // approach the first when it is well open, stop under it
+      if (p.x + p.w < px(a.c) - 24) return go('R');
+      if (p.cx < px(a.c) + 8 - 7) return go(a.s.shutAt < 0 && a.gap >= FIT + 2 * a.s.step + 4 ? 'R' : '');
+      if (Math.abs(p.vx) > 5) return go('');
+      phase = 1;
+      jt = 10;
+      return { move: '', jump: true };
+    }
+    if (phase === 1) {
+      if (!p.onGround) return go('');
+      if (a.s.freeze <= 0) {
+        // the bump missed (it was already low): try again
+        jt = 10;
+        return { move: '', jump: true };
+      }
+      phase = 2;
+    }
+    // frozen: go when the second has just broken (it is at the top), and once going, keep going
+    if (phase === 3 || p.cx > px(b.c) + 16) return go('R');
+    const ok = b.s.shutAt < 0 && b.gap >= b.s.g0 - 1 && a.s.freeze > 60;
+    if (ok) phase = 3;
+    return go(ok ? 'R' : '');
+  };
+}
+/** pairs: bump each, then through at once */
+function pairWalk(x: number): (w: World) => Out {
+  let W: World | null = null;
+  let jt = 0;
+  let bumped = new Set<number>();
+  return (w) => {
+    if (W !== w) {
+      W = w;
+      jt = 0;
+      bumped = new Set();
+    }
+    const list = (w.flags.shl7 as Stal[]).filter((st) => st.c >= x + 11 && st.c <= x + 23).sort((a, b) => a.c - b.c);
+    const p = w.player;
+    if (jt > 0) {
+      jt--;
+      return { move: '', jump: true };
+    }
+    const next = list.find((st) => px(st.c) + 16 > p.x);
+    if (!next) return go('R');
+    if (p.x + p.w < px(next.c) - 24) return go('R');
+    if (p.cx < px(next.c) + 8 - 7) {
+      // approach when it is high and not shut
+      return go(next.s.shutAt < 0 && next.gap >= FIT + 2 * next.s.step + 8 ? 'R' : '');
+    }
+    if (!bumped.has(next.c) && p.onGround) {
+      if (Math.abs(p.vx) > 5) return go('');
+      bumped.add(next.c);
+      jt = 10;
+      return { move: '', jump: true };
+    }
+    return go(p.onGround ? 'R' : '');
+  };
+}
+const act07b = (x: number): Step[] => [{ policy: poolWalk(x), until: and(ground, X(x + 37)), max: 5000, note: 'into the pool before the roof comes down, out at the break' }, { hold: 'R', until: X(x + 38), max: 300 }];
+const act07c = (x: number): Step[] => [{ policy: caveWalk('shl7'), until: and(ground, X(x + 33)), max: 6000, note: 'three hidden tips: pass each on its clicks' }, { hold: 'R', until: X(x + 34), max: 300 }];
+const act07d = (x: number): Step[] => [{ policy: knockWalk(x), until: and(ground, X(x + 27)), max: 6000, note: 'bump the first, wait under it, go at the second’s break' }, { hold: 'R', until: X(x + 28), max: 300 }];
+const act07e = (x: number): Step[] => [{ policy: pairWalk(x), until: and(ground, X(x + 31)), max: 6000, note: 'bump each pair and go through at once' }, { hold: 'R', until: X(x + 32), max: 300 }];
 const room07 = (): Step[] => [{ policy: caveWalk('shl7', 22), until: and(ground, X(24)), max: 4000, note: 'three stalactites, each on its own drip' }, { hold: 'R', until: X(29), max: 400 }];
 const act07 = (x: number): Step[] => [{ policy: galleryRun(x), until: and(ground, X(x + 33)), max: 5000, note: 'wait for the first to break, then run the gallery' }, { hold: 'R', until: X(x + 34), max: 300 }];
 const columnPolicy: Policy = (w) => caveWalk('shl7')(w);
@@ -554,7 +658,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'SHL-10': { steps: [{ hold: 'R', until: X(8), max: 600 }, { hold: '', until: done, max: 1500, note: 'stop at the drop and keep waiting for a beat, as in the tour' }], cause: 'shl-lyoh' },
 };
 const ROOMS: Record<string, () => Step[]> = { 'SHL-02': room02, 'SHL-03': room03, 'SHL-04': room04, 'SHL-05': room05, 'SHL-06': room06, 'SHL-07': room07, 'SHL-08': room08, 'SHL-09': room09, 'SHL-10': room10 };
-const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'], 'SHL-05': ['shl05-ar', 'shl05-pung'], 'SHL-06': ['shl06-sprout', 'shl06-kiang'], 'SHL-07': ['shl07-krem'], 'SHL-08': ['shl08-roof', 'shl08-pull', 'shl08-bucket', 'shl08-two'], 'SHL-09': ['shl09-sngi', 'shl09-kot', 'shl09-pdeng', 'shl09-doh'], 'SHL-10': ['shl10-rong', 'shl10-jingkieng', 'shl10-pung'] };
+const ACT_ORDER: Record<string, string[]> = { 'SHL-02': ['shl02-sngi', 'shl02-lyoh'], 'SHL-03': ['shl03-wake', 'shl03-wet'], 'SHL-04': ['shl04-iew', 'shl04-khynnah'], 'SHL-05': ['shl05-ar', 'shl05-pung'], 'SHL-06': ['shl06-sprout', 'shl06-kiang'], 'SHL-07': ['shl07-krem', 'shl07-pool', 'shl07-plop', 'shl07-knock', 'shl07-pairs'], 'SHL-08': ['shl08-roof', 'shl08-pull', 'shl08-bucket', 'shl08-two'], 'SHL-09': ['shl09-sngi', 'shl09-kot', 'shl09-pdeng', 'shl09-doh'], 'SHL-10': ['shl10-rong', 'shl10-jingkieng', 'shl10-pung'] };
 const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
 const prefix = (id: string, act: string): Step[] => [...ROOMS[id](), ...ACT_ORDER[id].slice(0, ACT_ORDER[id].indexOf(act)).flatMap((a) => actRoutes[a](actX0(id, a)))];
 /** the stage up to the act (route), then `steps` played from the act's first column; built when the test runs */
@@ -610,6 +714,14 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
   ],
   'SHL-07': [
     inAct('SHL-07', 'shl07-krem', 'stop under the fourth stalactite of the gallery to count', (x) => [{ policy: galleryRun(x), until: X(x + 16.2), max: 3000 }, { hold: '', until: done, max: 1500 }], 'shl-maw'),
+    inAct('SHL-07', 'shl07-pool', 'run the storm stretch', () => runOn, 'shl-maw'),
+    inAct('SHL-07', 'shl07-pool', 'wait at the mouth for the roof to come down, then run (into the shut row)', (x) => [{ hold: 'R', until: X(x + 5), max: 900 }, { hold: '', until: (w) => (w.flags.shl7 as Stal[]).some((st) => st.c > x + 7 && st.c < x + 10 && st.s.shutAt >= 0), max: 3000 }, { hold: 'R', until: done, max: 1500 }], 'shl-shut'),
+    inAct('SHL-07', 'shl07-plop', 'run past the pillars', () => runOn, 'shl-shut'),
+    inAct('SHL-07', 'shl07-plop', 'stand under the second pillar’s stalactite while it plops (nearly down)', (x) => [{ policy: caveWalk('shl7', x + 10), until: and(ground, X(x + 13)), max: 3000 }, { hold: 'R', until: X(x + 15.5), max: 900 }, { hold: '', until: (w) => { const b = (w.flags.shl7 as Stal[]).find((st) => Math.abs(st.c - (x + 18)) < 0.01)!; return b.s.shutAt < 0 && b.gap >= b.s.g0 - 1; }, max: 3000, note: 'it has just broken' }, { hold: 'R', until: X(x + 17.9), max: 900 }, { hold: '', until: done, max: 2000 }], 'shl-maw'),
+    inAct('SHL-07', 'shl07-knock', 'run through the pair', () => runOn, 'shl-shut'),
+    inAct('SHL-07', 'shl07-knock', 'bump the first, then wait under the second for its break', (x) => [{ policy: knockWalk(x), until: (w) => (w.flags.shl7 as Stal[]).find((st) => Math.abs(st.c - (x + 12)) < 0.01)!.s.freeze > 0, max: 3000 }, { hold: '', until: ground, max: 200 }, { hold: '', until: (w) => { const b = (w.flags.shl7 as Stal[]).find((st) => Math.abs(st.c - (x + 14.5)) < 0.01)!; return b.s.shutAt < 0 && b.gap >= b.s.g0 - 1; }, max: 3000, note: 'the second has just broken' }, { hold: 'R', until: X(x + 14.4), max: 600 }, { hold: '', until: done, max: 2000 }], 'shl-maw'),
+    inAct('SHL-07', 'shl07-pairs', 'run the pairs', () => runOn, 'shl-shut'),
+    inAct('SHL-07', 'shl07-pairs', 'bump the first and wait under it, as the knock taught', (x) => [{ hold: 'R', until: X(x + 11.9), max: 900 }, { hold: '', until: (w) => Math.abs(w.player.vx) < 5, max: 60 }, { hold: '', jump: 10, ticks: 10 }, { hold: '', until: done, max: 1500 }], 'shl-stump'),
   ],
   'SHL-08': [
     inAct('SHL-08', 'shl08-roof', 'walk to the gate and wait for it', () => runOn, 'shl-soaked'),
@@ -655,6 +767,10 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'shl08-bucket': act08c,
   'shl08-two': act08d,
   'shl07-krem': act07,
+  'shl07-pool': act07b,
+  'shl07-plop': act07c,
+  'shl07-knock': act07d,
+  'shl07-pairs': act07e,
   'shl06-sprout': act06,
   'shl06-kiang': act06b,
   'shl05-ar': act05,
