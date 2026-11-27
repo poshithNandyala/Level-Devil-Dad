@@ -263,6 +263,9 @@ class Patrol extends Entity {
     cause = 'svp-magar2',
     /** the cause of the last two gaps */
     readonly cause2 = cause,
+    /** a second, faster crocodile takes over from this x (px) on: its speed, px/s */
+    readonly fastFrom = Infinity,
+    readonly fastSpeed = 34,
   ) {
     super();
     this.layer = 5;
@@ -299,10 +302,10 @@ class Patrol extends Entity {
       }
     } else {
       const t = this.stops[this.idx];
-      const step = 34 * DT;
+      const step = (this.cx > this.fastFrom ? this.fastSpeed : 34) * DT;
       if (Math.abs(t - this.cx) <= step) {
         this.cx = t;
-        this.rest = 150;
+        this.rest = this.cx > this.fastFrom ? 20 : 150;
       } else this.cx += Math.sign(t - this.cx) * step;
     }
     const gx = this.gaps.find((g) => Math.abs(g - this.cx) < 10);
@@ -321,6 +324,67 @@ class Patrol extends Entity {
     crocBody(ctx, this.cx, lunging ? FLOOR - 14 : FLOOR + 14, 40, this.heading < 0 ? -1 : 1, lunging ? 0.5 : 0.06);
     ctx.fillStyle = 'rgba(70,170,190,0.55)';
     ctx.fillRect(this.cx - 24, FLOOR + 12, 48, 18);
+  }
+}
+
+/** the finale's second crocodile: it lies still under the last gap, with nothing but its eyes showing and no ripples, until it swims away */
+export class StillCroc extends Entity {
+  cx: number;
+  gone = false;
+  private armed = -1;
+  readonly hurt: Hurt;
+  constructor(
+    readonly gapX: number,
+    /** it swims off when Dad has been past this x (px) this long, ticks */
+    readonly after: number,
+    readonly pastX: number,
+    readonly toX: number,
+  ) {
+    super();
+    this.layer = 5;
+    this.cx = gapX;
+    this.hurt = new Hurt(gapX - 8, FLOOR - 40, 16, 48, 'svp-magar4', null);
+  }
+  update(w: World) {
+    if (this.gone) {
+      this.hurt.on = false;
+      return;
+    }
+    const p = w.player;
+    if (this.armed < 0 && p.cx > this.pastX) this.armed = w.tick;
+    if (this.armed >= 0 && w.tick - this.armed > this.after) {
+      // it swims off to the right, under the last log
+      this.cx += 60 * DT;
+      if (this.cx > this.toX) {
+        this.gone = true;
+        return;
+      }
+    }
+    this.hurt.on = Math.abs(this.cx - this.gapX) < 10;
+  }
+  get moving() {
+    return this.armed >= 0 && this.cx !== this.gapX;
+  }
+  draw(ctx: Ctx, w: World) {
+    if (this.gone) return;
+    if (this.cx === this.gapX || !this.moving) {
+      // eyes only, and a dark patch under the surface
+      ctx.fillStyle = 'rgba(20,50,40,0.5)';
+      ctx.fillRect(this.cx - 18, FLOOR + 9, 36, 5);
+      ctx.fillStyle = '#E8D84A';
+      ctx.fillRect(this.cx - 7, FLOOR + 5, 2.4, 2.4);
+      ctx.fillRect(this.cx + 4, FLOOR + 5, 2.4, 2.4);
+    } else {
+      crocBody(ctx, this.cx, FLOOR + 14, 40, 1, 0.06);
+      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+      ctx.lineWidth = 1;
+      for (let k = 0; k < 3; k++) {
+        const r = 5 + (((w.tick >> 1) + k * 9) % 27);
+        ctx.beginPath();
+        ctx.ellipse(this.cx, FLOOR + 8, r, r * 0.28, 0, 0, TAU);
+        ctx.stroke();
+      }
+    }
   }
 }
 
@@ -345,10 +409,16 @@ export function buildNala(w: World, x: number, stale: boolean) {
     );
   }
   const gaps = [x + 8.5, x + 20.5, x + 32.5].map(px);
-  const pat = new Patrol(px(x + 3), px(x + 38), gaps, gaps, px(x + 3) + 16, stale ? 'svp-magar3' : 'svp-magar2', stale ? 'svp-magar4' : 'svp-magar2');
+  const pat = new Patrol(px(x + 3), px(x + 38), gaps, stale ? gaps.slice(0, 2) : gaps, px(x + 3) + 16, stale ? 'svp-magar3' : 'svp-magar2', stale ? 'svp-magar4' : 'svp-magar2');
   w.add(pat);
   w.add(pat.hurt);
   (w.flags.patrols ??= []).push(pat);
+  if (stale) {
+    const still = new StillCroc(gaps[2], 300, px(x + 22), px(x + 36));
+    w.add(still);
+    w.add(still.hurt);
+    w.flags.still = still;
+  }
   // the stale board points at the middle log and stays there: nobody turned it
   const stuck = { x: px(x + 14.5), y: FLOOR - 2 };
   w.add(new Board(px(x + 0.6), px(10.6), () => (stale ? stuck : pat.aim())));

@@ -15,7 +15,7 @@ import type { Lift } from '../../src/game/cities/svp/uthao';
 import type { Bus } from '../../src/game/cities/svp/bus';
 import type { Belt } from '../../src/game/cities/svp/nali';
 import type { SawHall } from '../../src/game/cities/svp/s02';
-import type { Creek } from '../../src/game/cities/svp/s03';
+import type { Creek, StillCroc } from '../../src/game/cities/svp/s03';
 import type { Herd, LateBoat } from '../../src/game/cities/svp/s04';
 import type { EyeView, Viewpoint } from '../../src/game/cities/svp/s05';
 import type { Bough, Flock } from '../../src/game/cities/svp/s06';
@@ -591,7 +591,12 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     climbRight('out behind the crowd', px(x + 26)),
     { hold: 'R', until: and(ground, X(x + 47)), max: 600 },
   ],
-  'svp10-nadi': (x) => actRoutes['svp03-nala'](x),
+  'svp10-nadi': (x) => [
+    { ...crossGaps(), until: (w) => w.player.x > px(x + 22) && w.player.onGround, max: 6000, note: 'the first two gaps by the ripples' },
+    { policy: (w) => go(toward(w, px(x + 30.5), 3)), until: (w) => (w.flags.still as StillCroc).gone, max: 3000, note: 'at the last gap: the eyes are still there, no ripples; wait till it has swum away' },
+    hopUntil(and(ground, X(x + 38.5)), 'across the last gap'),
+    { hold: 'R', until: and(ground, X(x + 39.5)), max: 300 },
+  ],
   'svp10-jad': (x0) => [
     ...greyJump(x0 + 6 + 2, x0 + 6 + 9),
     ...greyJump(x0 + 6 + 8, x0 + 6 + 15),
@@ -918,6 +923,10 @@ actDeath('SVP-10', 'svp10-nali', 'under in the first stretch, then over the arch
 ]);
 // ---- 10: the callbacks that break their rules
 const arrowAtLast = (w: World) => ({ cx: (patrols(w)[0] as unknown as { gaps: number[] }).gaps[0] + 96 });
+actDeath('SVP-10', 'svp10-nadi', 'the ripples at the first two gaps, then no ripples at the last: go', 'svp-magar4', (x) => [
+  { ...crossGaps(), until: (w) => w.player.x > px(x + 22) && w.player.onGround, max: 6000, note: 'the first two gaps by the ripples' },
+  hopUntil((w) => w.state !== 'play', 'no ripples at the last gap, so hop it'),
+]);
 actDeath('SVP-10', 'svp10-nadi', 'trust the board: its arrow is stuck on the middle log, so the gaps look safe', 'svp-magar3', () => [{ ...crossGaps(arrowAtLast), until: (w) => w.state !== 'play', max: 3600, note: 'along the logs by the stuck arrow' }]);
 actDeath('SVP-10', 'svp10-jad', 'along the green roots, as the cellar taught', 'svp-eent3', () => [{ hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'along the green roots' }]);
 actDeath('SVP-10', 'svp10-jad', 'the first creek by the grey roots, the second by the green', 'svp-eent4', (x) => [
