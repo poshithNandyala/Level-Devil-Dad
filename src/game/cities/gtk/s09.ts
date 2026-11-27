@@ -210,7 +210,7 @@ export const act: Act = {
     // a bank 5 tiles wide at the start, so a checkpoint there is calm
     thinShore(w, c.x + 5.5, c.x + 18);
     river(w, c.x + 19, c.x + 20);
-    yak(w, c.X(3), [{ wait: 0.5 }, { to: c.X(17) }, { wait: 2.0, photo: true }, { sink: true }], 'mount', 'gtk9a');
+    yak(w, c.X(3), [{ wait: 0.5 }, { to: c.X(17) }, { wait: 1.7, photo: true }, { sink: true }], 'mount', 'gtk9a');
     onPass(w, c.X(10), (w2) => npc(w2, 'Hajur! Photo! | Yes! A photo!', c.X(17), FL - 50, 1.4));
     sign(w, c.x + 27, 8, 3.6, 'CHANGU', 'wood', null, 'snow point');
   },

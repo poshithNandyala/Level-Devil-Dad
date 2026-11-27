@@ -582,7 +582,8 @@ function gapJumper(o: { skipPainted?: boolean; low?: boolean; full?: boolean } =
     const p = w.player;
     if (p.onGround) {
       const fr = Math.round((p.y + p.h) / 16);
-      const tx = Math.floor((p.x + p.w + 14) / 16);
+      // look 22 px ahead: a jump pressed a little late still leaves from the edge
+      const tx = Math.floor((p.x + p.w + 22) / 16);
       if (!w.isSolidTile(w.tileAt(tx, fr)) && !w.isSolidTile(w.tileAt(tx, fr + 1))) {
         // low: a tap, released at once (the shortest jump still clears two tiles)
         jt = o.low ? 1 : o.full ? 45 : 15;
