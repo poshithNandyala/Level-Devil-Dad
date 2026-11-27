@@ -407,6 +407,7 @@ act('dis09-tug', 'DIS-09', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-
 /** more scripted deaths inside an act: [act, stage, play from the act's start, cause, what] */
 const ACT_MORE: [string, string, Play, string, string][] = [];
 ACT_MORE.push(['dis07-dheki', 'DIS-07', (x) => [...crossDheki(x + 6, 0), ...crossDheki(x + 14, 1), { hold: 'R', until: X(x + 24.6), max: 400 }, ...crossDheki(x + 29, 2), { hold: 'R', until: done, max: 600 }], 'dis-dheki', 'two women at the third dheki: goes on its first, quick fall, and the pestle is pressed up again under him']);
+act('dis10-thanda', 'DIS-10', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-tel', 'walks on to the shine, as 04 taught'], [(x) => [{ hold: 'R', until: X(x + 7.4), max: 600 }, { hold: 'R', jump: 8, ticks: 8 }, { hold: 'R', until: done, max: 600 }], 'dis-tel', 'hops short on to the shiny patch to wait for it to set, as in 04']);
 act('dis07-dheki', 'DIS-07', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-dheki', 'runs and hops the mortar while the pestle is up'], [(x) => [{ hold: 'R', until: X(x + 7), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-dheki-tail', 'waits on the tail plank: she steps off and it flies up']);
 act('dis07-bordoisila', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-bordoisila', 'walks on into the storm'], [(x) => [{ hold: 'R', until: X(x + 13), max: 600 }, { hold: '', brace: true, until: done, max: 900 }], 'dis-hail', 'holds on against the wind in the open']);
 act('dis10-tug', 'DIS-10', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir < 0 && p.t < 6; }, max: 2400 }, { hold: 'R', until: done, max: 900 }], 'dis-rope', 'goes on the red flag, as in 09: red is the near team now']);
@@ -654,6 +655,7 @@ export const ONE_PLAY: Record<string, string> = {
   'dis05-atithi': 'the guest-house givers have one trap, three gamosas over your feet at the pit',
   'dis07-chowk': 'the chowk gates have one trap, the stakes: early, late and out of the ring all meet them',
   'dis09-chaal': 'the roof has one trap, the ball down the oil: every stop off a grip pad meets it',
+  'dis10-thanda': 'the cold pan’s one trap is the oil: shine now means a slide, and every wrong step is a step on the shine',
   'dis10-gamosa': 'the callback has one trap, the blinding gamosa at the pit: walking into the givers and taking the fourth one both blind you',
 };
 /** acts whose obvious fix is the stage's FIX play (a different trap from the stage's NAIVE) */
@@ -761,6 +763,13 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     ...hopR(x + 19.4, 'off the last slab', 12),
     { hold: 'R', until: X(x + 29), max: 600 },
   ],
+  'dis10-thanda': mark('dis10-thanda', (x) => [
+    { hold: 'R', until: X(x + 7.6), max: 600, note: 'on to the first matte crepe' },
+    ...hopR(x + 8.2, 'over the oil on to the next matte one', 14),
+    ...hopR(x + 13.2, 'over the oil', 14),
+    ...hopR(x + 18.2, 'over the oil', 14),
+    { hold: 'R', until: and(ground, X(x + 28)), max: 400 },
+  ]),
   'dis07-dheki': mark('dis07-dheki', (x) => [
     ...crossDheki(x + 6, 0),
     ...crossDheki(x + 14, 1),

@@ -5,6 +5,7 @@ export const causeLines: Record<string, string[]> = {
   'dis-porcupine': ['Bah! The spur is only bamboo poles: you slipped through into the river.', 'Don’t stand on the spur. Jump over it to the sand step on its downstream side, once the step is up.'],
   'dis-dheki': ['Dheki! You went into the mortar, and the pestle came down.', 'Wait on the pedestal in the middle of the lever, and walk over the mortar only while the pestle lies in it. Where two women work, it falls twice: the first time only for a moment.'],
   'dis-dheki-tail': ['Dheki! The tail flew up when she stepped off, and you went into the trench.', 'The tail is a plank only while she presses it. Cross it at once, on to the pedestal, and never wait on it.'],
+  'dis-tel': ['Tel! The shine on the cold pan was only oil, and you slid off into the ash.', 'The fire is out and the cook is asleep: nothing is poured and nothing is rolled. Matte crepes have set and stay; hop from matte to matte.'],
   'dis-luit': ['Luit! The sandbar was not there, or it went out from under you.', 'Read the level post. When the siren goes the next bar comes up first, the bar you stand on goes last, and a bar that narrows keeps its left end. The hut never moves.'],
   'dis-basket': ['Tokari! The plucker’s basket swung into you.', 'Stay a few steps behind her and follow. Never hop over her, and when the path is wet wait before it: you can’t stop on it.'],
   'dis-tawa': ['Zui! You fell on the hot pan.', 'Hop only when the next crepe is poured and shiny.'],
