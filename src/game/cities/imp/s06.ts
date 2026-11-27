@@ -78,9 +78,9 @@ function hummock(g: Grid, c0: number, c1: number) {
 export function room(): LevelDef {
   const g = Grid.ground(15).put(1, 14, '@').put(30, 14, 'E');
   // bank 0-5; thin mat a 6-7, patch 8-9, thin b 10-12, patch 13-14, thin c 15-20 (the leap), patch 21-22, thin d 23-24, patch 25-26, bank 27+
-  g.fill(6, 7, 15, 15, 'a').fill(10, 12, 15, 15, 'b').fill(15, 20, 15, 15, 'c').fill(23, 24, 15, 15, 'd');
-  g.fill(6, 26, 16, 17, '.');
-  hummock(g, 16, 18);
+  g.fill(6, 7, 15, 15, 'a').fill(10, 12, 15, 15, 'b').fill(15, 21, 15, 15, 'c').fill(24, 25, 15, 15, 'd');
+  g.fill(6, 27, 16, 17, '.');
+  hummock(g, 16, 17);
   return {
     id: 'IMP-06',
     city: 'IMP',
@@ -96,11 +96,11 @@ export function room(): LevelDef {
       for (const l of 'abd') crumble(w, l, THIN);
       crumble(w, 'c', 0.02); // the leap's stretch: thinnest of all, it goes the moment a foot lands on it
       pool(w, 6, 15, 15.6, { cause: 'imp-phum', colors: LOKTAK, behind: true });
-      pool(w, 15, 21, 15.6, { cause: 'imp-chong', colors: LOKTAK, behind: true });
-      pool(w, 21, 27, 15.6, { cause: 'imp-phum', colors: LOKTAK, behind: true });
-      reeds(w, [[8, 9], [13, 14], [21, 22], [25, 26]]);
-      reeds(w, [[16, 18]], 13);
-      sangai(w, 'imp6', 3, 28, 2, [[px(14) / 16, px(21) / 16]]);
+      pool(w, 15, 22, 15.6, { cause: 'imp-chong', colors: LOKTAK, behind: true });
+      pool(w, 22, 28, 15.6, { cause: 'imp-phum', colors: LOKTAK, behind: true });
+      reeds(w, [[8, 9], [13, 14], [22, 23], [26, 27]]);
+      reeds(w, [[16, 17]], 13);
+      sangai(w, 'imp6', 3, 28, 2, [[14, 22]]);
       onPass(w, px(12.5), (w2) => tara(w2, L.taunt[0], 2.4));
       onPass(w, px(2), (w2) => tara(w2, L.intro[4], 2.2));
       sign(w, 1.5, 10.4, 3.8, 'KEIBUL LAMJAO', 'green', null, 'the floating park');
@@ -116,7 +116,7 @@ export const act: Act = {
   id: 'imp06-lamjao',
   w: 40,
   advice: 'Deeper in the park the deer walks straight across a bare stretch: its feet are light, yours are not. Hop only reed patch to reed patch, and where the patches are too far apart take the hummock.',
-  cps: [20, 36],
+  cps: [16.5, 36],
   paint: (g, c) => {
     const L5 = c.L;
     g.fill(c.x + 3, c.x + 4, 15, 15, L5[0]).fill(c.x + 7, c.x + 9, 15, 15, L5[1]).fill(c.x + 12, c.x + 15, 15, 15, L5[2]).fill(c.x + 23, c.x + 28, 15, 15, L5[3]).fill(c.x + 31, c.x + 32, 15, 15, L5[4]);
@@ -138,7 +138,7 @@ export const act2: Act = {
   id: 'imp06-pabot',
   w: 38,
   advice: 'Toward Pabot hill the firm patches thin out: two hummocks in a row, with bare mat under both. Hop hummock to hummock and come down on the reeds at the hill’s foot.',
-  cps: [19],
+  cps: [],
   paint: (g, c) => {
     const L5 = c.L;
     g.fill(c.x + 3, c.x + 5, 15, 15, L5[0]).fill(c.x + 8, c.x + 11, 15, 15, L5[1]).fill(c.x + 14, c.x + 26, 15, 15, L5[2]).fill(c.x + 29, c.x + 31, 15, 15, L5[3]);

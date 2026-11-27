@@ -5,6 +5,7 @@ import type { Door } from '../../src/game/entities/basics';
 import { Step, X, and, ground, done } from '../runner';
 import type { CityTests } from '../city-tests';
 import { LEVEL_BY_ID } from '../../src/game/levels';
+import { LEAD } from '../../src/game/cities/imp/levels';
 import type { FisherState } from '../../src/game/cities/imp/s02';
 import type { TopiaryState } from '../../src/game/cities/imp/s03';
 import type { LeafState } from '../../src/game/cities/imp/s04';
@@ -212,13 +213,13 @@ const room06 = (): Step[] => [
   ...hops([
     [4.8, 12],
     [9.3, 12],
-    [14.0, 14],
+    [13.5, 14],
   ]),
-  { hold: 'R', until: X(18.3), max: 400, note: 'along the hummock' },
-  { hold: 'R', jump: 10, ticks: 10, note: 'down on to the patch beyond the leap' },
+  { hold: 'R', until: X(17.4), max: 400, note: 'along the hummock' },
+  { hold: 'R', jump: 26, ticks: 26, long: true, note: 'down on to the patch beyond the leap' },
   { hold: 'R', until: ground, max: 300 },
-  ...hops([[22.6, 12]]),
-  { hold: 'R', until: and(ground, X(27.5)), max: 600 },
+  ...hops([[23.6, 12]]),
+  { hold: 'R', until: and(ground, X(28.5)), max: 600 },
   { hold: 'R', until: X(31.5), max: 400 },
 ];
 const act06 = (x: number): Step[] => [
@@ -319,11 +320,19 @@ const gallop = (minBreath: number) => (w: World): Out => {
   const cx = p.x + p.w / 2;
   if (!s.on) return go('R');
   const onSoft = s.soft.some(([a, b]) => cx >= a * 16 - 8 && cx < b * 16 + 8);
-  const ballBehind = s.balls.some((b) => b.alive && b.x < cx && cx - b.x < 200);
-  const ballPassed = s.balls.some((b) => b.alive && b.x > cx + 10 && b.x - cx < 180);
+  // the nearest ball behind: a rest is safe while it is still far (it rolls at 118 px/s)
+  const behind = s.balls.filter((b) => b.alive && b.x < cx).map((b) => cx - b.x);
+  const dist = behind.length ? Math.min(...behind) : 9999;
   if (s.winded >= 0) return go('');
-  if (s.breath < minBreath && !onSoft && !ballBehind && ballPassed) return go('');
-  if (s.breath < 1.2 && !onSoft && !ballBehind) return go('');
+  // the next soft stretch ahead: what it costs at a gallop (4 breath a second), plus a margin
+  const ahead = s.soft.find(([a]) => a * 16 - cx > -8 && a * 16 - cx < 120);
+  const need = Math.max(minBreath, ahead ? ((ahead[1] - ahead[0]) * 16 / 140) * 4 + 3 : 0);
+  const standing = Math.abs(p.vx) < 5;
+  // the ball is faster than the pony and passes a galloper: rest while the nearest ball behind is still far
+  // (over a second away), and be galloping again before it arrives
+  void standing;
+  // top up whenever the ball allows it (it allows it rarely), so the soft stretches are met with a full bar
+  if (s.breath < Math.max(need, 8.5) && !onSoft && dist > 200) return go('');
   return go('R');
 };
 const room09 = (): Step[] => [{ policy: gallop(4), until: X(31.5), max: 3000, note: 'gallop; rest after a ball if low' }];
@@ -399,13 +408,19 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
   'imp10-thambal': act10a,
   'imp10-dock': act10b,
 };
+/** the act's content starts LEAD tiles after its first column (levels.ts `led`): every route above is written against
+ * the content, so the public act routes take the act's first column and add LEAD */
 const actX0 = (id: string, act: string) => LEVEL_BY_ID.get(id)!.parts!.find((p) => p.kind === act)!.x0;
+for (const k of Object.keys(actRoutes)) {
+  const r = actRoutes[k];
+  actRoutes[k] = (x: number) => r(x + LEAD);
+}
 const prefix = (id: string, act: string): Step[] => [...ROOMS[id](), ...ACT_ORDER[id].slice(0, ACT_ORDER[id].indexOf(act)).flatMap((a) => actRoutes[a](actX0(id, a)))];
-/** the stage up to the act (route), then `steps` played from the act's first column; built when the test runs */
+/** the stage up to the act (route), then `steps` played from the act's content start; built when the test runs */
 const inAct = (id: string, act: string, what: string, steps: (x: number) => Step[], cause?: string) => ({
   what,
   get steps(): Step[] {
-    return [...prefix(id, act), ...steps(actX0(id, act))];
+    return [...prefix(id, act), ...steps(actX0(id, act) + LEAD)];
   },
   cause,
 });
@@ -428,7 +443,7 @@ const fix: Record<string, { steps: Step[]; cause?: string }> = {
   'IMP-03': { steps: [...hop(4.8, 'tier 0', 16), { hold: '', until: done, max: 1500, note: 'wait below him' }], cause: 'imp-shear-makha' },
   'IMP-04': { steps: [{ hold: 'R', until: X(6.2), max: 300 }, { hold: 'R', jump: 30, ticks: 30, long: true, note: 'to the far rim, beyond the dew' }, { hold: 'R', until: ground, max: 300 }, { hold: '', until: done, max: 1500 }], cause: 'imp-dew-rim' },
   'IMP-05': { steps: [{ hold: 'R', until: X(3.6), max: 400 }, { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: X(11.6), max: 600, note: 'to the front edge' }, { hold: '', until: done, max: 1500, note: 'wait for the big mat' }], cause: 'imp-lurch' },
-  'IMP-06': { steps: [...hops([[4.8, 12], [9.3, 12]]), { hold: 'R', until: X(14.2), max: 400 }, { hold: 'R', jump: 24, ticks: 24, long: true, note: 'follow the deer’s leap' }, { hold: 'R', until: done, max: 900 }], cause: 'imp-chong' },
+  'IMP-06': { steps: [...hops([[4.8, 12], [9.3, 12]]), { hold: 'R', until: X(14.3), max: 400 }, { hold: 'R', jump: 30, ticks: 30, long: true, note: 'follow the deer’s leap, straight on as Tara says' }, { hold: 'R', until: done, max: 900 }], cause: 'imp-chong' },
   'IMP-07': { steps: [{ hold: 'R', until: X(3.4), max: 400 }, { hold: 'R', jump: 10, ticks: 10 }, { hold: 'R', until: and(ground, X(6.8)), max: 400 }, { hold: '', until: done, max: 2400, note: 'stand where you are for the ride' }], cause: 'imp-branch' },
   'IMP-08': { steps: [...stallWalk(5, [0, 1, 3, 4, 5], 40), ...runOn], cause: 'imp-shutter' },
   'IMP-09': { steps: [{ policy: (w) => (ponyOf(w).breath < 5 ? go('') : go('R')), until: done, max: 6000, note: 'rest whenever the bar is low, wherever you are' }], cause: 'imp-kangjei' },
@@ -440,14 +455,9 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
     inAct(
       'IMP-04',
       'imp04-ani',
-      'land on the both-rim leaf',
-      (x) => [
-        { policy: leafWalk('imp4b', (x + 31) * 16), until: (w) => leavesOf(w, 'imp4b')[1].t0 >= 0 && leavesOf(w, 'imp4b')[1].beads.every((b) => b.gone) && w.player.onGround, max: 2000, note: 'the first two leaves as taught' },
-        { hold: 'R', until: X(x + 15.4), max: 400 },
-        { hold: 'R', jump: 10, ticks: 10, note: 'on to the narrow leaf' },
-        { hold: '', until: done, max: 900 },
-      ],
-      'imp-dew-ani',
+      'run on from the first leaf without waiting for the dew to go',
+      (x) => [{ policy: leafWalk('imp4b', (x + 31) * 16), until: (w) => leavesOf(w, 'imp4b')[0].t0 >= 0 && w.player.onGround, max: 2000, note: 'land on the first leaf' }, { hold: 'R', until: done, max: 900 }],
+      'imp-dew',
     ),
   ],
   'IMP-05': [
@@ -458,6 +468,7 @@ const mistakes: Record<string, { what: string; steps: Step[]; cause?: string }[]
       (x) => [
         { hold: 'R', until: X(x + 1.6), max: 600 },
         { hold: 'R', jump: 10, ticks: 10, note: 'on to the fast mat' },
+        { hold: 'R', until: ground, max: 300 },
         { hold: '', until: (w) => dockOf(w, 'imp5b').clicks >= 1, max: 900, note: 'carried to the anchored mat' },
         { policy: (w) => go(w.player.x + 5 > dockOf(w, 'imp5b').body[0] + 10 ? 'L' : ''), until: done, max: 2000, note: 'stand at the back end' },
       ],

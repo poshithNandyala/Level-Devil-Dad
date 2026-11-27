@@ -14,7 +14,8 @@ import { Rig, box, perTick } from './entities';
 import { FL, since, taraScript } from './common';
 import { lines as L } from './lines';
 
-export const PONY = { max: 10, firm: 1.6, soft: 4.0, rest: 2.5, winded: 3.0, ball: 118, every: 4.5, ballFrom: 200 };
+/** the ball is faster than the pony: it passes a galloper harmlessly and takes whoever is standing */
+export const PONY = { max: 10, firm: 1.4, soft: 4.0, rest: 3.0, winded: 3.5, ball: 220, every: 4.5, ballFrom: 520 };
 
 export interface PonyState {
   breath: number;
@@ -26,11 +27,13 @@ export interface PonyState {
   nextBall: number;
   on: boolean;
   troughs: number[];
+  /** sideline columns (the chukker starts and the half-way marks): the ball is never hit at a man standing there */
+  safe: number[];
 }
 
 /** installs the pony on the whole stage (called once by the room); soft patches and troughs are added by the acts */
 export function pony(w: World) {
-  const st: PonyState = { breath: PONY.max, winded: -1, soft: [], balls: [], nextBall: 0, on: false, troughs: [] };
+  const st: PonyState = { breath: PONY.max, winded: -1, soft: [], balls: [], nextBall: 0, on: false, troughs: [], safe: [0.5] };
   w.flags.imp9 = st;
   w.onTick((w2) => {
     const p = w2.player;
@@ -55,14 +58,23 @@ export function pony(w: World) {
     p.noJump = st.winded >= 0;
     // troughs: passing one fills the bar
     for (const t of st.troughs) if (Math.abs(cx - px(t)) < 6) st.breath = PONY.max;
-    // the ball: rolls up the ground from behind every few seconds, faster than a rest, slower than a gallop
-    if (w2.tick >= st.nextBall) {
-      st.nextBall = w2.tick + Math.round(PONY.every * 120);
+    // the ball: one at a time; the next is hit up the ground once the last has rolled well past
+    st.balls = st.balls.filter((b) => b.alive);
+    if (st.balls.every((b) => b.x > cx + 200) && w2.tick >= st.nextBall) {
+      st.nextBall = w2.tick + 30;
       const b = w2.add(
         new Rig(cx - PONY.ballFrom, FL - 10, 10, 10, {
           layer: 3,
           cause: 'imp-kangjei',
           inset: 1,
+          // a galloping pony is not a target: the ball rolls past; a standing or winded one is
+          live: (_r, w3) => {
+            const p = w3.player;
+            // on the sideline (a chukker's start or its half-way mark) nobody hits a ball at a standing man
+            const cx = p.x + p.w / 2;
+            if (st.safe.some((t) => cx >= t * 16 - 16 && cx <= t * 16 + 80)) return false;
+            return Math.abs(p.vx) < 30 || st.winded >= 0;
+          },
           tick: (r, w3) => {
             r.x += perTick(PONY.ball);
             r.hazard!.cause = st.winded >= 0 ? 'imp-kangjei-wa' : 'imp-kangjei';
@@ -139,6 +151,9 @@ const chukker = (id: string, n: number, soft: [number, number][], trough: boolea
     const st = w.flags.imp9 as PonyState;
     for (const [a, b] of soft) st.soft.push([c.x + a, c.x + b]);
     if (trough) st.troughs.push(c.x + 37);
+    // the sidelines: the act's start checkpoint (two columns before the content, levels.ts LEAD) and the half-way mark
+    st.safe.push(c.x - 1.5, c.x + 20);
+    if (!trough) st.safe.push(c.x + 39.5); // the last chukker: the door's checkpoint (doorX - 9.5) too
     sign(w, c.x + 1.5, 10.4, 3.4, `CHUKKER ${n}`, 'green', null, trough ? 'trough at the end' : 'no trough');
   },
 });
@@ -146,6 +161,6 @@ const chukker = (id: string, n: number, soft: [number, number][], trough: boolea
 export const acts = [
   chukker('imp09-ani', 2, [[8, 14], [22, 30]], true, 'Second chukker: two soft stretches. Cross each at a gallop with the bar above a third, and rest only on firm ground right after a ball has gone by.'),
   chukker('imp09-ahum', 3, [[6, 16], [20, 24], [30, 34]], true, 'Third chukker: a long soft stretch first. Fill up at the trough, gallop it, rest after the ball, finish.'),
-  chukker('imp09-mari', 4, [[10, 18], [26, 34]], false, 'The last chukker has no trough: there is nothing to fill the bar. Rest to full right after a ball passes before you start it, and spend it on the two soft stretches only.'),
+  chukker('imp09-mari', 4, [[8, 14], [26, 34]], false, 'The last chukker has no trough: there is nothing to fill the bar. Rest to full right after a ball passes before you start it, and spend it on the two soft stretches only.'),
 ];
 export const meta09 = { family: 'steed-stamina-gallop-walk', betrayals: ['stamina'], ending: 'imp-marjing-door-plain' };
