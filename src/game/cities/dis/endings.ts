@@ -68,8 +68,8 @@ export const endings: Record<DisEndingKind, Ending> = {
       w.when((w2) => w2.player.cx > px(D - 24), (w2) => tara(w2, 'Bhal, Dad! | Good, Dad!', 2.4));
     },
   },
-  // ================================================================ DIS-03: the tea chest
-  /** The door is the tea chest at the end of the path, nailed shut until the plucker walking up it has tipped her basket in. */
+  // ================================================================ DIS-03: the muga reel
+  /** The door is up on the verandah; a muga cocoon rides its reel up to it and is reeled in after a moment. */
   'dis-muga-reel': {
     space: 22,
     after: 5,
