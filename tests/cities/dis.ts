@@ -420,7 +420,7 @@ act('dis10-talatal', 'DIS-10', [(x) => [...hopsUp(x + 2, 6), { hold: 'R', until:
 act('dis07-card', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-gate', 'runs to the exit gate: it is shut before the card’s time'], [(x) => [{ hold: 'R', until: X(x + 25), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'dawdles on the road short of the gate: a corridor']);
 ACT_MORE.push(['dis07-card', 'DIS-07', (x) => [{ hold: 'R', until: X(x + 32), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-horin', 'waits at the gate for the card: the deer cross there']);
 act('dis07-dheki', 'DIS-07', [() => [{ policy: () => ({ move: 'R', jump: true }), until: done, max: 3000 }], 'dis-dheki', 'runs and hops the mortar while the pestle is up'], [(x) => [{ hold: 'R', until: X(x + 7), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-dheki-tail', 'waits on the tail plank: she steps off and it flies up']);
-act('dis07-bordoisila', 'DIS-07', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-bordoisila', 'walks on into the storm'], [(x) => [{ hold: 'R', until: X(x + 13), max: 600 }, { hold: '', brace: true, until: done, max: 900 }], 'dis-hail', 'holds on against the wind in the open']);
+act('dis07-bordoisila', 'DIS-07', [(x) => [{ hold: 'R', until: X(x + 8.6), max: 600 }, { hold: '', until: done, max: 1500 }], 'dis-hail', 'shelters under the granary’s roof: the hail drives in on the wind'], [(x) => [{ hold: 'R', until: X(x + 14), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-bordoisila', 'runs on past the granary to get away from it: the wind takes him into the pond']);
 act('dis10-tug', 'DIS-10', [() => [{ hold: 'R', until: done, max: 1500 }], 'dis-khaal', 'runs straight on over the ditch'], [(x) => [{ hold: 'R', until: X(x + 10.9), max: 600 }, { hold: '', until: (w) => { const p = tug(w).phase(w.tick); return p.taut && p.dir < 0 && p.t < 6; }, max: 2400 }, { hold: 'R', until: done, max: 900 }], 'dis-rope', 'goes on the red flag, as in 09: red is the near team now']);
 act('dis10-bordoisila', 'DIS-10', [(x) => [...hopR(x + 11.3, 'jumps the channel before the wind', 14), { hold: 'R', until: done, max: 600 }], 'dis-bordoisila', 'jumps the channel before the wind comes'], [(x) => [{ hold: 'R', until: X(x + 6.2), max: 600 }, { hold: '', until: done, max: 900 }], 'dis-bhoral', 'shelters under the bhoral, as in 07']);
 act('dis08-jeep', 'DIS-08', [rhinoNaive, 'dis-beel', 'walks into the tall grass'], [rhinoFix, 'dis-gorh', 'waits at the edge of the grass, where the second jeep is']);
@@ -819,7 +819,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: and(ground, X(x + 32)), max: 600, note: 'across on the rope at once' },
   ]),
   'dis07-bordoisila': mark('dis07-bordoisila', (x) => [
-    { hold: 'R', until: X(x + 8.6), max: 600, note: 'under the bhoral before the storm' },
+    { hold: 'R', until: X(x + 11.6), max: 600, note: 'into the bhoral’s lee, away from the wind' },
     { hold: '', until: (w) => (w.flags.storm as Bordoisila[])[0].over, max: 900, note: 'till Bordoisila has passed' },
     ...hopR(x + 16.3, 'over the pond', 14),
     { hold: 'R', until: and(ground, X(x + 24)), max: 600 },

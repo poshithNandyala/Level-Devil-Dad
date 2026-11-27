@@ -58,7 +58,7 @@ export class Bordoisila extends Entity {
 export const bordoisila: Act = {
   id: 'dis07-bordoisila',
   w: 26,
-  advice: 'Bordoisila, the April storm, blows in: first the wind, toward the pond, then the hail. Get under the bhoral, the granary on stilts, before it comes, and stay there till it has passed. Holding on in the open won’t save you from the hail.',
+  advice: 'Bordoisila, the April storm, blows in: first the wind, then the hail, and the hail drives in slantwise on the wind. Under the bhoral, the granary on stilts, it still reaches you. Read the wind (the leaves fly with it) and put the granary between you and it: stand in its lee, on the side away from the wind, till the storm has passed.',
   cps: [1.5, 23.5],
   paint: (g, c) => {
     g.pit(c.x + 17, c.x + 19);
@@ -67,14 +67,16 @@ export const bordoisila: Act = {
     const x = c.x;
     river(w, x + 17, x + 20, 'dis-bordoisila');
     const s = w.add(new Bordoisila(px(x + 3)));
+    // the wind blows from the left, toward the pond. It blows round the granary (no push under it), but the hail
+    // drives in slantwise on it, under the granary too; only the lee, the two columns just downwind of it, is clear
     for (const [a, b] of [
       [x, x + 7],
-      [x + 11, x + 17],
-    ]) {
-      const g = w.add(new Gust(a, 0, b - a, 15, 260));
-      s.gusts.push(g);
-      s.hail.push(w.add(new Danger({ x: px(a), y: 0, w: px(b - a), h: GROUND }, 'dis-hail', false)));
-    }
+      [x + 13, x + 17],
+    ]) s.gusts.push(w.add(new Gust(a, 0, b - a, 15, 260)));
+    for (const [a, b] of [
+      [x, x + 11],
+      [x + 13, x + 17],
+    ]) s.hail.push(w.add(new Danger({ x: px(a), y: 0, w: px(b - a), h: GROUND }, 'dis-hail', false)));
     (w.flags.storm ??= []).push(s);
     onPass(w, px(x + 2), (w2) => tara(w2, 'Roba! | Stop!', 2.4));
     // the bhoral: a granary on four bamboo stilts, thatched, high enough to walk under
