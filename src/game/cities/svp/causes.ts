@@ -14,6 +14,8 @@ export const causeLines: Record<string, string[]> = {
   'svp-nazar2': ['Nazar! You climbed the signboard and the picture lined up from too high: the ledge appeared far below the road.', 'The note was taken from eye height, not from the top of a pole. The bench is the right height: stand on that.'],
   'svp-nazar': ['Nazar! The ledge was only a picture from the bench.', 'Stand on the footprints without moving, and the view lines up. Then run, it only holds a few seconds.'],
   'svp-saman': ['Saman! They all stood up and took the floor with them.', 'Don’t wait on the luggage: when the ship is called it goes. Cross, and get into the trench.'],
+  'svp-bus': ['Bus! You were right behind it, and it rolled back before it went.', 'A bus about to leave rolls back first, with its engine note rising. Do not wait behind it: get on its roof.'],
+  'svp-bus-aage': ['Bus! You ran ahead of it down the lane, and it pulled away into you.', 'The bus pulls away faster than you can run, and the barrier at the end lifts only for the bus. Ride on its roof.'],
   'svp-bheed2': ['Bheed! You came down when the crowd had gone by, and the same crowd was coming back.', 'The storm has turned the whole hall round: the crowd goes to the ship and comes back. Stay up on the tall stack for both.'],
   'svp-bheed': ['Bheed! The whole hall ran for the ship, and you were in the way.', 'Down in the trench while they run for the ship, and out again behind them.'],
   'svp-jahaz': ['Jahaz! You got on the first ship, and it sailed.', 'The first ship is the crowd’s. Wait for the second, and step over to it when it docks.'],

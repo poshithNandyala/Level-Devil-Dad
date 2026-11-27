@@ -12,6 +12,7 @@ import type { Stall } from '../../src/game/cities/svp/kadhai';
 import type { Pool } from '../../src/game/cities/svp/hauz';
 import type { LiftBridge } from '../../src/game/cities/svp/khula';
 import type { Lift } from '../../src/game/cities/svp/uthao';
+import type { Bus } from '../../src/game/cities/svp/bus';
 import type { Belt } from '../../src/game/cities/svp/nali';
 import type { SawHall } from '../../src/game/cities/svp/s02';
 import type { Creek } from '../../src/game/cities/svp/s03';
@@ -111,6 +112,7 @@ const inTrench = (w: World) => w.player.onGround && w.player.y + w.player.h > 25
 /** out of the trench by its right wall */
 const climbRight = (note: string, farX: number): Step => ({ hold: 'R', jump: 14, until: (w) => w.player.onGround && w.player.y + w.player.h <= 241 && w.player.x >= farX, max: 300, note });
 const ships = (w: World) => w.flags.ships as Ship[];
+const bus0 = (w: World) => (w.flags.buses as Bus[])[0];
 
 // ------------------------------------------------------------------ SVP-08: the two monsoons
 const wx = (w: World) => w.flags.weather as Weather;
@@ -690,6 +692,13 @@ const actRoutes: Record<string, (x: number) => Step[]> = {
     { hold: 'R', until: (w) => w.player.onGround && w.player.y + w.player.h > FLOOR_Y - 2 && w.player.cx > px(x + 31), max: 600, note: 'down the far side' },
     { hold: 'R', until: and(ground, X(x + 35)), max: 600 },
   ],
+  'svp07-bus': (x) => [
+    { hold: 'R', until: and(ground, X(x + 6.2)), max: 900, note: 'along to the bus' },
+    { hold: 'R', jump: 14, until: (w) => w.standing(bus0(w).plat.solid), max: 300, note: 'up on to the roof' },
+    { hold: '', until: (w) => bus0(w).stopped, max: 1800, note: 'on the roof: it rolls back, and goes, and the barrier lifts' },
+    { hold: 'R', until: and(ground, X(x + 36)), max: 600, note: 'off the bus and through the barrier' },
+    { hold: 'R', until: and(ground, X(x + 41)), max: 600 },
+  ],
   'svp04-ghat': (x) => [
     { hold: 'R', until: (w) => herdA(w).carrying, max: 900, note: 'past the stall' },
     putDown(herdA, 'put it down at the stall: the herd gathers there'),
@@ -941,6 +950,16 @@ const windSpot = (idx: number, against = false) => (w: World) => {
   return (d > 0) !== against ? a.x1 - 20 : a.x0 + 20;
 };
 const intoStreet = (x: number): Step => ({ hold: 'R', until: (w) => { return w.player.onGround && w.player.cx >= px(x + 4.5); }, max: 900, note: 'on along the road into the street' });
+actDeath('SVP-07', 'svp07-bus', 'wait right behind the bus for it to leave', 'svp-bus', (x) => [
+  { hold: 'R', until: and(ground, X(x + 7.3)), max: 900, note: 'right up behind the bus' },
+  { hold: '', until: (w) => w.state !== 'play', max: 900, note: 'wait for it to go' },
+]);
+actDeath('SVP-07', 'svp07-bus', 'over the bus and on down the lane ahead of it', 'svp-bus-aage', (x) => [
+  { hold: 'R', until: and(ground, X(x + 6.2)), max: 900, note: 'along to the bus' },
+  { hold: 'R', jump: 14, until: (w) => w.standing(bus0(w).plat.solid), max: 300, note: 'up on to the roof' },
+  { hold: 'R', until: (w) => w.player.onGround && w.player.y + w.player.h > FLOOR_Y - 2 && w.player.cx > px(x + 14), max: 600, note: 'along the roof and down off its nose' },
+  { hold: 'R', until: (w) => w.state !== 'play', max: 900, note: 'on down the lane ahead of it' },
+]);
 actDeath('SVP-09', 'svp09-patta', 'let go under the middle of the pontoon', 'svp-hull', (x) => [
   { hold: 'R', until: and(ground, X(x + 15)), max: 900, note: 'to under the middle of the pontoon' },
   { hold: '', until: (w) => w.state !== 'play', max: 900, note: 'stand still: up into the hull' },
