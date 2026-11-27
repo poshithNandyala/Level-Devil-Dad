@@ -218,6 +218,8 @@ function howrahRoom(): LevelDef {
     build(w: World) {
       w.add(new Girders(0, px(32)));
       road(w, px(6), px(28));
+      // fix 4: taken as the tall porter brings you over the pylon step, so a leap off him past it still counts
+      checkpoint(w, 28.3);
       const p1 = w.add(new Porter({ x: px(5), v: 40, h: SHORT, rests: [[px(21), 3]], go: (w2, me) => w2.player.isRiding(me.load) }));
       w.add(new Porter({ x: px(-2.5), v: 60, h: TALL, rests: [[px(30.5), Infinity]], go: walking(p1) }));
       w.add(new Porter({ x: px(23), v: -45, h: TALL - 1, go: walking(p1), off: px(6) }));
@@ -305,15 +307,16 @@ const horn: Act = {
   w: 36,
   // on the long pylon step, before the porters
   cp0: false,
-  cps: [4.5],
+  cps: [1.5, 4.5, 31],
   advice: 'A lorry behind is leaning on its horn: on every blare the porters step toward the parapet, and the load under you jumps back a stride without you. Be on the back of the load when the horn goes, and walk back to it again after each one. Don’t hop to the porter in front on the horn: he steps too.',
   paint: (g, c) => {
-    g.fill(c.x, c.x + 8, 14, 14, '#').fill(c.x + 1, c.x + 8, 13, 13, '#');
+    // fix 4: the span ends at a pylon step past the second horn, a walk from the next act's
+    g.fill(c.x, c.x + 8, 14, 14, '#').fill(c.x + 1, c.x + 8, 13, 13, '#').fill(c.x + 29, c.x + 35, 13, 14, '#');
   },
   build: (w, c) => {
     w.add(new Girders(c.X(0), c.X(36)));
-    w.add(new Road(c.X(9), c.X(36), (w2) => (w2.flags.tipped && w2.tick - w2.flags.tipped < 120 ? 'ccu-parapet' : w2.flags.cha ? 'ccu-cha' : 'ccu-gaari')));
-    const p1 = w.add(new Porter({ x: c.X(10), v: 50, h: TALL, rests: [[c.X(36.8), Infinity]], go: (w2, me) => w2.player.isRiding(me.load), kind: 'sack' }));
+    w.add(new Road(c.X(9), c.X(29), (w2) => (w2.flags.tipped && w2.tick - w2.flags.tipped < 120 ? 'ccu-parapet' : w2.flags.cha ? 'ccu-cha' : 'ccu-gaari')));
+    const p1 = w.add(new Porter({ x: c.X(10), v: 50, h: TALL, rests: [[c.X(29.8), Infinity]], go: (w2, me) => w2.player.isRiding(me.load), kind: 'sack' }));
     const p2 = w.add(new Porter({ x: c.X(15), v: 50, h: TALL, go: walking(p1), off: c.X(36), kind: 'books' }));
     const h = w.add(new Horn([p1, p2], [c.X(16), c.X(26)]));
     w.flags.horn = { p1, p2, h };
@@ -328,15 +331,16 @@ const board: Act = {
   w: 40,
   // on the long pylon step, before the porters
   cp0: false,
-  cps: [3],
-  advice: 'One CHA board, and it seats one. A short porter overtakes under you on his way to it, and he gets there first: he sets down, and yours finds the board taken and walks on past it. So this time don’t switch: stay on your load.',
+  cps: [5, 33.5],
+  advice: 'One CHA board, and it seats one. A short porter overtakes under you on his way to it, and he gets there first: he sets down, and yours finds the board taken and walks on past it. So this time don’t switch: stay on your load, to the next pylon.',
   paint: (g, c) => {
-    g.fill(c.x, c.x + 8, 14, 14, '#').fill(c.x + 1, c.x + 8, 13, 13, '#');
+    // fix 4: the span ends at a pylon step just past the board, a walk from the next act's
+    g.fill(c.x, c.x + 8, 14, 14, '#').fill(c.x + 1, c.x + 8, 13, 13, '#').fill(c.x + 32, c.x + 39, 13, 14, '#');
   },
   build: (w, c) => {
     w.add(new Girders(c.X(0), c.X(40)));
-    road(w, c.X(9), c.X(40));
-    const a = w.add(new Porter({ x: c.X(10), v: 45, h: TALL, rests: [[c.X(40.8), Infinity]], go: (w2, me) => w2.player.isRiding(me.load), kind: 'sack' }));
+    road(w, c.X(9), c.X(32));
+    const a = w.add(new Porter({ x: c.X(10), v: 45, h: TALL, rests: [[c.X(32.8), Infinity]], go: (w2, me) => w2.player.isRiding(me.load), kind: 'sack' }));
     const b = w.add(new Porter({ x: c.X(7), v: 66, h: SHORT, rests: [[c.X(26), 6]], go: walking(a), off: c.X(40), kind: 'books' }));
     w.add(new ChaiBoard(c.X(26)));
     w.flags.board = { a, b };
