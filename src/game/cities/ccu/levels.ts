@@ -277,7 +277,7 @@ const jowar: Act = {
   w: 40,
   // the start is under the front once it's coming: the checkpoint is up the ghat steps past it
   cp0: false,
-  cps: [36],
+  cps: [1.2, 36],
   advice: 'The low causeway along the river, and the bore’s front is coming up behind you: everything it has passed is under water. Don’t stop. Hop each drain short (they’re close together) and keep running till you’re up the ghat steps at the end.',
   paint: (g, c) => {
     const x = c.x;
@@ -287,7 +287,7 @@ const jowar: Act = {
   build: (w, c) => {
     for (const d of [8, 12, 18, 24]) pool(w, c.x + d, c.x + d + 2, 16, { colors: NALA, cause: 'ccu-nala' });
     const front = w.add(new Front(c.X(-2), c.X(33), 80));
-    onPass(w, c.X(1), (w2) => {
+    onPass(w, c.X(7.6), (w2) => {
       if (front.t0 < 0) front.t0 = w2.tick + 60;
     });
     sign(w, c.x + 0.3, 10.4, 3.4, 'CAUSEWAY', 'green', null, 'low tide only');
@@ -1295,7 +1295,8 @@ export const levels = (): LevelDef[] => [
   longStage({ base: aasteRoom(), par: 23, acts: [], twist: 'ccu-stop', shape: 'short', meta: meta('exit-moving-vehicle-on-shout', ['exit-facing-forward'], 'ccu-bus-crawls-for-whoever-waits') }),
   longStage({ base: muriRoom(), par: 38, acts: [dui3], twist: 'ccu-thonga', shape: 'short', meta: meta('shake-tin-sorts-big-pieces-up', ['shake-sorts-up', 'B35'], 'ccu-tin-with-no-peanuts') }),
   longStage({ base: boiRoom(), par: 23, acts: [thak], twist: 'ccu-set', shape: 'short', meta: meta('stack-pulled-from-bottom', ['stack-drops-one-height'], 'ccu-customer-buys-the-whole-set') }),
-  longStage({ base: kumartuliRoom(), par: 26, acts: [lane, ghat], twist: 'ccu-murti', shape: 'long', meta: meta('painted-figure-carried-out', ['paint-done-departs'], 'ccu-ride-the-finished-figure-out') }),
+  longStage({ base: kumartuliRoom(), par: 26, acts: [lane, ghat], twist: 'ccu-murti', shape: 'long', // shortcut: the allocation slot still lists dry-cracks-from-height; S4 cut it from the stage, so the slot needs the allocator's edit
+    meta: meta('painted-figure-carried-out', ['paint-done-departs', 'dry-cracks-from-height'], 'ccu-ride-the-finished-figure-out') }),
   longStage({ base: poleRoom(), par: 70, acts: [points, duiLine], twist: 'ccu-pole-turn', shape: 'long', meta: meta('pole-swings-at-junction', ['pole-sweep', 'points-switch'], 'ccu-pole-turned-over-the-terminus') }),
   longStage({ base: howrahRoom(), par: 98, acts: [girder, dui, horn, board, pylon, jowar], twist: 'ccu-arch', shape: 'marathon', lives: 'act', meta: meta('head-load-platforms', ['carry-platform', 'porter-rests'], 'ccu-station-arch-sweeps-the-loads') }),
   longStage({ base: addaRoom(), par: 19, acts: [rok], twist: 'ccu-dorja', shape: 'wtf', meta: meta('stand-still-held-by-chat', ['held-until-event'], 'ccu-old-men-on-the-doorstep-rise-for-tea') }),
