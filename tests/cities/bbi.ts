@@ -788,6 +788,10 @@ const DEATHS: Record<string, Death[]> = {
     { what: 'stay on your badi', cause: 'bbi-bhanwar', steps: (x) => [...hop(x + 1.4, 'up on the rim'), { hold: '', until: ground, max: 300 }, leap((w) => pl(w).bx[0] + 13, 'on to it', () => true, 5), { hold: '', until: done, max: 1500 }] },
     { what: 'hop for the far rim at the last moment', cause: 'bbi-pakhala', steps: (x) => [...hop(x + 1.4, 'up on the rim'), { hold: '', until: ground, max: 300 }, leap((w) => pl(w).bx[0] + 13, 'on to it', () => true, 5), stayOn((w) => pl(w).bx[0] + 13, (w) => pl(w).bx[0] + 13 > px(x + 9) - 10, 'to the hole', 1500), { hold: 'R', jump: 15, ticks: 15 }, { hold: 'R', until: done, max: 600 }] },
   ],
+  'bbi08-ghurni': [
+    { what: 'jump on the first badi as soon as it is in reach', cause: 'bbi-ghurni', steps: (x) => [{ hold: 'R', until: X(x + 3.0), max: 400 }, waitFor((w) => { const c = Math.cos(gh(w).th[0]); return Math.sin(gh(w).th[0]) > 0.6 && c < 0; }, 'it races towards you'), { hold: 'R', jump: 12, ticks: 12 }, { hold: 'R', until: done, max: 600 }] },
+    { what: 'get on at the edge and wait for the stir to stop', cause: 'bbi-chamacha', steps: (x) => [{ hold: 'R', until: X(x + 3.0), max: 400 }, waitFor((w) => Math.cos(gh(w).th[0]) < -0.97, 'the near edge'), leap((w) => gh(w).rigs[0].x + 13, 'on at the slow edge'), stayOn((w) => gh(w).rigs[0].x + 13, done, 'and wait', 900)] },
+  ],
   'bbi08-phinga': [
     { what: 'stand at the rim and read his throws', cause: 'bbi-badi', steps: (x) => [{ hold: 'R', until: X(x + 2.8), max: 400 }, { hold: '', until: done, max: 1200 }] },
     { what: 'let the first go by, then ride the second', cause: 'bbi-buda', steps: (x) => [{ hold: 'R', until: X(x + 1.4), max: 400 }, waitFor((w) => ph(w).t0 >= 0 && (w.tick - ph(w).t0) / 120 > 2.2 + 0.6, 'the second lands'), leap((w) => ph(w).floats[1].x + 13, 'on to the second'), { hold: '', until: done, max: 600 }] },
@@ -1009,6 +1013,18 @@ const tantuRun = (x: number): Step[] => [
 ];
 /** the server: on to the first badi the moment it lands, ride it over, off on to the far bank */
 const ph = (w: World) => w.flags.bbi8ph as { t0: number; floats: { x: number }[] };
+/** the stir: on at A's near edge, across to B where they meet edge to edge, off at B's far edge */
+const gh = (w: World) => w.flags.bbi8gh as { t0: number; rigs: { x: number }[]; th: number[] };
+const ghurniRun = (x: number): Step[] => [
+  { hold: 'R', until: X(x + 3.0), max: 400, note: 'to the rim' },
+  waitFor((w) => gh(w).t0 >= 0 && Math.cos(gh(w).th[0]) < -0.97, 'A at its slow near edge'),
+  leap((w) => gh(w).rigs[0].x + 13, 'on to A'),
+  stayOn((w) => gh(w).rigs[0].x + 13, (w) => Math.cos(gh(w).th[0]) > 0.97, 'ride A to its far edge', 600),
+  leap((w) => gh(w).rigs[1].x + 13, 'across to B, slow too'),
+  stayOn((w) => gh(w).rigs[1].x + 13, (w) => Math.cos(gh(w).th[1]) < -0.97, 'ride B to its far edge', 600),
+  leap(() => px(x + 21.5), 'off on to the far rim'),
+  { hold: 'R', until: X(x + 23.5), max: 300 },
+];
 const phingaRun = (x: number): Step[] => [
   { hold: 'R', until: X(x + 2.6), max: 400, note: 'to the rim' },
   waitFor((w) => ph(w).t0 >= 0 && (w.tick - ph(w).t0) / 120 > 0.9 + 0.6, 'the first lands soft'),
@@ -1148,6 +1164,7 @@ const actRoutes: Record<string, (x: number) => Step[]> = { 'bbi07-sajaghara': sa
   'bbi06-rachh': loomRun('bbi6q', 8, 0.5),
   'bbi06-tantu': tantuRun,
   'bbi08-phinga': phingaRun,
+  'bbi08-ghurni': ghurniRun,
   'bbi09-ulta': chAct('bbi9u', 9, 8),
   'bbi09-udaya': (x) => {
     const out: Step[] = [{ hold: 'R', until: X(x + 1.4), max: 300 }];
