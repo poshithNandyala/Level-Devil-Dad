@@ -502,13 +502,13 @@ function solutions(S: Record<string, Step[]>, lengthen: (id: string, drop: numbe
   S['DIS-05'] = gamosaSet(0, 18);
   lengthen('DIS-05', 0, []);
   S['DIS-06'] = [
-    { hold: 'R', until: X(12.2), max: 600, note: 'to the bank, back from the edge' },
+    { hold: 'R', until: X(10.4), max: 600, note: 'to the bank, well back from the edge' },
     { hold: '', until: (w) => banks(w)[0].slabs[1].solid.collidable, max: 900, note: 'wait for the sand step behind the first spur' },
-    { hold: 'R', until: X(12.8), max: 100 },
+    { hold: 'R', until: X(11.5), max: 100 },
     { hold: 'R', jump: 20, ticks: 20, long: true, note: 'over the slab and the spur on to the step' },
     { hold: 'R', until: ground, max: 200 },
     { hold: '', until: (w) => banks(w)[0].slabs[3].solid.collidable, max: 900, note: 'wait for the step behind the second spur' },
-    { hold: 'R', until: X(18.3), max: 300 },
+    { hold: 'R', until: X(17.4), max: 300 },
     { hold: 'R', jump: 20, ticks: 20, long: true, note: 'over the slab and the spur on to the step' },
     { hold: 'R', until: and(ground, X(28)), max: 600 },
   ];
